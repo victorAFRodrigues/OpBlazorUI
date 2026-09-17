@@ -1,0 +1,135 @@
+@namespace OpBlazorUI.Showcase.Client.Components.Layout
+@implements IDisposable
+
+<aside class="layout-sidebar @(LayoutState.SidebarOpen ? "sidebar-open" : null)">
+    <nav>
+        <ol class="layout-menu">
+            @foreach (var entry in AppMenu.Entries)
+            {
+                <li>
+                    @if (entry.HasChildren)
+                    {
+                        var expanded = IsExpanded(entry.Label);
+                        <button type="button" class="@(expanded ? "menu-expanded" : null)" @onclick="() => Toggle(entry.Label)">
+                            <div class="menu-icon"><i class="@entry.Icon"></i></div>
+                            <span>@entry.Label</span>
+                            <span class="menu-toggle">
+                                <i class="menu-toggle-icon pi pi-angle-down"></i>
+                            </span>
+                        </button>
+
+                        @if (expanded)
+                        {
+                            <div>
+                                <ol>
+                                    @if (entry.Groups.Count > 0)
+                                    {
+                                        @foreach (var group in entry.Groups)
+                                        {
+                                            <li>
+                                                <span class="menu-child-category">@group.Label</span>
+                                                <div>
+                                                    <ol>
+                                                        @foreach (var item in group.Items)
+                                                        {
+                                                            <li><a href="@item.Route" class="@(IsActive(item.Route) ? "router-link-active" : null)"><span>@item.Label</span>@if (!item.ComingSoon) { <span class="menu-badge" title="Portado"></span> }</a></li>
+                                                        }
+                                                    </ol>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @foreach (var child in entry.Children)
+                                        {
+                                            <li><a href="@child.Route" class="@(IsActive(child.Route) ? "router-link-active" : null)"><span>@child.Label</span>@if (!child.ComingSoon) { <span class="menu-badge" title="Portado"></span> }</a></li>
+                                        }
+                                    }
+                                </ol>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <a href="@(entry.Route ?? "/coming-soon")">
+                            <div class="menu-icon"><i class="@entry.Icon"></i></div>
+                            <span>@entry.Label</span>
+                        </a>
+                    }
+                </li>
+            }
+
+            <li class="drawer-quickaction-divider"></li>
+            <li class="drawer-quickaction">
+                <a target="_blank" rel="noopener noreferrer" href="https://github.com/openng-org/optimus-ui">
+                    <div class="menu-icon"><i class="pi pi-github"></i></div><span>GitHub</span>
+                </a>
+            </li>
+            <li class="drawer-quickaction">
+                <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/auSfMzVVPr">
+                    <div class="menu-icon"><i class="pi pi-discord"></i></div><span>Discord</span>
+                </a>
+            </li>
+            <li class="drawer-quickaction">
+                <a target="_blank" rel="noopener noreferrer" href="https://github.com/openng-org/optimus-ui/discussions">
+                    <div class="menu-icon"><i class="pi pi-comments"></i></div><span>Discussões</span>
+                </a>
+            </li>
+            <li class="drawer-quickaction">
+                <button type="button" @onclick="() => DarkModeState.Set(!DarkModeState.Dark)">
+                    <div class="menu-icon"><i class="pi @(DarkModeState.Dark ? "pi-sun" : "pi-moon")"></i></div><span>Modo escuro</span>
+                </button>
+            </li>
+            <li class="drawer-quickaction">
+                <button type="button" @onclick="() => _configOpen = !_configOpen">
+                    <div class="menu-icon"><i class="pi pi-palette"></i></div><span>Personalizar tema</span>
+                </button>
+            </li>
+            @if (_configOpen)
+            {
+                <li class="drawer-quickaction"><Configurator/></li>
+            }
+        </ol>
+    </nav>
+</aside>
+
+@code {
+    private readonly HashSet<string> _expanded = new(StringComparer.Ordinal) { "Components" };
+    private bool _configOpen;
+
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        LayoutState.SidebarToggled += OnSidebarToggled;
+        DarkModeState.Changed += OnDarkChanged;
+    }
+
+    private void OnSidebarToggled() => StateHasChanged();
+    private void OnDarkChanged() => StateHasChanged();
+
+    private bool IsExpanded(string label) => _expanded.Contains(label);
+
+    private void Toggle(string label)
+    {
+        if (!_expanded.Add(label)) _expanded.Remove(label);
+    }
+
+    private bool IsActive(string route)
+    {
+        var uri = Nav.Uri;
+        var idx = uri.IndexOf('?');
+        var path = idx >= 0 ? uri[..idx] : uri;
+        var baseUri = Nav.BaseUri.TrimEnd('/');
+        var rel = path.StartsWith(baseUri) ? path[baseUri.Length..] : path;
+        if (string.IsNullOrEmpty(rel)) rel = "/";
+        return string.Equals(rel, route, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public void Dispose()
+    {
+        LayoutState.SidebarToggled -= OnSidebarToggled;
+        DarkModeState.Changed -= OnDarkChanged;
+    }
+}

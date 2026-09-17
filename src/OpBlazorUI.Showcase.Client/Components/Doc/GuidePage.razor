@@ -1,0 +1,31 @@
+@namespace OpBlazorUI.Showcase.Client.Components.Doc
+
+<div class="doc-component">
+    <div class="doc-tabpanels">
+        <div class="doc-guide">
+            <div class="doc-main">
+                <div class="doc-intro">
+                    <h1>@Title</h1>
+                    @if (Description != null)
+                    {
+                        <p>@Description</p>
+                    }
+                </div>
+
+                @ChildContent
+            </div>
+
+            @if (Sections.Count > 0)
+            {
+                <DocSectionNav Items="Sections"/>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public IReadOnlyList<string> Sections { get; set; } = [];
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

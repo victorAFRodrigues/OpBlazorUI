@@ -1,0 +1,147 @@
+@page "/checkbox"
+@namespace OpBlazorUI.Showcase.Client.Components.Pages
+@using OpBlazorUI.Showcase.Client.Components.Doc
+@using OpBlazorUI.Base.Components.Checkbox
+
+<DocComponent Title="Checkbox"
+              Description="O Checkbox é uma extensão do elemento checkbox padrão, com temas.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <OpCheckbox @bind-Checked="_checked" Id="cb1"/>
+                <label class="ms-2" for="cb1">Checkbox</label>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Indeterminado">
+            <ChildContent>
+                <OpCheckbox Indeterminate="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@IndeterminateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido / Desabilitado">
+            <ChildContent>
+                <div class="flex gap-4 items-center">
+                    <OpCheckbox Checked="true" Invalid="true"/>
+                    <OpCheckbox Checked="true" Disabled="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos">
+            <ChildContent>
+                <div class="flex gap-4 items-center">
+                    <OpCheckbox Checked="true" Size="small"/>
+                    <OpCheckbox Checked="true"/>
+                    <OpCheckbox Checked="true" Size="large"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Checked", "bool?", "null", "Estado marcado." },
+                              new[] { "CheckedChanged", "EventCallback&lt;bool?&gt;", "-", "Callback de binding." },
+                              new[] { "Indeterminate", "bool", "false", "Estado indeterminado." },
+                              new[] { "Value", "string?", "null", "Valor do input." },
+                              new[] { "Name", "string?", "null", "Name do input." },
+                              new[] { "Id", "string?", "null", "Id do input." },
+                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula." },
+                              new[] { "Required", "bool", "false", "Obrigatório." },
+                              new[] { "Readonly", "bool", "false", "Somente leitura." },
+                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "Variant", "string", "outlined", "Variante: <code>outlined</code> ou <code>filled</code>." },
+                              new[] { "CheckboxIcon", "string?", "null", "Classe do ícone de marcação." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "InputClass", "string?", "null", "Classes do input." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnChange", "EventCallback&lt;bool&gt;", "Disparado ao mudar o estado." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="checkbox"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>InputClass</code> e atributos extras para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private bool? _checked = true;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Checkbox
+
+        <OpCheckbox @bind-Checked="_checked" Id="cb1" />
+        <label for="cb1">Checkbox</label>
+        """;
+
+    private const string BasicCode = """
+        <OpCheckbox @bind-Checked="_checked" Id="cb1" />
+        <label for="cb1">Checkbox</label>
+
+        @code {
+            private bool? _checked;
+        }
+        """;
+
+    private const string IndeterminateCode = """
+        <OpCheckbox Indeterminate="true" />
+        """;
+
+    private const string StateCode = """
+        <OpCheckbox Checked="true" Invalid="true" />
+        <OpCheckbox Checked="true" Disabled="true" />
+        """;
+
+    private const string SizeCode = """
+        <OpCheckbox Checked="true" Size="small" />
+        <OpCheckbox Checked="true" />
+        <OpCheckbox Checked="true" Size="large" />
+        """;
+}

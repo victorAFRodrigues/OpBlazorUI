@@ -1,0 +1,57 @@
+name: Deploy Showcase to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  PROJECT_PATH: src/OpBlazorUI.Showcase.Client/OpBlazorUI.Showcase.Client.csproj
+  REPO_NAME: OpBlazorUI
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restaurar dependências
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Publicar (Release)
+        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o release --nologo --no-restore
+
+      - name: Ajustar base href para o subcaminho do GitHub Pages
+        run: |
+          sed -i 's|<base href="/" />|<base href="/${{ env.REPO_NAME }}/" />|g; s|<base href="/"/>|<base href="/${{ env.REPO_NAME }}/"/>|g' \
+            release/wwwroot/index.html
+
+      - name: Criar .nojekyll (evita que _framework seja ignorado)
+        run: touch release/wwwroot/.nojekyll
+
+      - name: Criar 404.html para fallback de rotas SPA
+        run: cp release/wwwroot/index.html release/wwwroot/404.html
+
+      - name: Preparar artefato do GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: release/wwwroot
+
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

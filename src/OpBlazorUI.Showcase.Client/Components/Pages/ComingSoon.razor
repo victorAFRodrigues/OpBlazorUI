@@ -1,0 +1,18 @@
+@page "/coming-soon/{slug?}"
+@namespace OpBlazorUI.Showcase.Client.Components.Pages
+
+<div class="doc-section">
+    <h1 class="doc-section-label" style="font-size:2rem;">@Title</h1>
+    <div class="doc-section-description">
+        <p>Este componente ainda não foi portado para Blazor.</p>
+        <p>Estamos construindo o port do Optimus UI gradualmente — volte em breve!</p>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Slug { get; set; }
+
+    private string Title => string.IsNullOrEmpty(Slug)
+        ? "Em breve"
+        : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Slug.Replace("-", " "));
+}

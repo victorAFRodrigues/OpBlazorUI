@@ -1,0 +1,190 @@
+@page "/table"
+@namespace OpBlazorUI.Showcase.Client.Components.Pages
+@using OpBlazorUI.Showcase.Client.Components.Doc
+@using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Models
+
+<DocComponent Title="Table"
+              Description="A tabela exibe dados em formato tabular.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5" Sortable="true" RowHover="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Seleção + Zebrado + Linhas de Grade">
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_selected" StripedRows="true" ShowGridlines="true"/>
+                <div class="mt-2 text-sm">Selecionados: @_selected.Count</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SelectionCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanho / Vazio">
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" Size="small" Paginator="true" Rows="3"/>
+                    <OpDataTable Items="Array.Empty<Product>()" Columns="Cols" EmptyMessage="Nenhum produto encontrado"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@EmptyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Carregando">
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="Cols" Loading="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoadingCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Items", "IReadOnlyList&lt;TItem&gt;?", "null", "Dados da tabela." },
+                              new[] { "Columns", "IReadOnlyList&lt;OpDataTableColumn&gt;", "[]", "Definição das colunas." },
+                              new[] { "Sortable", "bool", "true", "Habilita ordenação." },
+                              new[] { "StripedRows", "bool", "false", "Linhas listradas." },
+                              new[] { "ShowGridlines", "bool", "false", "Exibe linhas de grade." },
+                              new[] { "RowHover", "bool", "true", "Realce no hover." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "Selection", "bool", "false", "Habilita seleção de linhas." },
+                              new[] { "SelectedItems", "IReadOnlyList&lt;TItem&gt;?", "null", "Itens selecionados." },
+                              new[] { "SelectedItemsChanged", "EventCallback&lt;IReadOnlyList&lt;TItem&gt;?&gt;", "-", "Callback de seleção." },
+                              new[] { "Paginator", "bool", "false", "Habilita paginação." },
+                              new[] { "PaginatorPosition", "string", "bottom", "Posição do paginador." },
+                              new[] { "Rows", "int", "5", "Linhas por página." },
+                              new[] { "EmptyMessage", "string", "Nenhum resultado encontrado", "Mensagem quando vazio." },
+                              new[] { "Loading", "bool", "false", "Exibe estado de carregamento." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnSort", "EventCallback&lt;(string Field, int Order)&gt;", "Disparado ao ordenar." },
+                              new[] { "OnPage", "EventCallback&lt;int&gt;", "Disparado ao mudar de página." },
+                              new[] { "OnRowClick", "EventCallback&lt;TItem&gt;", "Disparado ao clicar em uma linha." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="OpDataTableColumn">
+            <ChildContent>
+                <ApiTable Caption="OpDataTableColumn"
+                          Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Field", "string", "", "Nome da propriedade." },
+                              new[] { "Header", "string", "", "Título da coluna." },
+                              new[] { "Sortable", "bool", "true", "Coluna ordenável." },
+                              new[] { "Width", "string?", "null", "Largura da coluna." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="datatable"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>OpDataTableColumn.StyleClass</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private IReadOnlyList<Product> _selected = Array.Empty<Product>();
+
+    private sealed class Product
+    {
+        public string Name { get; set; } = "";
+        public string Category { get; set; } = "";
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+    }
+
+    private static readonly List<OpDataTableColumn> Cols = new()
+    {
+        new() { Field = "Name", Header = "Nome" },
+        new() { Field = "Category", Header = "Categoria" },
+        new() { Field = "Price", Header = "Preço" },
+        new() { Field = "Stock", Header = "Estoque" }
+    };
+
+    private static readonly List<Product> Products = new()
+    {
+        new() { Name = "Alface", Category = "Hortaliça", Price = 2.5m, Stock = 120 },
+        new() { Name = "Tomate", Category = "Hortaliça", Price = 4.9m, Stock = 85 },
+        new() { Name = "Banana", Category = "Fruta", Price = 3.2m, Stock = 200 },
+        new() { Name = "Maçã", Category = "Fruta", Price = 5.6m, Stock = 64 },
+        new() { Name = "Cenoura", Category = "Legume", Price = 2.1m, Stock = 150 },
+        new() { Name = "Batata", Category = "Legume", Price = 3.8m, Stock = 95 }
+    };
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.DataTable
+        @using OpBlazorUI.Base.Models
+
+        <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5" />
+        """;
+
+    private const string BasicCode = """
+        <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5" Sortable="true" RowHover="true" />
+
+        @code {
+            private static readonly List<OpDataTableColumn> Cols = new()
+            {
+                new() { Field = "Name", Header = "Nome" },
+                new() { Field = "Category", Header = "Categoria" },
+                new() { Field = "Price", Header = "Preço" }
+            };
+
+            private static readonly List<Product> Products = new() { ... };
+        }
+        """;
+
+    private const string SelectionCode = """
+        <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_selected"
+                     StripedRows="true" ShowGridlines="true" />
+
+        @code {
+            private IReadOnlyList<Product> _selected = Array.Empty<Product>();
+        }
+        """;
+
+    private const string EmptyCode = """
+        <OpDataTable Items="Products" Columns="Cols" Size="small" Paginator="true" Rows="3" />
+        <OpDataTable Items="Array.Empty<Product>()" Columns="Cols" EmptyMessage="Nenhum produto encontrado" />
+        """;
+
+    private const string LoadingCode = """
+        <OpDataTable Items="Products" Columns="Cols" Loading="true" />
+        """;
+}

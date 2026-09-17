@@ -1,7 +1,6 @@
 <Solution>
     <Folder Name="/src/">
-        <Project Path="src/OpBlazorUI.Showcase/OpBlazorUI.Showcase.Client/OpBlazorUI.Showcase.Client.csproj" />
-        <Project Path="src/OpBlazorUI.Showcase/OpBlazorUI.Showcase/OpBlazorUI.Showcase.csproj" />
+        <Project Path="src/OpBlazorUI.Showcase.Client/OpBlazorUI.Showcase.Client.csproj" />
     </Folder>
     <Folder Name="/src/Components/">
         <Project Path="src\Components\OpBlazorUI.Base\OpBlazorUI.Base.csproj" />

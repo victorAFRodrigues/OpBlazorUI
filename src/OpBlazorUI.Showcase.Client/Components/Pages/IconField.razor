@@ -1,0 +1,93 @@
+@page "/iconfield"
+@namespace OpBlazorUI.Showcase.Client.Components.Pages
+@using OpBlazorUI.Showcase.Client.Components.Doc
+@using OpBlazorUI.Base.Components.IconField
+@using OpBlazorUI.Base.Components.InputIcon
+@using OpBlazorUI.Base.Components.InputText
+
+<DocComponent Title="IconField"
+              Description="O IconField exibe um ícone dentro de um elemento de entrada.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpIconField IconPosition="left" StyleClass="w-72">
+                        <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+                        <OpInputText Placeholder="Buscar..."/>
+                    </OpIconField>
+                    <OpIconField IconPosition="right" StyleClass="w-72">
+                        <OpInputText Placeholder="Usuário"/>
+                        <OpInputIcon><i class="pi pi-user"></i></OpInputIcon>
+                    </OpIconField>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "IconPosition", "string", "left", "Posição do ícone: <code>left</code> ou <code>right</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Ícone (<code>OpInputIcon</code>) + input." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="iconfield"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ChildContent</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.IconField
+        @using OpBlazorUI.Base.Components.InputIcon
+        @using OpBlazorUI.Base.Components.InputText
+
+        <OpIconField IconPosition="left">
+            <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+            <OpInputText Placeholder="Buscar..." />
+        </OpIconField>
+        """;
+
+    private const string BasicCode = """
+        <OpIconField IconPosition="left" StyleClass="w-72">
+            <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+            <OpInputText Placeholder="Buscar..." />
+        </OpIconField>
+
+        <OpIconField IconPosition="right" StyleClass="w-72">
+            <OpInputText Placeholder="Usuário" />
+            <OpInputIcon><i class="pi pi-user"></i></OpInputIcon>
+        </OpIconField>
+        """;
+}

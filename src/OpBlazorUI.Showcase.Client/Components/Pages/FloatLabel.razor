@@ -1,0 +1,108 @@
+@page "/floatlabel"
+@namespace OpBlazorUI.Showcase.Client.Components.Pages
+@using OpBlazorUI.Showcase.Client.Components.Doc
+@using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.InputText
+
+<DocComponent Title="FloatLabel"
+              Description="O FloatLabel aparece sobre o campo de entrada quando focalizado.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <OpFloatLabel>
+                    <OpInputText Id="fl1" Fluid="true"/>
+                    <label for="fl1">Rótulo Sobre</label>
+                </OpFloatLabel>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Variantes">
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <OpFloatLabel Variant="in">
+                        <OpInputText Id="fl2" Variant="filled" Fluid="true"/>
+                        <label for="fl2">Rótulo Dentro</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="on">
+                        <OpInputText Id="fl3" Fluid="true"/>
+                        <label for="fl3">Rótulo Sobre a Borda</label>
+                    </OpFloatLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VariantCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Variant", "string", "over", "Variante: <code>over</code>, <code>in</code> ou <code>on</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Input + label." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="floatlabel"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ChildContent</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.FloatLabel
+        @using OpBlazorUI.Base.Components.InputText
+
+        <OpFloatLabel>
+            <OpInputText Id="fl1" Fluid="true" />
+            <label for="fl1">Rótulo Sobre</label>
+        </OpFloatLabel>
+        """;
+
+    private const string BasicCode = """
+        <OpFloatLabel>
+            <OpInputText Id="fl1" Fluid="true" />
+            <label for="fl1">Rótulo Sobre</label>
+        </OpFloatLabel>
+        """;
+
+    private const string VariantCode = """
+        <OpFloatLabel Variant="in">
+            <OpInputText Id="fl2" Variant="filled" Fluid="true" />
+            <label for="fl2">Rótulo Dentro</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpInputText Id="fl3" Fluid="true" />
+            <label for="fl3">Rótulo Sobre a Borda</label>
+        </OpFloatLabel>
+        """;
+}
