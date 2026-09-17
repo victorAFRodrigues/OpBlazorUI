@@ -430,8 +430,11 @@ test-results/
 .AppleDouble
 .LSOverride
 
-# Icon must end with two \r
-Icon
+# O template do macOS.gitignore traz a linha "Icon" (o arquivo de ícone customizado
+# do Finder, que na verdade termina com \r). Sozinha, essa regra casa com qualquer
+# arquivo OU diretório chamado "Icon" em qualquer nível do repositório — foi o que
+# mantinha src/Components/OpBlazorUI.Base/Components/Icon/ fora do versionamento.
+# Regra removida de propósito; não reintroduza sem escopar o caminho.
 
 
 # Thumbnails
