@@ -1,0 +1,2 @@
+/Users/victorafrodrigues/RiderProjects/OpBlazorUI/src/Components/OpBlazorUI.Base/wwwroot/fonts/openng-icons.svg
+/Users/victorafrodrigues/RiderProjects/OpBlazorUI/src/OpBlazorUI.Showcase/OpBlazorUI.Showcase/wwwroot/favicon.png

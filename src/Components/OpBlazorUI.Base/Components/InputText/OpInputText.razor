@@ -1,0 +1,20 @@
+@namespace OpBlazorUI.Base.Components.InputText
+
+<input type="@Type"
+       class="@RootClass"
+       value="@Value"
+       placeholder="@Placeholder"
+       id="@Id"
+       name="@Name"
+       aria-label="@AriaLabel"
+       aria-invalid="@(Invalid ? "true" : null)"
+       maxlength="@MaxLength"
+       autocomplete="@Autocomplete"
+       disabled="@Disabled"
+       readonly="@Readonly"
+       @oninput="HandleInput"
+       @onchange="HandleChange"
+       @onfocus="OnFocus"
+       @onblur="OnBlur"
+       @onkeydown="OnKeyDown"
+       @attributes="AdditionalAttributes"/>

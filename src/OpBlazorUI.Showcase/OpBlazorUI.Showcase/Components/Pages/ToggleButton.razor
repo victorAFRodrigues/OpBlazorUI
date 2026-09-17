@@ -1,0 +1,137 @@
+@page "/togglebutton"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.ToggleButton
+
+<DocComponent Title="ToggleButton"
+              Description="O ToggleButton é usado para selecionar um valor booleano usando um botão.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <OpToggleButton @bind-Checked="_on" OnLabel="Ligado" OffLabel="Desligado"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícones">
+            <ChildContent>
+                <div class="flex gap-3">
+                    <OpToggleButton @bind-Checked="_bold" OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Alternar"/>
+                    <OpToggleButton @bind-Checked="_lock" OnLabel="Bloqueado" OffLabel="Desbloqueado" OnIcon="pi pi-lock" OffIcon="pi pi-lock" IconPos="left"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido / Desabilitado / Tamanho">
+            <ChildContent>
+                <div class="flex gap-3 items-center">
+                    <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Invalid="true"/>
+                    <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Disabled="true"/>
+                    <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Size="small"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StateCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Checked", "bool", "false", "Estado marcado." },
+                              new[] { "CheckedChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
+                              new[] { "OnLabel", "string?", "null", "Texto quando ligado." },
+                              new[] { "OffLabel", "string?", "null", "Texto quando desligado." },
+                              new[] { "OnIcon", "string?", "null", "Ícone quando ligado." },
+                              new[] { "OffIcon", "string?", "null", "Ícone quando desligado." },
+                              new[] { "IconPos", "string", "left", "Posição do ícone: <code>left</code> ou <code>right</code>." },
+                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura." },
+                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnChange", "EventCallback&lt;bool&gt;", "Disparado ao mudar o estado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ContentTemplate", "RenderFragment&lt;bool&gt;?", "Template customizado do conteúdo." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="togglebutton"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ContentTemplate</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private bool _on = true;
+    private bool _bold;
+    private bool _lock;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.ToggleButton
+
+        <OpToggleButton @bind-Checked="_on" OnLabel="Ligado" OffLabel="Desligado" />
+        """;
+
+    private const string BasicCode = """
+        <OpToggleButton @bind-Checked="_on" OnLabel="Ligado" OffLabel="Desligado" />
+
+        @code {
+            private bool _on = true;
+        }
+        """;
+
+    private const string IconCode = """
+        <OpToggleButton @bind-Checked="_bold" OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Alternar" />
+        <OpToggleButton @bind-Checked="_lock" OnLabel="Bloqueado" OffLabel="Desbloqueado" OnIcon="pi pi-lock" OffIcon="pi pi-lock" />
+        """;
+
+    private const string StateCode = """
+        <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Invalid="true" />
+        <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Disabled="true" />
+        <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Size="small" />
+        """;
+}

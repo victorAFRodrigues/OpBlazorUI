@@ -1,0 +1,201 @@
+/*
+ * Optimus UI — estilos "runtime" dos componentes que não fazem parte do tema
+ * (base + preset). No Angular eles são emitidos pelos próprios componentes
+ * (BaseIcon/Button etc.); aqui ficam centralizados para o port Blazor.
+ */
+
+.p-icon {
+    display: inline-block;
+    vertical-align: baseline;
+    flex-shrink: 0;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--p-surface-50);
+    color: var(--p-text-color);
+}
+
+.app-dark body {
+    background-color: var(--p-surface-950);
+}
+
+.p-icon-spin {
+    animation: p-icon-spin 2s infinite linear;
+}
+
+.p-hidden-accessible {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.p-hidden-accessible input,
+.p-hidden-accessible select {
+    transform: scale(0);
+}
+
+.p-anchored-overlay-leave-active {
+    animation-fill-mode: forwards;
+}
+
+@keyframes p-icon-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+/*
+ * Posicionamento CSS-only (substitui o posicionamento por JS).
+ * Overlays ancorados ao trigger via position: absolute dentro de um
+ * wrapper position: relative. Sem auto-flip.
+ */
+.p-select-overlay,
+.p-multiselect-overlay,
+.p-menu-overlay,
+.p-datepicker-panel:not(.p-datepicker-panel-inline) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 100%;
+    z-index: 1000;
+}
+
+.p-tooltip {
+    z-index: 1100;
+}
+
+.p-tooltip-text {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}
+
+.p-tooltip-top {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.p-tooltip-bottom {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.p-tooltip-left {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.p-tooltip-right {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.p-tooltip-right .p-tooltip-arrow {
+    top: 50%;
+    left: 0;
+}
+
+.p-tooltip-left .p-tooltip-arrow {
+    top: 50%;
+    right: 0;
+}
+
+.p-tooltip-top .p-tooltip-arrow {
+    left: 50%;
+    bottom: 0;
+}
+
+.p-tooltip-bottom .p-tooltip-arrow {
+    left: 50%;
+    top: 0;
+}
+
+/*
+ * Toast positioning (fixed viewport).
+ * The theme provides only .p-toast-top-center, .p-toast-bottom-center, .p-toast-center with transforms.
+ * We add the missing positions and the base fixed positioning.
+ */
+.p-toast {
+    position: fixed;
+    z-index: 1150;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.p-toast-top-left { top: 20px; left: 20px; }
+.p-toast-top-center { top: 20px; left: 50%; }
+.p-toast-top-right { top: 20px; right: 20px; }
+.p-toast-bottom-left { bottom: 20px; left: 20px; }
+.p-toast-bottom-center { bottom: 20px; left: 50%; }
+.p-toast-bottom-right { bottom: 20px; right: 20px; }
+.p-toast-center { top: 50%; left: 50%; }
+
+/*
+ * Toast enter/leave — overrides do tema para transições mais suaves.
+ * O tema usa ease-in com translateY(-100%) scale(0.6), que fica abrupto.
+ * Aqui usamos curvas suaves (ease-out na entrada, ease-in-out na saída),
+ * deslocamento curto e colapso da linha do grid com overflow escondido.
+ */
+.p-toast-message {
+    overflow: hidden;
+    will-change: opacity, transform, grid-template-rows;
+    transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1),
+                transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.p-toast-message-enter-active {
+    animation: op-toast-enter 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.p-toast-message-leave-active {
+    animation: op-toast-leave 350ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.p-toast-message-leave-to .p-toast-message-content {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+@keyframes op-toast-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-0.75rem);
+        grid-template-rows: 0fr;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        grid-template-rows: 1fr;
+    }
+}
+
+@keyframes op-toast-leave {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+        grid-template-rows: 1fr;
+        margin-bottom: 1rem;
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-0.75rem);
+        grid-template-rows: 0fr;
+        margin-bottom: 0;
+    }
+}

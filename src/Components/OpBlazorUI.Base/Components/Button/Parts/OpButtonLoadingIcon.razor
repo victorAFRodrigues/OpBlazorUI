@@ -1,0 +1,15 @@
+@using OpBlazorUI.Base.Components.Icon
+@namespace OpBlazorUI.Base.Components.Button.Parts
+
+@if (Template != null)
+{
+    @Template
+}
+else if (!string.IsNullOrEmpty(Icon))
+{
+    <span class="p-button-loading-icon pi-spin @Icon" aria-hidden="true"></span>
+}
+else
+{
+    <OpIcon Name="spinner" CssClass="p-icon p-icon-spin p-button-loading-icon"/>
+}

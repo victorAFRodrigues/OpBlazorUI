@@ -1,0 +1,113 @@
+@using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.IconField
+@using OpBlazorUI.Base.Components.InputIcon
+@using OpBlazorUI.Base.Components.InputSwitch
+@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.RadioButton
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 36rem;">
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Checkbox</label>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpCheckbox @bind-Checked="cb1" Id="cb1"/>
+                Básico</label>
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpCheckbox @bind-Checked="cb2" Id="cb2"/>
+                Marcado</label>
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpCheckbox Checked="false" Indeterminate="true" Id="cb3"/>
+                Indeterminado</label>
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpCheckbox @bind-Checked="cb4" Disabled="true" Id="cb4"/>
+                Desabilitado</label>
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpCheckbox @bind-Checked="cb5" Invalid="true" Id="cb5"/>
+                Inválido</label>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">RadioButton</label>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpRadioButton Value="@("A")" @bind-ModelValue="radio" Name="grp1"/>
+                Opção A</label>
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpRadioButton Value="@("B")" @bind-ModelValue="radio" Name="grp1"/>
+                Opção B</label>
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpRadioButton Value="@("C")" @bind-ModelValue="radio" Name="grp1"/>
+                Opção C</label>
+            <div>Selecionado: @radio</div>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">InputSwitch</label>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpInputSwitch @bind-Checked="sw1"/> @(sw1 ? "Ligado" : "Desligado")</label>
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpInputSwitch @bind-Checked="sw2" Disabled="true"/>
+                Desabilitado</label>
+            <label style="display:flex; gap:.5rem; align-items:center;">
+                <OpInputSwitch @bind-Checked="sw3" Invalid="true"/>
+                Inválido</label>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">FloatLabel</label>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+            <OpFloatLabel>
+                <OpInputText @bind-Value="fl1" Id="fl1"/>
+                <label for="fl1">Over Label</label>
+            </OpFloatLabel>
+            <OpFloatLabel Variant="in">
+                <OpInputText @bind-Value="fl2" Id="fl2" Variant="filled"/>
+                <label for="fl2">In Label</label>
+            </OpFloatLabel>
+            <OpFloatLabel Variant="on">
+                <OpInputText @bind-Value="fl3" Id="fl3"/>
+                <label for="fl3">On Label</label>
+            </OpFloatLabel>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">IconField</label>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+            <OpIconField IconPosition="left" StyleClass="w-56">
+                <OpInputIcon><i class="pi pi-search" style="width:1rem"></i></OpInputIcon>
+                <OpInputText @bind-Value="if1" Placeholder="Buscar..."/>
+            </OpIconField>
+            <OpIconField IconPosition="right" StyleClass="w-56">
+                <OpInputText @bind-Value="if2" Placeholder="Usuário"/>
+                <OpInputIcon><i class="pi pi-user" style="width:1rem"></i></OpInputIcon>
+            </OpIconField>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool? cb1;
+    private bool? cb2 = true;
+    private bool? cb4;
+    private bool? cb5;
+
+    private string? radio = "B";
+
+    private bool sw1 = true;
+    private bool sw2;
+    private bool sw3 = true;
+
+    private string? fl1;
+    private string? fl2;
+    private string? fl3;
+
+    private string? if1;
+    private string? if2;
+}

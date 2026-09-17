@@ -1,0 +1,23 @@
+@namespace OpBlazorUI.Base.Components.RadioButton
+@typeparam TValue
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <input type="radio"
+           class="p-radiobutton-input"
+           id="@Id"
+           name="@Name"
+           checked="@Checked"
+           required="@Required"
+           disabled="@Disabled"
+           aria-labelledby="@AriaLabelledBy"
+           aria-label="@AriaLabel"
+           aria-checked="@(Checked ? "true" : "false")"
+           tabindex="@TabIndex"
+           @onchange="HandleChange"
+           @onfocus="OnFocus"
+           @onblur="OnBlur"/>
+
+    <div class="p-radiobutton-box">
+        <div class="p-radiobutton-icon"></div>
+    </div>
+</div>

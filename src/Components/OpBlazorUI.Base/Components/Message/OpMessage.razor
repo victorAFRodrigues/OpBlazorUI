@@ -1,0 +1,114 @@
+@namespace OpBlazorUI.Base.Components.Message
+
+<div class="@RootClass"
+     role="alert"
+     aria-live="assertive"
+     aria-atomic="true"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+    <div class="p-message-content">
+        @if (IconTemplate != null)
+        {
+            <span class="p-message-icon">@IconTemplate</span>
+        }
+        else if (!string.IsNullOrEmpty(EffectiveIcon))
+        {
+            <span class="p-message-icon @EffectiveIcon" aria-hidden="true"></span>
+        }
+
+        <div class="p-message-content-wrapper">
+            <span class="p-message-text">@ChildContent</span>
+        </div>
+
+        @if (Closable)
+        {
+            <button type="button"
+                    class="p-message-close-button"
+                    aria-label="Close"
+                    @onclick="OnCloseClick">
+                @if (CloseIconTemplate != null)
+                {
+                    <span class="p-message-close-icon">@CloseIconTemplate</span>
+                }
+                else
+                {
+                    <span class="p-message-close-icon @CloseIcon" aria-hidden="true"></span>
+                }
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Severity { get; set; } = "info";
+    [Parameter] public string? Variant { get; set; }
+    [Parameter] public string? Size { get; set; }
+    [Parameter] public bool Closable { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string CloseIcon { get; set; } = "pi pi-times";
+    [Parameter] public int? Life { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? IconTemplate { get; set; }
+    [Parameter] public RenderFragment? CloseIconTemplate { get; set; }
+    [Parameter] public RenderFragment? ContainerTemplate { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClose { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private CancellationTokenSource? _lifeCts;
+
+    protected override void OnInitialized()
+    {
+        if (Life.HasValue && Life.Value > 0)
+        {
+            _lifeCts = new CancellationTokenSource();
+            _ = AutoCloseAsync(_lifeCts.Token);
+        }
+    }
+
+    private async Task AutoCloseAsync(CancellationToken token)
+    {
+        try
+        {
+            await Task.Delay(Life!.Value, token);
+            await CloseAsync(new MouseEventArgs());
+        }
+        catch (TaskCanceledException)
+        {
+        }
+    }
+
+    private async Task OnCloseClick(MouseEventArgs e)
+    {
+        await CloseAsync(e);
+    }
+
+    private async Task CloseAsync(MouseEventArgs e)
+    {
+        _lifeCts?.Cancel();
+        await InvokeAsync(StateHasChanged);
+        await OnClose.InvokeAsync(e);
+    }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-message p-component",
+        $"p-message-{Severity}",
+        Variant switch
+        {
+            "outlined" => "p-message-outlined",
+            "simple" => "p-message-simple",
+            _ => null
+        },
+        Size switch
+        {
+            "small" => "p-message-sm",
+            "large" => "p-message-lg",
+            _ => null
+        },
+        StyleClass);
+
+    private string? EffectiveIcon => Icon ?? OpSeverityIcon.Get(Severity);
+}

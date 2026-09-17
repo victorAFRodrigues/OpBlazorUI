@@ -1,0 +1,28 @@
+@namespace OpBlazorUI.Base
+@implements IDisposable
+
+<HeadContent>
+    <link rel="stylesheet" href="_content/OpBlazorUI.Base/openng-icons.css"/>
+    <link id="optimus-theme" rel="stylesheet" href="@_themeUrl"/>
+    <link rel="stylesheet" href="_content/OpBlazorUI.Base/optimus-base.css"/>
+</HeadContent>
+
+@code {
+    private string _themeUrl = OpTheme.ThemeUrl;
+
+    protected override void OnInitialized()
+    {
+        OpTheme.ThemeChanged += OnThemeChanged;
+    }
+
+    private void OnThemeChanged()
+    {
+        _themeUrl = OpTheme.ThemeUrl;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        OpTheme.ThemeChanged -= OnThemeChanged;
+    }
+}

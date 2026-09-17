@@ -1,0 +1,143 @@
+@namespace OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.Icon
+@typeparam TItem
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (Paginator && (PaginatorPosition == "top" || PaginatorPosition == "both"))
+    {
+        <div class="p-datatable-paginator-top p-paginator p-component">
+            <div class="p-paginator-content">
+                <button type="button" class="p-paginator-first @(_currentPage == 0 ? "p-disabled" : "")"
+                        aria-label="First Page" disabled="@(_currentPage == 0)" @onclick="() => GoToPage(0)">
+                    <OpIcon Name="angle-double-left" CssClass="p-paginator-first-icon"/>
+                </button>
+                <button type="button" class="p-paginator-prev @(_currentPage == 0 ? "p-disabled" : "")"
+                        aria-label="Previous Page" disabled="@(_currentPage == 0)"
+                        @onclick="() => GoToPage(_currentPage - 1)">
+                    <OpIcon Name="angle-left" CssClass="p-paginator-prev-icon"/>
+                </button>
+                <span class="p-paginator-pages">
+                    @for (var p = 0; p < PageCount; p++)
+                    {
+                        var page = p;
+                        <button type="button"
+                                class="p-paginator-page @(_currentPage == page ? "p-paginator-page-selected" : "")"
+                                aria-current="@(_currentPage == page ? "page" : null)" aria-label="@(page + 1)"
+                                @onclick="() => GoToPage(page)">@(page + 1)</button>
+                    }
+                </span>
+                <button type="button" class="p-paginator-next @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
+                        aria-label="Next Page" disabled="@(_currentPage >= PageCount - 1)"
+                        @onclick="() => GoToPage(_currentPage + 1)">
+                    <OpIcon Name="angle-right" CssClass="p-paginator-next-icon"/>
+                </button>
+                <button type="button" class="p-paginator-last @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
+                        aria-label="Last Page" disabled="@(_currentPage >= PageCount - 1)"
+                        @onclick="() => GoToPage(PageCount - 1)">
+                    <OpIcon Name="angle-double-right" CssClass="p-paginator-last-icon"/>
+                </button>
+            </div>
+        </div>
+    }
+
+    <div class="p-datatable-table-container">
+        <table class="p-datatable-table">
+            <thead class="p-datatable-thead">
+            <tr>
+                @if (Selection)
+                {
+                    <th class="p-datatable-header-cell p-datatable-selection-column" style="width: 3rem">
+                        <OpCheckbox Checked="@AllPageSelected" CheckedChanged="(v) => ToggleAllSelection()"
+                                    TabIndex="-1"/>
+                    </th>
+                }
+                @foreach (var col in Columns)
+                {
+                    <th class="@ThClass(col)" style="width:@col.Width" @onclick="() => ToggleSort(col)">
+                        <div class="p-datatable-column-header-content">
+                            <span class="p-datatable-column-title">@col.Header</span>
+                            @if (col.Sortable && Sortable)
+                            {
+                                <OpIcon Name="@SortIconName(col)" CssClass="p-datatable-sort-icon"/>
+                            }
+                        </div>
+                    </th>
+                }
+            </tr>
+            </thead>
+            <tbody class="p-datatable-tbody">
+            @if (PageItems.Count == 0)
+            {
+                <tr>
+                    <td class="p-datatable-empty-message"
+                        colspan="@(Columns.Count + (Selection ? 1 : 0))">@EmptyMessage</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in PageItems)
+                {
+                    <tr class="@TrClass(item)" @onclick="() => OnRowClicked(item)">
+                        @if (Selection)
+                        {
+                            <td>
+                                <OpCheckbox Checked="@IsSelected(item)" CheckedChanged="(v) => ToggleRowSelection(item)"
+                                            TabIndex="-1" @onclick:stopPropagation="true"/>
+                            </td>
+                        }
+                        @foreach (var col in Columns)
+                        {
+                            <td>@GetFieldValue(item, col.Field)</td>
+                        }
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Paginator && (PaginatorPosition == "bottom" || PaginatorPosition == "both"))
+    {
+        <div class="p-datatable-paginator-bottom p-paginator p-component">
+            <div class="p-paginator-content">
+                <button type="button" class="p-paginator-first @(_currentPage == 0 ? "p-disabled" : "")"
+                        aria-label="First Page" disabled="@(_currentPage == 0)" @onclick="() => GoToPage(0)">
+                    <OpIcon Name="angle-double-left" CssClass="p-paginator-first-icon"/>
+                </button>
+                <button type="button" class="p-paginator-prev @(_currentPage == 0 ? "p-disabled" : "")"
+                        aria-label="Previous Page" disabled="@(_currentPage == 0)"
+                        @onclick="() => GoToPage(_currentPage - 1)">
+                    <OpIcon Name="angle-left" CssClass="p-paginator-prev-icon"/>
+                </button>
+                <span class="p-paginator-pages">
+                    @for (var p = 0; p < PageCount; p++)
+                    {
+                        var page = p;
+                        <button type="button"
+                                class="p-paginator-page @(_currentPage == page ? "p-paginator-page-selected" : "")"
+                                aria-current="@(_currentPage == page ? "page" : null)" aria-label="@(page + 1)"
+                                @onclick="() => GoToPage(page)">@(page + 1)</button>
+                    }
+                </span>
+                <button type="button" class="p-paginator-next @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
+                        aria-label="Next Page" disabled="@(_currentPage >= PageCount - 1)"
+                        @onclick="() => GoToPage(_currentPage + 1)">
+                    <OpIcon Name="angle-right" CssClass="p-paginator-next-icon"/>
+                </button>
+                <button type="button" class="p-paginator-last @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
+                        aria-label="Last Page" disabled="@(_currentPage >= PageCount - 1)"
+                        @onclick="() => GoToPage(PageCount - 1)">
+                    <OpIcon Name="angle-double-right" CssClass="p-paginator-last-icon"/>
+                </button>
+            </div>
+        </div>
+    }
+
+    @if (Loading)
+    {
+        <div class="p-datatable-mask p-overlay-mask">
+            <span class="p-datatable-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+        </div>
+    }
+</div>

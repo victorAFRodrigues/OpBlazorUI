@@ -1,0 +1,133 @@
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Message
+@using OpBlazorUI.Base.Components.InputText
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 30rem;">
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Severidades</label>
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem; flex-direction:column;">
+            <OpMessage Severity="success">Success Message</OpMessage>
+            <OpMessage Severity="info">Info Message</OpMessage>
+            <OpMessage Severity="warn">Warn Message</OpMessage>
+            <OpMessage Severity="error">Error Message</OpMessage>
+            <OpMessage Severity="secondary">Secondary Message</OpMessage>
+            <OpMessage Severity="contrast">Contrast Message</OpMessage>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Variants</label>
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem; flex-direction:column;">
+            <OpMessage Variant="text" Severity="success">Text (default)</OpMessage>
+            <OpMessage Variant="outlined" Severity="success">Outlined</OpMessage>
+            <OpMessage Variant="simple" Severity="success">Simple</OpMessage>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Sizes</label>
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem; flex-direction:column;">
+            <OpMessage Size="small" Icon="pi pi-info-circle">Small Message</OpMessage>
+            <OpMessage Icon="pi pi-info-circle">Normal Message</OpMessage>
+            <OpMessage Size="large" Icon="pi pi-check-circle">Large Message</OpMessage>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Closable</label>
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem; flex-direction:column;">
+            <OpMessage Severity="info" Closable="true">This message can be closed</OpMessage>
+            <OpMessage Severity="success" Closable="true" Icon="pi pi-check-circle">Also closable with icon</OpMessage>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Icon Custom</label>
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem; flex-direction:column;">
+            <OpMessage Severity="info" Icon="pi pi-send">Custom send icon</OpMessage>
+            <OpMessage Severity="success" Icon="pi pi-user">With custom icon</OpMessage>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Life (auto-dismiss)</label>
+        <OpButton Label="Show Auto-Dismiss (3s)" OnClick="ShowLifeMessage" StyleClass="mb-2" />
+        @if (_showLifeMessage)
+        {
+            <OpMessage Severity="success" Life="3000" Closable="true" OnClose="@(e => _showLifeMessage = false)">Auto disappear in 3 seconds</OpMessage>
+        }
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Dinâmico (Add/Clear via botão)</label>
+        <div style="display:flex; gap:.5rem; margin-bottom:.5rem;">
+            <OpButton Label="Show Dynamic" OnClick="AddDynamicMessages" />
+            <OpButton Label="Clear" OnClick="ClearDynamicMessages" Severity="secondary" Outlined="true" />
+        </div>
+        @foreach (var msg in _dynamicMessages)
+        {
+            <OpMessage Severity="@msg.Severity" Closable="true" OnClose="@(e => _dynamicMessages.Remove(msg))">
+                @msg.Content
+            </OpMessage>
+        }
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Form Validation (inline errors)</label>
+        <div class="flex flex-col gap-1">
+            <OpInputText @bind-Value="_username" Placeholder="Username" StyleClass="w-full" />
+            @if (string.IsNullOrWhiteSpace(_username))
+            {
+                <OpMessage Severity="error" Variant="simple" Size="small" StyleClass="mt-1">Username is required</OpMessage>
+            }
+        </div>
+        <div class="flex flex-col gap-1 mt-2">
+            <OpInputText @bind-Value="_phone" Placeholder="Phone" StyleClass="w-full" />
+            @if (string.IsNullOrWhiteSpace(_phone))
+            {
+                <OpMessage Severity="error" Variant="simple" Size="small" StyleClass="mt-1">Phone number is required</OpMessage>
+            }
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">All Variants per Severity</label>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:.5rem;">
+            @foreach (var sev in new[] { "success", "info", "warn", "error", "secondary", "contrast" })
+            {
+                <OpMessage Severity="@sev" Variant="outlined">@sev.ToUpper()</OpMessage>
+            }
+        </div>
+    </div>
+
+</div>
+
+@code {
+    private bool _showLifeMessage = false;
+    private string _username = "";
+    private string _phone = "";
+
+    private sealed class DynamicMsg
+    {
+        public string Severity { get; set; } = "";
+        public string Content { get; set; } = "";
+    }
+
+    private readonly List<DynamicMsg> _dynamicMessages = new();
+
+    private void ShowLifeMessage() => _showLifeMessage = true;
+
+    private void AddDynamicMessages()
+    {
+        _dynamicMessages.AddRange(new[]
+        {
+            new DynamicMsg { Severity = "info", Content = "Dynamic Info Message" },
+            new DynamicMsg { Severity = "success", Content = "Dynamic Success Message" },
+            new DynamicMsg { Severity = "warn", Content = "Dynamic Warn Message" }
+        });
+    }
+
+    private void ClearDynamicMessages() => _dynamicMessages.Clear();
+}

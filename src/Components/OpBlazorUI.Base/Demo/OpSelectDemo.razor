@@ -1,0 +1,94 @@
+@using OpBlazorUI.Base.Components.Select
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 26rem;">
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Básico</label>
+        <OpSelect @bind-Value="city" Options="Cities" OptionLabel="Name" Placeholder="Select a City"
+                  StyleClass="w-full"/>
+        <div style="margin-top:.25rem">Selecionado: @(city?.Name ?? "—")</div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Com filtro + checkmark + clear</label>
+        <OpSelect @bind-Value="city2" Options="Cities" OptionLabel="Name" Filter="true" Checkmark="true"
+                  ShowClear="true" Placeholder="Select a City" StyleClass="w-full"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Filled + invalid</label>
+        <OpSelect @bind-Value="city3" Options="Cities" OptionLabel="Name" Variant="filled" Invalid="true"
+                  Placeholder="Inválido" StyleClass="w-full"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Disabled / Loading</label>
+        <div style="display:flex; gap:.75rem;">
+            <OpSelect @bind-Value="city4" Options="Cities" OptionLabel="Name" Disabled="true" Placeholder="Disabled"
+                      StyleClass="w-48"/>
+            <OpSelect TValue="City" Options="Cities" OptionLabel="Name" Loading="true" Placeholder="Loading..."
+                      StyleClass="w-48"/>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Com template de item</label>
+        <OpSelect @bind-Value="city5" Options="Cities" OptionLabel="Name" Placeholder="Select a City"
+                  StyleClass="w-full">
+            <ItemTemplate>
+                <div style="display:flex; align-items:center; gap:.5rem;">
+                    <span style="color:var(--p-primary-color)">◆</span>
+                    <span>@context.Name</span>
+                </div>
+            </ItemTemplate>
+        </OpSelect>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Agrupado</label>
+        <OpSelect @bind-Value="country" Options="CountryGroups" Group="true" OptionLabel="Name"
+                  Placeholder="Select a Country" StyleClass="w-full"/>
+        <div style="margin-top:.25rem">Selecionado: @(country?.Name ?? "—")</div>
+    </div>
+</div>
+
+@code {
+
+    public sealed class City
+    {
+        public string Name { get; set; } = "";
+        public string Code { get; set; } = "";
+    }
+
+    public sealed class CountryGroup
+    {
+        public string Label { get; set; } = "";
+        public List<City> Items { get; set; } = new();
+    }
+
+    private City? city;
+    private City? city2;
+    private City? city3;
+    private City? city4;
+    private City? city5;
+    private City? country;
+
+    private static readonly List<City> Cities = new()
+    {
+        new() { Name = "New York", Code = "NY" },
+        new() { Name = "Rome", Code = "RM" },
+        new() { Name = "London", Code = "LDN" },
+        new() { Name = "Istanbul", Code = "IST" },
+        new() { Name = "Paris", Code = "PRS" },
+        new() { Name = "Barcelona", Code = "BCN" },
+        new() { Name = "Berlin", Code = "BER" },
+    };
+
+    private static readonly List<CountryGroup> CountryGroups = new()
+    {
+        new() { Label = "Germany", Items = new() { new() { Name = "Berlin" }, new() { Name = "Frankfurt" }, new() { Name = "Hamburg" } } },
+        new() { Label = "USA", Items = new() { new() { Name = "Chicago" }, new() { Name = "Los Angeles" }, new() { Name = "New York" } } },
+        new() { Label = "Japan", Items = new() { new() { Name = "Kyoto" }, new() { Name = "Osaka" }, new() { Name = "Tokyo" } } },
+    };
+
+}

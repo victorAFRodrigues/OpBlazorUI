@@ -1,0 +1,195 @@
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Toast
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Services
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 30rem;">
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Básico</label>
+        <OpToast Key="basic" />
+        <OpButton Label="Show Info" OnClick='() => ShowToast("info", "Info", "This is an info message", key: "basic")' />
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Severidades</label>
+        <OpToast Key="severity" />
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
+            <OpButton Label="Success" OnClick='() => ShowToast("success", "Success", "Operation completed", key: "severity")' Severity="success" />
+            <OpButton Label="Info" OnClick='() => ShowToast("info", "Info", "Information message", key: "severity")' Severity="info" />
+            <OpButton Label="Warn" OnClick='() => ShowToast("warn", "Warning", "Something to check", key: "severity")' Severity="warn" />
+            <OpButton Label="Error" OnClick='() => ShowToast("error", "Error", "Something went wrong", key: "severity")' Severity="danger" />
+            <OpButton Label="Secondary" OnClick='() => ShowToast("secondary", "Secondary", "Less prominent", key: "severity")' Severity="secondary" />
+            <OpButton Label="Contrast" OnClick='() => ShowToast("contrast", "Contrast", "High contrast", key: "severity")' Severity="contrast" />
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Life (duração customizada)</label>
+        <OpToast Key="life" />
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
+            <OpButton Label="1 segundo" OnClick='() => ShowToast("info", "Life", "Visible for 1s", life: 1000, key: "life")' />
+            <OpButton Label="5 segundos" OnClick='() => ShowToast("info", "Life", "Visible for 5s", life: 5000, key: "life")' />
+            <OpButton Label="10 segundos" OnClick='() => ShowToast("info", "Life", "Visible for 10s", life: 10000, key: "life")' />
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Sticky + Clear</label>
+        <OpToast Key="sticky" />
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
+            <OpButton Label="Show Sticky" OnClick='() => ShowToast("info", "Sticky", "Will not close automatically", sticky: true, key: "sticky")' />
+            <OpButton Label="Clear All" OnClick="ClearAll" Severity="secondary" Outlined="true" />
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Múltiplos (AddAll)</label>
+        <OpToast Key="multiple" />
+        <OpButton Label="Show Multiple" OnClick="ShowMultiple" Severity="warn" />
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Posições (keys diferentes)</label>
+        <OpToast Key="tl" Position="top-left" />
+        <OpToast Key="tr" Position="top-right" />
+        <OpToast Key="bl" Position="bottom-left" />
+        <OpToast Key="br" Position="bottom-right" />
+        <OpToast Key="tc" Position="top-center" />
+        <OpToast Key="bc" Position="bottom-center" />
+        <OpToast Key="center" Position="center" />
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
+            <OpButton Label="Top Left" OnClick='() => ShowToast("info", "Position", "Top Left", key: "tl")' />
+            <OpButton Label="Top Center" OnClick='() => ShowToast("info", "Position", "Top Center", key: "tc")' />
+            <OpButton Label="Top Right" OnClick='() => ShowToast("info", "Position", "Top Right", key: "tr")' />
+            <OpButton Label="Bottom Left" OnClick='() => ShowToast("info", "Position", "Bottom Left", key: "bl")' />
+            <OpButton Label="Bottom Center" OnClick='() => ShowToast("info", "Position", "Bottom Center", key: "bc")' />
+            <OpButton Label="Bottom Right" OnClick='() => ShowToast("info", "Position", "Bottom Right", key: "br")' />
+            <OpButton Label="Center" OnClick='() => ShowToast("info", "Position", "Center", key: "center")' />
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Target (2 toasts, mesma key)</label>
+        <OpToast Key="target1" Position="top-right" />
+        <OpToast Key="target2" Position="bottom-right" />
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
+            <OpButton Label="Toast 1" OnClick='() => ShowToast("success", "Target", "Key: target1", key: "target1")' />
+            <OpButton Label="Toast 2" OnClick='() => ShowToast("warn", "Target", "Key: target2", key: "target2")' />
+            <OpButton Label="Clear Both" OnClick='() => { MessageService.Clear("target1"); MessageService.Clear("target2"); }' Severity="secondary" Outlined="true" />
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">MessageTemplate (custom content)</label>
+        <OpToast Key="template">
+            <MessageTemplate Context="message">
+                <div class="flex items-center gap-3 p-3">
+                    <span class="pi @message.EffectiveIcon(OpSeverityIcon.Get(message.Severity)) text-2xl" aria-hidden="true"></span>
+                    <div class="flex-1">
+                        <div class="font-bold">@message.Summary</div>
+                        <div class="text-sm opacity-80">@message.Detail</div>
+                    </div>
+                    @if (message.Closable)
+                    {
+                        <button class="p-toast-close-button p-button-text p-button-plain" @onclick='@(() => MessageService.Remove(message))'>
+                            <span class="pi pi-times" aria-hidden="true"></span>
+                        </button>
+                    }
+                </div>
+            </MessageTemplate>
+        </OpToast>
+        <OpButton Label="Show Template" OnClick='() => ShowToast("success", "Custom Template", "With avatar and custom layout", key: "template")' />
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Headless (upload simulation)</label>
+        <OpToast Key="headless">
+            <HeadlessTemplate Context="context">
+                <section class="p-4 w-full bg-primary/90 text-white rounded-xl">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="pi pi-cloud-upload text-2xl" aria-hidden="true"></span>
+                        <span class="font-bold text-lg">@context.Message.Summary</span>
+                    </div>
+                    <div class="flex flex-col gap-2 mb-3">
+                        <div class="h-2 bg-white/30 rounded-full overflow-hidden">
+                            <div class="h-full bg-white transition-all duration-300" style="width: @(_progress)%"></div>
+                        </div>
+                        <label class="text-sm">@(_progress)% uploaded</label>
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <OpButton Label="Another?" Size="small" OnClick='() => context.Close()' Variant="text" />
+                        <OpButton Label="Cancel" Size="small" OnClick='() => context.Close()' Severity="secondary" Variant="text" />
+                    </div>
+                </section>
+            </HeadlessTemplate>
+        </OpToast>
+        <OpButton Label="Start Upload" OnClick="StartUpload" Severity="contrast" />
+    </div>
+
+</div>
+
+@code {
+    [Inject] private OpMessageService MessageService { get; set; } = default!;
+
+    private int _progress = 0;
+    private System.Threading.Timer? _timer;
+
+    private void ShowToast(string severity, string summary, string detail, int? life = null, bool sticky = false, string? key = null)
+    {
+        MessageService.Add(new OpToastMessage
+        {
+            Key = key,
+            Severity = severity,
+            Summary = summary,
+            Detail = detail,
+            Life = life,
+            Sticky = sticky
+        });
+    }
+
+    private void ClearAll() => MessageService.Clear();
+
+    private void ShowMultiple()
+    {
+        MessageService.AddAll(new[]
+        {
+            new OpToastMessage { Key = "multiple", Severity = "info", Summary = "Message 1", Detail = "First message" },
+            new OpToastMessage { Key = "multiple", Severity = "success", Summary = "Message 2", Detail = "Second message" },
+            new OpToastMessage { Key = "multiple", Severity = "warn", Summary = "Message 3", Detail = "Third message" }
+        });
+    }
+
+    private void StartUpload()
+    {
+        if (_progress > 0) return;
+
+        MessageService.Add(new OpToastMessage
+        {
+            Key = "headless",
+            Severity = "custom",
+            Sticky = true,
+            Summary = "Uploading your files..."
+        });
+
+        _progress = 0;
+        _timer?.Dispose();
+        _timer = new System.Threading.Timer(_ =>
+        {
+            if (_progress < 100)
+            {
+                _progress += 20;
+                InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                _progress = 100;
+                _timer?.Dispose();
+                InvokeAsync(StateHasChanged);
+            }
+        }, null, 0, 1000);
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}

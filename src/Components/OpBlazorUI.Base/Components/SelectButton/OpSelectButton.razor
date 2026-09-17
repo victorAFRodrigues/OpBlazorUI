@@ -1,0 +1,25 @@
+@namespace OpBlazorUI.Base.Components.SelectButton
+@using OpBlazorUI.Base.Components.ToggleButton
+@typeparam TValue
+
+<div class="@RootClass" role="group" aria-labelledby="@AriaLabelledBy">
+    @{
+        var index = 0;
+    }
+    @foreach (var option in AllOptions)
+    {
+        var i = index++;
+        <OpToggleButton Checked="@IsSelected(option)"
+                        CheckedChanged="(v) => OnOptionSelect(option)"
+                        OnLabel="@GetOptionLabel(option)"
+                        OffLabel="@GetOptionLabel(option)"
+                        Disabled="@(Disabled || IsOptionDisabled(option))"
+                        Size="@Size"
+                        Fluid="@Fluid"
+                        ContentTemplate="@GetContentTemplate(option, i)"/>
+    }
+</div>
+
+@code {
+    [Parameter] public string? AriaLabelledBy { get; set; }
+}

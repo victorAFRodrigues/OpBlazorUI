@@ -1,0 +1,21 @@
+@namespace OpBlazorUI.Base.Components.ThemeSwitcher
+
+<div class="op-theme-switcher @StyleClass" style="display: flex; gap: .375rem; flex-wrap: wrap; align-items: center;">
+    <button type="button"
+            title="@(_darkMode ? "Modo claro" : "Modo escuro")"
+            aria-label="@(_darkMode ? "Modo claro" : "Modo escuro")"
+            @onclick="ToggleDarkMode"
+            style="width:1.25rem;height:1.25rem;border-radius:9999px;border:1px solid var(--p-content-border-color);background-color:var(--p-surface-0);color:var(--p-text-color);cursor:pointer;flex-shrink:0;padding:0;display:inline-flex;align-items:center;justify-content:center;">
+        <i class="pi @(_darkMode ? "pi-sun" : "pi-moon")" style="font-size:.75rem"></i>
+    </button>
+
+    @foreach (var theme in Themes)
+    {
+        <button type="button"
+                title="@theme.Name"
+                aria-label="Tema @theme.Name"
+                @onclick="() => SetTheme(theme)"
+                style="width:1.25rem;height:1.25rem;border-radius:9999px;border:2px solid var(--p-content-border-color);background-color:@theme.Hex;cursor:pointer;flex-shrink:0;padding:0;">
+        </button>
+    }
+</div>

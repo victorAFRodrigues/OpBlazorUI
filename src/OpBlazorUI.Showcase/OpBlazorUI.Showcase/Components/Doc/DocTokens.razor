@@ -1,0 +1,21 @@
+@namespace OpBlazorUI.Showcase.Components.Doc
+
+<ApiTable Caption="Classes CSS"
+          Headers="@(new[] { "Classe", "Descrição" })"
+          Rows="@_classRows"/>
+
+<ApiTable Caption="Design Tokens"
+          Headers="@(new[] { "Variável CSS", "Valor" })"
+          Rows="@_tokenRows"/>
+
+@code {
+    [Parameter] public string Component { get; set; } = "";
+
+    private string[][] _classRows => DocTheming.Classes.TryGetValue(Component, out var classes)
+        ? classes.Select(c => new[] { c, DocTheming.Humanize(c, Component) }).ToArray()
+        : [];
+
+    private string[][] _tokenRows => DocTheming.Tokens.TryGetValue(Component, out var tokens)
+        ? tokens.Select(t => new[] { t.Var, t.Value }).ToArray()
+        : [];
+}

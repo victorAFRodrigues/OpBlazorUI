@@ -1,0 +1,84 @@
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 2.5rem; max-width: 30rem;">
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Menu inline</label>
+        <div style="border:1px solid var(--p-content-border-color); border-radius:6px; width: max-content;">
+            <OpMenu Items="InlineItems" StyleClass="w-56" OnItemClick="OnInlineClick"/>
+        </div>
+        <div style="margin-top:.5rem">Último clique: @lastClick</div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Menu agrupado</label>
+        <div style="border:1px solid var(--p-content-border-color); border-radius:6px; width: max-content;">
+            <OpMenu Groups="GroupedItems" StyleClass="w-56"/>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Menu popup (com separador/disabled)</label>
+        <div style="position: relative; display: inline-block;">
+            <OpButton Label="Abrir menu" Severity="secondary" @onclick="TogglePopup"/>
+            <OpMenu @ref="_popupMenu" Popup="true" Items="PopupItems" StyleClass="w-56" OnItemClick="OnPopupItemClick"/>
+        </div>
+    </div>
+</div>
+
+@code {
+    private OpMenu? _popupMenu;
+    private bool _popupOpen;
+    private string? lastClick;
+
+    private static readonly List<OpMenuItem> InlineItems = new()
+    {
+        new() { Label = "Novo", Icon = "pi pi-plus" },
+        new() { Label = "Abrir", Icon = "pi pi-folder-open" },
+        new() { Label = "Salvar", Icon = "pi pi-save" },
+        new() { Label = "Exportar", Icon = "pi pi-upload", Disabled = true },
+    };
+
+    private static readonly List<OpMenuGroup> GroupedItems = new()
+    {
+        new() { Label = "Documentos", Items = new() { new() { Label = "Novo", Icon = "pi pi-plus" }, new() { Label = "Pesquisar", Icon = "pi pi-search" } } },
+        new() { Label = "Perfil", Items = new() { new() { Label = "Configurações", Icon = "pi pi-cog" }, new() { Label = "Sair", Icon = "pi pi-sign-out" } } },
+    };
+
+    private static readonly List<OpMenuItem> PopupItems = new()
+    {
+        new() { Label = "Editar", Icon = "pi pi-pencil" },
+        new() { Label = "Duplicar", Icon = "pi pi-copy" },
+        new() { Separator = true },
+        new() { Label = "Arquivar", Icon = "pi pi-inbox" },
+        new() { Label = "Excluir", Icon = "pi pi-trash" },
+    };
+
+    private async Task OnInlineClick(OpMenuItem item)
+    {
+        lastClick = item.Label;
+    }
+
+    private async Task TogglePopup()
+    {
+        if (_popupOpen)
+        {
+            await _popupMenu!.HideAsync();
+        }
+        else
+        {
+            await _popupMenu!.ShowAsync();
+        }
+
+        _popupOpen = !_popupOpen;
+    }
+
+    private async Task OnPopupItemClick(OpMenuItem item)
+    {
+        lastClick = item.Label;
+        _popupOpen = false;
+    }
+
+}

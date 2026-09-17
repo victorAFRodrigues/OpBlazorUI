@@ -1,0 +1,28 @@
+@using OpBlazorUI.Base.Components.Button.Parts
+@namespace OpBlazorUI.Base.Components.Button
+
+<button type="@Type"
+        class="@RootClass"
+        aria-label="@AriaLabel"
+        tabindex="@TabIndex"
+        disabled="@(Disabled || Loading)"
+        @onclick="OnClick"
+        @onfocus="OnFocus"
+        @onblur="OnBlur"
+        @attributes="AdditionalAttributes">
+    @ChildContent
+
+    @if (Loading)
+    {
+        <OpButtonLoadingIcon Icon="@LoadingIcon" Template="@LoadingIconTemplate"/>
+    }
+    else
+    {
+        <OpButtonIcon Icon="@Icon" IconPos="@IconPos" HasLabel="@HasLabel" Template="@IconTemplate"/>
+    }
+
+    @if (HasLabel && ChildContent == null)
+    {
+        <OpButtonLabel Label="@Label"/>
+    }
+</button>

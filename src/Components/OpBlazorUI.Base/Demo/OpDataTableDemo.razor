@@ -1,0 +1,68 @@
+@using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Models
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 2.5rem; max-width: 44rem;">
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Básico com sort + paginação</label>
+        <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5" Sortable="true" RowHover="true"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Seleção + striped + gridlines</label>
+        <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_selected" StripedRows="true"
+                     ShowGridlines="true"/>
+        <div style="margin-top:.5rem">Selecionados: @_selected.Count</div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Tamanho small / sem dados</label>
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+            <OpDataTable Items="Products" Columns="Cols" Size="small" Paginator="true" Rows="3"/>
+            <OpDataTable Items="Array.Empty<Product>()" Columns="Cols" EmptyMessage="Nenhum produto encontrado"/>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Loading</label>
+        <OpDataTable Items="Products" Columns="Cols" Loading="true"/>
+    </div>
+</div>
+
+@code {
+
+    public sealed class Product
+    {
+        public string Name { get; set; } = "";
+        public string Category { get; set; } = "";
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+    }
+
+    private IReadOnlyList<Product>? _selected = Array.Empty<Product>();
+
+    private static readonly List<OpDataTableColumn> Cols = new()
+    {
+        new() { Field = "Name", Header = "Nome" },
+        new() { Field = "Category", Header = "Categoria" },
+        new() { Field = "Price", Header = "Preço" },
+        new() { Field = "Stock", Header = "Estoque" },
+    };
+
+    private static readonly List<Product> Products = new()
+    {
+        new() { Name = "Alface", Category = "Hortaliça", Price = 2.5m, Stock = 120 },
+        new() { Name = "Tomate", Category = "Hortaliça", Price = 4.9m, Stock = 85 },
+        new() { Name = "Banana", Category = "Fruta", Price = 3.2m, Stock = 200 },
+        new() { Name = "Maçã", Category = "Fruta", Price = 5.6m, Stock = 64 },
+        new() { Name = "Cenoura", Category = "Legume", Price = 2.1m, Stock = 150 },
+        new() { Name = "Batata", Category = "Legume", Price = 3.8m, Stock = 95 },
+        new() { Name = "Laranja", Category = "Fruta", Price = 4.0m, Stock = 40 },
+        new() { Name = "Couve", Category = "Hortaliça", Price = 2.9m, Stock = 70 },
+        new() { Name = "Cebola", Category = "Legume", Price = 3.5m, Stock = 110 },
+        new() { Name = "Pera", Category = "Fruta", Price = 6.2m, Stock = 30 },
+        new() { Name = "Brócolis", Category = "Hortaliça", Price = 5.0m, Stock = 25 },
+        new() { Name = "Abóbora", Category = "Legume", Price = 4.4m, Stock = 55 },
+    };
+
+}

@@ -1,0 +1,410 @@
+@using OpBlazorUI.Base.Components.Icon
+@namespace OpBlazorUI.Base.Components.DatePicker
+
+<span class="@RootClass" style="position: relative" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
+      @onkeydown="OnRootKeydown">
+    @if (!Inline)
+    {
+        <input type="text"
+               class="@InputClass"
+               role="combobox"
+               autocomplete="off"
+               value="@_inputText"
+               placeholder="@Placeholder"
+               name="@Name"
+               id="@_inputId"
+               aria-haspopup="dialog"
+               aria-autocomplete="none"
+               aria-expanded="@(_overlayVisible ? "true" : "false")"
+               aria-controls="@(_overlayVisible ? $"{_inputId}-panel" : null)"
+               aria-labelledby="@AriaLabelledBy"
+               aria-label="@AriaLabel"
+               aria-required="@(Required ? "true" : null)"
+               disabled="@Disabled"
+               readonly="@ReadonlyInput"
+               required="@Required"
+               tabindex="@TabIndex"
+               size="@InputSize"
+               @oninput="OnUserInput"
+               @onclick="OnInputClick"
+               @onfocus="OnInputFocusEvent"
+               @onblur="OnInputBlur"
+               @onkeydown="OnInputKeydown"/>
+
+        @if (ShowClear && !Disabled && HasValue)
+        {
+            @if (ClearIconTemplate != null)
+            {
+                <span class="p-datepicker-clear-icon" @onclick="Clear">@ClearIconTemplate</span>
+            }
+            else
+            {
+                <OpIcon Name="times" CssClass="p-datepicker-clear-icon" OnClick="Clear"/>
+            }
+        }
+
+        @if (ShowIcon && IconDisplay == "button")
+        {
+            <button type="button"
+                    class="p-datepicker-dropdown"
+                    aria-haspopup="dialog"
+                    aria-expanded="@(_overlayVisible ? "true" : "false")"
+                    aria-controls="@(_overlayVisible ? $"{_inputId}-panel" : null)"
+                    aria-label="@(IconAriaLabel ?? "Choose Date")"
+                    disabled="@Disabled"
+                    tabindex="0"
+                    @onclick="OnButtonClick">
+                @if (!string.IsNullOrEmpty(Icon))
+                {
+                    <span class="@Icon"></span>
+                }
+                else if (TriggerIconTemplate != null)
+                {
+                    @TriggerIconTemplate
+                }
+                else
+                {
+                    <OpIcon Name="calendar"/>
+                }
+            </button>
+        }
+
+        @if (IconDisplay == "input" && ShowIcon)
+        {
+            <span class="p-datepicker-input-icon-container">
+                @if (InputIconTemplate != null)
+                {
+                    @InputIconTemplate(new OpDatePickerInputIconContext
+                    {
+                        ClickCallback = EventCallback.Factory.Create<MouseEventArgs>(this, OnButtonClick)
+                    })
+                }
+                else
+                {
+                    <OpIcon Name="calendar" CssClass="p-datepicker-input-icon" OnClick="OnButtonClick"/>
+                }
+            </span>
+        }
+    }
+
+    @if (Inline || _panelRendered)
+    {
+        <div class="@PanelClass"
+             id="@(Inline ? null : $"{_inputId}-panel")"
+             role="@(Inline ? null : "dialog")"
+             aria-modal="@(Inline ? null : "true")"
+             aria-label="@(Inline ? null : "Choose Date")"
+             @onmousedown="OnPanelMouseDown"
+             @onmousedown:preventDefault="@(!Inline)"
+             @onanimationend="OnPanelAnimationEnd">
+
+            @HeaderTemplate
+
+            @if (!TimeOnly)
+            {
+                <div class="p-datepicker-calendar-container">
+                    @foreach (var month in _months)
+                    {
+                        var monthIndex = _months.IndexOf(month);
+                        <div class="p-datepicker-calendar" @key="month">
+                            <div class="p-datepicker-header">
+                                <button type="button"
+                                        class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-prev-button"
+                                        style="@(monthIndex == 0 ? "visibility:visible" : "visibility:hidden")"
+                                        aria-label="Previous Month"
+                                        @onclick="PrevMonth">
+                                    @if (PreviousIconTemplate != null)
+                                    {
+                                        @PreviousIconTemplate
+                                    }
+                                    else
+                                    {
+                                        <OpIcon Name="chevron-left"/>
+                                    }
+                                </button>
+
+                                <div class="p-datepicker-title">
+                                    @if (_currentView == OpDatePickerView.Date)
+                                    {
+                                        <button type="button" class="p-datepicker-select-month"
+                                                aria-label="Choose Month"
+                                                @onclick="SwitchToMonthView">@GetMonthName(month.Month)</button>
+                                    }
+                                    @if (_currentView != OpDatePickerView.Year)
+                                    {
+                                        <button type="button" class="p-datepicker-select-year" aria-label="Choose Year"
+                                                @onclick="SwitchToYearView">@GetYear(month)</button>
+                                    }
+                                    @if (_currentView == OpDatePickerView.Year)
+                                    {
+                                        <span class="p-datepicker-decade">
+                                            @if (DecadeTemplate != null)
+                                            {
+                                                @DecadeTemplate(YearPickerValues())
+                                            }
+                                            else
+                                            {
+                                                @($"{YearPickerValues()[0]} - {YearPickerValues()[^1]}")
+                                            }
+                                        </span>
+                                    }
+                                </div>
+
+                                <button type="button"
+                                        class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-next-button"
+                                        style="@(monthIndex == _months.Count - 1 ? "visibility:visible" : "visibility:hidden")"
+                                        aria-label="Next Month"
+                                        @onclick="NextMonth">
+                                    @if (NextIconTemplate != null)
+                                    {
+                                        @NextIconTemplate
+                                    }
+                                    else
+                                    {
+                                        <OpIcon Name="chevron-right"/>
+                                    }
+                                </button>
+                            </div>
+
+                            @if (_currentView == OpDatePickerView.Date)
+                            {
+                                <table class="p-datepicker-day-view" role="grid">
+                                    <thead>
+                                        <tr>
+                                            @if (ShowWeek)
+                                            {
+                                                <th class="p-datepicker-weekheader p-disabled"><span>Wk</span></th>
+                                            }
+                                            @foreach (var weekDay in WeekDayNames())
+                                            {
+                                                <th class="p-datepicker-weekday-cell" scope="col"><span
+                                                        class="p-datepicker-weekday">@weekDay</span></th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (var j = 0; j < month.Weeks.Count; j++)
+                                        {
+                                            var week = month.Weeks[j];
+                                            <tr>
+                                                @if (ShowWeek)
+                                                {
+                                                    <td class="p-datepicker-weeknumber"><span
+                                                            class="p-datepicker-weeklabel-container p-disabled">@month.WeekNumbers[j]</span></td>
+                                                }
+                                                @foreach (var date in week)
+                                                {
+                                                    @if (date != null && (date.OtherMonth ? ShowOtherMonths : true))
+                                                    {
+                                                        <td class="@DayCellClass(date)" aria-label="@date.Day"
+                                                            @key="@(date.Year * 10000 + date.Month * 100 + date.Day)">
+                                                            <span class="@DayClass(date)" draggable="false"
+                                                                  data-date="@date.Date.ToString("yyyy-MM-dd")"
+                                                                  @onclick="e => OnDateSelect(e, date)"
+                                                                  @onkeydown="e => OnDateCellKeydown(e, date)">
+                                                                @if (DateTemplate != null)
+                                                                {
+                                                                    @DateTemplate(date)
+                                                                }
+                                                                else
+                                                                {
+                                                                    @date.Day
+                                                                }
+                                                            </span>
+                                                            @if (IsSelected(date))
+                                                            {
+                                                                <div class="p-hidden-accessible"
+                                                                     aria-live="polite">@date.Day</div>
+                                                            }
+                                                        </td>
+                                                    }
+                                                    else if (date == null)
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    }
+                </div>
+
+                @if (_currentView == OpDatePickerView.Month)
+                {
+                    <div class="p-datepicker-month-view">
+                        @for (var m = 0; m < 12; m++)
+                        {
+                            var monthIndex = m;
+                            <span
+                                class="p-datepicker-month @(IsMonthSelected(monthIndex) ? "p-datepicker-month-selected" : "") @(IsMonthDisabled(monthIndex) ? "p-disabled" : "")"
+                                @onclick="e => OnMonthSelect(e, monthIndex)">@GetMonthName(monthIndex)</span>
+                        }
+                    </div>
+                }
+
+                @if (_currentView == OpDatePickerView.Year)
+                {
+                    <div class="p-datepicker-year-view">
+                        @foreach (var y in YearPickerValues())
+                        {
+                            <span
+                                class="p-datepicker-year @(IsYearSelected(y) ? "p-datepicker-year-selected" : "") @(IsYearDisabled(y) ? "p-disabled" : "")"
+                                @onclick="e => OnYearSelect(e, y)">@y</span>
+                        }
+                    </div>
+                }
+            }
+
+            @if ((ShowTime || TimeOnly) && _currentView == OpDatePickerView.Date)
+            {
+                <div class="p-datepicker-time-picker">
+                    <div class="p-datepicker-hour-picker">
+                        <button type="button"
+                                class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-increment-button"
+                                aria-label="Next Hour" @onclick="IncrementHour">
+                            @if (IncrementIconTemplate != null)
+                            {
+                                @IncrementIconTemplate
+                            }
+                            else
+                            {
+                                <OpIcon Name="chevron-up"/>
+                            }
+                        </button>
+                        <span>@HourText</span>
+                        <button type="button"
+                                class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-decrement-button"
+                                aria-label="Previous Hour" @onclick="DecrementHour">
+                            @if (DecrementIconTemplate != null)
+                            {
+                                @DecrementIconTemplate
+                            }
+                            else
+                            {
+                                <OpIcon Name="chevron-down"/>
+                            }
+                        </button>
+                    </div>
+                    <div class="p-datepicker-separator"><span>@TimeSeparator</span></div>
+                    <div class="p-datepicker-minute-picker">
+                        <button type="button"
+                                class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-increment-button"
+                                aria-label="Next Minute" @onclick="IncrementMinute">
+                            @if (IncrementIconTemplate != null)
+                            {
+                                @IncrementIconTemplate
+                            }
+                            else
+                            {
+                                <OpIcon Name="chevron-up"/>
+                            }
+                        </button>
+                        <span>@MinuteText</span>
+                        <button type="button"
+                                class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-decrement-button"
+                                aria-label="Previous Minute" @onclick="DecrementMinute">
+                            @if (DecrementIconTemplate != null)
+                            {
+                                @DecrementIconTemplate
+                            }
+                            else
+                            {
+                                <OpIcon Name="chevron-down"/>
+                            }
+                        </button>
+                    </div>
+                    @if (ShowSeconds)
+                    {
+                        <div class="p-datepicker-separator"><span>@TimeSeparator</span></div>
+                        <div class="p-datepicker-second-picker">
+                            <button type="button"
+                                    class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-increment-button"
+                                    aria-label="Next Second" @onclick="IncrementSecond">
+                                @if (IncrementIconTemplate != null)
+                                {
+                                    @IncrementIconTemplate
+                                }
+                                else
+                                {
+                                    <OpIcon Name="chevron-up"/>
+                                }
+                            </button>
+                            <span>@SecondText</span>
+                            <button type="button"
+                                    class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-decrement-button"
+                                    aria-label="Previous Second" @onclick="DecrementSecond">
+                                @if (DecrementIconTemplate != null)
+                                {
+                                    @DecrementIconTemplate
+                                }
+                                else
+                                {
+                                    <OpIcon Name="chevron-down"/>
+                                }
+                            </button>
+                        </div>
+                    }
+                    @if (HourFormat == 12)
+                    {
+                        <div class="p-datepicker-separator"><span>@TimeSeparator</span></div>
+                        <div class="p-datepicker-ampm-picker">
+                            <button type="button"
+                                    class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-increment-button"
+                                    aria-label="AM" @onclick="ToggleAmPm">
+                                @if (IncrementIconTemplate != null)
+                                {
+                                    @IncrementIconTemplate
+                                }
+                                else
+                                {
+                                    <OpIcon Name="chevron-up"/>
+                                }
+                            </button>
+                            <span>@(_pm ? "PM" : "AM")</span>
+                            <button type="button"
+                                    class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-decrement-button"
+                                    aria-label="PM" @onclick="ToggleAmPm">
+                                @if (DecrementIconTemplate != null)
+                                {
+                                    @DecrementIconTemplate
+                                }
+                                else
+                                {
+                                    <OpIcon Name="chevron-down"/>
+                                }
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+
+            @if (ShowButtonBar)
+            {
+                <div class="p-datepicker-buttonbar">
+                    @if (ButtonBarTemplate != null)
+                    {
+                        @ButtonBarTemplate(new OpDatePickerButtonBarContext
+                        {
+                            TodayCallback = EventCallback.Factory.Create<MouseEventArgs>(this, OnTodayButtonClick),
+                            ClearCallback = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearButtonClick)
+                        })
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="p-button p-component p-button-sm p-button-text p-button-secondary p-datepicker-today-button @TodayButtonStyleClass"
+                                @onclick="OnTodayButtonClick"><span class="p-button-label">@TodayLabel</span></button>
+                        <button type="button"
+                                class="p-button p-component p-button-sm p-button-text p-button-secondary p-datepicker-clear-button @ClearButtonStyleClass"
+                                @onclick="OnClearButtonClick"><span class="p-button-label">@ClearLabel</span></button>
+                    }
+                </div>
+            }
+
+            @FooterTemplate
+        </div>
+    }
+</span>

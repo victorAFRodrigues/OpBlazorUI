@@ -1,0 +1,52 @@
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.Tooltip
+@namespace OpBlazorUI.Base.Demo
+
+<div
+    style="padding: 4rem 2rem; display: flex; flex-direction: column; gap: 3rem; align-items: center; max-width: 30rem; margin: 0 auto;">
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Posições</label>
+        <div style="display:flex; gap:1.5rem; align-items:center; justify-content:center; flex-wrap:wrap;">
+            <OpTooltip Content="Tooltip à direita" Position="right">
+                <OpButton Label="Right" Severity="secondary"/>
+            </OpTooltip>
+            <OpTooltip Content="Tooltip à esquerda" Position="left">
+                <OpButton Label="Left" Severity="secondary"/>
+            </OpTooltip>
+            <OpTooltip Content="Tooltip acima" Position="top">
+                <OpButton Label="Top" Severity="secondary"/>
+            </OpTooltip>
+            <OpTooltip Content="Tooltip abaixo" Position="bottom">
+                <OpButton Label="Bottom" Severity="secondary"/>
+            </OpTooltip>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Em ícone / input / texto</label>
+        <div style="display:flex; gap:1.5rem; align-items:center; justify-content:center; flex-wrap:wrap;">
+            <OpTooltip Content="Excluir registro">
+                <OpButton Icon="pi pi-trash" Rounded="true" Severity="danger"/>
+            </OpTooltip>
+            <OpTooltip Content="Digite seu nome completo" Position="top">
+                <OpInputText Placeholder="Nome"/>
+            </OpTooltip>
+            <OpTooltip Content="Mais informações sobre este campo" Position="bottom">
+                <span style="border-bottom:1px dashed var(--p-text-muted-color); cursor:help">passe o mouse aqui</span>
+            </OpTooltip>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Com delay / desabilitado</label>
+        <div style="display:flex; gap:1.5rem; align-items:center; justify-content:center;">
+            <OpTooltip Content="Aparece com 500ms" ShowDelay="500">
+                <OpButton Label="Com delay" Severity="secondary"/>
+            </OpTooltip>
+            <OpTooltip Content="Não deveria aparecer" Disabled="true">
+                <OpButton Label="Tooltip desabilitado" Severity="secondary"/>
+            </OpTooltip>
+        </div>
+    </div>
+</div>

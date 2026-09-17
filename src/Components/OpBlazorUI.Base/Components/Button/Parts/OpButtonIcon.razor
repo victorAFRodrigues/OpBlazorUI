@@ -1,0 +1,10 @@
+@namespace OpBlazorUI.Base.Components.Button.Parts
+
+@if (!string.IsNullOrEmpty(Icon))
+{
+    <span class="@IconClass"></span>
+}
+else if (Template != null)
+{
+    @Template
+}

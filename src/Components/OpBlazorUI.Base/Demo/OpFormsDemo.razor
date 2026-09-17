@@ -1,0 +1,62 @@
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.InputText
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; max-width: 36rem;">
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Botões (severity)</label>
+        <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+            <OpButton Label="Primary"/>
+            <OpButton Label="Secondary" Severity="secondary"/>
+            <OpButton Label="Success" Severity="success"/>
+            <OpButton Label="Info" Severity="info"/>
+            <OpButton Label="Warning" Severity="warn"/>
+            <OpButton Label="Help" Severity="help"/>
+            <OpButton Label="Danger" Severity="danger"/>
+            <OpButton Label="Contrast" Severity="contrast"/>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Variant / sizes</label>
+        <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
+            <OpButton Label="Outlined" Variant="outlined"/>
+            <OpButton Label="Text" Variant="text"/>
+            <OpButton Label="Link" Variant="link"/>
+            <OpButton Label="Raised" Variant="raised"/>
+            <OpButton Label="Small" Size="small" Severity="secondary"/>
+            <OpButton Label="Large" Size="large" Severity="secondary"/>
+            <OpButton Label="Rounded" Rounded="true"/>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Com ícone</label>
+        <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
+            <OpButton Label="Novo" Icon="pi pi-plus"/>
+            <OpButton Icon="pi pi-trash" Severity="danger" Rounded="true"/>
+            <OpButton Label="Carregando" Icon="pi pi-check" Loading="true"/>
+            <OpButton Label="Desabilitado" Disabled="true"/>
+        </div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">InputText</label>
+        <div style="display:flex; flex-direction:column; gap:.75rem;">
+            <OpInputText @bind-Value="text" Placeholder="Digite algo..."/>
+            <OpInputText @bind-Value="filled" Variant="filled" Placeholder="Variant filled"/>
+            <OpInputText @bind-Value="small" Size="small" Placeholder="Small"/>
+            <OpInputText @bind-Value="invalid" Invalid="true" Placeholder="Inválido"/>
+            <OpInputText @bind-Value="disabled" Disabled="true" Placeholder="Desabilitado"/>
+            <div>Valor digitado: @text</div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string? text;
+    private string? filled;
+    private string? small;
+    private string? invalid;
+    private string? disabled;
+}

@@ -1,0 +1,53 @@
+@using OpBlazorUI.Base.Components.DatePicker
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 30rem;">
+    <div>
+        <label style="display:block; margin-bottom: .5rem; font-weight:600">Básico</label>
+        <OpDatePicker @bind-Value="basic" Placeholder="Basic"/>
+        <div>Valor: @(basic?.ToString("dd/MM/yyyy"))</div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom: .5rem; font-weight:600">Com ícone (botão)</label>
+        <OpDatePicker @bind-Value="icon" ShowIcon="true"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom: .5rem; font-weight:600">Com ícone no input + limpar</label>
+        <OpDatePicker @bind-Value="clear" ShowIcon="true" IconDisplay="input" ShowClear="true"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom: .5rem; font-weight:600">Inline</label>
+        <OpDatePicker @bind-Value="inline" Inline="true"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom: .5rem; font-weight:600">Range + button bar</label>
+        <OpDatePicker @bind-RangeValue="range" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true"
+                      ShowButtonBar="true"/>
+        <div>
+            Range: @string.Join(" até ", (range ?? Array.Empty<DateTime?>()).Where(d => d.HasValue).Select(d => d!.Value.ToString("dd/MM/yyyy")))</div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom: .5rem; font-weight:600">Time picker (12h)</label>
+        <OpDatePicker @bind-Value="time" ShowTime="true" HourFormat="12"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom: .5rem; font-weight:600">Month picker</label>
+        <OpDatePicker @bind-Value="monthOnly" View="OpDatePickerView.Month" DateFormat="mm/yy" ReadonlyInput="true"/>
+    </div>
+</div>
+
+@code {
+    private DateTime? basic;
+    private DateTime? icon;
+    private DateTime? clear;
+    private DateTime? inline = DateTime.Today;
+    private IReadOnlyList<DateTime?>? range;
+    private DateTime? time;
+    private DateTime? monthOnly;
+}

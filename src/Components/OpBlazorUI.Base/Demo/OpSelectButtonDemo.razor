@@ -1,0 +1,63 @@
+@using OpBlazorUI.Base.Components.SelectButton
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 2rem; max-width: 40rem;">
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Simples (single)</label>
+        <OpSelectButton @bind-Value="single" Options="Options" OptionLabel="Name"/>
+        <div style="margin-top:.5rem">Selecionado: @(single?.Name ?? "—")</div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Múltiplo</label>
+        <OpSelectButton @bind-MultipleValue="multiple" Multiple="true" Options="Options" OptionLabel="Name"/>
+        <div style="margin-top:.5rem">
+            Selecionados: @string.Join(", ", (multiple ?? Array.Empty<OpOption>()).Select(o => o.Name))</div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Com item template (ícone)</label>
+        <OpSelectButton @bind-Value="template" Options="Options" OptionLabel="Name">
+            <ItemTemplate>
+                <div style="display:flex; align-items:center; gap:.375rem;">
+                    <i class="pi pi-check" style="font-size:.75rem"></i>
+                    <span>@context.Option.Name</span>
+                </div>
+            </ItemTemplate>
+        </OpSelectButton>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.75rem; font-weight:600">Invalid / Disabled / Fluid / Size</label>
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+            <OpSelectButton @bind-Value="invalidVal" Options="Options" OptionLabel="Name" Invalid="true"/>
+            <OpSelectButton @bind-Value="disabledVal" Options="Options" OptionLabel="Name" Disabled="true"/>
+            <OpSelectButton @bind-Value="fluidVal" Options="Options" OptionLabel="Name" Fluid="true"/>
+            <OpSelectButton @bind-Value="smallVal" Options="Options" OptionLabel="Name" Size="small"/>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public sealed class OpOption
+    {
+        public string Name { get; set; } = "";
+    }
+
+    private OpOption? single;
+    private IReadOnlyList<OpOption>? multiple = Array.Empty<OpOption>();
+    private OpOption? template;
+    private OpOption? invalidVal;
+    private OpOption? disabledVal;
+    private OpOption? fluidVal;
+    private OpOption? smallVal;
+
+    private static readonly List<OpOption> Options = new()
+    {
+        new() { Name = "Opção 1" },
+        new() { Name = "Opção 2" },
+        new() { Name = "Opção 3" }
+    };
+
+}

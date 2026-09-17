@@ -1,0 +1,27 @@
+@namespace OpBlazorUI.Base.Components.ToggleButton
+
+<button type="button"
+        class="@RootClass"
+        role="button"
+        aria-pressed="@(Checked ? "true" : "false")"
+        aria-label="@AriaLabel"
+        tabindex="@(Disabled ? -1 : 0)"
+        disabled="@Disabled"
+        @onclick="Toggle">
+    <span class="p-togglebutton-content">
+        @if (ContentTemplate != null)
+        {
+            @ContentTemplate(Checked)
+        }
+        else
+        {
+            @if (HasIcon)
+            {
+                <span class="@IconClass"></span>
+            }
+
+            <span
+                class="p-togglebutton-label">@(Checked ? (HasOnLabel ? OnLabel : "&nbsp;") : (HasOffLabel ? OffLabel : "&nbsp;"))</span>
+        }
+    </span>
+</button>

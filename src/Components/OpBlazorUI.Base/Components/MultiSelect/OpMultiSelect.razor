@@ -1,0 +1,232 @@
+@namespace OpBlazorUI.Base.Components.MultiSelect
+@using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.Icon
+@using OpBlazorUI.Base.Components.IconField
+@using OpBlazorUI.Base.Components.InputIcon
+@typeparam TValue
+
+<div class="@RootClass" style="position: relative" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
+     @onkeydown="OnRootKeydown" @attributes="AdditionalAttributes">
+    <div class="p-hidden-accessible">
+        <input role="combobox"
+               id="@_id"
+               @ref="_inputRef"
+               tabindex="@(Disabled ? -1 : TabIndex)"
+               aria-haspopup="listbox"
+               aria-expanded="@(_overlayVisible ? "true" : "false")"
+               aria-controls="@(_overlayVisible ? $"{_id}_list" : null)"
+               aria-label="@AriaLabel"
+               disabled="@Disabled"
+               @onfocus="OnInputFocus"
+               @onblur="OnInputBlur"
+               @onkeydown="OnInputKeydown"/>
+    </div>
+
+    <div class="p-multiselect-label-container" @onclick="OnRootClick">
+        <div class="@LabelClass">
+            @if (SelectedItemsTemplate != null)
+            {
+                @SelectedItemsTemplate(SelectedOptions)
+                @if (!HasSelection)
+                {
+                    @(Placeholder ?? "&nbsp;")
+                }
+            }
+            else if (Display == "chip")
+            {
+                @if (MaxSelectedLabels is { } max && SelectedOptions.Count >= max)
+                {
+                    @($"{SelectedOptions.Count} items selected")
+                }
+                else
+                {
+                    @foreach (var item in ChipItems)
+                    {
+                        <div class="p-multiselect-chip-item">
+                            <div class="p-chip p-component p-multiselect-chip">
+                                <div class="p-chip-label">@GetOptionLabel((object)item!)</div>
+                                @if (!Disabled && !Readonly)
+                                {
+                                    <span @onclick:stopPropagation="true">
+                                        <OpIcon Name="times-circle"
+                                                CssClass="p-chip-remove-icon p-multiselect-chip-icon"
+                                                OnClick="() => RemoveOptionAsync(item)"/>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (!HasSelection)
+                    {
+                        @(Placeholder ?? "&nbsp;")
+                    }
+                }
+            }
+            else
+            {
+                @(HasSelection ? CommaLabel : Placeholder ?? "&nbsp;")
+            }
+        </div>
+    </div>
+
+    @if (ShowClear && !Disabled && HasSelection)
+    {
+        @if (ClearIconTemplate != null)
+        {
+            <span class="p-multiselect-clear-icon" aria-hidden="true" @onclick="Clear">@ClearIconTemplate</span>
+        }
+        else
+        {
+            <OpIcon Name="times" CssClass="p-multiselect-clear-icon" OnClick="Clear"/>
+        }
+    }
+
+    <div class="p-multiselect-dropdown" role="button" aria-label="dropdown trigger" aria-haspopup="listbox"
+         aria-expanded="@(_overlayVisible ? "true" : "false")" @onclick="OnDropdownClick">
+        @if (Loading)
+        {
+            @if (LoadingIconTemplate != null)
+            {
+                @LoadingIconTemplate
+            }
+            else
+            {
+                <span class="p-multiselect-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+            }
+        }
+        else if (DropdownIconTemplate != null)
+        {
+            @DropdownIconTemplate
+        }
+        else if (!string.IsNullOrEmpty(DropdownIcon))
+        {
+            <span class="p-multiselect-dropdown-icon @DropdownIcon"></span>
+        }
+        else
+        {
+            <OpIcon Name="chevron-down" CssClass="p-multiselect-dropdown-icon"/>
+        }
+    </div>
+
+    @if (_panelRendered)
+    {
+        <div class="@PanelClass"
+             @onmousedown="OnPanelMouseDown"
+             @onanimationend="OnPanelAnimationEnd">
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+
+            @HeaderTemplate
+
+            @if (Filter)
+            {
+                <div class="p-multiselect-header" @onclick:stopPropagation="true">
+                    <OpIconField IconPosition="left">
+                        <input type="text"
+                               class="p-inputtext p-multiselect-filter"
+                               role="searchbox"
+                               autocomplete="off"
+                               value="@_filterValue"
+                               placeholder="Filter"
+                               aria-owns="@($"{_id}_list")"
+                               aria-label="Filter"
+                               @oninput="OnFilterInput"/>
+                        <OpInputIcon>
+                            <OpIcon Name="search"/>
+                        </OpInputIcon>
+                    </OpIconField>
+                </div>
+            }
+
+            <div class="p-multiselect-list-container" style="max-height:@(ScrollHeight ?? "auto")">
+                <ul class="p-multiselect-list" role="listbox" id="@($"{_id}_list")">
+                    @if (Group)
+                    {
+                        @foreach (var group in VisibleOptions)
+                        {
+                            <li class="p-multiselect-option-group" role="option">
+                                @if (GroupTemplate != null)
+                                {
+                                    @GroupTemplate(group)
+                                }
+                                else
+                                {
+                                    <span
+                                        class="p-multiselect-option-group-label">@GetOptionGroupLabelValue(group)</span>
+                                }
+                            </li>
+                            @foreach (var child in GetOptionGroupChildren(group))
+                            {
+                                @if (MatchesFilter(child))
+                                {
+                                    var isSel = IsSelected(child);
+                                    <li class="@OptionClass(child)" role="option" aria-label="@GetOptionLabel(child)"
+                                        aria-selected="@(isSel ? "true" : "false")"
+                                        @onclick="() => OnOptionClick(child)">
+                                        <OpCheckbox Checked="@isSel" TabIndex="-1" Variant="@Variant"/>
+                                        @if (ItemTemplate != null && child is TValue childTv)
+                                        {
+                                            @ItemTemplate(childTv)
+                                        }
+                                        else
+                                        {
+                                            <span class="p-multiselect-option-label">@GetOptionLabel(child)</span>
+                                        }
+                                    </li>
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        @foreach (var option in VisibleOptions)
+                        {
+                            var index = VisibleOptions.IndexOf(option);
+                            var isSel = IsSelected(option);
+                            <li class="@OptionClass(option) @(_focusedOptionIndex == index ? "p-focus" : "")"
+                                id="@($"{_id}_{index}")"
+                                role="option"
+                                aria-label="@GetOptionLabel(option)"
+                                aria-selected="@(isSel ? "true" : "false")"
+                                data-p-focused="@(_focusedOptionIndex == index ? "true" : null)"
+                                @onclick="() => OnOptionClick(option)"
+                                @onmouseenter="() => OnOptionMouseEnter(index)">
+                                <OpCheckbox Checked="@isSel" TabIndex="-1" Variant="@Variant"/>
+                                @if (ItemTemplate != null && option is TValue optTv)
+                                {
+                                    @ItemTemplate(optTv)
+                                }
+                                else
+                                {
+                                    <span class="p-multiselect-option-label">@GetOptionLabel(option)</span>
+                                }
+                            </li>
+                        }
+                    }
+
+                    @if (ShowEmptyMessage)
+                    {
+                        <li class="p-multiselect-empty-message" role="option">
+                            @if (!string.IsNullOrEmpty(_filterValue) && EmptyFilterTemplate != null)
+                            {
+                                @EmptyFilterTemplate
+                            }
+                            else if (string.IsNullOrEmpty(_filterValue) && EmptyTemplate != null)
+                            {
+                                @EmptyTemplate
+                            }
+                            else
+                            {
+                                @(!string.IsNullOrEmpty(_filterValue) ? EmptyFilterMessage : EmptyMessage)
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            @FooterTemplate
+
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+        </div>
+    }
+</div>

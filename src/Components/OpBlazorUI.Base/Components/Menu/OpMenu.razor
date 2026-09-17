@@ -1,0 +1,94 @@
+@using OpBlazorUI.Base.Models
+@namespace OpBlazorUI.Base.Components.Menu
+
+@if (!Popup || _panelRendered)
+{
+    <div class="@RootClass"
+         id="@_id"
+         @onfocusout="OnRootFocusOut"
+         @onfocusin="OnRootFocusIn"
+         @onmousedown="OnPanelMouseDown"
+         @onkeydown="OnRootKeydown"
+         @attributes="AdditionalAttributes">
+        @if (StartTemplate != null)
+        {
+            <div class="p-menu-start">@StartTemplate</div>
+        }
+
+        <ul class="p-menu-list"
+            role="menu"
+            id="@($"{_id}_list")"
+            tabindex="0"
+            @ref="_listRef"
+            aria-activedescendant="@(_focusedItemIndex >= 0 ? ItemId(_focusedItemIndex) : null)"
+            aria-label="@AriaLabel"
+            @onkeydown="OnListKeydown">
+            @if (GroupItems.Count > 0)
+            {
+                @foreach (var group in GroupItems)
+                {
+                    <li class="p-menu-submenu-label" role="none">
+                        <span>@group.Label</span>
+                    </li>
+                    @foreach (var item in group.Items)
+                    {
+                        @RenderItem(item, 0)
+                    }
+                }
+            }
+            else
+            {
+                @foreach (var item in FlatItems)
+                {
+                    @RenderItem(item, 0)
+                }
+            }
+        </ul>
+
+        @if (EndTemplate != null)
+        {
+            <div class="p-menu-end">@EndTemplate</div>
+        }
+    </div>
+}
+
+@code {
+
+    private RenderFragment RenderItem(OpMenuItem item, int seed) => __builder =>
+    {
+        if (item.Separator)
+        {
+            <li class="p-menu-separator" role="separator"></li>
+        }
+        else if (item.Visible)
+        {
+            var index = AllItems.IndexOf(item);
+            <li class="@ItemClass(item, index)"
+                id="@ItemId(index)"
+                role="menuitem"
+                aria-label="@item.Label"
+                data-p-focused="@(_focusedItemIndex == index ? "true" : null)"
+                aria-disabled="@(item.Disabled ? "true" : null)"
+                @onclick="() => OnItemClicked(item)"
+                @onmouseenter="() => { _focusedItemIndex = index; }">
+                <div class="p-menu-item-content">
+                    @if (ItemTemplate != null)
+                    {
+                        @ItemTemplate(item)
+                    }
+                    else
+                    {
+                        <a class="p-menu-item-link" href="@item.Url" tabindex="-1">
+                            @if (!string.IsNullOrEmpty(item.Icon))
+                            {
+                                <span class="p-menu-item-icon @item.Icon"></span>
+                            }
+                            <span class="p-menu-item-label">@item.Label</span>
+                        </a>
+                    }
+                </div>
+            </li>
+        }
+    };
+
+}

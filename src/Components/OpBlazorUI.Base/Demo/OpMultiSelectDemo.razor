@@ -1,0 +1,80 @@
+@using OpBlazorUI.Base.Components.MultiSelect
+@namespace OpBlazorUI.Base.Demo
+
+<div style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 26rem;">
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Básico (comma)</label>
+        <OpMultiSelect @bind-Value="sel" Options="Cities" OptionLabel="Name" Placeholder="Select Cities"
+                       StyleClass="w-full"/>
+        <div style="margin-top:.25rem">
+            Selecionados: @string.Join(", ", (sel ?? Array.Empty<City>()).Select(c => c.Name))</div>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Chips + clear</label>
+        <OpMultiSelect @bind-Value="sel2" Options="Cities" OptionLabel="Name" Display="chip" ShowClear="true"
+                       Placeholder="Select Cities" StyleClass="w-full"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Com filtro + max labels</label>
+        <OpMultiSelect @bind-Value="sel3" Options="Cities" OptionLabel="Name" Display="chip" Filter="true"
+                       MaxSelectedLabels="3" Placeholder="Select Cities" StyleClass="w-full"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Agrupado</label>
+        <OpMultiSelect @bind-Value="sel4" Options="CountryGroups" Group="true" OptionLabel="Name"
+                       Placeholder="Select Countries" StyleClass="w-full"/>
+    </div>
+
+    <div>
+        <label style="display:block; margin-bottom:.5rem; font-weight:600">Filled / Disabled</label>
+        <div style="display:flex; gap:.75rem;">
+            <OpMultiSelect @bind-Value="sel5" Options="Cities" OptionLabel="Name" Variant="filled" Placeholder="Filled"
+                           StyleClass="w-48"/>
+            <OpMultiSelect TValue="City" Options="Cities" OptionLabel="Name" Disabled="true" Placeholder="Disabled"
+                           StyleClass="w-48"/>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public sealed class City
+    {
+        public string Name { get; set; } = "";
+        public string Code { get; set; } = "";
+    }
+
+    public sealed class CountryGroup
+    {
+        public string Label { get; set; } = "";
+        public List<City> Items { get; set; } = new();
+    }
+
+    private IReadOnlyList<City>? sel;
+    private IReadOnlyList<City>? sel2;
+    private IReadOnlyList<City>? sel3;
+    private IReadOnlyList<City>? sel4;
+    private IReadOnlyList<City>? sel5;
+
+    private static readonly List<City> Cities = new()
+    {
+        new() { Name = "New York", Code = "NY" },
+        new() { Name = "Rome", Code = "RM" },
+        new() { Name = "London", Code = "LDN" },
+        new() { Name = "Istanbul", Code = "IST" },
+        new() { Name = "Paris", Code = "PRS" },
+        new() { Name = "Barcelona", Code = "BCN" },
+        new() { Name = "Berlin", Code = "BER" },
+    };
+
+    private static readonly List<CountryGroup> CountryGroups = new()
+    {
+        new() { Label = "Germany", Items = new() { new() { Name = "Berlin" }, new() { Name = "Frankfurt" } } },
+        new() { Label = "USA", Items = new() { new() { Name = "Chicago" }, new() { Name = "New York" } } },
+        new() { Label = "Japan", Items = new() { new() { Name = "Kyoto" }, new() { Name = "Tokyo" } } },
+    };
+
+}

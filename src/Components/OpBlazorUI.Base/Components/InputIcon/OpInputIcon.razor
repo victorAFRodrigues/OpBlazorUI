@@ -1,0 +1,13 @@
+@namespace OpBlazorUI.Base.Components.InputIcon
+
+<span class="p-inputicon" @attributes="AdditionalAttributes">
+    @ChildContent
+</span>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+}

@@ -1,0 +1,42 @@
+@using OpBlazorUI.Base.Components.Icon
+@namespace OpBlazorUI.Base.Components.Checkbox
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <input type="checkbox"
+           class="@InputCss"
+           id="@Id"
+           name="@Name"
+           value="@Value"
+           checked="@(Checked == true)"
+           tabindex="@TabIndex"
+           required="@Required"
+           readonly="@Readonly"
+           disabled="@Disabled"
+           aria-labelledby="@AriaLabelledBy"
+           aria-label="@AriaLabel"
+           @onchange="HandleChange"
+           @onfocus="OnFocus"
+           @onblur="OnBlur"/>
+
+    <div class="p-checkbox-box">
+        @if (CheckboxIconTemplate != null)
+        {
+            @CheckboxIconTemplate(Checked == true)
+        }
+        else if (Indeterminate)
+        {
+            <OpIcon Name="minus" CssClass="p-checkbox-icon"/>
+        }
+        else if (Checked == true)
+        {
+            @if (!string.IsNullOrEmpty(CheckboxIcon))
+            {
+                <span class="p-checkbox-icon @CheckboxIcon"></span>
+            }
+            else
+            {
+                <OpIcon Name="check" CssClass="p-checkbox-icon"/>
+            }
+        }
+    </div>
+</div>

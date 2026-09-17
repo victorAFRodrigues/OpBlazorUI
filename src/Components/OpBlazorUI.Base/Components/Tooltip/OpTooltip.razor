@@ -1,0 +1,23 @@
+@namespace OpBlazorUI.Base.Components.Tooltip
+
+<span class="op-tooltip-wrapper"
+      style="@WrapperStyle"
+      aria-describedby="@(string.IsNullOrEmpty(Content) ? null : _id)"
+      @onmouseenter="OnEnter"
+      @onmouseleave="OnLeave"
+      @onfocusin="OnEnter"
+      @onfocusout="OnLeave"
+      @attributes="AdditionalAttributes">
+    @ChildContent
+
+    @if (!string.IsNullOrEmpty(Content))
+    {
+        <div class="@RootClass"
+             id="@_id"
+             role="tooltip"
+             style="display:@(_visible ? "block" : "none")">
+            <div class="p-tooltip-arrow"></div>
+            <div class="p-tooltip-text">@Content</div>
+        </div>
+    }
+</span>

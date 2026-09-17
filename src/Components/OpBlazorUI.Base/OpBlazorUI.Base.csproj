@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>OpBlazorUI.Base</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>OpenNG</Authors>
+        <Company>OpenNG</Company>
+        <Description>Optimus UI components for Blazor.</Description>
+        <PackageTags>blazor;optimus-ui;components;ui;openng</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://optimus.openng.org</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/openng-org/optimus-ui</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.9"/>
+    </ItemGroup>
+
+</Project>

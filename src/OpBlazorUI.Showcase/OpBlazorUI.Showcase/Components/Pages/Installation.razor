@@ -1,0 +1,144 @@
+@page "/installation"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Button
+
+<PageTitle>Installation - Optimus UI (Blazor)</PageTitle>
+
+<GuidePage Title="Installation"
+           Description="Como instalar o Optimus UI (Blazor) em uma aplicação Blazor e colocar o primeiro componente na tela."
+           Sections="@Sections">
+
+    <DocSection Label="Pré-requisitos">
+        <Description>
+            <p>Antes de começar, certifique-se de ter:</p>
+            <ul>
+                <li>.NET SDK <strong>10.0</strong> ou superior.</li>
+                <li>Uma aplicação <strong>Blazor Web App</strong>, <strong>Blazor Server</strong> ou <strong>Blazor WebAssembly</strong>.</li>
+                <li>Um editor como Rider, Visual Studio ou VS Code.</li>
+            </ul>
+        </Description>
+    </DocSection>
+
+    <DocSection Label="Compatibilidade">
+        <Description>
+            <p>O Optimus UI (Blazor) é distribuído como uma <em>Razor Class Library</em> e funciona em qualquer modelo de hospedagem do Blazor.</p>
+        </Description>
+        <ChildContent>
+            <ApiTable Caption="Compatibilidade"
+                      Headers="@(new[] { "Versão", ".NET", "Modelos" })"
+                      Rows="@(new[] {
+                          new[] { "1.0.0", "10.0", "Blazor Web App, Server, WebAssembly" }
+                      })"/>
+        </ChildContent>
+    </DocSection>
+
+    <DocSection Label="Instalação via NuGet">
+        <Description>
+            <p>Adicione o pacote <code>OpBlazorUI.Base</code> ao projeto:</p>
+        </Description>
+        <Code>
+            <CodeBlock Language="bash" Code="@("dotnet add package OpBlazorUI.Base")"/>
+            <p class="doc-section-description">Ou declare a referência manualmente no <code>.csproj</code>:</p>
+            <CodeBlock Language="xml"
+                       Code="@("<ItemGroup>\n    <PackageReference Include=\"OpBlazorUI.Base\" Version=\"1.0.0\" />\n</ItemGroup>")"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Instalação via referência de projeto">
+        <Description>
+            <p>Enquanto o pacote não estiver publicado no NuGet, use a referência direta ao projeto da biblioteca:</p>
+        </Description>
+        <Code>
+            <CodeBlock Language="bash"
+                       Code="@("dotnet add reference ../Components/OpBlazorUI.Base/OpBlazorUI.Base.csproj")"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Imports">
+        <Description>
+            <p>Importe o namespace raiz no <code>_Imports.razor</code> para ter acesso ao <code>OpBlazorUiSetup</code>, ao <code>OpTheme</code> e aos serviços. Cada componente vive em seu próprio namespace:</p>
+        </Description>
+        <Code>
+            <CodeBlock Language="razor"
+                       Code="@("@using OpBlazorUI.Base\n@using OpBlazorUI.Base.Components.Button\n@using OpBlazorUI.Base.Services")"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Registrar os serviços">
+        <Description>
+            <p>Registre os serviços da biblioteca no <code>Program.cs</code>. A extensão <code>AddOpBlazorUI()</code> já registra tudo que os componentes precisam, como o <code>OpMessageService</code>:</p>
+        </Description>
+        <Code>
+            <CodeBlock Language="csharp"
+                       Code="@("builder.Services.AddOpBlazorUI();")"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Adicionar o setup">
+        <Description>
+            <p>Adicione <code>&lt;OpBlazorUiSetup /&gt;</code> no <code>App.razor</code>. Ele injeta automaticamente o CSS de ícones, o CSS base e o arquivo de tema ativo:</p>
+        </Description>
+        <Code>
+            <CodeBlock Language="razor"
+                       Code="@("<body>\n    <OpBlazorUiSetup />\n    <Routes @rendermode=\"InteractiveServer\" />\n</body>")"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Ícones">
+        <Description>
+            <p>O <code>openng-icons.css</code> é carregado pelo <code>OpBlazorUiSetup</code>, então basta usar as classes <code>pi pi-*</code>:</p>
+        </Description>
+        <ChildContent>
+            <div class="flex gap-3 flex-wrap items-center" style="font-size:1.25rem">
+                <i class="pi pi-search"></i>
+                <i class="pi pi-user"></i>
+                <i class="pi pi-save"></i>
+                <i class="pi pi-trash"></i>
+                <i class="pi pi-cog"></i>
+                <i class="pi pi-bolt"></i>
+            </div>
+        </ChildContent>
+        <Code>
+            <CodeBlock Language="razor" Code="@("<i class=\"pi pi-search\"></i>")"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Verificação">
+        <Description>
+            <p>Coloque um componente em qualquer página e execute a aplicação. Se o botão aparecer estilizado, a instalação está concluída.</p>
+        </Description>
+        <ChildContent>
+            <OpButton Label="Save" Icon="pi pi-save"/>
+        </ChildContent>
+        <Code>
+            <CodeBlock Language="razor"
+                       Code="@("<OpButton Label=\"Save\" Icon=\"pi pi-save\" />")"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Próximos passos">
+        <Description>
+            <ul>
+                <li><a href="/configuration">Configuration</a> — temas, modo escuro, RTL e interop.</li>
+                <li><a href="/button">Button</a> — comece pelos componentes básicos.</li>
+            </ul>
+        </Description>
+    </DocSection>
+</GuidePage>
+
+@code {
+    private static readonly IReadOnlyList<string> Sections =
+    [
+        "Pré-requisitos",
+        "Compatibilidade",
+        "Instalação via NuGet",
+        "Instalação via referência de projeto",
+        "Imports",
+        "Registrar os serviços",
+        "Adicionar o setup",
+        "Ícones",
+        "Verificação",
+        "Próximos passos"
+    ];
+}
