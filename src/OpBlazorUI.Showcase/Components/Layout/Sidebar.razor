@@ -32,7 +32,7 @@
                                                     <ol>
                                                         @foreach (var item in group.Items)
                                                         {
-                                                            <li><a href="@item.Route" class="@(IsActive(item.Route) ? "router-link-active" : null)"><span>@item.Label</span>@if (!item.ComingSoon) { <span class="menu-badge" title="Portado"></span> }</a></li>
+                                                            <li><a href="@RelativeHref(item.Route)" class="@(IsActive(item.Route) ? "router-link-active" : null)"><span>@item.Label</span>@if (!item.ComingSoon) { <span class="menu-badge" title="Portado"></span> }</a></li>
                                                         }
                                                     </ol>
                                                 </div>
@@ -43,7 +43,7 @@
                                     {
                                         @foreach (var child in entry.Children)
                                         {
-                                            <li><a href="@child.Route" class="@(IsActive(child.Route) ? "router-link-active" : null)"><span>@child.Label</span>@if (!child.ComingSoon) { <span class="menu-badge" title="Portado"></span> }</a></li>
+                                            <li><a href="@RelativeHref(child.Route)" class="@(IsActive(child.Route) ? "router-link-active" : null)"><span>@child.Label</span>@if (!child.ComingSoon) { <span class="menu-badge" title="Portado"></span> }</a></li>
                                         }
                                     }
                                 </ol>
@@ -52,7 +52,7 @@
                     }
                     else
                     {
-                        <a href="@(entry.Route ?? "/coming-soon")">
+                        <a href="@RelativeHref(entry.Route ?? "/coming-soon")">
                             <div class="menu-icon"><i class="@entry.Icon"></i></div>
                             <span>@entry.Label</span>
                         </a>
@@ -110,6 +110,9 @@
     private void OnDarkChanged() => StateHasChanged();
 
     private bool IsExpanded(string label) => _expanded.Contains(label);
+
+    // Sem barra inicial: resolve relativo ao <base href>, essencial ao publicar sob um subcaminho (GitHub Pages).
+    private static string RelativeHref(string route) => route.TrimStart('/');
 
     private void Toggle(string label)
     {
