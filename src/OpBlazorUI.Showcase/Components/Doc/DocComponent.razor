@@ -1,0 +1,63 @@
+@namespace OpBlazorUI.Showcase.Components.Doc
+
+<div class="doc-component">
+    <ul class="doc-tabmenu">
+        @foreach (var tab in _tabs)
+        {
+            <li class="@(tab.Key == _active ? "doc-tabmenu-active" : null)">
+                <button type="button" @onclick="() => _active = tab.Key">@tab.Value</button>
+            </li>
+        }
+    </ul>
+
+    <div class="doc-tabpanels">
+        <div class="doc-tabpanel">
+            <div class="doc-main">
+                <div class="doc-intro">
+                    <h1>@Title</h1>
+                    <p>@Description</p>
+                </div>
+
+                @switch (_active)
+                {
+                    case "features":
+                        @Features
+                        break;
+                    case "api":
+                        @Api
+                        break;
+                    case "theming":
+                        @Theming
+                        break;
+                    case "passthrough":
+                        @Passthrough
+                        break;
+                    case "issues":
+                        @KnownIssues
+                        break;
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public RenderFragment? Features { get; set; }
+    [Parameter] public RenderFragment? Api { get; set; }
+    [Parameter] public RenderFragment? Theming { get; set; }
+    [Parameter] public RenderFragment? Passthrough { get; set; }
+    [Parameter] public RenderFragment? KnownIssues { get; set; }
+
+    private string _active = "features";
+
+    private static readonly (string Key, string Value)[] _tabs =
+    [
+        ("features", "RECURSOS"),
+        ("api", "API"),
+        ("theming", "TEMAS"),
+        ("passthrough", "PASS THROUGH"),
+        ("issues", "PROBLEMAS CONHECIDOS")
+    ];
+}

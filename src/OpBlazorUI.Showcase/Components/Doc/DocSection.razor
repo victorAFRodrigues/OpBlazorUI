@@ -1,0 +1,33 @@
+@namespace OpBlazorUI.Showcase.Components.Doc
+
+<section class="doc-section">
+    <h2 class="doc-section-label" id="@SectionId">
+        @Label
+        <a href="#@SectionId" aria-label="@Label">#</a>
+    </h2>
+
+    @if (Description != null)
+    {
+        <div class="doc-section-description">@Description</div>
+    }
+
+    @if (ChildContent != null)
+    {
+        <div class="doc-section-demo">@ChildContent</div>
+    }
+
+    @if (Code != null)
+    {
+        @Code
+    }
+</section>
+
+@code {
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public RenderFragment? Description { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? Code { get; set; }
+
+    private string SectionId => Id ?? Label.ToLowerInvariant().Replace(" ", "-");
+}

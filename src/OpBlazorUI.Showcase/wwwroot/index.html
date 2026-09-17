@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Optimus UI (Blazor)</title>
+    <base href="/"/>
+    <link rel="stylesheet" href="css/doc-variables.css"/>
+    <link rel="stylesheet" href="css/doc-layout.css"/>
+    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="OpBlazorUI.Showcase.styles.css"/>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+</head>
+
+<body>
+<div id="app">Carregando...</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    Ocorreu um erro não tratado.
+    <a href="." class="reload">Recarregar</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+<script>
+    window.opCopy = function (btn) {
+        var container = btn.closest('.doc-section-code');
+        var code = container ? container.querySelector('pre') : null;
+        if (!code) return;
+        var text = code.textContent || '';
+        var done = function () {
+            var i = btn.querySelector('i');
+            if (i) { i.className = 'pi pi-check'; }
+            setTimeout(function () { if (i) i.className = 'pi pi-copy'; }, 1500);
+        };
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(done).catch(function () { done(); });
+        } else {
+            done();
+        }
+    };
+</script>
+<script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>

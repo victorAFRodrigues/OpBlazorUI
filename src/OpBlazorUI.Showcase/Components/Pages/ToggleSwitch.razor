@@ -1,0 +1,109 @@
+@page "/toggleswitch"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.InputSwitch
+
+<DocComponent Title="ToggleSwitch"
+              Description="O ToggleSwitch é usado para selecionar um valor booleano.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <OpInputSwitch @bind-Checked="_on"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido / Desabilitado">
+            <ChildContent>
+                <div class="flex gap-4 items-center">
+                    <OpInputSwitch Checked="true" Invalid="true"/>
+                    <OpInputSwitch Checked="true" Disabled="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StateCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Checked", "bool", "false", "Estado ligado/desligado." },
+                              new[] { "CheckedChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
+                              new[] { "Name", "string?", "null", "Name do input." },
+                              new[] { "Id", "string?", "null", "Id do input." },
+                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula." },
+                              new[] { "Required", "bool", "false", "Obrigatório." },
+                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnChange", "EventCallback&lt;bool&gt;", "Disparado ao mudar o estado." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="toggleswitch"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>HandleTemplate</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private bool _on = true;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.InputSwitch
+
+        <OpInputSwitch @bind-Checked="_on" />
+        """;
+
+    private const string BasicCode = """
+        <OpInputSwitch @bind-Checked="_on" />
+
+        @code {
+            private bool _on = true;
+        }
+        """;
+
+    private const string StateCode = """
+        <OpInputSwitch Checked="true" Invalid="true" />
+        <OpInputSwitch Checked="true" Disabled="true" />
+        """;
+}

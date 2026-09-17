@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_PATH: src/OpBlazorUI.Showcase.Client/OpBlazorUI.Showcase.Client.csproj
+  PROJECT_PATH: src/OpBlazorUI.Showcase/OpBlazorUI.Showcase.csproj
   REPO_NAME: OpBlazorUI
 
 permissions:

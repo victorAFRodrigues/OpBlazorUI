@@ -106,16 +106,15 @@ ToggleSwitch, Tooltip.
 
 ```
 src/
-  Components/OpBlazorUI.Base/                  biblioteca de componentes (RCL)
-  OpBlazorUI.Showcase/OpBlazorUI.Showcase/     aplicação de documentação/showcase
-  OpBlazorUI.Showcase/OpBlazorUI.Showcase.Client/  projeto WASM do showcase
+  Components/OpBlazorUI.Base/     biblioteca de componentes (RCL)
+  OpBlazorUI.Showcase/             showcase/documentação, Blazor WebAssembly standalone (publicado no GitHub Pages)
 ```
 
 ## Desenvolvimento
 
 ```bash
 dotnet build OpBlazorUI.slnx
-dotnet run --project src/OpBlazorUI.Showcase/OpBlazorUI.Showcase
+dotnet run --project src/OpBlazorUI.Showcase
 ```
 
 ## Publicação
