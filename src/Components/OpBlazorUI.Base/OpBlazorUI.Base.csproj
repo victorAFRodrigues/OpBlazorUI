@@ -14,9 +14,11 @@
         <Description>Optimus UI components for Blazor.</Description>
         <PackageTags>blazor;optimus-ui;components;ui;openng</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://optimus.openng.org</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/openng-org/optimus-ui</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/victorAFRodrigues/OpBlazorUI</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/victorAFRodrigues/OpBlazorUI</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
 
@@ -26,6 +28,10 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.9"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="../../../README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>

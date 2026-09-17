@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore OpBlazorUI.slnx
+
+      - name: Build
+        run: dotnet build OpBlazorUI.slnx --configuration Release --no-restore
+
+      - name: Pack da biblioteca
+        run: |
+          dotnet pack src/Components/OpBlazorUI.Base/OpBlazorUI.Base.csproj \
+            --configuration Release \
+            --no-restore \
+            --output ./artifacts

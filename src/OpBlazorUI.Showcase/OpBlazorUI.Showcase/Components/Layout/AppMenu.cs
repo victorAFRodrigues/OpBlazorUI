@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace OpBlazorUI.Showcase.Components.Layout;
 
 public sealed class AppMenuItem

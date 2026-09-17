@@ -1,3 +1,5 @@
+using System;
+
 namespace OpBlazorUI.Showcase.Components.Layout;
 
 public static class DarkModeState
