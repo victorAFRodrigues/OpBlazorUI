@@ -83,11 +83,11 @@ public static class AppMenu
                         GroupItem("FloatLabel", "/floatlabel"), GroupItem("IconField", "/iconfield"),
                         GroupItem("IftaLabel"), GroupItem("InputGroup"), GroupItem("InputMask"),
                         GroupItem("InputNumber"), GroupItem("InputOtp"),
-                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter"), GroupItem("Knob"),
+                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter"),
                         GroupItem("Listbox"), GroupItem("MultiSelect", "/multiselect"),
                         GroupItem("Password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating"),
                         GroupItem("Select", "/select"), GroupItem("SelectButton", "/selectbutton"),
-                        GroupItem("Slider"), GroupItem("Textarea"),
+                        GroupItem("Textarea"),
                         GroupItem("ToggleButton", "/togglebutton"), GroupItem("ToggleSwitch", "/toggleswitch"),
                         GroupItem("TreeSelect")
                     ]
@@ -102,7 +102,7 @@ public static class AppMenu
                     Label = "Data",
                     Items =
                     [
-                        GroupItem("DataView"), GroupItem("OrderList"), GroupItem("OrgChart"),
+                        GroupItem("DataView"), GroupItem("OrderList"),
                         GroupItem("Paginator"), GroupItem("PickList"), GroupItem("Table", "/table"),
                         GroupItem("Timeline"), GroupItem("Tree"), GroupItem("TreeTable"), GroupItem("VirtualScroller")
                     ]
@@ -137,7 +137,7 @@ public static class AppMenu
                     Label = "Menu",
                     Items =
                     [
-                        GroupItem("Breadcrumb"), GroupItem("ContextMenu"), GroupItem("Dock"),
+                        GroupItem("Breadcrumb"), GroupItem("ContextMenu"),
                         GroupItem("Menu", "/menu"), GroupItem("Menubar"), GroupItem("MegaMenu"),
                         GroupItem("PanelMenu"), GroupItem("TieredMenu")
                     ]
@@ -166,15 +166,15 @@ public static class AppMenu
                         GroupItem("Badge"), GroupItem("Bind"), GroupItem("BlockUI"), GroupItem("Chip"),
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
                         GroupItem("FocusTrap"), GroupItem("Inplace"), GroupItem("MeterGroup"),
-                        GroupItem("ProgressBar"), GroupItem("ProgressSpinner"), GroupItem("Ripple"),
+                        GroupItem("ProgressBar"), GroupItem("ProgressSpinner"),
                         GroupItem("ScrollTop"), GroupItem("Skeleton"), GroupItem("StyleClass"),
-                        GroupItem("Tag"), GroupItem("Terminal")
+                        GroupItem("Tag")
                     ]
                 },
                 new AppMenuGroup
                 {
                     Label = "Utilities",
-                    Items = [GroupItem("FilterService"), GroupItem("Overlay API")]
+                    Items = [GroupItem("FilterService")]
                 }
             ]
         },
