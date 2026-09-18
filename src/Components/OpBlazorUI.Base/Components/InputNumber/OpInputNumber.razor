@@ -1,0 +1,67 @@
+@namespace OpBlazorUI.Base.Components.InputNumber
+
+<span class="@RootClass" @attributes="AdditionalAttributes">
+    @if (ShowButtons && ButtonLayout == "horizontal")
+    {
+        @DecrementButton
+    }
+
+    @if (ShowButtons && ButtonLayout == "vertical")
+    {
+        @IncrementButton
+    }
+
+    @if (!string.IsNullOrEmpty(Prefix))
+    {
+        <span class="p-inputnumber-prefix">@Prefix</span>
+    }
+
+    <input type="text"
+           class="@InputClassValue"
+           value="@FormatValue(Value)"
+           id="@Id"
+           placeholder="@Placeholder"
+           aria-label="@AriaLabel"
+           aria-invalid="@(Invalid ? "true" : null)"
+           disabled="@Disabled"
+           readonly="@Readonly"
+           autocomplete="@Autocomplete"
+           @oninput="HandleInput"
+           @onchange="HandleChange"
+           @onfocus="OnFocus"
+           @onblur="HandleBlur"
+           @onkeydown="HandleKeyDown"/>
+
+    @if (!string.IsNullOrEmpty(Suffix))
+    {
+        <span class="p-inputnumber-suffix">@Suffix</span>
+    }
+
+    @if (ShowClear && Value is not null)
+    {
+        <i class="p-inputnumber-clear-icon pi pi-times-circle" role="button" aria-label="Limpar" @onclick="Clear"></i>
+    }
+
+    @if (ShowButtons && ButtonLayout == "horizontal")
+    {
+        @IncrementButton
+    }
+
+    @if (ShowButtons && ButtonLayout == "vertical")
+    {
+        @DecrementButton
+    }
+
+    @if (ShowButtons && ButtonLayout == "stacked")
+    {
+        <span class="p-inputnumber-button-group">
+            @IncrementButton
+            @DecrementButton
+        </span>
+    }
+</span>
+
+@code {
+    private RenderFragment IncrementButton => @<button type="button" class="p-inputnumber-button p-inputnumber-increment-button" @onclick="Increment" disabled="@Disabled" tabindex="-1"><i class="@IncrementButtonIcon"></i></button>;
+    private RenderFragment DecrementButton => @<button type="button" class="p-inputnumber-button p-inputnumber-decrement-button" @onclick="Decrement" disabled="@Disabled" tabindex="-1"><i class="@DecrementButtonIcon"></i></button>;
+}
