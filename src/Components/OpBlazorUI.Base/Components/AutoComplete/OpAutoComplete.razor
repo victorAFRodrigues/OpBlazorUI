@@ -1,0 +1,269 @@
+@namespace OpBlazorUI.Base.Components.AutoComplete
+@using OpBlazorUI.Base.Components.Icon
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@typeparam TValue
+
+<span class="@RootClass" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
+      @onkeydown="OnRootKeydown" @attributes="AdditionalAttributes">
+    @if (Multiple)
+    {
+        <ul class="@MultipleClass" @onclick="FocusInput">
+            @foreach (var item in SelectedOptions)
+            {
+                <li class="p-autocomplete-chip-item">
+                    <div class="p-chip p-component p-autocomplete-chip">
+                        @if (SelectedItemTemplate != null)
+                        {
+                            @SelectedItemTemplate(item)
+                        }
+                        else
+                        {
+                            <span class="p-chip-label">@GetOptionLabel((object)item!)</span>
+                        }
+                        @if (!Disabled && !Readonly)
+                        {
+                            <span @onclick:stopPropagation="true">
+                                <OpIcon Name="times-circle"
+                                        CssClass="p-chip-remove-icon p-autocomplete-chip-icon"
+                                        OnClick="() => RemoveChipAsync(item)"/>
+                            </span>
+                        }
+                    </div>
+                </li>
+            }
+
+            <li class="p-autocomplete-input-chip">
+                <input type="text"
+                       class="p-autocomplete-input"
+                       id="@_id"
+                       role="combobox"
+                       aria-autocomplete="list"
+                       aria-haspopup="listbox"
+                       aria-expanded="@(_overlayVisible ? "true" : "false")"
+                       aria-controls="@(_overlayVisible ? $"{_id}_list" : null)"
+                       aria-activedescendant="@(_focusedOptionIndex >= 0 ? $"{_id}_{_focusedOptionIndex}" : null)"
+                       aria-labelledby="@AriaLabelledBy"
+                       aria-label="@AriaLabel"
+                       placeholder="@(SelectedOptions.Count == 0 ? Placeholder : null)"
+                       disabled="@Disabled"
+                       tabindex="@(Disabled ? -1 : TabIndex)"
+                       value="@_searchValue"
+                       @ref="_inputRef"
+                       @oninput="OnMultipleInput"
+                       @onfocus="OnInputFocus"
+                       @onblur="OnInputBlur"
+                       @onkeydown="OnInputKeydown"/>
+            </li>
+        </ul>
+    }
+    else
+    {
+        <input type="text"
+               class="@InputClass"
+               id="@_id"
+               role="combobox"
+               aria-autocomplete="list"
+               aria-haspopup="listbox"
+               aria-expanded="@(_overlayVisible ? "true" : "false")"
+               aria-controls="@(_overlayVisible ? $"{_id}_list" : null)"
+               aria-activedescendant="@(_focusedOptionIndex >= 0 ? $"{_id}_{_focusedOptionIndex}" : null)"
+               aria-labelledby="@AriaLabelledBy"
+               aria-label="@AriaLabel"
+               placeholder="@Placeholder"
+               disabled="@Disabled"
+               readonly="@Readonly"
+               tabindex="@(Disabled ? -1 : TabIndex)"
+               value="@_inputValue"
+               @ref="_inputRef"
+               @oninput="OnSingleInput"
+               @onfocus="OnInputFocus"
+               @onblur="OnInputBlur"
+               @onkeydown="OnInputKeydown"/>
+    }
+
+    @if (ShowClear && !Disabled && HasSelection)
+    {
+        @if (ClearIconTemplate != null)
+        {
+            <span class="p-autocomplete-clear-icon" aria-hidden="true" @onclick="Clear">@ClearIconTemplate</span>
+        }
+        else
+        {
+            <OpIcon Name="times" CssClass="p-autocomplete-clear-icon" OnClick="Clear"/>
+        }
+    }
+
+    @if (Loading)
+    {
+        @if (LoadingIconTemplate != null)
+        {
+            <span class="p-autocomplete-loader" aria-hidden="true">@LoadingIconTemplate</span>
+        }
+        else
+        {
+            <span class="p-autocomplete-loader pi pi-spinner pi-spin" aria-hidden="true"></span>
+        }
+    }
+
+    @if (Dropdown)
+    {
+        <div class="p-autocomplete-dropdown" role="button" aria-label="dropdown trigger" aria-haspopup="listbox"
+             aria-expanded="@(_overlayVisible ? "true" : "false")" @onclick="OnDropdownClickHandler">
+            @if (DropdownIconTemplate != null)
+            {
+                @DropdownIconTemplate
+            }
+            else
+            {
+                <OpIcon Name="chevron-down" CssClass="p-autocomplete-dropdown-icon"/>
+            }
+        </div>
+    }
+
+    @if (_panelRendered)
+    {
+        <div class="@PanelClass"
+             @onmousedown="OnPanelMouseDown"
+             @onanimationend="OnPanelAnimationEnd">
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+
+            @HeaderTemplate
+
+            <div class="p-autocomplete-list-container" style="max-height:@(ScrollHeight ?? "auto")">
+                @if (VirtualScroll && ItemsProvider != null)
+                {
+                    <ul class="p-autocomplete-list" role="listbox" id="@($"{_id}_list")">
+                        <Virtualize ItemsProvider="ItemsProvider"
+                                    ItemSize="VirtualScrollItemSize"
+                                    OverscanCount="VirtualScrollOverscan"
+                                    SpacerElement="li"
+                                    Context="option">
+                            @if (ItemTemplate != null && option is TValue optTv)
+                            {
+                                <li class="@OptionClass(option)" role="option" aria-label="@GetOptionLabel(option)"
+                                    aria-selected="@(IsSelected(option) ? "true" : "false")"
+                                    @onclick="() => OnOptionClick(option)">
+                                    @ItemTemplate(optTv)
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="@OptionClass(option)" role="option" aria-label="@GetOptionLabel(option)"
+                                    aria-selected="@(IsSelected(option) ? "true" : "false")"
+                                    @onclick="() => OnOptionClick(option)">
+                                    <span class="p-autocomplete-option-label">@GetOptionLabel(option)</span>
+                                </li>
+                            }
+                        </Virtualize>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="p-autocomplete-list" role="listbox" id="@($"{_id}_list")">
+                        @{ _flatIndex = 0; }
+                        @if (Group)
+                        {
+                            @foreach (var group in AllSuggestions)
+                            {
+                                @if (IsOptionGroup(group))
+                                {
+                                    <li class="p-autocomplete-option-group" role="option">
+                                        @if (GroupTemplate != null)
+                                        {
+                                            @GroupTemplate(group)
+                                        }
+                                        else
+                                        {
+                                            <span class="p-autocomplete-option-group-label">@GetOptionGroupLabelValue(group)</span>
+                                        }
+                                    </li>
+                                    @foreach (var child in GetOptionGroupChildren(group))
+                                    {
+                                        var index = _flatIndex++;
+                                        <li class="@OptionClass(child) @(_focusedOptionIndex == index ? "p-focus" : null)"
+                                            id="@($"{_id}_{index}")"
+                                            role="option"
+                                            aria-label="@GetOptionLabel(child)"
+                                            aria-selected="@(IsSelected(child) ? "true" : "false")"
+                                            data-p-focused="@(_focusedOptionIndex == index ? "true" : null)"
+                                            @onclick="() => OnOptionClick(child)"
+                                            @onmouseenter="() => OnOptionMouseEnter(index)">
+                                            @if (ItemTemplate != null && child is TValue childTv)
+                                            {
+                                                @ItemTemplate(childTv)
+                                            }
+                                            else
+                                            {
+                                                <span class="p-autocomplete-option-label">@GetOptionLabel(child)</span>
+                                            }
+                                        </li>
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            @foreach (var option in AllSuggestions)
+                            {
+                                var index = _flatIndex++;
+                                <li class="@OptionClass(option) @(_focusedOptionIndex == index ? "p-focus" : null)"
+                                    id="@($"{_id}_{index}")"
+                                    role="option"
+                                    aria-label="@GetOptionLabel(option)"
+                                    aria-selected="@(IsSelected(option) ? "true" : "false")"
+                                    data-p-focused="@(_focusedOptionIndex == index ? "true" : null)"
+                                    @onclick="() => OnOptionClick(option)"
+                                    @onmouseenter="() => OnOptionMouseEnter(index)">
+                                    @if (ItemTemplate != null && option is TValue optTv)
+                                    {
+                                        @ItemTemplate(optTv)
+                                    }
+                                    else
+                                    {
+                                        <span class="p-autocomplete-option-label">@GetOptionLabel(option)</span>
+                                    }
+                                </li>
+                            }
+                        }
+
+                        @if (ShowEmptyMessage)
+                        {
+                            <li class="p-autocomplete-empty-message" role="option">
+                                @if (EmptyTemplate != null)
+                                {
+                                    @EmptyTemplate
+                                }
+                                else
+                                {
+                                    @EmptyMessage
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+
+            @FooterTemplate
+
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+        </div>
+    }
+</span>
+
+@code {
+    private int _flatIndex;
+
+    private async Task FocusInput()
+    {
+        if (!Disabled && !Readonly)
+        {
+            await _inputRef.FocusAsync();
+        }
+    }
+
+    private void OnOptionMouseEnter(int index)
+    {
+        _focusedOptionIndex = index;
+        StateHasChanged();
+    }
+}
