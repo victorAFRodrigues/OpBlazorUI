@@ -77,7 +77,7 @@ public static class AppMenu
                     Label = "Form",
                     Items =
                     [
-                        GroupItem("AutoComplete"), GroupItem("CascadeSelect"),
+                        GroupItem("AutoComplete"), GroupItem("CascadeSelect", "/cascadeselect"),
                         GroupItem("Checkbox", "/checkbox"), GroupItem("ColorPicker"),
                         GroupItem("DatePicker", "/datepicker"), GroupItem("Editor"),
                         GroupItem("FloatLabel", "/floatlabel"), GroupItem("IconField", "/iconfield"),

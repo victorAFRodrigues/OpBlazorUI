@@ -1,0 +1,90 @@
+@namespace OpBlazorUI.Base.Components.CascadeSelect
+@using OpBlazorUI.Base.Components.Icon
+@typeparam TValue
+
+<span class="@RootClass" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
+      @attributes="AdditionalAttributes">
+    <span class="@LabelClass"
+          id="@_id"
+          role="combobox"
+          tabindex="@(Disabled ? -1 : TabIndex)"
+          aria-haspopup="tree"
+          aria-expanded="@(_overlayVisible ? "true" : "false")"
+          aria-controls="@(_overlayVisible ? $"{_id}_tree" : null)"
+          aria-label="@AriaLabel"
+          aria-labelledby="@AriaLabelledBy"
+          aria-disabled="@(Disabled ? "true" : null)"
+          @onfocus="OnLabelFocus"
+          @onblur="OnLabelBlur"
+          @onclick="OnLabelClick"
+          @onkeydown="OnLabelKeydown">
+        @if (SelectedItemTemplate != null && HasSelection && SelectedOption is TValue selTv)
+        {
+            @SelectedItemTemplate(selTv)
+        }
+        else if (HasSelection)
+        {
+            @CurrentLabel
+        }
+        else
+        {
+            @(Placeholder ?? "&nbsp;")
+        }
+    </span>
+
+    @if (ShowClear && !Disabled && HasSelection)
+    {
+        @if (ClearIconTemplate != null)
+        {
+            <span class="p-cascadeselect-clear-icon" @onclick="Clear">@ClearIconTemplate</span>
+        }
+        else
+        {
+            <OpIcon Name="times" CssClass="p-cascadeselect-clear-icon" OnClick="Clear"/>
+        }
+    }
+
+    <div class="p-cascadeselect-dropdown" role="button" aria-label="dropdown trigger" aria-haspopup="tree"
+         aria-expanded="@(_overlayVisible ? "true" : "false")" @onclick="OnDropdownClick">
+        @if (Loading)
+        {
+            @if (LoadingIconTemplate != null)
+            {
+                @LoadingIconTemplate
+            }
+            else
+            {
+                <span class="p-cascadeselect-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+            }
+        }
+        else if (DropdownIconTemplate != null)
+        {
+            @DropdownIconTemplate
+        }
+        else if (!string.IsNullOrEmpty(DropdownIcon))
+        {
+            <span class="@DropdownIcon"></span>
+        }
+        else
+        {
+            <OpIcon Name="chevron-down"/>
+        }
+    </div>
+
+    @if (_panelRendered)
+    {
+        <div class="@PanelClass"
+             @onmousedown="OnPanelMouseDown"
+             @onanimationend="OnPanelAnimationEnd">
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+
+            @HeaderTemplate
+
+            @BuildTree()
+
+            @FooterTemplate
+
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+        </div>
+    }
+</span>

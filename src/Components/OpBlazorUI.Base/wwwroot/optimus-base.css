@@ -63,12 +63,23 @@ body {
 .p-select-overlay,
 .p-multiselect-overlay,
 .p-menu-overlay,
+.p-cascadeselect-overlay,
 .p-datepicker-panel:not(.p-datepicker-panel-inline) {
     position: absolute;
     top: 100%;
     left: 0;
     min-width: 100%;
     z-index: 1000;
+}
+
+/*
+ * CascadeSelect: o tema não posiciona o <li> da opção, então a sublista
+ * aninhada (p-cascadeselect-option-list, position:absolute) resolveria o
+ * containing block no overlay/root. Forçamos position:relative no li para
+ * que cada subnível apareça alinhado à direita da própria opção.
+ */
+.p-cascadeselect-option {
+    position: relative;
 }
 
 .p-tooltip {
