@@ -1,0 +1,210 @@
+@page "/inputotp"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.InputOtp
+@using OpBlazorUI.Base.Components.Button
+
+<DocComponent Title="InputOtp"
+              Description="O InputOtp é usado para inserir senhas de uso único (one-time passwords).">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O InputOtp usa um conjunto de inputs de texto; consulte o InputText para mais informações sobre leitores de tela.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O binding de duas vias é feito com <code>@@bind-Value</code>. O número de caracteres é definido por
+                <code>Length</code> (padrão 4).
+            </Description>
+            <ChildContent>
+                <OpInputOtp @bind-Value="_value"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Somente Inteiros">
+            <Description>
+                Com <code>IntegerOnly</code>, apenas inteiros são aceitos.
+            </Description>
+            <ChildContent>
+                <OpInputOtp @bind-Value="_integer" IntegerOnly="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@IntegerCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Máscara">
+            <Description>
+                Com <code>Mask</code>, os valores ficam ocultos nos inputs.
+            </Description>
+            <ChildContent>
+                <OpInputOtp @bind-Value="_mask" Mask="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@MaskCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos">
+            <Description>
+                O InputOtp oferece os tamanhos <code>small</code> e <code>large</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpInputOtp @bind-Value="_s1" Size="small"/>
+                    <OpInputOtp @bind-Value="_s2"/>
+                    <OpInputOtp @bind-Value="_s3" Size="large"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template">
+            <Description>
+                Defina um template com seus próprios elementos, vinculando aos eventos e atributos fornecidos.
+            </Description>
+            <ChildContent>
+                <OpInputOtp @bind-Value="_custom">
+                    <Template Context="ctx">
+                        <input type="text" maxlength="1" value="@(ctx.Token?.ToString())"
+                               @oninput="ctx.OnInput" @onkeydown="ctx.OnKeyDown"
+                               class="p-inputtext p-component" style="width:2.5rem;text-align:center;margin-inline-end:0.25rem;"/>
+                    </Template>
+                </OpInputOtp>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Exemplo">
+            <Description>
+                Uma implementação de exemplo com elementos adicionais.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center">
+                    <div class="font-bold text-xl mb-2">Autentique sua conta</div>
+                    <p class="text-muted-color block mb-8">Digite o código enviado para o seu telefone.</p>
+                    <OpInputOtp @bind-Value="_sample" Length="6"/>
+                    <div class="flex justify-between mt-8 self-stretch">
+                        <OpButton Label="Reenviar código" Link="true" StyleClass="p-0"/>
+                        <OpButton Label="Enviar código"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SampleCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "string?", "null", "Valor concatenado dos tokens." },
+                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "-", "Callback de binding." },
+                              new[] { "Length", "int", "4", "Número de caracteres." },
+                              new[] { "Mask", "bool", "false", "Oculta os valores." },
+                              new[] { "IntegerOnly", "bool", "false", "Aceita apenas inteiros." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido." },
+                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Readonly", "bool", "false", "Somente leitura." },
+                              new[] { "Variant", "string", "outlined", "<code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "<code>small</code> ou <code>large</code>." },
+                              new[] { "Template", "RenderFragment&lt;OtpTokenContext&gt;?", "null", "Template de input customizado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnChange", "EventCallback&lt;string?&gt;", "Disparado ao mudar o valor." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="inputotp"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>InputClass</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private string? _value;
+    private string? _integer;
+    private string? _mask;
+    private string? _s1;
+    private string? _s2;
+    private string? _s3;
+    private string? _custom;
+    private string? _sample;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.InputOtp
+
+        <OpInputOtp @bind-Value="_value" />
+        """;
+
+    private const string BasicCode = """
+        <OpInputOtp @bind-Value="_value" />
+
+        @code {
+            private string? _value;
+        }
+        """;
+
+    private const string IntegerCode = """
+        <OpInputOtp @bind-Value="_value" IntegerOnly="true" />
+        """;
+
+    private const string MaskCode = """
+        <OpInputOtp @bind-Value="_value" Mask="true" />
+        """;
+
+    private const string SizeCode = """
+        <OpInputOtp @bind-Value="_value" Size="small" />
+        <OpInputOtp @bind-Value="_value" />
+        <OpInputOtp @bind-Value="_value" Size="large" />
+        """;
+
+    private const string TemplateCode = """
+        <OpInputOtp @bind-Value="_value">
+            <Template Context="ctx">
+                <input type="text" maxlength="1" value="@(ctx.Token?.ToString())"
+                       @oninput="ctx.OnInput" @onkeydown="ctx.OnKeyDown"
+                       class="p-inputtext p-component" />
+            </Template>
+        </OpInputOtp>
+        """;
+
+    private const string SampleCode = """
+        <OpInputOtp @bind-Value="_value" Length="6" />
+        <OpButton Label="Reenviar código" Link="true" />
+        <OpButton Label="Enviar código" />
+        """;
+}
