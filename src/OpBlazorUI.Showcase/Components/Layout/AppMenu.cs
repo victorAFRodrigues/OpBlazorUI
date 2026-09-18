@@ -79,7 +79,7 @@ public static class AppMenu
                     [
                         GroupItem("AutoComplete"), GroupItem("CascadeSelect", "/cascadeselect"),
                         GroupItem("Checkbox", "/checkbox"), GroupItem("ColorPicker"),
-                        GroupItem("DatePicker", "/datepicker"), GroupItem("Editor"),
+                        GroupItem("DatePicker", "/datepicker"), GroupItem("Editor", "/editor"),
                         GroupItem("FloatLabel", "/floatlabel"), GroupItem("IconField", "/iconfield"),
                         GroupItem("IftaLabel"), GroupItem("InputGroup"), GroupItem("InputMask"),
                         GroupItem("InputNumber"), GroupItem("InputOtp"),
