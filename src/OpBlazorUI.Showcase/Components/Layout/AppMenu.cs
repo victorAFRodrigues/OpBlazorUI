@@ -95,7 +95,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Button",
-                    Items = [GroupItem("Button", "/button"), GroupItem("SpeedDial"), GroupItem("SplitButton")]
+                    Items = [GroupItem("Button", "/button"), GroupItem("SpeedDial", "/speeddial"), GroupItem("SplitButton", "/splitbutton")]
                 },
                 new AppMenuGroup
                 {
