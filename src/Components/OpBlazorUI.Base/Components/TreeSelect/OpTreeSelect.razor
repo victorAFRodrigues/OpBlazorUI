@@ -1,0 +1,179 @@
+@namespace OpBlazorUI.Base.Components.TreeSelect
+@using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.Icon
+@using OpBlazorUI.Base.Components.IconField
+@using OpBlazorUI.Base.Components.InputIcon
+
+<div class="@RootClass" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
+     @attributes="AdditionalAttributes">
+    <div class="p-treeselect-label-container"
+         role="combobox"
+         tabindex="@(Disabled ? -1 : TabIndex)"
+         aria-haspopup="tree"
+         aria-expanded="@(_overlayVisible ? "true" : "false")"
+         aria-controls="@(_overlayVisible ? $"{_id}_tree" : null)"
+         aria-label="@AriaLabel"
+         aria-disabled="@(Disabled ? "true" : null)"
+         @onfocus="OnLabelFocus"
+         @onblur="OnLabelBlur"
+         @onclick="OnLabelClick">
+        <div class="@LabelClass">
+            @if (Display == "chip" && HasSelection)
+            {
+                @foreach (var n in SelectedNodes)
+                {
+                    <span class="p-chip">
+                        <span>@n.Label</span>
+                        <i class="pi pi-times"
+                           aria-hidden="true"
+                           @onclick="() => RemoveNodeAsync(n)"
+                           @onclick:stopPropagation="true"></i>
+                    </span>
+                }
+            }
+            else if (HasSelection)
+            {
+                @CommaLabel
+            }
+            else
+            {
+                @(Placeholder ?? "&nbsp;")
+            }
+        </div>
+    </div>
+
+    @if (ShowClear && !Disabled && HasSelection)
+    {
+        @if (ClearIconTemplate != null)
+        {
+            <span class="p-treeselect-clear-icon" @onclick="Clear">@ClearIconTemplate</span>
+        }
+        else
+        {
+            <OpIcon Name="times" CssClass="p-treeselect-clear-icon" OnClick="Clear"/>
+        }
+    }
+
+    <div class="p-treeselect-dropdown" role="button" aria-haspopup="tree"
+         aria-expanded="@(_overlayVisible ? "true" : "false")" @onclick="OnDropdownClick">
+        @if (Loading)
+        {
+            <span class="pi pi-spinner pi-spin" aria-hidden="true"></span>
+        }
+        else if (DropdownIconTemplate != null)
+        {
+            @DropdownIconTemplate
+        }
+        else
+        {
+            <OpIcon Name="chevron-down" CssClass="p-treeselect-dropdown-icon"/>
+        }
+    </div>
+
+    @if (_panelRendered)
+    {
+        <div class="@PanelClass"
+             style="top:100%; left:0;"
+             @onmousedown="OnPanelMouseDown"
+             @onanimationend="OnPanelAnimationEnd">
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+
+            @HeaderTemplate
+
+            @if (Filter)
+            {
+                <div class="p-treeselect-header" @onclick:stopPropagation="true">
+                    <OpIconField IconPosition="left">
+                        <input type="text"
+                               class="p-inputtext p-treeselect-filter"
+                               role="searchbox"
+                               autocomplete="off"
+                               value="@_filterValue"
+                               placeholder="Filter"
+                               aria-label="Filter"
+                               @oninput="OnFilterInput"/>
+                        <OpInputIcon><OpIcon Name="search"/></OpInputIcon>
+                    </OpIconField>
+                </div>
+            }
+
+            <div class="p-treeselect-tree-container" style="max-height:@(ScrollHeight ?? "400px")">
+                <div class="p-tree" id="@($"{_id}_tree")">
+                    @if (VisibleRoots.Count == 0)
+                    {
+                        @if (EmptyTemplate != null)
+                        {
+                            <div class="p-treeselect-empty-message">@EmptyTemplate</div>
+                        }
+                        else
+                        {
+                            <div class="p-treeselect-empty-message">@EmptyMessage</div>
+                        }
+                    }
+                    else
+                    {
+                        <ul class="p-tree-root-children" role="tree">
+                            @foreach (var node in VisibleRoots)
+                            {
+                                @RenderNode(node)
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+
+            @FooterTemplate
+
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+        </div>
+    }
+</div>
+
+@code {
+    private RenderFragment RenderNode(TreeNode node) => __builder =>
+    {
+        var selected = IsSelected(node);
+        var partial = IsPartial(node);
+
+        <li class="p-tree-node @(node.Leaf ? "p-tree-node-leaf" : "")" role="treeitem"
+            aria-label="@node.Label"
+            aria-selected="@(selected ? "true" : "false")"
+            aria-expanded="@(node.HasChildren ? (node.Expanded ? "true" : "false") : null)">
+            <div class="p-tree-node-content p-tree-node-selectable @(selected ? "p-tree-node-selected" : "")"
+                 @onclick="() => OnNodeClick(node)">
+                @if (IsCheckbox)
+                {
+                    <OpCheckbox Checked="@selected" Indeterminate="@partial" Readonly="true"/>
+                }
+
+                <button type="button" class="p-tree-node-toggle-button" @onclick="() => ToggleExpand(node)"
+                        @onclick:stopPropagation="true">
+                    @if (ItemTogglerIconTemplate != null)
+                    {
+                        @ItemTogglerIconTemplate(node)
+                    }
+                    else if (node.Loading)
+                    {
+                        <i class="pi pi-spinner pi-spin p-tree-node-icon"></i>
+                    }
+                    else
+                    {
+                        <i class="p-tree-node-icon pi @(node.Expanded ? "pi-chevron-down" : "pi-chevron-right")"></i>
+                    }
+                </button>
+
+                <span class="p-tree-node-label">@node.Label</span>
+            </div>
+
+            @if (node.Expanded && node.HasChildren)
+            {
+                <ul class="p-tree-node-children" role="group">
+                    @foreach (var child in node.Children!)
+                    {
+                        @RenderNode(child)
+                    }
+                </ul>
+            }
+        </li>
+    };
+}
