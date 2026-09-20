@@ -84,12 +84,12 @@ public static class AppMenu
                         GroupItem("IftaLabel", "/iftalabel"), GroupItem("InputGroup", "/inputgroup"), GroupItem("InputMask", "/inputmask"),
                         GroupItem("InputNumber", "/inputnumber"), GroupItem("InputOtp", "/inputotp"),
                         GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"),
-                        GroupItem("Listbox"), GroupItem("MultiSelect", "/multiselect"),
-                        GroupItem("Password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating"),
+                        GroupItem("Listbox", "/listbox"), GroupItem("MultiSelect", "/multiselect"),
+                        GroupItem("Password", "/password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating", "/rating"),
                         GroupItem("Select", "/select"), GroupItem("SelectButton", "/selectbutton"),
                         GroupItem("Textarea"),
                         GroupItem("ToggleButton", "/togglebutton"), GroupItem("ToggleSwitch", "/toggleswitch"),
-                        GroupItem("TreeSelect")
+                        GroupItem("TreeSelect", "/treeselect")
                     ]
                 },
                 new AppMenuGroup
