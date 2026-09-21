@@ -36,6 +36,8 @@ public partial class OpTreeSelect : ComponentBase
     [Parameter] public string? Size { get; set; }
     [Parameter] public bool Fluid { get; set; }
     [Parameter] public string? ScrollHeight { get; set; }
+    [Parameter] public bool VirtualScroll { get; set; }
+    [Parameter] public int VirtualScrollItemSize { get; set; } = 38;
     [Parameter] public string? EmptyMessage { get; set; } = "No results found";
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string LoadingMode { get; set; } = "mask";
@@ -227,6 +229,32 @@ public partial class OpTreeSelect : ComponentBase
             }
 
             return AllOptions.ToList();
+        }
+    }
+
+    private List<OpTreeFlatNode> VisibleFlatNodes
+    {
+        get
+        {
+            var list = new List<OpTreeFlatNode>();
+            void Walk(TreeNode node, int depth)
+            {
+                list.Add(new OpTreeFlatNode(node, depth));
+                if (node.Expanded && node.Children is not null)
+                {
+                    foreach (var child in node.Children)
+                    {
+                        Walk(child, depth + 1);
+                    }
+                }
+            }
+
+            foreach (var root in VisibleRoots)
+            {
+                Walk(root, 0);
+            }
+
+            return list;
         }
     }
 
