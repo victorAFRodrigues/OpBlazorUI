@@ -162,13 +162,13 @@ public static class AppMenu
                     Label = "Misc",
                     Items =
                     [
-                        GroupItem("AnimateOnScroll"), GroupItem("AutoFocus"), GroupItem("Avatar"),
-                        GroupItem("Badge"), GroupItem("Bind"), GroupItem("BlockUI"), GroupItem("Chip"),
+                        GroupItem("AnimateOnScroll"), GroupItem("AutoFocus"), GroupItem("Avatar", "/avatar"),
+                        GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI"), GroupItem("Chip", "/chip"),
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
                         GroupItem("FocusTrap"), GroupItem("Inplace"), GroupItem("MeterGroup"),
-                        GroupItem("ProgressBar"), GroupItem("ProgressSpinner"),
-                        GroupItem("ScrollTop"), GroupItem("Skeleton"), GroupItem("StyleClass"),
-                        GroupItem("Tag")
+                        GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
+                        GroupItem("ScrollTop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
+                        GroupItem("Tag", "/tag")
                     ]
                 },
                 new AppMenuGroup

@@ -1,0 +1,87 @@
+@page "/progressspinner"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.ProgressSpinner
+
+<DocComponent Title="ProgressSpinner"
+              Description="O ProgressSpinner é um indicador de status de processo.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpProgressSpinner AriaLabel="loading"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Customizado">
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpProgressSpinner StrokeWidth="8" Fill="transparent" AnimationDuration=".5s" Style="width:50px;height:50px"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "StrokeWidth", "string", "2", "Largura do traço do círculo." },
+                              new[] { "Fill", "string", "none", "Cor de fundo do círculo." },
+                              new[] { "AnimationDuration", "string", "2s", "Duração da animação de rotação." },
+                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="progressspinner"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.ProgressSpinner
+
+        <OpProgressSpinner />
+        """;
+
+    private const string BasicCode = """
+        <OpProgressSpinner AriaLabel="loading" />
+        """;
+
+    private const string CustomCode = """
+        <OpProgressSpinner StrokeWidth="8" Fill="transparent" AnimationDuration=".5s" Style="width:50px;height:50px" />
+        """;
+}
