@@ -25,6 +25,8 @@ public partial class OpDataTable<TItem> : ComponentBase
     [Parameter] public int Rows { get; set; } = 5;
     [Parameter] public string? EmptyMessage { get; set; } = "No results found";
     [Parameter] public bool Loading { get; set; }
+    [Parameter] public string LoadingMode { get; set; } = "mask";
+    [Parameter] public int SkeletonRows { get; set; }
     [Parameter] public string? StyleClass { get; set; }
 
     [Parameter] public RenderFragment? LoadingIconTemplate { get; set; }
@@ -37,6 +39,10 @@ public partial class OpDataTable<TItem> : ComponentBase
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     private IReadOnlyList<TItem> SourceItems => Items ?? Array.Empty<TItem>();
+
+    private bool ShowSkeleton => Loading && string.Equals(LoadingMode, "skeleton", StringComparison.OrdinalIgnoreCase);
+
+    private int SkeletonRowCount => SkeletonRows > 0 ? SkeletonRows : Rows;
 
     private List<TItem> SortedItems
     {
