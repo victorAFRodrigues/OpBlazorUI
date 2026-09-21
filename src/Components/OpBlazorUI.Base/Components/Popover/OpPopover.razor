@@ -1,0 +1,15 @@
+@namespace OpBlazorUI.Base.Components.Popover
+
+@if (_visible)
+{
+    <div class="@RootClass"
+         @ref="_root"
+         style="@RootStyle"
+         role="dialog"
+         aria-modal="true"
+         tabindex="@(FocusOnShow ? 0 : -1)"
+         @onkeydown="OnKeydown"
+         @attributes="AdditionalAttributes">
+        <div class="@ContentClass" style="@ContentStyle">@ChildContent</div>
+    </div>
+}
