@@ -25,6 +25,10 @@ public partial class OpButton : ComponentBase
     [Parameter] public int TabIndex { get; set; }
     [Parameter] public string? StyleClass { get; set; }
     [Parameter] public string? LoadingIcon { get; set; }
+    [Parameter] public string? Badge { get; set; }
+    [Parameter] public string? BadgeSeverity { get; set; }
+    [Parameter] public string? BadgeSize { get; set; }
+    [Parameter] public string? BadgeClass { get; set; }
 
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
@@ -39,6 +43,7 @@ public partial class OpButton : ComponentBase
 
     private bool HasIcon => !string.IsNullOrEmpty(Icon) || IconTemplate != null;
     private bool HasLabel => !string.IsNullOrEmpty(Label);
+    private bool HasBadge => !string.IsNullOrEmpty(Badge);
     private bool IconOnly => HasIcon && !HasLabel && ChildContent == null;
 
     private string RootClass => BuildClass(
