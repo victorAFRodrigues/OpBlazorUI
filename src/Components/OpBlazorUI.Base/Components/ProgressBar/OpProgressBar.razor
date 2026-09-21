@@ -1,0 +1,71 @@
+@namespace OpBlazorUI.Base.Components.ProgressBar
+
+<div class="@RootClass"
+     style="@Style"
+     role="progressbar"
+     aria-valuemin="0"
+     aria-valuemax="100"
+     aria-valuenow="@AriaValueNow"
+     @attributes="AdditionalAttributes">
+    <div class="@ValueClass" style="@ValueStyle">
+        @if (ContentTemplate != null)
+        {
+            @ContentTemplate(Value)
+        }
+        else if (ShowValue)
+        {
+            <div class="p-progressbar-label">@($"{Value}{Unit}")</div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Value { get; set; }
+    [Parameter] public bool ShowValue { get; set; } = true;
+    [Parameter] public string Unit { get; set; } = "%";
+    [Parameter] public string Mode { get; set; } = "determinate";
+    [Parameter] public string? Color { get; set; }
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? ValueStyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public RenderFragment<int>? ContentTemplate { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-progressbar p-component",
+        string.Equals(Mode, "indeterminate", StringComparison.OrdinalIgnoreCase)
+            ? "p-progressbar-indeterminate"
+            : "p-progressbar-determinate",
+        StyleClass);
+
+    private string ValueClass => OpCss.BuildClass(
+        "p-progressbar-value",
+        ValueStyleClass);
+
+    private string? AriaValueNow => string.Equals(Mode, "indeterminate", StringComparison.OrdinalIgnoreCase)
+        ? null
+        : Value.ToString();
+
+    private string ValueStyle
+    {
+        get
+        {
+            var sb = new System.Text.StringBuilder();
+            if (string.Equals(Mode, "indeterminate", StringComparison.OrdinalIgnoreCase))
+            {
+                sb.Append("display: flex;");
+            }
+            else
+            {
+                sb.Append($"width: {Value}%; display: flex;");
+            }
+            if (!string.IsNullOrEmpty(Color))
+            {
+                sb.Append($" background: {Color};");
+            }
+            return sb.ToString();
+        }
+    }
+}
