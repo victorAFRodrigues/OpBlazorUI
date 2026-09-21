@@ -103,7 +103,8 @@ IftaLabel, InputGroup, InputMask, InputNumber, InputOtp, InputText, KeyFilter, L
 Menu, Message, MultiSelect, Password, RadioButton, Rating, Select, SelectButton,
 SpeedDial, SplitButton, ThemeSwitcher, Toast, ToggleButton, ToggleSwitch, Tooltip,
 TreeSelect, Avatar, Badge, Chip, ProgressBar, ProgressSpinner, Skeleton, Tag,
-Dialog, Drawer, FocusTrap, Overlay, Popover.
+Dialog, Drawer, FocusTrap, Overlay, Popover, BlockUI, Card, Divider, Paginator,
+ScrollTop, VirtualScroller.
 
 ## Estrutura do repositório
 

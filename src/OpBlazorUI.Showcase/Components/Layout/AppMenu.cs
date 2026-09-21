@@ -103,8 +103,8 @@ public static class AppMenu
                     Items =
                     [
                         GroupItem("DataView"), GroupItem("OrderList"),
-                        GroupItem("Paginator"), GroupItem("PickList"), GroupItem("Table", "/table"),
-                        GroupItem("Timeline"), GroupItem("Tree"), GroupItem("TreeTable"), GroupItem("VirtualScroller")
+                        GroupItem("Paginator", "/paginator"), GroupItem("PickList"), GroupItem("Table", "/table"),
+                        GroupItem("Timeline"), GroupItem("Tree"), GroupItem("TreeTable"), GroupItem("VirtualScroller", "/virtualscroller")
                     ]
                 },
                 new AppMenuGroup
@@ -112,7 +112,7 @@ public static class AppMenu
                     Label = "Panel",
                     Items =
                     [
-                        GroupItem("Accordion"), GroupItem("Card"), GroupItem("Divider"),
+                        GroupItem("Accordion"), GroupItem("Card", "/card"), GroupItem("Divider", "/divider"),
                         GroupItem("Fieldset"), GroupItem("Panel"), GroupItem("ScrollPanel"),
                         GroupItem("Splitter"), GroupItem("Stepper"), GroupItem("Tabs"), GroupItem("Toolbar")
                     ]
@@ -163,11 +163,11 @@ public static class AppMenu
                     Items =
                     [
                         GroupItem("AnimateOnScroll"), GroupItem("AutoFocus"), GroupItem("Avatar", "/avatar"),
-                        GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI"), GroupItem("Chip", "/chip"),
+                        GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI", "/blockui"), GroupItem("Chip", "/chip"),
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
                         GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace"), GroupItem("MeterGroup"),
                         GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
-                        GroupItem("ScrollTop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
+                        GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
                         GroupItem("Tag", "/tag")
                     ]
                 },

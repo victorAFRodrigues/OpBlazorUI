@@ -1,0 +1,262 @@
+@page "/virtualscroller"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.VirtualScroller
+
+<DocComponent Title="VirtualScroller"
+              Description="O VirtualScroller renderiza apenas os itens visíveis, ideal para grandes volumes de dados.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico (100k itens)">
+            <ChildContent>
+                <OpVirtualScroller TItem="int"
+                                   Items="_items100k"
+                                   ItemSize="30"
+                                   ScrollHeight="400px"
+                                   StyleClass="border border-surface rounded">
+                    <ItemTemplate Context="ctx">
+                        <div class="flex align-items-center px-3" style="height:30px">
+                            Item @ctx.Item
+                        </div>
+                    </ItemTemplate>
+                </OpVirtualScroller>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Horizontal">
+            <ChildContent>
+                <OpVirtualScroller TItem="int"
+                                   Items="_items1000"
+                                   ItemSize="100"
+                                   Orientation="horizontal"
+                                   ScrollWidth="400px"
+                                   ScrollHeight="80px"
+                                   StyleClass="border border-surface rounded">
+                    <ItemTemplate Context="ctx">
+                        <div class="flex align-items-center justify-content-center" style="width:100px;height:80px;border-right:1px solid var(--p-content-border-color)">
+                            @ctx.Item
+                        </div>
+                    </ItemTemplate>
+                </OpVirtualScroller>
+            </ChildContent>
+            <Code><CodeBlock Code="@HorizontalCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Grid">
+            <ChildContent>
+                <OpVirtualScroller TItem="int"
+                                   Items="_items1000"
+                                   ItemSizeGrid="_gridSize"
+                                   Orientation="both"
+                                   ScrollHeight="400px"
+                                   StyleClass="border border-surface rounded">
+                    <ItemTemplate Context="ctx">
+                        <div class="flex align-items-center justify-content-center" style="width:100px;height:50px;border-right:1px solid var(--p-content-border-color);border-bottom:1px solid var(--p-content-border-color)">
+                            @ctx.Item
+                        </div>
+                    </ItemTemplate>
+                </OpVirtualScroller>
+            </ChildContent>
+            <Code><CodeBlock Code="@GridCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Lazy">
+            <ChildContent>
+                <OpVirtualScroller TItem="int"
+                                   Items="_lazyItems"
+                                   ItemSize="30"
+                                   ScrollHeight="400px"
+                                   Lazy="true"
+                                   Step="50"
+                                   OnLazyLoad="OnLazyLoad"
+                                   StyleClass="border border-surface rounded">
+                    <ItemTemplate Context="ctx">
+                        <div class="flex align-items-center px-3" style="height:30px">
+                            Item @ctx.Item
+                        </div>
+                    </ItemTemplate>
+                </OpVirtualScroller>
+            </ChildContent>
+            <Code><CodeBlock Code="@LazyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Loader">
+            <ChildContent>
+                <OpVirtualScroller TItem="int"
+                                   Items="_items1000"
+                                   ItemSize="30"
+                                   ScrollHeight="400px"
+                                   ShowLoader="true"
+                                   Loading="true"
+                                   StyleClass="border border-surface rounded">
+                    <ItemTemplate Context="ctx">
+                        <div class="flex align-items-center px-3" style="height:30px">
+                            Item @ctx.Item
+                        </div>
+                    </ItemTemplate>
+                </OpVirtualScroller>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoaderCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Items", "IReadOnlyList&lt;TItem&gt;?", "null", "Dados exibidos." },
+                              new[] { "ItemSize", "int", "0", "Altura (vertical) ou largura (horizontal) do item." },
+                              new[] { "ItemSizeGrid", "int[]?", "null", "[altura, largura] para orientação <code>both</code>." },
+                              new[] { "Orientation", "string", "vertical", "<code>vertical</code>, <code>horizontal</code> ou <code>both</code>." },
+                              new[] { "ScrollHeight", "string?", "null", "Altura do viewport." },
+                              new[] { "ScrollWidth", "string?", "null", "Largura do viewport." },
+                              new[] { "Lazy", "bool", "false", "Carrega dados sob demanda." },
+                              new[] { "Step", "int", "0", "Itens por chunk no modo lazy." },
+                              new[] { "ShowLoader", "bool", "false", "Exibe o loader." },
+                              new[] { "Loading", "bool", "false", "Indica carregamento." },
+                              new[] { "NumToleratedItems", "int?", "null", "Itens extras fora do viewport." },
+                              new[] { "Disabled", "bool", "false", "Desativa a virtualização." },
+                              new[] { "AppendOnly", "bool", "false", "Anexa itens sem remover." },
+                              new[] { "Inline", "bool", "false", "Exibição inline." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "Style", "string?", "null", "Estilos inline." },
+                              new[] { "Id", "string?", "null", "Id único." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnLazyLoad", "EventCallback&lt;OpVirtualScrollerLazyLoadEvent&gt;", "{ First, Last } — chunk a carregar." },
+                              new[] { "OnScroll", "EventCallback&lt;OpVirtualScrollerScrollEvent&gt;", "{ Top, Left } — posição do scroll." },
+                              new[] { "OnScrollIndexChange", "EventCallback&lt;OpVirtualScrollerIndexEvent&gt;", "{ First, Last } — range visível." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Métodos">
+            <ChildContent>
+                <ApiTable Caption="Métodos (via ref)"
+                          Headers="@(new[] { "Nome", "Parâmetros", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ScrollToIndexAsync", "int index, string behavior", "Rola até um índice (<code>auto</code> ou <code>smooth</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="virtualscroller"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>O modo <code>AutoSize</code> não foi portado (altura dinâmica). O grid (<code>both</code>) não reposiciona itens no eixo horizontal individualmente.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private static readonly IReadOnlyList<int> _items100k = Enumerable.Range(0, 100000).ToArray();
+    private static readonly IReadOnlyList<int> _items1000 = Enumerable.Range(0, 1000).ToArray();
+    private static readonly int[] _gridSize = [50, 100];
+
+    private readonly List<int> _lazyItems = [];
+    private int _lazyTotal = 200;
+
+    protected override void OnInitialized()
+    {
+        _lazyItems.AddRange(Enumerable.Range(0, _lazyTotal));
+    }
+
+    private Task OnLazyLoad(OpVirtualScrollerLazyLoadEvent e)
+    {
+        if (_lazyItems.Count < 5000)
+        {
+            var next = _lazyItems.Count + 50;
+            _lazyItems.AddRange(Enumerable.Range(_lazyItems.Count, 50));
+            StateHasChanged();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.VirtualScroller
+
+        <OpVirtualScroller TItem="int" Items="_items" ItemSize="30" ScrollHeight="400px">
+            <ItemTemplate Context="ctx">
+                <div style="height:30px">Item @ctx.Item</div>
+            </ItemTemplate>
+        </OpVirtualScroller>
+        """;
+
+    private const string BasicCode = """
+        <OpVirtualScroller TItem="int" Items="_items" ItemSize="30" ScrollHeight="400px">
+            <ItemTemplate Context="ctx">
+                <div style="height:30px">Item @ctx.Item</div>
+            </ItemTemplate>
+        </OpVirtualScroller>
+
+        @code {
+            private IReadOnlyList<int> _items = Enumerable.Range(0, 100000).ToArray();
+        }
+        """;
+
+    private const string HorizontalCode = """
+        <OpVirtualScroller TItem="int" Items="_items" ItemSize="100" Orientation="horizontal"
+                           ScrollWidth="400px" ScrollHeight="80px">
+            <ItemTemplate Context="ctx">
+                <div style="width:100px;height:80px">@ctx.Item</div>
+            </ItemTemplate>
+        </OpVirtualScroller>
+        """;
+
+    private const string GridCode = """
+        <OpVirtualScroller TItem="int" Items="_items" ItemSizeGrid="_grid" Orientation="both"
+                           ScrollHeight="400px">
+            <ItemTemplate Context="ctx">
+                <div style="width:100px;height:50px">@ctx.Item</div>
+            </ItemTemplate>
+        </OpVirtualScroller>
+        """;
+
+    private const string LazyCode = """
+        <OpVirtualScroller TItem="int" Items="_items" ItemSize="30" ScrollHeight="400px"
+                           Lazy="true" Step="50" OnLazyLoad="OnLazyLoad">
+            <ItemTemplate Context="ctx">
+                <div style="height:30px">Item @ctx.Item</div>
+            </ItemTemplate>
+        </OpVirtualScroller>
+        """;
+
+    private const string LoaderCode = """
+        <OpVirtualScroller TItem="int" Items="_items" ItemSize="30" ScrollHeight="400px"
+                           ShowLoader="true" Loading="true">
+            <ItemTemplate Context="ctx">
+                <div style="height:30px">Item @ctx.Item</div>
+            </ItemTemplate>
+        </OpVirtualScroller>
+        """;
+}
