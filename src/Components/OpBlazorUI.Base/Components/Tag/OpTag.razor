@@ -1,0 +1,55 @@
+@namespace OpBlazorUI.Base.Components.Tag
+
+<span class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            @if (IconTemplate != null)
+            {
+                <span class="p-tag-icon">@IconTemplate</span>
+            }
+            else
+            {
+                <span class="p-tag-icon @Icon" aria-hidden="true"></span>
+            }
+        }
+        @if (!string.IsNullOrEmpty(Value))
+        {
+            <span class="p-tag-label">@Value</span>
+        }
+    }
+</span>
+
+@code {
+    [Parameter] public string? Severity { get; set; }
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public bool Rounded { get; set; }
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? IconTemplate { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-tag p-component",
+        Severity?.ToLowerInvariant() switch
+        {
+            "secondary" => "p-tag-secondary",
+            "success" => "p-tag-success",
+            "info" => "p-tag-info",
+            "warn" => "p-tag-warn",
+            "danger" => "p-tag-danger",
+            "contrast" => "p-tag-contrast",
+            _ => null
+        },
+        Rounded ? "p-tag-rounded" : null,
+        StyleClass);
+}
