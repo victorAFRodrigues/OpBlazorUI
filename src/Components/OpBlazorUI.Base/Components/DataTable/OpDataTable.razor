@@ -1,6 +1,7 @@
 @namespace OpBlazorUI.Base.Components.DataTable
 @using OpBlazorUI.Base.Components.Checkbox
 @using OpBlazorUI.Base.Components.Icon
+@using OpBlazorUI.Base.Components.Skeleton
 @typeparam TItem
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
@@ -67,7 +68,27 @@
             </tr>
             </thead>
             <tbody class="p-datatable-tbody">
-            @if (PageItems.Count == 0)
+            @if (ShowSkeleton)
+            {
+                @for (var r = 0; r < SkeletonRowCount; r++)
+                {
+                    <tr class="p-datatable-skeleton-row">
+                        @if (Selection)
+                        {
+                            <td>
+                                <OpSkeleton Shape="circle" Width="1.5rem" Height="1.5rem"/>
+                            </td>
+                        }
+                        @foreach (var col in Columns)
+                        {
+                            <td>
+                                <OpSkeleton/>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            else if (PageItems.Count == 0)
             {
                 <tr>
                     <td class="p-datatable-empty-message"
@@ -134,7 +155,7 @@
         </div>
     }
 
-    @if (Loading)
+    @if (Loading && !ShowSkeleton)
     {
         <div class="p-datatable-mask p-overlay-mask">
             @if (LoadingIconTemplate != null)
