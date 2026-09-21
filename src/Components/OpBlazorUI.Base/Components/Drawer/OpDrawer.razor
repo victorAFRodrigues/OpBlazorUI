@@ -1,0 +1,59 @@
+@namespace OpBlazorUI.Base.Components.Drawer
+
+@if (Visible)
+{
+    <div class="@MaskClass"
+         style="@MaskStyle"
+         @onclick="OnMaskClick"
+         @onkeydown="OnKeydown"
+         @attributes="AdditionalAttributes">
+        <div class="@RootClass"
+             @ref="_root"
+             style="@Style"
+             role="complementary"
+             aria-modal="@(Modal ? "true" : null)"
+             aria-labelledby="@(_headerId)"
+             tabindex="-1"
+             @onclick:stopPropagation="true">
+            @if (ShowHeader)
+            {
+                <div class="p-drawer-header">
+                    @if (HeaderTemplate != null)
+                    {
+                        @HeaderTemplate
+                    }
+                    else if (!string.IsNullOrEmpty(Header))
+                    {
+                        <div class="p-drawer-title" id="@_headerId">@Header</div>
+                    }
+
+                    @if (Closable)
+                    {
+                        <button type="button"
+                                class="p-drawer-header-icon p-drawer-close-button"
+                                aria-label="@AriaCloseLabel"
+                                @onclick="Close">
+                            @if (CloseIconTemplate != null)
+                            {
+                                @CloseIconTemplate
+                            }
+                            else
+                            {
+                                <span class="@CloseIcon" aria-hidden="true"></span>
+                            }
+                        </button>
+                    }
+                </div>
+            }
+
+            <div class="p-drawer-content">
+                @ChildContent
+            </div>
+
+            @if (FooterTemplate != null)
+            {
+                <div class="p-drawer-footer">@FooterTemplate</div>
+            }
+        </div>
+    </div>
+}
