@@ -1,0 +1,31 @@
+@namespace OpBlazorUI.Base.Components.ProgressSpinner
+
+<div class="@RootClass" style="@Style" role="progressbar" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
+    <svg class="p-progressspinner-spin"
+         viewBox="25 25 50 50"
+         style="@SpinStyle">
+        <circle class="p-progressspinner-circle"
+                cx="50" cy="50" r="20"
+                fill="@Fill"
+                stroke-width="@StrokeWidth"
+                stroke-miterlimit="10" />
+    </svg>
+</div>
+
+@code {
+    [Parameter] public string StrokeWidth { get; set; } = "2";
+    [Parameter] public string Fill { get; set; } = "none";
+    [Parameter] public string AnimationDuration { get; set; } = "2s";
+    [Parameter] public string? AriaLabel { get; set; }
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-progressspinner p-component",
+        StyleClass);
+
+    private string SpinStyle => $"animation-duration: {AnimationDuration};";
+}
