@@ -1,0 +1,11 @@
+@namespace OpBlazorUI.Base.Components.Divider
+
+<div class="@RootClass"
+     role="separator"
+     aria-orientation="@(Layout == "vertical" ? "vertical" : "horizontal")"
+     @attributes="AdditionalAttributes">
+    @if (ChildContent != null)
+    {
+        <div class="p-divider-content">@ChildContent</div>
+    }
+</div>
