@@ -1,0 +1,18 @@
+@namespace OpBlazorUI.Base.Components.Avatar
+
+<div class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-avatar-group p-component",
+        StyleClass);
+}

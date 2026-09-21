@@ -1,0 +1,54 @@
+@namespace OpBlazorUI.Base.Components.Avatar
+
+<div class="@RootClass"
+     style="@Style"
+     aria-label="@AriaLabel"
+     aria-labelledby="@AriaLabelledBy"
+     @attributes="AdditionalAttributes">
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    else if (!string.IsNullOrEmpty(Image))
+    {
+        <img src="@Image" alt="@Alt" @onerror="OnImageError" />
+    }
+    else if (!string.IsNullOrEmpty(Icon))
+    {
+        <span class="p-avatar-icon @Icon" aria-hidden="true"></span>
+    }
+    else if (!string.IsNullOrEmpty(Label))
+    {
+        <span class="p-avatar-text">@Label</span>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string? Image { get; set; }
+    [Parameter] public string? Alt { get; set; }
+    [Parameter] public string Size { get; set; } = "normal";
+    [Parameter] public string Shape { get; set; } = "square";
+    [Parameter] public string? AriaLabel { get; set; }
+    [Parameter] public string? AriaLabelledBy { get; set; }
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback<ErrorEventArgs> OnImageError { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-avatar p-component",
+        !string.IsNullOrEmpty(Image) ? "p-avatar-image" : null,
+        string.Equals(Shape, "circle", StringComparison.OrdinalIgnoreCase) ? "p-avatar-circle" : null,
+        Size switch
+        {
+            "large" => "p-avatar-lg",
+            "xlarge" => "p-avatar-xl",
+            _ => null
+        },
+        StyleClass);
+}
