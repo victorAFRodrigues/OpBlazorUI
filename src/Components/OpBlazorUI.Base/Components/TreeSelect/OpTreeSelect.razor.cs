@@ -65,6 +65,7 @@ public partial class OpTreeSelect : ComponentBase
     [Parameter] public RenderFragment? EmptyTemplate { get; set; }
     [Parameter] public RenderFragment? ClearIconTemplate { get; set; }
     [Parameter] public RenderFragment? DropdownIconTemplate { get; set; }
+    [Parameter] public RenderFragment? LoadingIconTemplate { get; set; }
     [Parameter] public RenderFragment<TreeNode>? ItemTogglerIconTemplate { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
