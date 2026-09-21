@@ -38,7 +38,12 @@
             <img src="assets/OpBlazorUI-icon.png" alt=""/>
             <span>OpBlazor<span class="op-loader-brand-accent">UI</span></span>
         </div>
-        <div class="op-loader-ring" aria-hidden="true"></div>
+        <div class="p-progressspinner p-component" role="progressbar" aria-label="loading">
+            <svg class="p-progressspinner-spin" viewBox="25 25 50 50" style="animation-duration: 2s;">
+                <circle class="p-progressspinner-circle" cx="50" cy="50" r="20" fill="none"
+                        stroke-width="2" stroke-miterlimit="10"></circle>
+            </svg>
+        </div>
         <p class="op-loader-text">Carregando…</p>
         <p class="op-loader-hint">Preparando o runtime WebAssembly</p>
         <p class="op-loader-slow" hidden>
