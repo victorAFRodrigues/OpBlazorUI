@@ -102,7 +102,7 @@ Button, CascadeSelect, Checkbox, DataTable, DatePicker, Editor, FloatLabel, Icon
 IftaLabel, InputGroup, InputMask, InputNumber, InputOtp, InputText, KeyFilter, Listbox,
 Menu, Message, MultiSelect, Password, RadioButton, Rating, Select, SelectButton,
 SpeedDial, SplitButton, ThemeSwitcher, Toast, ToggleButton, ToggleSwitch, Tooltip,
-TreeSelect.
+TreeSelect, Avatar, Badge, Chip, ProgressBar, ProgressSpinner, Skeleton, Tag.
 
 ## Estrutura do repositório
 

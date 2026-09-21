@@ -1,0 +1,155 @@
+@page "/badge"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Badge
+
+<DocComponent Title="Badge"
+              Description="O Badge é um pequeno indicador de status para outro elemento.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="flex gap-2 items-center">
+                    <OpBadge Value="2"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Severidade">
+            <ChildContent>
+                <div class="flex gap-2 flex-wrap">
+                    <OpBadge Value="2"/>
+                    <OpBadge Value="6" Severity="secondary"/>
+                    <OpBadge Value="8" Severity="success"/>
+                    <OpBadge Value="4" Severity="info"/>
+                    <OpBadge Value="9" Severity="warn"/>
+                    <OpBadge Value="3" Severity="danger"/>
+                    <OpBadge Value="5" Severity="contrast"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SeverityCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanho">
+            <ChildContent>
+                <div class="flex gap-1 items-end">
+                    <OpBadge Value="8" Size="xlarge" Severity="success"/>
+                    <OpBadge Value="6" Size="large" Severity="warn"/>
+                    <OpBadge Value="4" Severity="info"/>
+                    <OpBadge Value="2" Size="small"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Overlay">
+            <Description>
+                Encapsule um elemento com o <code>OpOverlayBadge</code> para posicionar o badge no canto.
+            </Description>
+            <ChildContent>
+                <div class="flex gap-6 flex-wrap">
+                    <OpOverlayBadge Value="2">
+                        <i class="pi pi-bell" style="font-size: 2rem"></i>
+                    </OpOverlayBadge>
+                    <OpOverlayBadge Value="4" Severity="danger">
+                        <i class="pi pi-calendar" style="font-size: 2rem"></i>
+                    </OpOverlayBadge>
+                    <OpOverlayBadge Severity="danger">
+                        <i class="pi pi-envelope" style="font-size: 2rem"></i>
+                    </OpOverlayBadge>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@OverlayCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "string?", "null", "Valor exibido dentro do badge." },
+                              new[] { "Severity", "string?", "primary", "Severidade: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code> ou <code>contrast</code>." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code>, <code>large</code> ou <code>xlarge</code>." },
+                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="OverlayBadge">
+            <ChildContent>
+                <ApiTable Caption="Propriedades do OpOverlayBadge"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "string?", "null", "Valor exibido dentro do badge." },
+                              new[] { "Severity", "string?", "primary", "Severidade do badge." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo sob o qual o badge é posicionado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="badge"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Badge
+
+        <OpBadge Value="2" />
+        """;
+
+    private const string BasicCode = """
+        <OpBadge Value="2" />
+        """;
+
+    private const string SeverityCode = """
+        <OpBadge Value="2" />
+        <OpBadge Value="6" Severity="secondary" />
+        <OpBadge Value="8" Severity="success" />
+        <OpBadge Value="4" Severity="info" />
+        <OpBadge Value="9" Severity="warn" />
+        <OpBadge Value="3" Severity="danger" />
+        <OpBadge Value="5" Severity="contrast" />
+        """;
+
+    private const string SizeCode = """
+        <OpBadge Value="8" Size="xlarge" Severity="success" />
+        <OpBadge Value="6" Size="large" Severity="warn" />
+        <OpBadge Value="4" Severity="info" />
+        <OpBadge Value="2" Size="small" />
+        """;
+
+    private const string OverlayCode = """
+        <OpOverlayBadge Value="2">
+            <i class="pi pi-bell" style="font-size: 2rem"></i>
+        </OpOverlayBadge>
+        """;
+}

@@ -1,0 +1,135 @@
+@page "/chip"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Chip
+
+<DocComponent Title="Chip"
+              Description="O Chip representa entidades usando ícones, rótulos e imagens.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                Um chip removível exibe o ícone de excluir e dispara o evento <code>OnRemove</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <OpChip Label="Action"/>
+                    <OpChip Label="Comedy"/>
+                    <OpChip Label="Mystery"/>
+                    <OpChip Label="Thriller" Removable="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícone">
+            <ChildContent>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <OpChip Label="Apple" Icon="pi pi-apple"/>
+                    <OpChip Label="Facebook" Icon="pi pi-facebook"/>
+                    <OpChip Label="Google" Icon="pi pi-google"/>
+                    <OpChip Label="Microsoft" Icon="pi pi-microsoft" Removable="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Imagem">
+            <ChildContent>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <OpChip Label="Amy Elsner" Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Alt="Avatar image"/>
+                    <OpChip Label="Asiya Javayant" Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Alt="Avatar image"/>
+                    <OpChip Label="Xuxue Feng" Image="https://optimus.openng.org/demo/avatar/xuxuefeng.png" Alt="Avatar image" Removable="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ImageCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Label", "string?", "null", "Texto a exibir." },
+                              new[] { "Icon", "string?", "null", "Ícone a exibir." },
+                              new[] { "Image", "string?", "null", "URL da imagem." },
+                              new[] { "Alt", "string?", "null", "Atributo alt da imagem." },
+                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Removable", "bool", "false", "Exibe o ícone de remover." },
+                              new[] { "RemoveIcon", "string", "pi pi-times-circle", "Ícone do botão de remover." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnRemove", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao remover o chip." },
+                              new[] { "OnImageError", "EventCallback&lt;ErrorEventArgs&gt;", "Disparado ao falhar o carregamento da imagem." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado em vez dos modos internos." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="chip"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Chip
+
+        <OpChip Label="Action" />
+        """;
+
+    private const string BasicCode = """
+        <OpChip Label="Action" />
+        <OpChip Label="Thriller" Removable="true" />
+        """;
+
+    private const string IconCode = """
+        <OpChip Label="Apple" Icon="pi pi-apple" />
+        <OpChip Label="Microsoft" Icon="pi pi-microsoft" Removable="true" />
+        """;
+
+    private const string ImageCode = """
+        <OpChip Label="Amy Elsner" Image="https://optimus.openng.org/demo/avatar/amyelsner.png" />
+        """;
+}
