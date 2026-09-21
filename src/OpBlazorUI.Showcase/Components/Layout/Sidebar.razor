@@ -104,10 +104,12 @@
     {
         LayoutState.SidebarToggled += OnSidebarToggled;
         DarkModeState.Changed += OnDarkChanged;
+        Nav.LocationChanged += OnLocationChanged;
     }
 
     private void OnSidebarToggled() => StateHasChanged();
     private void OnDarkChanged() => StateHasChanged();
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => InvokeAsync(StateHasChanged);
 
     private bool IsExpanded(string label) => _expanded.Contains(label);
 
@@ -134,5 +136,6 @@
     {
         LayoutState.SidebarToggled -= OnSidebarToggled;
         DarkModeState.Changed -= OnDarkChanged;
+        Nav.LocationChanged -= OnLocationChanged;
     }
 }
