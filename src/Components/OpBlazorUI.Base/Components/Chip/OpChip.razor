@@ -30,6 +30,7 @@
                   aria-label="Remove"
                   tabindex="@(Disabled ? -1 : 0)"
                   @onclick="OnRemoveClick"
+                  @onclick:stopPropagation="true"
                   @onkeydown="OnRemoveKeyDown"
                   @onkeydown:stopPropagation="true"></span>
         }
