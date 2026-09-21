@@ -1,0 +1,8 @@
+@namespace OpBlazorUI.Base.Components.FocusTrap
+
+<div @ref="_root"
+     class="@RootClass"
+     data-focustrap-disabled="@(Disabled ? "true" : null)"
+     @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
