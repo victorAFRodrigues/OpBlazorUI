@@ -137,7 +137,14 @@
     @if (Loading)
     {
         <div class="p-datatable-mask p-overlay-mask">
-            <span class="p-datatable-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+            @if (LoadingIconTemplate != null)
+            {
+                @LoadingIconTemplate
+            }
+            else
+            {
+                <span class="p-datatable-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+            }
         </div>
     }
 </div>
