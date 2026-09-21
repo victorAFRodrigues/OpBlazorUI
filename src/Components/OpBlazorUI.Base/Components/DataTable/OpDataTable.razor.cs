@@ -27,6 +27,8 @@ public partial class OpDataTable<TItem> : ComponentBase
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string? StyleClass { get; set; }
 
+    [Parameter] public RenderFragment? LoadingIconTemplate { get; set; }
+
     [Parameter] public EventCallback<(string Field, int Order)> OnSort { get; set; }
     [Parameter] public EventCallback<int> OnPage { get; set; }
     [Parameter] public EventCallback<TItem> OnRowClick { get; set; }
