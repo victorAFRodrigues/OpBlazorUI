@@ -39,7 +39,10 @@
 
         <DocSection Label="Carregando">
             <ChildContent>
-                <OpDataTable Items="Products" Columns="Cols" Loading="true"/>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" Loading="true"/>
+                    <OpDataTable Items="Products" Columns="Cols" Loading="true" LoadingMode="skeleton"/>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@LoadingCode"/></Code>
         </DocSection>
@@ -66,6 +69,9 @@
                               new[] { "Rows", "int", "5", "Linhas por página." },
                               new[] { "EmptyMessage", "string", "Nenhum resultado encontrado", "Mensagem quando vazio." },
                               new[] { "Loading", "bool", "false", "Exibe estado de carregamento." },
+                              new[] { "LoadingMode", "string", "mask", "Modo de loading: <code>mask</code> (overlay) ou <code>skeleton</code> (linhas placeholder)." },
+                              new[] { "SkeletonRows", "int", "0", "Quantidade de linhas no modo <code>skeleton</code> (0 usa <code>Rows</code>)." },
+                              new[] { "LoadingIconTemplate", "RenderFragment?", "null", "Template do ícone de carregamento (modo <code>mask</code>)." },
                               new[] { "StyleClass", "string?", "null", "Classes adicionais." }
                           })"/>
             </ChildContent>
@@ -186,5 +192,6 @@
 
     private const string LoadingCode = """
         <OpDataTable Items="Products" Columns="Cols" Loading="true" />
+        <OpDataTable Items="Products" Columns="Cols" Loading="true" LoadingMode="skeleton" />
         """;
 }

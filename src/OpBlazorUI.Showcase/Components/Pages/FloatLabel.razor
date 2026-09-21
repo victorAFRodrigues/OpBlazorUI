@@ -12,14 +12,45 @@
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O FloatLabel não requer roles nem atributos ARIA adicionais e não inclui elementos interativos.
+                O vínculo entre o rótulo e o campo é feito pelo atributo <code>for</code> do <code>&lt;label&gt;</code>
+                apontando para o <code>id</code> do input.
+            </Description>
+        </DocSection>
+
         <DocSection Label="Básico">
             <ChildContent>
                 <OpFloatLabel>
-                    <OpInputText Id="fl1" Fluid="true"/>
+                    <OpInputText Id="fl1" @bind-Value="_value" Fluid="true"/>
                     <label for="fl1">Rótulo Sobre</label>
                 </OpFloatLabel>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido">
+            <Description>
+                Quando o campo está inválido, o rótulo também é destacado.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <OpFloatLabel>
+                        <OpInputText Id="fli1" @bind-Value="_invalid1" Invalid="@(string.IsNullOrEmpty(_invalid1))" Autocomplete="off"/>
+                        <label for="fli1">Usuário</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="in">
+                        <OpInputText Id="fli2" @bind-Value="_invalid2" Invalid="@(string.IsNullOrEmpty(_invalid2))" Autocomplete="off"/>
+                        <label for="fli2">Usuário</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="on">
+                        <OpInputText Id="fli3" @bind-Value="_invalid3" Invalid="@(string.IsNullOrEmpty(_invalid3))" Autocomplete="off"/>
+                        <label for="fli3">Usuário</label>
+                    </OpFloatLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
 
         <DocSection Label="Variantes">
@@ -89,8 +120,29 @@
 
     private const string BasicCode = """
         <OpFloatLabel>
-            <OpInputText Id="fl1" Fluid="true" />
+            <OpInputText Id="fl1" @bind-Value="_value" Fluid="true" />
             <label for="fl1">Rótulo Sobre</label>
+        </OpFloatLabel>
+
+        @code {
+            private string? _value;
+        }
+        """;
+
+    private const string InvalidCode = """
+        <OpFloatLabel>
+            <OpInputText Id="fli1" @bind-Value="_value1" Invalid="@(string.IsNullOrEmpty(_value1))" Autocomplete="off" />
+            <label for="fli1">Usuário</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="in">
+            <OpInputText Id="fli2" @bind-Value="_value2" Invalid="@(string.IsNullOrEmpty(_value2))" Autocomplete="off" />
+            <label for="fli2">Usuário</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpInputText Id="fli3" @bind-Value="_value3" Invalid="@(string.IsNullOrEmpty(_value3))" Autocomplete="off" />
+            <label for="fli3">Usuário</label>
         </OpFloatLabel>
         """;
 
@@ -105,4 +157,9 @@
             <label for="fl3">Rótulo Sobre a Borda</label>
         </OpFloatLabel>
         """;
+
+    private string? _value;
+    private string? _invalid1;
+    private string? _invalid2;
+    private string? _invalid3;
 }

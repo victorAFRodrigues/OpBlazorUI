@@ -1,0 +1,402 @@
+@page "/inputnumber"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.InputNumber
+@using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.IftaLabel
+
+<DocComponent Title="InputNumber"
+              Description="O InputNumber é um componente de entrada numérica.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                Descreva o valor com <code>&lt;label&gt;</code> + <code>Id</code> ou com <code>AriaLabel</code>.
+                O input usa o papel de <code>spinbutton</code>.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O InputNumber é usado como um input controlado via <code>@@bind-Value</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-auto">
+                        <label class="mb-2 font-bold block" for="in1">Somente inteiro</label>
+                        <OpInputNumber Id="in1" @bind-Value="_int"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="mb-2 font-bold block" for="in2">Sem agrupamento</label>
+                        <OpInputNumber Id="in2" Mode="decimal" UseGrouping="false" @bind-Value="_nogroup"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="mb-2 font-bold block" for="in3">Min-Max casas decimais</label>
+                        <OpInputNumber Id="in3" Mode="decimal" MinFractionDigits="2" MaxFractionDigits="5" @bind-Value="_frac"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="mb-2 font-bold block" for="in4">Limites Min-Max</label>
+                        <OpInputNumber Id="in4" Mode="decimal" Min="0" Max="100" @bind-Value="_minmax"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Botões">
+            <Description>
+                Os botões de spinner são habilitados com <code>ShowButtons</code>; o layout é definido por
+                <code>ButtonLayout</code> (<code>stacked</code>, <code>horizontal</code> ou <code>vertical</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-auto">
+                        <label class="mb-2 block font-bold" for="inb1">Empilhado</label>
+                        <OpInputNumber Id="inb1" @bind-Value="_stacked" ShowButtons="true" Mode="currency" Currency="USD"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="mb-2 block font-bold" for="inb2">Limites Min-Max</label>
+                        <OpInputNumber Id="inb2" @bind-Value="_minmax2" Mode="decimal" ShowButtons="true" Min="0" Max="100"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="mb-2 block font-bold" for="inb3">Horizontal com passo</label>
+                        <OpInputNumber Id="inb3" @bind-Value="_horiz" ShowButtons="true" ButtonLayout="horizontal" Step="0.25m" Mode="currency" Currency="EUR" IncrementButtonIcon="pi pi-plus" DecrementButtonIcon="pi pi-minus"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ButtonCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Moeda">
+            <Description>
+                A formatação de moeda é definida com <code>Mode="currency"</code> e <code>Currency</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-auto">
+                        <label class="block font-bold mb-2" for="inc1">Estados Unidos</label>
+                        <OpInputNumber Id="inc1" @bind-Value="_usd" Mode="currency" Currency="USD" Locale="en-US"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="block font-bold mb-2" for="inc2">Alemanha</label>
+                        <OpInputNumber Id="inc2" @bind-Value="_eur" Mode="currency" Currency="EUR" Locale="de-DE"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="block font-bold mb-2" for="inc3">Índia</label>
+                        <OpInputNumber Id="inc3" @bind-Value="_inr" Mode="currency" Currency="INR" CurrencyDisplay="code" Locale="en-IN"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="block font-bold mb-2" for="inc4">Japão</label>
+                        <OpInputNumber Id="inc4" @bind-Value="_jpy" Mode="currency" Currency="JPY" Locale="ja-JP"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CurrencyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Prefixo & Sufixo">
+            <Description>
+                Textos customizados podem ser colocados antes ou depois do input com <code>Prefix</code> e <code>Suffix</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="inp1">Milha</label>
+                        <OpInputNumber Id="inp1" @bind-Value="_mile" Suffix=" mi"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="inp2">Porcentagem</label>
+                        <OpInputNumber Id="inp2" @bind-Value="_percent" Prefix="%"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="inp3">Expiração</label>
+                        <OpInputNumber Id="inp3" @bind-Value="_expiry" Prefix="Expira em " Suffix=" dias"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PrefixSuffixCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos">
+            <Description>
+                O InputNumber oferece os tamanhos <code>small</code> e <code>large</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpInputNumber Size="small" Placeholder="Small" Mode="currency" Currency="USD" @bind-Value="_s1"/>
+                    <OpInputNumber Placeholder="Normal" Mode="currency" Currency="USD" @bind-Value="_s2"/>
+                    <OpInputNumber Size="large" Placeholder="Large" Mode="currency" Currency="USD" @bind-Value="_s3"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Fluid">
+            <Description>
+                <code>Fluid</code> faz o componente ocupar toda a largura do contêiner.
+            </Description>
+            <ChildContent>
+                <OpInputNumber Fluid="true" Mode="currency" Currency="USD" @bind-Value="_fluid"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Preenchido">
+            <Description>
+                <code>Variant="filled"</code> dá maior ênfase visual.
+            </Description>
+            <ChildContent>
+                <OpInputNumber Variant="filled" @bind-Value="_filled"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado">
+            <Description>
+                Com <code>Disabled</code>, o campo não pode ser editado nem focalizado.
+            </Description>
+            <ChildContent>
+                <OpInputNumber Disabled="true" Prefix="%" @bind-Value="_disabled"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido">
+            <Description>
+                O estado inválido é aplicado via <code>Invalid</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpInputNumber Invalid="@(_inv1 is null)" Mode="decimal" MinFractionDigits="2" Placeholder="Valor" @bind-Value="_inv1"/>
+                    <OpInputNumber Invalid="@(_inv2 is null)" Mode="decimal" MinFractionDigits="2" Variant="filled" Placeholder="Valor" @bind-Value="_inv2"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Limpar">
+            <Description>
+                Com <code>ShowClear</code>, um ícone de limpar é exibido para apagar o valor.
+            </Description>
+            <ChildContent>
+                <OpInputNumber ShowClear="true" Mode="currency" Currency="USD" Locale="en-US" @bind-Value="_clear" StyleClass="w-56"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ClearCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Float Label">
+            <Description>
+                O InputNumber funciona com o FloatLabel.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <OpFloatLabel>
+                        <OpInputNumber Id="innf1" @bind-Value="_fl1" Mode="currency" Currency="USD" Locale="en-US"/>
+                        <label for="innf1">Rótulo Sobre</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="in">
+                        <OpInputNumber Id="innf2" @bind-Value="_fl2" Mode="currency" Currency="USD" Locale="en-US"/>
+                        <label for="innf2">Rótulo Dentro</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="on">
+                        <OpInputNumber Id="innf3" @bind-Value="_fl3" Mode="currency" Currency="USD" Locale="en-US"/>
+                        <label for="innf3">Rótulo Sobre a Borda</label>
+                    </OpFloatLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FloatLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ifta Label">
+            <Description>
+                O InputNumber também funciona com o IftaLabel.
+            </Description>
+            <ChildContent>
+                <OpIftaLabel>
+                    <OpInputNumber Id="inni1" @bind-Value="_ifta" Mode="currency" Currency="USD" Locale="en-US"/>
+                    <label for="inni1">Preço</label>
+                </OpIftaLabel>
+            </ChildContent>
+            <Code><CodeBlock Code="@IftaLabelCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "decimal?", "null", "Valor numérico." },
+                              new[] { "ValueChanged", "EventCallback&lt;decimal?&gt;", "-", "Callback de binding." },
+                              new[] { "Min", "decimal?", "null", "Valor mínimo." },
+                              new[] { "Max", "decimal?", "null", "Valor máximo." },
+                              new[] { "Step", "decimal", "1", "Incremento dos botões/teclas." },
+                              new[] { "Mode", "string", "decimal", "<code>decimal</code> ou <code>currency</code>." },
+                              new[] { "Currency", "string?", "null", "Código ISO 4217 (ex.: <code>USD</code>)." },
+                              new[] { "CurrencyDisplay", "string", "symbol", "<code>symbol</code> ou <code>code</code>." },
+                              new[] { "Locale", "string?", "null", "Locale de formatação." },
+                              new[] { "UseGrouping", "bool", "true", "Usa separador de milhar." },
+                              new[] { "MinFractionDigits", "int?", "null", "Mínimo de casas decimais." },
+                              new[] { "MaxFractionDigits", "int?", "null", "Máximo de casas decimais." },
+                              new[] { "Prefix", "string?", "null", "Texto antes do valor." },
+                              new[] { "Suffix", "string?", "null", "Texto depois do valor." },
+                              new[] { "ShowButtons", "bool", "false", "Exibe os botões de spinner." },
+                              new[] { "ButtonLayout", "string", "stacked", "<code>stacked</code>, <code>horizontal</code> ou <code>vertical</code>." },
+                              new[] { "ShowClear", "bool", "false", "Exibe o ícone de limpar." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido." },
+                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Readonly", "bool", "false", "Somente leitura." },
+                              new[] { "Variant", "string", "outlined", "<code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "<code>small</code> ou <code>large</code>." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura." },
+                              new[] { "Id", "string?", "null", "Id do input." },
+                              new[] { "Placeholder", "string?", "null", "Placeholder." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnInput", "EventCallback&lt;decimal?&gt;", "Disparado ao digitar." },
+                              new[] { "OnChange", "EventCallback&lt;decimal?&gt;", "Disparado ao mudar o valor." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." },
+                              new[] { "OnClear", "EventCallback", "Disparado ao limpar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="inputnumber"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>InputClass</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private decimal? _int = 42723;
+    private decimal? _nogroup = 58151;
+    private decimal? _frac = 2351.35m;
+    private decimal? _minmax = 50;
+    private decimal? _stacked = 20;
+    private decimal? _minmax2 = 10.5m;
+    private decimal? _horiz = 25;
+    private decimal? _usd = 1500;
+    private decimal? _eur = 2500;
+    private decimal? _inr = 4250;
+    private decimal? _jpy = 5002;
+    private decimal? _mile = 20;
+    private decimal? _percent = 50;
+    private decimal? _expiry = 10;
+    private decimal? _s1;
+    private decimal? _s2;
+    private decimal? _s3;
+    private decimal? _fluid;
+    private decimal? _filled;
+    private decimal? _disabled = 50;
+    private decimal? _inv1;
+    private decimal? _inv2;
+    private decimal? _clear;
+    private decimal? _fl1;
+    private decimal? _fl2;
+    private decimal? _fl3;
+    private decimal? _ifta;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.InputNumber
+
+        <OpInputNumber @bind-Value="_value" />
+        """;
+
+    private const string BasicCode = """
+        <OpInputNumber @bind-Value="_value" />
+        <OpInputNumber Mode="decimal" UseGrouping="false" @bind-Value="_value" />
+        <OpInputNumber Mode="decimal" MinFractionDigits="2" MaxFractionDigits="5" @bind-Value="_value" />
+        <OpInputNumber Mode="decimal" Min="0" Max="100" @bind-Value="_value" />
+
+        @code {
+            private decimal? _value;
+        }
+        """;
+
+    private const string ButtonCode = """
+        <OpInputNumber @bind-Value="_value" ShowButtons="true" Mode="currency" Currency="USD" />
+        <OpInputNumber @bind-Value="_value" ShowButtons="true" ButtonLayout="horizontal" Step="0.25" Mode="currency" Currency="EUR" />
+        """;
+
+    private const string CurrencyCode = """
+        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="USD" Locale="en-US" />
+        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="EUR" Locale="de-DE" />
+        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="INR" CurrencyDisplay="code" Locale="en-IN" />
+        """;
+
+    private const string PrefixSuffixCode = """
+        <OpInputNumber @bind-Value="_value" Suffix=" mi" />
+        <OpInputNumber @bind-Value="_value" Prefix="%" />
+        <OpInputNumber @bind-Value="_value" Prefix="Expira em " Suffix=" dias" />
+        """;
+
+    private const string SizeCode = """
+        <OpInputNumber Size="small" Placeholder="Small" @bind-Value="_value" />
+        <OpInputNumber Placeholder="Normal" @bind-Value="_value" />
+        <OpInputNumber Size="large" Placeholder="Large" @bind-Value="_value" />
+        """;
+
+    private const string FluidCode = """
+        <OpInputNumber Fluid="true" Mode="currency" Currency="USD" @bind-Value="_value" />
+        """;
+
+    private const string FilledCode = """
+        <OpInputNumber Variant="filled" @bind-Value="_value" />
+        """;
+
+    private const string DisabledCode = """
+        <OpInputNumber Disabled="true" Prefix="%" @bind-Value="_value" />
+        """;
+
+    private const string InvalidCode = """
+        <OpInputNumber Invalid="@(_value is null)" Mode="decimal" MinFractionDigits="2" Placeholder="Valor" @bind-Value="_value" />
+        """;
+
+    private const string ClearCode = """
+        <OpInputNumber ShowClear="true" Mode="currency" Currency="USD" Locale="en-US" @bind-Value="_value" />
+        """;
+
+    private const string FloatLabelCode = """
+        <OpFloatLabel>
+            <OpInputNumber Id="innf1" @bind-Value="_value" Mode="currency" Currency="USD" Locale="en-US" />
+            <label for="innf1">Rótulo Sobre</label>
+        </OpFloatLabel>
+        """;
+
+    private const string IftaLabelCode = """
+        <OpIftaLabel>
+            <OpInputNumber Id="inni1" @bind-Value="_value" Mode="currency" Currency="USD" Locale="en-US" />
+            <label for="inni1">Preço</label>
+        </OpIftaLabel>
+        """;
+}

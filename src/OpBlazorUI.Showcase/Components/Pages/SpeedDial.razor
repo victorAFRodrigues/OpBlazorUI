@@ -1,0 +1,289 @@
+@page "/speeddial"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.SpeedDial
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Toast
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Services
+@using Microsoft.AspNetCore.Components
+
+<DocComponent Title="SpeedDial"
+              Description="O SpeedDial é um botão flutuante com um menu popup de ações.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O botão inclui <code>aria-haspopup</code>, <code>aria-expanded</code> e <code>aria-controls</code> para definir a relação com o popup. O popup usa role <code>menu</code> e cada ação tem role <code>menuitem</code> com <code>aria-label</code>.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Círculo">
+            <Description>
+                Os itens são exibidos ao redor do botão quando <code>Type="circle"</code>; <code>Radius</code> define o raio do círculo.
+            </Description>
+            <ChildContent>
+                <OpToast Key="speeddial"/>
+                <div style="position:relative; height:500px;" class="flex items-center justify-center">
+                    <OpSpeedDial Model="_items" Radius="80" Type="circle" Style="position:absolute;"
+                                 ButtonSeverity="warn" ButtonRounded="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CircleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Linear">
+            <Description>
+                A orientação padrão é linear; <code>Direction</code> define a posição dos itens em relação ao botão.
+            </Description>
+            <ChildContent>
+                <div style="height:500px; position:relative;">
+                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; left:calc(50% - 2rem); bottom:0;"/>
+                    <OpSpeedDial Model="_items" Direction="down" Style="position:absolute; left:calc(50% - 2rem); top:0;"/>
+                    <OpSpeedDial Model="_items" Direction="left" Style="position:absolute; top:calc(50% - 2rem); right:0;"/>
+                    <OpSpeedDial Model="_items" Direction="right" Style="position:absolute; top:calc(50% - 2rem); left:0;"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LinearCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Máscara">
+            <Description>
+                A propriedade <code>Mask</code> exibe uma camada modal atrás dos itens do popup.
+            </Description>
+            <ChildContent>
+                <div style="position:relative; height:350px;">
+                    <OpSpeedDial Model="_items" Direction="up" Mask="true" Style="position:absolute; right:1rem; bottom:1rem;"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MaskCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Quarto de Círculo">
+            <Description>
+                Com <code>Type="quarter-circle"</code>, os itens são exibidos em um quarto de círculo.
+            </Description>
+            <ChildContent>
+                <div style="position:relative; height:500px;">
+                    <OpSpeedDial Model="_items" Radius="120" Type="quarter-circle" Direction="up-left" Style="position:absolute; right:0; bottom:0;"/>
+                    <OpSpeedDial Model="_items" Radius="120" Type="quarter-circle" Direction="up-right" Style="position:absolute; left:0; bottom:0;"/>
+                    <OpSpeedDial Model="_items" Radius="120" Type="quarter-circle" Direction="down-left" Style="position:absolute; right:0; top:0;"/>
+                    <OpSpeedDial Model="_items" Radius="120" Type="quarter-circle" Direction="down-right" Style="position:absolute; left:0; top:0;"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@QuarterCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Semicírculo">
+            <Description>
+                Com <code>Type="semi-circle"</code>, os itens são exibidos em um semicírculo.
+            </Description>
+            <ChildContent>
+                <div style="position:relative; height:500px;">
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down" Style="position:absolute; left:calc(50% - 2rem); top:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="right" Style="position:absolute; top:calc(50% - 2rem); left:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="left" Style="position:absolute; top:calc(50% - 2rem); right:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="up" Style="position:absolute; left:calc(50% - 2rem); bottom:0;"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SemiCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template">
+            <Description>
+                Use <code>ButtonTemplate</code> para customizar o botão e <code>ItemTemplate</code> para customizar cada item.
+            </Description>
+            <ChildContent>
+                <div style="position:relative; height:400px;" class="flex items-end justify-center">
+                    <OpSpeedDial Model="_items" Direction="up" TransitionDelay="80" Style="position:absolute;">
+                        <ButtonTemplate Context="ctx">
+                            <OpButton Outlined="true" StyleClass="border" OnClick="@(_ => ctx.Toggle?.Invoke())">
+                                <span class="pi pi-plus"></span>
+                            </OpButton>
+                        </ButtonTemplate>
+                        <ItemTemplate Context="item">
+                            <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem; padding:.5rem; border:1px solid var(--p-content-border-color); border-radius:6px; width:5rem; cursor:pointer;">
+                                <span class="@item.Icon"></span>
+                                <span>@item.Label</span>
+                            </div>
+                        </ItemTemplate>
+                    </OpSpeedDial>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tooltip">
+            <Description>
+                Os itens exibem um tooltip ao passar o mouse quando <code>Tooltip</code> está habilitado.
+            </Description>
+            <ChildContent>
+                <div style="position:relative; height:350px;">
+                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; right:0; bottom:0;" ButtonSeverity="help" ButtonRounded="true" Tooltip="true" TooltipPosition="left"/>
+                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; left:0; bottom:0;" ButtonSeverity="danger" ButtonRounded="true" Tooltip="true" TooltipPosition="right"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TooltipCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;?", "null", "Itens do menu de ações." },
+                              new[] { "Visible", "bool", "false", "Visibilidade do popup. Combine com <code>@bind-Visible</code>." },
+                              new[] { "TransitionDelay", "int", "30", "Atraso da transição de cada item." },
+                              new[] { "Type", "string", "linear", "<code>linear</code>, <code>circle</code>, <code>semi-circle</code> ou <code>quarter-circle</code>." },
+                              new[] { "Radius", "int", "0", "Raio para os tipos circulares." },
+                              new[] { "Direction", "string", "up", "Direção: <code>up</code>, <code>down</code>, <code>left</code>, <code>right</code>, <code>up-left</code>, <code>up-right</code>, <code>down-left</code>, <code>down-right</code>." },
+                              new[] { "Mask", "bool", "false", "Exibe uma camada de máscara atrás do popup." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente." },
+                              new[] { "HideOnClickOutside", "bool", "true", "Fecha ao clicar fora." },
+                              new[] { "ShowIcon", "string?", "pi pi-plus", "Ícone do botão quando fechado." },
+                              new[] { "HideIcon", "string?", "null", "Ícone do botão quando aberto." },
+                              new[] { "RotateAnimation", "bool", "true", "Rotaciona o ShowIcon quando não há HideIcon." },
+                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Ids dos elementos que rotulam o botão." },
+                              new[] { "Style", "string?", "null", "Estilo inline do elemento raiz." },
+                              new[] { "StyleClass", "string?", "null", "Classes do elemento raiz." },
+                              new[] { "ButtonSeverity", "string?", "null", "Severidade do botão." },
+                              new[] { "ButtonRounded", "bool", "false", "Botão arredondado." },
+                              new[] { "ButtonRaised", "bool", "false", "Botão com elevação." },
+                              new[] { "ButtonText", "bool", "false", "Botão textual." },
+                              new[] { "ButtonOutlined", "bool", "false", "Botão contornado." },
+                              new[] { "ButtonSize", "string?", "null", "Tamanho do botão." },
+                              new[] { "Tooltip", "bool", "false", "Exibe tooltip nos itens." },
+                              new[] { "TooltipPosition", "string", "right", "Posição do tooltip." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "VisibleChanged", "EventCallback&lt;bool&gt;", "Disparado ao mudar a visibilidade." },
+                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar no botão." },
+                              new[] { "OnShow", "EventCallback", "Disparado ao exibir as ações." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao ocultar as ações." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ButtonTemplate", "RenderFragment&lt;SpeedDialButtonContext&gt;?", "Template do botão." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "Template do item." },
+                              new[] { "IconTemplate", "RenderFragment?", "Template do ícone." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="speeddial"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use os templates e as propriedades <code>Button*</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    [Inject] private OpMessageService MessageService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private List<OpMenuItem> _items = new();
+
+    protected override void OnInitialized()
+    {
+        _items = BuildItems();
+    }
+
+    private List<OpMenuItem> BuildItems() => new()
+    {
+        new() { Icon = "pi pi-pencil", Label = "Adicionar", Command = () => Add("info", "Adicionar", "Dado adicionado") },
+        new() { Icon = "pi pi-refresh", Label = "Atualizar", Command = () => Add("success", "Atualizar", "Dado atualizado") },
+        new() { Icon = "pi pi-trash", Label = "Excluir", Command = () => Add("danger", "Excluir", "Dado excluído") },
+        new() { Icon = "pi pi-upload", Label = "Upload", Command = () => Navigation.NavigateTo("/installation") },
+        new() { Icon = "pi pi-external-link", Label = "Website", Url = "https://angular.dev", Target = "_blank" }
+    };
+
+    private void Add(string severity, string summary, string detail) =>
+        MessageService.Add(new OpToastMessage { Key = "speeddial", Severity = severity, Summary = summary, Detail = detail });
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.SpeedDial
+        @using OpBlazorUI.Base.Models
+
+        <OpSpeedDial Model="_items" Direction="up" />
+        """;
+
+    private const string CircleCode = """
+        <OpSpeedDial Model="_items" Radius="80" Type="circle" Style="position:absolute;"
+                     ButtonSeverity="warn" ButtonRounded="true" />
+        """;
+
+    private const string LinearCode = """
+        <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; left:calc(50% - 2rem); bottom:0;" />
+        <OpSpeedDial Model="_items" Direction="down" Style="position:absolute; left:calc(50% - 2rem); top:0;" />
+        <OpSpeedDial Model="_items" Direction="left" Style="position:absolute; top:calc(50% - 2rem); right:0;" />
+        <OpSpeedDial Model="_items" Direction="right" Style="position:absolute; top:calc(50% - 2rem); left:0;" />
+        """;
+
+    private const string MaskCode = """
+        <OpSpeedDial Model="_items" Direction="up" Mask="true" Style="position:absolute; right:1rem; bottom:1rem;" />
+        """;
+
+    private const string QuarterCode = """
+        <OpSpeedDial Model="_items" Radius="120" Type="quarter-circle" Direction="up-left" Style="position:absolute; right:0; bottom:0;" />
+        """;
+
+    private const string SemiCode = """
+        <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down" Style="position:absolute; left:calc(50% - 2rem); top:0;" />
+        """;
+
+    private const string TemplateCode = """
+        <OpSpeedDial Model="_items" Direction="up" TransitionDelay="80">
+            <ButtonTemplate Context="ctx">
+                <OpButton Outlined="true" OnClick="@(_ => ctx.Toggle?.Invoke())">
+                    <span class="pi pi-plus"></span>
+                </OpButton>
+            </ButtonTemplate>
+            <ItemTemplate Context="item">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem;">
+                    <span class="@item.Icon"></span>
+                    <span>@item.Label</span>
+                </div>
+            </ItemTemplate>
+        </OpSpeedDial>
+        """;
+
+    private const string TooltipCode = """
+        <OpSpeedDial Model="_items" Direction="up" Tooltip="true" TooltipPosition="left"
+                     ButtonSeverity="help" ButtonRounded="true" />
+        """;
+}

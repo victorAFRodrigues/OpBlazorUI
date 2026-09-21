@@ -1,0 +1,104 @@
+@page "/skeleton"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Skeleton
+
+<DocComponent Title="Skeleton"
+              Description="O Skeleton é um placeholder exibido no lugar do conteúdo enquanto ele carrega.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O Skeleton usa <code>aria-hidden="true"</code> para ser ignorado por leitores de tela.
+                Agrupe vários skeletons em um contêiner com <code>aria-busy</code> para indicar o carregamento.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Formas">
+            <Description>
+                Retângulo é a forma padrão; use <code>Shape="circle"</code> para círculos e
+                <code>BorderRadius</code> para cantos arredondados.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2">
+                    <OpSkeleton class="mb-1"/>
+                    <OpSkeleton Width="10rem" class="mb-1"/>
+                    <OpSkeleton Width="5rem" Height="2rem"/>
+                    <OpSkeleton Shape="circle" Size="3rem"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ShapesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Sem Animação">
+            <ChildContent>
+                <OpSkeleton Width="10rem" Animation="none"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@NoAnimationCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Shape", "string?", "rectangle", "Forma do elemento: <code>rectangle</code> ou <code>circle</code>." },
+                              new[] { "BorderRadius", "string?", "null", "Border radius; usa o do tema se vazio." },
+                              new[] { "Size", "string?", "null", "Define largura e altura juntas (ex.: <code>3rem</code>)." },
+                              new[] { "Width", "string", "100%", "Largura do elemento." },
+                              new[] { "Height", "string", "1rem", "Altura do elemento." },
+                              new[] { "Animation", "string", "wave", "Animação: <code>wave</code> ou <code>none</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="skeleton"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Skeleton
+
+        <OpSkeleton />
+        """;
+
+    private const string ShapesCode = """
+        <OpSkeleton />
+        <OpSkeleton Width="10rem" />
+        <OpSkeleton Width="5rem" Height="2rem" />
+        <OpSkeleton Shape="circle" Size="3rem" />
+        """;
+
+    private const string NoAnimationCode = """
+        <OpSkeleton Width="10rem" Animation="none" />
+        """;
+}

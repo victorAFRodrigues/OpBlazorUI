@@ -1,0 +1,64 @@
+@namespace OpBlazorUI.Base.Components.Rating
+
+<div class="@RootClass" role="radiogroup" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
+    @if (Cancel)
+    {
+        <div class="p-rating-option p-rating-cancel-item" @onclick="() => Rate(0)" @onfocus="OnFocus" @onblur="OnBlur">
+            @if (CancelIconTemplate != null)
+            {
+                @CancelIconTemplate
+            }
+            else
+            {
+                <i class="pi pi-ban p-rating-icon"></i>
+            }
+            <input type="radio"
+                   class="p-hidden-accessible"
+                   name="@Name"
+                   value="0"
+                   checked="@(Value == 0)"
+                   disabled="@Disabled"
+                   readonly="@Readonly"
+                   tabindex="-1"/>
+        </div>
+    }
+
+    @for (var i = 1; i <= Stars; i++)
+    {
+        var star = i;
+        var active = star <= Value && Value > 0;
+        <div class="@OptionClass(star)" @onclick="() => Rate(star)" @onfocus="OnFocus" @onblur="OnBlur">
+            @if (active)
+            {
+                @if (OnIconTemplate != null)
+                {
+                    @OnIconTemplate
+                }
+                else
+                {
+                    <i class="@IconClass(true)"></i>
+                }
+            }
+            else
+            {
+                @if (OffIconTemplate != null)
+                {
+                    @OffIconTemplate
+                }
+                else
+                {
+                    <i class="@IconClass(false)"></i>
+                }
+            }
+
+            <input type="radio"
+                   class="p-hidden-accessible"
+                   name="@Name"
+                   value="@star"
+                   checked="@(Value == star)"
+                   disabled="@Disabled"
+                   readonly="@Readonly"
+                   tabindex="@(Disabled ? -1 : 0)"/>
+        </div>
+    }
+</div>

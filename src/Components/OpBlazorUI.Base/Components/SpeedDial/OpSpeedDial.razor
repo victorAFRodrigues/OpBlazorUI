@@ -1,0 +1,76 @@
+@namespace OpBlazorUI.Base.Components.SpeedDial
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Tooltip
+@using OpBlazorUI.Base.Models
+
+<div class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
+    @if (ButtonTemplate != null)
+    {
+        var ctx = new SpeedDialButtonContext { Toggle = () => _ = Toggle() };
+        @ButtonTemplate(ctx)
+    }
+    else
+    {
+        <OpButton StyleClass="@ButtonClass"
+                  Icon="@ButtonIconClass"
+                  IconTemplate="@IconTemplate"
+                  Severity="@ButtonSeverity"
+                  Rounded="@ButtonRounded"
+                  Raised="@ButtonRaised"
+                  Text="@ButtonText"
+                  Outlined="@ButtonOutlined"
+                  Size="@ButtonSize"
+                  Disabled="@Disabled"
+                  AriaLabel="@AriaLabel"
+                  TabIndex="@ButtonTabIndex"
+                  style="@ButtonStyle"
+                  aria-haspopup="menu"
+                  aria-expanded="@(_visible ? "true" : "false")"
+                  aria-controls="@($"{_id}_list")"
+                  aria-labelledby="@AriaLabelledBy"
+                  OnClick="OnButtonClick"/>
+    }
+
+    <ul class="p-speeddial-list" role="menu" id="@($"{_id}_list")" style="@ListStyle">
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var item = Items[i];
+            <li class="p-speeddial-item" role="menuitem" aria-label="@item.Label" style="@ItemStyle(i)">
+                @if (Tooltip)
+                {
+                    <OpTooltip Content="@item.Label" Position="@TooltipPosition">
+                        @RenderAction(item)
+                    </OpTooltip>
+                }
+                else
+                {
+                    @RenderAction(item)
+                }
+            </li>
+        }
+    </ul>
+
+    @if (Mask && _visible)
+    {
+        <div class="p-speeddial-mask @MaskStyleClass" style="@(MaskStyle ?? "inset:0;")"
+             @onclick="() => SetVisibleAsync(false)"></div>
+    }
+</div>
+
+@code {
+    private RenderFragment RenderAction(OpMenuItem item) => __builder =>
+    {
+        @if (ItemTemplate != null)
+        {
+            <OpButton StyleClass="p-speeddial-action" Rounded="true" AriaLabel="@item.Label"
+                      OnClick="() => OnItemClick(item)">
+                @ItemTemplate(item)
+            </OpButton>
+        }
+        else
+        {
+            <OpButton StyleClass="p-speeddial-action" Icon="@item.Icon" Rounded="true"
+                      AriaLabel="@item.Label" OnClick="() => OnItemClick(item)"/>
+        }
+    };
+}

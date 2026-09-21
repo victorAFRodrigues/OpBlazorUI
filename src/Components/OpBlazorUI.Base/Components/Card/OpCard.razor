@@ -1,0 +1,40 @@
+@namespace OpBlazorUI.Base.Components.Card
+
+<div class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
+    @if (HeaderTemplate != null)
+    {
+        <div class="p-card-header">@HeaderTemplate</div>
+    }
+
+    <div class="p-card-body">
+        @if (HasCaption)
+        {
+            <div class="p-card-caption">
+                @if (TitleTemplate != null)
+                {
+                    <div class="p-card-title">@TitleTemplate</div>
+                }
+                else if (!string.IsNullOrEmpty(Header))
+                {
+                    <div class="p-card-title">@Header</div>
+                }
+
+                @if (SubtitleTemplate != null)
+                {
+                    <div class="p-card-subtitle">@SubtitleTemplate</div>
+                }
+                else if (!string.IsNullOrEmpty(Subheader))
+                {
+                    <div class="p-card-subtitle">@Subheader</div>
+                }
+            </div>
+        }
+
+        <div class="p-card-content">@ChildContent</div>
+
+        @if (FooterTemplate != null)
+        {
+            <div class="p-card-footer">@FooterTemplate</div>
+        }
+    </div>
+</div>

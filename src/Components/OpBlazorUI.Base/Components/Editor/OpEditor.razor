@@ -1,0 +1,48 @@
+@namespace OpBlazorUI.Base.Components.Editor
+
+<div class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
+    <div class="p-editor-toolbar" @ref="_toolbarRef">
+        @if (HeaderTemplate != null)
+        {
+            @HeaderTemplate
+        }
+        else
+        {
+            <span class="ql-formats">
+                <select class="ql-header">
+                    <option value="1">Título</option>
+                    <option value="2">Subtítulo</option>
+                    <option selected>Normal</option>
+                </select>
+            </span>
+            <span class="ql-formats">
+                <button type="button" class="ql-bold" aria-label="Negrito"></button>
+                <button type="button" class="ql-italic" aria-label="Itálico"></button>
+                <button type="button" class="ql-underline" aria-label="Sublinhado"></button>
+            </span>
+            <span class="ql-formats">
+                <select class="ql-color" aria-label="Cor do texto"></select>
+                <select class="ql-background" aria-label="Cor de fundo"></select>
+            </span>
+            <span class="ql-formats">
+                <button type="button" class="ql-list" value="ordered" aria-label="Lista ordenada"></button>
+                <button type="button" class="ql-list" value="bullet" aria-label="Lista não ordenada"></button>
+                <select class="ql-align" aria-label="Alinhamento">
+                    <option selected></option>
+                    <option value="center"></option>
+                    <option value="right"></option>
+                    <option value="justify"></option>
+                </select>
+            </span>
+            <span class="ql-formats">
+                <button type="button" class="ql-link" aria-label="Inserir link"></button>
+                <button type="button" class="ql-image" aria-label="Inserir imagem"></button>
+                <button type="button" class="ql-code-block" aria-label="Bloco de código"></button>
+            </span>
+            <span class="ql-formats">
+                <button type="button" class="ql-clean" aria-label="Limpar formatação"></button>
+            </span>
+        }
+    </div>
+    <div class="p-editor-content" @ref="_contentRef"></div>
+</div>

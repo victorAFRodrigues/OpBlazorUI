@@ -1,0 +1,267 @@
+@page "/editor"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Editor
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Message
+@using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
+
+<DocComponent Title="Editor"
+              Description="O Editor é um editor de rich text baseado no Quill.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Description>
+                O Editor usa o Quill por baixo. O script <code>quill.min.js</code> já é servido pela biblioteca
+                em <code>_content/OpBlazorUI.Base/quill.min.js</code> e é carregado automaticamente pelo <code>OpBlazorUiSetup</code>.
+                O CSS (Snow theme + <code>.p-editor-*</code>) também já faz parte do tema.
+            </Description>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O Quill tem um bom desempenho geral em acessibilidade: os elementos da toolbar podem ser acessados por tab
+                e possuem os papéis/atributos ARIA necessários. Uma limitação conhecida é a falta de suporte a setas nos
+                dropdowns da toolbar, que pode ser contornada com uma toolbar customizada.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O modelo pode ser vinculado com <code>@@bind-Value</code>. A altura é definida via <code>Style</code>.
+            </Description>
+            <ChildContent>
+                <OpEditor @bind-Value="_text" Style="height:320px"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Toolbar Customizada">
+            <Description>
+                O Editor fornece uma toolbar padrão com opções comuns. Para customizá-la, defina os controles dentro de
+                <code>HeaderTemplate</code> usando as classes do Quill (ex.: <code>ql-bold</code>, <code>ql-italic</code>).
+                Consulte a documentação do Quill para os controles disponíveis.
+            </Description>
+            <ChildContent>
+                <OpEditor @bind-Value="_customText" Style="height:320px">
+                    <HeaderTemplate>
+                        <span class="ql-formats">
+                            <button type="button" class="ql-bold" aria-label="Negrito"></button>
+                            <button type="button" class="ql-italic" aria-label="Itálico"></button>
+                            <button type="button" class="ql-underline" aria-label="Sublinhado"></button>
+                        </span>
+                    </HeaderTemplate>
+                </OpEditor>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomToolbarCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Somente Leitura">
+            <Description>
+                Com <code>Readonly</code>, o conteúdo não pode ser editado.
+            </Description>
+            <ChildContent>
+                <OpEditor Value="@_readonlyText" Readonly="true" Style="height:200px"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReadonlyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulário">
+            <Description>
+                O Editor funciona com <code>EditForm</code> e validação. Como o Quill normaliza o conteúdo vazio para
+                <code>&lt;p&gt;&lt;br&gt;&lt;/p&gt;</code>, o exemplo usa um atributo customizado (<code>NotEmptyHtml</code>)
+                que valida o texto sem as tags.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_formModel" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit" class="flex flex-col gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpEditor @bind-Value="_formModel.Content"
+                              Invalid="@(_submitted && !IsValidContent(_formModel.Content))"
+                              Style="height:320px"/>
+                    <ValidationMessage For="() => _formModel.Content"/>
+                    <div>
+                        <OpButton Label="Enviar" Type="submit" Severity="secondary"/>
+                    </div>
+                </EditForm>
+                @if (_success)
+                {
+                    <div class="mt-3">
+                        <OpMessage Severity="success" Size="small" Variant="simple">Formulário enviado com sucesso.</OpMessage>
+                    </div>
+                }
+            </ChildContent>
+            <Code><CodeBlock Code="@FormCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <Description>
+                Parâmetros públicos do componente.
+            </Description>
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "string?", "null", "Conteúdo HTML do editor. Combine com <code>@bind-Value</code>." },
+                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "-", "Callback de binding do valor." },
+                              new[] { "Placeholder", "string?", "null", "Texto exibido quando o editor está vazio." },
+                              new[] { "Readonly", "bool", "false", "Instancia o editor em modo somente leitura." },
+                              new[] { "Disabled", "bool", "false", "Desabilita a edição e aplica o estado visual de desabilitado." },
+                              new[] { "Invalid", "bool", "false", "Aplica o estilo de erro." },
+                              new[] { "Style", "string?", "null", "Estilo inline do contêiner (ex.: <code>height:320px</code>)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Formats", "IReadOnlyList&lt;string&gt;?", "null", "Whitelist de formatos exibidos na toolbar (ver documentação do Quill)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <Description>
+                Callbacks disparados pelas interações do editor.
+            </Description>
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnChange", "EventCallback&lt;string?&gt;", "Disparado quando o conteúdo muda (edição do usuário)." },
+                              new[] { "OnTextChange", "EventCallback&lt;string?&gt;", "Disparado quando o texto do editor muda." },
+                              new[] { "OnFocus", "EventCallback", "Disparado ao focar o editor." },
+                              new[] { "OnBlur", "EventCallback", "Disparado ao desfocar o editor." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <Description>
+                Slots que substituem partes internas por conteúdo customizado.
+            </Description>
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "HeaderTemplate", "RenderFragment?", "Toolbar customizada no lugar da toolbar padrão." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <Description>
+                Classes CSS e design tokens (<code>--p-editor-*</code>) usados pelo componente. Os valores podem ser sobrescritos via CSS.
+            </Description>
+            <ChildContent><DocTokens Component="editor"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e o <code>HeaderTemplate</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>Os dropdowns da toolbar (cabeçalho, cores, alinhamento) não suportam navegação por setas — limitação herdada do Quill.</p>
+                    <p>Os parâmetros avançados do Angular (<code>modules</code>, <code>bounds</code>, <code>scrollingContainer</code>, <code>debug</code>) ainda não foram portados.</p>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private string? _text;
+    private string _customText = "<div>Hello World!</div><div>Optimus UI <b>Editor</b> Rocks</div>";
+    private string _readonlyText = "Always bet on Prime!";
+
+    private FormModel _formModel = new();
+    private bool _submitted;
+    private bool _success;
+
+    private sealed class FormModel
+    {
+        [NotEmptyHtml(ErrorMessage = "Conteúdo é obrigatório.")]
+        public string? Content { get; set; }
+    }
+
+    private sealed class NotEmptyHtmlAttribute : ValidationAttribute
+    {
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            var html = value as string ?? "";
+            var text = Regex.Replace(html, "<.*?>", string.Empty);
+            text = System.Net.WebUtility.HtmlDecode(text).Trim();
+            return string.IsNullOrEmpty(text)
+                ? new ValidationResult(ErrorMessage ?? "Conteúdo é obrigatório.")
+                : ValidationResult.Success;
+        }
+    }
+
+    private static bool IsValidContent(string? html)
+    {
+        if (html is null) return false;
+        var text = Regex.Replace(html, "<.*?>", string.Empty);
+        text = System.Net.WebUtility.HtmlDecode(text).Trim();
+        return !string.IsNullOrEmpty(text);
+    }
+
+    private void OnValidSubmit()
+    {
+        _success = true;
+        _submitted = false;
+        _formModel = new FormModel();
+    }
+
+    private void OnInvalidSubmit()
+    {
+        _submitted = true;
+        _success = false;
+    }
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Editor
+
+        <OpEditor @bind-Value="_text" Style="height:320px" />
+        """;
+
+    private const string BasicCode = """
+        <OpEditor @bind-Value="_text" Style="height:320px" />
+
+        @code {
+            private string? _text;
+        }
+        """;
+
+    private const string CustomToolbarCode = """
+        <OpEditor @bind-Value="_text" Style="height:320px">
+            <HeaderTemplate>
+                <span class="ql-formats">
+                    <button type="button" class="ql-bold" aria-label="Negrito"></button>
+                    <button type="button" class="ql-italic" aria-label="Itálico"></button>
+                    <button type="button" class="ql-underline" aria-label="Sublinhado"></button>
+                </span>
+            </HeaderTemplate>
+        </OpEditor>
+        """;
+
+    private const string ReadonlyCode = """
+        <OpEditor Value="_text" Readonly="true" Style="height:200px" />
+        """;
+
+    private const string FormCode = """
+        <EditForm Model="_formModel" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit">
+            <DataAnnotationsValidator />
+            <OpEditor @bind-Value="_formModel.Content"
+                      Invalid="@(_submitted && !IsValidContent(_formModel.Content))"
+                      Style="height:320px" />
+            <ValidationMessage For="() => _formModel.Content" />
+            <OpButton Label="Enviar" Type="submit" Severity="secondary" />
+        </EditForm>
+        """;
+}

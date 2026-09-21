@@ -1,0 +1,118 @@
+@namespace OpBlazorUI.Base.Components.SplitButton
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Models
+
+<div class="@RootClass"
+     @onfocusout="OnRootFocusOut"
+     @onfocusin="OnRootFocusIn"
+     @onkeydown="OnRootKeydown"
+     @attributes="AdditionalAttributes">
+    <OpButton StyleClass="p-splitbutton-button"
+              Label="@Label"
+              Icon="@Icon"
+              IconPos="@IconPos"
+              Severity="@Severity"
+              Raised="@Raised"
+              Rounded="@Rounded"
+              Text="@Text"
+              Outlined="@Outlined"
+              Plain="@Plain"
+              Size="@Size"
+              Disabled="@(Disabled || ButtonDisabled)"
+              TabIndex="@TabIndex"
+              autofocus="@Autofocus"
+              OnClick="OnClick">
+        @ContentTemplate
+    </OpButton>
+
+    <OpButton StyleClass="p-splitbutton-dropdown"
+              Icon="@DropdownIcon"
+              Severity="@Severity"
+              Raised="@Raised"
+              Rounded="@Rounded"
+              Text="@Text"
+              Outlined="@Outlined"
+              Plain="@Plain"
+              Size="@Size"
+              Disabled="@(Disabled || MenuButtonDisabled)"
+              AriaLabel="@ExpandAriaLabel"
+              aria-haspopup="menu"
+              aria-expanded="@(_overlayVisible ? "true" : "false")"
+              aria-controls="@($"{_id}_menu")"
+              OnClick="OnDropdownButtonClick">
+        @DropdownIconTemplate
+    </OpButton>
+
+    @if (_panelRendered)
+    {
+        <div class="@OverlayClass"
+             style="position:absolute; top:calc(100% + 0.25rem); left:0; min-width:100%; z-index:10;"
+             @onmousedown="OnPanelMouseDown"
+             @onmouseleave="CloseSubmenus"
+             @onanimationend="OnPanelAnimationEnd">
+            <ul class="p-tieredmenu-root-list" role="menu" id="@($"{_id}_menu")">
+                @foreach (var item in Items)
+                {
+                    @RenderItem(item)
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+@code {
+    private RenderFragment RenderItem(OpMenuItem item) => __builder =>
+    {
+        if (item.Separator)
+        {
+            <li class="p-tieredmenu-separator" role="separator"></li>
+        }
+        else if (item.Visible)
+        {
+            var isOpen = _openPath.Contains(item);
+            <li class="p-tieredmenu-item @(isOpen ? "p-tieredmenu-item-active" : "") @(item.Disabled ? "p-disabled" : "")"
+                role="menuitem"
+                aria-label="@item.Label"
+                aria-disabled="@(item.Disabled ? "true" : null)"
+                @onmouseenter="() => OpenItem(item)">
+                <div class="p-tieredmenu-item-content">
+                    @if (item.Url is not null)
+                    {
+                        <a class="p-tieredmenu-item-link" href="@item.Url" target="@item.Target" @onclick="() => OnItemClick(item)">
+                            @RenderItemContent(item)
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="p-tieredmenu-item-link" @onclick="() => OnItemClick(item)">
+                            @RenderItemContent(item)
+                        </div>
+                    }
+                </div>
+
+                @if (item.HasChildren && isOpen)
+                {
+                    <ul class="p-tieredmenu-submenu" role="menu" style="left:100%; top:0; display:flex;">
+                        @foreach (var child in item.Items!)
+                        {
+                            @RenderItem(child)
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    };
+
+    private RenderFragment RenderItemContent(OpMenuItem item) => __builder =>
+    {
+        @if (!string.IsNullOrEmpty(item.Icon))
+        {
+            <span class="p-tieredmenu-item-icon @item.Icon"></span>
+        }
+        <span class="p-tieredmenu-item-label">@item.Label</span>
+        @if (item.HasChildren)
+        {
+            <i class="p-tieredmenu-submenu-icon pi pi-angle-right"></i>
+        }
+    };
+}

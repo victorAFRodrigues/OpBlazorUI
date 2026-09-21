@@ -1,0 +1,112 @@
+@namespace OpBlazorUI.Base.Components.Paginator
+
+@if (AlwaysShow || PageCount > 1)
+{
+    <nav class="@RootClass" @attributes="AdditionalAttributes">
+        @if (TemplateLeft != null)
+        {
+            <div class="p-paginator-content-start">@TemplateLeft</div>
+        }
+
+        @if (ShowCurrentPageReport)
+        {
+            <span class="p-paginator-current" aria-live="polite">@CurrentPageReport</span>
+        }
+
+        @if (ShowFirstLastIcon)
+        {
+            <button type="button" class="p-paginator-first" disabled="@IsFirstPageDisabled" aria-label="First Page" @onclick="ChangeToFirstPage">
+                @if (FirstPageLinkIconTemplate != null)
+                {
+                    <span class="p-paginator-first-icon">@FirstPageLinkIconTemplate</span>
+                }
+                else
+                {
+                    <span class="p-paginator-first-icon pi pi-angle-double-left" aria-hidden="true"></span>
+                }
+            </button>
+        }
+
+        <button type="button" class="p-paginator-prev" disabled="@IsFirstPageDisabled" aria-label="Previous Page" @onclick="ChangeToPrevPage">
+            @if (PreviousPageLinkIconTemplate != null)
+            {
+                <span class="p-paginator-prev-icon">@PreviousPageLinkIconTemplate</span>
+            }
+            else
+            {
+                <span class="p-paginator-prev-icon pi pi-angle-left" aria-hidden="true"></span>
+            }
+        </button>
+
+        @if (ShowPageLinks)
+        {
+            <span class="p-paginator-pages">
+                @foreach (var page in PageLinks)
+                {
+                    <button type="button"
+                            class="@PageClass(page)"
+                            aria-label="@(page + 1)"
+                            aria-current="@(page == CurrentPage ? "page" : null)"
+                            @onclick="() => ChangeToPage(page)">
+                        @(page + 1)
+                    </button>
+                }
+            </span>
+        }
+
+        <button type="button" class="p-paginator-next" disabled="@IsLastPageDisabled" aria-label="Next Page" @onclick="ChangeToNextPage">
+            @if (NextPageLinkIconTemplate != null)
+            {
+                <span class="p-paginator-next-icon">@NextPageLinkIconTemplate</span>
+            }
+            else
+            {
+                <span class="p-paginator-next-icon pi pi-angle-right" aria-hidden="true"></span>
+            }
+        </button>
+
+        @if (ShowFirstLastIcon)
+        {
+            <button type="button" class="p-paginator-last" disabled="@IsLastPageDisabled" aria-label="Last Page" @onclick="ChangeToLastPage">
+                @if (LastPageLinkIconTemplate != null)
+                {
+                    <span class="p-paginator-last-icon">@LastPageLinkIconTemplate</span>
+                }
+                else
+                {
+                    <span class="p-paginator-last-icon pi pi-angle-double-right" aria-hidden="true"></span>
+                }
+            </button>
+        }
+
+        @if (ShowJumpToPageInput)
+        {
+            <span class="p-paginator-jtp-input">
+                <input type="text"
+                       class="p-inputtext"
+                       value="@_jumpToPageText"
+                       aria-label="Jump to page"
+                       @oninput="OnJumpToPageInput"
+                       @onkeydown="OnJumpToPageKeydown"/>
+            </span>
+        }
+
+        @if (RowsPerPageOptions is { Count: > 0 })
+        {
+            <select class="p-paginator-rpp-dropdown p-inputtext"
+                    value="@Rows"
+                    aria-label="Rows per page"
+                    @onchange="OnRowsPerPageChange">
+                @foreach (var option in RowsPerPageOptions)
+                {
+                    <option value="@option">@option</option>
+                }
+            </select>
+        }
+
+        @if (TemplateRight != null)
+        {
+            <div class="p-paginator-content-end">@TemplateRight</div>
+        }
+    </nav>
+}

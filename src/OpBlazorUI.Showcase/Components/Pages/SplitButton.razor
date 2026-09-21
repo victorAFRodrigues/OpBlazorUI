@@ -1,0 +1,399 @@
+@page "/splitbutton"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.SplitButton
+@using OpBlazorUI.Base.Components.Toast
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Services
+@using Microsoft.AspNetCore.Components
+
+<DocComponent Title="SplitButton"
+              Description="O SplitButton agrupa um conjunto de comandos em um overlay com um item de ação padrão.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O botão principal usa <code>Label</code> como <code>aria-label</code> por padrão. O botão do dropdown requer <code>ExpandAriaLabel</code>, além de <code>aria-haspopup</code>, <code>aria-expanded</code> e <code>aria-controls</code>. O popup usa role <code>menu</code> e cada item tem role <code>menuitem</code>.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O SplitButton tem um botão de ação padrão e uma coleção de opções definidas por <code>Model</code>.
+            </Description>
+            <ChildContent>
+                <OpToast Key="splitbutton"/>
+                <OpSplitButton Label="Salvar" OnClick="@(e => Save())" Model="_items"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado">
+            <Description>
+                Os estados desabilitados do botão e do menu podem ser controlados independentemente com <code>ButtonDisabled</code> e <code>MenuButtonDisabled</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex gap-4 flex-wrap">
+                    <OpSplitButton Label="Salvar" Icon="pi pi-plus" Model="_items" Disabled="true"/>
+                    <OpSplitButton Label="Botão" Icon="pi pi-plus" Model="_items" ButtonDisabled="true"/>
+                    <OpSplitButton Label="Menu" Icon="pi pi-plus" Model="_items" MenuButtonDisabled="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícones">
+            <Description>
+                Os botões e itens de menu suportam ícones.
+            </Description>
+            <ChildContent>
+                <OpSplitButton Label="Salvar" Icon="pi pi-check" DropdownIcon="pi pi-cog" Model="_iconItems"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Aninhado">
+            <Description>
+                O SplitButton suporta itens de menu aninhados.
+            </Description>
+            <ChildContent>
+                <OpSplitButton Label="Salvar" OnClick="@(e => Save())" Model="_nestedItems"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@NestedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Contornado">
+            <ChildContent>
+                <div class="flex gap-4 flex-wrap">
+                    <OpSplitButton Label="Primary" Model="_items" Outlined="true"/>
+                    <OpSplitButton Label="Secondary" Model="_items" Outlined="true" Severity="secondary"/>
+                    <OpSplitButton Label="Success" Model="_items" Outlined="true" Severity="success"/>
+                    <OpSplitButton Label="Info" Model="_items" Outlined="true" Severity="info"/>
+                    <OpSplitButton Label="Warning" Model="_items" Outlined="true" Severity="warn"/>
+                    <OpSplitButton Label="Help" Model="_items" Outlined="true" Severity="help"/>
+                    <OpSplitButton Label="Danger" Model="_items" Outlined="true" Severity="danger"/>
+                    <OpSplitButton Label="Contrast" Model="_items" Outlined="true" Severity="contrast"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@OutlinedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Elevado">
+            <ChildContent>
+                <div class="flex gap-4 flex-wrap">
+                    <OpSplitButton Label="Primary" Model="_items" Raised="true"/>
+                    <OpSplitButton Label="Secondary" Model="_items" Raised="true" Severity="secondary"/>
+                    <OpSplitButton Label="Success" Model="_items" Raised="true" Severity="success"/>
+                    <OpSplitButton Label="Info" Model="_items" Raised="true" Severity="info"/>
+                    <OpSplitButton Label="Warning" Model="_items" Raised="true" Severity="warn"/>
+                    <OpSplitButton Label="Help" Model="_items" Raised="true" Severity="help"/>
+                    <OpSplitButton Label="Danger" Model="_items" Raised="true" Severity="danger"/>
+                    <OpSplitButton Label="Contrast" Model="_items" Raised="true" Severity="contrast"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RaisedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Texto Elevado">
+            <ChildContent>
+                <div class="flex gap-4 flex-wrap">
+                    <OpSplitButton Label="Primary" Model="_items" Raised="true" Text="true"/>
+                    <OpSplitButton Label="Secondary" Model="_items" Raised="true" Text="true" Severity="secondary"/>
+                    <OpSplitButton Label="Success" Model="_items" Raised="true" Text="true" Severity="success"/>
+                    <OpSplitButton Label="Danger" Model="_items" Raised="true" Text="true" Severity="danger"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RaisedTextCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Arredondado">
+            <ChildContent>
+                <div class="flex gap-4 flex-wrap">
+                    <OpSplitButton Label="Primary" Model="_items" Rounded="true"/>
+                    <OpSplitButton Label="Secondary" Model="_items" Rounded="true" Severity="secondary"/>
+                    <OpSplitButton Label="Success" Model="_items" Rounded="true" Severity="success"/>
+                    <OpSplitButton Label="Danger" Model="_items" Rounded="true" Severity="danger"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RoundedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Severidade">
+            <Description>
+                A propriedade <code>Severity</code> define o tipo do botão.
+            </Description>
+            <ChildContent>
+                <div class="flex gap-4 flex-wrap">
+                    <OpSplitButton Label="Salvar" Model="_items"/>
+                    <OpSplitButton Label="Salvar" Model="_items" Severity="secondary"/>
+                    <OpSplitButton Label="Salvar" Model="_items" Severity="success"/>
+                    <OpSplitButton Label="Salvar" Model="_items" Severity="info"/>
+                    <OpSplitButton Label="Salvar" Model="_items" Severity="warn"/>
+                    <OpSplitButton Label="Salvar" Model="_items" Severity="help"/>
+                    <OpSplitButton Label="Salvar" Model="_items" Severity="danger"/>
+                    <OpSplitButton Label="Salvar" Model="_items" Severity="contrast"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SeverityCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos">
+            <ChildContent>
+                <div class="flex gap-4 items-center flex-wrap">
+                    <OpSplitButton Label="Small" Model="_items" Size="small"/>
+                    <OpSplitButton Label="Normal" Model="_items"/>
+                    <OpSplitButton Label="Large" Model="_items" Size="large"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Texto">
+            <ChildContent>
+                <div class="flex gap-4 flex-wrap">
+                    <OpSplitButton Label="Primary" Model="_items" Text="true"/>
+                    <OpSplitButton Label="Secondary" Model="_items" Text="true" Severity="secondary"/>
+                    <OpSplitButton Label="Success" Model="_items" Text="true" Severity="success"/>
+                    <OpSplitButton Label="Danger" Model="_items" Text="true" Severity="danger"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TextCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template">
+            <Description>
+                Use <code>ContentTemplate</code> para customizar o conteúdo do botão principal.
+            </Description>
+            <ChildContent>
+                <OpSplitButton Severity="contrast" OnClick="@(e => Save())" Model="_items">
+                    <ContentTemplate>
+                        <span class="flex items-center font-bold">
+                            <span class="pi pi-star-fill" style="margin-right:.5rem;"></span>
+                            <span>Optimus UI</span>
+                        </span>
+                    </ContentTemplate>
+                </OpSplitButton>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;?", "null", "Itens do overlay." },
+                              new[] { "Label", "string?", "null", "Texto do botão principal." },
+                              new[] { "Icon", "string?", "null", "Ícone do botão principal." },
+                              new[] { "IconPos", "string", "left", "Posição do ícone." },
+                              new[] { "Severity", "string?", "null", "Estilo do botão." },
+                              new[] { "Raised", "bool", "false", "Elevação." },
+                              new[] { "Rounded", "bool", "false", "Bordas circulares." },
+                              new[] { "Text", "bool", "false", "Estilo textual." },
+                              new[] { "Outlined", "bool", "false", "Estilo contornado." },
+                              new[] { "Plain", "bool", "false", "Estilo plano." },
+                              new[] { "Size", "string?", "null", "<code>small</code> ou <code>large</code>." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente." },
+                              new[] { "ButtonDisabled", "bool", "false", "Desabilita o botão principal." },
+                              new[] { "MenuButtonDisabled", "bool", "false", "Desabilita o botão do menu." },
+                              new[] { "DropdownIcon", "string?", "pi pi-chevron-down", "Ícone do dropdown." },
+                              new[] { "ExpandAriaLabel", "string?", "null", "Label do botão de expandir." },
+                              new[] { "MenuStyleClass", "string?", "null", "Classes do menu." },
+                              new[] { "StyleClass", "string?", "null", "Classes do elemento raiz." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
+                              new[] { "Autofocus", "bool", "false", "Foco automático." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar no botão principal." },
+                              new[] { "OnMenuShow", "EventCallback", "Disparado ao exibir o menu." },
+                              new[] { "OnMenuHide", "EventCallback", "Disparado ao ocultar o menu." },
+                              new[] { "OnDropdownClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar no dropdown." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ContentTemplate", "RenderFragment?", "Template do conteúdo do botão principal." },
+                              new[] { "DropdownIconTemplate", "RenderFragment?", "Template do ícone do dropdown." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="splitbutton"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use os templates para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    [Inject] private OpMessageService MessageService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private List<OpMenuItem> _items = new();
+    private List<OpMenuItem> _iconItems = new();
+    private List<OpMenuItem> _nestedItems = new();
+
+    protected override void OnInitialized()
+    {
+        _items = new List<OpMenuItem>
+        {
+            new() { Label = "Atualizar", Command = () => Add("success", "Atualizado", "Dado atualizado") },
+            new() { Label = "Excluir", Command = () => Add("warn", "Excluir", "Dado excluído") },
+            new() { Label = "Angular.dev", Url = "https://angular.dev", Target = "_blank" },
+            new() { Separator = true },
+            new() { Label = "Upload", Command = () => Navigation.NavigateTo("/installation") }
+        };
+
+        _iconItems = new List<OpMenuItem>
+        {
+            new() { Label = "Atualizar", Icon = "pi pi-refresh", Command = () => Add("success", "Atualizado", "Dado atualizado") },
+            new() { Label = "Excluir", Icon = "pi pi-times", Command = () => Add("warn", "Excluir", "Dado excluído") },
+            new() { Separator = true },
+            new() { Label = "Sair", Icon = "pi pi-power-off", Url = "https://angular.io/", Target = "_blank" }
+        };
+
+        _nestedItems = new List<OpMenuItem>
+        {
+            new()
+            {
+                Label = "Arquivo", Icon = "pi pi-fw pi-file",
+                Items = new List<OpMenuItem>
+                {
+                    new()
+                    {
+                        Label = "Novo", Icon = "pi pi-fw pi-plus",
+                        Items = new List<OpMenuItem>
+                        {
+                            new() { Label = "Favorito", Icon = "pi pi-fw pi-bookmark" },
+                            new() { Label = "Vídeo", Icon = "pi pi-fw pi-video" }
+                        }
+                    },
+                    new() { Label = "Excluir", Icon = "pi pi-fw pi-trash" },
+                    new() { Separator = true },
+                    new() { Label = "Exportar", Icon = "pi pi-fw pi-external-link" }
+                }
+            },
+            new()
+            {
+                Label = "Editar", Icon = "pi pi-fw pi-pencil",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Esquerda", Icon = "pi pi-fw pi-align-left" },
+                    new() { Label = "Direita", Icon = "pi pi-fw pi-align-right" },
+                    new() { Label = "Centro", Icon = "pi pi-fw pi-align-center" }
+                }
+            },
+            new() { Separator = true },
+            new() { Label = "Sair", Icon = "pi pi-fw pi-power-off" }
+        };
+    }
+
+    private void Save() => Add("success", "Sucesso", "Dado salvo");
+
+    private void Add(string severity, string summary, string detail) =>
+        MessageService.Add(new OpToastMessage { Key = "splitbutton", Severity = severity, Summary = summary, Detail = detail });
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.SplitButton
+        @using OpBlazorUI.Base.Models
+
+        <OpSplitButton Label="Salvar" OnClick="Save" Model="_items" />
+        """;
+
+    private const string BasicCode = """
+        <OpSplitButton Label="Salvar" OnClick="Save" Model="_items" />
+        """;
+
+    private const string DisabledCode = """
+        <OpSplitButton Label="Salvar" Model="_items" Disabled="true" />
+        <OpSplitButton Label="Salvar" Model="_items" ButtonDisabled="true" />
+        <OpSplitButton Label="Salvar" Model="_items" MenuButtonDisabled="true" />
+        """;
+
+    private const string IconsCode = """
+        <OpSplitButton Label="Salvar" Icon="pi pi-check" DropdownIcon="pi pi-cog" Model="_items" />
+        """;
+
+    private const string NestedCode = """
+        <OpSplitButton Label="Salvar" Model="_nestedItems" />
+        """;
+
+    private const string OutlinedCode = """
+        <OpSplitButton Label="Primary" Model="_items" Outlined="true" />
+        <OpSplitButton Label="Secondary" Model="_items" Outlined="true" Severity="secondary" />
+        """;
+
+    private const string RaisedCode = """
+        <OpSplitButton Label="Primary" Model="_items" Raised="true" />
+        <OpSplitButton Label="Secondary" Model="_items" Raised="true" Severity="secondary" />
+        """;
+
+    private const string RaisedTextCode = """
+        <OpSplitButton Label="Primary" Model="_items" Raised="true" Text="true" />
+        """;
+
+    private const string RoundedCode = """
+        <OpSplitButton Label="Primary" Model="_items" Rounded="true" />
+        """;
+
+    private const string SeverityCode = """
+        <OpSplitButton Label="Salvar" Model="_items" />
+        <OpSplitButton Label="Salvar" Model="_items" Severity="secondary" />
+        <OpSplitButton Label="Salvar" Model="_items" Severity="success" />
+        <OpSplitButton Label="Salvar" Model="_items" Severity="danger" />
+        """;
+
+    private const string SizesCode = """
+        <OpSplitButton Label="Small" Model="_items" Size="small" />
+        <OpSplitButton Label="Normal" Model="_items" />
+        <OpSplitButton Label="Large" Model="_items" Size="large" />
+        """;
+
+    private const string TextCode = """
+        <OpSplitButton Label="Primary" Model="_items" Text="true" />
+        """;
+
+    private const string TemplateCode = """
+        <OpSplitButton Severity="contrast" OnClick="Save" Model="_items">
+            <ContentTemplate>
+                <span class="flex items-center font-bold">
+                    <span class="pi pi-star-fill" style="margin-right:.5rem;"></span>
+                    <span>Optimus UI</span>
+                </span>
+            </ContentTemplate>
+        </OpSplitButton>
+        """;
+}

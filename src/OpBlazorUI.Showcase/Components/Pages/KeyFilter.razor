@@ -1,0 +1,134 @@
+@page "/keyfilter"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.InputText
+
+<DocComponent Title="KeyFilter"
+              Description="O KeyFilter restringe teclas individuais. Para restringir todo o input, use InputNumber ou InputMask.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Description>
+                No Angular, o KeyFilter é uma diretiva aplicada a um <code>&lt;input&gt;</code>. No Blazor, ele é um parâmetro
+                <code>KeyFilter</code> do componente <code>OpInputText</code>.
+            </Description>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Presets">
+            <Description>
+                O KeyFilter oferece vários presets: <code>int</code>, <code>num</code>, <code>money</code>, <code>hex</code>,
+                <code>alpha</code> e <code>alphanum</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="kf1">Inteiro</label>
+                        <OpInputText Id="kf1" KeyFilter="int" StyleClass="w-full"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="kf2">Número</label>
+                        <OpInputText Id="kf2" KeyFilter="num" StyleClass="w-full"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="kf3">Moeda</label>
+                        <OpInputText Id="kf3" KeyFilter="money" StyleClass="w-full"/>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="kf4">Hex</label>
+                        <OpInputText Id="kf4" KeyFilter="hex" StyleClass="w-full"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="kf5">Alfabético</label>
+                        <OpInputText Id="kf5" KeyFilter="alpha" StyleClass="w-full"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="kf6">Alfanumérico</label>
+                        <OpInputText Id="kf6" KeyFilter="alphanum" StyleClass="w-full"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PresetsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Regex">
+            <Description>
+                Além dos presets, uma expressão regular pode ser usada para customização.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="kf7">Bloquear espaço</label>
+                        <OpInputText Id="kf7" KeyFilter="^[^\s]+$" StyleClass="w-full"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="kf8">Bloquear &lt; &gt; * !</label>
+                        <OpInputText Id="kf8" KeyFilter="^[^<>*!]+$" StyleClass="w-full"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RegexCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                Consulte o InputText para acessibilidade, pois o KeyFilter é um complemento do InputText.
+            </Description>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <Description>
+                Parâmetro adicionado ao <code>OpInputText</code>.
+            </Description>
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "KeyFilter", "string?", "null", "Preset (<code>int</code>, <code>num</code>, <code>money</code>, <code>hex</code>, <code>alpha</code>, <code>alphanum</code>) ou expressão regular." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e atributos extras para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.InputText
+
+        <OpInputText KeyFilter="int" />
+        """;
+
+    private const string PresetsCode = """
+        <OpInputText KeyFilter="int" />
+        <OpInputText KeyFilter="num" />
+        <OpInputText KeyFilter="money" />
+        <OpInputText KeyFilter="hex" />
+        <OpInputText KeyFilter="alpha" />
+        <OpInputText KeyFilter="alphanum" />
+        """;
+
+    private const string RegexCode = """
+        <OpInputText KeyFilter="^[^\s]+$" />
+        <OpInputText KeyFilter="^[^<>*!]+$" />
+        """;
+}

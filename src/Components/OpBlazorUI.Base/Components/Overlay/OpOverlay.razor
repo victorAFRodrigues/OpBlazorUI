@@ -1,0 +1,27 @@
+@namespace OpBlazorUI.Base.Components.Overlay
+
+@if (Visible)
+{
+    @if (Mode == "modal")
+    {
+        <div class="@MaskClass"
+             style="@MaskStyle"
+             @onclick="OnMaskClick"
+             @onkeydown="OnKeydown"
+             @attributes="AdditionalAttributes">
+            <div class="@RootClass" style="@Style" role="dialog" aria-modal="true">
+                <div class="@ContentClass" style="@ContentStyle" @onclick:stopPropagation="true">@ChildContent</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="@RootClass"
+             style="@Style"
+             role="dialog"
+             @onkeydown="OnKeydown"
+             @attributes="AdditionalAttributes">
+            <div class="@ContentClass" style="@ContentStyle">@ChildContent</div>
+        </div>
+    }
+}

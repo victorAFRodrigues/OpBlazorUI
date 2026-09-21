@@ -1,0 +1,117 @@
+@page "/iftalabel"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Base.Components.InputText
+
+<DocComponent Title="IftaLabel"
+              Description="O IftaLabel é usado para criar rótulos alinhados ao topo dentro do campo.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O IftaLabel não requer roles nem atributos ARIA adicionais e não inclui elementos interativos.
+                O vínculo entre o rótulo e o campo é feito pelo atributo <code>for</code> do <code>&lt;label&gt;</code>
+                apontando para o <code>id</code> do input.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O IftaLabel é usado envolvendo o input e o seu rótulo.
+            </Description>
+            <ChildContent>
+                <OpIftaLabel>
+                    <OpInputText Id="ift1" @bind-Value="_value" Autocomplete="off"/>
+                    <label for="ift1">Usuário</label>
+                </OpIftaLabel>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido">
+            <Description>
+                Quando o campo está inválido, o rótulo também é destacado.
+            </Description>
+            <ChildContent>
+                <OpIftaLabel>
+                    <OpInputText Id="ift2" @bind-Value="_invalid" Invalid="@(string.IsNullOrEmpty(_invalid))" Autocomplete="off"/>
+                    <label for="ift2">Usuário</label>
+                </OpIftaLabel>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Input + label." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="iftalabel"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ChildContent</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private string? _value;
+    private string? _invalid;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.IftaLabel
+        @using OpBlazorUI.Base.Components.InputText
+
+        <OpIftaLabel>
+            <OpInputText Id="ift1" @bind-Value="_value" Autocomplete="off" />
+            <label for="ift1">Usuário</label>
+        </OpIftaLabel>
+        """;
+
+    private const string BasicCode = """
+        <OpIftaLabel>
+            <OpInputText Id="ift1" @bind-Value="_value" Autocomplete="off" />
+            <label for="ift1">Usuário</label>
+        </OpIftaLabel>
+
+        @code {
+            private string? _value;
+        }
+        """;
+
+    private const string InvalidCode = """
+        <OpIftaLabel>
+            <OpInputText Id="ift2" @bind-Value="_value" Invalid="@(string.IsNullOrEmpty(_value))" Autocomplete="off" />
+            <label for="ift2">Usuário</label>
+        </OpIftaLabel>
+        """;
+}

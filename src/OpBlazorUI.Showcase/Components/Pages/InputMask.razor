@@ -1,0 +1,302 @@
+@page "/inputmask"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.IftaLabel
+
+<DocComponent Title="InputMask"
+              Description="O InputMask insere dados em um formato específico, como numérico, data, moeda e telefone.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Description>
+                No Angular, o InputMask é uma diretiva aplicada a um <code>&lt;input&gt;</code>. No Blazor, ele é um parâmetro
+                <code>Mask</code> do componente <code>OpInputText</code>.
+            </Description>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O InputMask usa o input nativo e inclui implicitamente qualquer atributo passado. Descreva o valor com
+                <code>&lt;label&gt;</code> + <code>id</code> ou com <code>aria-label</code>/<code>aria-labelledby</code>.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O InputMask é usado como um input controlado via <code>@@bind-Value</code>.
+            </Description>
+            <ChildContent>
+                <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="99-999999" StyleClass="w-full"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Máscara">
+            <Description>
+                A máscara aceita <code>a</code> (alfabético), <code>9</code> (numérico) e <code>*</code> (alfanumérico),
+                além de caracteres de formatação como <code>(</code>, <code>)</code> e <code>-</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="im1">SSN</label>
+                        <OpInputText Id="im1" Mask="999-99-9999" @bind-Value="_ssn" Placeholder="999-99-9999"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="im2">Telefone</label>
+                        <OpInputText Id="im2" Mask="(999) 999-9999" @bind-Value="_phone" Placeholder="(999) 999-9999"/>
+                    </div>
+                    <div class="flex-auto">
+                        <label class="font-bold block mb-2" for="im3">Número de série</label>
+                        <OpInputText Id="im3" Mask="a*-999-a999" @bind-Value="_serial" Placeholder="a*-999-a999"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MaskCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Opcional">
+            <Description>
+                Quando o input não completa a máscara, ele é limpo por padrão (use <code>AutoClear</code> para controlar).
+                O <code>?</code> torna opcional tudo que vem depois dele.
+            </Description>
+            <ChildContent>
+                <OpInputText Mask="(999) 999-9999? x99999" @bind-Value="_optional" Placeholder="(999) 999-9999? x99999" StyleClass="w-full"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@OptionalCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="SlotChar">
+            <Description>
+                O caractere de placeholder da máscara é <code>_</code> por padrão e pode ser alterado com <code>SlotChar</code>.
+            </Description>
+            <ChildContent>
+                <OpInputText Mask="99/99/9999" SlotChar="0" @bind-Value="_date" Placeholder="99/99/9999" StyleClass="w-full"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@SlotCharCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Preenchido">
+            <Description>
+                Use <code>Variant="filled"</code> para dar maior ênfase visual.
+            </Description>
+            <ChildContent>
+                <OpInputText Mask="99-999999" Variant="filled" @bind-Value="_filled" Placeholder="99-999999" StyleClass="w-full"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Float Label">
+            <Description>
+                O InputMask funciona com o FloatLabel.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <OpFloatLabel>
+                        <OpInputText Id="imf1" Mask="999-99-9999" @bind-Value="_fl1"/>
+                        <label for="imf1">Rótulo Sobre</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="in">
+                        <OpInputText Id="imf2" Mask="999-99-9999" @bind-Value="_fl2"/>
+                        <label for="imf2">Rótulo Dentro</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="on">
+                        <OpInputText Id="imf3" Mask="999-99-9999" @bind-Value="_fl3"/>
+                        <label for="imf3">Rótulo Sobre a Borda</label>
+                    </OpFloatLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FloatLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ifta Label">
+            <Description>
+                O InputMask também funciona com o IftaLabel.
+            </Description>
+            <ChildContent>
+                <OpIftaLabel>
+                    <OpInputText Id="imi1" Mask="999-99-9999" @bind-Value="_ifta" Autocomplete="off"/>
+                    <label for="imi1">SSN</label>
+                </OpIftaLabel>
+            </ChildContent>
+            <Code><CodeBlock Code="@IftaLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos">
+            <Description>
+                O InputMask oferece os tamanhos <code>small</code> e <code>large</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpInputText Size="small" Mask="99-999999" @bind-Value="_s1" Placeholder="Small"/>
+                    <OpInputText Mask="99-999999" @bind-Value="_s2" Placeholder="Normal"/>
+                    <OpInputText Size="large" Mask="99-999999" @bind-Value="_s3" Placeholder="Large"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Fluid">
+            <Description>
+                <code>Fluid</code> faz o componente ocupar toda a largura do contêiner.
+            </Description>
+            <ChildContent>
+                <OpInputText Mask="99-999999" Fluid="true" @bind-Value="_fluid" Placeholder="99-999999"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado">
+            <Description>
+                Com <code>Disabled</code>, o campo não pode ser editado nem focalizado.
+            </Description>
+            <ChildContent>
+                <OpInputText Mask="999-99-9999" Disabled="true" @bind-Value="_disabled" StyleClass="w-full"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido">
+            <Description>
+                O estado inválido é aplicado via <code>Invalid</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpInputText Mask="99-999999" Invalid="@(string.IsNullOrEmpty(_inv1))" @bind-Value="_inv1" Placeholder="Chave de série"/>
+                    <OpInputText Mask="99-999999" Variant="filled" Invalid="@(string.IsNullOrEmpty(_inv2))" @bind-Value="_inv2" Placeholder="Chave de série"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <Description>
+                Parâmetros adicionados ao <code>OpInputText</code> para a máscara.
+            </Description>
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Mask", "string?", "null", "Padrão da máscara (<code>a</code>, <code>9</code>, <code>*</code>, literais e <code>?</code>)." },
+                              new[] { "AutoClear", "bool", "true", "Limpa o valor incompleto ao desfocar." },
+                              new[] { "SlotChar", "string", "_", "Caractere de placeholder da máscara." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <Description>
+                O InputMask reutiliza o theming do <code>InputText</code> (<code>.p-inputtext</code> e tokens <code>--p-inputtext-*</code>).
+            </Description>
+            <ChildContent><DocTokens Component="inputtext"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e atributos extras para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private string? _value;
+    private string? _ssn;
+    private string? _phone;
+    private string? _serial;
+    private string? _optional;
+    private string? _date;
+    private string? _filled;
+    private string? _fl1;
+    private string? _fl2;
+    private string? _fl3;
+    private string? _ifta;
+    private string? _s1;
+    private string? _s2;
+    private string? _s3;
+    private string? _fluid;
+    private string? _disabled;
+    private string? _inv1;
+    private string? _inv2;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.InputText
+
+        <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="99-999999" />
+        """;
+
+    private const string BasicCode = """
+        <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="99-999999" />
+
+        @code {
+            private string? _value;
+        }
+        """;
+
+    private const string MaskCode = """
+        <OpInputText Mask="999-99-9999" @bind-Value="_ssn" Placeholder="999-99-9999" />
+        <OpInputText Mask="(999) 999-9999" @bind-Value="_phone" Placeholder="(999) 999-9999" />
+        <OpInputText Mask="a*-999-a999" @bind-Value="_serial" Placeholder="a*-999-a999" />
+        """;
+
+    private const string OptionalCode = """
+        <OpInputText Mask="(999) 999-9999? x99999" @bind-Value="_value" Placeholder="(999) 999-9999? x99999" />
+        """;
+
+    private const string SlotCharCode = """
+        <OpInputText Mask="99/99/9999" SlotChar="0" @bind-Value="_value" Placeholder="99/99/9999" />
+        """;
+
+    private const string FilledCode = """
+        <OpInputText Mask="99-999999" Variant="filled" @bind-Value="_value" Placeholder="99-999999" />
+        """;
+
+    private const string FloatLabelCode = """
+        <OpFloatLabel>
+            <OpInputText Id="imf1" Mask="999-99-9999" @bind-Value="_value" />
+            <label for="imf1">Rótulo Sobre</label>
+        </OpFloatLabel>
+        """;
+
+    private const string IftaLabelCode = """
+        <OpIftaLabel>
+            <OpInputText Id="imi1" Mask="999-99-9999" @bind-Value="_value" Autocomplete="off" />
+            <label for="imi1">SSN</label>
+        </OpIftaLabel>
+        """;
+
+    private const string SizeCode = """
+        <OpInputText Size="small" Mask="99-999999" @bind-Value="_value" Placeholder="Small" />
+        <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="Normal" />
+        <OpInputText Size="large" Mask="99-999999" @bind-Value="_value" Placeholder="Large" />
+        """;
+
+    private const string FluidCode = """
+        <OpInputText Mask="99-999999" Fluid="true" @bind-Value="_value" Placeholder="99-999999" />
+        """;
+
+    private const string DisabledCode = """
+        <OpInputText Mask="999-99-9999" Disabled="true" @bind-Value="_value" />
+        """;
+
+    private const string InvalidCode = """
+        <OpInputText Mask="99-999999" Invalid="@(string.IsNullOrEmpty(_value))" @bind-Value="_value" Placeholder="Chave de série" />
+        """;
+}

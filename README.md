@@ -98,9 +98,13 @@ Modo escuro e RTL via `_content/OpBlazorUI.Base/optimus.interop.js` (`setDarkMod
 
 ## Componentes portados
 
-AutoComplete, Button, Checkbox, DataTable, DatePicker, FloatLabel, IconField, InputText,
-Menu, Message, MultiSelect, RadioButton, Select, SelectButton, ThemeSwitcher, Toast,
-ToggleButton, ToggleSwitch, Tooltip.
+Button, CascadeSelect, Checkbox, DataTable, DatePicker, Editor, FloatLabel, IconField,
+IftaLabel, InputGroup, InputMask, InputNumber, InputOtp, InputText, KeyFilter, Listbox,
+Menu, Message, MultiSelect, Password, RadioButton, Rating, Select, SelectButton,
+SpeedDial, SplitButton, ThemeSwitcher, Toast, ToggleButton, ToggleSwitch, Tooltip,
+TreeSelect, Avatar, Badge, Chip, ProgressBar, ProgressSpinner, Skeleton, Tag,
+Dialog, Drawer, FocusTrap, Overlay, Popover, BlockUI, Card, Divider, Paginator,
+ScrollTop, VirtualScroller.
 
 ## Estrutura do repositório
 
