@@ -1,0 +1,177 @@
+@page "/paginator"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Paginator
+
+<DocComponent Title="Paginator"
+              Description="O Paginator exibe dados em formato paginado e oferece navegação entre páginas.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpPaginator First="_first"
+                                 Rows="_rows"
+                                 TotalRecords="120"
+                                 RowsPerPageOptions="_rowsPerPageOptions"
+                                 OnPageChange="OnPageChange"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Relatório de página">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpPaginator First="_first2"
+                                 Rows="10"
+                                 TotalRecords="120"
+                                 ShowCurrentPageReport="true"
+                                 ShowPageLinks="false"
+                                 ShowFirstLastIcon="false"
+                                 CurrentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                                 OnPageChange="OnPageChange2"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Pular para página">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpPaginator First="_first3"
+                                 Rows="10"
+                                 TotalRecords="120"
+                                 ShowJumpToPageInput="true"
+                                 OnPageChange="OnPageChange3"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@JumpCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "First", "int", "0", "Índice (zero-based) do primeiro registro." },
+                              new[] { "Rows", "int", "0", "Registros por página." },
+                              new[] { "TotalRecords", "int", "0", "Total de registros." },
+                              new[] { "RowsPerPageOptions", "IReadOnlyList&lt;int&gt;?", "null", "Opções do dropdown de linhas por página." },
+                              new[] { "PageLinkSize", "int", "5", "Quantidade de links de página." },
+                              new[] { "AlwaysShow", "bool", "true", "Exibe mesmo com uma única página." },
+                              new[] { "ShowFirstLastIcon", "bool", "true", "Exibe ícones de primeira/última página." },
+                              new[] { "ShowCurrentPageReport", "bool", "false", "Exibe o relatório da página atual." },
+                              new[] { "CurrentPageReportTemplate", "string", "{currentPage} of {totalPages}", "Template do relatório (placeholders: {currentPage}, {totalPages}, {rows}, {first}, {last}, {totalRecords})." },
+                              new[] { "ShowJumpToPageInput", "bool", "false", "Exibe input para pular de página." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnPageChange", "EventCallback&lt;OpPaginatorState&gt;", "Disparado ao mudar de página ({ First, Rows, Page, PageCount })." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="paginator"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>TemplateLeft</code>/<code>TemplateRight</code> e os templates de ícone para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>O dropdown de linhas por página usa um <code>&lt;select&gt;</code> nativo (o tema não estiliza <code>p-paginator-rpp-dropdown</code>).</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private int _first;
+    private int _rows = 10;
+    private int _first2;
+    private int _first3;
+
+    private static readonly int[] _rowsPerPageOptions = [10, 20, 30];
+
+    private Task OnPageChange(OpPaginatorState state)
+    {
+        _first = state.First;
+        _rows = state.Rows;
+        return Task.CompletedTask;
+    }
+
+    private Task OnPageChange2(OpPaginatorState state)
+    {
+        _first2 = state.First;
+        return Task.CompletedTask;
+    }
+
+    private Task OnPageChange3(OpPaginatorState state)
+    {
+        _first3 = state.First;
+        return Task.CompletedTask;
+    }
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Paginator
+
+        <OpPaginator First="_first" Rows="10" TotalRecords="120" OnPageChange="OnPageChange" />
+        """;
+
+    private const string BasicCode = """
+        <OpPaginator First="_first"
+                     Rows="10"
+                     TotalRecords="120"
+                     RowsPerPageOptions="_options"
+                     OnPageChange="OnPageChange" />
+
+        @code {
+            private int _first;
+            private int[] _options = [10, 20, 30];
+
+            private void OnPageChange(OpPaginatorState state) => _first = state.First;
+        }
+        """;
+
+    private const string ReportCode = """
+        <OpPaginator First="_first"
+                     Rows="10"
+                     TotalRecords="120"
+                     ShowCurrentPageReport="true"
+                     ShowPageLinks="false"
+                     ShowFirstLastIcon="false"
+                     CurrentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                     OnPageChange="OnPageChange" />
+        """;
+
+    private const string JumpCode = """
+        <OpPaginator First="_first"
+                     Rows="10"
+                     TotalRecords="120"
+                     ShowJumpToPageInput="true"
+                     OnPageChange="OnPageChange" />
+        """;
+}

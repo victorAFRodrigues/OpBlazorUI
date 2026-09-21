@@ -1,0 +1,147 @@
+@page "/divider"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Divider
+
+<DocComponent Title="Divider"
+              Description="O Divider é usado para separar conteúdo.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="card">
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                        ut labore et dolore magna aliqua.
+                    </p>
+                    <OpDivider/>
+                    <p>
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+                        laudantium, totam rem aperiam.
+                    </p>
+                    <OpDivider/>
+                    <p>
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.
+                    </p>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tipo">
+            <ChildContent>
+                <div class="card">
+                    <p class="m-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <OpDivider Type="solid"/>
+                    <p class="m-0">Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
+                    <OpDivider Type="dotted"/>
+                    <p class="m-0">At vero eos et accusamus et iusto odio dignissimos ducimus.</p>
+                    <OpDivider Type="dashed"/>
+                    <p class="m-0">Temporibus autem quibusdam et aut officiis debitis aut rerum.</p>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TypeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Conteúdo">
+            <ChildContent>
+                <div class="card">
+                    <p class="m-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <OpDivider Align="left"><b>Esquerda</b></OpDivider>
+                    <p class="m-0">Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
+                    <OpDivider Align="center"><b>Centro</b></OpDivider>
+                    <p class="m-0">At vero eos et accusamus et iusto odio dignissimos ducimus.</p>
+                    <OpDivider Align="right"><b>Direita</b></OpDivider>
+                    <p class="m-0">Temporibus autem quibusdam et aut officiis debitis aut rerum.</p>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ContentCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vertical">
+            <ChildContent>
+                <div class="card flex items-center" style="min-height:6rem">
+                    <p class="m-0 flex-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <OpDivider Layout="vertical"/>
+                    <p class="m-0 flex-1">Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
+                    <OpDivider Layout="vertical"><b>OR</b></OpDivider>
+                    <p class="m-0 flex-1">At vero eos et accusamus et iusto odio dignissimos ducimus.</p>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VerticalCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Layout", "string", "horizontal", "Orientação: <code>horizontal</code> ou <code>vertical</code>." },
+                              new[] { "Type", "string", "solid", "Estilo da borda: <code>solid</code>, <code>dashed</code> ou <code>dotted</code>." },
+                              new[] { "Align", "string?", "null", "Alinhamento do conteúdo: <code>left</code>/<code>center</code>/<code>right</code> (horizontal) ou <code>top</code>/<code>center</code>/<code>bottom</code> (vertical)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo dentro do divisor." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="divider"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Divider
+
+        <OpDivider />
+        """;
+
+    private const string BasicCode = """
+        <p>Lorem ipsum dolor sit amet.</p>
+        <OpDivider />
+        <p>Sed ut perspiciatis unde omnis.</p>
+        """;
+
+    private const string TypeCode = """
+        <OpDivider Type="solid" />
+        <OpDivider Type="dotted" />
+        <OpDivider Type="dashed" />
+        """;
+
+    private const string ContentCode = """
+        <OpDivider Align="left"><b>Esquerda</b></OpDivider>
+        <OpDivider Align="center"><b>Centro</b></OpDivider>
+        <OpDivider Align="right"><b>Direita</b></OpDivider>
+        """;
+
+    private const string VerticalCode = """
+        <OpDivider Layout="vertical" />
+        <OpDivider Layout="vertical"><b>OR</b></OpDivider>
+        """;
+}

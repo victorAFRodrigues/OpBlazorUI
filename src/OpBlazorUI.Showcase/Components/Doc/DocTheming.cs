@@ -50,6 +50,11 @@ public static class DocTheming
         ["popover"] = [".p-popover", ".p-popover-content", ".p-popover-flipped"],
         ["overlay"] = [".p-overlay", ".p-overlay-mask", ".p-overlay-content", ".p-overlay-mask-enter-active", ".p-overlay-mask-leave-active"],
         ["focustrap"] = [".p-focustrap"],
+        ["paginator"] = [".p-paginator", ".p-paginator-content", ".p-paginator-content-start", ".p-paginator-content-end", ".p-paginator-first", ".p-paginator-first-icon", ".p-paginator-prev", ".p-paginator-prev-icon", ".p-paginator-next", ".p-paginator-next-icon", ".p-paginator-last", ".p-paginator-last-icon", ".p-paginator-pages", ".p-paginator-page", ".p-paginator-page-selected", ".p-paginator-current", ".p-paginator-jtp-input"],
+        ["divider"] = [".p-divider", ".p-divider-content", ".p-divider-horizontal", ".p-divider-vertical", ".p-divider-solid", ".p-divider-dashed", ".p-divider-dotted"],
+        ["card"] = [".p-card", ".p-card-header", ".p-card-body", ".p-card-caption", ".p-card-title", ".p-card-subtitle", ".p-card-content", ".p-card-footer"],
+        ["blockui"] = [".p-blockui", ".p-blockui-mask"],
+        ["virtualscroller"] = [".p-virtualscroller", ".p-virtualscroller-content", ".p-virtualscroller-spacer", ".p-virtualscroller-loader", ".p-virtualscroller-loading-icon"],
     };
 
     public static readonly Dictionary<string, (string Var, string Value)[]> Tokens = new(StringComparer.OrdinalIgnoreCase)
@@ -94,6 +99,11 @@ public static class DocTheming
         ["drawer"] = [("--p-drawer-background", "var(--p-overlay-modal-background)"), ("--p-drawer-border-color", "var(--p-overlay-modal-border-color)"), ("--p-drawer-color", "var(--p-overlay-modal-color)"), ("--p-drawer-shadow", "var(--p-overlay-modal-shadow)"), ("--p-drawer-header-padding", "var(--p-overlay-modal-padding)"), ("--p-drawer-title-font-size", "1.5rem"), ("--p-drawer-title-font-weight", "600"), ("--p-drawer-content-padding", "0 var(--p-overlay-modal-padding) var(--p-overlay-modal-padding) var(--p-overlay-modal-padding)"), ("--p-drawer-footer-padding", "var(--p-overlay-modal-padding)")],
         ["popover"] = [("--p-popover-background", "var(--p-overlay-popover-background)"), ("--p-popover-border-color", "var(--p-overlay-popover-border-color)"), ("--p-popover-color", "var(--p-overlay-popover-color)"), ("--p-popover-border-radius", "var(--p-overlay-popover-border-radius)"), ("--p-popover-shadow", "var(--p-overlay-popover-shadow)"), ("--p-popover-content-padding", "var(--p-overlay-popover-padding)"), ("--p-popover-gutter", "10px"), ("--p-popover-arrow-offset", "1.25rem")],
         ["overlay"] = [("--p-overlay-modal-background", "var(--p-surface-0)"), ("--p-overlay-modal-border-color", "var(--p-surface-200)"), ("--p-overlay-modal-color", "var(--p-text-color)"), ("--p-overlay-modal-border-radius", "var(--p-border-radius-xl)"), ("--p-overlay-modal-padding", "1.25rem"), ("--p-overlay-modal-shadow", "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"), ("--p-overlay-popover-background", "var(--p-surface-0)"), ("--p-overlay-popover-border-color", "var(--p-surface-200)"), ("--p-overlay-popover-color", "var(--p-text-color)"), ("--p-overlay-popover-border-radius", "var(--p-border-radius-md)"), ("--p-overlay-popover-padding", "0.75rem"), ("--p-overlay-popover-shadow", "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"), ("--p-overlay-select-background", "var(--p-surface-0)"), ("--p-overlay-select-border-color", "var(--p-surface-200)"), ("--p-overlay-select-color", "var(--p-text-color)"), ("--p-overlay-select-border-radius", "var(--p-border-radius-md)"), ("--p-overlay-select-shadow", "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"), ("--p-overlay-navigation-shadow", "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)")],
+        ["paginator"] = [("--p-paginator-padding", "0.5rem 1rem"), ("--p-paginator-gap", "0.25rem"), ("--p-paginator-border-radius", "var(--p-content-border-radius)"), ("--p-paginator-background", "var(--p-content-background)"), ("--p-paginator-color", "var(--p-content-color)"), ("--p-paginator-transition-duration", "var(--p-transition-duration)"), ("--p-paginator-nav-button-background", "transparent"), ("--p-paginator-nav-button-hover-background", "var(--p-content-hover-background)"), ("--p-paginator-nav-button-selected-background", "var(--p-highlight-background)"), ("--p-paginator-nav-button-color", "var(--p-text-muted-color)"), ("--p-paginator-nav-button-hover-color", "var(--p-text-hover-muted-color)"), ("--p-paginator-nav-button-selected-color", "var(--p-highlight-color)"), ("--p-paginator-nav-button-width", "2.5rem"), ("--p-paginator-nav-button-height", "2.5rem"), ("--p-paginator-nav-button-border-radius", "50%"), ("--p-paginator-current-page-report-color", "var(--p-text-muted-color)"), ("--p-paginator-jump-to-page-input-max-width", "2.5rem")],
+        ["divider"] = [("--p-divider-border-color", "var(--p-content-border-color)"), ("--p-divider-content-background", "var(--p-content-background)"), ("--p-divider-content-color", "var(--p-text-color)"), ("--p-divider-horizontal-margin", "1rem 0"), ("--p-divider-horizontal-padding", "0 1rem"), ("--p-divider-horizontal-content-padding", "0 0.5rem"), ("--p-divider-vertical-margin", "0 1rem"), ("--p-divider-vertical-padding", "0.5rem 0"), ("--p-divider-vertical-content-padding", "0.5rem 0")],
+        ["card"] = [("--p-card-background", "var(--p-content-background)"), ("--p-card-border-radius", "var(--p-border-radius-xl)"), ("--p-card-color", "var(--p-content-color)"), ("--p-card-shadow", "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)"), ("--p-card-body-padding", "1.25rem"), ("--p-card-body-gap", "0.5rem"), ("--p-card-caption-gap", "0.5rem"), ("--p-card-title-font-size", "1.25rem"), ("--p-card-title-font-weight", "500"), ("--p-card-subtitle-color", "var(--p-text-muted-color)")],
+        ["blockui"] = [("--p-blockui-border-radius", "var(--p-content-border-radius)")],
+        ["virtualscroller"] = [("--p-virtualscroller-loader-icon-size", "2rem"), ("--p-virtualscroller-loader-mask-background", "var(--p-content-background)"), ("--p-virtualscroller-loader-mask-color", "var(--p-text-muted-color)")],
     };
 
     private static readonly Dictionary<string, string> Words = new(StringComparer.OrdinalIgnoreCase)
@@ -296,7 +306,29 @@ public static class DocTheming
         ["topright"] = "superior direito",
         ["bottomleft"] = "inferior esquerdo",
         ["bottomright"] = "inferior direito",
-        ["actions"] = "ações"
+        ["actions"] = "ações",
+        ["current"] = "atual",
+        ["first"] = "primeiro",
+        ["last"] = "último",
+        ["page"] = "página",
+        ["pages"] = "páginas",
+        ["jtp"] = "pular para página",
+        ["divider"] = "divisor",
+        ["horizontal"] = "horizontal",
+        ["solid"] = "sólida",
+        ["dashed"] = "tracejada",
+        ["dotted"] = "pontilhada",
+        ["card"] = "card",
+        ["caption"] = "legenda",
+        ["subtitle"] = "subtítulo",
+        ["blockui"] = "block ui",
+        ["loader"] = "loader",
+        ["nav"] = "navegação",
+        ["report"] = "relatório",
+        ["jump"] = "pular",
+        ["to"] = "para",
+        ["max"] = "máximo",
+        ["margin"] = "margem"
     };
 
     public static string Humanize(string name, string component)
