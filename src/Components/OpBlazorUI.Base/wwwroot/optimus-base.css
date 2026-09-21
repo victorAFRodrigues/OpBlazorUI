@@ -64,12 +64,22 @@ body {
 .p-multiselect-overlay,
 .p-menu-overlay,
 .p-cascadeselect-overlay,
+.p-autocomplete-overlay,
 .p-datepicker-panel:not(.p-datepicker-panel-inline) {
     position: absolute;
     top: 100%;
     left: 0;
     min-width: 100%;
     z-index: 1000;
+}
+
+/*
+ * AutoComplete: o tema não define position no root (no Angular o PrimeNG
+ * aplica inline). Sem isso, o overlay absoluto ancora no container posicionado
+ * mais próximo e vira um painel de largura total.
+ */
+.p-autocomplete {
+    position: relative;
 }
 
 /*
