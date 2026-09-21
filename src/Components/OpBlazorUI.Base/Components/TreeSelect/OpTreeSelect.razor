@@ -1,5 +1,6 @@
 @namespace OpBlazorUI.Base.Components.TreeSelect
 @using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.Chip
 @using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
@@ -23,13 +24,10 @@
             {
                 @foreach (var n in SelectedNodes)
                 {
-                    <span class="p-chip">
-                        <span>@n.Label</span>
-                        <i class="pi pi-times"
-                           aria-hidden="true"
-                           @onclick="() => RemoveNodeAsync(n)"
-                           @onclick:stopPropagation="true"></i>
-                    </span>
+                    <OpChip Label="@n.Label"
+                            Removable="true"
+                            RemoveIcon="pi pi-times"
+                            OnRemove="() => RemoveNodeAsync(n)"/>
                 }
             }
             else if (HasSelection)
@@ -59,7 +57,14 @@
          aria-expanded="@(_overlayVisible ? "true" : "false")" @onclick="OnDropdownClick">
         @if (Loading)
         {
-            <span class="pi pi-spinner pi-spin" aria-hidden="true"></span>
+            @if (LoadingIconTemplate != null)
+            {
+                @LoadingIconTemplate
+            }
+            else
+            {
+                <span class="p-treeselect-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+            }
         }
         else if (DropdownIconTemplate != null)
         {
