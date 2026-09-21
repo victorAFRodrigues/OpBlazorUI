@@ -3,6 +3,7 @@
 @using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
+@using OpBlazorUI.Base.Components.VirtualScroller
 
 <div class="@RootClass" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
      @attributes="AdditionalAttributes">
@@ -97,30 +98,52 @@
                 </div>
             }
 
-            <div class="p-treeselect-tree-container" style="max-height:@(ScrollHeight ?? "400px")">
-                <div class="p-tree" id="@($"{_id}_tree")">
-                    @if (VisibleRoots.Count == 0)
-                    {
-                        @if (EmptyTemplate != null)
+            @if (VirtualScroll && VisibleFlatNodes.Count > 0)
+            {
+                <OpVirtualScroller TItem="OpTreeFlatNode"
+                                   Items="VisibleFlatNodes"
+                                   ItemSize="VirtualScrollItemSize"
+                                   ScrollHeight="ScrollHeight"
+                                   StyleClass="p-treeselect-tree-container">
+                    <ContentTemplate Context="ctx">
+                        <div class="p-tree" id="@($"{_id}_tree")">
+                            <ul class="p-tree-root-children" role="tree">
+                                @foreach (var flat in ctx.Items)
+                                {
+                                    @RenderFlatNode(flat)
+                                }
+                            </ul>
+                        </div>
+                    </ContentTemplate>
+                </OpVirtualScroller>
+            }
+            else
+            {
+                <div class="p-treeselect-tree-container" style="max-height:@(ScrollHeight ?? "400px")">
+                    <div class="p-tree" id="@($"{_id}_tree")">
+                        @if (VisibleRoots.Count == 0)
                         {
-                            <div class="p-treeselect-empty-message">@EmptyTemplate</div>
+                            @if (EmptyTemplate != null)
+                            {
+                                <div class="p-treeselect-empty-message">@EmptyTemplate</div>
+                            }
+                            else
+                            {
+                                <div class="p-treeselect-empty-message">@EmptyMessage</div>
+                            }
                         }
                         else
                         {
-                            <div class="p-treeselect-empty-message">@EmptyMessage</div>
+                            <ul class="p-tree-root-children" role="tree">
+                                @foreach (var node in VisibleRoots)
+                                {
+                                    @RenderNode(node)
+                                }
+                            </ul>
                         }
-                    }
-                    else
-                    {
-                        <ul class="p-tree-root-children" role="tree">
-                            @foreach (var node in VisibleRoots)
-                            {
-                                @RenderNode(node)
-                            }
-                        </ul>
-                    }
+                    </div>
                 </div>
-            </div>
+            }
 
             @FooterTemplate
 
@@ -174,6 +197,47 @@
                     }
                 </ul>
             }
+        </li>
+    };
+
+    private RenderFragment RenderFlatNode(OpTreeFlatNode flat) => __builder =>
+    {
+        var node = flat.Node;
+        var depth = flat.Depth;
+        var selected = IsSelected(node);
+        var partial = IsPartial(node);
+        var indent = depth > 0 ? $"padding-inline-start:calc({depth} * var(--p-tree-indent));" : null;
+
+        <li class="p-tree-node @(node.Leaf ? "p-tree-node-leaf" : "")" role="treeitem"
+            aria-label="@node.Label"
+            aria-selected="@(selected ? "true" : "false")"
+            aria-expanded="@(node.HasChildren ? (node.Expanded ? "true" : "false") : null)">
+            <div class="p-tree-node-content p-tree-node-selectable @(selected ? "p-tree-node-selected" : "")"
+                 style="@indent"
+                 @onclick="() => OnNodeClick(node)">
+                @if (IsCheckbox)
+                {
+                    <OpCheckbox Checked="@selected" Indeterminate="@partial" Readonly="true"/>
+                }
+
+                <button type="button" class="p-tree-node-toggle-button" @onclick="() => ToggleExpand(node)"
+                        @onclick:stopPropagation="true">
+                    @if (ItemTogglerIconTemplate != null)
+                    {
+                        @ItemTogglerIconTemplate(node)
+                    }
+                    else if (node.Loading)
+                    {
+                        <i class="pi pi-spinner pi-spin p-tree-node-icon"></i>
+                    }
+                    else
+                    {
+                        <i class="p-tree-node-icon pi @(node.Expanded ? "pi-chevron-down" : "pi-chevron-right")"></i>
+                    }
+                </button>
+
+                <span class="p-tree-node-label">@node.Label</span>
+            </div>
         </li>
     };
 }

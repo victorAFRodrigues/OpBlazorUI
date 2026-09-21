@@ -3,6 +3,7 @@
 @using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
+@using OpBlazorUI.Base.Components.VirtualScroller
 @typeparam TValue
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
@@ -44,7 +45,36 @@
         </div>
     }
 
-    <div class="p-listbox-list-container" style="@ListContainerStyle">
+    @if (VirtualScroll && !Group && VisibleOptions.Count > 0)
+    {
+        <OpVirtualScroller TItem="object"
+                           Items="VisibleOptions"
+                           ItemSize="VirtualScrollItemSize"
+                           ScrollHeight="ScrollHeight"
+                           StyleClass="p-listbox-list-container">
+            <ContentTemplate Context="ctx">
+                @BuildList(ctx.Items)
+            </ContentTemplate>
+        </OpVirtualScroller>
+    }
+    else
+    {
+        <div class="p-listbox-list-container" style="@ListContainerStyle">
+            @BuildList(VisibleOptions)
+        </div>
+    }
+
+    @FooterTemplate
+</div>
+
+@code {
+    private async Task OnListClick(MouseEventArgs e)
+    {
+        await OnClick.InvokeAsync(e);
+    }
+
+    private RenderFragment BuildList(IReadOnlyList<object> options) => __builder =>
+    {
         <ul class="@ListClass" role="listbox" id="@($"{_id}_list")"
             aria-multiselectable="@(IsMultiple ? "true" : "false")"
             aria-label="@AriaLabel"
@@ -77,7 +107,7 @@
             }
             else
             {
-                @foreach (var option in VisibleOptions)
+                @foreach (var option in options)
                 {
                     @RenderOption(option)
                 }
@@ -101,16 +131,7 @@
                 </li>
             }
         </ul>
-    </div>
-
-    @FooterTemplate
-</div>
-
-@code {
-    private async Task OnListClick(MouseEventArgs e)
-    {
-        await OnClick.InvokeAsync(e);
-    }
+    };
 
     private RenderFragment RenderOption(object option) => __builder =>
     {

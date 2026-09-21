@@ -13,3 +13,6 @@ public class TreeNode
 
     public bool HasChildren => Children is { Count: > 0 };
 }
+
+/// <summary>Nó achatado (com profundidade) usado pelo virtual scroll do <c>OpTreeSelect</c>.</summary>
+public sealed record OpTreeFlatNode(TreeNode Node, int Depth);

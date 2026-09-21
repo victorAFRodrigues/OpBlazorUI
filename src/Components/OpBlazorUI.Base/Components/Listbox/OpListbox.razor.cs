@@ -34,6 +34,8 @@ public partial class OpListbox<TValue> : ComponentBase
     [Parameter] public bool ShowToggleAll { get; set; } = true;
     [Parameter] public bool Striped { get; set; }
     [Parameter] public string? ScrollHeight { get; set; }
+    [Parameter] public bool VirtualScroll { get; set; }
+    [Parameter] public int VirtualScrollItemSize { get; set; } = 38;
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
     [Parameter] public bool Invalid { get; set; }
