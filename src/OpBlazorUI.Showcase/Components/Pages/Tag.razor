@@ -1,0 +1,142 @@
+@page "/tag"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Tag
+
+<DocComponent Title="Tag"
+              Description="O Tag é usado para categorizar conteúdo.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpTag Value="New"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Severidade">
+            <ChildContent>
+                <div class="flex justify-center gap-2 flex-wrap">
+                    <OpTag Value="Primary"/>
+                    <OpTag Severity="secondary" Value="Secondary"/>
+                    <OpTag Severity="success" Value="Success"/>
+                    <OpTag Severity="info" Value="Info"/>
+                    <OpTag Severity="warn" Value="Warn"/>
+                    <OpTag Severity="danger" Value="Danger"/>
+                    <OpTag Severity="contrast" Value="Contrast"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SeverityCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícone">
+            <ChildContent>
+                <div class="flex justify-center gap-2 flex-wrap">
+                    <OpTag Icon="pi pi-user" Value="Primary"/>
+                    <OpTag Icon="pi pi-search" Severity="secondary" Value="Secondary"/>
+                    <OpTag Icon="pi pi-check" Severity="success" Value="Success"/>
+                    <OpTag Icon="pi pi-info-circle" Severity="info" Value="Info"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Pílula">
+            <ChildContent>
+                <div class="flex justify-center gap-2 flex-wrap">
+                    <OpTag Value="Primary" Rounded="true"/>
+                    <OpTag Severity="success" Value="Success" Rounded="true"/>
+                    <OpTag Severity="danger" Value="Danger" Rounded="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PillCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "string?", "null", "Valor exibido dentro do tag." },
+                              new[] { "Severity", "string?", "primary", "Severidade: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code> ou <code>contrast</code>." },
+                              new[] { "Icon", "string?", "null", "Ícone exibido ao lado do valor." },
+                              new[] { "Rounded", "bool", "false", "Cantos arredondados (pílula)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado em vez do valor." },
+                              new[] { "IconTemplate", "RenderFragment?", "Template do ícone." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="tag"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Tag
+
+        <OpTag Value="New" />
+        """;
+
+    private const string BasicCode = """
+        <OpTag Value="New" />
+        """;
+
+    private const string SeverityCode = """
+        <OpTag Value="Primary" />
+        <OpTag Severity="secondary" Value="Secondary" />
+        <OpTag Severity="success" Value="Success" />
+        <OpTag Severity="info" Value="Info" />
+        <OpTag Severity="warn" Value="Warn" />
+        <OpTag Severity="danger" Value="Danger" />
+        <OpTag Severity="contrast" Value="Contrast" />
+        """;
+
+    private const string IconCode = """
+        <OpTag Icon="pi pi-user" Value="Primary" />
+        <OpTag Icon="pi pi-check" Severity="success" Value="Success" />
+        """;
+
+    private const string PillCode = """
+        <OpTag Value="Primary" Rounded="true" />
+        <OpTag Severity="success" Value="Success" Rounded="true" />
+        """;
+}

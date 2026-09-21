@@ -1,0 +1,151 @@
+@page "/avatar"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Avatar
+
+<DocComponent Title="Avatar"
+              Description="O Avatar representa pessoas usando ícones, rótulos e imagens.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Rótulo">
+            <ChildContent>
+                <div class="flex gap-2 items-center">
+                    <OpAvatar Label="P" Size="xlarge"/>
+                    <OpAvatar Label="V" Size="large" Shape="circle"/>
+                    <OpAvatar Label="U"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícone">
+            <ChildContent>
+                <div class="flex gap-2 items-center">
+                    <OpAvatar Icon="pi pi-user" Size="xlarge" Shape="circle"/>
+                    <OpAvatar Icon="pi pi-user" Size="large"/>
+                    <OpAvatar Icon="pi pi-user"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Imagem">
+            <ChildContent>
+                <div class="flex gap-2 items-center">
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="xlarge" Shape="circle"/>
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Size="large" Shape="circle"/>
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Shape="circle"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ImageCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Grupo">
+            <ChildContent>
+                <OpAvatarGroup>
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="large" Shape="circle"/>
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Size="large" Shape="circle"/>
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Size="large" Shape="circle"/>
+                    <OpAvatar Label="+2" Shape="circle" Size="large"/>
+                </OpAvatarGroup>
+            </ChildContent>
+            <Code><CodeBlock Code="@GroupCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Label", "string?", "null", "Texto a exibir." },
+                              new[] { "Icon", "string?", "null", "Ícone a exibir." },
+                              new[] { "Image", "string?", "null", "URL da imagem." },
+                              new[] { "Alt", "string?", "null", "Atributo alt da imagem." },
+                              new[] { "Size", "string", "normal", "Tamanho: <code>normal</code>, <code>large</code> ou <code>xlarge</code>." },
+                              new[] { "Shape", "string", "square", "Forma: <code>square</code> ou <code>circle</code>." },
+                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o avatar." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnImageError", "EventCallback&lt;ErrorEventArgs&gt;", "Disparado ao falhar o carregamento da imagem." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado em vez dos modos internos." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="avatar"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Avatar
+
+        <OpAvatar Label="P" Shape="circle" />
+        """;
+
+    private const string LabelCode = """
+        <OpAvatar Label="P" Size="xlarge" />
+        <OpAvatar Label="V" Size="large" Shape="circle" />
+        <OpAvatar Label="U" />
+        """;
+
+    private const string IconCode = """
+        <OpAvatar Icon="pi pi-user" Size="xlarge" Shape="circle" />
+        <OpAvatar Icon="pi pi-user" Size="large" />
+        <OpAvatar Icon="pi pi-user" />
+        """;
+
+    private const string ImageCode = """
+        <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="xlarge" Shape="circle" />
+        """;
+
+    private const string GroupCode = """
+        <OpAvatarGroup>
+            <OpAvatar Image="..." Size="large" Shape="circle" />
+            <OpAvatar Label="+2" Shape="circle" Size="large" />
+        </OpAvatarGroup>
+        """;
+}

@@ -85,6 +85,20 @@
                 <CodeBlock Code="@("<OpButton Label=\"Carregando\" Loading=\"true\" />\n<OpButton Label=\"Desabilitado\" Disabled=\"true\" />")"/>
             </Code>
         </DocSection>
+
+        <DocSection Label="Badge">
+            <ChildContent>
+                <div class="flex gap-2 flex-wrap">
+                    <OpButton Label="Emails" Badge="8"/>
+                    <OpButton Label="Mensagens" Badge="24" BadgeSeverity="secondary"/>
+                    <OpButton Label="Notificações" Badge="3" BadgeSeverity="success"/>
+                    <OpButton Icon="pi pi-bell" Badge="5" BadgeSeverity="danger" AriaLabel="Notificações"/>
+                </div>
+            </ChildContent>
+            <Code>
+                <CodeBlock Code="@("<OpButton Label=\"Emails\" Badge=\"8\" />\n<OpButton Label=\"Mensagens\" Badge=\"24\" BadgeSeverity=\"secondary\" />\n<OpButton Icon=\"pi pi-bell\" Badge=\"5\" BadgeSeverity=\"danger\" AriaLabel=\"Notificações\" />")"/>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
@@ -100,6 +114,10 @@
                               new[] { "Variant", "string?", "null", "Variante: <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>link</code>, <code>plain</code>." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
                               new[] { "Loading", "bool", "false", "Exibe o spinner de carregamento e desabilita o botão." },
+                              new[] { "Badge", "string?", "null", "Valor exibido no badge interno do botão." },
+                              new[] { "BadgeSeverity", "string?", "null", "Severidade do badge: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code>, <code>contrast</code>." },
+                              new[] { "BadgeSize", "string?", "null", "Tamanho do badge: <code>small</code>, <code>large</code>, <code>xlarge</code>." },
+                              new[] { "BadgeClass", "string?", "null", "Classes adicionais no badge." },
                               new[] { "Disabled", "bool", "false", "Desabilita o botão." },
                               new[] { "Fluid", "bool", "false", "Ocupa toda a largura disponível." },
                               new[] { "Rounded", "bool", "false", "Aplica cantos totalmente arredondados." },

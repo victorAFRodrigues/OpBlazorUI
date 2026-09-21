@@ -43,6 +43,8 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     [Parameter] public string? Size { get; set; }
     [Parameter] public bool Fluid { get; set; }
     [Parameter] public string? ScrollHeight { get; set; }
+    [Parameter] public bool VirtualScroll { get; set; }
+    [Parameter] public int VirtualScrollItemSize { get; set; } = 38;
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string? DropdownIcon { get; set; }
     [Parameter] public string? EmptyMessage { get; set; } = "No results found";

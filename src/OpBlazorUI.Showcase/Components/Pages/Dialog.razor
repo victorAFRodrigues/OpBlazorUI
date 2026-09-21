@@ -1,0 +1,267 @@
+@page "/dialog"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Dialog
+@using OpBlazorUI.Base.Components.Button
+
+<DocComponent Title="Dialog"
+              Description="O Dialog é um contêiner para exibir conteúdo em uma janela de overlay.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar" @onclick="ShowDialog"/>
+                    <OpDialog @bind-Visible="_visible" Header="Editar Perfil" Modal="true" Style="width:25rem">
+                        <span class="block mb-4">Atualize suas informações.</span>
+                        <div class="flex items-center gap-4 mb-4">
+                            <label for="dlg-username" class="font-semibold w-24">Usuário</label>
+                            <input id="dlg-username" class="flex-auto"/>
+                        </div>
+                        <div class="flex items-center gap-4 mb-4">
+                            <label for="dlg-email" class="font-semibold w-24">Email</label>
+                            <input id="dlg-email" class="flex-auto"/>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <OpButton Label="Cancelar" Severity="secondary" @onclick="HideDialog"/>
+                            <OpButton Label="Salvar" @onclick="HideDialog"/>
+                        </div>
+                    </OpDialog>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar" @onclick="ShowTemplateDialog"/>
+                    <OpDialog @bind-Visible="_templateVisible" Modal="true" Style="width:25rem">
+                        <HeaderTemplate>
+                            <div class="inline-flex items-center justify-center gap-2">
+                                <span class="font-bold whitespace-nowrap">Novo contato</span>
+                            </div>
+                        </HeaderTemplate>
+                        <ChildContent>
+                            <span class="block mb-4">Adicione um novo contato.</span>
+                            <div class="flex items-center gap-4 mb-4">
+                                <label for="dlg-name" class="font-semibold w-24">Nome</label>
+                                <input id="dlg-name" class="flex-auto"/>
+                            </div>
+                        </ChildContent>
+                        <FooterTemplate>
+                            <OpButton Label="Cancelar" Text="true" Severity="secondary" @onclick="HideTemplateDialog"/>
+                            <OpButton Label="Salvar" Outlined="true" @onclick="HideTemplateDialog"/>
+                        </FooterTemplate>
+                    </OpDialog>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Posição">
+            <ChildContent>
+                <div class="card flex flex-wrap justify-center gap-2">
+                    <OpButton Label="Topo" Severity="secondary" @onclick="ShowTop"/>
+                    <OpButton Label="Esquerda" Severity="secondary" @onclick="ShowLeft"/>
+                    <OpButton Label="Direita" Severity="secondary" @onclick="ShowRight"/>
+                    <OpButton Label="Base" Severity="secondary" @onclick="ShowBottom"/>
+                    <OpDialog @bind-Visible="_positionVisible" Header="Posição" Modal="true" Position="@_position" Style="width:25rem">
+                        <span class="block mb-4">Posição: @_position</span>
+                    </OpDialog>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PositionCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Maximizável">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar" @onclick="ShowMaxDialog"/>
+                    <OpDialog @bind-Visible="_maxVisible" Header="Cabeçalho" Modal="true" Maximizable="true" Style="width:50rem">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                            ut labore et dolore magna aliqua.
+                        </p>
+                    </OpDialog>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MaxCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Sem Modal">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar" @onclick="ShowPlainDialog"/>
+                    <OpDialog @bind-Visible="_plainVisible" Header="Sem máscara" Style="width:25rem">
+                        <span class="block mb-4">Sem máscara de fundo (modal=false).</span>
+                        <div class="flex justify-end gap-2">
+                            <OpButton Label="Fechar" Severity="secondary" @onclick="HidePlainDialog"/>
+                        </div>
+                    </OpDialog>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PlainCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Visible", "bool", "false", "Controla a visibilidade." },
+                              new[] { "VisibleChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
+                              new[] { "Header", "string?", "null", "Título do dialog." },
+                              new[] { "Modal", "bool", "false", "Bloqueia o fundo com máscara." },
+                              new[] { "Closable", "bool", "true", "Exibe o botão de fechar." },
+                              new[] { "CloseOnEscape", "bool", "true", "Fecha com a tecla Escape." },
+                              new[] { "DismissableMask", "bool", "false", "Fecha ao clicar na máscara." },
+                              new[] { "ShowHeader", "bool", "true", "Exibe o cabeçalho." },
+                              new[] { "Position", "string", "center", "Posição: <code>center</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>topleft</code>, <code>topright</code>, <code>bottomleft</code>, <code>bottomright</code>." },
+                              new[] { "Maximizable", "bool", "false", "Permite tela cheia." },
+                              new[] { "FocusOnShow", "bool", "true", "Foca o dialog ao abrir." },
+                              new[] { "Style", "string?", "null", "Estilos inline do dialog." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ContentStyle", "string?", "null", "Estilos do conteúdo." },
+                              new[] { "ContentStyleClass", "string?", "null", "Classes do conteúdo." },
+                              new[] { "MaskStyle", "string?", "null", "Estilos da máscara." },
+                              new[] { "MaskStyleClass", "string?", "null", "Classes da máscara." },
+                              new[] { "CloseIcon", "string", "pi pi-times", "Classe do ícone de fechar." },
+                              new[] { "CloseAriaLabel", "string", "Close", "Label de acessibilidade do botão de fechar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnShow", "EventCallback", "Disparado ao exibir." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao ocultar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo do dialog." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Cabeçalho customizado." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Rodapé customizado." },
+                              new[] { "CloseIconTemplate", "RenderFragment?", "Ícone de fechar customizado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="dialog"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>MaskStyleClass</code> e atributos extras para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Arrastar (<code>draggable</code>) e redimensionar (<code>resizable</code>) ainda não foram portados. O fechamento com animação de saída é instantâneo.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private bool _visible;
+    private bool _templateVisible;
+    private bool _positionVisible;
+    private bool _maxVisible;
+    private bool _plainVisible;
+    private string _position = "top";
+
+    private void ShowDialog() => _visible = true;
+    private void HideDialog() => _visible = false;
+    private void ShowTemplateDialog() => _templateVisible = true;
+    private void HideTemplateDialog() => _templateVisible = false;
+    private void ShowMaxDialog() => _maxVisible = true;
+    private void ShowPlainDialog() => _plainVisible = true;
+    private void HidePlainDialog() => _plainVisible = false;
+
+    private void ShowPositionedDialog(string position)
+    {
+        _position = position;
+        _positionVisible = true;
+    }
+
+    private void ShowTop() => ShowPositionedDialog("top");
+    private void ShowLeft() => ShowPositionedDialog("left");
+    private void ShowRight() => ShowPositionedDialog("right");
+    private void ShowBottom() => ShowPositionedDialog("bottom");
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Dialog
+
+        <OpDialog @bind-Visible="_visible" Header="Título" />
+        """;
+
+    private const string BasicCode = """
+        <OpButton Label="Mostrar" @onclick="ShowDialog" />
+        <OpDialog @bind-Visible="_visible" Header="Editar Perfil" Modal="true" Style="width:25rem">
+            <span class="block mb-4">Atualize suas informações.</span>
+            <div class="flex justify-end gap-2">
+                <OpButton Label="Cancelar" Severity="secondary" @onclick="HideDialog" />
+                <OpButton Label="Salvar" @onclick="HideDialog" />
+            </div>
+        </OpDialog>
+
+        @code {
+            private bool _visible;
+            private void ShowDialog() => _visible = true;
+            private void HideDialog() => _visible = false;
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpDialog @bind-Visible="_visible" Modal="true">
+            <HeaderTemplate>
+                <span class="font-bold">Novo contato</span>
+            </HeaderTemplate>
+            <span class="block mb-4">Adicione um novo contato.</span>
+            <FooterTemplate>
+                <OpButton Label="Cancelar" Text="true" Severity="secondary" @onclick="Hide" />
+                <OpButton Label="Salvar" Outlined="true" @onclick="Hide" />
+            </FooterTemplate>
+        </OpDialog>
+        """;
+
+    private const string PositionCode = """
+        <OpDialog @bind-Visible="_visible" Header="Posição" Modal="true" Position="top" Style="width:25rem">
+            <span>Conteúdo</span>
+        </OpDialog>
+        """;
+
+    private const string MaxCode = """
+        <OpDialog @bind-Visible="_visible" Header="Cabeçalho" Modal="true" Maximizable="true" Style="width:50rem">
+            <p>Conteúdo</p>
+        </OpDialog>
+        """;
+
+    private const string PlainCode = """
+        <OpDialog @bind-Visible="_visible" Header="Sem máscara" Style="width:25rem">
+            <span>Sem modal=true.</span>
+        </OpDialog>
+        """;
+}

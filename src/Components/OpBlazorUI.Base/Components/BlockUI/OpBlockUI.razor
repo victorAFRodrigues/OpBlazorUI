@@ -1,0 +1,21 @@
+@namespace OpBlazorUI.Base.Components.BlockUI
+
+<div class="@RootClass"
+     aria-busy="@(Blocked ? "true" : "false")"
+     @attributes="AdditionalAttributes">
+    @ChildContent
+
+    @if (Blocked)
+    {
+        <div class="@MaskClass">
+            @if (ContentTemplate != null)
+            {
+                @ContentTemplate
+            }
+            else
+            {
+                <span class="pi pi-spinner pi-spin" aria-hidden="true"></span>
+            }
+        </div>
+    }
+</div>

@@ -1,8 +1,10 @@
 @namespace OpBlazorUI.Base.Components.MultiSelect
 @using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.Chip
 @using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
+@using OpBlazorUI.Base.Components.VirtualScroller
 @typeparam TValue
 
 <div class="@RootClass" style="position: relative" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
@@ -43,17 +45,11 @@
                     @foreach (var item in ChipItems)
                     {
                         <div class="p-multiselect-chip-item">
-                            <div class="p-chip p-component p-multiselect-chip">
-                                <div class="p-chip-label">@GetOptionLabel((object)item!)</div>
-                                @if (!Disabled && !Readonly)
-                                {
-                                    <span @onclick:stopPropagation="true">
-                                        <OpIcon Name="times-circle"
-                                                CssClass="p-chip-remove-icon p-multiselect-chip-icon"
-                                                OnClick="() => RemoveOptionAsync(item)"/>
-                                    </span>
-                                }
-                            </div>
+                            <OpChip Label="@GetOptionLabel((object)item!)"
+                                    Removable="@(!Disabled && !Readonly)"
+                                    RemoveIcon="p-multiselect-chip-icon pi pi-times-circle"
+                                    StyleClass="p-multiselect-chip"
+                                    OnRemove="() => RemoveOptionAsync(item)"/>
                         </div>
                     }
 
@@ -138,91 +134,24 @@
                 </div>
             }
 
-            <div class="p-multiselect-list-container" style="max-height:@(ScrollHeight ?? "auto")">
-                <ul class="p-multiselect-list" role="listbox" id="@($"{_id}_list")">
-                    @if (Group)
-                    {
-                        @foreach (var group in VisibleOptions)
-                        {
-                            <li class="p-multiselect-option-group" role="option">
-                                @if (GroupTemplate != null)
-                                {
-                                    @GroupTemplate(group)
-                                }
-                                else
-                                {
-                                    <span
-                                        class="p-multiselect-option-group-label">@GetOptionGroupLabelValue(group)</span>
-                                }
-                            </li>
-                            @foreach (var child in GetOptionGroupChildren(group))
-                            {
-                                @if (MatchesFilter(child))
-                                {
-                                    var isSel = IsSelected(child);
-                                    <li class="@OptionClass(child)" role="option" aria-label="@GetOptionLabel(child)"
-                                        aria-selected="@(isSel ? "true" : "false")"
-                                        @onclick="() => OnOptionClick(child)">
-                                        <OpCheckbox Checked="@isSel" TabIndex="-1" Variant="@Variant"/>
-                                        @if (ItemTemplate != null && child is TValue childTv)
-                                        {
-                                            @ItemTemplate(childTv)
-                                        }
-                                        else
-                                        {
-                                            <span class="p-multiselect-option-label">@GetOptionLabel(child)</span>
-                                        }
-                                    </li>
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        @foreach (var option in VisibleOptions)
-                        {
-                            var index = VisibleOptions.IndexOf(option);
-                            var isSel = IsSelected(option);
-                            <li class="@OptionClass(option) @(_focusedOptionIndex == index ? "p-focus" : "")"
-                                id="@($"{_id}_{index}")"
-                                role="option"
-                                aria-label="@GetOptionLabel(option)"
-                                aria-selected="@(isSel ? "true" : "false")"
-                                data-p-focused="@(_focusedOptionIndex == index ? "true" : null)"
-                                @onclick="() => OnOptionClick(option)"
-                                @onmouseenter="() => OnOptionMouseEnter(index)">
-                                <OpCheckbox Checked="@isSel" TabIndex="-1" Variant="@Variant"/>
-                                @if (ItemTemplate != null && option is TValue optTv)
-                                {
-                                    @ItemTemplate(optTv)
-                                }
-                                else
-                                {
-                                    <span class="p-multiselect-option-label">@GetOptionLabel(option)</span>
-                                }
-                            </li>
-                        }
-                    }
-
-                    @if (ShowEmptyMessage)
-                    {
-                        <li class="p-multiselect-empty-message" role="option">
-                            @if (!string.IsNullOrEmpty(_filterValue) && EmptyFilterTemplate != null)
-                            {
-                                @EmptyFilterTemplate
-                            }
-                            else if (string.IsNullOrEmpty(_filterValue) && EmptyTemplate != null)
-                            {
-                                @EmptyTemplate
-                            }
-                            else
-                            {
-                                @(!string.IsNullOrEmpty(_filterValue) ? EmptyFilterMessage : EmptyMessage)
-                            }
-                        </li>
-                    }
-                </ul>
-            </div>
+            @if (VirtualScroll && !Group && VisibleOptions.Count > 0)
+            {
+                <OpVirtualScroller TItem="object"
+                                   Items="VisibleOptions"
+                                   ItemSize="VirtualScrollItemSize"
+                                   ScrollHeight="ScrollHeight"
+                                   StyleClass="p-multiselect-list-container">
+                    <ContentTemplate Context="ctx">
+                        @BuildList(ctx.Items)
+                    </ContentTemplate>
+                </OpVirtualScroller>
+            }
+            else
+            {
+                <div class="p-multiselect-list-container" style="max-height:@(ScrollHeight ?? "auto")">
+                    @BuildList(VisibleOptions)
+                </div>
+            }
 
             @FooterTemplate
 
@@ -230,3 +159,97 @@
         </div>
     }
 </div>
+
+@code {
+    private RenderFragment BuildList(IReadOnlyList<object> options) => __builder =>
+    {
+        <ul class="p-multiselect-list" role="listbox" id="@($"{_id}_list")">
+            @if (Group)
+            {
+                @foreach (var group in VisibleOptions)
+                {
+                    <li class="p-multiselect-option-group" role="option">
+                        @if (GroupTemplate != null)
+                        {
+                            @GroupTemplate(group)
+                        }
+                        else
+                        {
+                            <span class="p-multiselect-option-group-label">@GetOptionGroupLabelValue(group)</span>
+                        }
+                    </li>
+                    @foreach (var child in GetOptionGroupChildren(group))
+                    {
+                        @if (MatchesFilter(child))
+                        {
+                            var isSel = IsSelected(child);
+                            <li class="@OptionClass(child)" role="option" aria-label="@GetOptionLabel(child)"
+                                aria-selected="@(isSel ? "true" : "false")"
+                                @onclick="() => OnOptionClick(child)">
+                                <OpCheckbox Checked="@isSel" TabIndex="-1" Variant="@Variant"/>
+                                @if (ItemTemplate != null && child is TValue childTv)
+                                {
+                                    @ItemTemplate(childTv)
+                                }
+                                else
+                                {
+                                    <span class="p-multiselect-option-label">@GetOptionLabel(child)</span>
+                                }
+                            </li>
+                        }
+                    }
+                }
+            }
+            else
+            {
+                @foreach (var option in options)
+                {
+                    @RenderOption(option)
+                }
+            }
+
+            @if (ShowEmptyMessage)
+            {
+                <li class="p-multiselect-empty-message" role="option">
+                    @if (!string.IsNullOrEmpty(_filterValue) && EmptyFilterTemplate != null)
+                    {
+                        @EmptyFilterTemplate
+                    }
+                    else if (string.IsNullOrEmpty(_filterValue) && EmptyTemplate != null)
+                    {
+                        @EmptyTemplate
+                    }
+                    else
+                    {
+                        @(!string.IsNullOrEmpty(_filterValue) ? EmptyFilterMessage : EmptyMessage)
+                    }
+                </li>
+            }
+        </ul>
+    };
+
+    private RenderFragment RenderOption(object option) => __builder =>
+    {
+        var index = VisibleOptions.IndexOf(option);
+        var isSel = IsSelected(option);
+
+        <li class="@OptionClass(option) @(_focusedOptionIndex == index ? "p-focus" : "")"
+            id="@($"{_id}_{index}")"
+            role="option"
+            aria-label="@GetOptionLabel(option)"
+            aria-selected="@(isSel ? "true" : "false")"
+            data-p-focused="@(_focusedOptionIndex == index ? "true" : null)"
+            @onclick="() => OnOptionClick(option)"
+            @onmouseenter="() => OnOptionMouseEnter(index)">
+            <OpCheckbox Checked="@isSel" TabIndex="-1" Variant="@Variant"/>
+            @if (ItemTemplate != null && option is TValue optTv)
+            {
+                @ItemTemplate(optTv)
+            }
+            else
+            {
+                <span class="p-multiselect-option-label">@GetOptionLabel(option)</span>
+            }
+        </li>
+    };
+}

@@ -1,0 +1,173 @@
+@page "/popover"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Popover
+@using OpBlazorUI.Base.Components.Button
+
+<DocComponent Title="Popover"
+              Description="O Popover é um contêiner que sobrepõe outros componentes na página.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <span @ref="_trigger">
+                        <OpButton Label="Compartilhar" Icon="pi pi-share-alt" @onclick="TogglePopover"/>
+                    </span>
+                    <OpPopover @ref="_popover">
+                        <div class="flex flex-col gap-4 w-64">
+                            <div>
+                                <span class="font-medium block mb-2">Compartilhar este documento</span>
+                                <p class="m-0">Envie o link abaixo para os membros da equipe.</p>
+                            </div>
+                            <div>
+                                <span class="font-medium block mb-2">Convidar membro</span>
+                                <div class="flex items-center gap-2">
+                                    <input class="flex-auto" disabled/>
+                                    <OpButton Label="Convidar" Icon="pi pi-users"/>
+                                </div>
+                            </div>
+                        </div>
+                    </OpPopover>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Alvo customizado">
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <OpButton Label="Mostrar" Icon="pi pi-image" @onclick="ShowTarget"/>
+                    <div @ref="_targetEl" class="mt-2 w-40 h-20 border border-surface flex items-center justify-center">
+                        <span>Elemento alvo</span>
+                    </div>
+                    <OpPopover @ref="_targetPopover">
+                        <div class="w-40">
+                            <span class="font-medium">Conteúdo</span>
+                        </div>
+                    </OpPopover>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TargetCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Position", "string", "bottom", "Posição: <code>bottom</code> ou <code>top</code>." },
+                              new[] { "Dismissable", "bool", "true", "Oculta ao clicar fora." },
+                              new[] { "FocusOnShow", "bool", "true", "Foca o popover ao abrir." },
+                              new[] { "Style", "string?", "null", "Estilos inline." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ContentStyle", "string?", "null", "Estilos do conteúdo." },
+                              new[] { "ContentStyleClass", "string?", "null", "Classes do conteúdo." },
+                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Métodos">
+            <ChildContent>
+                <ApiTable Caption="Métodos (via ref)"
+                          Headers="@(new[] { "Nome", "Parâmetros", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Show", "ElementReference target", "Exibe o painel alinhado ao alvo." },
+                              new[] { "Hide", "-", "Oculta o painel." },
+                              new[] { "Toggle", "ElementReference target", "Alterna a visibilidade." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnShow", "EventCallback", "Disparado ao exibir." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao ocultar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="popover"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>ContentStyleClass</code> e atributos extras para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>O alinhamento usa posicionamento JS (fixed) limitado a <code>bottom</code>/<code>top</code>. A seta depende de <code>--p-popover-arrow-left</code>, não definida no tema.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private OpPopover? _popover;
+    private OpPopover? _targetPopover;
+    private ElementReference _trigger;
+    private ElementReference _targetEl;
+
+    private void TogglePopover() => _ = _popover!.Toggle(_trigger);
+    private void ShowTarget() => _ = _targetPopover!.Show(_targetEl);
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Popover
+
+        <span @ref="_trigger">
+            <OpButton Label="Abrir" @onclick="Toggle" />
+        </span>
+        <OpPopover @ref="_popover">
+            <span>Conteúdo</span>
+        </OpPopover>
+        """;
+
+    private const string BasicCode = """
+        <span @ref="_trigger">
+            <OpButton Label="Compartilhar" Icon="pi pi-share-alt" @onclick="Toggle" />
+        </span>
+        <OpPopover @ref="_popover">
+            <div class="flex flex-col gap-4 w-64">
+                <span class="font-medium">Compartilhar este documento</span>
+            </div>
+        </OpPopover>
+
+        @code {
+            private OpPopover? _popover;
+            private ElementReference _trigger;
+            private void Toggle() => _ = _popover!.Toggle(_trigger);
+        }
+        """;
+
+    private const string TargetCode = """
+        <OpButton Label="Mostrar" @onclick="Show" />
+        <div @ref="_targetEl">Elemento alvo</div>
+        <OpPopover @ref="_popover">
+            <span>Conteúdo</span>
+        </OpPopover>
+
+        @code {
+            private OpPopover? _popover;
+            private ElementReference _targetEl;
+            private void Show() => _ = _popover!.Show(_targetEl);
+        }
+        """;
+}

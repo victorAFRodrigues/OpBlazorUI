@@ -1,0 +1,22 @@
+.p-inputnumber-prefix,
+.p-inputnumber-suffix {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    color: var(--p-inputtext-color);
+    padding-inline: var(--p-form-field-padding-x);
+    background: var(--p-form-field-background);
+    border: 1px solid var(--p-form-field-border-color);
+}
+
+.p-inputnumber-prefix {
+    border-start-start-radius: var(--p-form-field-border-radius);
+    border-end-start-radius: var(--p-form-field-border-radius);
+    border-inline-end: 0 none;
+}
+
+.p-inputnumber-suffix {
+    border-start-end-radius: var(--p-form-field-border-radius);
+    border-end-end-radius: var(--p-form-field-border-radius);
+    border-inline-start: 0 none;
+}

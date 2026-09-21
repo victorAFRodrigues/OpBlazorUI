@@ -1,0 +1,112 @@
+@page "/focustrap"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.FocusTrap
+@using OpBlazorUI.Base.Components.Button
+
+<DocComponent Title="FocusTrap"
+              Description="O FocusTrap mantém o foco dentro de um elemento ao tabular.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpFocusTrap StyleClass="w-full sm:w-80 flex flex-col gap-6">
+                        <input class="p-inputtext" type="text" placeholder="Nome"/>
+                        <input class="p-inputtext" type="text" placeholder="Email"/>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="ft-accept"/>
+                            <label for="ft-accept">Concordo com os termos e condições.</label>
+                        </div>
+                        <OpButton Label="Enviar" Fluid="true"/>
+                    </OpFocusTrap>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpFocusTrap Disabled="true" StyleClass="w-full sm:w-80 flex flex-col gap-6">
+                        <input class="p-inputtext" type="text" placeholder="Nome"/>
+                        <input class="p-inputtext" type="text" placeholder="Email"/>
+                        <OpButton Label="Enviar" Fluid="true"/>
+                    </OpFocusTrap>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Disabled", "bool", "false", "Desabilita o gerenciamento de foco." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo com o foco preso." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent>
+                <div class="doc-section-description"><p>O FocusTrap é um utilitário invisível: não possui classes CSS nem design tokens próprios no tema.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>O gerenciamento de foco usa <code>keydown</code> (Tab/Shift+Tab) via JS interop.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.FocusTrap
+
+        <OpFocusTrap>
+            <input class="p-inputtext" placeholder="Nome" />
+            <OpButton Label="Enviar" />
+        </OpFocusTrap>
+        """;
+
+    private const string BasicCode = """
+        <OpFocusTrap StyleClass="w-full sm:w-80 flex flex-col gap-6">
+            <input class="p-inputtext" type="text" placeholder="Nome" />
+            <input class="p-inputtext" type="text" placeholder="Email" />
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="accept" />
+                <label for="accept">Concordo com os termos.</label>
+            </div>
+            <OpButton Label="Enviar" Fluid="true" />
+        </OpFocusTrap>
+        """;
+
+    private const string DisabledCode = """
+        <OpFocusTrap Disabled="true">
+            <input class="p-inputtext" placeholder="Nome" />
+        </OpFocusTrap>
+        """;
+}

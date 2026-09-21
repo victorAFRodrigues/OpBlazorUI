@@ -1,0 +1,36 @@
+@namespace OpBlazorUI.Base.Components.InputOtp
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (Template is not null)
+    {
+        for (var i = 0; i < Length; i++)
+        {
+            var idx = i;
+            var context = new OtpTokenContext
+            {
+                Index = i,
+                Token = TokenAt(i),
+                OnInput = EventCallback.Factory.Create<ChangeEventArgs>(this, e => HandleInput(idx, e)),
+                OnKeyDown = EventCallback.Factory.Create<KeyboardEventArgs>(this, e => HandleKeyDown(idx, e))
+            };
+            @Template(context)
+        }
+    }
+    else
+    {
+        for (var i = 0; i < Length; i++)
+        {
+            var idx = i;
+            <input type="@(Mask ? "password" : "text")"
+                   class="@InputClass"
+                   value="@(TokenAt(idx)?.ToString())"
+                   maxlength="1"
+                   disabled="@Disabled"
+                   readonly="@Readonly"
+                   aria-label="@($"Caractere {idx + 1}")"
+                   @oninput="e => HandleInput(idx, e)"
+                   @onkeydown="e => HandleKeyDown(idx, e)"
+                   @ref="_inputs[idx]"/>
+        }
+    }
+</div>

@@ -1,0 +1,143 @@
+@page "/card"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Card
+@using OpBlazorUI.Base.Components.Button
+
+<DocComponent Title="Card"
+              Description="O Card é um contêiner flexível.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpCard Header="Card Simples" Style="width:25rem">
+                        <p class="m-0">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur
+                            error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis.
+                        </p>
+                    </OpCard>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Avançado">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpCard Style="width:25rem;overflow:hidden">
+                        <HeaderTemplate>
+                            <img alt="Card" class="w-full" src="https://optimus.openng.org/demo/card-ng.jpg"/>
+                        </HeaderTemplate>
+                        <TitleTemplate>
+                            Card Avançado
+                        </TitleTemplate>
+                        <SubtitleTemplate>
+                            Subtítulo do card
+                        </SubtitleTemplate>
+                        <ChildContent>
+                            <p class="m-0">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur
+                                error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis.
+                            </p>
+                        </ChildContent>
+                        <FooterTemplate>
+                            <div class="flex gap-4 mt-1">
+                                <OpButton Label="Cancelar" Severity="secondary" Outlined="true" Fluid="true"/>
+                                <OpButton Label="Salvar" Fluid="true"/>
+                            </div>
+                        </FooterTemplate>
+                    </OpCard>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AdvancedCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Header", "string?", "null", "Título do card." },
+                              new[] { "Subheader", "string?", "null", "Subtítulo do card." },
+                              new[] { "Style", "string?", "null", "Estilos inline." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo do card." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Cabeçalho (imagem) customizado." },
+                              new[] { "TitleTemplate", "RenderFragment?", "Título customizado." },
+                              new[] { "SubtitleTemplate", "RenderFragment?", "Subtítulo customizado." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Rodapé customizado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="card"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>Style</code>, <code>StyleClass</code> e atributos extras para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Card
+
+        <OpCard Header="Card Simples">
+            <p>Conteúdo</p>
+        </OpCard>
+        """;
+
+    private const string BasicCode = """
+        <OpCard Header="Card Simples" Style="width:25rem">
+            <p class="m-0">Conteúdo do card.</p>
+        </OpCard>
+        """;
+
+    private const string AdvancedCode = """
+        <OpCard Style="width:25rem;overflow:hidden">
+            <HeaderTemplate>
+                <img alt="Card" class="w-full" src=".../card-ng.jpg" />
+            </HeaderTemplate>
+            <TitleTemplate>Card Avançado</TitleTemplate>
+            <SubtitleTemplate>Subtítulo do card</SubtitleTemplate>
+            <p>Conteúdo.</p>
+            <FooterTemplate>
+                <div class="flex gap-4 mt-1">
+                    <OpButton Label="Cancelar" Severity="secondary" Outlined="true" Fluid="true" />
+                    <OpButton Label="Salvar" Fluid="true" />
+                </div>
+            </FooterTemplate>
+        </OpCard>
+        """;
+}

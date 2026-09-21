@@ -1,0 +1,115 @@
+@page "/scrolltop"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.ScrollTop
+
+<DocComponent Title="ScrollTop"
+              Description="O ScrollTop aparece após uma certa posição de scroll e navega rapidamente ao topo da página.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico (janela)">
+            <ChildContent>
+                <div class="card flex flex-col items-center">
+                    <p>Role a página para exibir o botão ScrollTop (canto inferior direito).</p>
+                    <OpScrollTop/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Elemento alvo (pai)">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <div style="width:250px;height:200px;overflow:auto;display:flex;flex-direction:column">
+                        <p class="m-0">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                            incididunt ut labore et dolore magna aliqua. Vitae et leo duis ut diam. Ultricies mi
+                            quis hendrerit dolor magna eget est lorem. Amet consectetur adipiscing elit ut. Nam
+                            libero justo laoreet sit amet. Pharetra massa massa ultricies mi quis hendrerit dolor
+                            magna. Est ultricies integer quis auctor elit sed vulputate. Consequat ac felis donec
+                            et. Tellus orci ac auctor augue mauris. Semper feugiat nibh sed pulvinar proin gravida
+                            hendrerit lectus a. Tincidunt arcu non sodales neque sodales. Metus aliquam eleifend
+                            mi in nulla posuere sollicitudin aliquam ultrices.
+                        </p>
+                        <OpScrollTop Target="parent" Threshold="100" Icon="pi pi-arrow-up"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TargetCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Target", "string", "window", "Alvo do scroll: <code>window</code> ou <code>parent</code>." },
+                              new[] { "Threshold", "int", "400", "Posição de scroll para exibir o botão." },
+                              new[] { "Icon", "string", "pi pi-angle-up", "Classe do ícone." },
+                              new[] { "Behavior", "string", "smooth", "Comportamento do scroll: <code>auto</code> ou <code>smooth</code>." },
+                              new[] { "ButtonAriaLabel", "string", "Scroll to top", "Label de acessibilidade." },
+                              new[] { "Style", "string?", "null", "Estilos inline." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "IconTemplate", "RenderFragment?", "Ícone customizado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent>
+                <div class="doc-section-description"><p>O ScrollTop não possui classes CSS nem design tokens no tema (0 ocorrências); os estilos ficam em <code>optimus-base.css</code>.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Posicionamento CSS-only; o modo <code>parent</code> usa <code>position: sticky</code> (o alvo deve ser um contêiner flexível).</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.ScrollTop
+
+        <OpScrollTop />
+        """;
+
+    private const string BasicCode = """
+        <OpScrollTop />
+        """;
+
+    private const string TargetCode = """
+        <div style="width:250px;height:200px;overflow:auto;display:flex;flex-direction:column">
+            <p>Conteúdo longo...</p>
+            <OpScrollTop Target="parent" Threshold="100" Icon="pi pi-arrow-up" />
+        </div>
+        """;
+}

@@ -1,0 +1,233 @@
+@page "/rating"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Rating
+@using System.ComponentModel.DataAnnotations
+
+<DocComponent Title="Rating"
+              Description="O Rating é um componente de seleção baseado em estrelas.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O Rating usa internamente radio buttons visíveis apenas para leitores de tela.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O binding bidirecional é feito com <code>@@bind-Value</code>.
+            </Description>
+            <ChildContent>
+                <OpRating @bind-Value="_value"/>
+                <div class="mt-2 text-sm">Valor: @_value</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado">
+            <ChildContent>
+                <OpRating @bind-Value="_value2" Disabled="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Número de Estrelas">
+            <Description>
+                O número de estrelas é definido com a propriedade <code>Stars</code>.
+            </Description>
+            <ChildContent>
+                <OpRating @bind-Value="_value3" Stars="10"/>
+                <div class="mt-2 text-sm">Valor: @_value3</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StarsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Somente Leitura">
+            <ChildContent>
+                <OpRating Value="3" Readonly="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReadonlyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Sem Cancelar">
+            <Description>
+                Um ícone de cancelar é exibido por padrão para redefinir o valor; defina <code>Cancel="false"</code> para removê-lo.
+            </Description>
+            <ChildContent>
+                <OpRating @bind-Value="_value4" Cancel="false"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@NoCancelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template">
+            <Description>
+                Os ícones de ativo/inativo podem ser customizados com <code>OnIconTemplate</code> e <code>OffIconTemplate</code>.
+            </Description>
+            <ChildContent>
+                <OpRating @bind-Value="_value5">
+                    <OnIconTemplate><i class="pi pi-heart-fill p-rating-icon" style="color:var(--p-red-500)"></i></OnIconTemplate>
+                    <OffIconTemplate><i class="pi pi-heart p-rating-icon"></i></OffIconTemplate>
+                </OpRating>
+                <div class="mt-2 text-sm">Valor: @_value5</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Validação">
+            <Description>
+                O Rating integra-se ao <code>EditForm</code> do Blazor com DataAnnotations.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpRating @bind-Value="_form.Rating" Invalid="@(!_submitted && _form.Rating == 0)"/>
+                    <ValidationMessage For="() => _form.Rating"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Avaliação: @_form.Rating</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "int", "0", "Valor da avaliação. Combine com <code>@bind-Value</code>." },
+                              new[] { "Stars", "int", "5", "Número de estrelas." },
+                              new[] { "Cancel", "bool", "true", "Exibe o ícone para redefinir o valor." },
+                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Readonly", "bool", "false", "Somente leitura." },
+                              new[] { "Invalid", "bool", "false", "Estado de erro." },
+                              new[] { "Required", "bool", "false", "Obrigatório." },
+                              new[] { "Name", "string?", "null", "Nome do grupo de radio buttons." },
+                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "InputId", "string?", "null", "Id base do componente." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "OnIconClass", "string?", "pi pi-star-fill", "Classe do ícone ativo." },
+                              new[] { "OffIconClass", "string?", "pi pi-star", "Classe do ícone inativo." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnRate", "EventCallback&lt;int&gt;", "Disparado ao avaliar." },
+                              new[] { "OnChange", "EventCallback&lt;int&gt;", "Disparado ao mudar o valor." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnIconTemplate", "RenderFragment?", "Template do ícone ativo." },
+                              new[] { "OffIconTemplate", "RenderFragment?", "Template do ícone inativo." },
+                              new[] { "CancelIconTemplate", "RenderFragment?", "Template do ícone de cancelar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="rating"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use os templates para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private int _value;
+    private int _value2 = 5;
+    private int _value3 = 5;
+    private int _value4;
+    private int _value5;
+
+    private bool _submitted;
+    private RatingForm _form = new();
+
+    private sealed class RatingForm
+    {
+        [Range(1, 5, ErrorMessage = "A avaliação é obrigatória.")]
+        public int Rating { get; set; }
+    }
+
+    private void OnSubmit()
+    {
+        _submitted = true;
+    }
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Rating
+
+        <OpRating @bind-Value="_value" />
+        """;
+
+    private const string BasicCode = """
+        <OpRating @bind-Value="_value" />
+        """;
+
+    private const string DisabledCode = """
+        <OpRating @bind-Value="_value" Disabled="true" />
+        """;
+
+    private const string StarsCode = """
+        <OpRating @bind-Value="_value" Stars="10" />
+        """;
+
+    private const string ReadonlyCode = """
+        <OpRating Value="3" Readonly="true" />
+        """;
+
+    private const string NoCancelCode = """
+        <OpRating @bind-Value="_value" Cancel="false" />
+        """;
+
+    private const string TemplateCode = """
+        <OpRating @bind-Value="_value">
+            <OnIconTemplate><i class="pi pi-heart-fill p-rating-icon"></i></OnIconTemplate>
+            <OffIconTemplate><i class="pi pi-heart p-rating-icon"></i></OffIconTemplate>
+        </OpRating>
+        """;
+
+    private const string ValidationCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpRating @bind-Value="_form.Rating" Invalid="@(!_submitted && _form.Rating == 0)" />
+            <ValidationMessage For="() => _form.Rating" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+        """;
+}

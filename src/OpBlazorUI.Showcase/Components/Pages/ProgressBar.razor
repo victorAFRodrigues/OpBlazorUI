@@ -1,0 +1,145 @@
+@page "/progressbar"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.ProgressBar
+
+<DocComponent Title="ProgressBar"
+              Description="O ProgressBar é um indicador de status de processo.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <ChildContent>
+                <div class="card">
+                    <OpProgressBar Value="50"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Sem Valor">
+            <ChildContent>
+                <div class="card">
+                    <OpProgressBar Value="50" ShowValue="false"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@NoValueCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Indeterminado">
+            <ChildContent>
+                <div class="card">
+                    <OpProgressBar Mode="indeterminate" Style="height:6px"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IndeterminateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Cor">
+            <ChildContent>
+                <div class="card">
+                    <OpProgressBar Value="75" Color="var(--p-green-500)"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ColorCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template">
+            <ChildContent>
+                <div class="card">
+                    <OpProgressBar Value="50">
+                        <ContentTemplate Context="v">
+                            <span>@v/100</span>
+                        </ContentTemplate>
+                    </OpProgressBar>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "int", "0", "Valor atual do progresso." },
+                              new[] { "ShowValue", "bool", "true", "Exibe o valor dentro da barra." },
+                              new[] { "Unit", "string", "%", "Unidade anexada ao valor." },
+                              new[] { "Mode", "string", "determinate", "Modo: <code>determinate</code> ou <code>indeterminate</code>." },
+                              new[] { "Color", "string?", "null", "Cor de fundo do progresso." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ValueStyleClass", "string?", "null", "Classes do elemento de valor." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ContentTemplate", "RenderFragment&lt;int&gt;?", "Conteúdo customizado; recebe o valor via <code>Context</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="progressbar"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.ProgressBar
+
+        <OpProgressBar Value="50" />
+        """;
+
+    private const string BasicCode = """
+        <OpProgressBar Value="50" />
+        """;
+
+    private const string NoValueCode = """
+        <OpProgressBar Value="50" ShowValue="false" />
+        """;
+
+    private const string IndeterminateCode = """
+        <OpProgressBar Mode="indeterminate" Style="height:6px" />
+        """;
+
+    private const string ColorCode = """
+        <OpProgressBar Value="75" Color="var(--p-green-500)" />
+        """;
+
+    private const string TemplateCode = """
+        <OpProgressBar Value="50">
+            <ContentTemplate Context="v">
+                <span>@v/100</span>
+            </ContentTemplate>
+        </OpProgressBar>
+        """;
+}

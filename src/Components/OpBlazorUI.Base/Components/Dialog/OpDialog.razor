@@ -1,0 +1,70 @@
+@namespace OpBlazorUI.Base.Components.Dialog
+
+@if (Visible)
+{
+    <div class="@MaskClass"
+         style="@MaskStyleValue"
+         @onclick="OnMaskClick"
+         @onkeydown="OnKeydown"
+         @attributes="AdditionalAttributes">
+        <div class="@RootClass"
+             @ref="_root"
+             style="@Style"
+             role="dialog"
+             aria-modal="@(Modal ? "true" : null)"
+             aria-labelledby="@(_headerId)"
+             tabindex="-1"
+             @onclick:stopPropagation="true">
+            @if (ShowHeader)
+            {
+                <div class="p-dialog-header">
+                    @if (HeaderTemplate != null)
+                    {
+                        @HeaderTemplate
+                    }
+                    else if (!string.IsNullOrEmpty(Header))
+                    {
+                        <span class="p-dialog-title" id="@_headerId">@Header</span>
+                    }
+
+                    <div class="p-dialog-header-actions">
+                        @if (Maximizable)
+                        {
+                            <button type="button"
+                                    class="p-dialog-header-icon p-dialog-maximize-button"
+                                    aria-label="@(_maximized ? "Minimize" : "Maximize")"
+                                    @onclick="ToggleMaximize">
+                                <span class="@(_maximized ? "pi pi-window-minimize" : "pi pi-window-maximize")" aria-hidden="true"></span>
+                            </button>
+                        }
+                        @if (Closable)
+                        {
+                            <button type="button"
+                                    class="p-dialog-header-icon p-dialog-close-button"
+                                    aria-label="@CloseAriaLabel"
+                                    @onclick="Close">
+                                @if (CloseIconTemplate != null)
+                                {
+                                    @CloseIconTemplate
+                                }
+                                else
+                                {
+                                    <span class="@CloseIcon" aria-hidden="true"></span>
+                                }
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="p-dialog-content" style="@ContentStyle">
+                @ChildContent
+            </div>
+
+            @if (FooterTemplate != null)
+            {
+                <div class="p-dialog-footer">@FooterTemplate</div>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,39 @@
+@namespace OpBlazorUI.Base.Components.Skeleton
+
+<div class="@RootClass" style="@RootStyle" aria-hidden="true" @attributes="AdditionalAttributes"></div>
+
+@code {
+    [Parameter] public string? Shape { get; set; }
+    [Parameter] public string? BorderRadius { get; set; }
+    [Parameter] public string? Size { get; set; }
+    [Parameter] public string Width { get; set; } = "100%";
+    [Parameter] public string Height { get; set; } = "1rem";
+    [Parameter] public string Animation { get; set; } = "wave";
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-skeleton p-component",
+        string.Equals(Shape, "circle", StringComparison.OrdinalIgnoreCase) ? "p-skeleton-circle" : null,
+        string.Equals(Animation, "none", StringComparison.OrdinalIgnoreCase) ? "p-skeleton-animation-none" : null,
+        StyleClass);
+
+    private string RootStyle
+    {
+        get
+        {
+            var width = Size ?? Width;
+            var height = Size ?? Height;
+            var sb = new System.Text.StringBuilder();
+            sb.Append($"width: {width}; height: {height};");
+            if (!string.IsNullOrEmpty(BorderRadius))
+                sb.Append($" border-radius: {BorderRadius};");
+            if (!string.IsNullOrEmpty(Style))
+                sb.Append($" {Style}");
+            return sb.ToString();
+        }
+    }
+}

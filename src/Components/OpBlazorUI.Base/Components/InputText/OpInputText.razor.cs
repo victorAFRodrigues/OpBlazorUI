@@ -22,6 +22,11 @@ public partial class OpInputText : ComponentBase
     [Parameter] public string? Autocomplete { get; set; }
     [Parameter] public string? StyleClass { get; set; }
 
+    [Parameter] public string? Mask { get; set; }
+    [Parameter] public bool AutoClear { get; set; } = true;
+    [Parameter] public string SlotChar { get; set; } = "_";
+    [Parameter] public string? KeyFilter { get; set; }
+
     [Parameter] public EventCallback<string?> OnInput { get; set; }
     [Parameter] public EventCallback<string?> OnChange { get; set; }
     [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
@@ -43,7 +48,9 @@ public partial class OpInputText : ComponentBase
 
     private async Task HandleInput(ChangeEventArgs e)
     {
-        var text = e.Value?.ToString();
+        var text = e.Value?.ToString() ?? string.Empty;
+        text = MaskFilter.ApplyKeyFilter(text, KeyFilter);
+        text = MaskFilter.ApplyMask(text, Mask, SlotChar);
         Value = text;
         await ValueChanged.InvokeAsync(text);
         await OnInput.InvokeAsync(text);
@@ -52,6 +59,17 @@ public partial class OpInputText : ComponentBase
     private async Task HandleChange(ChangeEventArgs e)
     {
         await OnChange.InvokeAsync(e.Value?.ToString());
+    }
+
+    private async Task HandleBlur(FocusEventArgs e)
+    {
+        if (Mask is { Length: > 0 } && AutoClear && MaskFilter.IsIncomplete(Value, SlotChar))
+        {
+            Value = string.Empty;
+            await ValueChanged.InvokeAsync(string.Empty);
+        }
+
+        await OnBlur.InvokeAsync(e);
     }
 
     private static string BuildClass(params string?[] classes)

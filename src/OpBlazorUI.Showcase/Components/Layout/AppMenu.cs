@@ -77,25 +77,25 @@ public static class AppMenu
                     Label = "Form",
                     Items =
                     [
-                        GroupItem("AutoComplete", "/autocomplete"), GroupItem("CascadeSelect"),
+                        GroupItem("AutoComplete"), GroupItem("CascadeSelect", "/cascadeselect"),
                         GroupItem("Checkbox", "/checkbox"), GroupItem("ColorPicker"),
-                        GroupItem("DatePicker", "/datepicker"), GroupItem("Editor"),
+                        GroupItem("DatePicker", "/datepicker"), GroupItem("Editor", "/editor"),
                         GroupItem("FloatLabel", "/floatlabel"), GroupItem("IconField", "/iconfield"),
-                        GroupItem("IftaLabel"), GroupItem("InputGroup"), GroupItem("InputMask"),
-                        GroupItem("InputNumber"), GroupItem("InputOtp"),
-                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter"),
-                        GroupItem("Listbox"), GroupItem("MultiSelect", "/multiselect"),
-                        GroupItem("Password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating"),
+                        GroupItem("IftaLabel", "/iftalabel"), GroupItem("InputGroup", "/inputgroup"), GroupItem("InputMask", "/inputmask"),
+                        GroupItem("InputNumber", "/inputnumber"), GroupItem("InputOtp", "/inputotp"),
+                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"),
+                        GroupItem("Listbox", "/listbox"), GroupItem("MultiSelect", "/multiselect"),
+                        GroupItem("Password", "/password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating", "/rating"),
                         GroupItem("Select", "/select"), GroupItem("SelectButton", "/selectbutton"),
                         GroupItem("Textarea"),
                         GroupItem("ToggleButton", "/togglebutton"), GroupItem("ToggleSwitch", "/toggleswitch"),
-                        GroupItem("TreeSelect")
+                        GroupItem("TreeSelect", "/treeselect")
                     ]
                 },
                 new AppMenuGroup
                 {
                     Label = "Button",
-                    Items = [GroupItem("Button", "/button"), GroupItem("SpeedDial"), GroupItem("SplitButton")]
+                    Items = [GroupItem("Button", "/button"), GroupItem("SpeedDial", "/speeddial"), GroupItem("SplitButton", "/splitbutton")]
                 },
                 new AppMenuGroup
                 {
@@ -103,8 +103,8 @@ public static class AppMenu
                     Items =
                     [
                         GroupItem("DataView"), GroupItem("OrderList"),
-                        GroupItem("Paginator"), GroupItem("PickList"), GroupItem("Table", "/table"),
-                        GroupItem("Timeline"), GroupItem("Tree"), GroupItem("TreeTable"), GroupItem("VirtualScroller")
+                        GroupItem("Paginator", "/paginator"), GroupItem("PickList"), GroupItem("Table", "/table"),
+                        GroupItem("Timeline"), GroupItem("Tree"), GroupItem("TreeTable"), GroupItem("VirtualScroller", "/virtualscroller")
                     ]
                 },
                 new AppMenuGroup
@@ -112,7 +112,7 @@ public static class AppMenu
                     Label = "Panel",
                     Items =
                     [
-                        GroupItem("Accordion"), GroupItem("Card"), GroupItem("Divider"),
+                        GroupItem("Accordion"), GroupItem("Card", "/card"), GroupItem("Divider", "/divider"),
                         GroupItem("Fieldset"), GroupItem("Panel"), GroupItem("ScrollPanel"),
                         GroupItem("Splitter"), GroupItem("Stepper"), GroupItem("Tabs"), GroupItem("Toolbar")
                     ]
@@ -122,8 +122,8 @@ public static class AppMenu
                     Label = "Overlay",
                     Items =
                     [
-                        GroupItem("ConfirmDialog"), GroupItem("ConfirmPopup"), GroupItem("Dialog"),
-                        GroupItem("Drawer"), GroupItem("DynamicDialog"), GroupItem("Popover"),
+                        GroupItem("ConfirmDialog"), GroupItem("ConfirmPopup"), GroupItem("Dialog", "/dialog"),
+                        GroupItem("Drawer", "/drawer"), GroupItem("DynamicDialog"), GroupItem("Popover", "/popover"),
                         GroupItem("Tooltip", "/tooltip")
                     ]
                 },
@@ -162,19 +162,19 @@ public static class AppMenu
                     Label = "Misc",
                     Items =
                     [
-                        GroupItem("AnimateOnScroll"), GroupItem("AutoFocus"), GroupItem("Avatar"),
-                        GroupItem("Badge"), GroupItem("Bind"), GroupItem("BlockUI"), GroupItem("Chip"),
+                        GroupItem("AnimateOnScroll"), GroupItem("AutoFocus"), GroupItem("Avatar", "/avatar"),
+                        GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI", "/blockui"), GroupItem("Chip", "/chip"),
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
-                        GroupItem("FocusTrap"), GroupItem("Inplace"), GroupItem("MeterGroup"),
-                        GroupItem("ProgressBar"), GroupItem("ProgressSpinner"),
-                        GroupItem("ScrollTop"), GroupItem("Skeleton"), GroupItem("StyleClass"),
-                        GroupItem("Tag")
+                        GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace"), GroupItem("MeterGroup"),
+                        GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
+                        GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
+                        GroupItem("Tag", "/tag")
                     ]
                 },
                 new AppMenuGroup
                 {
                     Label = "Utilities",
-                    Items = [GroupItem("FilterService")]
+                    Items = [GroupItem("FilterService"), GroupItem("Overlay API", "/overlay")]
                 }
             ]
         },
