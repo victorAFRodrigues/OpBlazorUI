@@ -301,3 +301,90 @@ body {
 .p-drawer-mask.p-drawer-top { align-items: flex-start; }
 .p-drawer-mask.p-drawer-bottom { align-items: flex-end; }
 .p-drawer-mask.p-drawer-full { align-items: center; justify-content: center; }
+
+/*
+ * Divider — alinhamento do conteúdo (o tema não traz as regras de justify/align
+ * para left/center/right/top/bottom; apenas os :dir(rtl)).
+ */
+.p-divider-vertical { align-items: center; }
+
+.p-divider-horizontal.p-divider-left { justify-content: flex-start; }
+.p-divider-horizontal.p-divider-center { justify-content: center; }
+.p-divider-horizontal.p-divider-right { justify-content: flex-end; }
+.p-divider-vertical.p-divider-top { align-items: flex-start; }
+.p-divider-vertical.p-divider-center { align-items: center; }
+.p-divider-vertical.p-divider-bottom { align-items: flex-end; }
+
+/*
+ * BlockUI — máscara centralizada sobre o conteúdo.
+ */
+.p-blockui-mask {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/*
+ * ScrollTop — sem CSS no tema (0 ocorrências). Botão fixo no canto.
+ */
+.p-scrolltop {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1100;
+    background: var(--p-primary-color);
+    color: var(--p-primary-contrast-color);
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    transition: opacity 0.15s, background-color 0.2s;
+}
+
+.p-scrolltop:hover {
+    background: var(--p-primary-hover-color);
+}
+
+.p-scrolltop-icon {
+    font-size: 1rem;
+}
+
+.p-scrolltop-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.p-scrolltop-parent {
+    position: sticky;
+    bottom: 1rem;
+    margin: 1rem 0 0 auto;
+}
+
+/*
+ * VirtualScroller — o tema só traz loader/loading-icon. Classes-base aqui.
+ */
+.p-virtualscroller {
+    position: relative;
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+}
+
+.p-virtualscroller-content {
+    position: relative;
+    overflow: visible;
+    will-change: transform;
+}
+
+.p-virtualscroller-spacer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    pointer-events: none;
+}

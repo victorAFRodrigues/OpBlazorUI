@@ -130,3 +130,42 @@ export function removeOutsideClickListener(element) {
         element.__opOutsideHandler = null;
     }
 }
+
+export function scrollTopInit(element, dotnetRef, target) {
+    if (!element || element.__opScrollTop) return;
+    const isParent = target === 'parent';
+    const scrollEl = isParent ? element.parentElement : window;
+    const getTop = () => {
+        if (isParent) return scrollEl ? scrollEl.scrollTop : 0;
+        return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    };
+    let ticking = false;
+    const handler = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            ticking = false;
+            try {
+                dotnetRef.invokeMethodAsync('NotifyScrollTop', getTop());
+            } catch (_) {
+                // ignore
+            }
+        });
+    };
+    element.__opScrollTop = { scrollEl, handler };
+    scrollEl.addEventListener('scroll', handler, { passive: true });
+    handler();
+}
+
+export function scrollTopDispose(element) {
+    if (!element || !element.__opScrollTop) return;
+    element.__opScrollTop.scrollEl.removeEventListener('scroll', element.__opScrollTop.handler);
+    element.__opScrollTop = null;
+}
+
+export function scrollTopTo(element, target, behavior) {
+    const isParent = target === 'parent';
+    const scrollEl = isParent ? element.parentElement : (document.scrollingElement || document.documentElement);
+    if (!scrollEl) return;
+    scrollEl.scrollTo({ top: 0, behavior });
+}
