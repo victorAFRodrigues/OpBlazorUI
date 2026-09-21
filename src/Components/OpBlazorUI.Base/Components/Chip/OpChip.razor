@@ -1,0 +1,84 @@
+@namespace OpBlazorUI.Base.Components.Chip
+
+<div class="@RootClass"
+     style="@Style"
+     tabindex="@(Removable && !Disabled ? 0 : -1)"
+     @onkeydown="OnKeyDown"
+     @attributes="AdditionalAttributes">
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        @if (!string.IsNullOrEmpty(Image))
+        {
+            <img class="p-chip-image" src="@Image" alt="@Alt" @onerror="OnImageError" />
+        }
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <span class="p-chip-icon @Icon" aria-hidden="true"></span>
+        }
+        @if (!string.IsNullOrEmpty(Label))
+        {
+            <span class="p-chip-label">@Label</span>
+        }
+        @if (Removable)
+        {
+            <span class="p-chip-remove-icon @RemoveIcon"
+                  role="button"
+                  aria-label="Remove"
+                  tabindex="@(Disabled ? -1 : 0)"
+                  @onclick="OnRemoveClick"
+                  @onkeydown="OnRemoveKeyDown"
+                  @onkeydown:stopPropagation="true"></span>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string? Image { get; set; }
+    [Parameter] public string? Alt { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool Removable { get; set; }
+    [Parameter] public string RemoveIcon { get; set; } = "pi pi-times-circle";
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnRemove { get; set; }
+    [Parameter] public EventCallback<ErrorEventArgs> OnImageError { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-chip p-component",
+        Disabled ? "p-disabled" : null,
+        StyleClass);
+
+    private async Task OnRemoveClick(MouseEventArgs e)
+    {
+        if (Disabled) return;
+        await OnRemove.InvokeAsync(e);
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (!Removable || Disabled) return;
+        if (e.Key is "Backspace" or "Enter")
+        {
+            await OnRemove.InvokeAsync(new MouseEventArgs());
+        }
+    }
+
+    private async Task OnRemoveKeyDown(KeyboardEventArgs e)
+    {
+        if (Disabled) return;
+        if (e.Key is "Enter" or " ")
+        {
+            await OnRemove.InvokeAsync(new MouseEventArgs());
+        }
+    }
+}
