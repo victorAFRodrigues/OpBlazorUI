@@ -102,6 +102,17 @@
             <Code><CodeBlock Code="@MultipleCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Virtual Scroll">
+            <Description>
+                Para listas muito grandes, ative <code>VirtualScroll</code> (com <code>ScrollHeight</code>) para renderizar apenas as opções visíveis.
+            </Description>
+            <ChildContent>
+                <OpListbox TValue="City" @bind-Value="_virtualCity" Options="ManyCities" OptionLabel="Name" VirtualScroll="true" ScrollHeight="200px" StyleClass="w-full md:w-56"/>
+                <div class="mt-2 text-sm">Selecionado: @(_virtualCity?.Name ?? "—")</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VirtualScrollCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Template">
             <Description>
                 Para conteúdo customizado, defina um <code>ItemTemplate</code>; o contexto é o próprio item (<code>TValue</code>).
@@ -164,6 +175,8 @@
                               new[] { "ShowToggleAll", "bool", "true", "Exibe o checkbox de selecionar tudo no modo múltiplo." },
                               new[] { "Striped", "bool", "false", "Linhas com cores alternadas." },
                               new[] { "ScrollHeight", "string?", "null", "Altura máxima da lista (px), com rolagem." },
+                              new[] { "VirtualScroll", "bool", "false", "Virtualiza a lista (rende apenas as opções visíveis). Requer <code>ScrollHeight</code>." },
+                              new[] { "VirtualScrollItemSize", "int", "38", "Altura (px) de cada opção usada no virtual scroll (incluindo o gap)." },
                               new[] { "Disabled", "bool", "false", "Desabilita o componente." },
                               new[] { "Readonly", "bool", "false", "Somente leitura." },
                               new[] { "Invalid", "bool", "false", "Estado de erro." },
@@ -244,6 +257,7 @@
     private IReadOnlyList<City>? _cities;
     private IReadOnlyList<City>? _cities2;
     private string? _country;
+    private City? _virtualCity;
 
     private bool _submitted;
     private FormModel _form = new();
@@ -273,6 +287,10 @@
         new() { Name = "Istambul", Code = "IST" },
         new() { Name = "Paris", Code = "PRS" }
     };
+
+    private static readonly List<City> ManyCities = Enumerable.Range(0, 10000)
+        .Select(i => new City { Name = $"Cidade {i}", Code = $"C{i}" })
+        .ToList();
 
     private sealed class CountryGroup
     {
@@ -323,6 +341,11 @@
 
     private const string MultipleCode = """
         <OpListbox TValue="City" @bind-SelectedValues="_cities" Options="Cities" OptionLabel="Name" Multiple="true" />
+        """;
+
+    private const string VirtualScrollCode = """
+        <OpListbox TValue="City" @bind-Value="_city" Options="ManyCities" OptionLabel="Name"
+                   VirtualScroll="true" ScrollHeight="200px" />
         """;
 
     private const string TemplateCode = """
