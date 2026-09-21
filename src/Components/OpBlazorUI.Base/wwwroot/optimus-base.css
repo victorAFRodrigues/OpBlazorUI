@@ -210,3 +210,94 @@ body {
         margin-bottom: 0;
     }
 }
+
+/*
+ * Overlay API — container base.
+ * "overlay" = ancorado (absolute, como dropdown) e "modal" = fixed centralizado
+ * com máscara. O conteúdo é estilizado pelo usuário via contentStyleClass.
+ */
+.p-overlay {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 100%;
+    z-index: 1000;
+}
+
+.p-overlay-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.p-overlay-content {
+    background: var(--p-overlay-modal-background);
+    color: var(--p-overlay-modal-color);
+    border: 1px solid var(--p-overlay-modal-border-color);
+    border-radius: var(--p-overlay-modal-border-radius);
+    box-shadow: var(--p-overlay-modal-shadow);
+    padding: var(--p-overlay-modal-padding);
+}
+
+/*
+ * Dialog / Drawer — máscara (reusa .p-overlay-mask para fundo e animação) e
+ * posicionamento por posição. O tema só traz margin nas posições; o alinhamento
+ * da máscara (flex) fica aqui.
+ */
+.p-dialog-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.p-dialog-top { align-items: flex-start; }
+.p-dialog-bottom { align-items: flex-end; }
+.p-dialog-left { justify-content: flex-start; }
+.p-dialog-right { justify-content: flex-end; }
+.p-dialog-topleft { align-items: flex-start; justify-content: flex-start; }
+.p-dialog-topright { align-items: flex-start; justify-content: flex-end; }
+.p-dialog-bottomleft { align-items: flex-end; justify-content: flex-start; }
+.p-dialog-bottomright { align-items: flex-end; justify-content: flex-end; }
+
+.p-dialog-header-icon,
+.p-drawer-header-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--p-text-muted-color);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.p-dialog-header-icon:hover,
+.p-drawer-header-icon:hover {
+    background: var(--p-content-hover-background);
+    color: var(--p-content-hover-color);
+}
+
+.p-drawer-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+}
+
+.p-drawer-mask.p-drawer-left { justify-content: flex-start; }
+.p-drawer-mask.p-drawer-right { justify-content: flex-end; }
+.p-drawer-mask.p-drawer-top { align-items: flex-start; }
+.p-drawer-mask.p-drawer-bottom { align-items: flex-end; }
+.p-drawer-mask.p-drawer-full { align-items: center; justify-content: center; }

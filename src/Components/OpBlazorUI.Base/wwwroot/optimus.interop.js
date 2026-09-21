@@ -26,3 +26,107 @@ export function copyText(text) {
     }
     return Promise.reject(new Error('clipboard unavailable'));
 }
+
+const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+function getFocusableElements(container) {
+    return Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
+        (el) => !el.disabled && el.getAttribute('aria-hidden') !== 'true' && el.offsetParent !== null
+    );
+}
+
+export function focusTrapInit(element) {
+    if (!element || element.__opFocusTrapHandler) return;
+    const handler = (e) => {
+        if (e.key !== 'Tab' || element.getAttribute('data-focustrap-disabled') === 'true') return;
+        const focusables = getFocusableElements(element);
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey) {
+            if (active === first || !element.contains(active)) {
+                e.preventDefault();
+                last.focus();
+            }
+        } else if (active === last || !element.contains(active)) {
+            e.preventDefault();
+            first.focus();
+        }
+    };
+    element.__opFocusTrapHandler = handler;
+    element.addEventListener('keydown', handler);
+}
+
+export function focusTrapDispose(element) {
+    if (!element) return;
+    if (element.__opFocusTrapHandler) {
+        element.removeEventListener('keydown', element.__opFocusTrapHandler);
+        element.__opFocusTrapHandler = null;
+    }
+}
+
+export function alignOverlay(element, target, position = 'bottom') {
+    if (!element || !target) return { top: 0, left: 0, flipped: false };
+    element.style.position = 'fixed';
+    element.style.top = '0px';
+    element.style.left = '0px';
+    element.style.margin = '0';
+    element.style.transform = 'none';
+    element.style.visibility = 'hidden';
+
+    const targetRect = target.getBoundingClientRect();
+    const elRect = element.getBoundingClientRect();
+    const gutter = 8;
+    const viewportMargin = 8;
+
+    const centeredLeft = targetRect.left + (targetRect.width - elRect.width) / 2;
+    let top;
+    let left = centeredLeft;
+    let flipped = false;
+
+    if (position === 'top') {
+        top = targetRect.top - elRect.height - gutter;
+    } else {
+        top = targetRect.bottom + gutter;
+    }
+
+    if (top < viewportMargin && position !== 'top') {
+        top = targetRect.top - elRect.height - gutter;
+        flipped = true;
+    } else if (top + elRect.height > window.innerHeight - viewportMargin && position === 'top') {
+        top = targetRect.bottom + gutter;
+        flipped = true;
+    }
+
+    left = Math.max(viewportMargin, Math.min(left, window.innerWidth - elRect.width - viewportMargin));
+
+    element.style.top = top + 'px';
+    element.style.left = left + 'px';
+    element.classList.toggle('p-popover-flipped', flipped);
+    element.style.visibility = 'visible';
+
+    return { top, left, flipped };
+}
+
+export function addOutsideClickListener(element, target, dotnetRef) {
+    if (!element || element.__opOutsideHandler) return;
+    const handler = (e) => {
+        if (element.contains(e.target) || (target && target.contains && target.contains(e.target))) return;
+        try {
+            dotnetRef.invokeMethodAsync('OnOutsideClick');
+        } catch (_) {
+            // ignore
+        }
+    };
+    element.__opOutsideHandler = handler;
+    document.addEventListener('pointerdown', handler, true);
+}
+
+export function removeOutsideClickListener(element) {
+    if (!element) return;
+    if (element.__opOutsideHandler) {
+        document.removeEventListener('pointerdown', element.__opOutsideHandler, true);
+        element.__opOutsideHandler = null;
+    }
+}
