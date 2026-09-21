@@ -1,0 +1,21 @@
+@namespace OpBlazorUI.Base.Components.Badge
+
+<div class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
+    @ChildContent
+    <OpBadge Value="@Value" Severity="@Severity" />
+</div>
+
+@code {
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public string? Severity { get; set; }
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-overlaybadge p-component",
+        StyleClass);
+}
