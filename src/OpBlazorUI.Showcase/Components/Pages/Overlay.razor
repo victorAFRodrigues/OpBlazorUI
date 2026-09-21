@@ -1,0 +1,145 @@
+@page "/overlay"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Overlay
+@using OpBlazorUI.Base.Components.Button
+
+<DocComponent Title="Overlay"
+              Description="O Overlay é um contêiner base para exibir conteúdo sobreposto (ancorado ou modal).">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico (overlay)">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <div style="position:relative">
+                        <OpButton Label="Mostrar Overlay" @onclick="ToggleOverlay"/>
+                        <OpOverlay @bind-Visible="_overlayVisible" Mode="overlay">
+                            <span>Conteúdo do overlay ancorado.</span>
+                        </OpOverlay>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Modal">
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar Modal" @onclick="ToggleModal"/>
+                    <OpOverlay @bind-Visible="_modalVisible" Mode="modal" Dismissable="true">
+                        <span>Conteúdo do overlay modal.</span>
+                    </OpOverlay>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ModalCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Visible", "bool", "false", "Controla a visibilidade." },
+                              new[] { "VisibleChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
+                              new[] { "Mode", "string", "overlay", "Modo: <code>overlay</code> (ancorado) ou <code>modal</code> (centralizado com máscara)." },
+                              new[] { "Style", "string?", "null", "Estilos inline do overlay." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "ContentStyle", "string?", "null", "Estilos do conteúdo." },
+                              new[] { "ContentStyleClass", "string?", "null", "Classes do conteúdo." },
+                              new[] { "Target", "string?", "null", "Seletor do alvo (CSS-only no port atual)." },
+                              new[] { "AppendTo", "string?", "self", "Alvo de anexação (aceito, sem portal)." },
+                              new[] { "Dismissable", "bool", "false", "Oculta ao clicar na máscara (modal)." },
+                              new[] { "HideOnEscape", "bool", "true", "Oculta com a tecla Escape." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Métodos">
+            <ChildContent>
+                <ApiTable Caption="Métodos (via ref)"
+                          Headers="@(new[] { "Nome", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ShowAsync()", "Exibe o overlay." },
+                              new[] { "HideAsync()", "Oculta o overlay." },
+                              new[] { "ToggleAsync()", "Alterna a visibilidade." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnBeforeShow", "EventCallback", "Antes de exibir." },
+                              new[] { "OnShow", "EventCallback", "Ao exibir." },
+                              new[] { "OnBeforeHide", "EventCallback", "Antes de ocultar." },
+                              new[] { "OnHide", "EventCallback", "Ao ocultar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="overlay"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>O posicionamento é CSS-only (sem auto-flip nem portal <code>appendTo</code>).</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private bool _overlayVisible;
+    private bool _modalVisible;
+
+    private void ToggleOverlay() => _overlayVisible = !_overlayVisible;
+    private void ToggleModal() => _modalVisible = !_modalVisible;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Overlay
+
+        <OpOverlay @bind-Visible="_visible" Mode="overlay">
+            <span>Conteúdo</span>
+        </OpOverlay>
+        """;
+
+    private const string BasicCode = """
+        <div style="position:relative">
+            <OpButton Label="Mostrar Overlay" @onclick="Toggle" />
+            <OpOverlay @bind-Visible="_visible" Mode="overlay">
+                <span>Conteúdo do overlay ancorado.</span>
+            </OpOverlay>
+        </div>
+
+        @code {
+            private bool _visible;
+            private void Toggle() => _visible = !_visible;
+        }
+        """;
+
+    private const string ModalCode = """
+        <OpButton Label="Mostrar Modal" @onclick="Toggle" />
+        <OpOverlay @bind-Visible="_visible" Mode="modal" Dismissable="true">
+            <span>Conteúdo do overlay modal.</span>
+        </OpOverlay>
+        """;
+}

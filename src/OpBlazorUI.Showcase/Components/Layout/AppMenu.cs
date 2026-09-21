@@ -122,8 +122,8 @@ public static class AppMenu
                     Label = "Overlay",
                     Items =
                     [
-                        GroupItem("ConfirmDialog"), GroupItem("ConfirmPopup"), GroupItem("Dialog"),
-                        GroupItem("Drawer"), GroupItem("DynamicDialog"), GroupItem("Popover"),
+                        GroupItem("ConfirmDialog"), GroupItem("ConfirmPopup"), GroupItem("Dialog", "/dialog"),
+                        GroupItem("Drawer", "/drawer"), GroupItem("DynamicDialog"), GroupItem("Popover", "/popover"),
                         GroupItem("Tooltip", "/tooltip")
                     ]
                 },
@@ -165,7 +165,7 @@ public static class AppMenu
                         GroupItem("AnimateOnScroll"), GroupItem("AutoFocus"), GroupItem("Avatar", "/avatar"),
                         GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI"), GroupItem("Chip", "/chip"),
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
-                        GroupItem("FocusTrap"), GroupItem("Inplace"), GroupItem("MeterGroup"),
+                        GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace"), GroupItem("MeterGroup"),
                         GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
                         GroupItem("ScrollTop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
                         GroupItem("Tag", "/tag")
@@ -174,7 +174,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Utilities",
-                    Items = [GroupItem("FilterService")]
+                    Items = [GroupItem("FilterService"), GroupItem("Overlay API", "/overlay")]
                 }
             ]
         },
