@@ -1,0 +1,633 @@
+@page "/autocomplete"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.AutoComplete
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Message
+@using OpBlazorUI.Base.Models
+@using System.ComponentModel.DataAnnotations
+
+<DocComponent Title="AutoComplete"
+              Description="O AutoComplete é um campo de entrada que fornece sugestões em tempo real enquanto você digita.">
+
+    <Features>
+        <DocSection Label="Acessibilidade">
+            <Description>
+                O valor pode ser descrito por um <code>&lt;label for&gt;</code> combinado com <code>InputId</code>, ou pelos atributos <code>AriaLabelledBy</code>/<code>AriaLabel</code>. O input tem <code>role="combobox"</code> com <code>aria-autocomplete</code>, <code>aria-haspopup</code> e <code>aria-expanded</code>. A relação entre input e popup é feita com <code>aria-controls</code>, e <code>aria-activedescendant</code> indica a opção ativa durante a navegação por teclado. No modo múltiplo, a lista de chips usa <code>role="listbox"</code> e cada chip usa <code>role="option"</code> com <code>aria-label</code> definido pelo rótulo do chip.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O AutoComplete usa <code>@@bind-Value</code>, uma lista de <code>Suggestions</code> e o <code>CompleteMethod</code> para consultar os resultados. O callback recebe a <code>Query</code> digitada e deve atualizar <code>Suggestions</code>.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="string" @bind-Value="_basic" Suggestions="_basicSuggestions" CompleteMethod="SearchBasic" Placeholder="Digite algo..."/>
+                <div class="mt-2 text-sm">Selecionado: @(_basic ?? "—")</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Objetos">
+            <Description>
+                Com <code>OptionLabel</code>, o AutoComplete exibe um campo do objeto como sugestão, mas o valor vinculado continua sendo a instância do objeto.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="Country" @bind-Value="_country" Suggestions="_countrySuggestions" CompleteMethod="SearchCountry" OptionLabel="Name" Placeholder="País"/>
+                <div class="mt-2 text-sm">Selecionado: @(_country?.Name ?? "—")</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ObjectsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Dropdown">
+            <Description>
+                <code>Dropdown="true"</code> exibe um botão ao lado do campo. O <code>DropdownMode</code> define a query enviada no clique: <code>blank</code> (vazia, padrão) ou <code>current</code> (valor atual).
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="string" @bind-Value="_dropdown" Suggestions="_dropdownSuggestions" CompleteMethod="SearchDropdown" Dropdown="true" Placeholder="Com dropdown"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DropdownCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado">
+            <Description>
+                Quando <code>Disabled</code> está presente, o campo não pode ser editado nem focado.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="string" @bind-Value="_disabled" Suggestions="_disabledSuggestions" CompleteMethod="SearchBasic" Disabled="true" Placeholder="Desabilitado"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido">
+            <Description>
+                <code>Invalid</code> aplica o estilo de erro, útil para indicar falha de validação.
+            </Description>
+            <ChildContent>
+                <div class="flex gap-3 flex-wrap">
+                    <OpAutoComplete TValue="string" @bind-Value="_invalid1" Suggestions="_invalidSuggestions" CompleteMethod="SearchBasic" Invalid="true" Placeholder="Código"/>
+                    <OpAutoComplete TValue="string" @bind-Value="_invalid2" Suggestions="_invalidSuggestions" CompleteMethod="SearchBasic" Variant="filled" Invalid="true" Placeholder="Código"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Variantes e Fluido">
+            <Description>
+                Use <code>Variant="filled"</code> para o fundo preenchido e <code>Fluid="true"</code> para ocupar toda a largura do contêiner.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpAutoComplete TValue="string" @bind-Value="_filled" Suggestions="_filledSuggestions" CompleteMethod="SearchBasic" Variant="filled" Placeholder="Preenchido"/>
+                    <OpAutoComplete TValue="string" @bind-Value="_fluid" Suggestions="_fluidSuggestions" CompleteMethod="SearchBasic" Fluid="true" Placeholder="Fluido"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos">
+            <ChildContent>
+                <div class="flex flex-col items-center gap-3">
+                    <OpAutoComplete TValue="string" @bind-Value="_size1" Suggestions="_sizeSuggestions" CompleteMethod="SearchBasic" Size="small" Placeholder="Pequeno"/>
+                    <OpAutoComplete TValue="string" @bind-Value="_size2" Suggestions="_sizeSuggestions" CompleteMethod="SearchBasic" Placeholder="Normal"/>
+                    <OpAutoComplete TValue="string" @bind-Value="_size3" Suggestions="_sizeSuggestions" CompleteMethod="SearchBasic" Size="large" Placeholder="Grande"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Múltiplo">
+            <Description>
+                Ative o modo múltiplo com <code>Multiple="true"</code>; o valor passa a ser uma lista (<code>@@bind-MultipleValue</code>).
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="string" @bind-MultipleValue="_multiple" Multiple="true" Suggestions="_multipleSuggestions" CompleteMethod="SearchBasic" Placeholder="Selecione vários"/>
+                <div class="mt-2 text-sm">Selecionados: @(_multiple is { Count: > 0 } ? string.Join(", ", _multiple) : "—")</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Chips (addOnBlur / addOnTab / separator)">
+            <Description>
+                Com <code>Typeahead="false"</code>, o AutoComplete funciona como entrada de tags. <code>AddOnBlur</code>, <code>AddOnTab</code> e <code>Separator</code> controlam como os itens são adicionados.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpAutoComplete TValue="string" @bind-MultipleValue="_chipBlur" Multiple="true" Typeahead="false" AddOnBlur="true" Fluid="true" Placeholder="Digite e clique fora para adicionar..."/>
+                    <OpAutoComplete TValue="string" @bind-MultipleValue="_chipTab" Multiple="true" Typeahead="false" AddOnTab="true" Fluid="true" Placeholder="Digite e pressione Tab para adicionar..."/>
+                    <OpAutoComplete TValue="string" @bind-MultipleValue="_chipSep" Multiple="true" Typeahead="false" Separator="," Fluid="true" Placeholder="Digite itens separados por vírgula..."/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ChipsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Forçar Seleção">
+            <Description>
+                <code>ForceSelection="true"</code> valida a entrada manual: se o texto não corresponder a nenhuma sugestão, o valor é limpo, garantindo que o model sempre contenha uma sugestão válida.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="Country" @bind-Value="_forceCountry" Suggestions="_forceSuggestions" CompleteMethod="SearchCountry" OptionLabel="Name" ForceSelection="true" Placeholder="País (forçado)"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ForceCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Agrupado">
+            <Description>
+                Com <code>Group="true"</code>, as sugestões vêm de grupos. <code>GroupTemplate</code> customiza o rótulo de cada grupo.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="string" @bind-Value="_groupCity" Suggestions="_groupSuggestions" CompleteMethod="SearchGroup" Group="true" OptionGroupLabel="Label" OptionGroupChildren="Items" Placeholder="Dica: digite 'a'"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@GroupCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Templates">
+            <Description>
+                <code>ItemTemplate</code>, <code>HeaderTemplate</code>, <code>FooterTemplate</code> e <code>SelectedItemTemplate</code> permitem customizar a lista e o item selecionado.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="Country" @bind-Value="_tplCountry" Suggestions="_tplSuggestions" CompleteMethod="SearchCountry" OptionLabel="Name" Placeholder="País">
+                    <HeaderTemplate>
+                        <div class="px-3 py-2" style="font-weight:600;">Países disponíveis</div>
+                    </HeaderTemplate>
+                    <ItemTemplate Context="c">
+                        <div style="display:flex; align-items:center; gap:.5rem;">
+                            <span style="color:var(--p-primary-color)">◆</span>
+                            <span>@c.Name</span>
+                        </div>
+                    </ItemTemplate>
+                    <FooterTemplate>
+                        <div class="px-3 py-2" style="font-size:.85rem; color:var(--p-text-muted-color);">Digite para filtrar</div>
+                    </FooterTemplate>
+                </OpAutoComplete>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Limpar">
+            <Description>
+                Com <code>ShowClear="true"</code>, um ícone de limpar é exibido para restaurar o valor padrão.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="string" @bind-Value="_clear" Suggestions="_clearSuggestions" CompleteMethod="SearchBasic" ShowClear="true" Placeholder="Digite algo..."/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ClearCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulário (EditForm)">
+            <Description>
+                O AutoComplete pode ser usado dentro de um <code>EditForm</code>. Neste exemplo, o campo é obrigatório e a validação é exibida via <code>OpMessage</code>.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_formModel" OnValidSubmit="_ => OnFormSubmit()" OnInvalidSubmit="_ => _formSubmitted = true">
+                    <DataAnnotationsValidator />
+                    <div class="flex flex-col gap-3" style="max-width:20rem;">
+                        <div>
+                            <OpAutoComplete TValue="string" @bind-Value="_formModel.Value"
+                                             Suggestions="_formSuggestions" CompleteMethod="SearchBasic"
+                                             Invalid="@(_formSubmitted && string.IsNullOrEmpty(_formModel.Value))"
+                                             Fluid="true" Placeholder="Obrigatório"/>
+                            @if (_formSubmitted && string.IsNullOrEmpty(_formModel.Value))
+                            {
+                                <div class="mt-1">
+                                    <OpMessage Severity="error" Variant="simple" Size="small">O valor é obrigatório.</OpMessage>
+                                </div>
+                            }
+                        </div>
+                        <OpButton Label="Enviar" Type="submit" Severity="secondary"/>
+                    </div>
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Virtual Scroll">
+            <Description>
+                O scroll virtual renderiza apenas um subconjunto das opções por vez. Quando há muitos itens, use <code>VirtualScroll="true"</code>, <code>VirtualScrollItemSize</code> (altura do item) e <code>ItemsProvider</code>, que é chamado sob demanda conforme a rolagem — ideal para fetch paginado.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="VirtualItem" @bind-Value="_virtualSelected"
+                                 VirtualScroll="true" VirtualScrollItemSize="34"
+                                 ItemsProvider="LoadVirtualItems"
+                                 OptionLabel="Label" Dropdown="true" Placeholder="Item"/>
+                <div class="mt-2 text-sm">Selecionado: @(_virtualSelected?.Label ?? "—")</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VirtualCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades">
+            <ChildContent>
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Suggestions", "IReadOnlyList&lt;object&gt;?", "null", "Sugestões exibidas no overlay. Atualize este valor a partir do <code>CompleteMethod</code>." },
+                              new[] { "OptionLabel", "string?", "null", "Propriedade do objeto usada como texto de cada opção." },
+                              new[] { "OptionValue", "string?", "null", "Propriedade usada como valor de cada opção." },
+                              new[] { "OptionDisabled", "string?", "null", "Propriedade booleana que desabilita opções específicas." },
+                              new[] { "Value", "TValue?", "null", "Valor selecionado (modo single). Combine com <code>@bind-Value</code>." },
+                              new[] { "Multiple", "bool", "false", "Ativa o modo de seleção múltipla." },
+                              new[] { "MultipleValue", "IReadOnlyList&lt;TValue&gt;?", "null", "Valores selecionados (modo multiple). Combine com <code>@bind-MultipleValue</code>." },
+                              new[] { "Placeholder", "string?", "null", "Texto exibido quando o campo está vazio." },
+                              new[] { "Dropdown", "bool", "false", "Exibe um botão de dropdown ao lado do campo." },
+                              new[] { "DropdownMode", "string", "blank", "<code>blank</code> (query vazia) ou <code>current</code> (query com o valor atual)." },
+                              new[] { "ShowClear", "bool", "false", "Exibe um ícone para limpar o valor." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente." },
+                              new[] { "Readonly", "bool", "false", "Impede edição." },
+                              new[] { "Invalid", "bool", "false", "Aplica o estilo de erro." },
+                              new[] { "Required", "bool", "false", "Marca o campo como obrigatório." },
+                              new[] { "Group", "bool", "false", "Ativa o modo agrupado." },
+                              new[] { "OptionGroupLabel", "string", "label", "Propriedade do grupo usada como rótulo." },
+                              new[] { "OptionGroupChildren", "string", "items", "Propriedade do grupo com a lista de itens." },
+                              new[] { "ForceSelection", "bool", "false", "Limpa o valor se a entrada manual não corresponder a nenhuma sugestão." },
+                              new[] { "Typeahead", "bool", "true", "Dispara <code>CompleteMethod</code> conforme digita." },
+                              new[] { "AddOnBlur", "bool", "false", "No modo múltiplo, adiciona o texto como chip ao desfocar." },
+                              new[] { "AddOnTab", "bool", "false", "No modo múltiplo, adiciona o texto como chip ao pressionar Tab." },
+                              new[] { "Separator", "string?", "null", "No modo múltiplo, caractere que adiciona o texto como chip." },
+                              new[] { "MinLength", "int", "1", "Tamanho mínimo da query para disparar o <code>CompleteMethod</code>." },
+                              new[] { "Variant", "string", "outlined", "<code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "<code>small</code> ou <code>large</code>." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura disponível." },
+                              new[] { "ScrollHeight", "string?", "null", "Altura máxima (px) da lista, com rolagem." },
+                              new[] { "Loading", "bool", "false", "Exibe um spinner de carregamento." },
+                              new[] { "EmptyMessage", "string", "No results found", "Mensagem quando não há sugestões." },
+                              new[] { "InputId", "string?", "null", "Id do input interno (para <code>&lt;label for&gt;</code>)." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo de acessibilidade." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o componente." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
+                              new[] { "AutoFocus", "bool", "false", "Foca o input automaticamente ao carregar." },
+                              new[] { "VirtualScroll", "bool", "false", "Renderiza a lista com scroll virtual." },
+                              new[] { "VirtualScrollItemSize", "float", "34", "Altura (px) de cada item no scroll virtual." },
+                              new[] { "VirtualScrollOverscan", "int", "3", "Itens extras renderizados antes/depois da área visível." },
+                              new[] { "ItemsProvider", "ItemsProviderDelegate&lt;object&gt;?", "null", "Fornece itens sob demanda no scroll virtual (fetch paginado)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais do elemento raiz." },
+                              new[] { "PanelStyleClass", "string?", "null", "Classes do painel do overlay." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "CompleteMethod", "EventCallback&lt;OpAutoCompleteCompleteEvent&gt;", "Disparado para consultar sugestões; recebe a <code>Query</code> digitada." },
+                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado quando o valor muda." },
+                              new[] { "OnSelect", "EventCallback&lt;OpAutoCompleteSelectEvent&gt;", "Disparado ao selecionar uma opção." },
+                              new[] { "OnUnselect", "EventCallback&lt;OpAutoCompleteSelectEvent&gt;", "Disparado ao desmarcar uma opção." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." },
+                              new[] { "OnShow", "EventCallback", "Disparado ao abrir o overlay." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao fechar o overlay." },
+                              new[] { "OnClear", "EventCallback", "Disparado ao limpar o valor." },
+                              new[] { "OnDropdownClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar no botão de dropdown." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ItemTemplate", "RenderFragment&lt;TValue&gt;?", "Customiza o conteúdo de cada opção." },
+                              new[] { "SelectedItemTemplate", "RenderFragment&lt;TValue&gt;?", "Customiza o conteúdo do chip (modo múltiplo)." },
+                              new[] { "GroupTemplate", "RenderFragment&lt;object&gt;?", "Customiza o rótulo de cada grupo." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo extra no topo do overlay." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Conteúdo extra no rodapé do overlay." },
+                              new[] { "EmptyTemplate", "RenderFragment?", "Customiza a mensagem quando não há sugestões." },
+                              new[] { "LoadingIconTemplate", "RenderFragment?", "Substitui o ícone de carregamento." },
+                              new[] { "DropdownIconTemplate", "RenderFragment?", "Substitui o ícone do dropdown." },
+                              new[] { "ClearIconTemplate", "RenderFragment?", "Substitui o ícone de limpar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent><DocTokens Component="autocomplete"/></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>PanelStyleClass</code>, <code>AdditionalAttributes</code> e os templates para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description"><p>No modo <code>VirtualScroll</code>, a navegação por teclado (setas) fica limitada ao fechamento com Enter/Escape; a seleção é feita pelo clique.</p></div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private string? _basic;
+    private List<object> _basicSuggestions = new();
+
+    private Country? _country;
+    private List<object> _countrySuggestions = new();
+
+    private string? _dropdown;
+    private List<object> _dropdownSuggestions = new();
+
+    private string? _disabled;
+    private List<object> _disabledSuggestions = new();
+
+    private string? _invalid1;
+    private string? _invalid2;
+    private List<object> _invalidSuggestions = new();
+
+    private string? _filled;
+    private List<object> _filledSuggestions = new();
+
+    private string? _fluid;
+    private List<object> _fluidSuggestions = new();
+
+    private string? _size1;
+    private string? _size2;
+    private string? _size3;
+    private List<object> _sizeSuggestions = new();
+
+    private IReadOnlyList<string>? _multiple;
+    private List<object> _multipleSuggestions = new();
+
+    private IReadOnlyList<string>? _chipBlur;
+    private IReadOnlyList<string>? _chipTab;
+    private IReadOnlyList<string>? _chipSep;
+
+    private Country? _forceCountry;
+    private List<object> _forceSuggestions = new();
+
+    private string? _groupCity;
+    private List<object> _groupSuggestions = new();
+
+    private Country? _tplCountry;
+    private List<object> _tplSuggestions = new();
+
+    private string? _clear;
+    private List<object> _clearSuggestions = new();
+
+    private VirtualItem? _virtualSelected;
+    private static readonly List<VirtualItem> _virtualItems =
+        Enumerable.Range(0, 10000).Select(i => new VirtualItem { Label = "Item " + i, Value = "Item " + i }).ToList();
+
+    // formulário
+    private readonly FormModel _formModel = new();
+    private List<object> _formSuggestions = new();
+    private bool _formSubmitted;
+
+    public sealed class Country
+    {
+        public string Name { get; set; } = "";
+        public string Code { get; set; } = "";
+    }
+
+    public sealed class VirtualItem
+    {
+        public string Label { get; set; } = "";
+        public string Value { get; set; } = "";
+    }
+
+    public sealed class FormModel
+    {
+        [Required]
+        public string? Value { get; set; }
+    }
+
+    private sealed class CityGroup
+    {
+        public string Label { get; set; } = "";
+        public List<string> Items { get; set; } = new();
+    }
+
+    private static readonly List<Country> Countries = new()
+    {
+        new() { Name = "Brasil", Code = "br" },
+        new() { Name = "Estados Unidos", Code = "us" },
+        new() { Name = "Alemanha", Code = "de" },
+        new() { Name = "Japão", Code = "jp" },
+        new() { Name = "França", Code = "fr" }
+    };
+
+    private static readonly List<CityGroup> CityGroups = new()
+    {
+        new() { Label = "Alemanha", Items = new() { "Berlim", "Frankfurt", "Hamburgo", "Munique" } },
+        new() { Label = "EUA", Items = new() { "Chicago", "Los Angeles", "Nova York", "São Francisco" } },
+        new() { Label = "Japão", Items = new() { "Quioto", "Osaka", "Tóquio", "Yokohama" } }
+    };
+
+    private void SearchBasic(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query;
+        _basicSuggestions = Enumerable.Range(0, 10).Select(i => (object)$"{query}-{i}").ToList();
+        _disabledSuggestions = _basicSuggestions;
+        _invalidSuggestions = _basicSuggestions;
+        _filledSuggestions = _basicSuggestions;
+        _fluidSuggestions = _basicSuggestions;
+        _sizeSuggestions = _basicSuggestions;
+        _multipleSuggestions = _basicSuggestions;
+        _clearSuggestions = _basicSuggestions;
+        _formSuggestions = _basicSuggestions;
+    }
+
+    private void SearchDropdown(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query;
+        _dropdownSuggestions = string.IsNullOrEmpty(query)
+            ? Enumerable.Range(0, 10).Select(i => (object)i.ToString()).ToList()
+            : Enumerable.Range(0, 10).Select(i => (object)$"{query}-{i}").ToList();
+    }
+
+    private void SearchCountry(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query;
+        _countrySuggestions = Countries
+            .Where(c => c.Name.StartsWith(query, StringComparison.CurrentCultureIgnoreCase))
+            .Cast<object>()
+            .ToList();
+        _forceSuggestions = _countrySuggestions;
+        _tplSuggestions = _countrySuggestions;
+    }
+
+    private void SearchGroup(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query;
+        var result = new List<object>();
+        foreach (var group in CityGroups)
+        {
+            var items = group.Items.Where(i => i.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            if (items.Count > 0)
+            {
+                result.Add(new CityGroup { Label = group.Label, Items = items });
+            }
+        }
+
+        _groupSuggestions = result;
+    }
+
+    private ValueTask<ItemsProviderResult<object>> LoadVirtualItems(ItemsProviderRequest request)
+    {
+        var items = _virtualItems.Skip(request.StartIndex).Take(request.Count).Cast<object>();
+        return ValueTask.FromResult(new ItemsProviderResult<object>(items, _virtualItems.Count));
+    }
+
+    private void OnFormSubmit() => _formSubmitted = true;
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.AutoComplete
+
+        <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions" CompleteMethod="Search" />
+        """;
+
+    private const string BasicCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions" CompleteMethod="Search" Placeholder="Digite algo..." />
+
+        @code {
+            private string? _value;
+            private List<object> _suggestions = new();
+
+            private void Search(OpAutoCompleteCompleteEvent e) =>
+                _suggestions = Enumerable.Range(0, 10).Select(i => (object)$"{e.Query}-{i}").ToList();
+        }
+        """;
+
+    private const string ObjectsCode = """
+        <OpAutoComplete TValue="Country" @bind-Value="_country" Suggestions="_suggestions"
+                        CompleteMethod="Search" OptionLabel="Name" Placeholder="País" />
+
+        @code {
+            private Country? _country;
+            private List<object> _suggestions = new();
+
+            private void Search(OpAutoCompleteCompleteEvent e) =>
+                _suggestions = Countries
+                    .Where(c => c.Name.StartsWith(e.Query, StringComparison.CurrentCultureIgnoreCase))
+                    .Cast<object>().ToList();
+        }
+        """;
+
+    private const string DropdownCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions"
+                        CompleteMethod="Search" Dropdown="true" Placeholder="Com dropdown" />
+        """;
+
+    private const string DisabledCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions"
+                        CompleteMethod="Search" Disabled="true" Placeholder="Desabilitado" />
+        """;
+
+    private const string InvalidCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions" CompleteMethod="Search" Invalid="true" Placeholder="Código" />
+        <OpAutoComplete TValue="string" @bind-Value="_value2" Suggestions="_suggestions" CompleteMethod="Search" Variant="filled" Invalid="true" Placeholder="Código" />
+        """;
+
+    private const string FilledCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions" CompleteMethod="Search" Variant="filled" Placeholder="Preenchido" />
+        <OpAutoComplete TValue="string" @bind-Value="_value2" Suggestions="_suggestions" CompleteMethod="Search" Fluid="true" Placeholder="Fluido" />
+        """;
+
+    private const string SizesCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_value1" Suggestions="_suggestions" CompleteMethod="Search" Size="small" Placeholder="Pequeno" />
+        <OpAutoComplete TValue="string" @bind-Value="_value2" Suggestions="_suggestions" CompleteMethod="Search" Placeholder="Normal" />
+        <OpAutoComplete TValue="string" @bind-Value="_value3" Suggestions="_suggestions" CompleteMethod="Search" Size="large" Placeholder="Grande" />
+        """;
+
+    private const string MultipleCode = """
+        <OpAutoComplete TValue="string" @bind-MultipleValue="_values" Multiple="true"
+                        Suggestions="_suggestions" CompleteMethod="Search" Placeholder="Selecione vários" />
+
+        @code {
+            private IReadOnlyList<string>? _values;
+        }
+        """;
+
+    private const string ChipsCode = """
+        <OpAutoComplete TValue="string" @bind-MultipleValue="_v1" Multiple="true" Typeahead="false" AddOnBlur="true" Placeholder="Digite e clique fora para adicionar..." />
+        <OpAutoComplete TValue="string" @bind-MultipleValue="_v2" Multiple="true" Typeahead="false" AddOnTab="true" Placeholder="Digite e pressione Tab para adicionar..." />
+        <OpAutoComplete TValue="string" @bind-MultipleValue="_v3" Multiple="true" Typeahead="false" Separator="," Placeholder="Digite itens separados por vírgula..." />
+        """;
+
+    private const string ForceCode = """
+        <OpAutoComplete TValue="Country" @bind-Value="_country" Suggestions="_suggestions"
+                        CompleteMethod="Search" OptionLabel="Name" ForceSelection="true" Placeholder="País (forçado)" />
+        """;
+
+    private const string GroupCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_city" Suggestions="_groups" CompleteMethod="Search"
+                        Group="true" OptionGroupLabel="Label" OptionGroupChildren="Items" Placeholder="Dica: digite 'a'" />
+        """;
+
+    private const string TemplateCode = """
+        <OpAutoComplete TValue="Country" @bind-Value="_country" Suggestions="_suggestions" CompleteMethod="Search" OptionLabel="Name">
+            <HeaderTemplate>
+                <div class="px-3 py-2" style="font-weight:600;">Países disponíveis</div>
+            </HeaderTemplate>
+            <ItemTemplate Context="c">
+                <div style="display:flex; align-items:center; gap:.5rem;">
+                    <span style="color:var(--p-primary-color)">◆</span>
+                    <span>@c.Name</span>
+                </div>
+            </ItemTemplate>
+        </OpAutoComplete>
+        """;
+
+    private const string ClearCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions"
+                        CompleteMethod="Search" ShowClear="true" Placeholder="Digite algo..." />
+        """;
+
+    private const string FormCode = """
+        <EditForm Model="_model" OnValidSubmit="OnSubmit" OnInvalidSubmit="OnInvalid">
+            <DataAnnotationsValidator />
+            <OpAutoComplete TValue="string" @bind-Value="_model.Value"
+                             Suggestions="_suggestions" CompleteMethod="Search"
+                             Invalid="@(_submitted && string.IsNullOrEmpty(_model.Value))"
+                             Fluid="true" Placeholder="Obrigatório" />
+            @if (_submitted && string.IsNullOrEmpty(_model.Value))
+            {
+                <OpMessage Severity="error" Variant="simple" Size="small">O valor é obrigatório.</OpMessage>
+            }
+            <OpButton Label="Enviar" Type="submit" Severity="secondary" />
+        </EditForm>
+
+        @code {
+            private readonly FormModel _model = new();
+            private bool _submitted;
+
+            public sealed class FormModel
+            {
+                [Required]
+                public string? Value { get; set; }
+            }
+        }
+        """;
+
+    private const string VirtualCode = """
+        <OpAutoComplete TValue="VirtualItem" @bind-Value="_selected"
+                         VirtualScroll="true" VirtualScrollItemSize="34"
+                         ItemsProvider="LoadItems" OptionLabel="Label" Dropdown="true" Placeholder="Item" />
+
+        @code {
+            private VirtualItem? _selected;
+
+            private static readonly List<VirtualItem> _items =
+                Enumerable.Range(0, 10000).Select(i => new VirtualItem { Label = "Item " + i, Value = "Item " + i }).ToList();
+
+            private ValueTask<ItemsProviderResult<object>> LoadItems(ItemsProviderRequest request)
+            {
+                var items = _items.Skip(request.StartIndex).Take(request.Count).Cast<object>();
+                return ValueTask.FromResult(new ItemsProviderResult<object>(items, _items.Count));
+            }
+        }
+        """;
+}
