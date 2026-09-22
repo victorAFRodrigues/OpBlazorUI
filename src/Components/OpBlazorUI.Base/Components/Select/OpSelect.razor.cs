@@ -101,12 +101,19 @@ public partial class OpSelect<TValue> : ComponentBase
         Size == "large" ? "p-select-lg p-inputfield-lg" : null,
         StyleClass);
 
-    private string LabelClass => BuildClass(
-        "p-select-label",
-        Placeholder is { Length: > 0 } && CurrentLabel == Placeholder ? "p-placeholder" : null,
-        !Editable && SelectedItemTemplate is null && string.IsNullOrEmpty(CurrentLabel)
-            ? "p-select-label-empty"
-            : null);
+    private string LabelClass
+    {
+        get
+        {
+            // .p-select-label-empty aplica opacity:0; só deve valer sem valor nem
+            // placeholder (como no PrimeNG). Com placeholder, usa-se .p-placeholder.
+            var showPlaceholder = !Editable && !HasSelection && !string.IsNullOrEmpty(Placeholder);
+            return BuildClass(
+                "p-select-label",
+                showPlaceholder ? "p-placeholder" : null,
+                !Editable && !HasSelection && !showPlaceholder ? "p-select-label-empty" : null);
+        }
+    }
 
     private string PanelClass => BuildClass(
         "p-select-overlay p-component-overlay p-component",
