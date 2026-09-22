@@ -100,12 +100,20 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
         Size == "large" ? "p-cascadeselect-lg p-inputfield-lg" : null,
         StyleClass);
 
-    private string LabelClass => BuildClass(
-        "p-cascadeselect-label",
-        Placeholder is { Length: > 0 } && CurrentLabel == Placeholder ? "p-placeholder" : null,
-        SelectedItemTemplate is null && string.IsNullOrEmpty(CurrentLabel)
-            ? "p-cascadeselect-label-empty"
-            : null);
+    private string LabelClass
+    {
+        get
+        {
+            // O tema aplica visibility:hidden em .p-cascadeselect-label-empty.
+            // Ela só deve valer quando não há valor nem placeholder (como no PrimeNG);
+            // com placeholder, usa-se .p-placeholder (visível e clicável).
+            var showPlaceholder = !HasSelection && !string.IsNullOrEmpty(Placeholder);
+            return BuildClass(
+                "p-cascadeselect-label",
+                showPlaceholder ? "p-placeholder" : null,
+                !HasSelection && !showPlaceholder ? "p-cascadeselect-label-empty" : null);
+        }
+    }
 
     private string PanelClass => BuildClass(
         "p-cascadeselect-overlay p-component-overlay p-component",
