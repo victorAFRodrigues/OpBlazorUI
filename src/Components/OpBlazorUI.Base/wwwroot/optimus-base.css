@@ -355,6 +355,7 @@ body {
 .p-scrolltop-sticky.p-button {
     position: sticky !important;
     display: flex;
+    flex-shrink: 0;
     margin-inline-start: auto;
     z-index: 1100;
 }
