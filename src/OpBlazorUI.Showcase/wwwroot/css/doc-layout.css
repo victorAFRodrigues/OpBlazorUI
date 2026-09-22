@@ -741,6 +741,20 @@
 .gap-6 { gap: 1.5rem; }
 .grid { display: grid; }
 .w-full { width: 100%; }
+.w-24 { width: 6rem; }
+.w-40 { width: 10rem; }
+.w-48 { width: 12rem; }
+.w-56 { width: 14rem; }
+.w-64 { width: 16rem; }
+.w-80 { width: 20rem; }
+.w-max { width: max-content; }
+@media (min-width: 768px) {
+    .md\:w-40 { width: 10rem; }
+    .md\:w-48 { width: 12rem; }
+    .md\:w-56 { width: 14rem; }
+    .md\:w-64 { width: 16rem; }
+    .md\:w-80 { width: 20rem; }
+}
 .mb-2 { margin-bottom: .5rem; }
 .mb-3 { margin-bottom: .75rem; }
 .mb-4 { margin-bottom: 1rem; }

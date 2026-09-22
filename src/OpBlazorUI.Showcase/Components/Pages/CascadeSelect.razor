@@ -34,7 +34,7 @@
                 <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
                                  OptionLabel="Cname" OptionGroupLabel="Name"
                                  OptionGroupChildren="@GroupChildren"
-                                 Placeholder="Selecione uma Cidade" StyleClass="w-full"/>
+                                 Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56"/>
                 <div class="mt-2 text-sm">Selecionado: @(_selectedCity?.Cname ?? "—")</div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
@@ -48,7 +48,7 @@
                 <OpCascadeSelect TValue="City" @bind-Value="_selectedCity2" Options="Countries"
                                  OptionLabel="Cname" OptionGroupLabel="Name"
                                  OptionGroupChildren="@GroupChildren"
-                                 ShowClear="true" Placeholder="Selecione uma Cidade" StyleClass="w-full"/>
+                                 ShowClear="true" Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56"/>
             </ChildContent>
             <Code><CodeBlock Code="@ClearCode"/></Code>
         </DocSection>
@@ -127,7 +127,7 @@
             <ChildContent>
                 <OpCascadeSelect TValue="City" @bind-Value="_selectedCity5" Options="Countries"
                                  OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                 Placeholder="Selecione uma Cidade" StyleClass="w-full">
+                                 Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56">
                     <ItemTemplate Context="opt">
                         <div style="display:flex; align-items:center; gap:.5rem;">
                             <span style="color:var(--p-primary-color)">@(opt is Country ? "◆" : opt is State ? "◦" : "•")</span>
@@ -187,7 +187,7 @@
                     <OpCascadeSelect TValue="City" @bind-Value="_formModel.SelectedCity" Options="Countries"
                                      OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
                                      Invalid="@(_submitted && _formModel.SelectedCity is null)"
-                                     Placeholder="Selecione uma Cidade" StyleClass="w-full"/>
+                                     Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56"/>
                     <ValidationMessage For="() => _formModel.SelectedCity"/>
                     <div>
                         <OpButton Label="Enviar" Type="submit" Severity="secondary"/>
@@ -414,7 +414,7 @@
         <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
                          OptionLabel="Cname" OptionGroupLabel="Name"
                          OptionGroupChildren="@GroupChildren"
-                         Placeholder="Selecione uma Cidade" StyleClass="w-full" />
+                         Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56" />
 
         @code {
             private City? _selectedCity;
