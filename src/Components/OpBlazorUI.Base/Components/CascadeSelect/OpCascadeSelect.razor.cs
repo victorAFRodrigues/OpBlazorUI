@@ -100,12 +100,20 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
         Size == "large" ? "p-cascadeselect-lg p-inputfield-lg" : null,
         StyleClass);
 
-    private string LabelClass => BuildClass(
-        "p-cascadeselect-label",
-        Placeholder is { Length: > 0 } && CurrentLabel == Placeholder ? "p-placeholder" : null,
-        SelectedItemTemplate is null && string.IsNullOrEmpty(CurrentLabel)
-            ? "p-cascadeselect-label-empty"
-            : null);
+    private string LabelClass
+    {
+        get
+        {
+            // O tema aplica visibility:hidden em .p-cascadeselect-label-empty.
+            // Ela só deve valer quando não há valor nem placeholder (como no PrimeNG);
+            // com placeholder, usa-se .p-placeholder (visível e clicável).
+            var showPlaceholder = !HasSelection && !string.IsNullOrEmpty(Placeholder);
+            return BuildClass(
+                "p-cascadeselect-label",
+                showPlaceholder ? "p-placeholder" : null,
+                !HasSelection && !showPlaceholder ? "p-cascadeselect-label-empty" : null);
+        }
+    }
 
     private string PanelClass => BuildClass(
         "p-cascadeselect-overlay p-component-overlay p-component",
@@ -622,27 +630,39 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
     }
 
     // ------------------------------------------------------------ render tree
-    private RenderFragment BuildTree() => builder => RenderOptionList(builder, 0, AllOptions);
-
-    private void RenderOptionList(RenderTreeBuilder builder, int depth, IReadOnlyList<object> options)
+    private RenderFragment BuildTree() => builder =>
     {
-        builder.OpenElement(0, "ul");
-        builder.AddAttribute(1, "class", depth == 0 ? "p-cascadeselect-list" : "p-cascadeselect-option-list");
-        builder.AddAttribute(2, "role", depth == 0 ? "tree" : "group");
+        // Contador de sequência monotônico e único em toda a árvore. Sequências
+        // repetidas/não crescentes entre frames confundem o diff do Blazor e o
+        // handler de clique dos itens aninhados deixa de disparar.
+        var seq = 0;
+        RenderOptionList(builder, 0, AllOptions, ref seq);
+    };
+
+    private void RenderOptionList(RenderTreeBuilder builder, int depth, IReadOnlyList<object> options, ref int seq)
+    {
+        builder.OpenElement(seq++, "ul");
+        // A sublista usa as mesmas classes do PrimeNG (p-cascadeselect-list +
+        // p-cascadeselect-overlay + p-cascadeselect-option-list): o display:flex de
+        // .p-cascadeselect-list prevalece sobre o display:none de -option-list.
+        builder.AddAttribute(seq++, "class", depth == 0
+            ? "p-cascadeselect-list"
+            : "p-cascadeselect-list p-cascadeselect-overlay p-cascadeselect-option-list");
+        builder.AddAttribute(seq++, "role", depth == 0 ? "tree" : "group");
         if (depth == 0)
         {
-            builder.AddAttribute(3, "id", $"{_id}_tree");
+            builder.AddAttribute(seq++, "id", $"{_id}_tree");
         }
 
         for (var i = 0; i < options.Count; i++)
         {
-            RenderOption(builder, depth, options[i], i, options.Count);
+            RenderOption(builder, depth, options[i], i, options.Count, ref seq);
         }
 
         builder.CloseElement();
     }
 
-    private void RenderOption(RenderTreeBuilder builder, int depth, object option, int index, int setSize)
+    private void RenderOption(RenderTreeBuilder builder, int depth, object option, int index, int setSize, ref int seq)
     {
         var isGroup = HasChildren(option, depth);
         var disabled = IsOptionDisabled(option);
@@ -657,45 +677,48 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
             disabled ? "p-disabled" : null,
             focused ? "p-focus" : null);
 
-        builder.OpenElement(0, "li");
-        builder.AddAttribute(1, "class", optionClass);
-        builder.AddAttribute(2, "role", "treeitem");
-        builder.AddAttribute(3, "aria-label", GetNodeLabel(option, depth));
-        builder.AddAttribute(4, "aria-selected", selected ? "true" : "false");
-        builder.AddAttribute(5, "aria-expanded", isGroup ? (expanded ? "true" : "false") : null);
-        builder.AddAttribute(6, "aria-level", depth + 1);
-        builder.AddAttribute(7, "aria-setsize", setSize);
-        builder.AddAttribute(8, "aria-posinset", index + 1);
-        builder.AddAttribute(9, "onclick",
-            EventCallback.Factory.Create<MouseEventArgs>(this, _ => OnNodeClick(option)));
+        builder.OpenElement(seq++, "li");
+        builder.AddAttribute(seq++, "class", optionClass);
+        builder.AddAttribute(seq++, "role", "treeitem");
+        builder.AddAttribute(seq++, "aria-label", GetNodeLabel(option, depth));
+        builder.AddAttribute(seq++, "aria-selected", selected ? "true" : "false");
+        builder.AddAttribute(seq++, "aria-expanded", isGroup ? (expanded ? "true" : "false") : null);
+        builder.AddAttribute(seq++, "aria-level", depth + 1);
+        builder.AddAttribute(seq++, "aria-setsize", setSize);
+        builder.AddAttribute(seq++, "aria-posinset", index + 1);
 
-        builder.OpenElement(10, "div");
-        builder.AddAttribute(11, "class", "p-cascadeselect-option-content");
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "p-cascadeselect-option-content");
+        // O clique fica no content (como no PrimeNG), não no <li>: o <li> é
+        // ancestral da sublista, então o clique em um item aninhado borbulharia
+        // até o <li> pai e o recolheria.
+        builder.AddAttribute(seq++, "onclick",
+            EventCallback.Factory.Create<MouseEventArgs>(this, _ => OnNodeClick(option)));
 
         if (ItemTemplate is not null)
         {
-            builder.AddContent(12, ItemTemplate(option));
+            builder.AddContent(seq++, ItemTemplate(option));
         }
         else
         {
-            builder.OpenElement(13, "span");
-            builder.AddContent(14, GetNodeLabel(option, depth));
+            builder.OpenElement(seq++, "span");
+            builder.AddContent(seq++, GetNodeLabel(option, depth));
             builder.CloseElement();
         }
 
         if (isGroup)
         {
-            builder.OpenElement(15, "span");
-            builder.AddAttribute(16, "class", "p-cascadeselect-group-icon-container");
+            builder.OpenElement(seq++, "span");
+            builder.AddAttribute(seq++, "class", "p-cascadeselect-group-icon-container");
             if (OptionGroupIconTemplate is not null)
             {
-                builder.AddContent(17, OptionGroupIconTemplate);
+                builder.AddContent(seq++, OptionGroupIconTemplate);
             }
             else
             {
-                builder.OpenComponent<OpIcon>(18);
-                builder.AddAttribute(19, "Name", "chevron-right");
-                builder.AddAttribute(20, "CssClass", "p-cascadeselect-group-icon");
+                builder.OpenComponent<OpIcon>(seq++);
+                builder.AddAttribute(seq++, "Name", "chevron-right");
+                builder.AddAttribute(seq++, "CssClass", "p-cascadeselect-group-icon");
                 builder.CloseComponent();
             }
 
@@ -704,9 +727,10 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
 
         builder.CloseElement();
 
-        if (isGroup)
+        // Como no PrimeNG, a sublista só é renderizada quando o item está ativo.
+        if (isGroup && expanded)
         {
-            RenderOptionList(builder, depth + 1, GetChildren(option, depth));
+            RenderOptionList(builder, depth + 1, GetChildren(option, depth), ref seq);
         }
 
         builder.CloseElement();

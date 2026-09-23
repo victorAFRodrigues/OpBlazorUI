@@ -36,9 +36,9 @@ public partial class OpScrollTop : ComponentBase, IAsyncDisposable
 
     [Inject] private IJSRuntime Js { get; set; } = default!;
 
-    private string RootClass => OpCss.BuildClass(
+    private string ButtonStyleClass => OpCss.BuildClass(
         "p-scrolltop",
-        Target == "parent" ? "p-scrolltop-parent" : null,
+        Target == "parent" ? "p-scrolltop-sticky" : null,
         !_visible ? "p-scrolltop-hidden" : null,
         StyleClass);
 

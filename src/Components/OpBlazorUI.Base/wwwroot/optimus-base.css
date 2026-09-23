@@ -64,12 +64,22 @@ body {
 .p-multiselect-overlay,
 .p-menu-overlay,
 .p-cascadeselect-overlay,
+.p-autocomplete-overlay,
 .p-datepicker-panel:not(.p-datepicker-panel-inline) {
     position: absolute;
     top: 100%;
     left: 0;
     min-width: 100%;
     z-index: 1000;
+}
+
+/*
+ * AutoComplete: o tema não define position no root (no Angular o PrimeNG
+ * aplica inline). Sem isso, o overlay absoluto ancora no container posicionado
+ * mais próximo e vira um painel de largura total.
+ */
+.p-autocomplete {
+    position: relative;
 }
 
 /*
@@ -84,6 +94,13 @@ body {
 
 .p-tooltip {
     z-index: 1100;
+    /*
+     * O tooltip é posicionado por left/right: 100% (ou left: 50%) dentro do
+     * wrapper. Sem largura explícita, o shrink-to-fit usaria o espaço
+     * disponível (~0) e espremeria o texto. max-content usa a largura do
+     * conteúdo, limitada pelo max-width do tema.
+     */
+    width: max-content;
 }
 
 .p-tooltip-text {
@@ -325,29 +342,22 @@ body {
 }
 
 /*
- * ScrollTop — sem CSS no tema (0 ocorrências). Botão fixo no canto.
+ * ScrollTop — sem CSS no tema (0 ocorrências). O botão usa o Button do tema
+ * (p-button), então aqui fica apenas o posicionamento, como no PrimeNG.
  */
-.p-scrolltop {
-    position: fixed;
-    bottom: 1.25rem;
-    right: 1.25rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 0;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+.p-scrolltop.p-button {
+    position: fixed !important;
+    inset-block-end: 20px;
+    inset-inline-end: 20px;
     z-index: 1100;
-    background: var(--p-primary-color);
-    color: var(--p-primary-contrast-color);
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    transition: opacity 0.15s, background-color 0.2s;
 }
 
-.p-scrolltop:hover {
-    background: var(--p-primary-hover-color);
+.p-scrolltop-sticky.p-button {
+    position: sticky !important;
+    display: flex;
+    flex-shrink: 0;
+    margin-inline-start: auto;
+    z-index: 1100;
 }
 
 .p-scrolltop-icon {
@@ -357,12 +367,6 @@ body {
 .p-scrolltop-hidden {
     opacity: 0;
     pointer-events: none;
-}
-
-.p-scrolltop-parent {
-    position: sticky;
-    bottom: 1rem;
-    margin: 1rem 0 0 auto;
 }
 
 /*

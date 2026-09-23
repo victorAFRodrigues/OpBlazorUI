@@ -1,5 +1,6 @@
 @namespace OpBlazorUI.Showcase.Components.Layout
 @using OpBlazorUI.Base.Components.InputSwitch
+@implements IDisposable
 
 <div class="config-panel-content">
     <div class="config-panel-colors">
@@ -31,13 +32,13 @@
     <div class="config-panel-settings">
         <span class="config-panel-label">Presets</span>
         <div class="flex gap-2 flex-wrap">
-            @foreach (var preset in new[] { "Aura", "Material", "Lara", "Nora" })
+            @foreach (var preset in Presets)
             {
-                var isAura = preset == "Aura";
-                <button type="button" title="@(isAura ? "Aura" : $"{preset} (em breve)")"
-                        disabled="@(!isAura)"
-                        style="padding:.25rem .75rem;border-radius:6px;border:1px solid var(--border-color);background-color:@(isAura ? "var(--primary-color)" : "var(--card-background)");color:@(isAura ? "var(--primary-contrast-color)" : "var(--text-secondary-color)");cursor:@(isAura ? "pointer" : "default");font-weight:600;font-size:.875rem;opacity:@(isAura ? "1" : ".6");">
-                    @preset
+                <button type="button" title="@preset.Title"
+                        disabled="@(!preset.Available)"
+                        @onclick="() => SelectPreset(preset)"
+                        style="@PresetButtonStyle(preset)">
+                    @preset.Name
                 </button>
             }
         </div>
@@ -50,7 +51,68 @@
 </div>
 
 @code {
+    private sealed record ThemePreset(string Name, string File, bool Available)
+    {
+        public string Title => Available ? Name : $"{Name} (em breve)";
+    }
+
+    private static readonly ThemePreset[] Presets =
+    [
+        new("Aura", "aura.css", true),
+        new("Material", "", false),
+        new("Lara", "lara.css", true),
+        new("Nora", "", false),
+    ];
+
     private bool _rtl = OpConfig.Rtl;
 
+    protected override void OnInitialized() => OpTheme.ThemeChanged += OnThemeChanged;
+
+    private void OnThemeChanged() => InvokeAsync(StateHasChanged);
+
+    private static string ActiveFile
+    {
+        get
+        {
+            var url = OpTheme.ThemeUrl;
+            var idx = url.LastIndexOf('/');
+            return idx >= 0 ? url[(idx + 1)..] : url;
+        }
+    }
+
+    private static bool IsActivePreset(ThemePreset preset)
+    {
+        var isLara = string.Equals(ActiveFile, "lara.css", StringComparison.OrdinalIgnoreCase);
+        return preset.Name switch
+        {
+            "Lara" => isLara,
+            "Aura" => !isLara,
+            _ => false,
+        };
+    }
+
+    private void SelectPreset(ThemePreset preset)
+    {
+        if (!preset.Available) return;
+        OpTheme.SetThemeUrl($"_content/OpBlazorUI.Base/themes/{preset.File}");
+    }
+
+    private static string PresetButtonStyle(ThemePreset preset)
+    {
+        var active = IsActivePreset(preset);
+        var baseCss = "padding:.25rem .75rem;border-radius:6px;font-weight:600;font-size:.875rem;";
+        if (!preset.Available)
+            return baseCss +
+                   $"border:1px solid var(--border-color);background-color:var(--card-background);" +
+                   $"color:var(--text-secondary-color);cursor:default;opacity:.6;";
+        return baseCss +
+               $"border:1px solid {(active ? "var(--primary-color)" : "var(--border-color)")};" +
+               $"background-color:{(active ? "var(--primary-color)" : "var(--card-background)")};" +
+               $"color:{(active ? "var(--primary-contrast-color)" : "var(--text-secondary-color)")};" +
+               "cursor:pointer;";
+    }
+
     private void OnRtlChanged(bool value) => OpConfig.SetRtl(value);
+
+    public void Dispose() => OpTheme.ThemeChanged -= OnThemeChanged;
 }

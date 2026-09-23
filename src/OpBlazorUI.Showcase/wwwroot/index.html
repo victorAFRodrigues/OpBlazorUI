@@ -7,14 +7,57 @@
     <title>OpBlazorUI</title>
     <base href="/"/>
     <link rel="stylesheet" href="css/doc-variables.css"/>
+    <link rel="stylesheet" href="css/tailwind.css"/>
     <link rel="stylesheet" href="css/doc-layout.css"/>
     <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="css/loader.css"/>
     <link rel="stylesheet" href="OpBlazorUI.Showcase.styles.css"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
+
+    <script>
+        // Aplica o modo escuro antes da primeira pintura, para o loader global
+        // já aparecer no tema correto e evitar flash (FOUC).
+        (function () {
+            try {
+                var stored = localStorage.getItem('op-dark-mode');
+                var dark = stored === '1' ||
+                    (stored === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (dark) {
+                    document.documentElement.classList.add('app-dark');
+                }
+            } catch (e) {
+                // localStorage indisponível — mantém o tema claro.
+            }
+        })();
+    </script>
 </head>
 
 <body>
-<div id="app">Carregando...</div>
+<div id="app">
+    <div class="op-loader" role="status" aria-live="polite">
+        <div class="op-loader-brand">
+            <img src="assets/OpBlazorUI-icon.png" alt=""/>
+            <span>OpBlazor<span class="op-loader-brand-accent">UI</span></span>
+        </div>
+        <div class="p-progressspinner p-component" role="progressbar" aria-label="loading">
+            <svg class="p-progressspinner-spin" viewBox="25 25 50 50" style="animation-duration: 2s;">
+                <circle class="p-progressspinner-circle" cx="50" cy="50" r="20" fill="none"
+                        stroke-width="2" stroke-miterlimit="10"></circle>
+            </svg>
+        </div>
+        <p class="op-loader-text">Carregando…</p>
+        <p class="op-loader-hint">Preparando o runtime WebAssembly</p>
+        <p class="op-loader-slow" hidden>
+            Está demorando mais que o esperado. Verifique sua conexão e recarregue a página.
+        </p>
+    </div>
+</div>
+
+<noscript>
+    <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;font-family:sans-serif;background:#f8fafc;color:#0f172a;">
+        Este aplicativo requer JavaScript habilitado para carregar.
+    </div>
+</noscript>
 
 <div id="blazor-error-ui" data-nosnippet>
     Ocorreu um erro não tratado.
@@ -39,6 +82,14 @@
             done();
         }
     };
+
+    // Se o runtime do Blazor demorar demais para assumir a tela, informa o usuário.
+    window.setTimeout(function () {
+        var slow = document.querySelector('.op-loader-slow');
+        if (slow && document.querySelector('.op-loader')) {
+            slow.hidden = false;
+        }
+    }, 15000);
 </script>
 <script src="_framework/blazor.webassembly.js"></script>
 </body>
