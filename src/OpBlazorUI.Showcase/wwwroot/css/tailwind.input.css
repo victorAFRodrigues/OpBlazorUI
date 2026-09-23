@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Preflight desligado (corePlugins.preflight: false) por não competir com o
+ * tema Aura. Aqui fica o mínimo que as utilities de borda assumem:
+ * estilo sólido, largura 0 e caixa border-box.
+ */
+@layer base {
+    *,
+    ::before,
+    ::after {
+        box-sizing: border-box;
+        border-width: 0;
+        border-style: solid;
+        border-color: currentColor;
+    }
+}
+
+@layer utilities {
+    .text-muted-color {
+        color: var(--p-text-muted-color);
+    }
+
+    .border-surface {
+        border-color: var(--p-content-border-color);
+    }
+}

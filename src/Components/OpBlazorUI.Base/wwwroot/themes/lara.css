@@ -254,7 +254,7 @@
     --p-navigation-submenu-icon-focus-color: var(--p-surface-500);
     --p-navigation-submenu-icon-active-color: var(--p-surface-500);
     --p-navigation-submenu-label-background: transparent;
-    --p-navigation-submenu-label-color: var(--p-text-muted-color);
+    --p-navigation-submenu-label-color: var(--p-text-color);
     --p-navigation-item-focus-background: var(--p-surface-100);
     --p-navigation-item-active-background: var(--p-surface-100);
     --p-navigation-item-color: var(--p-text-color);
@@ -264,7 +264,7 @@
     --p-navigation-item-icon-focus-color: var(--p-surface-500);
     --p-navigation-item-icon-active-color: var(--p-surface-500);
     --p-list-option-group-background: transparent;
-    --p-list-option-group-color: var(--p-text-muted-color);
+    --p-list-option-group-color: var(--p-text-color);
     --p-list-option-focus-background: var(--p-surface-100);
     --p-list-option-selected-background: var(--p-highlight-background);
     --p-list-option-selected-focus-background: var(--p-highlight-focus-background);
@@ -296,9 +296,9 @@
     --p-form-field-disabled-background: var(--p-surface-200);
     --p-form-field-filled-background: var(--p-surface-50);
     --p-form-field-filled-hover-background: var(--p-surface-50);
-    --p-form-field-filled-focus-background: var(--p-surface-50);
+    --p-form-field-filled-focus-background: var(--p-surface-0);
     --p-form-field-border-color: var(--p-surface-300);
-    --p-form-field-hover-border-color: var(--p-surface-400);
+    --p-form-field-hover-border-color: var(--p-primary-color);
     --p-form-field-focus-border-color: var(--p-primary-color);
     --p-form-field-invalid-border-color: var(--p-red-400);
     --p-form-field-color: var(--p-surface-700);
@@ -309,17 +309,17 @@
     --p-form-field-float-label-focus-color: var(--p-primary-600);
     --p-form-field-float-label-active-color: var(--p-surface-500);
     --p-form-field-float-label-invalid-color: var(--p-form-field-invalid-placeholder-color);
-    --p-form-field-icon-color: var(--p-surface-400);
-    --p-form-field-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgba(18, 18, 23, 0.05);
-    --p-mask-background: rgba(0, 0, 0, 0.4);
+    --p-form-field-icon-color: var(--p-surface-500);
+    --p-form-field-shadow: none;
+    --p-mask-background: rgba(0,0,0,0.4);
     --p-mask-color: var(--p-surface-200);
-    --p-highlight-background: var(--p-primary-50);
-    --p-highlight-focus-background: var(--p-primary-100);
-    --p-highlight-color: var(--p-primary-700);
-    --p-highlight-focus-color: var(--p-primary-800);
-    --p-primary-color: var(--p-primary-500);
+    --p-highlight-background: var(--p-primary-950);
+    --p-highlight-focus-background: var(--p-primary-700);
+    --p-highlight-color: #ffffff;
+    --p-highlight-focus-color: #ffffff;
+    --p-primary-color: var(--p-primary-950);
     --p-primary-contrast-color: #ffffff;
-    --p-primary-hover-color: var(--p-primary-600);
+    --p-primary-hover-color: var(--p-primary-800);
     --p-primary-active-color: var(--p-primary-700);
     --p-surface-0: #ffffff;
     --p-surface-50: var(--p-slate-50);
@@ -337,63 +337,63 @@
     --p-disabled-opacity: 0.6;
     --p-icon-size: 1rem;
     --p-anchor-gutter: 2px;
-    --p-overlay-navigation-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --p-overlay-navigation-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     --p-overlay-modal-border-radius: var(--p-border-radius-xl);
-    --p-overlay-modal-padding: 1.25rem;
-    --p-overlay-modal-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --p-overlay-modal-padding: 1.5rem;
+    --p-overlay-modal-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     --p-overlay-popover-border-radius: var(--p-border-radius-md);
-    --p-overlay-popover-padding: 0.75rem;
-    --p-overlay-popover-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --p-overlay-popover-padding: 1rem;
+    --p-overlay-popover-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     --p-overlay-select-border-radius: var(--p-border-radius-md);
-    --p-overlay-select-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --p-overlay-select-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     --p-navigation-submenu-icon-size: 0.875rem;
-    --p-navigation-submenu-label-padding: 0.5rem 0.75rem;
+    --p-navigation-submenu-label-padding: 0.625rem 1rem;
     --p-navigation-submenu-label-font-weight: 600;
-    --p-navigation-item-padding: 0.5rem 0.75rem;
-    --p-navigation-item-border-radius: var(--p-border-radius-sm);
+    --p-navigation-item-padding: 0.625rem 1rem;
+    --p-navigation-item-border-radius: 0;
     --p-navigation-item-gap: 0.5rem;
-    --p-navigation-list-padding: 0.25rem 0.25rem;
-    --p-navigation-list-gap: 2px;
+    --p-navigation-list-padding: 0.5rem 0;
+    --p-navigation-list-gap: 0;
     --p-mask-transition-duration: 0.3s;
     --p-content-border-radius: var(--p-border-radius-md);
-    --p-list-padding: 0.25rem 0.25rem;
-    --p-list-gap: 2px;
-    --p-list-option-group-padding: 0.5rem 0.75rem;
+    --p-list-padding: 0.5rem 0;
+    --p-list-gap: 0;
+    --p-list-option-group-padding: 0.625rem 1rem;
     --p-list-option-group-font-weight: 600;
-    --p-list-option-padding: 0.5rem 0.75rem;
-    --p-list-option-border-radius: var(--p-border-radius-sm);
-    --p-list-header-padding: 0.5rem 1rem 0.25rem 1rem;
+    --p-list-option-padding: 0.625rem 1rem;
+    --p-list-option-border-radius: 0;
+    --p-list-header-padding: 0.625rem 1rem 0 1rem;
     --p-form-field-padding-x: 0.75rem;
-    --p-form-field-padding-y: 0.5rem;
+    --p-form-field-padding-y: 0.625rem;
     --p-form-field-border-radius: var(--p-border-radius-md);
     --p-form-field-transition-duration: var(--p-transition-duration);
-    --p-form-field-focus-ring-width: 0;
-    --p-form-field-focus-ring-style: none;
-    --p-form-field-focus-ring-color: transparent;
-    --p-form-field-focus-ring-offset: 0;
-    --p-form-field-focus-ring-shadow: none;
+    --p-form-field-focus-ring-width: var(--p-focus-ring-width);
+    --p-form-field-focus-ring-style: var(--p-focus-ring-style);
+    --p-form-field-focus-ring-color: var(--p-focus-ring-color);
+    --p-form-field-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-form-field-focus-ring-shadow: var(--p-focus-ring-shadow);
     --p-form-field-lg-font-size: 1.125rem;
     --p-form-field-lg-padding-x: 0.875rem;
-    --p-form-field-lg-padding-y: 0.625rem;
+    --p-form-field-lg-padding-y: 0.75rem;
     --p-form-field-sm-font-size: 0.875rem;
     --p-form-field-sm-padding-x: 0.625rem;
-    --p-form-field-sm-padding-y: 0.375rem;
-    --p-primary-50: #fdf4ff;
-    --p-primary-100: #fae8ff;
-    --p-primary-200: #f5d0fe;
-    --p-primary-300: #f0abfc;
-    --p-primary-400: #e879f9;
-    --p-primary-500: #d946ef;
-    --p-primary-600: #c026d3;
-    --p-primary-700: #a21caf;
-    --p-primary-800: #86198f;
-    --p-primary-900: #701a75;
-    --p-primary-950: #4a044e;
-    --p-focus-ring-width: 1px;
-    --p-focus-ring-style: solid;
-    --p-focus-ring-color: var(--p-primary-color);
-    --p-focus-ring-offset: 2px;
-    --p-focus-ring-shadow: none;
+    --p-form-field-sm-padding-y: 0.5rem;
+    --p-primary-50: var(--p-surface-50);
+    --p-primary-100: var(--p-surface-100);
+    --p-primary-200: var(--p-surface-200);
+    --p-primary-300: var(--p-surface-300);
+    --p-primary-400: var(--p-surface-400);
+    --p-primary-500: var(--p-surface-500);
+    --p-primary-600: var(--p-surface-600);
+    --p-primary-700: var(--p-surface-700);
+    --p-primary-800: var(--p-surface-800);
+    --p-primary-900: var(--p-surface-900);
+    --p-primary-950: var(--p-surface-950);
+    --p-focus-ring-width: 0;
+    --p-focus-ring-style: none;
+    --p-focus-ring-color: transparent;
+    --p-focus-ring-offset: 0;
+    --p-focus-ring-shadow: 0 0 0 0.2rem var(--p-primary-200);
 }
 
 .app-dark {
@@ -401,7 +401,7 @@
     --p-navigation-submenu-icon-focus-color: var(--p-surface-400);
     --p-navigation-submenu-icon-active-color: var(--p-surface-400);
     --p-navigation-submenu-label-background: transparent;
-    --p-navigation-submenu-label-color: var(--p-text-muted-color);
+    --p-navigation-submenu-label-color: var(--p-text-color);
     --p-navigation-item-focus-background: var(--p-surface-800);
     --p-navigation-item-active-background: var(--p-surface-800);
     --p-navigation-item-color: var(--p-text-color);
@@ -411,7 +411,7 @@
     --p-navigation-item-icon-focus-color: var(--p-surface-400);
     --p-navigation-item-icon-active-color: var(--p-surface-400);
     --p-list-option-group-background: transparent;
-    --p-list-option-group-color: var(--p-text-muted-color);
+    --p-list-option-group-color: var(--p-text-color);
     --p-list-option-focus-background: var(--p-surface-800);
     --p-list-option-selected-background: var(--p-highlight-background);
     --p-list-option-selected-focus-background: var(--p-highlight-focus-background);
@@ -443,9 +443,9 @@
     --p-form-field-disabled-background: var(--p-surface-700);
     --p-form-field-filled-background: var(--p-surface-800);
     --p-form-field-filled-hover-background: var(--p-surface-800);
-    --p-form-field-filled-focus-background: var(--p-surface-800);
+    --p-form-field-filled-focus-background: var(--p-surface-950);
     --p-form-field-border-color: var(--p-surface-600);
-    --p-form-field-hover-border-color: var(--p-surface-500);
+    --p-form-field-hover-border-color: var(--p-primary-color);
     --p-form-field-focus-border-color: var(--p-primary-color);
     --p-form-field-invalid-border-color: var(--p-red-300);
     --p-form-field-color: var(--p-surface-0);
@@ -457,17 +457,17 @@
     --p-form-field-float-label-active-color: var(--p-surface-400);
     --p-form-field-float-label-invalid-color: var(--p-form-field-invalid-placeholder-color);
     --p-form-field-icon-color: var(--p-surface-400);
-    --p-form-field-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgba(18, 18, 23, 0.05);
-    --p-mask-background: rgba(0, 0, 0, 0.6);
+    --p-form-field-shadow: none;
+    --p-mask-background: rgba(0,0,0,0.6);
     --p-mask-color: var(--p-surface-200);
-    --p-highlight-background: color-mix(in srgb, var(--p-primary-400), transparent 84%);
-    --p-highlight-focus-background: color-mix(in srgb, var(--p-primary-400), transparent 76%);
-    --p-highlight-color: rgba(255, 255, 255, .87);
-    --p-highlight-focus-color: rgba(255, 255, 255, .87);
-    --p-primary-color: var(--p-primary-400);
-    --p-primary-contrast-color: var(--p-surface-900);
-    --p-primary-hover-color: var(--p-primary-300);
-    --p-primary-active-color: var(--p-primary-200);
+    --p-highlight-background: var(--p-primary-50);
+    --p-highlight-focus-background: var(--p-primary-300);
+    --p-highlight-color: var(--p-primary-950);
+    --p-highlight-focus-color: var(--p-primary-950);
+    --p-primary-color: var(--p-primary-50);
+    --p-primary-contrast-color: var(--p-primary-950);
+    --p-primary-hover-color: var(--p-primary-200);
+    --p-primary-active-color: var(--p-primary-300);
     --p-surface-0: #ffffff;
     --p-surface-50: var(--p-zinc-50);
     --p-surface-100: var(--p-zinc-100);
@@ -630,28 +630,28 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-accordion-content-border-width: 0;
+    --p-accordion-content-border-width: 0 1px 1px 1px;
     --p-accordion-content-border-color: var(--p-content-border-color);
     --p-accordion-content-background: var(--p-content-background);
     --p-accordion-content-color: var(--p-text-color);
-    --p-accordion-content-padding: 0 1.125rem 1.125rem 1.125rem;
+    --p-accordion-content-padding: 1.125rem;
     --p-accordion-header-color: var(--p-text-muted-color);
     --p-accordion-header-hover-color: var(--p-text-color);
     --p-accordion-header-active-color: var(--p-text-color);
     --p-accordion-header-active-hover-color: var(--p-text-color);
     --p-accordion-header-padding: 1.125rem;
-    --p-accordion-header-font-weight: 600;
+    --p-accordion-header-font-weight: 700;
     --p-accordion-header-border-radius: 0;
-    --p-accordion-header-border-width: 0;
+    --p-accordion-header-border-width: 0 1px 1px 1px;
     --p-accordion-header-border-color: var(--p-content-border-color);
-    --p-accordion-header-background: var(--p-content-background);
-    --p-accordion-header-hover-background: var(--p-content-background);
-    --p-accordion-header-active-background: var(--p-content-background);
-    --p-accordion-header-active-hover-background: var(--p-content-background);
+    --p-accordion-header-background: var(--p-surface-50);
+    --p-accordion-header-hover-background: var(--p-surface-100);
+    --p-accordion-header-active-background: var(--p-surface-50);
+    --p-accordion-header-active-hover-background: var(--p-surface-100);
     --p-accordion-header-last-bottom-border-radius: var(--p-content-border-radius);
     --p-accordion-header-last-active-bottom-border-radius: 0;
     --p-accordion-header-first-top-border-radius: var(--p-content-border-radius);
-    --p-accordion-header-first-border-width: 0;
+    --p-accordion-header-first-border-width: 1px;
     --p-accordion-header-toggle-icon-color: var(--p-text-muted-color);
     --p-accordion-header-toggle-icon-hover-color: var(--p-text-color);
     --p-accordion-header-toggle-icon-active-color: var(--p-text-color);
@@ -659,9 +659,9 @@ thead.p-datatable-thead > tr > th,
     --p-accordion-header-focus-ring-width: var(--p-focus-ring-width);
     --p-accordion-header-focus-ring-style: var(--p-focus-ring-style);
     --p-accordion-header-focus-ring-color: var(--p-focus-ring-color);
-    --p-accordion-header-focus-ring-offset: -1px;
-    --p-accordion-header-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-accordion-panel-border-width: 0 0 1px 0;
+    --p-accordion-header-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-accordion-header-focus-ring-shadow: inset var(--p-focus-ring-shadow);
+    --p-accordion-panel-border-width: 0;
     --p-accordion-panel-border-color: var(--p-content-border-color);
     --p-accordion-transition-duration: var(--p-transition-duration);
 }
@@ -769,9 +769,9 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-autocomplete-dropdown-background: var(--p-surface-100);
-    --p-autocomplete-dropdown-hover-background: var(--p-surface-200);
-    --p-autocomplete-dropdown-active-background: var(--p-surface-300);
+    --p-autocomplete-dropdown-background: var(--p-surface-50);
+    --p-autocomplete-dropdown-hover-background: var(--p-surface-100);
+    --p-autocomplete-dropdown-active-background: var(--p-surface-200);
     --p-autocomplete-dropdown-color: var(--p-surface-600);
     --p-autocomplete-dropdown-hover-color: var(--p-surface-700);
     --p-autocomplete-dropdown-active-color: var(--p-surface-800);
@@ -784,11 +784,11 @@ thead.p-datatable-thead > tr > th,
     --p-autocomplete-dropdown-hover-border-color: var(--p-form-field-border-color);
     --p-autocomplete-dropdown-active-border-color: var(--p-form-field-border-color);
     --p-autocomplete-dropdown-border-radius: var(--p-form-field-border-radius);
-    --p-autocomplete-dropdown-focus-ring-width: var(--p-focus-ring-width);
-    --p-autocomplete-dropdown-focus-ring-style: var(--p-focus-ring-style);
-    --p-autocomplete-dropdown-focus-ring-color: var(--p-focus-ring-color);
-    --p-autocomplete-dropdown-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-autocomplete-dropdown-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-autocomplete-dropdown-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-autocomplete-dropdown-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-autocomplete-dropdown-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-autocomplete-dropdown-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-autocomplete-dropdown-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
     --p-autocomplete-dropdown-lg-width: 3rem;
     --p-autocomplete-dropdown-sm-width: 2rem;
     --p-autocomplete-option-group-background: var(--p-list-option-group-background);
@@ -1418,7 +1418,7 @@ thead.p-datatable-thead > tr > th,
     --p-breadcrumb-item-focus-ring-shadow: var(--p-focus-ring-shadow);
     --p-breadcrumb-item-icon-color: var(--p-navigation-item-icon-color);
     --p-breadcrumb-item-icon-hover-color: var(--p-navigation-item-icon-focus-color);
-    --p-breadcrumb-padding: 1rem;
+    --p-breadcrumb-padding: 1.25rem;
     --p-breadcrumb-background: var(--p-content-background);
     --p-breadcrumb-gap: 0.5rem;
     --p-breadcrumb-transition-duration: var(--p-transition-duration);
@@ -1518,9 +1518,9 @@ thead.p-datatable-thead > tr > th,
     --p-button-text-success-hover-background: var(--p-green-50);
     --p-button-text-success-active-background: var(--p-green-100);
     --p-button-text-success-color: var(--p-green-500);
-    --p-button-text-secondary-hover-background: var(--p-surface-50);
-    --p-button-text-secondary-active-background: var(--p-surface-100);
-    --p-button-text-secondary-color: var(--p-surface-500);
+    --p-button-text-secondary-hover-background: var(--p-surface-100);
+    --p-button-text-secondary-active-background: var(--p-surface-200);
+    --p-button-text-secondary-color: var(--p-surface-600);
     --p-button-text-primary-hover-background: var(--p-primary-50);
     --p-button-text-primary-active-background: var(--p-primary-100);
     --p-button-text-primary-color: var(--p-primary-color);
@@ -1569,8 +1569,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-contrast-color: var(--p-surface-0);
     --p-button-contrast-hover-color: var(--p-surface-0);
     --p-button-contrast-active-color: var(--p-surface-0);
-    --p-button-contrast-focus-ring-color: var(--p-surface-950);
-    --p-button-contrast-focus-ring-shadow: none;
+    --p-button-contrast-focus-ring-color: transparent;
+    --p-button-contrast-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-400);
     --p-button-danger-background: var(--p-red-500);
     --p-button-danger-hover-background: var(--p-red-600);
     --p-button-danger-active-background: var(--p-red-700);
@@ -1580,8 +1580,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-danger-color: #ffffff;
     --p-button-danger-hover-color: #ffffff;
     --p-button-danger-active-color: #ffffff;
-    --p-button-danger-focus-ring-color: var(--p-red-500);
-    --p-button-danger-focus-ring-shadow: none;
+    --p-button-danger-focus-ring-color: transparent;
+    --p-button-danger-focus-ring-shadow: 0 0 0 0.2rem var(--p-red-200);
     --p-button-help-background: var(--p-purple-500);
     --p-button-help-hover-background: var(--p-purple-600);
     --p-button-help-active-background: var(--p-purple-700);
@@ -1591,8 +1591,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-help-color: #ffffff;
     --p-button-help-hover-color: #ffffff;
     --p-button-help-active-color: #ffffff;
-    --p-button-help-focus-ring-color: var(--p-purple-500);
-    --p-button-help-focus-ring-shadow: none;
+    --p-button-help-focus-ring-color: transparent;
+    --p-button-help-focus-ring-shadow: 0 0 0 0.2rem var(--p-purple-200);
     --p-button-warn-background: var(--p-orange-500);
     --p-button-warn-hover-background: var(--p-orange-600);
     --p-button-warn-active-background: var(--p-orange-700);
@@ -1602,8 +1602,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-warn-color: #ffffff;
     --p-button-warn-hover-color: #ffffff;
     --p-button-warn-active-color: #ffffff;
-    --p-button-warn-focus-ring-color: var(--p-orange-500);
-    --p-button-warn-focus-ring-shadow: none;
+    --p-button-warn-focus-ring-color: transparent;
+    --p-button-warn-focus-ring-shadow: 0 0 0 0.2rem var(--p-orange-200);
     --p-button-success-background: var(--p-green-500);
     --p-button-success-hover-background: var(--p-green-600);
     --p-button-success-active-background: var(--p-green-700);
@@ -1613,8 +1613,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-success-color: #ffffff;
     --p-button-success-hover-color: #ffffff;
     --p-button-success-active-color: #ffffff;
-    --p-button-success-focus-ring-color: var(--p-green-500);
-    --p-button-success-focus-ring-shadow: none;
+    --p-button-success-focus-ring-color: transparent;
+    --p-button-success-focus-ring-shadow: 0 0 0 0.2rem var(--p-green-200);
     --p-button-info-background: var(--p-sky-500);
     --p-button-info-hover-background: var(--p-sky-600);
     --p-button-info-active-background: var(--p-sky-700);
@@ -1624,8 +1624,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-info-color: #ffffff;
     --p-button-info-hover-color: #ffffff;
     --p-button-info-active-color: #ffffff;
-    --p-button-info-focus-ring-color: var(--p-sky-500);
-    --p-button-info-focus-ring-shadow: none;
+    --p-button-info-focus-ring-color: transparent;
+    --p-button-info-focus-ring-shadow: 0 0 0 0.2rem var(--p-sky-200);
     --p-button-secondary-background: var(--p-surface-100);
     --p-button-secondary-hover-background: var(--p-surface-200);
     --p-button-secondary-active-background: var(--p-surface-300);
@@ -1635,8 +1635,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-secondary-color: var(--p-surface-600);
     --p-button-secondary-hover-color: var(--p-surface-700);
     --p-button-secondary-active-color: var(--p-surface-800);
-    --p-button-secondary-focus-ring-color: var(--p-surface-600);
-    --p-button-secondary-focus-ring-shadow: none;
+    --p-button-secondary-focus-ring-color: transparent;
+    --p-button-secondary-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-200);
     --p-button-primary-background: var(--p-primary-color);
     --p-button-primary-hover-background: var(--p-primary-hover-color);
     --p-button-primary-active-background: var(--p-primary-active-color);
@@ -1646,29 +1646,29 @@ thead.p-datatable-thead > tr > th,
     --p-button-primary-color: var(--p-primary-contrast-color);
     --p-button-primary-hover-color: var(--p-primary-contrast-color);
     --p-button-primary-active-color: var(--p-primary-contrast-color);
-    --p-button-primary-focus-ring-color: var(--p-primary-color);
-    --p-button-primary-focus-ring-shadow: none;
+    --p-button-primary-focus-ring-color: transparent;
+    --p-button-primary-focus-ring-shadow: 0 0 0 0.2rem var(--p-primary-200);
     --p-button-border-radius: var(--p-form-field-border-radius);
     --p-button-rounded-border-radius: 2rem;
     --p-button-gap: 0.5rem;
-    --p-button-padding-x: var(--p-form-field-padding-x);
+    --p-button-padding-x: 1rem;
     --p-button-padding-y: var(--p-form-field-padding-y);
-    --p-button-icon-only-width: 2.5rem;
+    --p-button-icon-only-width: 2.75rem;
     --p-button-raised-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     --p-button-badge-size: 1rem;
     --p-button-transition-duration: var(--p-form-field-transition-duration);
-    --p-button-focus-ring-width: var(--p-focus-ring-width);
-    --p-button-focus-ring-style: var(--p-focus-ring-style);
-    --p-button-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-button-label-font-weight: 500;
+    --p-button-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-button-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-button-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-button-label-font-weight: 600;
     --p-button-lg-font-size: var(--p-form-field-lg-font-size);
     --p-button-lg-padding-x: var(--p-form-field-lg-padding-x);
     --p-button-lg-padding-y: var(--p-form-field-lg-padding-y);
-    --p-button-lg-icon-only-width: 3rem;
+    --p-button-lg-icon-only-width: 3.25rem;
     --p-button-sm-font-size: var(--p-form-field-sm-font-size);
     --p-button-sm-padding-x: var(--p-form-field-sm-padding-x);
     --p-button-sm-padding-y: var(--p-form-field-sm-padding-y);
-    --p-button-sm-icon-only-width: 2rem;
+    --p-button-sm-icon-only-width: 2.25rem;
 }
 
 .app-dark {
@@ -1696,9 +1696,9 @@ thead.p-datatable-thead > tr > th,
     --p-button-text-success-hover-background: color-mix(in srgb, var(--p-green-400), transparent 96%);
     --p-button-text-success-active-background: color-mix(in srgb, var(--p-green-400), transparent 84%);
     --p-button-text-success-color: var(--p-green-400);
-    --p-button-text-secondary-hover-background: var(--p-surface-800);
-    --p-button-text-secondary-active-background: var(--p-surface-700);
-    --p-button-text-secondary-color: var(--p-surface-400);
+    --p-button-text-secondary-hover-background: var(--p-surface-700);
+    --p-button-text-secondary-active-background: var(--p-surface-600);
+    --p-button-text-secondary-color: var(--p-surface-300);
     --p-button-text-primary-hover-background: color-mix(in srgb, var(--p-primary-color), transparent 96%);
     --p-button-text-primary-active-background: color-mix(in srgb, var(--p-primary-color), transparent 84%);
     --p-button-text-primary-color: var(--p-primary-color);
@@ -1710,12 +1710,12 @@ thead.p-datatable-thead > tr > th,
     --p-button-outlined-contrast-active-background: var(--p-surface-700);
     --p-button-outlined-contrast-border-color: var(--p-surface-500);
     --p-button-outlined-contrast-color: var(--p-surface-0);
-    --p-button-outlined-danger-hover-background: color-mix(in srgb, var(--p-red-400), transparent 96%);
-    --p-button-outlined-danger-active-background: color-mix(in srgb, var(--p-red-400), transparent 84%);
+    --p-button-outlined-danger-hover-background: color-mix(in srgb, var(--p-danger-400), transparent 96%);
+    --p-button-outlined-danger-active-background: color-mix(in srgb, var(--p-danger-400), transparent 84%);
     --p-button-outlined-danger-border-color: var(--p-red-700);
     --p-button-outlined-danger-color: var(--p-red-400);
-    --p-button-outlined-help-hover-background: color-mix(in srgb, var(--p-purple-400), transparent 96%);
-    --p-button-outlined-help-active-background: color-mix(in srgb, var(--p-purple-400), transparent 84%);
+    --p-button-outlined-help-hover-background: color-mix(in srgb, var(--p-help-400), transparent 96%);
+    --p-button-outlined-help-active-background: color-mix(in srgb, var(--p-help-400), transparent 84%);
     --p-button-outlined-help-border-color: var(--p-purple-700);
     --p-button-outlined-help-color: var(--p-purple-400);
     --p-button-outlined-warn-hover-background: color-mix(in srgb, var(--p-orange-400), transparent 96%);
@@ -1730,8 +1730,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-outlined-success-active-background: color-mix(in srgb, var(--p-green-400), transparent 84%);
     --p-button-outlined-success-border-color: var(--p-green-700);
     --p-button-outlined-success-color: var(--p-green-400);
-    --p-button-outlined-secondary-hover-background: rgba(255, 255, 255, 0.04);
-    --p-button-outlined-secondary-active-background: rgba(255, 255, 255, 0.16);
+    --p-button-outlined-secondary-hover-background: rgba(255,255,255,0.04);
+    --p-button-outlined-secondary-active-background: rgba(255,255,255,0.16);
     --p-button-outlined-secondary-border-color: var(--p-surface-700);
     --p-button-outlined-secondary-color: var(--p-surface-400);
     --p-button-outlined-primary-hover-background: color-mix(in srgb, var(--p-primary-color), transparent 96%);
@@ -1747,8 +1747,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-contrast-color: var(--p-surface-950);
     --p-button-contrast-hover-color: var(--p-surface-950);
     --p-button-contrast-active-color: var(--p-surface-950);
-    --p-button-contrast-focus-ring-color: var(--p-surface-0);
-    --p-button-contrast-focus-ring-shadow: none;
+    --p-button-contrast-focus-ring-color: transparent;
+    --p-button-contrast-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-surface-0), transparent 80%);
     --p-button-danger-background: var(--p-red-400);
     --p-button-danger-hover-background: var(--p-red-300);
     --p-button-danger-active-background: var(--p-red-200);
@@ -1758,8 +1758,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-danger-color: var(--p-red-950);
     --p-button-danger-hover-color: var(--p-red-950);
     --p-button-danger-active-color: var(--p-red-950);
-    --p-button-danger-focus-ring-color: var(--p-red-400);
-    --p-button-danger-focus-ring-shadow: none;
+    --p-button-danger-focus-ring-color: transparent;
+    --p-button-danger-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-red-400), transparent 80%);
     --p-button-help-background: var(--p-purple-400);
     --p-button-help-hover-background: var(--p-purple-300);
     --p-button-help-active-background: var(--p-purple-200);
@@ -1769,8 +1769,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-help-color: var(--p-purple-950);
     --p-button-help-hover-color: var(--p-purple-950);
     --p-button-help-active-color: var(--p-purple-950);
-    --p-button-help-focus-ring-color: var(--p-purple-400);
-    --p-button-help-focus-ring-shadow: none;
+    --p-button-help-focus-ring-color: transparent;
+    --p-button-help-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-purple-400), transparent 80%);
     --p-button-warn-background: var(--p-orange-400);
     --p-button-warn-hover-background: var(--p-orange-300);
     --p-button-warn-active-background: var(--p-orange-200);
@@ -1780,8 +1780,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-warn-color: var(--p-orange-950);
     --p-button-warn-hover-color: var(--p-orange-950);
     --p-button-warn-active-color: var(--p-orange-950);
-    --p-button-warn-focus-ring-color: var(--p-orange-400);
-    --p-button-warn-focus-ring-shadow: none;
+    --p-button-warn-focus-ring-color: transparent;
+    --p-button-warn-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-orange-400), transparent 80%);
     --p-button-success-background: var(--p-green-400);
     --p-button-success-hover-background: var(--p-green-300);
     --p-button-success-active-background: var(--p-green-200);
@@ -1791,8 +1791,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-success-color: var(--p-green-950);
     --p-button-success-hover-color: var(--p-green-950);
     --p-button-success-active-color: var(--p-green-950);
-    --p-button-success-focus-ring-color: var(--p-green-400);
-    --p-button-success-focus-ring-shadow: none;
+    --p-button-success-focus-ring-color: transparent;
+    --p-button-success-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-green-400), transparent 80%);
     --p-button-info-background: var(--p-sky-400);
     --p-button-info-hover-background: var(--p-sky-300);
     --p-button-info-active-background: var(--p-sky-200);
@@ -1802,8 +1802,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-info-color: var(--p-sky-950);
     --p-button-info-hover-color: var(--p-sky-950);
     --p-button-info-active-color: var(--p-sky-950);
-    --p-button-info-focus-ring-color: var(--p-sky-400);
-    --p-button-info-focus-ring-shadow: none;
+    --p-button-info-focus-ring-color: transparent;
+    --p-button-info-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-sky-400), transparent 80%);
     --p-button-secondary-background: var(--p-surface-800);
     --p-button-secondary-hover-background: var(--p-surface-700);
     --p-button-secondary-active-background: var(--p-surface-600);
@@ -1813,8 +1813,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-secondary-color: var(--p-surface-300);
     --p-button-secondary-hover-color: var(--p-surface-200);
     --p-button-secondary-active-color: var(--p-surface-100);
-    --p-button-secondary-focus-ring-color: var(--p-surface-300);
-    --p-button-secondary-focus-ring-shadow: none;
+    --p-button-secondary-focus-ring-color: transparent;
+    --p-button-secondary-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-surface-300), transparent 80%);
     --p-button-primary-background: var(--p-primary-color);
     --p-button-primary-hover-background: var(--p-primary-hover-color);
     --p-button-primary-active-background: var(--p-primary-active-color);
@@ -1824,8 +1824,8 @@ thead.p-datatable-thead > tr > th,
     --p-button-primary-color: var(--p-primary-contrast-color);
     --p-button-primary-hover-color: var(--p-primary-contrast-color);
     --p-button-primary-active-color: var(--p-primary-contrast-color);
-    --p-button-primary-focus-ring-color: var(--p-primary-color);
-    --p-button-primary-focus-ring-shadow: none;
+    --p-button-primary-focus-ring-color: transparent;
+    --p-button-primary-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-primary-color), transparent 80%);
 }
 
 
@@ -2482,14 +2482,14 @@ thead.p-datatable-thead > tr > th,
 :root, :host {
     --p-card-subtitle-color: var(--p-text-muted-color);
     --p-card-title-font-size: 1.25rem;
-    --p-card-title-font-weight: 500;
+    --p-card-title-font-weight: 700;
     --p-card-caption-gap: 0.5rem;
-    --p-card-body-padding: 1.25rem;
-    --p-card-body-gap: 0.5rem;
+    --p-card-body-padding: 1.5rem;
+    --p-card-body-gap: 0.75rem;
     --p-card-background: var(--p-content-background);
-    --p-card-border-radius: var(--p-border-radius-xl);
+    --p-card-border-radius: var(--p-border-radius-lg);
     --p-card-color: var(--p-content-color);
-    --p-card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --p-card-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
 }
 
 
@@ -2529,9 +2529,9 @@ thead.p-datatable-thead > tr > th,
     --p-carousel-indicator-background: var(--p-surface-200);
     --p-carousel-indicator-hover-background: var(--p-surface-300);
     --p-carousel-indicator-active-background: var(--p-primary-color);
-    --p-carousel-indicator-width: 2rem;
-    --p-carousel-indicator-height: 0.5rem;
-    --p-carousel-indicator-border-radius: var(--p-content-border-radius);
+    --p-carousel-indicator-width: 1rem;
+    --p-carousel-indicator-height: 1rem;
+    --p-carousel-indicator-border-radius: 50;
     --p-carousel-indicator-focus-ring-width: var(--p-focus-ring-width);
     --p-carousel-indicator-focus-ring-style: var(--p-focus-ring-style);
     --p-carousel-indicator-focus-ring-color: var(--p-focus-ring-color);
@@ -2670,7 +2670,7 @@ thead.p-datatable-thead > tr > th,
     --p-cascadeselect-option-icon-size: 0.875rem;
     --p-cascadeselect-list-padding: var(--p-list-padding);
     --p-cascadeselect-list-gap: var(--p-list-gap);
-    --p-cascadeselect-list-mobile-indent: 1rem;
+    --p-cascadeselect-list-mobile-indent: 1.25rem;
     --p-cascadeselect-overlay-background: var(--p-overlay-select-background);
     --p-cascadeselect-overlay-border-color: var(--p-overlay-select-border-color);
     --p-cascadeselect-overlay-border-radius: var(--p-overlay-select-border-radius);
@@ -2971,16 +2971,16 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-checkbox-icon-size: 0.875rem;
+    --p-checkbox-icon-size: 1rem;
     --p-checkbox-icon-color: var(--p-form-field-color);
     --p-checkbox-icon-checked-color: var(--p-primary-contrast-color);
     --p-checkbox-icon-checked-hover-color: var(--p-primary-contrast-color);
     --p-checkbox-icon-disabled-color: var(--p-form-field-disabled-color);
-    --p-checkbox-icon-lg-size: 1rem;
+    --p-checkbox-icon-lg-size: 1.25rem;
     --p-checkbox-icon-sm-size: 0.75rem;
     --p-checkbox-border-radius: var(--p-border-radius-sm);
-    --p-checkbox-width: 1.25rem;
-    --p-checkbox-height: 1.25rem;
+    --p-checkbox-width: 1.5rem;
+    --p-checkbox-height: 1.5rem;
     --p-checkbox-background: var(--p-form-field-background);
     --p-checkbox-checked-background: var(--p-primary-color);
     --p-checkbox-checked-hover-background: var(--p-primary-hover-color);
@@ -2988,7 +2988,7 @@ thead.p-datatable-thead > tr > th,
     --p-checkbox-filled-background: var(--p-form-field-filled-background);
     --p-checkbox-border-color: var(--p-form-field-border-color);
     --p-checkbox-hover-border-color: var(--p-form-field-hover-border-color);
-    --p-checkbox-focus-border-color: var(--p-form-field-border-color);
+    --p-checkbox-focus-border-color: var(--p-form-field-focus-border-color);
     --p-checkbox-checked-border-color: var(--p-primary-color);
     --p-checkbox-checked-hover-border-color: var(--p-primary-hover-color);
     --p-checkbox-checked-focus-border-color: var(--p-primary-color);
@@ -2996,15 +2996,15 @@ thead.p-datatable-thead > tr > th,
     --p-checkbox-invalid-border-color: var(--p-form-field-invalid-border-color);
     --p-checkbox-shadow: var(--p-form-field-shadow);
     --p-checkbox-transition-duration: var(--p-form-field-transition-duration);
-    --p-checkbox-lg-width: 1.5rem;
-    --p-checkbox-lg-height: 1.5rem;
-    --p-checkbox-sm-width: 1rem;
-    --p-checkbox-sm-height: 1rem;
-    --p-checkbox-focus-ring-width: var(--p-focus-ring-width);
-    --p-checkbox-focus-ring-style: var(--p-focus-ring-style);
-    --p-checkbox-focus-ring-color: var(--p-focus-ring-color);
-    --p-checkbox-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-checkbox-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-checkbox-lg-width: 1.75rem;
+    --p-checkbox-lg-height: 1.75rem;
+    --p-checkbox-sm-width: 1.25rem;
+    --p-checkbox-sm-height: 1.25rem;
+    --p-checkbox-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-checkbox-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-checkbox-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-checkbox-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-checkbox-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
 }
 
 
@@ -3157,13 +3157,13 @@ thead.p-datatable-thead > tr > th,
     --p-chip-remove-icon-focus-ring-style: var(--p-focus-ring-style);
     --p-chip-remove-icon-focus-ring-color: var(--p-focus-ring-color);
     --p-chip-remove-icon-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-chip-remove-icon-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
+    --p-chip-remove-icon-focus-ring-shadow: var(--p-focus-ring-shadow);
     --p-chip-icon-size: 1rem;
     --p-chip-image-width: 2rem;
     --p-chip-image-height: 2rem;
     --p-chip-border-radius: 16px;
-    --p-chip-padding-x: 0.75rem;
-    --p-chip-padding-y: 0.5rem;
+    --p-chip-padding-x: 0.875rem;
+    --p-chip-padding-y: 0.625rem;
     --p-chip-gap: 0.5rem;
     --p-chip-transition-duration: var(--p-transition-duration);
 }
@@ -3234,15 +3234,15 @@ thead.p-datatable-thead > tr > th,
     --p-colorpicker-panel-background: var(--p-surface-800);
     --p-colorpicker-panel-border-color: var(--p-surface-900);
     --p-colorpicker-panel-shadow: var(--p-overlay-popover-shadow);
-    --p-colorpicker-panel-border-radius: var(--p-overlay-popover-border-radius);
-    --p-colorpicker-preview-width: 1.5rem;
-    --p-colorpicker-preview-height: 1.5rem;
+    --p-colorpicker-panel-border-radius: var(--p-overlay-popover-borderRadius);
+    --p-colorpicker-preview-width: 1.75rem;
+    --p-colorpicker-preview-height: 1.75rem;
     --p-colorpicker-preview-border-radius: var(--p-form-field-border-radius);
-    --p-colorpicker-preview-focus-ring-width: var(--p-focus-ring-width);
-    --p-colorpicker-preview-focus-ring-style: var(--p-focus-ring-style);
-    --p-colorpicker-preview-focus-ring-color: var(--p-focus-ring-color);
-    --p-colorpicker-preview-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-colorpicker-preview-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-colorpicker-preview-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-colorpicker-preview-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-colorpicker-preview-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-colorpicker-preview-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-colorpicker-preview-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
     --p-colorpicker-transition-duration: var(--p-transition-duration);
 }
 
@@ -3495,7 +3495,7 @@ thead.p-datatable-thead > tr > th,
     --p-contextmenu-submenu-icon-color: var(--p-navigation-submenu-icon-color);
     --p-contextmenu-submenu-icon-focus-color: var(--p-navigation-submenu-icon-focus-color);
     --p-contextmenu-submenu-icon-active-color: var(--p-navigation-submenu-icon-active-color);
-    --p-contextmenu-submenu-mobile-indent: 1rem;
+    --p-contextmenu-submenu-mobile-indent: 1.25rem;
     --p-contextmenu-item-focus-background: var(--p-navigation-item-focus-background);
     --p-contextmenu-item-active-background: var(--p-navigation-item-active-background);
     --p-contextmenu-item-color: var(--p-navigation-item-color);
@@ -3711,17 +3711,17 @@ thead.p-datatable-thead > tr > th,
     --p-datatable-resize-indicator-color: var(--p-primary-color);
     --p-datatable-column-resizer-width: 0.5rem;
     --p-datatable-drop-point-color: var(--p-primary-color);
-    --p-datatable-footer-background: var(--p-content-background);
+    --p-datatable-footer-background: var(--p-surface-50);
     --p-datatable-footer-border-color: var(--p-datatable-border-color);
-    --p-datatable-footer-color: var(--p-content-color);
+    --p-datatable-footer-color: var(--p-text-color);
     --p-datatable-footer-border-width: 0 0 1px 0;
     --p-datatable-footer-padding: 0.75rem 1rem;
     --p-datatable-footer-lg-padding: 1rem 1.25rem;
     --p-datatable-footer-sm-padding: 0.375rem 0.5rem;
-    --p-datatable-column-footer-font-weight: 600;
-    --p-datatable-footer-cell-background: var(--p-content-background);
+    --p-datatable-column-footer-font-weight: 700;
+    --p-datatable-footer-cell-background: var(--p-surface-50);
     --p-datatable-footer-cell-border-color: var(--p-datatable-border-color);
-    --p-datatable-footer-cell-color: var(--p-content-color);
+    --p-datatable-footer-cell-color: var(--p-text-color);
     --p-datatable-footer-cell-padding: 0.75rem 1rem;
     --p-datatable-footer-cell-lg-padding: 1rem 1.25rem;
     --p-datatable-footer-cell-sm-padding: 0.375rem 0.5rem;
@@ -3738,14 +3738,14 @@ thead.p-datatable-thead > tr > th,
     --p-datatable-row-focus-ring-width: var(--p-focus-ring-width);
     --p-datatable-row-focus-ring-style: var(--p-focus-ring-style);
     --p-datatable-row-focus-ring-color: var(--p-focus-ring-color);
-    --p-datatable-row-focus-ring-offset: -1px;
-    --p-datatable-row-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-datatable-column-title-font-weight: 600;
-    --p-datatable-header-cell-background: var(--p-content-background);
-    --p-datatable-header-cell-hover-background: var(--p-content-hover-background);
+    --p-datatable-row-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-datatable-row-focus-ring-shadow: inset var(--p-focus-ring-shadow);
+    --p-datatable-column-title-font-weight: 700;
+    --p-datatable-header-cell-background: var(--p-surface-50);
+    --p-datatable-header-cell-hover-background: var(--p-surface-100);
     --p-datatable-header-cell-selected-background: var(--p-highlight-background);
     --p-datatable-header-cell-border-color: var(--p-datatable-border-color);
-    --p-datatable-header-cell-color: var(--p-content-color);
+    --p-datatable-header-cell-color: var(--p-text-color);
     --p-datatable-header-cell-hover-color: var(--p-content-hover-color);
     --p-datatable-header-cell-selected-color: var(--p-highlight-color);
     --p-datatable-header-cell-gap: 0.5rem;
@@ -3755,12 +3755,12 @@ thead.p-datatable-thead > tr > th,
     --p-datatable-header-cell-focus-ring-width: var(--p-focus-ring-width);
     --p-datatable-header-cell-focus-ring-style: var(--p-focus-ring-style);
     --p-datatable-header-cell-focus-ring-color: var(--p-focus-ring-color);
-    --p-datatable-header-cell-focus-ring-offset: -1px;
-    --p-datatable-header-cell-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-datatable-header-background: var(--p-content-background);
+    --p-datatable-header-cell-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-datatable-header-cell-focus-ring-shadow: inset var(--p-focus-ring-shadow);
+    --p-datatable-header-background: var(--p-surface-50);
     --p-datatable-header-border-color: var(--p-datatable-border-color);
-    --p-datatable-header-color: var(--p-content-color);
-    --p-datatable-header-border-width: 0 0 1px 0;
+    --p-datatable-header-color: var(--p-text-color);
+    --p-datatable-header-border-width: 1px 0 1px 0;
     --p-datatable-header-padding: 0.75rem 1rem;
     --p-datatable-header-lg-padding: 1rem 1.25rem;
     --p-datatable-header-sm-padding: 0.375rem 0.5rem;
@@ -4391,23 +4391,23 @@ thead.p-datatable-thead > tr > th,
     --p-dataview-footer-color: var(--p-content-color);
     --p-dataview-footer-border-color: var(--p-content-border-color);
     --p-dataview-footer-border-width: 1px 0 0 0;
-    --p-dataview-footer-padding: 0.75rem 1rem;
-    --p-dataview-footer-border-radius: 0;
+    --p-dataview-footer-padding: 0.875rem 1.125rem;
+    --p-dataview-footer-border-radius: 0 0 5px 5px;
     --p-dataview-content-background: var(--p-content-background);
     --p-dataview-content-color: var(--p-content-color);
     --p-dataview-content-border-color: transparent;
     --p-dataview-content-border-width: 0;
     --p-dataview-content-padding: 0;
-    --p-dataview-content-border-radius: 0;
-    --p-dataview-header-background: var(--p-content-background);
-    --p-dataview-header-color: var(--p-content-color);
+    --p-dataview-content-border-radius: 5px;
+    --p-dataview-header-background: var(--p-surface-50);
+    --p-dataview-header-color: var(--p-text-color);
     --p-dataview-header-border-color: var(--p-content-border-color);
     --p-dataview-header-border-width: 0 0 1px 0;
-    --p-dataview-header-padding: 0.75rem 1rem;
-    --p-dataview-header-border-radius: 0;
-    --p-dataview-border-color: transparent;
-    --p-dataview-border-width: 0;
-    --p-dataview-border-radius: 0;
+    --p-dataview-header-padding: 0.875rem 1.125rem;
+    --p-dataview-header-border-radius: 5px 5px 0 0;
+    --p-dataview-border-color: var(--p-content-border-color);
+    --p-dataview-border-width: 1px;
+    --p-dataview-border-radius: 4px;
     --p-dataview-padding: 0;
 }
 
@@ -4476,24 +4476,24 @@ thead.p-datatable-thead > tr > th,
 :root, :host {
     --p-datepicker-today-background: var(--p-surface-200);
     --p-datepicker-today-color: var(--p-surface-900);
-    --p-datepicker-dropdown-background: var(--p-surface-100);
-    --p-datepicker-dropdown-hover-background: var(--p-surface-200);
-    --p-datepicker-dropdown-active-background: var(--p-surface-300);
+    --p-datepicker-dropdown-background: var(--p-surface-50);
+    --p-datepicker-dropdown-hover-background: var(--p-surface-100);
+    --p-datepicker-dropdown-active-background: var(--p-surface-200);
     --p-datepicker-dropdown-color: var(--p-surface-600);
     --p-datepicker-dropdown-hover-color: var(--p-surface-700);
     --p-datepicker-dropdown-active-color: var(--p-surface-800);
-    --p-datepicker-time-picker-padding: 0.5rem 0 0 0;
+    --p-datepicker-time-picker-padding: 0.75rem 0 0 0;
     --p-datepicker-time-picker-border-color: var(--p-content-border-color);
     --p-datepicker-time-picker-gap: 0.5rem;
     --p-datepicker-time-picker-button-gap: 0.25rem;
-    --p-datepicker-buttonbar-padding: 0.5rem 0 0 0;
+    --p-datepicker-buttonbar-padding: 0.75rem 0 0 0;
     --p-datepicker-buttonbar-border-color: var(--p-content-border-color);
-    --p-datepicker-year-padding: 0.375rem;
+    --p-datepicker-year-padding: 0.5rem;
     --p-datepicker-year-border-radius: var(--p-content-border-radius);
-    --p-datepicker-year-view-margin: 0.5rem 0 0 0;
-    --p-datepicker-month-padding: 0.375rem;
+    --p-datepicker-year-view-margin: 0.75rem 0 0 0;
+    --p-datepicker-month-padding: 0.5rem;
     --p-datepicker-month-border-radius: var(--p-content-border-radius);
-    --p-datepicker-month-view-margin: 0.5rem 0 0 0;
+    --p-datepicker-month-view-margin: 0.75rem 0 0 0;
     --p-datepicker-date-hover-background: var(--p-content-hover-background);
     --p-datepicker-date-selected-background: var(--p-primary-color);
     --p-datepicker-date-range-selected-background: var(--p-highlight-background);
@@ -4501,30 +4501,30 @@ thead.p-datatable-thead > tr > th,
     --p-datepicker-date-hover-color: var(--p-content-hover-color);
     --p-datepicker-date-selected-color: var(--p-primary-contrast-color);
     --p-datepicker-date-range-selected-color: var(--p-highlight-color);
-    --p-datepicker-date-width: 2rem;
-    --p-datepicker-date-height: 2rem;
+    --p-datepicker-date-width: 2.5rem;
+    --p-datepicker-date-height: 2.5rem;
     --p-datepicker-date-border-radius: 50%;
-    --p-datepicker-date-padding: 0.25rem;
-    --p-datepicker-date-focus-ring-width: var(--p-focus-ring-width);
-    --p-datepicker-date-focus-ring-style: var(--p-focus-ring-style);
-    --p-datepicker-date-focus-ring-color: var(--p-focus-ring-color);
-    --p-datepicker-date-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-datepicker-date-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-datepicker-week-day-padding: 0.25rem;
-    --p-datepicker-week-day-font-weight: 500;
+    --p-datepicker-date-padding: 0.375rem;
+    --p-datepicker-date-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-datepicker-date-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-datepicker-date-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-datepicker-date-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-datepicker-date-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
+    --p-datepicker-week-day-padding: 0.375rem;
+    --p-datepicker-week-day-font-weight: 700;
     --p-datepicker-week-day-color: var(--p-content-color);
-    --p-datepicker-day-view-margin: 0.5rem 0 0 0;
+    --p-datepicker-day-view-margin: 0.75rem 0 0 0;
     --p-datepicker-group-border-color: var(--p-content-border-color);
     --p-datepicker-group-gap: var(--p-overlay-popover-padding);
     --p-datepicker-select-year-hover-background: var(--p-content-hover-background);
     --p-datepicker-select-year-color: var(--p-content-color);
     --p-datepicker-select-year-hover-color: var(--p-content-hover-color);
-    --p-datepicker-select-year-padding: 0.25rem 0.5rem;
+    --p-datepicker-select-year-padding: 0.375rem 0.625rem;
     --p-datepicker-select-year-border-radius: var(--p-content-border-radius);
     --p-datepicker-select-month-hover-background: var(--p-content-hover-background);
     --p-datepicker-select-month-color: var(--p-content-color);
     --p-datepicker-select-month-hover-color: var(--p-content-hover-color);
-    --p-datepicker-select-month-padding: 0.25rem 0.5rem;
+    --p-datepicker-select-month-padding: 0.375rem 0.625rem;
     --p-datepicker-select-month-border-radius: var(--p-content-border-radius);
     --p-datepicker-input-icon-color: var(--p-form-field-icon-color);
     --p-datepicker-dropdown-width: 2.5rem;
@@ -4532,19 +4532,19 @@ thead.p-datatable-thead > tr > th,
     --p-datepicker-dropdown-hover-border-color: var(--p-form-field-border-color);
     --p-datepicker-dropdown-active-border-color: var(--p-form-field-border-color);
     --p-datepicker-dropdown-border-radius: var(--p-form-field-border-radius);
-    --p-datepicker-dropdown-focus-ring-width: var(--p-focus-ring-width);
-    --p-datepicker-dropdown-focus-ring-style: var(--p-focus-ring-style);
-    --p-datepicker-dropdown-focus-ring-color: var(--p-focus-ring-color);
-    --p-datepicker-dropdown-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-datepicker-dropdown-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-datepicker-dropdown-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-datepicker-dropdown-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-datepicker-dropdown-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-datepicker-dropdown-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-datepicker-dropdown-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
     --p-datepicker-dropdown-lg-width: 3rem;
     --p-datepicker-dropdown-sm-width: 2rem;
     --p-datepicker-title-gap: 0.5rem;
-    --p-datepicker-title-font-weight: 500;
+    --p-datepicker-title-font-weight: 700;
     --p-datepicker-header-background: var(--p-content-background);
     --p-datepicker-header-border-color: var(--p-content-border-color);
     --p-datepicker-header-color: var(--p-content-color);
-    --p-datepicker-header-padding: 0 0 0.5rem 0;
+    --p-datepicker-header-padding: 0 0 0.75rem 0;
     --p-datepicker-panel-background: var(--p-content-background);
     --p-datepicker-panel-border-color: var(--p-content-border-color);
     --p-datepicker-panel-color: var(--p-content-color);
@@ -5138,12 +5138,12 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-divider-vertical-margin: 0 1rem;
-    --p-divider-vertical-padding: 0.5rem 0;
-    --p-divider-vertical-content-padding: 0.5rem 0;
-    --p-divider-horizontal-margin: 1rem 0;
-    --p-divider-horizontal-padding: 0 1rem;
-    --p-divider-horizontal-content-padding: 0 0.5rem;
+    --p-divider-vertical-margin: 0 1.125rem;
+    --p-divider-vertical-padding: 1.125rem 0;
+    --p-divider-vertical-content-padding: 0.625rem 0;
+    --p-divider-horizontal-margin: 1.125rem 0;
+    --p-divider-horizontal-padding: 0 1.125rem;
+    --p-divider-horizontal-content-padding: 0 0.625rem;
     --p-divider-content-background: var(--p-content-background);
     --p-divider-content-color: var(--p-text-color);
     --p-divider-border-color: var(--p-content-border-color);
@@ -5244,7 +5244,7 @@ thead.p-datatable-thead > tr > th,
     --p-dock-background: rgba(255, 255, 255, 0.1);
     --p-dock-border-color: rgba(255, 255, 255, 0.2);
     --p-dock-padding: 0.5rem;
-    --p-dock-border-radius: var(--p-border-radius-xl);
+    --p-dock-border-radius: var(--p-border-radius-lg);
 }
 
 
@@ -5583,7 +5583,7 @@ thead.p-datatable-thead > tr > th,
     --p-editor-toolbar-item-color: var(--p-text-muted-color);
     --p-editor-toolbar-item-hover-color: var(--p-text-color);
     --p-editor-toolbar-item-active-color: var(--p-primary-color);
-    --p-editor-toolbar-background: var(--p-content-background);
+    --p-editor-toolbar-background: var(--p-surface-50);
     --p-editor-toolbar-border-color: var(--p-content-border-color);
     --p-editor-toolbar-border-radius: var(--p-content-border-radius);
 }
@@ -6759,16 +6759,16 @@ thead.p-datatable-thead > tr > th,
     --p-fieldset-content-padding: 0;
     --p-fieldset-toggle-icon-color: var(--p-text-muted-color);
     --p-fieldset-toggle-icon-hover-color: var(--p-text-hover-muted-color);
-    --p-fieldset-legend-background: var(--p-content-background);
-    --p-fieldset-legend-hover-background: var(--p-content-hover-background);
-    --p-fieldset-legend-color: var(--p-content-color);
-    --p-fieldset-legend-hover-color: var(--p-content-hover-color);
+    --p-fieldset-legend-background: var(--p-surface-50);
+    --p-fieldset-legend-hover-background: var(--p-surface-100);
+    --p-fieldset-legend-color: var(--p-text-color);
+    --p-fieldset-legend-hover-color: var(--p-text-hover-color);
     --p-fieldset-legend-border-radius: var(--p-content-border-radius);
     --p-fieldset-legend-border-width: 1px;
-    --p-fieldset-legend-border-color: transparent;
-    --p-fieldset-legend-padding: 0.5rem 0.75rem;
+    --p-fieldset-legend-border-color: var(--p-content-border-color);
+    --p-fieldset-legend-padding: 0.625rem 0.875rem;
     --p-fieldset-legend-gap: 0.5rem;
-    --p-fieldset-legend-font-weight: 600;
+    --p-fieldset-legend-font-weight: 700;
     --p-fieldset-legend-focus-ring-width: var(--p-focus-ring-width);
     --p-fieldset-legend-focus-ring-style: var(--p-focus-ring-style);
     --p-fieldset-legend-focus-ring-color: var(--p-focus-ring-color);
@@ -6778,7 +6778,7 @@ thead.p-datatable-thead > tr > th,
     --p-fieldset-border-color: var(--p-content-border-color);
     --p-fieldset-border-radius: var(--p-content-border-radius);
     --p-fieldset-color: var(--p-content-color);
-    --p-fieldset-padding: 0 1.125rem 1.125rem 1.125rem;
+    --p-fieldset-padding: 0.75rem 1.125rem 1.125rem 1.125rem;
     --p-fieldset-transition-duration: var(--p-transition-duration);
 }
 
@@ -6878,14 +6878,14 @@ thead.p-datatable-thead > tr > th,
     --p-fileupload-file-border-color: var(--p-content-border-color);
     --p-fileupload-file-info-gap: 0.5rem;
     --p-fileupload-content-highlight-border-color: var(--p-primary-color);
-    --p-fileupload-content-padding: 0 1.125rem 1.125rem 1.125rem;
+    --p-fileupload-content-padding: 1.125rem;
     --p-fileupload-content-gap: 1rem;
-    --p-fileupload-header-background: transparent;
+    --p-fileupload-header-background: var(--p-surface-50);
     --p-fileupload-header-color: var(--p-text-color);
     --p-fileupload-header-padding: 1.125rem;
-    --p-fileupload-header-border-color: unset;
-    --p-fileupload-header-border-width: 0;
-    --p-fileupload-header-border-radius: 0;
+    --p-fileupload-header-border-color: var(--p-content-border-color);
+    --p-fileupload-header-border-width: 0 0 1px 0;
+    --p-fileupload-header-border-radius: 5px 5px 0 0;
     --p-fileupload-header-gap: 0.5rem;
     --p-fileupload-background: var(--p-content-background);
     --p-fileupload-border-color: var(--p-content-border-color);
@@ -6987,9 +6987,9 @@ thead.p-datatable-thead > tr > th,
     --p-floatlabel-on-active-background: var(--p-form-field-background);
     --p-floatlabel-on-active-padding: 0 0.125rem;
     --p-floatlabel-in-active-top: var(--p-form-field-padding-y);
-    --p-floatlabel-in-input-padding-top: 1.5rem;
+    --p-floatlabel-in-input-padding-top: 1.875rem;
     --p-floatlabel-in-input-padding-bottom: var(--p-form-field-padding-y);
-    --p-floatlabel-over-active-top: -1.25rem;
+    --p-floatlabel-over-active-top: -1.375rem;
     --p-floatlabel-color: var(--p-form-field-float-label-color);
     --p-floatlabel-focus-color: var(--p-form-field-float-label-focus-color);
     --p-floatlabel-active-color: var(--p-form-field-float-label-active-color);
@@ -7154,7 +7154,7 @@ thead.p-datatable-thead > tr > th,
     --p-galleria-thumbnail-nav-button-focus-ring-color: var(--p-focus-ring-color);
     --p-galleria-thumbnail-nav-button-focus-ring-offset: var(--p-focus-ring-offset);
     --p-galleria-thumbnail-nav-button-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-galleria-thumbnails-content-background: var(--p-content-background);
+    --p-galleria-thumbnails-content-background: var(--p-surface-50);
     --p-galleria-thumbnails-content-padding: 1rem 0.25rem;
     --p-galleria-nav-icon-size: 1.5rem;
     --p-galleria-nav-button-background: rgba(255, 255, 255, 0.1);
@@ -7162,14 +7162,14 @@ thead.p-datatable-thead > tr > th,
     --p-galleria-nav-button-color: var(--p-surface-100);
     --p-galleria-nav-button-hover-color: var(--p-surface-0);
     --p-galleria-nav-button-size: 3rem;
-    --p-galleria-nav-button-gutter: 0.5rem;
+    --p-galleria-nav-button-gutter: 0;
     --p-galleria-nav-button-focus-ring-width: var(--p-focus-ring-width);
     --p-galleria-nav-button-focus-ring-style: var(--p-focus-ring-style);
     --p-galleria-nav-button-focus-ring-color: var(--p-focus-ring-color);
     --p-galleria-nav-button-focus-ring-offset: var(--p-focus-ring-offset);
     --p-galleria-nav-button-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-galleria-nav-button-next-border-radius: 50%;
-    --p-galleria-nav-button-prev-border-radius: 50%;
+    --p-galleria-nav-button-next-border-radius: 12px 0 0 12px;
+    --p-galleria-nav-button-prev-border-radius: 0 12px 12px 0;
     --p-galleria-border-width: 1px;
     --p-galleria-border-color: var(--p-content-border-color);
     --p-galleria-border-radius: var(--p-content-border-radius);
@@ -7693,7 +7693,7 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-iftalabel-input-padding-top: 1.5rem;
+    --p-iftalabel-input-padding-top: 1.875rem;
     --p-iftalabel-input-padding-bottom: var(--p-form-field-padding-y);
     --p-iftalabel-color: var(--p-form-field-float-label-color);
     --p-iftalabel-focus-color: var(--p-form-field-float-label-focus-color);
@@ -7756,22 +7756,22 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-image-action-hover-background: rgba(255, 255, 255, 0.1);
+    --p-image-action-hover-background: rgba(255,255,255,0.1);
     --p-image-action-color: var(--p-surface-50);
     --p-image-action-hover-color: var(--p-surface-0);
     --p-image-action-size: 3rem;
     --p-image-action-icon-size: 1.5rem;
-    --p-image-action-border-radius: 50%;
+    --p-image-action-border-radius: var(--p-content-border-radius);
     --p-image-action-focus-ring-width: var(--p-focus-ring-width);
     --p-image-action-focus-ring-style: var(--p-focus-ring-style);
     --p-image-action-focus-ring-color: var(--p-focus-ring-color);
     --p-image-action-focus-ring-offset: var(--p-focus-ring-offset);
     --p-image-action-focus-ring-shadow: var(--p-focus-ring-shadow);
     --p-image-toolbar-blur: 8px;
-    --p-image-toolbar-background: rgba(255, 255, 255, 0.1);
-    --p-image-toolbar-border-color: rgba(255, 255, 255, 0.2);
+    --p-image-toolbar-background: rgba(255,255,255,0.1);
+    --p-image-toolbar-border-color: rgba(255,255,255,0.2);
     --p-image-toolbar-border-width: 1px;
-    --p-image-toolbar-border-radius: 30px;
+    --p-image-toolbar-border-radius: var(--p-content-border-radius);
     --p-image-toolbar-padding: .5rem;
     --p-image-toolbar-gap: 0.5rem;
     --p-image-toolbar-position-left: auto;
@@ -7921,16 +7921,16 @@ thead.p-datatable-thead > tr > th,
 :root, :host {
     --p-imagecompare-handle-size: 15px;
     --p-imagecompare-handle-hover-size: 30px;
-    --p-imagecompare-handle-background: rgba(255, 255, 255, 0.3);
-    --p-imagecompare-handle-hover-background: rgba(255, 255, 255, 0.3);
-    --p-imagecompare-handle-border-color: unset;
-    --p-imagecompare-handle-hover-border-color: unset;
-    --p-imagecompare-handle-border-width: 0;
+    --p-imagecompare-handle-background: rgba(255,255,255,0.3);
+    --p-imagecompare-handle-hover-background: rgba(255,255,255,0.3);
+    --p-imagecompare-handle-border-color: rgba(255,255,255,0.3);
+    --p-imagecompare-handle-hover-border-color: rgba(255,255,255,0.3);
+    --p-imagecompare-handle-border-width: 3px;
     --p-imagecompare-handle-border-radius: 50%;
     --p-imagecompare-handle-transition-duration: var(--p-transition-duration);
     --p-imagecompare-handle-focus-ring-width: var(--p-focus-ring-width);
     --p-imagecompare-handle-focus-ring-style: var(--p-focus-ring-style);
-    --p-imagecompare-handle-focus-ring-color: rgba(255, 255, 255, 0.3);
+    --p-imagecompare-handle-focus-ring-color: rgba(255,255,255,0.3);
     --p-imagecompare-handle-focus-ring-offset: var(--p-focus-ring-offset);
     --p-imagecompare-handle-focus-ring-shadow: var(--p-focus-ring-shadow);
 }
@@ -8024,30 +8024,30 @@ thead.p-datatable-thead > tr > th,
 
 :root, :host {
     --p-inlinemessage-contrast-background: var(--p-surface-900);
-    --p-inlinemessage-contrast-border-color: var(--p-surface-950);
+    --p-inlinemessage-contrast-border-color: var(--p-surface-900);
     --p-inlinemessage-contrast-color: var(--p-surface-50);
-    --p-inlinemessage-contrast-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-950), transparent 96%);
+    --p-inlinemessage-contrast-shadow: none;
     --p-inlinemessage-secondary-background: var(--p-surface-100);
-    --p-inlinemessage-secondary-border-color: var(--p-surface-200);
+    --p-inlinemessage-secondary-border-color: var(--p-surface-100);
     --p-inlinemessage-secondary-color: var(--p-surface-600);
-    --p-inlinemessage-secondary-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-500), transparent 96%);
+    --p-inlinemessage-secondary-shadow: none;
     --p-inlinemessage-error-background: color-mix(in srgb, var(--p-red-50), transparent 5%);
-    --p-inlinemessage-error-border-color: var(--p-red-200);
+    --p-inlinemessage-error-border-color: color-mix(in srgb, var(--p-red-50), transparent 5%);
     --p-inlinemessage-error-color: var(--p-red-600);
-    --p-inlinemessage-error-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-red-500), transparent 96%);
-    --p-inlinemessage-warn-background: color-mix(in srgb, var(--p-yellow-50), transparent 5%);
-    --p-inlinemessage-warn-border-color: var(--p-yellow-200);
+    --p-inlinemessage-error-shadow: none;
+    --p-inlinemessage-warn-background: color-mix(in srgb,var(--p-yellow-50), transparent 5%);
+    --p-inlinemessage-warn-border-color: color-mix(in srgb,var(--p-yellow-50), transparent 5%);
     --p-inlinemessage-warn-color: var(--p-yellow-600);
-    --p-inlinemessage-warn-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-yellow-500), transparent 96%);
+    --p-inlinemessage-warn-shadow: none;
     --p-inlinemessage-success-background: color-mix(in srgb, var(--p-green-50), transparent 5%);
-    --p-inlinemessage-success-border-color: var(--p-green-200);
+    --p-inlinemessage-success-border-color: color-mix(in srgb, var(--p-green-50), transparent 5%);
     --p-inlinemessage-success-color: var(--p-green-600);
-    --p-inlinemessage-success-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-green-500), transparent 96%);
+    --p-inlinemessage-success-shadow: none;
     --p-inlinemessage-info-background: color-mix(in srgb, var(--p-blue-50), transparent 5%);
-    --p-inlinemessage-info-border-color: var(--p-blue-200);
+    --p-inlinemessage-info-border-color: color-mix(in srgb, var(--p-blue-50), transparent 5%);
     --p-inlinemessage-info-color: var(--p-blue-600);
-    --p-inlinemessage-info-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-blue-500), transparent 96%);
-    --p-inlinemessage-icon-size: 1rem;
+    --p-inlinemessage-info-shadow: none;
+    --p-inlinemessage-icon-size: 1.125rem;
     --p-inlinemessage-text-font-weight: 500;
     --p-inlinemessage-padding: var(--p-form-field-padding-y) var(--p-form-field-padding-x);
     --p-inlinemessage-border-radius: var(--p-content-border-radius);
@@ -8056,29 +8056,29 @@ thead.p-datatable-thead > tr > th,
 
 .app-dark {
     --p-inlinemessage-contrast-background: var(--p-surface-0);
-    --p-inlinemessage-contrast-border-color: var(--p-surface-100);
+    --p-inlinemessage-contrast-border-color: var(--p-surface-0);
     --p-inlinemessage-contrast-color: var(--p-surface-950);
-    --p-inlinemessage-contrast-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-950), transparent 96%);
+    --p-inlinemessage-contrast-shadow: none;
     --p-inlinemessage-secondary-background: var(--p-surface-800);
-    --p-inlinemessage-secondary-border-color: var(--p-surface-700);
+    --p-inlinemessage-secondary-border-color: var(--p-surface-800);
     --p-inlinemessage-secondary-color: var(--p-surface-300);
-    --p-inlinemessage-secondary-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-500), transparent 96%);
+    --p-inlinemessage-secondary-shadow: none;
     --p-inlinemessage-error-background: color-mix(in srgb, var(--p-red-500), transparent 84%);
-    --p-inlinemessage-error-border-color: color-mix(in srgb, var(--p-red-700), transparent 64%);
+    --p-inlinemessage-error-border-color: color-mix(in srgb, var(--p-red-500), transparent 84%);
     --p-inlinemessage-error-color: var(--p-red-500);
-    --p-inlinemessage-error-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-red-500), transparent 96%);
+    --p-inlinemessage-error-shadow: none;
     --p-inlinemessage-warn-background: color-mix(in srgb, var(--p-yellow-500), transparent 84%);
-    --p-inlinemessage-warn-border-color: color-mix(in srgb, var(--p-yellow-700), transparent 64%);
+    --p-inlinemessage-warn-border-color: color-mix(in srgb, var(--p-yellow-500), transparent 84%);
     --p-inlinemessage-warn-color: var(--p-yellow-500);
-    --p-inlinemessage-warn-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-yellow-500), transparent 96%);
+    --p-inlinemessage-warn-shadow: none;
     --p-inlinemessage-success-background: color-mix(in srgb, var(--p-green-500), transparent 84%);
-    --p-inlinemessage-success-border-color: color-mix(in srgb, var(--p-green-700), transparent 64%);
+    --p-inlinemessage-success-border-color: color-mix(in srgb, var(--p-green-500), transparent 84%);
     --p-inlinemessage-success-color: var(--p-green-500);
-    --p-inlinemessage-success-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-green-500), transparent 96%);
+    --p-inlinemessage-success-shadow: none;
     --p-inlinemessage-info-background: color-mix(in srgb, var(--p-blue-500), transparent 84%);
-    --p-inlinemessage-info-border-color: color-mix(in srgb, var(--p-blue-700), transparent 64%);
+    --p-inlinemessage-info-border-color: color-mix(in srgb, var(--p-blue-500), transparent 84%);
     --p-inlinemessage-info-color: var(--p-blue-500);
-    --p-inlinemessage-info-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-blue-500), transparent 96%);
+    --p-inlinemessage-info-shadow: none;
 }
 
 
@@ -8353,12 +8353,12 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-inputgroup-addon-background: var(--p-form-field-background);
+    --p-inputgroup-addon-background: var(--p-surface-50);
     --p-inputgroup-addon-border-color: var(--p-form-field-border-color);
-    --p-inputgroup-addon-color: var(--p-form-field-icon-color);
+    --p-inputgroup-addon-color: var(--p-text-muted-color);
     --p-inputgroup-addon-border-radius: var(--p-form-field-border-radius);
-    --p-inputgroup-addon-padding: 0.5rem;
-    --p-inputgroup-addon-min-width: 2.5rem;
+    --p-inputgroup-addon-padding: 0.625rem 0.5rem;
+    --p-inputgroup-addon-min-width: 2.75rem;
 }
 
 
@@ -8468,15 +8468,15 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-inputnumber-button-background: transparent;
-    --p-inputnumber-button-hover-background: var(--p-surface-100);
-    --p-inputnumber-button-active-background: var(--p-surface-200);
+    --p-inputnumber-button-background: var(--p-surface-100);
+    --p-inputnumber-button-hover-background: var(--p-surface-200);
+    --p-inputnumber-button-active-background: var(--p-surface-300);
     --p-inputnumber-button-border-color: var(--p-form-field-border-color);
     --p-inputnumber-button-hover-border-color: var(--p-form-field-border-color);
     --p-inputnumber-button-active-border-color: var(--p-form-field-border-color);
-    --p-inputnumber-button-color: var(--p-surface-400);
-    --p-inputnumber-button-hover-color: var(--p-surface-500);
-    --p-inputnumber-button-active-color: var(--p-surface-600);
+    --p-inputnumber-button-color: var(--p-surface-600);
+    --p-inputnumber-button-hover-color: var(--p-surface-700);
+    --p-inputnumber-button-active-color: var(--p-surface-800);
     --p-inputnumber-button-width: 2.5rem;
     --p-inputnumber-button-border-radius: var(--p-form-field-border-radius);
     --p-inputnumber-button-vertical-padding: var(--p-form-field-padding-y);
@@ -8484,15 +8484,15 @@ thead.p-datatable-thead > tr > th,
 }
 
 .app-dark {
-    --p-inputnumber-button-background: transparent;
-    --p-inputnumber-button-hover-background: var(--p-surface-800);
-    --p-inputnumber-button-active-background: var(--p-surface-700);
+    --p-inputnumber-button-background: var(--p-surface-800);
+    --p-inputnumber-button-hover-background: var(--p-surface-700);
+    --p-inputnumber-button-active-background: var(--p-surface-500);
     --p-inputnumber-button-border-color: var(--p-form-field-border-color);
     --p-inputnumber-button-hover-border-color: var(--p-form-field-border-color);
     --p-inputnumber-button-active-border-color: var(--p-form-field-border-color);
-    --p-inputnumber-button-color: var(--p-surface-400);
-    --p-inputnumber-button-hover-color: var(--p-surface-300);
-    --p-inputnumber-button-active-color: var(--p-surface-200);
+    --p-inputnumber-button-color: var(--p-surface-300);
+    --p-inputnumber-button-hover-color: var(--p-surface-200);
+    --p-inputnumber-button-active-color: var(--p-surface-100);
 }
 
 
@@ -8884,8 +8884,8 @@ thead.p-datatable-thead > tr > th,
     --p-listbox-option-striped-background: var(--p-surface-50);
     --p-listbox-empty-message-padding: var(--p-list-option-padding);
     --p-listbox-checkmark-color: var(--p-list-option-color);
-    --p-listbox-checkmark-gutter-start: -0.375rem;
-    --p-listbox-checkmark-gutter-end: 0.375rem;
+    --p-listbox-checkmark-gutter-start: -0.5rem;
+    --p-listbox-checkmark-gutter-end: 0.5rem;
     --p-listbox-option-group-background: var(--p-list-option-group-background);
     --p-listbox-option-group-color: var(--p-list-option-group-color);
     --p-listbox-option-group-font-weight: var(--p-list-option-group-font-weight);
@@ -9041,7 +9041,7 @@ thead.p-datatable-thead > tr > th,
 
 :root, :host {
     --p-megamenu-mobile-button-border-radius: 50%;
-    --p-megamenu-mobile-button-size: 1.75rem;
+    --p-megamenu-mobile-button-size: 2rem;
     --p-megamenu-mobile-button-color: var(--p-text-muted-color);
     --p-megamenu-mobile-button-hover-color: var(--p-text-hover-muted-color);
     --p-megamenu-mobile-button-hover-background: var(--p-content-hover-background);
@@ -9080,14 +9080,14 @@ thead.p-datatable-thead > tr > th,
     --p-megamenu-item-icon-focus-color: var(--p-navigation-item-icon-focus-color);
     --p-megamenu-item-icon-active-color: var(--p-navigation-item-icon-active-color);
     --p-megamenu-base-item-border-radius: var(--p-content-border-radius);
-    --p-megamenu-base-item-padding: var(--p-navigation-item-padding);
-    --p-megamenu-background: var(--p-content-background);
-    --p-megamenu-border-color: var(--p-content-border-color);
+    --p-megamenu-base-item-padding: 0.75rem 1rem;
+    --p-megamenu-background: var(--p-surface-50);
+    --p-megamenu-border-color: transparent;
     --p-megamenu-border-radius: var(--p-content-border-radius);
     --p-megamenu-color: var(--p-content-color);
     --p-megamenu-gap: 0.5rem;
     --p-megamenu-transition-duration: var(--p-transition-duration);
-    --p-megamenu-horizontal-orientation-padding: 0.5rem 0.75rem;
+    --p-megamenu-horizontal-orientation-padding: 0.75rem 1rem;
     --p-megamenu-horizontal-orientation-gap: 0.5rem;
     --p-megamenu-vertical-orientation-padding: var(--p-navigation-list-padding);
     --p-megamenu-vertical-orientation-gap: var(--p-navigation-list-gap);
@@ -9543,7 +9543,7 @@ thead.p-datatable-thead > tr > th,
 
 :root, :host {
     --p-menubar-mobile-button-border-radius: 50%;
-    --p-menubar-mobile-button-size: 1.75rem;
+    --p-menubar-mobile-button-size: 2rem;
     --p-menubar-mobile-button-color: var(--p-text-muted-color);
     --p-menubar-mobile-button-hover-color: var(--p-text-hover-muted-color);
     --p-menubar-mobile-button-hover-background: var(--p-content-hover-background);
@@ -9559,7 +9559,7 @@ thead.p-datatable-thead > tr > th,
     --p-menubar-submenu-border-color: var(--p-content-border-color);
     --p-menubar-submenu-border-radius: var(--p-content-border-radius);
     --p-menubar-submenu-shadow: var(--p-overlay-navigation-shadow);
-    --p-menubar-submenu-mobile-indent: 1rem;
+    --p-menubar-submenu-mobile-indent: 1.25rem;
     --p-menubar-submenu-icon-size: var(--p-navigation-submenu-icon-size);
     --p-menubar-submenu-icon-color: var(--p-navigation-submenu-icon-color);
     --p-menubar-submenu-icon-focus-color: var(--p-navigation-submenu-icon-focus-color);
@@ -9576,13 +9576,13 @@ thead.p-datatable-thead > tr > th,
     --p-menubar-item-icon-focus-color: var(--p-navigation-item-icon-focus-color);
     --p-menubar-item-icon-active-color: var(--p-navigation-item-icon-active-color);
     --p-menubar-base-item-border-radius: var(--p-content-border-radius);
-    --p-menubar-base-item-padding: var(--p-navigation-item-padding);
-    --p-menubar-background: var(--p-content-background);
-    --p-menubar-border-color: var(--p-content-border-color);
+    --p-menubar-base-item-padding: 0.75rem 1rem;
+    --p-menubar-background: var(--p-surface-50);
+    --p-menubar-border-color: transparent;
     --p-menubar-border-radius: var(--p-content-border-radius);
     --p-menubar-color: var(--p-content-color);
     --p-menubar-gap: 0.5rem;
-    --p-menubar-padding: 0.5rem 0.75rem;
+    --p-menubar-padding: 0.75rem 1rem;
     --p-menubar-transition-duration: var(--p-transition-duration);
 }
 
@@ -9858,87 +9858,87 @@ thead.p-datatable-thead > tr > th,
 
 :root, :host {
     --p-message-contrast-background: var(--p-surface-900);
-    --p-message-contrast-border-color: var(--p-surface-950);
+    --p-message-contrast-border-color: transparent;
     --p-message-contrast-color: var(--p-surface-50);
-    --p-message-contrast-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-950), transparent 96%);
-    --p-message-contrast-simple-color: var(--p-surface-950);
-    --p-message-contrast-outlined-color: var(--p-surface-950);
-    --p-message-contrast-outlined-border-color: var(--p-surface-950);
+    --p-message-contrast-shadow: none;
+    --p-message-contrast-simple-color: var(--p-surface-900);
+    --p-message-contrast-outlined-color: var(--p-surface-900);
+    --p-message-contrast-outlined-border-color: var(--p-surface-900);
     --p-message-contrast-close-button-hover-background: var(--p-surface-800);
-    --p-message-contrast-close-button-focus-ring-color: var(--p-surface-50);
-    --p-message-contrast-close-button-focus-ring-shadow: none;
+    --p-message-contrast-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-contrast-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-400);
     --p-message-secondary-background: var(--p-surface-100);
-    --p-message-secondary-border-color: var(--p-surface-200);
+    --p-message-secondary-border-color: transparent;
     --p-message-secondary-color: var(--p-surface-600);
-    --p-message-secondary-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-500), transparent 96%);
+    --p-message-secondary-shadow: none;
     --p-message-secondary-simple-color: var(--p-surface-500);
     --p-message-secondary-outlined-color: var(--p-surface-500);
     --p-message-secondary-outlined-border-color: var(--p-surface-500);
     --p-message-secondary-close-button-hover-background: var(--p-surface-200);
-    --p-message-secondary-close-button-focus-ring-color: var(--p-surface-600);
-    --p-message-secondary-close-button-focus-ring-shadow: none;
+    --p-message-secondary-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-secondary-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-200);
     --p-message-error-background: color-mix(in srgb, var(--p-red-50), transparent 5%);
-    --p-message-error-border-color: var(--p-red-200);
+    --p-message-error-border-color: transparent;
     --p-message-error-color: var(--p-red-600);
-    --p-message-error-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-red-500), transparent 96%);
+    --p-message-error-shadow: none;
     --p-message-error-simple-color: var(--p-red-600);
     --p-message-error-outlined-color: var(--p-red-600);
     --p-message-error-outlined-border-color: var(--p-red-600);
     --p-message-error-close-button-hover-background: var(--p-red-100);
-    --p-message-error-close-button-focus-ring-color: var(--p-red-600);
-    --p-message-error-close-button-focus-ring-shadow: none;
-    --p-message-warn-background: color-mix(in srgb, var(--p-yellow-50), transparent 5%);
-    --p-message-warn-border-color: var(--p-yellow-200);
+    --p-message-error-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-error-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-red-200);
+    --p-message-warn-background: color-mix(in srgb,var(--p-yellow-50), transparent 5%);
+    --p-message-warn-border-color: transparent;
     --p-message-warn-color: var(--p-yellow-600);
-    --p-message-warn-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-yellow-500), transparent 96%);
+    --p-message-warn-shadow: none;
     --p-message-warn-simple-color: var(--p-yellow-600);
     --p-message-warn-outlined-color: var(--p-yellow-600);
     --p-message-warn-outlined-border-color: var(--p-yellow-600);
     --p-message-warn-close-button-hover-background: var(--p-yellow-100);
-    --p-message-warn-close-button-focus-ring-color: var(--p-yellow-600);
-    --p-message-warn-close-button-focus-ring-shadow: none;
+    --p-message-warn-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-warn-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-yellow-200);
     --p-message-success-background: color-mix(in srgb, var(--p-green-50), transparent 5%);
-    --p-message-success-border-color: var(--p-green-200);
+    --p-message-success-border-color: transparent;
     --p-message-success-color: var(--p-green-600);
-    --p-message-success-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-green-500), transparent 96%);
+    --p-message-success-shadow: none;
     --p-message-success-simple-color: var(--p-green-600);
     --p-message-success-outlined-color: var(--p-green-600);
     --p-message-success-outlined-border-color: var(--p-green-600);
     --p-message-success-close-button-hover-background: var(--p-green-100);
-    --p-message-success-close-button-focus-ring-color: var(--p-green-600);
-    --p-message-success-close-button-focus-ring-shadow: none;
+    --p-message-success-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-success-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-green-200);
     --p-message-info-background: color-mix(in srgb, var(--p-blue-50), transparent 5%);
-    --p-message-info-border-color: var(--p-blue-200);
+    --p-message-info-border-color: transparent;
     --p-message-info-color: var(--p-blue-600);
-    --p-message-info-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-blue-500), transparent 96%);
+    --p-message-info-shadow: none;
     --p-message-info-simple-color: var(--p-blue-600);
     --p-message-info-outlined-color: var(--p-blue-600);
     --p-message-info-outlined-border-color: var(--p-blue-600);
     --p-message-info-close-button-hover-background: var(--p-blue-100);
-    --p-message-info-close-button-focus-ring-color: var(--p-blue-600);
-    --p-message-info-close-button-focus-ring-shadow: none;
+    --p-message-info-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-info-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-blue-200);
     --p-message-simple-content-padding: 0;
     --p-message-outlined-border-width: 1px;
     --p-message-close-icon-size: 1rem;
     --p-message-close-icon-lg-size: 1.125rem;
     --p-message-close-icon-sm-size: 0.875rem;
-    --p-message-close-button-width: 1.75rem;
-    --p-message-close-button-height: 1.75rem;
+    --p-message-close-button-width: 2rem;
+    --p-message-close-button-height: 2rem;
     --p-message-close-button-border-radius: 50%;
     --p-message-close-button-focus-ring-width: var(--p-focus-ring-width);
     --p-message-close-button-focus-ring-style: var(--p-focus-ring-style);
     --p-message-close-button-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-message-icon-size: 1.125rem;
-    --p-message-icon-lg-size: 1.25rem;
+    --p-message-icon-size: 1.25rem;
+    --p-message-icon-lg-size: 1.5rem;
     --p-message-icon-sm-size: 1rem;
     --p-message-text-font-size: 1rem;
     --p-message-text-font-weight: 500;
     --p-message-text-lg-font-size: 1.125rem;
     --p-message-text-sm-font-size: 0.875rem;
-    --p-message-content-padding: 0.5rem 0.75rem;
+    --p-message-content-padding: 0.75rem 1rem;
     --p-message-content-gap: 0.5rem;
-    --p-message-content-lg-padding: 0.625rem 0.875rem;
-    --p-message-content-sm-padding: 0.375rem 0.625rem;
+    --p-message-content-lg-padding: 0.75rem 0.875rem;
+    --p-message-content-sm-padding: 0.5rem 0.625rem;
     --p-message-border-radius: var(--p-content-border-radius);
     --p-message-border-width: 1px;
     --p-message-transition-duration: var(--p-transition-duration);
@@ -9946,65 +9946,65 @@ thead.p-datatable-thead > tr > th,
 
 .app-dark {
     --p-message-contrast-background: var(--p-surface-0);
-    --p-message-contrast-border-color: var(--p-surface-100);
+    --p-message-contrast-border-color: transparent;
     --p-message-contrast-color: var(--p-surface-950);
-    --p-message-contrast-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-950), transparent 96%);
+    --p-message-contrast-shadow: none;
     --p-message-contrast-simple-color: var(--p-surface-0);
     --p-message-contrast-outlined-color: var(--p-surface-0);
     --p-message-contrast-outlined-border-color: var(--p-surface-0);
     --p-message-contrast-close-button-hover-background: var(--p-surface-100);
-    --p-message-contrast-close-button-focus-ring-color: var(--p-surface-950);
-    --p-message-contrast-close-button-focus-ring-shadow: none;
+    --p-message-contrast-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-contrast-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-surface-950), transparent 80%);
     --p-message-secondary-background: var(--p-surface-800);
-    --p-message-secondary-border-color: var(--p-surface-700);
+    --p-message-secondary-border-color: transparent;
     --p-message-secondary-color: var(--p-surface-300);
-    --p-message-secondary-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-500), transparent 96%);
+    --p-message-secondary-shadow: none;
     --p-message-secondary-simple-color: var(--p-surface-400);
     --p-message-secondary-outlined-color: var(--p-surface-400);
     --p-message-secondary-outlined-border-color: var(--p-surface-400);
     --p-message-secondary-close-button-hover-background: var(--p-surface-700);
-    --p-message-secondary-close-button-focus-ring-color: var(--p-surface-300);
-    --p-message-secondary-close-button-focus-ring-shadow: none;
+    --p-message-secondary-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-secondary-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-surface-300), transparent 80%);
     --p-message-error-background: color-mix(in srgb, var(--p-red-500), transparent 84%);
-    --p-message-error-border-color: color-mix(in srgb, var(--p-red-700), transparent 64%);
+    --p-message-error-border-color: transparent;
     --p-message-error-color: var(--p-red-500);
-    --p-message-error-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-red-500), transparent 96%);
+    --p-message-error-shadow: none;
     --p-message-error-simple-color: var(--p-red-500);
     --p-message-error-outlined-color: var(--p-red-500);
     --p-message-error-outlined-border-color: var(--p-red-500);
     --p-message-error-close-button-hover-background: rgba(255, 255, 255, 0.05);
-    --p-message-error-close-button-focus-ring-color: var(--p-red-500);
-    --p-message-error-close-button-focus-ring-shadow: none;
+    --p-message-error-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-error-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-red-500), transparent 80%);
     --p-message-warn-background: color-mix(in srgb, var(--p-yellow-500), transparent 84%);
-    --p-message-warn-border-color: color-mix(in srgb, var(--p-yellow-700), transparent 64%);
+    --p-message-warn-border-color: transparent;
     --p-message-warn-color: var(--p-yellow-500);
-    --p-message-warn-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-yellow-500), transparent 96%);
+    --p-message-warn-shadow: none;
     --p-message-warn-simple-color: var(--p-yellow-500);
     --p-message-warn-outlined-color: var(--p-yellow-500);
     --p-message-warn-outlined-border-color: var(--p-yellow-500);
     --p-message-warn-close-button-hover-background: rgba(255, 255, 255, 0.05);
-    --p-message-warn-close-button-focus-ring-color: var(--p-yellow-500);
-    --p-message-warn-close-button-focus-ring-shadow: none;
+    --p-message-warn-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-warn-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-yellow-500), transparent 80%);
     --p-message-success-background: color-mix(in srgb, var(--p-green-500), transparent 84%);
-    --p-message-success-border-color: color-mix(in srgb, var(--p-green-700), transparent 64%);
+    --p-message-success-border-color: transparent;
     --p-message-success-color: var(--p-green-500);
-    --p-message-success-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-green-500), transparent 96%);
+    --p-message-success-shadow: none;
     --p-message-success-simple-color: var(--p-green-500);
     --p-message-success-outlined-color: var(--p-green-500);
     --p-message-success-outlined-border-color: var(--p-green-500);
     --p-message-success-close-button-hover-background: rgba(255, 255, 255, 0.05);
-    --p-message-success-close-button-focus-ring-color: var(--p-green-500);
-    --p-message-success-close-button-focus-ring-shadow: none;
+    --p-message-success-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-success-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-green-500), transparent 80%);
     --p-message-info-background: color-mix(in srgb, var(--p-blue-500), transparent 84%);
-    --p-message-info-border-color: color-mix(in srgb, var(--p-blue-700), transparent 64%);
+    --p-message-info-border-color: transparent;
     --p-message-info-color: var(--p-blue-500);
-    --p-message-info-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-blue-500), transparent 96%);
+    --p-message-info-shadow: none;
     --p-message-info-simple-color: var(--p-blue-500);
     --p-message-info-outlined-color: var(--p-blue-500);
     --p-message-info-outlined-border-color: var(--p-blue-500);
     --p-message-info-close-button-hover-background: rgba(255, 255, 255, 0.05);
-    --p-message-info-close-button-focus-ring-color: var(--p-blue-500);
-    --p-message-info-close-button-focus-ring-shadow: none;
+    --p-message-info-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-message-info-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-blue-500), transparent 80%);
 }
 
 
@@ -10330,7 +10330,7 @@ thead.p-datatable-thead > tr > th,
     --p-metergroup-label-marker-size: 0.5rem;
     --p-metergroup-label-gap: 0.5rem;
     --p-metergroup-meters-background: var(--p-content-border-color);
-    --p-metergroup-meters-size: 0.5rem;
+    --p-metergroup-meters-size: 0.625rem;
     --p-metergroup-border-radius: var(--p-content-border-radius);
     --p-metergroup-gap: 1rem;
 }
@@ -10766,7 +10766,7 @@ thead.p-datatable-thead > tr > th,
     --p-organizationchart-node-toggle-button-border-color: var(--p-content-border-color);
     --p-organizationchart-node-toggle-button-color: var(--p-text-muted-color);
     --p-organizationchart-node-toggle-button-hover-color: var(--p-text-color);
-    --p-organizationchart-node-toggle-button-size: 1.5rem;
+    --p-organizationchart-node-toggle-button-size: 1.75rem;
     --p-organizationchart-node-toggle-button-border-radius: 50%;
     --p-organizationchart-node-toggle-button-focus-ring-width: var(--p-focus-ring-width);
     --p-organizationchart-node-toggle-button-focus-ring-style: var(--p-focus-ring-style);
@@ -10780,8 +10780,8 @@ thead.p-datatable-thead > tr > th,
     --p-organizationchart-node-color: var(--p-content-color);
     --p-organizationchart-node-selected-color: var(--p-highlight-color);
     --p-organizationchart-node-hover-color: var(--p-content-hover-color);
-    --p-organizationchart-node-padding: 0.75rem 1rem;
-    --p-organizationchart-node-toggleable-padding: 0.75rem 1rem 1.25rem 1rem;
+    --p-organizationchart-node-padding: 1rem 1.25rem;
+    --p-organizationchart-node-toggleable-padding: 1rem 1.25rem 1.5rem 1.25rem;
     --p-organizationchart-node-border-radius: var(--p-content-border-radius);
     --p-organizationchart-gutter: 0.75rem;
     --p-organizationchart-transition-duration: var(--p-transition-duration);
@@ -11063,16 +11063,16 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-panel-footer-padding: 0 1.125rem 1.125rem 1.125rem;
-    --p-panel-content-padding: 0 1.125rem 1.125rem 1.125rem;
-    --p-panel-title-font-weight: 600;
-    --p-panel-toggleable-header-padding: 0.375rem 1.125rem;
-    --p-panel-header-background: transparent;
+    --p-panel-footer-padding: 1.125rem;
+    --p-panel-content-padding: 1.125rem;
+    --p-panel-title-font-weight: 700;
+    --p-panel-toggleable-header-padding: 0.25rem 1.125rem;
+    --p-panel-header-background: var(--p-surface-50);
     --p-panel-header-color: var(--p-text-color);
     --p-panel-header-padding: 1.125rem;
     --p-panel-header-border-color: var(--p-content-border-color);
-    --p-panel-header-border-width: 0;
-    --p-panel-header-border-radius: 0;
+    --p-panel-header-border-width: 0 0 1px 0;
+    --p-panel-header-border-radius: 5px 5px 0 0;
     --p-panel-background: var(--p-content-background);
     --p-panel-border-color: var(--p-content-border-color);
     --p-panel-color: var(--p-content-color);
@@ -11145,12 +11145,12 @@ thead.p-datatable-thead > tr > th,
     --p-panelmenu-panel-border-width: 1px;
     --p-panelmenu-panel-color: var(--p-content-color);
     --p-panelmenu-panel-padding: 0.25rem 0.25rem;
-    --p-panelmenu-panel-border-radius: var(--p-content-border-radius);
-    --p-panelmenu-panel-last-border-width: 1px;
+    --p-panelmenu-panel-border-radius: 0;
+    --p-panelmenu-panel-last-border-width: 0 1px 1px 1px;
     --p-panelmenu-panel-last-bottom-border-radius: var(--p-content-border-radius);
-    --p-panelmenu-panel-first-border-width: 1px;
+    --p-panelmenu-panel-first-border-width: 1px 1px 0 1px;
     --p-panelmenu-panel-first-top-border-radius: var(--p-content-border-radius);
-    --p-panelmenu-gap: 0.5rem;
+    --p-panelmenu-gap: 0;
     --p-panelmenu-transition-duration: var(--p-transition-duration);
 }
 
@@ -11326,7 +11326,7 @@ thead.p-datatable-thead > tr > th,
     --p-password-strength-weak-background: var(--p-red-500);
     --p-password-strength-medium-background: var(--p-amber-500);
     --p-password-strength-strong-background: var(--p-green-500);
-    --p-password-content-gap: 0.5rem;
+    --p-password-content-gap: 0.75rem;
     --p-password-overlay-background: var(--p-overlay-popover-background);
     --p-password-overlay-border-color: var(--p-overlay-popover-border-color);
     --p-password-overlay-border-radius: var(--p-overlay-popover-border-radius);
@@ -11548,12 +11548,12 @@ thead.p-datatable-thead > tr > th,
 
 :root, :host {
     --p-progressbar-label-color: var(--p-primary-contrast-color);
-    --p-progressbar-label-font-size: 0.75rem;
+    --p-progressbar-label-font-size: 0.875rem;
     --p-progressbar-label-font-weight: 600;
     --p-progressbar-value-background: var(--p-primary-color);
     --p-progressbar-background: var(--p-content-border-color);
     --p-progressbar-border-radius: var(--p-content-border-radius);
-    --p-progressbar-height: 1.25rem;
+    --p-progressbar-height: 1.5rem;
 }
 
 
@@ -11678,17 +11678,17 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-progressspinner-color-one: var(--p-red-500);
-    --p-progressspinner-color-two: var(--p-blue-500);
-    --p-progressspinner-color-three: var(--p-green-500);
-    --p-progressspinner-color-four: var(--p-yellow-500);
+    --p-progressspinner-color-one: var(--p-pink-500);
+    --p-progressspinner-color-two: var(--p-sky-500);
+    --p-progressspinner-color-three: var(--p-emerald-500);
+    --p-progressspinner-color-four: var(--p-amber-500);
 }
 
 .app-dark {
-    --p-progressspinner-color-one: var(--p-red-400);
-    --p-progressspinner-color-two: var(--p-blue-400);
-    --p-progressspinner-color-three: var(--p-green-400);
-    --p-progressspinner-color-four: var(--p-yellow-400);
+    --p-progressspinner-color-one: var(--p-pink-400);
+    --p-progressspinner-color-two: var(--p-sky-400);
+    --p-progressspinner-color-three: var(--p-emerald-400);
+    --p-progressspinner-color-four: var(--p-amber-400);
 }
 
 
@@ -11768,14 +11768,14 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-radiobutton-icon-size: 0.75rem;
+    --p-radiobutton-icon-size: 1rem;
     --p-radiobutton-icon-checked-color: var(--p-primary-contrast-color);
     --p-radiobutton-icon-checked-hover-color: var(--p-primary-contrast-color);
     --p-radiobutton-icon-disabled-color: var(--p-form-field-disabled-color);
-    --p-radiobutton-icon-lg-size: 1rem;
-    --p-radiobutton-icon-sm-size: 0.5rem;
-    --p-radiobutton-width: 1.25rem;
-    --p-radiobutton-height: 1.25rem;
+    --p-radiobutton-icon-lg-size: 1.25rem;
+    --p-radiobutton-icon-sm-size: 0.75rem;
+    --p-radiobutton-width: 1.5rem;
+    --p-radiobutton-height: 1.5rem;
     --p-radiobutton-background: var(--p-form-field-background);
     --p-radiobutton-checked-background: var(--p-primary-color);
     --p-radiobutton-checked-hover-background: var(--p-primary-hover-color);
@@ -11783,7 +11783,7 @@ thead.p-datatable-thead > tr > th,
     --p-radiobutton-filled-background: var(--p-form-field-filled-background);
     --p-radiobutton-border-color: var(--p-form-field-border-color);
     --p-radiobutton-hover-border-color: var(--p-form-field-hover-border-color);
-    --p-radiobutton-focus-border-color: var(--p-form-field-border-color);
+    --p-radiobutton-focus-border-color: var(--p-form-field-focus-border-color);
     --p-radiobutton-checked-border-color: var(--p-primary-color);
     --p-radiobutton-checked-hover-border-color: var(--p-primary-hover-color);
     --p-radiobutton-checked-focus-border-color: var(--p-primary-color);
@@ -11791,15 +11791,15 @@ thead.p-datatable-thead > tr > th,
     --p-radiobutton-invalid-border-color: var(--p-form-field-invalid-border-color);
     --p-radiobutton-shadow: var(--p-form-field-shadow);
     --p-radiobutton-transition-duration: var(--p-form-field-transition-duration);
-    --p-radiobutton-lg-width: 1.5rem;
-    --p-radiobutton-lg-height: 1.5rem;
-    --p-radiobutton-sm-width: 1rem;
-    --p-radiobutton-sm-height: 1rem;
-    --p-radiobutton-focus-ring-width: var(--p-focus-ring-width);
-    --p-radiobutton-focus-ring-style: var(--p-focus-ring-style);
-    --p-radiobutton-focus-ring-color: var(--p-focus-ring-color);
-    --p-radiobutton-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-radiobutton-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-radiobutton-lg-width: 1.75rem;
+    --p-radiobutton-lg-height: 1.75rem;
+    --p-radiobutton-sm-width: 1.25rem;
+    --p-radiobutton-sm-height: 1.25rem;
+    --p-radiobutton-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-radiobutton-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-radiobutton-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-radiobutton-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-radiobutton-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
 }
 
 
@@ -11948,7 +11948,7 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-rating-icon-size: 1rem;
+    --p-rating-icon-size: 1.25rem;
     --p-rating-icon-color: var(--p-text-muted-color);
     --p-rating-icon-hover-color: var(--p-primary-color);
     --p-rating-icon-active-color: var(--p-primary-color);
@@ -12019,11 +12019,11 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-ripple-background: rgba(0, 0, 0, 0.1);
+    --p-ripple-background: rgba(0,0,0,0.1);
 }
 
 .app-dark {
-    --p-ripple-background: rgba(255, 255, 255, 0.3);
+    --p-ripple-background: rgba(255,255,255,0.3);
 }
 
 
@@ -12049,7 +12049,7 @@ thead.p-datatable-thead > tr > th,
 
 
 :root, :host {
-    --p-scrollpanel-bar-background: var(--p-surface-100);
+    --p-scrollpanel-bar-background: var(--p-surface-200);
     --p-scrollpanel-bar-size: 9px;
     --p-scrollpanel-bar-border-radius: var(--p-border-radius-sm);
     --p-scrollpanel-bar-focus-ring-width: var(--p-focus-ring-width);
@@ -12061,7 +12061,7 @@ thead.p-datatable-thead > tr > th,
 }
 
 .app-dark {
-    --p-scrollpanel-bar-background: var(--p-surface-800);
+    --p-scrollpanel-bar-background: var(--p-surface-700);
 }
 
 
@@ -12135,8 +12135,8 @@ thead.p-datatable-thead > tr > th,
 :root, :host {
     --p-select-empty-message-padding: var(--p-list-option-padding);
     --p-select-checkmark-color: var(--p-list-option-color);
-    --p-select-checkmark-gutter-start: -0.375rem;
-    --p-select-checkmark-gutter-end: 0.375rem;
+    --p-select-checkmark-gutter-start: -0.5rem;
+    --p-select-checkmark-gutter-end: 0.5rem;
     --p-select-clear-icon-color: var(--p-form-field-icon-color);
     --p-select-option-group-background: var(--p-list-option-group-background);
     --p-select-option-group-color: var(--p-list-option-group-color);
@@ -12488,7 +12488,7 @@ input.p-select-label {
 
 :root, :host {
     --p-skeleton-background: var(--p-surface-200);
-    --p-skeleton-animation-background: rgba(255, 255, 255, 0.4);
+    --p-skeleton-animation-background: rgba(255,255,255,0.4);
     --p-skeleton-border-radius: var(--p-content-border-radius);
 }
 
@@ -12552,21 +12552,21 @@ input.p-select-label {
 
 :root, :host {
     --p-slider-handle-content-background: var(--p-surface-0);
-    --p-slider-handle-width: 20px;
-    --p-slider-handle-height: 20px;
+    --p-slider-handle-width: 16px;
+    --p-slider-handle-height: 16px;
     --p-slider-handle-border-radius: 50%;
-    --p-slider-handle-background: var(--p-content-border-color);
-    --p-slider-handle-hover-background: var(--p-content-border-color);
-    --p-slider-handle-focus-ring-width: var(--p-focus-ring-width);
-    --p-slider-handle-focus-ring-style: var(--p-focus-ring-style);
-    --p-slider-handle-focus-ring-color: var(--p-focus-ring-color);
-    --p-slider-handle-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-slider-handle-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-slider-handle-background: var(--p-primary-color);
+    --p-slider-handle-hover-background: var(--p-primary-color);
+    --p-slider-handle-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-slider-handle-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-slider-handle-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-slider-handle-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-slider-handle-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
     --p-slider-handle-content-border-radius: 50%;
-    --p-slider-handle-content-hover-background: var(--p-content-background);
-    --p-slider-handle-content-width: 16px;
-    --p-slider-handle-content-height: 16px;
-    --p-slider-handle-content-shadow: 0px 0.5px 0px 0px rgba(0, 0, 0, 0.08), 0px 1px 1px 0px rgba(0, 0, 0, 0.14);
+    --p-slider-handle-content-hover-background: var(--p-primary-color);
+    --p-slider-handle-content-width: 12px;
+    --p-slider-handle-content-height: 12px;
+    --p-slider-handle-content-shadow: none;
     --p-slider-range-background: var(--p-primary-color);
     --p-slider-track-background: var(--p-content-border-color);
     --p-slider-track-border-radius: var(--p-content-border-radius);
@@ -12802,7 +12802,7 @@ input.p-select-label {
 
 :root, :host {
     --p-splitter-handle-size: 24px;
-    --p-splitter-handle-background: transparent;
+    --p-splitter-handle-background: var(--p-surface-400);
     --p-splitter-handle-border-radius: var(--p-content-border-radius);
     --p-splitter-handle-focus-ring-width: var(--p-focus-ring-width);
     --p-splitter-handle-focus-ring-style: var(--p-focus-ring-style);
@@ -12906,16 +12906,16 @@ input.p-select-label {
     --p-stepper-steppanel-indent: 1rem;
     --p-stepper-steppanels-padding: 0.875rem 0.5rem 1.125rem 0.5rem;
     --p-stepper-step-number-background: var(--p-content-background);
-    --p-stepper-step-number-active-background: var(--p-content-background);
+    --p-stepper-step-number-active-background: var(--p-primary-color);
     --p-stepper-step-number-border-color: var(--p-content-border-color);
-    --p-stepper-step-number-active-border-color: var(--p-content-border-color);
+    --p-stepper-step-number-active-border-color: var(--p-primary-color);
     --p-stepper-step-number-color: var(--p-text-muted-color);
-    --p-stepper-step-number-active-color: var(--p-primary-color);
-    --p-stepper-step-number-size: 2rem;
-    --p-stepper-step-number-font-size: 1.143rem;
+    --p-stepper-step-number-active-color: var(--p-primary-contrast-color);
+    --p-stepper-step-number-size: 2.25rem;
+    --p-stepper-step-number-font-size: 1.125rem;
     --p-stepper-step-number-font-weight: 500;
     --p-stepper-step-number-border-radius: 50%;
-    --p-stepper-step-number-shadow: 0px 0.5px 0px 0px rgba(0, 0, 0, 0.06), 0px 1px 1px 0px rgba(0, 0, 0, 0.12);
+    --p-stepper-step-number-shadow: none;
     --p-stepper-step-title-color: var(--p-text-muted-color);
     --p-stepper-step-title-active-color: var(--p-primary-color);
     --p-stepper-step-title-font-weight: 500;
@@ -13134,16 +13134,16 @@ input.p-select-label {
 
 :root, :host {
     --p-steps-item-number-background: var(--p-content-background);
-    --p-steps-item-number-active-background: var(--p-content-background);
+    --p-steps-item-number-active-background: var(--p-primary-color);
     --p-steps-item-number-border-color: var(--p-content-border-color);
-    --p-steps-item-number-active-border-color: var(--p-content-border-color);
+    --p-steps-item-number-active-border-color: var(--p-primary-color);
     --p-steps-item-number-color: var(--p-text-muted-color);
-    --p-steps-item-number-active-color: var(--p-primary-color);
-    --p-steps-item-number-size: 2rem;
-    --p-steps-item-number-font-size: 1.143rem;
+    --p-steps-item-number-active-color: var(--p-primary-contrast-color);
+    --p-steps-item-number-size: 2.25rem;
+    --p-steps-item-number-font-size: 1.125rem;
     --p-steps-item-number-font-weight: 500;
     --p-steps-item-number-border-radius: 50%;
-    --p-steps-item-number-shadow: 0px 0.5px 0px 0px rgba(0, 0, 0, 0.06), 0px 1px 1px 0px rgba(0, 0, 0, 0.12);
+    --p-steps-item-number-shadow: none;
     --p-steps-item-label-color: var(--p-text-muted-color);
     --p-steps-item-label-active-color: var(--p-primary-color);
     --p-steps-item-label-font-weight: 500;
@@ -13276,32 +13276,32 @@ input.p-select-label {
 
 
 :root, :host {
-    --p-tabmenu-active-bar-height: 1px;
-    --p-tabmenu-active-bar-bottom: -1px;
-    --p-tabmenu-active-bar-background: var(--p-primary-color);
+    --p-tabmenu-active-bar-height: 0;
+    --p-tabmenu-active-bar-bottom: 0;
+    --p-tabmenu-active-bar-background: transparent;
     --p-tabmenu-item-icon-color: var(--p-text-muted-color);
     --p-tabmenu-item-icon-hover-color: var(--p-text-color);
     --p-tabmenu-item-icon-active-color: var(--p-primary-color);
-    --p-tabmenu-item-background: transparent;
-    --p-tabmenu-item-hover-background: transparent;
-    --p-tabmenu-item-active-background: transparent;
-    --p-tabmenu-item-border-width: 0 0 1px 0;
-    --p-tabmenu-item-border-color: var(--p-content-border-color);
-    --p-tabmenu-item-hover-border-color: var(--p-content-border-color);
+    --p-tabmenu-item-background: var(--p-surface-50);
+    --p-tabmenu-item-hover-background: var(--p-surface-100);
+    --p-tabmenu-item-active-background: var(--p-surface-0);
+    --p-tabmenu-item-border-width: 2px 0 0 0;
+    --p-tabmenu-item-border-color: transparent;
+    --p-tabmenu-item-hover-border-color: transparent;
     --p-tabmenu-item-active-border-color: var(--p-primary-color);
     --p-tabmenu-item-color: var(--p-text-muted-color);
     --p-tabmenu-item-hover-color: var(--p-text-color);
     --p-tabmenu-item-active-color: var(--p-primary-color);
-    --p-tabmenu-item-padding: 1rem 1.125rem;
+    --p-tabmenu-item-padding: 1rem 1.25rem;
     --p-tabmenu-item-font-weight: 600;
-    --p-tabmenu-item-margin: 0 0 -1px 0;
+    --p-tabmenu-item-margin: 0;
     --p-tabmenu-item-gap: 0.5rem;
     --p-tabmenu-item-focus-ring-width: var(--p-focus-ring-width);
     --p-tabmenu-item-focus-ring-style: var(--p-focus-ring-style);
     --p-tabmenu-item-focus-ring-color: var(--p-focus-ring-color);
     --p-tabmenu-item-focus-ring-offset: var(--p-focus-ring-offset);
     --p-tabmenu-item-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-tabmenu-tablist-border-width: 0 0 1px 0;
+    --p-tabmenu-tablist-border-width: 0;
     --p-tabmenu-tablist-background: var(--p-content-background);
     --p-tabmenu-tablist-border-color: var(--p-content-border-color);
     --p-tabmenu-transition-duration: var(--p-transition-duration);
@@ -13406,9 +13406,9 @@ input.p-select-label {
 
 :root, :host {
     --p-tabs-nav-button-shadow: 0px 0px 10px 50px rgba(255, 255, 255, 0.6);
-    --p-tabs-active-bar-height: 1px;
-    --p-tabs-active-bar-bottom: -1px;
-    --p-tabs-active-bar-background: var(--p-primary-color);
+    --p-tabs-active-bar-height: 0;
+    --p-tabs-active-bar-bottom: 0;
+    --p-tabs-active-bar-background: transparent;
     --p-tabs-nav-button-background: var(--p-content-background);
     --p-tabs-nav-button-color: var(--p-text-muted-color);
     --p-tabs-nav-button-hover-color: var(--p-text-color);
@@ -13416,8 +13416,8 @@ input.p-select-label {
     --p-tabs-nav-button-focus-ring-width: var(--p-focus-ring-width);
     --p-tabs-nav-button-focus-ring-style: var(--p-focus-ring-style);
     --p-tabs-nav-button-focus-ring-color: var(--p-focus-ring-color);
-    --p-tabs-nav-button-focus-ring-offset: -1px;
-    --p-tabs-nav-button-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-tabs-nav-button-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-tabs-nav-button-focus-ring-shadow: inset var(--p-focus-ring-shadow);
     --p-tabs-tabpanel-background: var(--p-content-background);
     --p-tabs-tabpanel-color: var(--p-content-color);
     --p-tabs-tabpanel-padding: 0.875rem 1.125rem 1.125rem 1.125rem;
@@ -13426,26 +13426,26 @@ input.p-select-label {
     --p-tabs-tabpanel-focus-ring-color: var(--p-focus-ring-color);
     --p-tabs-tabpanel-focus-ring-offset: var(--p-focus-ring-offset);
     --p-tabs-tabpanel-focus-ring-shadow: inset var(--p-focus-ring-shadow);
-    --p-tabs-tab-background: transparent;
-    --p-tabs-tab-hover-background: transparent;
-    --p-tabs-tab-active-background: transparent;
-    --p-tabs-tab-border-width: 0 0 1px 0;
-    --p-tabs-tab-border-color: var(--p-content-border-color);
-    --p-tabs-tab-hover-border-color: var(--p-content-border-color);
+    --p-tabs-tab-background: var(--p-surface-50);
+    --p-tabs-tab-hover-background: var(--p-surface-100);
+    --p-tabs-tab-active-background: var(--p-surface-0);
+    --p-tabs-tab-border-width: 2px 0 0 0;
+    --p-tabs-tab-border-color: transparent;
+    --p-tabs-tab-hover-border-color: transparent;
     --p-tabs-tab-active-border-color: var(--p-primary-color);
     --p-tabs-tab-color: var(--p-text-muted-color);
     --p-tabs-tab-hover-color: var(--p-text-color);
     --p-tabs-tab-active-color: var(--p-primary-color);
-    --p-tabs-tab-padding: 1rem 1.125rem;
-    --p-tabs-tab-font-weight: 600;
-    --p-tabs-tab-margin: 0 0 -1px 0;
+    --p-tabs-tab-padding: 1rem 1.25rem;
+    --p-tabs-tab-font-weight: 700;
+    --p-tabs-tab-margin: 0;
     --p-tabs-tab-gap: 0.5rem;
     --p-tabs-tab-focus-ring-width: var(--p-focus-ring-width);
     --p-tabs-tab-focus-ring-style: var(--p-focus-ring-style);
     --p-tabs-tab-focus-ring-color: var(--p-focus-ring-color);
-    --p-tabs-tab-focus-ring-offset: -1px;
-    --p-tabs-tab-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-tabs-tablist-border-width: 0 0 1px 0;
+    --p-tabs-tab-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-tabs-tab-focus-ring-shadow: inset var(--p-focus-ring-shadow);
+    --p-tabs-tablist-border-width: 0;
     --p-tabs-tablist-background: var(--p-content-background);
     --p-tabs-tablist-border-color: var(--p-content-border-color);
     --p-tabs-transition-duration: var(--p-transition-duration);
@@ -13762,18 +13762,18 @@ input.p-select-label {
 :root, :host {
     --p-tag-contrast-background: var(--p-surface-950);
     --p-tag-contrast-color: var(--p-surface-0);
-    --p-tag-danger-background: var(--p-red-100);
-    --p-tag-danger-color: var(--p-red-700);
-    --p-tag-warn-background: var(--p-orange-100);
-    --p-tag-warn-color: var(--p-orange-700);
-    --p-tag-info-background: var(--p-sky-100);
-    --p-tag-info-color: var(--p-sky-700);
-    --p-tag-success-background: var(--p-green-100);
-    --p-tag-success-color: var(--p-green-700);
+    --p-tag-danger-background: var(--p-red-500);
+    --p-tag-danger-color: var(--p-surface-0);
+    --p-tag-warn-background: var(--p-orange-500);
+    --p-tag-warn-color: var(--p-surface-0);
+    --p-tag-info-background: var(--p-sky-500);
+    --p-tag-info-color: var(--p-surface-0);
+    --p-tag-success-background: var(--p-green-500);
+    --p-tag-success-color: var(--p-surface-0);
     --p-tag-secondary-background: var(--p-surface-100);
     --p-tag-secondary-color: var(--p-surface-600);
-    --p-tag-primary-background: var(--p-primary-100);
-    --p-tag-primary-color: var(--p-primary-700);
+    --p-tag-primary-background: var(--p-primary-color);
+    --p-tag-primary-color: var(--p-primary-contrast-color);
     --p-tag-icon-size: 0.75rem;
     --p-tag-font-size: 0.875rem;
     --p-tag-font-weight: 700;
@@ -13786,18 +13786,18 @@ input.p-select-label {
 .app-dark {
     --p-tag-contrast-background: var(--p-surface-0);
     --p-tag-contrast-color: var(--p-surface-950);
-    --p-tag-danger-background: color-mix(in srgb, var(--p-red-500), transparent 84%);
-    --p-tag-danger-color: var(--p-red-300);
-    --p-tag-warn-background: color-mix(in srgb, var(--p-orange-500), transparent 84%);
-    --p-tag-warn-color: var(--p-orange-300);
-    --p-tag-info-background: color-mix(in srgb, var(--p-sky-500), transparent 84%);
-    --p-tag-info-color: var(--p-sky-300);
-    --p-tag-success-background: color-mix(in srgb, var(--p-green-500), transparent 84%);
-    --p-tag-success-color: var(--p-green-300);
+    --p-tag-danger-background: var(--p-red-400);
+    --p-tag-danger-color: var(--p-red-950);
+    --p-tag-warn-background: var(--p-orange-400);
+    --p-tag-warn-color: var(--p-orange-950);
+    --p-tag-info-background: var(--p-sky-400);
+    --p-tag-info-color: var(--p-sky-950);
+    --p-tag-success-background: var(--p-green-400);
+    --p-tag-success-color: var(--p-green-950);
     --p-tag-secondary-background: var(--p-surface-800);
     --p-tag-secondary-color: var(--p-surface-300);
-    --p-tag-primary-background: color-mix(in srgb, var(--p-primary-500), transparent 84%);
-    --p-tag-primary-color: var(--p-primary-300);
+    --p-tag-primary-background: var(--p-primary-color);
+    --p-tag-primary-color: var(--p-primary-contrast-color);
 }
 
 
@@ -14030,7 +14030,7 @@ input.p-select-label {
     --p-tieredmenu-submenu-icon-color: var(--p-navigation-submenu-icon-color);
     --p-tieredmenu-submenu-icon-focus-color: var(--p-navigation-submenu-icon-focus-color);
     --p-tieredmenu-submenu-icon-active-color: var(--p-navigation-submenu-icon-active-color);
-    --p-tieredmenu-submenu-mobile-indent: 1rem;
+    --p-tieredmenu-submenu-mobile-indent: 1.25rem;
     --p-tieredmenu-item-focus-background: var(--p-navigation-item-focus-background);
     --p-tieredmenu-item-active-background: var(--p-navigation-item-active-background);
     --p-tieredmenu-item-color: var(--p-navigation-item-color);
@@ -14208,11 +14208,11 @@ input.p-select-label {
     --p-timeline-event-marker-border-radius: 50%;
     --p-timeline-event-marker-border-width: 2px;
     --p-timeline-event-marker-background: var(--p-content-background);
-    --p-timeline-event-marker-border-color: var(--p-content-border-color);
+    --p-timeline-event-marker-border-color: var(--p-primary-color);
     --p-timeline-event-marker-content-border-radius: 50%;
     --p-timeline-event-marker-content-size: 0.375rem;
-    --p-timeline-event-marker-content-background: var(--p-primary-color);
-    --p-timeline-event-marker-content-inset-shadow: 0px 0.5px 0px 0px rgba(0, 0, 0, 0.06), 0px 1px 1px 0px rgba(0, 0, 0, 0.12);
+    --p-timeline-event-marker-content-background: transparent;
+    --p-timeline-event-marker-content-inset-shadow: none;
     --p-timeline-vertical-event-content-padding: 0 1rem;
     --p-timeline-horizontal-event-content-padding: 1rem 0;
     --p-timeline-event-min-height: 5rem;
@@ -14378,57 +14378,57 @@ input.p-select-label {
 
 :root, :host {
     --p-toast-contrast-background: var(--p-surface-900);
-    --p-toast-contrast-border-color: var(--p-surface-950);
+    --p-toast-contrast-border-color: var(--p-primary-color);
     --p-toast-contrast-color: var(--p-surface-50);
     --p-toast-contrast-detail-color: var(--p-surface-0);
-    --p-toast-contrast-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-950), transparent 96%);
+    --p-toast-contrast-shadow: var(--p-overlay-popover-shadow);
     --p-toast-contrast-close-button-hover-background: var(--p-surface-800);
-    --p-toast-contrast-close-button-focus-ring-color: var(--p-surface-50);
-    --p-toast-contrast-close-button-focus-ring-shadow: none;
+    --p-toast-contrast-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-contrast-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-400);
     --p-toast-secondary-background: var(--p-surface-100);
-    --p-toast-secondary-border-color: var(--p-surface-200);
+    --p-toast-secondary-border-color: var(--p-surface-500);
     --p-toast-secondary-color: var(--p-surface-600);
     --p-toast-secondary-detail-color: var(--p-surface-700);
-    --p-toast-secondary-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-500), transparent 96%);
+    --p-toast-secondary-shadow: var(--p-overlay-popover-shadow);
     --p-toast-secondary-close-button-hover-background: var(--p-surface-200);
-    --p-toast-secondary-close-button-focus-ring-color: var(--p-surface-600);
-    --p-toast-secondary-close-button-focus-ring-shadow: none;
+    --p-toast-secondary-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-secondary-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-surface-200);
     --p-toast-error-background: color-mix(in srgb, var(--p-red-50), transparent 5%);
-    --p-toast-error-border-color: var(--p-red-200);
+    --p-toast-error-border-color: var(--p-red-500);
     --p-toast-error-color: var(--p-red-600);
     --p-toast-error-detail-color: var(--p-surface-700);
-    --p-toast-error-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-red-500), transparent 96%);
+    --p-toast-error-shadow: var(--p-overlay-popover-shadow);
     --p-toast-error-close-button-hover-background: var(--p-red-100);
-    --p-toast-error-close-button-focus-ring-color: var(--p-red-600);
-    --p-toast-error-close-button-focus-ring-shadow: none;
-    --p-toast-warn-background: color-mix(in srgb, var(--p-yellow-50), transparent 5%);
-    --p-toast-warn-border-color: var(--p-yellow-200);
+    --p-toast-error-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-error-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-red-200);
+    --p-toast-warn-background: color-mix(in srgb,var(--p-yellow-50), transparent 5%);
+    --p-toast-warn-border-color: var(--p-yellow-500);
     --p-toast-warn-color: var(--p-yellow-600);
     --p-toast-warn-detail-color: var(--p-surface-700);
-    --p-toast-warn-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-yellow-500), transparent 96%);
+    --p-toast-warn-shadow: var(--p-overlay-popover-shadow);
     --p-toast-warn-close-button-hover-background: var(--p-yellow-100);
-    --p-toast-warn-close-button-focus-ring-color: var(--p-yellow-600);
-    --p-toast-warn-close-button-focus-ring-shadow: none;
+    --p-toast-warn-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-warn-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-yellow-200);
     --p-toast-success-background: color-mix(in srgb, var(--p-green-50), transparent 5%);
-    --p-toast-success-border-color: var(--p-green-200);
+    --p-toast-success-border-color: var(--p-green-500);
     --p-toast-success-color: var(--p-green-600);
     --p-toast-success-detail-color: var(--p-surface-700);
-    --p-toast-success-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-green-500), transparent 96%);
+    --p-toast-success-shadow: var(--p-overlay-popover-shadow);
     --p-toast-success-close-button-hover-background: var(--p-green-100);
-    --p-toast-success-close-button-focus-ring-color: var(--p-green-600);
-    --p-toast-success-close-button-focus-ring-shadow: none;
+    --p-toast-success-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-success-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-green-200);
     --p-toast-info-background: color-mix(in srgb, var(--p-blue-50), transparent 5%);
-    --p-toast-info-border-color: var(--p-blue-200);
+    --p-toast-info-border-color: var(--p-blue-500);
     --p-toast-info-color: var(--p-blue-600);
     --p-toast-info-detail-color: var(--p-surface-700);
-    --p-toast-info-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-blue-500), transparent 96%);
+    --p-toast-info-shadow: var(--p-overlay-popover-shadow);
     --p-toast-info-close-button-hover-background: var(--p-blue-100);
-    --p-toast-info-close-button-focus-ring-color: var(--p-blue-600);
-    --p-toast-info-close-button-focus-ring-shadow: none;
+    --p-toast-info-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-info-close-button-focus-ring-shadow: 0 0 0 0.2rem var(--p-blue-200);
     --p-toast-blur: 1.5px;
     --p-toast-close-icon-size: 1rem;
-    --p-toast-close-button-width: 1.75rem;
-    --p-toast-close-button-height: 1.75rem;
+    --p-toast-close-button-width: 2rem;
+    --p-toast-close-button-height: 2rem;
     --p-toast-close-button-border-radius: 50%;
     --p-toast-close-button-focus-ring-width: var(--p-focus-ring-width);
     --p-toast-close-button-focus-ring-style: var(--p-focus-ring-style);
@@ -14440,10 +14440,10 @@ input.p-select-label {
     --p-toast-text-gap: 0.5rem;
     --p-toast-content-padding: var(--p-overlay-popover-padding);
     --p-toast-content-gap: 0.5rem;
-    --p-toast-icon-size: 1.125rem;
+    --p-toast-icon-size: 1.25rem;
     --p-toast-width: 25rem;
     --p-toast-border-radius: var(--p-content-border-radius);
-    --p-toast-border-width: 1px;
+    --p-toast-border-width: 0 0 0 6px;
     --p-toast-transition-duration: var(--p-transition-duration);
 }
 
@@ -14452,50 +14452,50 @@ input.p-select-label {
     --p-toast-contrast-border-color: var(--p-surface-100);
     --p-toast-contrast-color: var(--p-surface-950);
     --p-toast-contrast-detail-color: var(--p-surface-950);
-    --p-toast-contrast-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-950), transparent 96%);
+    --p-toast-contrast-shadow: var(--p-overlay-popover-shadow);
     --p-toast-contrast-close-button-hover-background: var(--p-surface-100);
-    --p-toast-contrast-close-button-focus-ring-color: var(--p-surface-950);
-    --p-toast-contrast-close-button-focus-ring-shadow: none;
+    --p-toast-contrast-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-contrast-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-surface-950), transparent 80%);
     --p-toast-secondary-background: var(--p-surface-800);
     --p-toast-secondary-border-color: var(--p-surface-700);
     --p-toast-secondary-color: var(--p-surface-300);
     --p-toast-secondary-detail-color: var(--p-surface-0);
-    --p-toast-secondary-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-surface-500), transparent 96%);
+    --p-toast-secondary-shadow: var(--p-overlay-popover-shadow);
     --p-toast-secondary-close-button-hover-background: var(--p-surface-700);
-    --p-toast-secondary-close-button-focus-ring-color: var(--p-surface-300);
-    --p-toast-secondary-close-button-focus-ring-shadow: none;
+    --p-toast-secondary-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-secondary-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-surface-300), transparent 80%);
     --p-toast-error-background: color-mix(in srgb, var(--p-red-500), transparent 84%);
     --p-toast-error-border-color: color-mix(in srgb, var(--p-red-700), transparent 64%);
     --p-toast-error-color: var(--p-red-500);
     --p-toast-error-detail-color: var(--p-surface-0);
-    --p-toast-error-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-red-500), transparent 96%);
+    --p-toast-error-shadow: var(--p-overlay-popover-shadow);
     --p-toast-error-close-button-hover-background: rgba(255, 255, 255, 0.05);
-    --p-toast-error-close-button-focus-ring-color: var(--p-red-500);
-    --p-toast-error-close-button-focus-ring-shadow: none;
+    --p-toast-error-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-error-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-red-500), transparent 80%);
     --p-toast-warn-background: color-mix(in srgb, var(--p-yellow-500), transparent 84%);
     --p-toast-warn-border-color: color-mix(in srgb, var(--p-yellow-700), transparent 64%);
     --p-toast-warn-color: var(--p-yellow-500);
     --p-toast-warn-detail-color: var(--p-surface-0);
-    --p-toast-warn-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-yellow-500), transparent 96%);
+    --p-toast-warn-shadow: var(--p-overlay-popover-shadow);
     --p-toast-warn-close-button-hover-background: rgba(255, 255, 255, 0.05);
-    --p-toast-warn-close-button-focus-ring-color: var(--p-yellow-500);
-    --p-toast-warn-close-button-focus-ring-shadow: none;
+    --p-toast-warn-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-warn-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-yellow-500), transparent 80%);
     --p-toast-success-background: color-mix(in srgb, var(--p-green-500), transparent 84%);
     --p-toast-success-border-color: color-mix(in srgb, var(--p-green-700), transparent 64%);
     --p-toast-success-color: var(--p-green-500);
     --p-toast-success-detail-color: var(--p-surface-0);
-    --p-toast-success-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-green-500), transparent 96%);
+    --p-toast-success-shadow: var(--p-overlay-popover-shadow);
     --p-toast-success-close-button-hover-background: rgba(255, 255, 255, 0.05);
-    --p-toast-success-close-button-focus-ring-color: var(--p-green-500);
-    --p-toast-success-close-button-focus-ring-shadow: none;
+    --p-toast-success-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-success-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-green-500), transparent 80%);
     --p-toast-info-background: color-mix(in srgb, var(--p-blue-500), transparent 84%);
     --p-toast-info-border-color: color-mix(in srgb, var(--p-blue-700), transparent 64%);
     --p-toast-info-color: var(--p-blue-500);
     --p-toast-info-detail-color: var(--p-surface-0);
-    --p-toast-info-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-blue-500), transparent 96%);
+    --p-toast-info-shadow: var(--p-overlay-popover-shadow);
     --p-toast-info-close-button-hover-background: rgba(255, 255, 255, 0.05);
-    --p-toast-info-close-button-focus-ring-color: var(--p-blue-500);
-    --p-toast-info-close-button-focus-ring-shadow: none;
+    --p-toast-info-close-button-focus-ring-color: var(--p-focus-ring-color);
+    --p-toast-info-close-button-focus-ring-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--p-blue-500), transparent 80%);
     --p-toast-blur: 10px;
 }
 
@@ -14771,25 +14771,25 @@ input.p-select-label {
 
 
 :root, :host {
-    --p-togglebutton-icon-color: var(--p-surface-500);
-    --p-togglebutton-icon-hover-color: var(--p-surface-700);
-    --p-togglebutton-icon-checked-color: var(--p-surface-900);
-    --p-togglebutton-content-checked-background: var(--p-surface-0);
-    --p-togglebutton-background: var(--p-surface-100);
-    --p-togglebutton-checked-background: var(--p-surface-100);
+    --p-togglebutton-icon-color: var(--p-text-muted-color);
+    --p-togglebutton-icon-hover-color: var(--p-text-muted-color);
+    --p-togglebutton-icon-checked-color: var(--p-highlight-color);
+    --p-togglebutton-content-checked-background: transparent;
+    --p-togglebutton-background: var(--p-form-field-background);
+    --p-togglebutton-checked-background: var(--p-highlight-background);
     --p-togglebutton-hover-background: var(--p-surface-100);
-    --p-togglebutton-border-color: var(--p-surface-100);
-    --p-togglebutton-color: var(--p-surface-500);
-    --p-togglebutton-hover-color: var(--p-surface-700);
-    --p-togglebutton-checked-color: var(--p-surface-900);
-    --p-togglebutton-checked-border-color: var(--p-surface-100);
-    --p-togglebutton-content-padding: 0.25rem 0.75rem;
-    --p-togglebutton-content-border-radius: var(--p-content-border-radius);
-    --p-togglebutton-content-checked-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.02), 0px 1px 2px 0px rgba(0, 0, 0, 0.04);
-    --p-togglebutton-content-lg-padding: 0.25rem 0.75rem;
-    --p-togglebutton-content-sm-padding: 0.25rem 0.75rem;
+    --p-togglebutton-border-color: var(--p-form-field-border-color);
+    --p-togglebutton-color: var(--p-form-field-color);
+    --p-togglebutton-hover-color: var(--p-form-field-color);
+    --p-togglebutton-checked-color: var(--p-highlight-color);
+    --p-togglebutton-checked-border-color: var(--p-form-field-border-color);
+    --p-togglebutton-content-padding: 0;
+    --p-togglebutton-content-border-radius: 0;
+    --p-togglebutton-content-checked-shadow: none;
+    --p-togglebutton-content-lg-padding: 0;
+    --p-togglebutton-content-sm-padding: 0;
     --p-togglebutton-icon-disabled-color: var(--p-form-field-disabled-color);
-    --p-togglebutton-padding: 0.25rem;
+    --p-togglebutton-padding: 0.625rem 1rem;
     --p-togglebutton-border-radius: var(--p-content-border-radius);
     --p-togglebutton-gap: 0.5rem;
     --p-togglebutton-font-weight: 500;
@@ -14799,29 +14799,29 @@ input.p-select-label {
     --p-togglebutton-invalid-border-color: var(--p-form-field-invalid-border-color);
     --p-togglebutton-transition-duration: var(--p-form-field-transition-duration);
     --p-togglebutton-lg-font-size: var(--p-form-field-lg-font-size);
-    --p-togglebutton-lg-padding: 0.25rem;
+    --p-togglebutton-lg-padding: 0.75rem 1.25rem;
     --p-togglebutton-sm-font-size: var(--p-form-field-sm-font-size);
-    --p-togglebutton-sm-padding: 0.25rem;
-    --p-togglebutton-focus-ring-width: var(--p-focus-ring-width);
-    --p-togglebutton-focus-ring-style: var(--p-focus-ring-style);
-    --p-togglebutton-focus-ring-color: var(--p-focus-ring-color);
-    --p-togglebutton-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-togglebutton-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-togglebutton-sm-padding: 0.5rem 0.75rem;
+    --p-togglebutton-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-togglebutton-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-togglebutton-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-togglebutton-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-togglebutton-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
 }
 
 .app-dark {
-    --p-togglebutton-icon-color: var(--p-surface-400);
-    --p-togglebutton-icon-hover-color: var(--p-surface-300);
-    --p-togglebutton-icon-checked-color: var(--p-surface-0);
-    --p-togglebutton-content-checked-background: var(--p-surface-800);
-    --p-togglebutton-background: var(--p-surface-950);
-    --p-togglebutton-checked-background: var(--p-surface-950);
-    --p-togglebutton-hover-background: var(--p-surface-950);
-    --p-togglebutton-border-color: var(--p-surface-950);
-    --p-togglebutton-color: var(--p-surface-400);
-    --p-togglebutton-hover-color: var(--p-surface-300);
-    --p-togglebutton-checked-color: var(--p-surface-0);
-    --p-togglebutton-checked-border-color: var(--p-surface-950);
+    --p-togglebutton-icon-color: var(--p-text-muted-color);
+    --p-togglebutton-icon-hover-color: var(--p-text-muted-color);
+    --p-togglebutton-icon-checked-color: var(--p-highlight-color);
+    --p-togglebutton-content-checked-background: transparent;
+    --p-togglebutton-background: var(--p-form-field-background);
+    --p-togglebutton-checked-background: var(--p-highlight-background);
+    --p-togglebutton-hover-background: var(--p-surface-800);
+    --p-togglebutton-border-color: var(--p-form-field-border-color);
+    --p-togglebutton-color: var(--p-form-field-color);
+    --p-togglebutton-hover-color: var(--p-form-field-color);
+    --p-togglebutton-checked-color: var(--p-highlight-color);
+    --p-togglebutton-checked-border-color: var(--p-form-field-border-color);
 }
 
 
@@ -14959,9 +14959,9 @@ input.p-select-label {
     --p-toggleswitch-checked-background: var(--p-primary-color);
     --p-toggleswitch-checked-hover-background: var(--p-primary-hover-color);
     --p-toggleswitch-handle-border-radius: 50%;
-    --p-toggleswitch-handle-size: 1rem;
-    --p-toggleswitch-width: 2.5rem;
-    --p-toggleswitch-height: 1.5rem;
+    --p-toggleswitch-handle-size: 1.25rem;
+    --p-toggleswitch-width: 3rem;
+    --p-toggleswitch-height: 1.75rem;
     --p-toggleswitch-border-radius: 30px;
     --p-toggleswitch-gap: 0.25rem;
     --p-toggleswitch-shadow: var(--p-form-field-shadow);
@@ -14973,11 +14973,11 @@ input.p-select-label {
     --p-toggleswitch-invalid-border-color: var(--p-form-field-invalid-border-color);
     --p-toggleswitch-transition-duration: var(--p-form-field-transition-duration);
     --p-toggleswitch-slide-duration: 0.2s;
-    --p-toggleswitch-focus-ring-width: var(--p-focus-ring-width);
-    --p-toggleswitch-focus-ring-style: var(--p-focus-ring-style);
-    --p-toggleswitch-focus-ring-color: var(--p-focus-ring-color);
-    --p-toggleswitch-focus-ring-offset: var(--p-focus-ring-offset);
-    --p-toggleswitch-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-toggleswitch-focus-ring-width: var(--p-form-field-focus-ring-width);
+    --p-toggleswitch-focus-ring-style: var(--p-form-field-focus-ring-style);
+    --p-toggleswitch-focus-ring-color: var(--p-form-field-focus-ring-color);
+    --p-toggleswitch-focus-ring-offset: var(--p-form-field-focus-ring-offset);
+    --p-toggleswitch-focus-ring-shadow: var(--p-form-field-focus-ring-shadow);
 }
 
 .app-dark {
@@ -15112,7 +15112,7 @@ input.p-select-label {
 
 
 :root, :host {
-    --p-toolbar-background: var(--p-content-background);
+    --p-toolbar-background: var(--p-surface-50);
     --p-toolbar-border-color: var(--p-content-border-color);
     --p-toolbar-border-radius: var(--p-content-border-radius);
     --p-toolbar-color: var(--p-content-color);
@@ -15148,7 +15148,7 @@ input.p-select-label {
     --p-tooltip-max-width: 12.5rem;
     --p-tooltip-gutter: 0.25rem;
     --p-tooltip-shadow: var(--p-overlay-popover-shadow);
-    --p-tooltip-padding: 0.5rem 0.75rem;
+    --p-tooltip-padding: 0.625rem 0.75rem;
     --p-tooltip-border-radius: var(--p-overlay-popover-border-radius);
 }
 
@@ -15237,7 +15237,7 @@ input.p-select-label {
     --p-tree-node-icon-color: var(--p-text-muted-color);
     --p-tree-node-icon-hover-color: var(--p-text-hover-muted-color);
     --p-tree-node-icon-selected-color: var(--p-highlight-color);
-    --p-tree-node-padding: 0.25rem 0.5rem;
+    --p-tree-node-padding: 0.375rem 0.625rem;
     --p-tree-node-border-radius: var(--p-content-border-radius);
     --p-tree-node-hover-background: var(--p-content-hover-background);
     --p-tree-node-selected-background: var(--p-highlight-background);
@@ -15248,8 +15248,8 @@ input.p-select-label {
     --p-tree-node-focus-ring-width: var(--p-focus-ring-width);
     --p-tree-node-focus-ring-style: var(--p-focus-ring-style);
     --p-tree-node-focus-ring-color: var(--p-focus-ring-color);
-    --p-tree-node-focus-ring-offset: -1px;
-    --p-tree-node-focus-ring-shadow: var(--p-focus-ring-shadow);
+    --p-tree-node-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-tree-node-focus-ring-shadow: inset var(--p-focus-ring-shadow);
     --p-tree-background: var(--p-content-background);
     --p-tree-color: var(--p-content-color);
     --p-tree-padding: 1rem;
@@ -15695,15 +15695,15 @@ input.p-select-label {
     --p-treetable-resize-indicator-width: 1px;
     --p-treetable-resize-indicator-color: var(--p-primary-color);
     --p-treetable-column-resizer-width: 0.5rem;
-    --p-treetable-footer-background: var(--p-content-background);
+    --p-treetable-footer-background: var(--p-surface-50);
     --p-treetable-footer-border-color: var(--p-treetable-border-color);
-    --p-treetable-footer-color: var(--p-content-color);
+    --p-treetable-footer-color: var(--p-text-color);
     --p-treetable-footer-border-width: 0 0 1px 0;
     --p-treetable-footer-padding: 0.75rem 1rem;
-    --p-treetable-column-footer-font-weight: 600;
-    --p-treetable-footer-cell-background: var(--p-content-background);
+    --p-treetable-column-footer-font-weight: 700;
+    --p-treetable-footer-cell-background: var(--p-surface-50);
     --p-treetable-footer-cell-border-color: var(--p-treetable-border-color);
-    --p-treetable-footer-cell-color: var(--p-content-color);
+    --p-treetable-footer-cell-color: var(--p-text-color);
     --p-treetable-footer-cell-padding: 0.75rem 1rem;
     --p-treetable-body-cell-border-color: var(--p-treetable-border-color);
     --p-treetable-body-cell-padding: 0.75rem 1rem;
@@ -15712,19 +15712,19 @@ input.p-select-label {
     --p-treetable-row-hover-background: var(--p-content-hover-background);
     --p-treetable-row-selected-background: var(--p-highlight-background);
     --p-treetable-row-color: var(--p-content-color);
-    --p-treetable-row-hover-color: var(--p-content-hover-color);
+    --p-treetable-row-hover-color: var(--p-sr-hover-color);
     --p-treetable-row-selected-color: var(--p-highlight-color);
     --p-treetable-row-focus-ring-width: var(--p-focus-ring-width);
     --p-treetable-row-focus-ring-style: var(--p-focus-ring-style);
     --p-treetable-row-focus-ring-color: var(--p-focus-ring-color);
-    --p-treetable-row-focus-ring-offset: -1px;
-    --p-treetable-row-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-treetable-column-title-font-weight: 600;
-    --p-treetable-header-cell-background: var(--p-content-background);
-    --p-treetable-header-cell-hover-background: var(--p-content-hover-background);
+    --p-treetable-row-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-treetable-row-focus-ring-shadow: inset var(--p-focus-ring-shadow);
+    --p-treetable-column-title-font-weight: 700;
+    --p-treetable-header-cell-background: var(--p-surface-50);
+    --p-treetable-header-cell-hover-background: var(--p-surface-100);
     --p-treetable-header-cell-selected-background: var(--p-highlight-background);
     --p-treetable-header-cell-border-color: var(--p-treetable-border-color);
-    --p-treetable-header-cell-color: var(--p-content-color);
+    --p-treetable-header-cell-color: var(--p-text-color);
     --p-treetable-header-cell-hover-color: var(--p-content-hover-color);
     --p-treetable-header-cell-selected-color: var(--p-highlight-color);
     --p-treetable-header-cell-gap: 0.5rem;
@@ -15732,12 +15732,12 @@ input.p-select-label {
     --p-treetable-header-cell-focus-ring-width: var(--p-focus-ring-width);
     --p-treetable-header-cell-focus-ring-style: var(--p-focus-ring-style);
     --p-treetable-header-cell-focus-ring-color: var(--p-focus-ring-color);
-    --p-treetable-header-cell-focus-ring-offset: -1px;
-    --p-treetable-header-cell-focus-ring-shadow: var(--p-focus-ring-shadow);
-    --p-treetable-header-background: var(--p-content-background);
+    --p-treetable-header-cell-focus-ring-offset: var(--p-focus-ring-offset);
+    --p-treetable-header-cell-focus-ring-shadow: inset var(--p-focus-ring-shadow);
+    --p-treetable-header-background: var(--p-surface-50);
     --p-treetable-header-border-color: var(--p-treetable-border-color);
-    --p-treetable-header-color: var(--p-content-color);
-    --p-treetable-header-border-width: 0 0 1px 0;
+    --p-treetable-header-color: var(--p-text-color);
+    --p-treetable-header-border-width: 1px 0 1px 0;
     --p-treetable-header-padding: 0.75rem 1rem;
     --p-treetable-transition-duration: var(--p-transition-duration);
 }

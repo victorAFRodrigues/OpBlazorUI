@@ -77,7 +77,8 @@ export function alignOverlay(element, target, position = 'bottom') {
 
     const targetRect = target.getBoundingClientRect();
     const elRect = element.getBoundingClientRect();
-    const gutter = 8;
+    // Alinhado a --p-popover-gutter (10px) do tema: é o vão onde a seta se encaixa.
+    const gutter = 10;
     const viewportMargin = 8;
 
     const centeredLeft = targetRect.left + (targetRect.width - elRect.width) / 2;
@@ -103,6 +104,16 @@ export function alignOverlay(element, target, position = 'bottom') {
 
     element.style.top = top + 'px';
     element.style.left = left + 'px';
+
+    // O tema posiciona a seta com left: calc(offset + var(--p-popover-arrow-left)).
+    // Replica o cálculo do Popover oficial para alinhar a seta ao alvo.
+    const borderRadius = parseFloat(window.getComputedStyle(element).borderRadius) || 0;
+    let arrowLeft = 0;
+    if (left < targetRect.left) {
+        arrowLeft = targetRect.left - left - borderRadius * 2;
+    }
+    element.style.setProperty('--p-popover-arrow-left', arrowLeft + 'px');
+
     element.classList.toggle('p-popover-flipped', flipped);
     element.style.visibility = 'visible';
 

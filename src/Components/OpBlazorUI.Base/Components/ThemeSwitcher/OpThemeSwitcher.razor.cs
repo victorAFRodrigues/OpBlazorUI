@@ -24,6 +24,7 @@ public partial class OpThemeSwitcher : ComponentBase, IAsyncDisposable
     public static readonly IReadOnlyList<OpThemeOption> Themes = new List<OpThemeOption>
     {
         new("noir", "#0a0a0a", "aura.css"),
+        new("lara", "#8b5cf6", "lara.css"),
         new("emerald", "#10b981", "aura-emerald.css"),
         new("green", "#22c55e", "aura-green.css"),
         new("lime", "#84cc16", "aura-lime.css"),
