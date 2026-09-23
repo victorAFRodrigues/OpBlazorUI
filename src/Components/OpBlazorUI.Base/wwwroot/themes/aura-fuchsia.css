@@ -12501,6 +12501,7 @@ input.p-select-label {
 .p-skeleton {
     display: block;
     overflow: hidden;
+    position: relative;
     background: var(--p-skeleton-background);
     border-radius: var(--p-skeleton-border-radius);
 }
