@@ -1973,9 +1973,6 @@ thead.p-datatable-thead > tr > th,
     transform-origin: 100% 0;
     margin: 0;
     z-index: 1;
-    outline-width: var(--p-overlaybadge-outline-width, 2px);
-    outline-style: solid;
-    outline-color: var(--p-overlaybadge-outline-color, var(--p-content-background, #fff));
 }
 
 .p-button .p-button-badge:dir(rtl) {
