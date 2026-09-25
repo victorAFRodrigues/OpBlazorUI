@@ -74,6 +74,32 @@ public partial class OpSpeedDial : ComponentBase
     // ------------------------------------------------------------ computed
     private IReadOnlyList<OpMenuItem> Items => Model ?? Array.Empty<OpMenuItem>();
 
+    /// <summary>
+    /// Estilo do container raiz. Para tipos circulares (circle, semi-circle,
+    /// quarter-circle), o container é dimensionado para 2×<see cref="Radius"/>
+    /// e o botão centralizado, de modo que os itens irradiem do centro do botão.
+    /// </summary>
+    private string RootStyle
+    {
+        get
+        {
+            var circular = Type is "circle" or "semi-circle" or "quarter-circle";
+            if (!circular || Radius <= 0)
+            {
+                return Style ?? string.Empty;
+            }
+
+            var diameter = Radius * 2;
+            var center = "display:flex; align-items:center; justify-content:center;";
+            var size = $"width:{diameter}px; height:{diameter}px;";
+            var basis = $"position:relative; {size} {center}";
+
+            return string.IsNullOrEmpty(Style)
+                ? basis
+                : $"{basis} {Style};";
+        }
+    }
+
     private string RootClass => BuildClass(
         "p-speeddial p-component",
         _visible ? "p-speeddial-open" : null,
