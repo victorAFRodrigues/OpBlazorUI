@@ -29,6 +29,9 @@ public partial class OpButton : ComponentBase
     [Parameter] public string? BadgeSeverity { get; set; }
     [Parameter] public string? BadgeSize { get; set; }
     [Parameter] public string? BadgeClass { get; set; }
+    [Parameter] public bool BadgeDisabled { get; set; }
+    [Parameter] public string? BadgeStyle { get; set; }
+    [Parameter] public Dictionary<string, object>? BadgeAdditionalAttributes { get; set; }
 
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
@@ -61,6 +64,7 @@ public partial class OpButton : ComponentBase
         Size == "large" ? "p-button-lg" : null,
         Plain ? "p-button-plain" : null,
         Fluid ? "p-button-fluid" : null,
+        HasBadge ? "p-button-has-badge" : null,
         StyleClass);
 
     private static string BuildClass(params string?[] classes)

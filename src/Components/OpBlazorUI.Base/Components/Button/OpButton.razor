@@ -29,6 +29,14 @@
 
     @if (HasBadge)
     {
-        <OpBadge Value="@Badge" Severity="@BadgeSeverity" Size="@BadgeSize" StyleClass="@BadgeClass"/>
+        <div class="p-button-badge">
+            <OpBadge Value="@Badge"
+                     Severity="@BadgeSeverity"
+                     Size="@BadgeSize"
+                     StyleClass="@BadgeClass"
+                     Disabled="@BadgeDisabled"
+                     Style="@BadgeStyle"
+                     AdditionalAttributes="@BadgeAdditionalAttributes"/>
+        </div>
     }
 </button>
