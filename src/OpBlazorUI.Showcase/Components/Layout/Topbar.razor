@@ -1,4 +1,5 @@
 @namespace OpBlazorUI.Showcase.Components.Layout
+@using OpBlazorUI.Base.Components.Popover
 @implements IDisposable
 
 <div class="layout-topbar layout-topbar-sticky">
@@ -45,15 +46,20 @@
                 </button>
             </li>
             <li class="relative topbar-desktop-item">
-                <button type="button" class="topbar-item config-item" aria-label="Personalizar tema" @onclick="ToggleConfig">
+                <button type="button" class="topbar-item config-item" @ref="_trigger" aria-label="Personalizar tema" @onclick="ToggleConfig">
                     <i class="pi pi-palette"></i>
                 </button>
-                @if (_configOpen)
-                {
-                    <div class="config-panel">
+                <OpPopover @ref="_configPopover">
+                    <div class="config-panel-content">
+                        <div class="config-panel-header">
+                            <span class="config-panel-title">Configurações</span>
+                            <button type="button" class="config-panel-close" aria-label="Fechar" @onclick="CloseConfig">
+                                <i class="pi pi-times"></i>
+                            </button>
+                        </div>
                         <Configurator/>
                     </div>
-                }
+                </OpPopover>
             </li>
             <li class="topbar-desktop-item">
                 <select class="topbar-item" aria-label="Versão" style="width:4rem;height:2rem;border-radius:6px;border:1px solid var(--border-color);background-color:var(--card-background);color:var(--text-color);font-weight:600;padding:0 .5rem;cursor:pointer;">
@@ -71,7 +77,8 @@
 
 @code {
     private bool _darkMode;
-    private bool _configOpen;
+    private ElementReference _trigger;
+    private OpPopover? _configPopover;
 
     protected override void OnInitialized() => DarkModeState.Changed += OnDarkChanged;
 
@@ -79,7 +86,9 @@
 
     private void ToggleDarkMode() => DarkModeState.Set(!DarkModeState.Dark);
 
-    private void ToggleConfig() => _configOpen = !_configOpen;
+    private void ToggleConfig() => _ = _configPopover!.Toggle(_trigger);
+
+    private void CloseConfig() => _ = _configPopover!.Hide();
 
     public void Dispose() => DarkModeState.Changed -= OnDarkChanged;
 }
