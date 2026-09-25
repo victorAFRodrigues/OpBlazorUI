@@ -176,7 +176,7 @@ public partial class OpSpeedDial : ComponentBase
 
     private static (double X, double Y) Circle(int index, int count, double r)
     {
-        var theta = 2 * Math.PI / count * index;
+        var theta = -Math.PI / 2 - 2 * Math.PI / count * index;
         return (r * Math.Cos(theta), r * Math.Sin(theta));
     }
 
@@ -187,8 +187,8 @@ public partial class OpSpeedDial : ComponentBase
         {
             "up" => (r * Math.Cos(t), -r * Math.Sin(t)),
             "down" => (r * Math.Cos(t), r * Math.Sin(t)),
-            "left" => (-r * Math.Sin(t), r * Math.Cos(t)),
-            "right" => (r * Math.Sin(t), r * Math.Cos(t)),
+            "left" => (-r * Math.Sin(t), -r * Math.Cos(t)),
+            "right" => (r * Math.Sin(t), -r * Math.Cos(t)),
             _ => (r * Math.Cos(t), -r * Math.Sin(t))
         };
     }
@@ -199,10 +199,10 @@ public partial class OpSpeedDial : ComponentBase
         return direction switch
         {
             "up-left" => (-r * Math.Sin(t), -r * Math.Cos(t)),
-            "up-right" => (r * Math.Sin(t), -r * Math.Cos(t)),
-            "down-left" => (-r * Math.Sin(t), r * Math.Cos(t)),
+            "up-right" => (r * Math.Cos(t), -r * Math.Sin(t)),
+            "down-left" => (-r * Math.Cos(t), r * Math.Sin(t)),
             "down-right" => (r * Math.Sin(t), r * Math.Cos(t)),
-            _ => (r * Math.Sin(t), -r * Math.Cos(t))
+            _ => (r * Math.Cos(t), -r * Math.Sin(t))
         };
     }
 

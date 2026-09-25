@@ -12695,7 +12695,7 @@ input.p-select-label {
 }
 
 .p-speeddial-button {
-    z-index: 1;
+    z-index: 3;
 }
 
 .p-speeddial-button.p-speeddial-rotate {
@@ -12739,6 +12739,13 @@ input.p-select-label {
 .p-speeddial-mask {
     position: absolute;
     border-radius: var(--p-content-border-radius);
+    z-index: 0;
+    background: color-mix(in srgb, var(--p-mask-background) 75%, transparent);
+}
+
+.p-speeddial-mask-invisible {
+    background: transparent;
+    border-radius: 0;
 }
 
 .p-speeddial-open .p-speeddial-list {

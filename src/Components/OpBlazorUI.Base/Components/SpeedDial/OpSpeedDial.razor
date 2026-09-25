@@ -50,9 +50,10 @@
         }
     </ul>
 
-    @if (Mask && _visible)
+    @if (_visible && (Mask || HideOnClickOutside))
     {
-        <div class="p-speeddial-mask @MaskStyleClass" style="@(MaskStyle ?? "inset:0;")"
+        <div class="p-speeddial-mask @(Mask ? null : "p-speeddial-mask-invisible") @MaskStyleClass"
+             style="@(MaskStyle ?? "position:fixed; inset:0;")"
              @onclick="() => SetVisibleAsync(false)"></div>
     }
 </div>

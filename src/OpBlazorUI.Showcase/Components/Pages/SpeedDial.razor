@@ -22,6 +22,29 @@
             </Description>
         </DocSection>
 
+        <DocSection Label="Itens Dinâmicos">
+            <Description>
+                Use os botões para adicionar ou remover ações e ver como o layout circular se adapta. O popup também fecha ao clicar fora.
+            </Description>
+            <ChildContent>
+                <OpToast Key="speeddial"/>
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    <OpButton Label="Adicionar" Icon="pi pi-plus" Size="small" OnClick="AddItem" Disabled="@(_items.Count >= _pool.Count)"/>
+                    <OpButton Label="Remover" Icon="pi pi-minus" Size="small" Severity="secondary" OnClick="RemoveItem" Disabled="@(_items.Count <= 1)"/>
+                    <OpButton Label="Reset (7)" Icon="pi pi-refresh" Size="small" Severity="help" Outlined="true" OnClick="ResetItems"/>
+                    <span class="text-sm opacity-70">@pluralize(_items.Count, "item", "itens")</span>
+                </div>
+                <div style="position:relative; height:520px;" class="flex items-center justify-center">
+                    <OpSpeedDial @bind-Visible="_visible" Model="_items" Radius="100" Type="circle"
+                                 Style="position:absolute;" ButtonSeverity="warn" ButtonRounded="true"
+                                 Tooltip="true" TooltipPosition="left"/>
+                    <OpSpeedDial @bind-Visible="_visibleSemi" Model="_items" Radius="100" Type="semi-circle" Direction="up"
+                                 Style="position:absolute; left:calc(50% - 2rem); bottom:0;" ButtonSeverity="info" ButtonRounded="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Círculo">
             <Description>
                 Os itens são exibidos ao redor do botão quando <code>Type="circle"</code>; <code>Radius</code> define o raio do círculo.
@@ -145,7 +168,7 @@
                               new[] { "Direction", "string", "up", "Direção: <code>up</code>, <code>down</code>, <code>left</code>, <code>right</code>, <code>up-left</code>, <code>up-right</code>, <code>down-left</code>, <code>down-right</code>." },
                               new[] { "Mask", "bool", "false", "Exibe uma camada de máscara atrás do popup." },
                               new[] { "Disabled", "bool", "false", "Desabilita o componente." },
-                              new[] { "HideOnClickOutside", "bool", "true", "Fecha ao clicar fora." },
+                              new[] { "HideOnClickOutside", "bool", "true", "Fecha ao clicar fora, mesmo sem máscara visível." },
                               new[] { "ShowIcon", "string?", "pi pi-plus", "Ícone do botão quando fechado." },
                               new[] { "HideIcon", "string?", "null", "Ícone do botão quando aberto." },
                               new[] { "RotateAnimation", "bool", "true", "Rotaciona o ShowIcon quando não há HideIcon." },
@@ -217,11 +240,33 @@
     [Inject] private NavigationManager Navigation { get; set; } = default!;
 
     private List<OpMenuItem> _items = new();
+    private List<OpMenuItem> _pool = new();
+    private bool _visible;
+    private bool _visibleSemi;
 
     protected override void OnInitialized()
     {
-        _items = BuildItems();
+        _pool = BuildItems();
+        _items = _pool.Take(7).ToList();
     }
+
+    private void AddItem()
+    {
+        if (_items.Count < _pool.Count)
+        {
+            _items = _pool.Take(_items.Count + 1).ToList();
+        }
+    }
+
+    private void RemoveItem()
+    {
+        if (_items.Count > 1)
+        {
+            _items = _pool.Take(_items.Count - 1).ToList();
+        }
+    }
+
+    private void ResetItems() => _items = _pool.Take(7).ToList();
 
     private List<OpMenuItem> BuildItems() => new()
     {
@@ -229,11 +274,24 @@
         new() { Icon = "pi pi-refresh", Label = "Atualizar", Command = () => Add("success", "Atualizar", "Dado atualizado") },
         new() { Icon = "pi pi-trash", Label = "Excluir", Command = () => Add("danger", "Excluir", "Dado excluído") },
         new() { Icon = "pi pi-upload", Label = "Upload", Command = () => Navigation.NavigateTo("/installation") },
-        new() { Icon = "pi pi-external-link", Label = "Website", Url = "https://angular.dev", Target = "_blank" }
+        new() { Icon = "pi pi-external-link", Label = "Website", Url = "https://angular.dev", Target = "_blank" },
+        new() { Icon = "pi pi-copy", Label = "Duplicar", Command = () => Add("info", "Duplicar", "Item duplicado") },
+        new() { Icon = "pi pi-share-alt", Label = "Compartilhar", Command = () => Add("success", "Compartilhar", "Link copiado") },
+        new() { Icon = "pi pi-bookmark", Label = "Favoritar", Command = () => Add("warn", "Favoritar", "Adicionado aos favoritos") },
+        new() { Icon = "pi pi-print", Label = "Imprimir", Command = () => Add("info", "Imprimir", "Enviado para impressão") },
+        new() { Icon = "pi pi-archive", Label = "Arquivar", Command = () => Add("secondary", "Arquivar", "Item arquivado") },
+        new() { Icon = "pi pi-eye", Label = "Visualizar", Command = () => Add("info", "Visualizar", "Abrindo visualização") },
+        new() { Icon = "pi pi-filter", Label = "Filtrar", Command = () => Add("help", "Filtrar", "Filtro aplicado") }
     };
 
     private void Add(string severity, string summary, string detail) =>
         MessageService.Add(new OpToastMessage { Key = "speeddial", Severity = severity, Summary = summary, Detail = detail });
+
+    private static string pluralize(int count, string singular, string plural)
+    {
+        var word = count == 1 ? singular : plural;
+        return $"{count} {word}";
+    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.SpeedDial
@@ -280,6 +338,13 @@
                 </div>
             </ItemTemplate>
         </OpSpeedDial>
+        """;
+
+    private const string DynamicCode = """
+        <OpSpeedDial @bind-Visible="visible" Model="_items" Radius="100" Type="circle"
+                     Style="position:absolute;" ButtonRounded="true" Tooltip="true" />
+
+        @* Remova e adicione itens de _items para ver o layout se recalcular. *@
         """;
 
     private const string TooltipCode = """
