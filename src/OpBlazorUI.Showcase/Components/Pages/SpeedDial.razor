@@ -34,12 +34,23 @@
                     <OpButton Label="Reset (7)" Icon="pi pi-refresh" Size="small" Severity="help" Outlined="true" OnClick="ResetItems"/>
                     <span class="text-sm opacity-70">@pluralize(_items.Count, "item", "itens")</span>
                 </div>
-                <div style="position:relative; height:520px;" class="flex items-center justify-center">
-                    <OpSpeedDial @bind-Visible="_visible" Model="_items" Radius="100" Type="circle"
-                                 Style="position:absolute;" ButtonSeverity="warn" ButtonRounded="true"
-                                 Tooltip="true" TooltipPosition="left"/>
-                    <OpSpeedDial @bind-Visible="_visibleSemi" Model="_items" Radius="100" Type="semi-circle" Direction="up"
-                                 Style="position:absolute; left:calc(50% - 2rem); bottom:0;" ButtonSeverity="info" ButtonRounded="true"/>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm opacity-70 mb-2"><code>Type="circle"</code></p>
+                        <div style="position:relative; height:320px;" class="flex items-center justify-center">
+                            <OpSpeedDial @bind-Visible="_visible" Model="_items" Radius="100" Type="circle"
+                                         Style="position:absolute;" ButtonSeverity="warn" ButtonRounded="true"
+                                         Tooltip="true" TooltipPosition="left"/>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm opacity-70 mb-2"><code>Type="semi-circle"</code> <code>Direction="up"</code></p>
+                        <div style="position:relative; height:320px;">
+                            <OpSpeedDial @bind-Visible="_visibleSemi" Model="_items" Radius="100" Type="semi-circle" Direction="up"
+                                         Style="position:absolute; left:50%; transform:translateX(-50%); bottom:0;"
+                                         ButtonSeverity="info" ButtonRounded="true"/>
+                        </div>
+                    </div>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@DynamicCode"/></Code>
@@ -47,7 +58,7 @@
 
         <DocSection Label="Círculo">
             <Description>
-                Os itens são exibidos ao redor do botão quando <code>Type="circle"</code>; <code>Radius</code> define o raio do círculo.
+                Os itens são exibidos ao redor do botão quando <code>Type="circle"</code>; <code>Radius</code> define o raio do círculo. O primeiro item fica no topo e os demais se distribuem no sentido anti-horário; o botão ocupa o centro e o container mede 2×<code>Radius</code>.
             </Description>
             <ChildContent>
                 <OpToast Key="speeddial"/>
@@ -88,7 +99,7 @@
 
         <DocSection Label="Quarto de Círculo">
             <Description>
-                Com <code>Type="quarter-circle"</code>, os itens são exibidos em um quarto de círculo.
+                Com <code>Type="quarter-circle"</code>, os itens são exibidos em um quarto de círculo. O botão fica no canto oposto ao quadrante e o container mede <code>Radius</code>×<code>Radius</code>.
             </Description>
             <ChildContent>
                 <div style="position:relative; height:500px;">
@@ -103,14 +114,14 @@
 
         <DocSection Label="Semicírculo">
             <Description>
-                Com <code>Type="semi-circle"</code>, os itens são exibidos em um semicírculo.
+                Com <code>Type="semi-circle"</code>, os itens são exibidos em um semicírculo. O botão fica na aresta reta do arco e o container assume apenas o tamanho necessário (2R×R ou R×2R).
             </Description>
             <ChildContent>
                 <div style="position:relative; height:500px;">
-                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down" Style="position:absolute; left:calc(50% - 2rem); top:0;"/>
-                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="right" Style="position:absolute; top:calc(50% - 2rem); left:0;"/>
-                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="left" Style="position:absolute; top:calc(50% - 2rem); right:0;"/>
-                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="up" Style="position:absolute; left:calc(50% - 2rem); bottom:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down" Style="position:absolute; left:50%; transform:translateX(-50%); top:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="right" Style="position:absolute; top:50%; transform:translateY(-50%); left:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="left" Style="position:absolute; top:50%; transform:translateY(-50%); right:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="up" Style="position:absolute; left:50%; transform:translateX(-50%); bottom:0;"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@SemiCode"/></Code>
@@ -321,7 +332,8 @@
         """;
 
     private const string SemiCode = """
-        <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down" Style="position:absolute; left:calc(50% - 2rem); top:0;" />
+        <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down"
+                     Style="position:absolute; left:50%; transform:translateX(-50%); top:0;" />
         """;
 
     private const string TemplateCode = """
