@@ -75,30 +75,65 @@ public partial class OpSpeedDial : ComponentBase
     private IReadOnlyList<OpMenuItem> Items => Model ?? Array.Empty<OpMenuItem>();
 
     /// <summary>
-    /// Estilo do container raiz. Para tipos circulares (circle, semi-circle,
-    /// quarter-circle), o container é dimensionado para 2×<see cref="Radius"/>
-    /// e o botão centralizado, de modo que os itens irradiem do centro do botão.
+    /// Estilo do container raiz. Para os tipos circulares o container é
+    /// dimensionado para o menor retângulo que comporta o leque de itens e o
+    /// botão é encostado na aresta/canto que serve de centro do arco:
+    /// circle (2R×2R, botão ao centro), semi-circle (2R×R ou R×2R, botão na
+    /// aresta reta) e quarter-circle (R×R, botão no canto).
     /// </summary>
     private string RootStyle
     {
         get
         {
-            var circular = Type is "circle" or "semi-circle" or "quarter-circle";
-            if (!circular || Radius <= 0)
+            if (Radius <= 0)
             {
                 return Style ?? string.Empty;
             }
 
-            var diameter = Radius * 2;
-            var center = "display:flex; align-items:center; justify-content:center;";
-            var size = $"width:{diameter}px; height:{diameter}px;";
-            var basis = $"position:relative; {size} {center}";
+            var basis = Type switch
+            {
+                "circle" => Box(Radius * 2, Radius * 2, Justify.Center, Align.Center),
+                "semi-circle" => Direction switch
+                {
+                    "up" => Box(Radius * 2, Radius, Justify.Center, Align.End),
+                    "down" => Box(Radius * 2, Radius, Justify.Center, Align.Start),
+                    "left" => Box(Radius, Radius * 2, Justify.End, Align.Center),
+                    "right" => Box(Radius, Radius * 2, Justify.Start, Align.Center),
+                    _ => Box(Radius * 2, Radius, Justify.Center, Align.End)
+                },
+                "quarter-circle" => Direction switch
+                {
+                    "up-left" => Box(Radius, Radius, Justify.End, Align.End),
+                    "up-right" => Box(Radius, Radius, Justify.Start, Align.End),
+                    "down-left" => Box(Radius, Radius, Justify.End, Align.Start),
+                    "down-right" => Box(Radius, Radius, Justify.Start, Align.Start),
+                    _ => Box(Radius, Radius, Justify.End, Align.End)
+                },
+                _ => Style ?? string.Empty
+            };
 
             return string.IsNullOrEmpty(Style)
                 ? basis
                 : $"{basis} {Style};";
         }
     }
+
+    private static class Justify
+    {
+        public const string Start = "flex-start";
+        public const string Center = "center";
+        public const string End = "flex-end";
+    }
+
+    private static class Align
+    {
+        public const string Start = "flex-start";
+        public const string Center = "center";
+        public const string End = "flex-end";
+    }
+
+    private static string Box(int width, int height, string justify, string align) =>
+        $"position:relative; width:{width}px; height:{height}px; display:flex; justify-content:{justify}; align-items:{align};";
 
     private string RootClass => BuildClass(
         "p-speeddial p-component",
@@ -144,65 +179,95 @@ public partial class OpSpeedDial : ComponentBase
     // ------------------------------------------------------------ positioning
     private string ItemStyle(int index)
     {
-        var count = Items.Count;
-        var delay = index * TransitionDelay;
-        var style = $"transition-delay:{delay}ms;";
+        var style = $"transition-delay:{index * TransitionDelay}ms;";
 
-        if (Type != "linear")
+        if (Type == "linear")
         {
-            var (x, y) = CalculatePoint(index, count, Radius, Type, Direction);
-            var scale = _visible ? 1 : 0;
-            style += $"position:absolute; left:50%; top:50%; transform:translate(calc(-50% + {x}px), calc(-50% + {y}px)) scale({scale});";
+            return style;
         }
+
+        var (x, y) = CalculatePoint(index, Items.Count, Radius, Type, Direction);
+        var scale = _visible ? 1 : 0;
+        var origin = ItemOrigin;
+
+        style += $"position:absolute; {origin} transform:translate(calc(-50% + {x}px), calc(-50% + {y}px)) scale({scale});";
 
         return style;
     }
 
+    /// <summary>
+    /// Origem polar dos itens: o ponto do container que coincide com o centro
+    /// do botão, de onde os itens irradiam.
+    /// </summary>
+    private string ItemOrigin => Type switch
+    {
+        "circle" => "left:50%; top:50%;",
+        "semi-circle" => Direction switch
+        {
+            "up" => "left:50%; top:100%;",
+            "down" => "left:50%; top:0%;",
+            "left" => "left:100%; top:50%;",
+            "right" => "left:0%; top:50%;",
+            _ => "left:50%; top:100%;"
+        },
+        "quarter-circle" => Direction switch
+        {
+            "up-left" => "left:100%; top:100%;",
+            "up-right" => "left:0%; top:100%;",
+            "down-left" => "left:100%; top:0%;",
+            "down-right" => "left:0%; top:0%;",
+            _ => "left:100%; top:100%;"
+        },
+        _ => "left:50%; top:50%;"
+    };
+
     private static (double X, double Y) CalculatePoint(int index, int count, int radius, string type, string direction)
     {
         var r = (double)radius;
-        if (count <= 1) return (0, 0);
 
-        var denom = count - 1;
+        // Com um único item o passo é zero: ele ocupa o início do arco em vez de sobrepor o botão.
+        var denom = Math.Max(count - 1, 1);
+        var total = Math.Max(count, 1);
+        var semiStep = Math.PI / denom;
+        var quarterStep = Math.PI / (2 * denom);
 
         return type switch
         {
-            "circle" => Circle(index, count, r),
-            "semi-circle" => SemiCircle(index, denom, r, direction),
-            "quarter-circle" => QuarterCircle(index, denom, r, direction),
+            "circle" => Polar(-Math.PI / 2 - 2 * Math.PI / total * index, r),
+            "semi-circle" => SemiCircle(index, semiStep, r, direction),
+            "quarter-circle" => QuarterCircle(index, quarterStep, r, direction),
             _ => (0, 0)
         };
     }
 
-    private static (double X, double Y) Circle(int index, int count, double r)
-    {
-        var theta = -Math.PI / 2 - 2 * Math.PI / count * index;
-        return (r * Math.Cos(theta), r * Math.Sin(theta));
-    }
+    private static (double X, double Y) Polar(double theta, double r) => (r * Math.Cos(theta), r * Math.Sin(theta));
 
-    private static (double X, double Y) SemiCircle(int index, int denom, double r, string direction)
+    private static (double X, double Y) SemiCircle(int index, double step, double r, string direction)
     {
-        var t = Math.PI * index / denom;
+        // Ângulos medidos a partir da origem polar (centro do botão),
+        // no sentido anti-horário, cobrindo exatamente 180°.
         return direction switch
         {
-            "up" => (r * Math.Cos(t), -r * Math.Sin(t)),
-            "down" => (r * Math.Cos(t), r * Math.Sin(t)),
-            "left" => (-r * Math.Sin(t), -r * Math.Cos(t)),
-            "right" => (r * Math.Sin(t), -r * Math.Cos(t)),
-            _ => (r * Math.Cos(t), -r * Math.Sin(t))
+            "up" => Polar(Math.PI + step * index, r),
+            "down" => Polar(step * index, r),
+            "left" => Polar(3 * Math.PI / 2 - step * index, r),
+            "right" => Polar(-Math.PI / 2 + step * index, r),
+            _ => Polar(Math.PI + step * index, r)
         };
     }
 
-    private static (double X, double Y) QuarterCircle(int index, int denom, double r, string direction)
+    private static (double X, double Y) QuarterCircle(int index, double step, double r, string direction)
     {
-        var t = Math.PI / 2 * index / denom;
+        // Quarter arcs cover exactly 90°, starting at the axis closest to the
+        // button corner and rotating into the target quadrant.
+        var t = step * index;
         return direction switch
         {
-            "up-left" => (-r * Math.Sin(t), -r * Math.Cos(t)),
-            "up-right" => (r * Math.Cos(t), -r * Math.Sin(t)),
-            "down-left" => (-r * Math.Cos(t), r * Math.Sin(t)),
-            "down-right" => (r * Math.Sin(t), r * Math.Cos(t)),
-            _ => (r * Math.Cos(t), -r * Math.Sin(t))
+            "up-left" => Polar(3 * Math.PI / 2 - t, r),
+            "up-right" => Polar(-Math.PI / 2 + t, r),
+            "down-left" => Polar(Math.PI - t, r),
+            "down-right" => Polar(t, r),
+            _ => Polar(-Math.PI / 2 + t, r)
         };
     }
 
