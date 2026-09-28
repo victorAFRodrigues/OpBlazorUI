@@ -22,7 +22,7 @@
         {
             var idx = i;
             <input type="@(Mask ? "password" : "text")"
-                   class="@InputClass"
+                   class="@InputClassValue"
                    value="@(TokenAt(idx)?.ToString())"
                    maxlength="1"
                    disabled="@Disabled"

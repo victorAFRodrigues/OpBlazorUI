@@ -102,9 +102,9 @@
                     <tr class="@TrClass(item)" @onclick="() => OnRowClicked(item)">
                         @if (Selection)
                         {
-                            <td>
+                            <td @onclick:stopPropagation="true">
                                 <OpCheckbox Checked="@IsSelected(item)" CheckedChanged="(v) => ToggleRowSelection(item)"
-                                            TabIndex="-1" @onclick:stopPropagation="true"/>
+                                            TabIndex="-1"/>
                             </td>
                         }
                         @foreach (var col in Columns)
