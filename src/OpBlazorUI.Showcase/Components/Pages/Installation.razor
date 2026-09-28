@@ -86,22 +86,38 @@
 
     <DocSection Label="Registrar os serviços">
         <Description>
-            <p>Registre os serviços da biblioteca no <code>Program.cs</code>. A extensão <code>AddOpBlazorUI()</code> já registra tudo que os componentes precisam, como o <code>OpMessageService</code>:</p>
+            <p>Registre os serviços da biblioteca no <code>Program.cs</code>. A extensão <code>AddOpBlazorUI()</code> registra o <code>OpThemeService</code> e o <code>OpMessageService</code>, e aceita o tema inicial. Numa <em>Blazor Web App</em> com WebAssembly ou Auto, registre nos <strong>dois</strong> <code>Program.cs</code> (servidor e <code>.Client</code>), com as mesmas opções:</p>
         </Description>
         <Code>
             <CodeBlock Language="csharp"
-                       Code="@("builder.Services.AddOpBlazorUI();")"/>
+                       Code="@ServicesCode"/>
         </Code>
     </DocSection>
 
     <DocSection Label="Adicionar o setup">
         <Description>
-            <p>Adicione <code>&lt;OpBlazorUiSetup /&gt;</code> no <code>App.razor</code>. Ele injeta automaticamente o CSS de ícones, o CSS base e o arquivo de tema ativo:</p>
+            <p>Duas peças, ambas no <code>App.razor</code> (ou no <code>index.html</code>, em WebAssembly standalone):</p>
+            <ul>
+                <li><code>op-theme.js</code> no <code>&lt;head&gt;</code>, depois do <code>&lt;base href&gt;</code>: carrega o CSS do tema e aplica cores, modo escuro e RTL antes da primeira pintura. Os <code>data-*</code> repetem o tema do <code>AddOpBlazorUI</code>.</li>
+                <li><code>&lt;OpBlazorUiSetup /&gt;</code> <strong>dentro da parte interativa</strong> da aplicação, normalmente no <code>MainLayout</code>: carrega ícones e CSS base e aplica as trocas de tema feitas em tempo de execução.</li>
+            </ul>
         </Description>
         <Code>
             <CodeBlock Language="razor"
-                       Code="@("<body>\n    <OpBlazorUiSetup />\n    <Routes @rendermode=\"InteractiveServer\" />\n</body>")"/>
+                       Code="@SetupCode"/>
         </Code>
+    </DocSection>
+
+    <DocSection Label="Modos de renderização">
+        <Description>
+            <p>Os componentes são agnósticos ao modo de renderização: o mesmo código roda em <strong>Interactive Server</strong>, <strong>Interactive WebAssembly</strong> e <strong>Interactive Auto</strong> (validado nos três). Algumas regras do Blazor valem para o tema:</p>
+            <ul>
+                <li><strong>Interatividade global</strong> (<code>&lt;Routes @@rendermode="..." /&gt;</code>) é o cenário mais simples: um único <code>OpThemeService</code> para a aplicação toda.</li>
+                <li><strong>Interatividade por página</strong>: o <code>&lt;OpBlazorUiSetup /&gt;</code> precisa usar o <strong>mesmo</strong> render mode das páginas que trocam o tema (por exemplo, <code>&lt;OpBlazorUiSetup @@rendermode="InteractiveServer" /&gt;</code> no layout). Cada “ilha” de render mode tem a sua instância do serviço; um Setup em Server não enxerga trocas feitas numa página WebAssembly.</li>
+                <li><strong>Auto</strong>: a primeira visita roda em Server e as seguintes em WebAssembly. O estado do serviço não passa de um runtime para o outro; com <code>PersistTheme = true</code> o tema salvo é restaurado nos dois.</li>
+                <li><strong>SSR estático</strong> (sem interatividade): os componentes de exibição renderizam normalmente, mas os interativos (Select, Dialog, DatePicker...) não respondem a eventos, como qualquer componente Blazor. O tema vem só do <code>op-theme.js</code>.</li>
+            </ul>
+        </Description>
     </DocSection>
 
     <DocSection Label="Ícones">
@@ -158,6 +174,7 @@
         "Imports",
         "Registrar os serviços",
         "Adicionar o setup",
+        "Modos de renderização",
         "Ícones",
         "Verificação",
         "Próximos passos"
@@ -191,5 +208,31 @@
         <ItemGroup>
             <PackageReference Include="OpBlazorUI.Base" Version="1.0.0" />
         </ItemGroup>
+        """;
+
+    private const string ServicesCode = """
+        builder.Services.AddOpBlazorUI(theme =>
+        {
+            theme.Preset = "aura";
+            theme.PersistTheme = true; // opcional
+        });
+        """;
+
+    private const string SetupCode = """
+        @* App.razor *@
+        <head>
+            <base href="/" />
+            <script src="_content/OpBlazorUI.Base/op-theme.js"
+                    data-preset="aura" data-primary="noir"></script>
+            ...
+            <HeadOutlet @rendermode="InteractiveAuto" />
+        </head>
+        <body>
+            <Routes @rendermode="InteractiveAuto" />
+        </body>
+
+        @* MainLayout.razor *@
+        <OpBlazorUiSetup />
+        @Body
         """;
 }

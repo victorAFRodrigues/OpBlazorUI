@@ -7,7 +7,8 @@
         aria-label="@AriaLabel"
         tabindex="@(Disabled ? -1 : 0)"
         disabled="@Disabled"
-        @onclick="Toggle">
+        @onclick="Toggle"
+        @attributes="AdditionalAttributes">
     <span class="p-togglebutton-content">
         @if (ContentTemplate != null)
         {

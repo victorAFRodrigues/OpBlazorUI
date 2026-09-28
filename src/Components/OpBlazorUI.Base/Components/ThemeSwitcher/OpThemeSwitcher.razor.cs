@@ -13,6 +13,9 @@ public partial class OpThemeSwitcher : ComponentBase, IDisposable
 {
     [Parameter] public string? StyleClass { get; set; }
 
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
     [Parameter] public EventCallback<string> OnThemeChanged { get; set; }
 
     [Parameter] public EventCallback<bool> OnDarkModeChanged { get; set; }
