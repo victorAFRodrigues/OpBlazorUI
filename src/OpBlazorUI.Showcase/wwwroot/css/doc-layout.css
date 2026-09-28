@@ -111,7 +111,7 @@
 }
 
 .layout-topbar-inner .topbar-items .ask-ai-button {
-    width: 10rem;g
+    width: 10rem;
     gap: .5rem;
 }
 
@@ -234,7 +234,7 @@
     width: 100%;
     align-items: center;
     padding-block: .5rem;
-    padding-inline: 1px;
+    padding-inline: 1px 14px;
     color: var(--text-color);
     font-weight: 600;
     transition: outline-color .2s;

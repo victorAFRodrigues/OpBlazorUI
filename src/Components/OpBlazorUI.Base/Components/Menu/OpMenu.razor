@@ -27,7 +27,8 @@
             @ref="_listRef"
             aria-activedescendant="@(_focusedItemIndex >= 0 ? ItemId(_focusedItemIndex) : null)"
             aria-label="@AriaLabel"
-            @onkeydown="OnListKeydown">
+            @onkeydown="OnListKeydown"
+            @onblur="() => _focusedItemIndex = -1">
             @if (GroupItems.Count > 0)
             {
                 @foreach (var group in GroupItems)
@@ -74,8 +75,7 @@
                 aria-label="@item.Label"
                 data-p-focused="@(_focusedItemIndex == index ? "true" : null)"
                 aria-disabled="@(item.Disabled ? "true" : null)"
-                @onclick="() => OnItemClicked(item)"
-                @onmouseenter="() => { _focusedItemIndex = index; }">
+                @onclick="() => OnItemClicked(item)">
                 <div class="p-menu-item-content">
                     @if (ItemTemplate != null)
                     {

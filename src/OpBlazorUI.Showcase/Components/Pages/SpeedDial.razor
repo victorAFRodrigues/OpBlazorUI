@@ -30,7 +30,7 @@
                 <OpToast Key="speeddial"/>
                 <div style="position:relative; height:500px;" class="flex items-center justify-center">
                     <OpSpeedDial Model="_items" Radius="80" Type="circle" Style="position:absolute;"
-                                 ButtonSeverity="warn" ButtonRounded="true"/>
+                                 ButtonSeverity="warn"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@CircleCode"/></Code>
@@ -105,10 +105,10 @@
                                 <span class="pi pi-plus"></span>
                             </OpButton>
                         </ButtonTemplate>
-                        <ItemTemplate Context="item">
-                            <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem; padding:.5rem; border:1px solid var(--p-content-border-color); border-radius:6px; width:5rem; cursor:pointer;">
-                                <span class="@item.Icon"></span>
-                                <span>@item.Label</span>
+                        <ItemTemplate Context="ctx">
+                            <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem; padding:.5rem; border:1px solid var(--p-content-border-color); border-radius:6px; width:5rem; cursor:pointer;" @onclick="ctx.Click">
+                                <span class="@ctx.Item.Icon"></span>
+                                <span>@ctx.Item.Label</span>
                             </div>
                         </ItemTemplate>
                     </OpSpeedDial>
@@ -123,8 +123,8 @@
             </Description>
             <ChildContent>
                 <div style="position:relative; height:350px;">
-                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; right:0; bottom:0;" ButtonSeverity="help" ButtonRounded="true" Tooltip="true" TooltipPosition="left"/>
-                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; left:0; bottom:0;" ButtonSeverity="danger" ButtonRounded="true" Tooltip="true" TooltipPosition="right"/>
+                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; right:0; bottom:0;" ButtonSeverity="help" Tooltip="true" TooltipPosition="left"/>
+                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; left:0; bottom:0;" ButtonSeverity="danger" Tooltip="true" TooltipPosition="right"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@TooltipCode"/></Code>
@@ -154,7 +154,6 @@
                               new[] { "Style", "string?", "null", "Estilo inline do elemento raiz." },
                               new[] { "StyleClass", "string?", "null", "Classes do elemento raiz." },
                               new[] { "ButtonSeverity", "string?", "null", "Severidade do botão." },
-                              new[] { "ButtonRounded", "bool", "false", "Botão arredondado." },
                               new[] { "ButtonRaised", "bool", "false", "Botão com elevação." },
                               new[] { "ButtonText", "bool", "false", "Botão textual." },
                               new[] { "ButtonOutlined", "bool", "false", "Botão contornado." },
@@ -182,7 +181,7 @@
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "ButtonTemplate", "RenderFragment&lt;SpeedDialButtonContext&gt;?", "Template do botão." },
-                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "Template do item." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;SpeedDialItemContext&gt;?", "Template do item. O contexto traz <code>Item</code>, <code>Index</code> e <code>Click</code> (executa o comando e fecha)." },
                               new[] { "IconTemplate", "RenderFragment?", "Template do ícone." }
                           })"/>
             </ChildContent>
@@ -244,7 +243,7 @@
 
     private const string CircleCode = """
         <OpSpeedDial Model="_items" Radius="80" Type="circle" Style="position:absolute;"
-                     ButtonSeverity="warn" ButtonRounded="true" />
+                     ButtonSeverity="warn" />
         """;
 
     private const string LinearCode = """
@@ -273,10 +272,10 @@
                     <span class="pi pi-plus"></span>
                 </OpButton>
             </ButtonTemplate>
-            <ItemTemplate Context="item">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem;">
-                    <span class="@item.Icon"></span>
-                    <span>@item.Label</span>
+            <ItemTemplate Context="ctx">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem;" @onclick="ctx.Click">
+                    <span class="@ctx.Item.Icon"></span>
+                    <span>@ctx.Item.Label</span>
                 </div>
             </ItemTemplate>
         </OpSpeedDial>
@@ -284,6 +283,6 @@
 
     private const string TooltipCode = """
         <OpSpeedDial Model="_items" Direction="up" Tooltip="true" TooltipPosition="left"
-                     ButtonSeverity="help" ButtonRounded="true" />
+                     ButtonSeverity="help" />
         """;
 }

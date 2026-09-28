@@ -306,19 +306,6 @@ body {
 .p-drawer-mask.p-drawer-full { align-items: center; justify-content: center; }
 
 /*
- * Divider — alinhamento do conteúdo (o tema não traz as regras de justify/align
- * para left/center/right/top/bottom; apenas os :dir(rtl)).
- */
-.p-divider-vertical { align-items: center; }
-
-.p-divider-horizontal.p-divider-left { justify-content: flex-start; }
-.p-divider-horizontal.p-divider-center { justify-content: center; }
-.p-divider-horizontal.p-divider-right { justify-content: flex-end; }
-.p-divider-vertical.p-divider-top { align-items: flex-start; }
-.p-divider-vertical.p-divider-center { align-items: center; }
-.p-divider-vertical.p-divider-bottom { align-items: flex-end; }
-
-/*
  * BlockUI — máscara centralizada sobre o conteúdo.
  */
 .p-blockui-mask {

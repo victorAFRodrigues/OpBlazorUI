@@ -3,7 +3,7 @@
 @using OpBlazorUI.Base.Components.Tooltip
 @using OpBlazorUI.Base.Models
 
-<div class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
+<div @ref="_root" class="@RootClass" style="@RootStyle" @attributes="AdditionalAttributes">
     @if (ButtonTemplate != null)
     {
         var ctx = new SpeedDialButtonContext { Toggle = () => _ = Toggle() };
@@ -15,7 +15,7 @@
                   Icon="@ButtonIconClass"
                   IconTemplate="@IconTemplate"
                   Severity="@ButtonSeverity"
-                  Rounded="@ButtonRounded"
+                  Rounded="true"
                   Raised="@ButtonRaised"
                   Text="@ButtonText"
                   Outlined="@ButtonOutlined"
@@ -35,41 +35,39 @@
         @for (var i = 0; i < Items.Count; i++)
         {
             var item = Items[i];
-            <li class="p-speeddial-item" role="menuitem" aria-label="@item.Label" style="@ItemStyle(i)">
+            <li class="@ItemClass(item)" role="menuitem" id="@($"{_id}_{i}")" aria-label="@item.Label" style="@ItemStyle(i)">
                 @if (Tooltip)
                 {
                     <OpTooltip Content="@item.Label" Position="@TooltipPosition">
-                        @RenderAction(item)
+                        @RenderAction(item, i)
                     </OpTooltip>
                 }
                 else
                 {
-                    @RenderAction(item)
+                    @RenderAction(item, i)
                 }
             </li>
         }
     </ul>
-
-    @if (Mask && _visible)
-    {
-        <div class="p-speeddial-mask @MaskStyleClass" style="@(MaskStyle ?? "inset:0;")"
-             @onclick="() => SetVisibleAsync(false)"></div>
-    }
 </div>
 
+@* Fora do root, como no upstream: um clique na máscara conta como clique fora. *@
+@if (Mask && _visible)
+{
+    <div class="@MaskClass" style="@MaskStyle"></div>
+}
+
 @code {
-    private RenderFragment RenderAction(OpMenuItem item) => __builder =>
+    private RenderFragment RenderAction(OpMenuItem item, int index) => __builder =>
     {
         @if (ItemTemplate != null)
         {
-            <OpButton StyleClass="p-speeddial-action" Rounded="true" AriaLabel="@item.Label"
-                      OnClick="() => OnItemClick(item)">
-                @ItemTemplate(item)
-            </OpButton>
+            @ItemTemplate(ItemContext(item, index))
         }
         else
         {
-            <OpButton StyleClass="p-speeddial-action" Icon="@item.Icon" Rounded="true"
+            <OpButton StyleClass="p-speeddial-action" Icon="@item.Icon" Severity="secondary" Rounded="true"
+                      Size="small" Disabled="@item.Disabled" TabIndex="@(_visible ? 0 : -1)"
                       AriaLabel="@item.Label" OnClick="() => OnItemClick(item)"/>
         }
     };

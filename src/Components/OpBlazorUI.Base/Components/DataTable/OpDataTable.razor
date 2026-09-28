@@ -42,9 +42,10 @@
         </div>
     }
 
-    <div class="p-datatable-table-container">
+    @* Estilos inline do upstream (inlineStyles): tabela larga rola no contêiner em vez de vazar. *@
+    <div class="p-datatable-table-container" style="overflow: auto;">
         <table class="p-datatable-table">
-            <thead class="p-datatable-thead">
+            <thead class="p-datatable-thead" style="position: sticky;">
             <tr>
                 @if (Selection)
                 {
