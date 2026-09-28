@@ -4,6 +4,7 @@ namespace OpBlazorUI.Base.Components.Tooltip;
 
 public partial class OpTooltip : ComponentBase
 {
+    private ElementReference _wrapperRef;
     private string _id = "";
     private bool _visible;
     private bool _hovering;

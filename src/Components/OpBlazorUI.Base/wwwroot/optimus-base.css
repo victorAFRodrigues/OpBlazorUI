@@ -56,9 +56,9 @@ body {
 }
 
 /*
- * Posicionamento CSS-only (substitui o posicionamento por JS).
- * Overlays ancorados ao trigger via position: absolute dentro de um
- * wrapper position: relative. Sem auto-flip.
+ * Posição inicial dos overlays ancorados, antes do JS assumir. O OpOverlayAttach
+ * (overlay.interop.js) troca para position: fixed com top/left/min-width/z-index
+ * inline, calculados a partir da âncora (com flip e acompanhando o scroll).
  */
 .p-select-overlay,
 .p-multiselect-overlay,
@@ -69,7 +69,6 @@ body {
     position: absolute;
     top: 100%;
     left: 0;
-    min-width: 100%;
     z-index: 1000;
 }
 
@@ -93,14 +92,17 @@ body {
 }
 
 .p-tooltip {
-    z-index: 1100;
     /*
-     * O tooltip é posicionado por left/right: 100% (ou left: 50%) dentro do
-     * wrapper. Sem largura explícita, o shrink-to-fit usaria o espaço
-     * disponível (~0) e espremeria o texto. max-content usa a largura do
-     * conteúdo, limitada pelo max-width do tema.
+     * O tooltip só é renderizado enquanto visível e é posicionado pelo
+     * overlay.interop.js (position: fixed + z-index da camada tooltip).
+     * Sem largura explícita, o shrink-to-fit espremeria o texto; max-content
+     * usa a largura do conteúdo, limitada pelo max-width do tema.
      */
     width: max-content;
+}
+
+.op-tooltip-wrapper > .p-tooltip {
+    display: block;
 }
 
 .p-tooltip-text {
@@ -108,30 +110,6 @@ body {
     word-wrap: break-word;
     overflow-wrap: anywhere;
     max-width: 100%;
-}
-
-.p-tooltip-top {
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.p-tooltip-bottom {
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.p-tooltip-left {
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.p-tooltip-right {
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
 }
 
 .p-tooltip-right .p-tooltip-arrow {
@@ -273,6 +251,11 @@ body {
     align-items: center;
     justify-content: center;
     padding: 1rem;
+}
+
+/* Maximizado: por classe (e não style inline), para não apagar o z-index aplicado via JS. */
+.p-dialog-mask.op-dialog-mask-maximized {
+    padding: 0;
 }
 
 .p-dialog-top { align-items: flex-start; }

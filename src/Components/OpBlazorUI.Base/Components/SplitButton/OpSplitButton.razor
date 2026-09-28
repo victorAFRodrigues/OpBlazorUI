@@ -1,8 +1,9 @@
 @namespace OpBlazorUI.Base.Components.SplitButton
+@using OpBlazorUI.Base.Components.Overlay
 @using OpBlazorUI.Base.Components.Button
 @using OpBlazorUI.Base.Models
 
-<div class="@RootClass"
+<div class="@RootClass" @ref="_rootRef"
      @onfocusout="OnRootFocusOut"
      @onfocusin="OnRootFocusIn"
      @onkeydown="OnRootKeydown"
@@ -46,10 +47,10 @@
     @if (_panelRendered)
     {
         <div class="@OverlayClass"
-             style="position:absolute; top:calc(100% + 0.25rem); left:0; min-width:100%; z-index:10;"
              @onmousedown="OnPanelMouseDown"
              @onmouseleave="CloseSubmenus"
              @onanimationend="OnPanelAnimationEnd">
+            <OpOverlayAttach Anchor="_rootRef" Layer="menu" MatchWidth="true" Gap="4"/>
             <ul class="p-tieredmenu-root-list" role="menu" id="@($"{_id}_menu")">
                 @foreach (var item in Items)
                 {

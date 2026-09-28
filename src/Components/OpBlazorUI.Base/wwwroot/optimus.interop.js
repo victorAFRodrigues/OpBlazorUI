@@ -66,60 +66,6 @@ export function focusTrapDispose(element) {
     }
 }
 
-export function alignOverlay(element, target, position = 'bottom') {
-    if (!element || !target) return { top: 0, left: 0, flipped: false };
-    element.style.position = 'fixed';
-    element.style.top = '0px';
-    element.style.left = '0px';
-    element.style.margin = '0';
-    element.style.transform = 'none';
-    element.style.visibility = 'hidden';
-
-    const targetRect = target.getBoundingClientRect();
-    const elRect = element.getBoundingClientRect();
-    // Alinhado a --p-popover-gutter (10px) do tema: é o vão onde a seta se encaixa.
-    const gutter = 10;
-    const viewportMargin = 8;
-
-    const centeredLeft = targetRect.left + (targetRect.width - elRect.width) / 2;
-    let top;
-    let left = centeredLeft;
-    let flipped = false;
-
-    if (position === 'top') {
-        top = targetRect.top - elRect.height - gutter;
-    } else {
-        top = targetRect.bottom + gutter;
-    }
-
-    if (top < viewportMargin && position !== 'top') {
-        top = targetRect.top - elRect.height - gutter;
-        flipped = true;
-    } else if (top + elRect.height > window.innerHeight - viewportMargin && position === 'top') {
-        top = targetRect.bottom + gutter;
-        flipped = true;
-    }
-
-    left = Math.max(viewportMargin, Math.min(left, window.innerWidth - elRect.width - viewportMargin));
-
-    element.style.top = top + 'px';
-    element.style.left = left + 'px';
-
-    // O tema posiciona a seta com left: calc(offset + var(--p-popover-arrow-left)).
-    // Replica o cálculo do Popover oficial para alinhar a seta ao alvo.
-    const borderRadius = parseFloat(window.getComputedStyle(element).borderRadius) || 0;
-    let arrowLeft = 0;
-    if (left < targetRect.left) {
-        arrowLeft = targetRect.left - left - borderRadius * 2;
-    }
-    element.style.setProperty('--p-popover-arrow-left', arrowLeft + 'px');
-
-    element.classList.toggle('p-popover-flipped', flipped);
-    element.style.visibility = 'visible';
-
-    return { top, left, flipped };
-}
-
 export function addOutsideClickListener(element, target, dotnetRef) {
     if (!element || element.__opOutsideHandler) return;
     const handler = (e) => {

@@ -1,12 +1,17 @@
 @namespace OpBlazorUI.Base.Components.Dialog
+@using OpBlazorUI.Base.Components.Overlay
 
 @if (Visible)
 {
     <div class="@MaskClass"
-         style="@MaskStyleValue"
+         style="@MaskStyle"
          @onclick="OnMaskClick"
          @onkeydown="OnKeydown"
          @attributes="AdditionalAttributes">
+        @if (AutoZIndex)
+        {
+            <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex"/>
+        }
         <div class="@RootClass"
              @ref="_root"
              style="@Style"

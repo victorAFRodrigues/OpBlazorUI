@@ -1,11 +1,12 @@
 @namespace OpBlazorUI.Base.Components.Select
+@using OpBlazorUI.Base.Components.Overlay
 @using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
 @typeparam TValue
 
-<span class="@RootClass" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
+<span class="@RootClass" @ref="_rootRef" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
       @attributes="AdditionalAttributes">
     @if (!Editable)
     {
@@ -99,6 +100,7 @@
         <div class="@PanelClass"
              @onmousedown="OnPanelMouseDown"
              @onanimationend="OnPanelAnimationEnd">
+            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2"/>
             <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
 
             @HeaderTemplate

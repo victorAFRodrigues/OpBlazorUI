@@ -6,6 +6,8 @@ namespace OpBlazorUI.Base.Components.Password;
 
 public partial class OpPassword : ComponentBase
 {
+    private ElementReference _rootRef;
+
     private string _id = "";
     private bool _masked = true;
     private bool _overlayVisible;

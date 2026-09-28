@@ -42,6 +42,11 @@ public partial class OpDialog : ComponentBase
 
     [Parameter] public string? MaskStyle { get; set; }
 
+    /// <summary>Aplica o z-index da camada modal (1100 + <see cref="BaseZIndex"/>), acima de topbars e overlays.</summary>
+    [Parameter] public bool AutoZIndex { get; set; } = true;
+
+    [Parameter] public int BaseZIndex { get; set; }
+
     [Parameter] public string? MaskStyleClass { get; set; }
 
     [Parameter] public string CloseIcon { get; set; } = "pi pi-times";
@@ -100,11 +105,8 @@ public partial class OpDialog : ComponentBase
         "p-dialog-mask",
         Position != "center" ? $"p-dialog-{Position}" : null,
         "p-overlay-mask-enter-active",
+        _maximized ? "op-dialog-mask-maximized" : null,
         MaskStyleClass);
-
-    private string? MaskStyleValue => OpCss.BuildClass(
-        _maximized ? "padding:0;" : null,
-        MaskStyle);
 
     private async Task Close(MouseEventArgs _)
     {

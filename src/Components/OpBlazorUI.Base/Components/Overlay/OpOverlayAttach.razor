@@ -1,0 +1,106 @@
+@namespace OpBlazorUI.Base.Components.Overlay
+@using Microsoft.JSInterop
+@implements IAsyncDisposable
+@inject IJSRuntime Js
+
+@* Marcador invisível: o painel conectado é o elemento pai deste span. *@
+<span @ref="_marker" hidden aria-hidden="true" data-op-overlay-marker></span>
+
+@code {
+    private const string JsModule = "./_content/OpBlazorUI.Base/overlay.interop.js";
+
+    private ElementReference _marker;
+    private IJSObjectReference? _module;
+    private bool _attached;
+    private bool _disposed;
+
+    /// <summary>Elemento de referência. Sem âncora, o painel só recebe o z-index da camada.</summary>
+    [Parameter] public ElementReference? Anchor { get; set; }
+
+    /// <summary>Sem <see cref="Anchor"/>, usa o elemento irmão anterior do painel como âncora.</summary>
+    [Parameter] public bool AnchorPrevious { get; set; }
+
+    /// <summary>Camada de z-index: <c>overlay</c>, <c>menu</c>, <c>modal</c> ou <c>tooltip</c>.</summary>
+    [Parameter] public string Layer { get; set; } = "overlay";
+
+    [Parameter] public int BaseZIndex { get; set; }
+
+    /// <summary>Lado preferido: <c>bottom</c>, <c>top</c>, <c>left</c> ou <c>right</c>. Inverte se não couber.</summary>
+    [Parameter] public string Placement { get; set; } = "bottom";
+
+    /// <summary><c>start</c> alinha à borda inicial da âncora; <c>center</c> centraliza.</summary>
+    [Parameter] public string Align { get; set; } = "start";
+
+    /// <summary>Largura mínima igual à da âncora (padrão dos selects).</summary>
+    [Parameter] public bool MatchWidth { get; set; }
+
+    /// <summary>Distância em px entre âncora e painel.</summary>
+    [Parameter] public double Gap { get; set; }
+
+    /// <summary>Mantém a margem do tema (o Popover usa a margem como espaço da seta).</summary>
+    [Parameter] public bool KeepMargin { get; set; }
+
+    /// <summary>Alinhamento da seta: <c>popover</c>, <c>tooltip</c> ou nulo.</summary>
+    [Parameter] public string? Arrow { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _disposed) return;
+        try
+        {
+            _module = await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
+            if (_disposed) return;
+            await _module.InvokeVoidAsync("attachParent", _marker, Anchor, new
+            {
+                layer = Layer,
+                baseZIndex = BaseZIndex,
+                positioned = Anchor is not null || AnchorPrevious,
+                anchorPrevious = AnchorPrevious,
+                placement = Placement,
+                align = Align,
+                matchWidth = MatchWidth,
+                gap = Gap,
+                keepMargin = KeepMargin,
+                arrow = Arrow
+            });
+            _attached = true;
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (TaskCanceledException)
+        {
+        }
+    }
+
+    /// <summary>Recalcula a posição (ex.: após o conteúdo do painel mudar de tamanho).</summary>
+    public async Task UpdateAsync()
+    {
+        if (_module is null || !_attached) return;
+        try
+        {
+            await _module.InvokeVoidAsync("updateParent", _marker);
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        if (_module is null) return;
+        try
+        {
+            if (_attached) await _module.InvokeVoidAsync("detachParent", _marker);
+            await _module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (TaskCanceledException)
+        {
+        }
+    }
+}
