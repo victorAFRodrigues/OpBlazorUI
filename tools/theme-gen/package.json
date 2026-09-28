@@ -5,7 +5,8 @@
   "description": "Gera os temas do OpBlazorUI a partir dos presets do Optimus UI (MIT).",
   "scripts": {
     "build": "node generate.mjs",
-    "compare": "node generate.mjs --compare"
+    "compare": "node generate.mjs --compare",
+    "extract": "node extract-extras.mjs"
   },
   "dependencies": {
     "@openng/optimus-ui-styled": "2.0.2",

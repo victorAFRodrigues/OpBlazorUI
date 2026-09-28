@@ -184,7 +184,9 @@ export function attach(el, anchor, opts = {}) {
 
     const state = { el, anchor, opts, raf: 0 };
     attached.set(el, state);
-    setZIndex(el, opts.layer || 'overlay', opts.baseZIndex || 0);
+    const z = setZIndex(el, opts.layer || 'overlay', opts.baseZIndex || 0);
+    // Máscara irmã (Drawer): logo abaixo do painel, como o enableModality do upstream.
+    if (opts.maskPrevious && el.previousElementSibling) el.previousElementSibling.style.zIndex = String(z - 1);
 
     if (opts.positioned === false || !anchor) return;
 

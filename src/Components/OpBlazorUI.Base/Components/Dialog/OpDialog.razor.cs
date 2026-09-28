@@ -100,12 +100,15 @@ public partial class OpDialog : ComponentBase
         _maximized ? "p-dialog-maximized" : null,
         StyleClass);
 
+    // inlineStyles do upstream: sem modal, a máscara deixa os cliques passarem para a página.
+    private string MaskInlineStyle => $"pointer-events: {(Modal ? "auto" : "none")}; {MaskStyle}".TrimEnd();
+
+    private string RootInlineStyle => $"pointer-events: auto; {Style}".TrimEnd();
+
     private string MaskClass => OpCss.BuildClass(
-        "p-overlay-mask",
         "p-dialog-mask",
+        Modal ? "p-overlay-mask p-overlay-mask-enter-active" : null,
         Position != "center" ? $"p-dialog-{Position}" : null,
-        "p-overlay-mask-enter-active",
-        _maximized ? "op-dialog-mask-maximized" : null,
         MaskStyleClass);
 
     private async Task Close(MouseEventArgs _)
@@ -123,7 +126,7 @@ public partial class OpDialog : ComponentBase
 
     private async Task OnMaskClick(MouseEventArgs e)
     {
-        if (DismissableMask)
+        if (Modal && DismissableMask)
         {
             await CloseAsync();
         }

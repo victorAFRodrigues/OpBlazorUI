@@ -1,6 +1,6 @@
 @namespace OpBlazorUI.Base.Components.Icon
 
-<svg class="@CssClass" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"
+<svg class="@IconClass" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"
      @onclick="OnClick" @attributes="AdditionalAttributes">
     @switch (Name)
     {
@@ -111,7 +111,12 @@
 @code {
     [Parameter] public string? Name { get; set; }
 
-    [Parameter] public string? CssClass { get; set; } = "p-icon";
+    [Parameter] public string? CssClass { get; set; }
+
+    // Como os ícones SVG do upstream: sempre p-icon (tamanho via --p-icon-size) + a classe da seção.
+    private string IconClass => string.IsNullOrWhiteSpace(CssClass)
+        ? "p-icon"
+        : CssClass.Split(' ', StringSplitOptions.RemoveEmptyEntries).Contains("p-icon") ? CssClass : $"p-icon {CssClass}";
 
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 

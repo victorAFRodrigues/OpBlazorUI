@@ -15,7 +15,7 @@
 
         @if (ShowFirstLastIcon)
         {
-            <button type="button" class="p-paginator-first" disabled="@IsFirstPageDisabled" aria-label="First Page" @onclick="ChangeToFirstPage">
+            <button type="button" class="p-paginator-first@(IsFirstPageDisabled ? " p-disabled" : "")" disabled="@IsFirstPageDisabled" aria-label="First Page" @onclick="ChangeToFirstPage">
                 @if (FirstPageLinkIconTemplate != null)
                 {
                     <span class="p-paginator-first-icon">@FirstPageLinkIconTemplate</span>
@@ -27,7 +27,7 @@
             </button>
         }
 
-        <button type="button" class="p-paginator-prev" disabled="@IsFirstPageDisabled" aria-label="Previous Page" @onclick="ChangeToPrevPage">
+        <button type="button" class="p-paginator-prev@(IsFirstPageDisabled ? " p-disabled" : "")" disabled="@IsFirstPageDisabled" aria-label="Previous Page" @onclick="ChangeToPrevPage">
             @if (PreviousPageLinkIconTemplate != null)
             {
                 <span class="p-paginator-prev-icon">@PreviousPageLinkIconTemplate</span>
@@ -54,7 +54,7 @@
             </span>
         }
 
-        <button type="button" class="p-paginator-next" disabled="@IsLastPageDisabled" aria-label="Next Page" @onclick="ChangeToNextPage">
+        <button type="button" class="p-paginator-next@(IsLastPageDisabled ? " p-disabled" : "")" disabled="@IsLastPageDisabled" aria-label="Next Page" @onclick="ChangeToNextPage">
             @if (NextPageLinkIconTemplate != null)
             {
                 <span class="p-paginator-next-icon">@NextPageLinkIconTemplate</span>
@@ -67,7 +67,7 @@
 
         @if (ShowFirstLastIcon)
         {
-            <button type="button" class="p-paginator-last" disabled="@IsLastPageDisabled" aria-label="Last Page" @onclick="ChangeToLastPage">
+            <button type="button" class="p-paginator-last@(IsLastPageDisabled ? " p-disabled" : "")" disabled="@IsLastPageDisabled" aria-label="Last Page" @onclick="ChangeToLastPage">
                 @if (LastPageLinkIconTemplate != null)
                 {
                     <span class="p-paginator-last-icon">@LastPageLinkIconTemplate</span>

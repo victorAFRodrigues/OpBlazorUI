@@ -15,7 +15,7 @@
         {
             <img class="p-chip-image" src="@Image" alt="@Alt" @onerror="OnImageError" />
         }
-        @if (!string.IsNullOrEmpty(Icon))
+        else if (!string.IsNullOrEmpty(Icon))
         {
             <span class="p-chip-icon @Icon" aria-hidden="true"></span>
         }

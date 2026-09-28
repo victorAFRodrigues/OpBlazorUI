@@ -253,12 +253,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-}
-
-/* Maximizado: por classe (e não style inline), para não apagar o z-index aplicado via JS. */
-.p-dialog-mask.op-dialog-mask-maximized {
-    padding: 0;
 }
 
 .p-dialog-top { align-items: flex-start; }
@@ -295,15 +289,7 @@ body {
 .p-drawer-mask {
     position: fixed;
     inset: 0;
-    z-index: 1000;
-    display: flex;
 }
-
-.p-drawer-mask.p-drawer-left { justify-content: flex-start; }
-.p-drawer-mask.p-drawer-right { justify-content: flex-end; }
-.p-drawer-mask.p-drawer-top { align-items: flex-start; }
-.p-drawer-mask.p-drawer-bottom { align-items: flex-end; }
-.p-drawer-mask.p-drawer-full { align-items: center; justify-content: center; }
 
 /*
  * BlockUI — máscara centralizada sobre o conteúdo.
@@ -339,30 +325,6 @@ body {
 
 .p-scrolltop-hidden {
     opacity: 0;
-    pointer-events: none;
-}
-
-/*
- * VirtualScroller — o tema só traz loader/loading-icon. Classes-base aqui.
- */
-.p-virtualscroller {
-    position: relative;
-    overflow: auto;
-    height: 100%;
-    width: 100%;
-}
-
-.p-virtualscroller-content {
-    position: relative;
-    overflow: visible;
-    will-change: transform;
-}
-
-.p-virtualscroller-spacer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1px;
     pointer-events: none;
 }
 

@@ -51,12 +51,14 @@
                     </div>
                     @if (msg.Closable)
                     {
-                        <button type="button"
-                                class="p-toast-close-button"
-                                aria-label="Close"
-                                @onclick="@(e => Close(msg))">
-                            <span class="p-toast-close-icon pi pi-times" aria-hidden="true"></span>
-                        </button>
+                        <div>
+                            <button type="button"
+                                    class="p-toast-close-button"
+                                    aria-label="Close"
+                                    @onclick="@(e => Close(msg))">
+                                <span class="p-toast-close-icon pi pi-times" aria-hidden="true"></span>
+                            </button>
+                        </div>
                     }
                 </div>
             }
