@@ -190,3 +190,15 @@ export function saveTheme(state) {
         // localStorage indisponível
     }
 }
+
+// SpeedDial (circle/semi-circle/quarter-circle): centraliza os itens no botão compensando a
+// diferença de tamanho entre o botão e a ação (--item-diff-x/y, como no upstream).
+export function speedDialItemDiff(root) {
+    if (!root) return;
+    const button = root.querySelector('.p-speeddial-button');
+    const list = root.querySelector('.p-speeddial-list');
+    const item = list && list.querySelector('.p-speeddial-item');
+    if (!button || !item) return;
+    list.style.setProperty('--item-diff-x', `${Math.abs(button.offsetWidth - item.offsetWidth) / 2}px`);
+    list.style.setProperty('--item-diff-y', `${Math.abs(button.offsetHeight - item.offsetHeight) / 2}px`);
+}

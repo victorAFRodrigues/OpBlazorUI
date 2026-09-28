@@ -1,5 +1,7 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.SpeedDial;
@@ -9,7 +11,15 @@ public sealed class SpeedDialButtonContext
     public Action? Toggle { get; init; }
 }
 
-public partial class OpSpeedDial : ComponentBase
+/// <summary>Contexto do <c>ItemTemplate</c>: o item, o índice e a ação de clique (executa o comando e fecha).</summary>
+public sealed class SpeedDialItemContext
+{
+    public required OpMenuItem Item { get; init; }
+    public int Index { get; init; }
+    public required Action Click { get; init; }
+}
+
+public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
 {
     private string _id = "";
     private bool _visible;
@@ -39,7 +49,6 @@ public partial class OpSpeedDial : ComponentBase
     [Parameter] public bool Tooltip { get; set; }
     [Parameter] public string TooltipPosition { get; set; } = "right";
     [Parameter] public string? ButtonSeverity { get; set; }
-    [Parameter] public bool ButtonRounded { get; set; }
     [Parameter] public bool ButtonRaised { get; set; }
     [Parameter] public bool ButtonText { get; set; }
     [Parameter] public bool ButtonOutlined { get; set; }
@@ -53,57 +62,109 @@ public partial class OpSpeedDial : ComponentBase
 
     // templates
     [Parameter] public RenderFragment<SpeedDialButtonContext>? ButtonTemplate { get; set; }
-    [Parameter] public RenderFragment<OpMenuItem>? ItemTemplate { get; set; }
+    [Parameter] public RenderFragment<SpeedDialItemContext>? ItemTemplate { get; set; }
     [Parameter] public RenderFragment? IconTemplate { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
+    [Inject] private IJSRuntime Js { get; set; } = default!;
+
+    private const string JsModule = "./_content/OpBlazorUI.Base/optimus.interop.js";
+    private ElementReference _root;
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<OpSpeedDial>? _selfRef;
+    private bool _listening;
+    private bool _disposed;
+
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
         _id = $"op-speeddial-{Guid.NewGuid():N}";
-        _visible = Visible;
+        _visible = _lastVisibleParam = Visible;
     }
+
+    // Só sincroniza quando o parâmetro muda: um re-render do pai (ex.: o OnClick do ButtonTemplate)
+    // não pode fechar o menu que acabou de abrir sem @bind-Visible.
+    private bool _lastVisibleParam;
 
     protected override void OnParametersSet()
     {
+        if (Visible == _lastVisibleParam) return;
+        _lastVisibleParam = Visible;
         _visible = Visible;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_disposed) return;
+        try
+        {
+            if (firstRender)
+            {
+                _module = await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
+                if (Type != "linear") await _module.InvokeVoidAsync("speedDialItemDiff", _root);
+            }
+
+            if (_module is null) return;
+            var listen = _visible && HideOnClickOutside;
+            if (listen && !_listening)
+            {
+                _listening = true;
+                _selfRef ??= DotNetObjectReference.Create(this);
+                await _module.InvokeVoidAsync("addOutsideClickListener", _root, null, _selfRef);
+            }
+            else if (!listen && _listening)
+            {
+                _listening = false;
+                await _module.InvokeVoidAsync("removeOutsideClickListener", _root);
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+        }
     }
 
     // ------------------------------------------------------------ computed
     private IReadOnlyList<OpMenuItem> Items => Model ?? Array.Empty<OpMenuItem>();
 
-    private string RootClass => BuildClass(
-        "p-speeddial p-component",
+    // Classes e inlineStyles como em speeddialstyle.ts.
+    private string RootClass => OpCss.BuildClass(
+        $"p-speeddial p-component p-speeddial-{Type}",
+        Type != "circle" ? $"p-speeddial-direction-{Direction}" : null,
         _visible ? "p-speeddial-open" : null,
-        Type != "linear" ? $"p-speeddial-{Type}" : null,
-        $"p-speeddial-{Direction}",
+        Disabled ? "p-disabled" : null,
         StyleClass);
 
-    private string ListStyle
+    private string? FlexDirection => Direction switch
+    {
+        "up" => "column-reverse",
+        "down" => "column",
+        "left" => "row-reverse",
+        "right" => "row",
+        _ => null
+    };
+
+    private string RootStyle
     {
         get
         {
-            if (Type == "linear")
+            var style = Direction switch
             {
-                return Direction switch
-                {
-                    "up" => "position:absolute; bottom:calc(100% + 0.5rem); left:50%; transform:translateX(-50%); flex-direction:column;",
-                    "down" => "position:absolute; top:calc(100% + 0.5rem); left:50%; transform:translateX(-50%); flex-direction:column;",
-                    "left" => "position:absolute; right:calc(100% + 0.5rem); top:50%; transform:translateY(-50%); flex-direction:row-reverse;",
-                    "right" => "position:absolute; left:calc(100% + 0.5rem); top:50%; transform:translateY(-50%); flex-direction:row;",
-                    _ => "position:absolute; bottom:calc(100% + 0.5rem); left:50%; transform:translateX(-50%); flex-direction:column;"
-                };
-            }
-
-            return "position:absolute; inset:0;";
+                "up" or "down" => "align-items: center;",
+                "left" or "right" => "justify-content: center;",
+                _ => ""
+            };
+            if (FlexDirection is not null) style += $" flex-direction: {FlexDirection};";
+            return $"{style} {Style}".Trim();
         }
     }
 
-    private string ButtonClass => BuildClass(
+    private string? ListStyle => FlexDirection is null ? null : $"flex-direction: {FlexDirection};";
+
+    private string ButtonClass => OpCss.BuildClass(
         "p-speeddial-button",
-        _visible && RotateAnimation && string.IsNullOrEmpty(HideIcon) ? "p-speeddial-rotate" : null,
+        RotateAnimation && string.IsNullOrEmpty(HideIcon) ? "p-speeddial-rotate" : null,
         ButtonStyleClass);
 
     private string ButtonIconClass
@@ -115,70 +176,68 @@ public partial class OpSpeedDial : ComponentBase
         }
     }
 
+    private string MaskClass => OpCss.BuildClass("p-speeddial-mask p-overlay-mask", MaskStyleClass);
+
+    private static string ItemClass(OpMenuItem item) => OpCss.BuildClass(
+        "p-speeddial-item",
+        item.Visible ? null : "p-hidden",
+        item.StyleClass);
+
+    private SpeedDialItemContext ItemContext(OpMenuItem item, int index)
+        => new() { Item = item, Index = index, Click = () => _ = OnItemClick(item) };
+
     // ------------------------------------------------------------ positioning
     private string ItemStyle(int index)
     {
         var count = Items.Count;
-        var delay = index * TransitionDelay;
-        var style = $"transition-delay:{delay}ms;";
+        var delay = (_visible ? index : count - index - 1) * TransitionDelay;
+        return $"transition-delay: {delay}ms;{PointStyle(index, count)}";
+    }
 
-        if (Type != "linear")
+    // calculatePointStyle do upstream: left/top/right/bottom relativos ao root, com o
+    // --item-diff-x/y (speedDialItemDiff) centralizando a ação no botão.
+    private string PointStyle(int index, int count)
+    {
+        if (Type == "linear" || count == 0) return "";
+
+        var radius = Radius > 0 ? Radius : count * 20;
+
+        if (Type == "circle")
         {
-            var (x, y) = CalculatePoint(index, count, Radius, Type, Direction);
-            var scale = _visible ? 1 : 0;
-            style += $"position:absolute; left:50%; top:50%; transform:translate(calc(-50% + {x}px), calc(-50% + {y}px)) scale({scale});";
+            var step = 2 * Math.PI / count;
+            return $" left: {Px(radius * Math.Cos(step * index), "x")}; top: {Px(radius * Math.Sin(step * index), "y")};";
         }
 
-        return style;
-    }
+        var stepSize = Type == "semi-circle"
+            ? Math.PI / Math.Max(count - 1, 1)
+            : Math.PI / (2 * Math.Max(count - 1, 1));
+        var x = Px(radius * Math.Cos(stepSize * index), "x");
+        var y = Px(radius * Math.Sin(stepSize * index), "y");
 
-    private static (double X, double Y) CalculatePoint(int index, int count, int radius, string type, string direction)
-    {
-        var r = (double)radius;
-        if (count <= 1) return (0, 0);
-
-        var denom = count - 1;
-
-        return type switch
+        if (Type == "semi-circle")
         {
-            "circle" => Circle(index, count, r),
-            "semi-circle" => SemiCircle(index, denom, r, direction),
-            "quarter-circle" => QuarterCircle(index, denom, r, direction),
-            _ => (0, 0)
+            return Direction switch
+            {
+                "up" => $" left: {x}; bottom: {y};",
+                "down" => $" left: {x}; top: {y};",
+                "left" => $" right: {y}; top: {x};",
+                "right" => $" left: {y}; top: {x};",
+                _ => ""
+            };
+        }
+
+        return Direction switch
+        {
+            "up-left" => $" right: {x}; bottom: {y};",
+            "up-right" => $" left: {x}; bottom: {y};",
+            "down-left" => $" right: {y}; top: {x};",
+            "down-right" => $" left: {y}; top: {x};",
+            _ => ""
         };
     }
 
-    private static (double X, double Y) Circle(int index, int count, double r)
-    {
-        var theta = 2 * Math.PI / count * index;
-        return (r * Math.Cos(theta), r * Math.Sin(theta));
-    }
-
-    private static (double X, double Y) SemiCircle(int index, int denom, double r, string direction)
-    {
-        var t = Math.PI * index / denom;
-        return direction switch
-        {
-            "up" => (r * Math.Cos(t), -r * Math.Sin(t)),
-            "down" => (r * Math.Cos(t), r * Math.Sin(t)),
-            "left" => (-r * Math.Sin(t), r * Math.Cos(t)),
-            "right" => (r * Math.Sin(t), r * Math.Cos(t)),
-            _ => (r * Math.Cos(t), -r * Math.Sin(t))
-        };
-    }
-
-    private static (double X, double Y) QuarterCircle(int index, int denom, double r, string direction)
-    {
-        var t = Math.PI / 2 * index / denom;
-        return direction switch
-        {
-            "up-left" => (-r * Math.Sin(t), -r * Math.Cos(t)),
-            "up-right" => (r * Math.Sin(t), -r * Math.Cos(t)),
-            "down-left" => (-r * Math.Sin(t), r * Math.Cos(t)),
-            "down-right" => (r * Math.Sin(t), r * Math.Cos(t)),
-            _ => (r * Math.Sin(t), -r * Math.Cos(t))
-        };
-    }
+    private static string Px(double value, string axis)
+        => string.Create(CultureInfo.InvariantCulture, $"calc({value:0.###}px + var(--item-diff-{axis}, 0px))");
 
     // ------------------------------------------------------------ interaction
     private async Task Toggle()
@@ -189,6 +248,7 @@ public partial class OpSpeedDial : ComponentBase
 
     private async Task SetVisibleAsync(bool value)
     {
+        if (_visible == value) return;
         _visible = value;
         await VisibleChanged.InvokeAsync(value);
         if (value)
@@ -203,6 +263,9 @@ public partial class OpSpeedDial : ComponentBase
         StateHasChanged();
     }
 
+    [JSInvokable]
+    public Task OnOutsideClick() => InvokeAsync(() => SetVisibleAsync(false));
+
     private async Task OnButtonClick(MouseEventArgs e)
     {
         await OnClick.InvokeAsync(e);
@@ -212,16 +275,26 @@ public partial class OpSpeedDial : ComponentBase
     private async Task OnItemClick(OpMenuItem item)
     {
         if (item.Disabled) return;
-
-        if (item.Url is not null)
-        {
-            // navegação/link
-        }
-
         item.Command?.Invoke();
         await SetVisibleAsync(false);
     }
 
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        try
+        {
+            if (_module is not null)
+            {
+                if (_listening) await _module.InvokeVoidAsync("removeOutsideClickListener", _root);
+                await _module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+
+        _selfRef?.Dispose();
+    }
 }

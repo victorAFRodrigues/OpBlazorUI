@@ -6,36 +6,43 @@
      aria-atomic="true"
      style="@Style"
      @attributes="AdditionalAttributes">
-    <div class="p-message-content">
-        @if (IconTemplate != null)
-        {
-            <span class="p-message-icon">@IconTemplate</span>
-        }
-        else if (!string.IsNullOrEmpty(EffectiveIcon))
-        {
-            <span class="p-message-icon @EffectiveIcon" aria-hidden="true"></span>
-        }
+    <div class="p-message-content-wrapper">
+        <div class="p-message-content">
+            @if (IconTemplate != null)
+            {
+                @IconTemplate
+            }
+            else if (!string.IsNullOrEmpty(EffectiveIcon))
+            {
+                <i class="p-message-icon @EffectiveIcon" aria-hidden="true"></i>
+            }
 
-        <div class="p-message-content-wrapper">
-            <span class="p-message-text">@ChildContent</span>
+            @if (ContainerTemplate != null)
+            {
+                @ContainerTemplate
+            }
+            else
+            {
+                <span class="p-message-text">@ChildContent</span>
+            }
+
+            @if (Closable)
+            {
+                <button type="button"
+                        class="p-message-close-button"
+                        aria-label="Close"
+                        @onclick="OnCloseClick">
+                    @if (CloseIconTemplate != null)
+                    {
+                        @CloseIconTemplate
+                    }
+                    else
+                    {
+                        <i class="p-message-close-icon @CloseIcon" aria-hidden="true"></i>
+                    }
+                </button>
+            }
         </div>
-
-        @if (Closable)
-        {
-            <button type="button"
-                    class="p-message-close-button"
-                    aria-label="Close"
-                    @onclick="OnCloseClick">
-                @if (CloseIconTemplate != null)
-                {
-                    <span class="p-message-close-icon">@CloseIconTemplate</span>
-                }
-                else
-                {
-                    <span class="p-message-close-icon @CloseIcon" aria-hidden="true"></span>
-                }
-            </button>
-        }
     </div>
 </div>
 
@@ -95,7 +102,7 @@
 
     private string RootClass => OpCss.BuildClass(
         "p-message p-component",
-        $"p-message-{Severity}",
+        $"p-message-{Severity.ToLowerInvariant()}",
         Variant switch
         {
             "outlined" => "p-message-outlined",

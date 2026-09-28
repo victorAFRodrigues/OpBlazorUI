@@ -7,27 +7,22 @@
     }
 
     <div class="p-card-body">
-        @if (HasCaption)
+        @if (TitleTemplate != null)
         {
-            <div class="p-card-caption">
-                @if (TitleTemplate != null)
-                {
-                    <div class="p-card-title">@TitleTemplate</div>
-                }
-                else if (!string.IsNullOrEmpty(Header))
-                {
-                    <div class="p-card-title">@Header</div>
-                }
+            <div class="p-card-title">@TitleTemplate</div>
+        }
+        else if (!string.IsNullOrEmpty(Header))
+        {
+            <div class="p-card-title">@Header</div>
+        }
 
-                @if (SubtitleTemplate != null)
-                {
-                    <div class="p-card-subtitle">@SubtitleTemplate</div>
-                }
-                else if (!string.IsNullOrEmpty(Subheader))
-                {
-                    <div class="p-card-subtitle">@Subheader</div>
-                }
-            </div>
+        @if (SubtitleTemplate != null)
+        {
+            <div class="p-card-subtitle">@SubtitleTemplate</div>
+        }
+        else if (!string.IsNullOrEmpty(Subheader))
+        {
+            <div class="p-card-subtitle">@Subheader</div>
         }
 
         <div class="p-card-content">@ChildContent</div>

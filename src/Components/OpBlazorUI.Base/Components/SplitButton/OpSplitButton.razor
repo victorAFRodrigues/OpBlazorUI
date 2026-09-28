@@ -13,36 +13,28 @@
               Icon="@Icon"
               IconPos="@IconPos"
               Severity="@Severity"
-              Raised="@Raised"
-              Rounded="@Rounded"
               Text="@Text"
               Outlined="@Outlined"
-              Plain="@Plain"
               Size="@Size"
               Disabled="@(Disabled || ButtonDisabled)"
               TabIndex="@TabIndex"
               autofocus="@Autofocus"
-              OnClick="OnClick">
-        @ContentTemplate
-    </OpButton>
+              ChildContent="@ContentTemplate"
+              OnClick="OnClick"/>
 
-    <OpButton StyleClass="p-splitbutton-dropdown"
+    <OpButton StyleClass="p-splitbutton-dropdown p-button-icon-only"
               Icon="@DropdownIcon"
               Severity="@Severity"
-              Raised="@Raised"
-              Rounded="@Rounded"
               Text="@Text"
               Outlined="@Outlined"
-              Plain="@Plain"
               Size="@Size"
               Disabled="@(Disabled || MenuButtonDisabled)"
               AriaLabel="@ExpandAriaLabel"
               aria-haspopup="menu"
               aria-expanded="@(_overlayVisible ? "true" : "false")"
               aria-controls="@($"{_id}_menu")"
-              OnClick="OnDropdownButtonClick">
-        @DropdownIconTemplate
-    </OpButton>
+              IconTemplate="@DropdownIconTemplate"
+              OnClick="OnDropdownButtonClick"/>
 
     @if (_panelRendered)
     {

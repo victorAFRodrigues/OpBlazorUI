@@ -1,27 +1,18 @@
 @namespace OpBlazorUI.Base.Components.Tag
 
 <span class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
-    @if (ChildContent != null)
+    @ChildContent
+    @if (IconTemplate != null)
     {
-        @ChildContent
+        <span class="p-tag-icon">@IconTemplate</span>
     }
-    else
+    else if (!string.IsNullOrEmpty(Icon))
     {
-        @if (!string.IsNullOrEmpty(Icon))
-        {
-            @if (IconTemplate != null)
-            {
-                <span class="p-tag-icon">@IconTemplate</span>
-            }
-            else
-            {
-                <span class="p-tag-icon @Icon" aria-hidden="true"></span>
-            }
-        }
-        @if (!string.IsNullOrEmpty(Value))
-        {
-            <span class="p-tag-label">@Value</span>
-        }
+        <span class="p-tag-icon @Icon" aria-hidden="true"></span>
+    }
+    @if (!string.IsNullOrEmpty(Value))
+    {
+        <span class="p-tag-label">@Value</span>
     }
 </span>
 

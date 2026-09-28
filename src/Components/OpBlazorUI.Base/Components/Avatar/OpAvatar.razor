@@ -5,21 +5,19 @@
      aria-label="@AriaLabel"
      aria-labelledby="@AriaLabelledBy"
      @attributes="AdditionalAttributes">
-    @if (ChildContent != null)
+    @ChildContent
+    @* Prioridade do upstream: label > ícone > imagem. *@
+    @if (!string.IsNullOrEmpty(Label))
     {
-        @ChildContent
-    }
-    else if (!string.IsNullOrEmpty(Image))
-    {
-        <img src="@Image" alt="@Alt" @onerror="OnImageError" />
+        <span class="p-avatar-label">@Label</span>
     }
     else if (!string.IsNullOrEmpty(Icon))
     {
         <span class="p-avatar-icon @Icon" aria-hidden="true"></span>
     }
-    else if (!string.IsNullOrEmpty(Label))
+    else if (!string.IsNullOrEmpty(Image))
     {
-        <span class="p-avatar-text">@Label</span>
+        <img src="@Image" alt="@Alt" aria-label="@AriaLabel" @onerror="OnImageError" />
     }
 </div>
 
