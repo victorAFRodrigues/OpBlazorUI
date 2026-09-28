@@ -18,23 +18,23 @@
 
     <DocSection Label="Temas">
         <Description>
-            <p>Cada tema é um arquivo CSS em <code>_content/OpBlazorUI.Base/themes/</code>. O tema padrão é o <code>aura.css</code> (paleta <strong>noir</strong>), e existem 16 variantes de cor:</p>
+            <p>O tema é a combinação de três escolhas independentes, todas geradas a partir dos presets do Optimus UI:</p>
             <ul>
-                <li><code>emerald</code>, <code>green</code>, <code>lime</code>, <code>orange</code>, <code>amber</code>, <code>yellow</code>, <code>teal</code>, <code>cyan</code></li>
-                <li><code>sky</code>, <code>blue</code>, <code>indigo</code>, <code>violet</code>, <code>purple</code>, <code>fuchsia</code>, <code>pink</code>, <code>rose</code></li>
+                <li><strong>Preset</strong>: o visual base dos componentes, em <code>themes/{preset}.css</code>. Opções: <code>aura</code> (padrão), <code>lara</code> e <code>nora</code>.</li>
+                <li><strong>Primária</strong>: <code>noir</code> (padrão; segue a superfície, preto no claro e branco no escuro), <code>emerald</code>, <code>green</code>, <code>lime</code>, <code>orange</code>, <code>amber</code>, <code>yellow</code>, <code>teal</code>, <code>cyan</code>, <code>sky</code>, <code>blue</code>, <code>indigo</code>, <code>violet</code>, <code>purple</code>, <code>fuchsia</code>, <code>pink</code> e <code>rose</code>.</li>
+                <li><strong>Superfície</strong>: <code>slate</code>, <code>gray</code>, <code>zinc</code>, <code>neutral</code>, <code>stone</code>, <code>soho</code>, <code>viva</code> e <code>ocean</code>. Sem superfície definida, vale a do preset (slate no claro, zinc no escuro).</li>
             </ul>
-            <p>Além das variantes, existe o preset <strong>Lara</strong> (<code>lara.css</code>), uma base completa com visual próprio mantida separada do Aura.</p>
-            <p>Defina o tema padrão informando a URL do arquivo desejado:</p>
+            <p>Primária e superfície não exigem outro arquivo: o <code>&lt;OpBlazorUiSetup /&gt;</code> carrega <code>themes/palettes.css</code> e aplica os atributos <code>data-op-primary</code> e <code>data-op-surface</code> no <code>&lt;html&gt;</code>. Defina o tema na inicialização (por exemplo, no <code>Program.cs</code>):</p>
         </Description>
         <Code>
             <CodeBlock Language="csharp"
-                       Code="@("OpTheme.SetThemeUrl(\"_content/OpBlazorUI.Base/themes/aura-emerald.css\");")"/>
+                       Code="@("OpTheme.SetPreset(\"lara\");\nOpTheme.SetPrimary(\"blue\");\nOpTheme.SetSurface(\"zinc\");")"/>
         </Code>
     </DocSection>
 
     <DocSection Label="Trocando o tema em tempo de execução">
         <Description>
-            <p>O componente <code>OpThemeSwitcher</code> renderiza os seletores de cor e o botão de modo escuro. Ao trocar o tema, ele atualiza o <code>OpTheme</code> e o <code>&lt;OpBlazorUiSetup /&gt;</code> recarrega o CSS automaticamente.</p>
+            <p>O componente <code>OpThemeSwitcher</code> renderiza os seletores de cor primária e o botão de modo escuro. Ao escolher uma cor, ele chama <code>OpTheme.SetPrimary</code> e o <code>&lt;OpBlazorUiSetup /&gt;</code> aplica a paleta na hora, sem recarregar o CSS.</p>
         </Description>
         <ChildContent>
             <OpThemeSwitcher/>

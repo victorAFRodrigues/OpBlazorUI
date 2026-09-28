@@ -7,6 +7,13 @@ export function setDarkMode(enabled) {
     }
 }
 
+// Paletas de themes/palettes.css: null remove o atributo (vale a paleta do preset).
+export function setPalette(primary, surface) {
+    const root = document.documentElement;
+    if (primary) root.setAttribute('data-op-primary', primary); else root.removeAttribute('data-op-primary');
+    if (surface) root.setAttribute('data-op-surface', surface); else root.removeAttribute('data-op-surface');
+}
+
 export function getDarkMode() {
     return document.documentElement.classList.contains('app-dark');
 }

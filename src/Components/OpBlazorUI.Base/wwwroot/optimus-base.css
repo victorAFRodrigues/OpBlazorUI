@@ -375,3 +375,11 @@ body {
     width: 1px;
     pointer-events: none;
 }
+
+/*
+ * Skeleton: o upstream aplica position: relative inline (inlineStyles). Sem isso o ::after
+ * absoluto da animacao wave vaza para fora da forma.
+ */
+.p-skeleton {
+    position: relative;
+}
