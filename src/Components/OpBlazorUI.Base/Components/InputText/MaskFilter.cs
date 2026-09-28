@@ -45,7 +45,7 @@ internal static class MaskFilter
         if (string.IsNullOrEmpty(mask)) return value ?? string.Empty;
         value ??= string.Empty;
 
-        var clean = StripLiterals(value, mask, slotChar);
+        var clean = ExtractRaw(value, mask, slotChar);
         var result = new StringBuilder();
         var index = 0;
         var optional = false;
@@ -91,30 +91,46 @@ internal static class MaskFilter
             }
         }
 
-        if (index < clean.Length) result.Append(clean[index..]);
-
         return result.ToString();
     }
 
     public static bool IsIncomplete(string? value, string slotChar) => value?.Contains(slotChar) == true;
 
-    private static string StripLiterals(string value, string mask, string slotChar)
+    // Alinha o valor com a máscara: um literal só é descartado na posição esperada, então
+    // dígitos iguais a literais (ex.: o "5" em "+55 (99) ...") são mantidos. Caracteres que não
+    // casam com o próximo placeholder, ou que excedem a máscara, são descartados.
+    private static string ExtractRaw(string value, string mask, string slotChar)
     {
-        var literals = new HashSet<char>();
-        foreach (var c in mask)
-        {
-            if (c != '?' && !IsPlaceholder(c)) literals.Add(c);
-        }
-
         var sb = new StringBuilder(value.Length);
-        foreach (var c in value)
+        var mi = 0;
+        foreach (var ch in value)
         {
-            if (slotChar.Length == 1 && c == slotChar[0]) continue;
-            if (literals.Contains(c)) continue;
-            sb.Append(c);
+            while (mi < mask.Length && mask[mi] == '?') mi++;
+            if (mi < mask.Length && !IsPlaceholder(mask[mi]) && ch == mask[mi])
+            {
+                mi++;
+                continue;
+            }
+
+            if (slotChar.Length == 1 && ch == slotChar[0]) continue;
+
+            var next = NextPlaceholder(mask, mi);
+            if (next < 0 || !Matches(ch, mask[next])) continue;
+            sb.Append(ch);
+            mi = next + 1;
         }
 
         return sb.ToString();
+    }
+
+    private static int NextPlaceholder(string mask, int from)
+    {
+        for (var i = from; i < mask.Length; i++)
+        {
+            if (IsPlaceholder(mask[i])) return i;
+        }
+
+        return -1;
     }
 
     private static bool IsPlaceholder(char c) => c is '9' or 'a' or '*';

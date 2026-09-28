@@ -631,10 +631,10 @@ public partial class OpAutoComplete<TValue> : ComponentBase
     private async Task ToggleOptionAsync(TValue option)
     {
         var list = SelectedOptions;
-        var existing = list.FirstOrDefault(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
-        if (existing is not null)
+        var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
+        if (existingIndex >= 0)
         {
-            list.Remove(existing);
+            list.RemoveAt(existingIndex);
             await OnUnselect.InvokeAsync(new OpAutoCompleteSelectEvent { Option = option });
         }
         else
@@ -652,10 +652,10 @@ public partial class OpAutoComplete<TValue> : ComponentBase
     private async Task RemoveChipAsync(TValue option)
     {
         var list = SelectedOptions;
-        var existing = list.FirstOrDefault(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
-        if (existing is not null)
+        var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
+        if (existingIndex >= 0)
         {
-            list.Remove(existing);
+            list.RemoveAt(existingIndex);
             await OnUnselect.InvokeAsync(new OpAutoCompleteSelectEvent { Option = option });
         }
 
