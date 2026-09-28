@@ -2,6 +2,7 @@
 //
 //   npm install && npm run build      → escreve wwwroot/themes/{aura,lara,nora}.css e palettes.css
 //   npm run compare                   → gera o Aura "noir" em out/ para comparar com um tema antigo
+//   npm run extract -- <optimus-ui>   → atualiza component-extras.json (CSS extra dos componentes Angular)
 //
 // Cada preset vira um CSS estático com: tokens primitivos → semânticos (claro e .app-dark) →
 // globais → estilo base → estilos comuns do preset → por componente (tokens + estilo).
@@ -66,6 +67,22 @@ function dedent(css) {
 
 const resolveDt = css => (css ? evaluateDtExpressions(css, dt) : '');
 
+// CSS extra dos componentes Angular (extract-extras.mjs). Regras que dependem do Angular
+// (p-button, .ng-invalid...) simplesmente não casam. Ficam de fora as que brigam com o
+// posicionamento fixed do overlay.interop.js (min-width: 100% e position: relative em painéis).
+const EXTRAS = JSON.parse(readFileSync(join(here, 'component-extras.json'), 'utf8'));
+const SKIP_RULES = ['.p-component-overlay.p-component', '.p-password-overlay'];
+
+function componentExtras(name) {
+    let css = EXTRAS.styles[name];
+    if (!css) return '';
+    for (const sel of SKIP_RULES) {
+        const esc = sel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        css = css.replace(new RegExp(`(^|\\n)[ \\t]*${esc}\\s*\\{[^}]*\\}`, 'g'), '$1');
+    }
+    return dedent(resolveDt(css));
+}
+
 // ---------------------------------------------------------------- geração
 
 function componentNames() {
@@ -106,6 +123,10 @@ async function buildPreset(preset, title) {
         if (style) css += dedent(resolveDt(style));
         if (vars.style) css += dedent(resolveDt(vars.style));
     }
+
+    // Depois de tudo, como no Angular (o CSS extra vem depois do tema no mesmo <style>).
+    css += `/* ---- Estilos dos componentes Angular (optimus-ui ${EXTRAS.commit ?? ''}, style/*style.ts) ---- */\n\n`;
+    for (const name of Object.keys(EXTRAS.styles)) css += componentExtras(name);
     return css.replace(/\n{3,}/g, '\n\n');
 }
 

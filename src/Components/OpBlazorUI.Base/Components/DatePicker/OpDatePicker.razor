@@ -223,9 +223,10 @@
                                                             }
                                                         </td>
                                                     }
-                                                    else if (date == null)
+                                                    else
                                                     {
-                                                        <td></td>
+                                                        @* Como no upstream: a célula existe (mantém as colunas); só o dia fica oculto. *@
+                                                        <td class="@(date != null ? DayCellClass(date) : null)"></td>
                                                     }
                                                 }
                                             </tr>

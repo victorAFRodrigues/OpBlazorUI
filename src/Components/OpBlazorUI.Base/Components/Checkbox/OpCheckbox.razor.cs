@@ -35,7 +35,7 @@ public partial class OpCheckbox : ComponentBase
 
     private string RootClass => BuildClass(
         "p-checkbox p-component",
-        Checked == true ? "p-checkbox-checked p-highlight" : null,
+        Checked == true && !Indeterminate ? "p-checkbox-checked p-highlight" : null,
         Disabled ? "p-disabled" : null,
         Invalid ? "p-invalid" : null,
         Variant == "filled" ? "p-variant-filled" : null,

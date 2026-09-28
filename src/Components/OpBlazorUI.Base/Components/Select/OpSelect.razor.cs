@@ -43,7 +43,7 @@ public partial class OpSelect<TValue> : ComponentBase
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
     [Parameter] public bool Fluid { get; set; }
-    [Parameter] public string? ScrollHeight { get; set; }
+    [Parameter] public string? ScrollHeight { get; set; } = "200px";
     [Parameter] public bool VirtualScroll { get; set; }
     [Parameter] public int VirtualScrollItemSize { get; set; } = 38;
     [Parameter] public bool Loading { get; set; }

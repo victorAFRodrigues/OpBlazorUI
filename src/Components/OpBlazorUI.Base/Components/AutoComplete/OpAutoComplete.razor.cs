@@ -57,7 +57,7 @@ public partial class OpAutoComplete<TValue> : ComponentBase
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
     [Parameter] public bool Fluid { get; set; }
-    [Parameter] public string? ScrollHeight { get; set; }
+    [Parameter] public string? ScrollHeight { get; set; } = "200px";
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string? EmptyMessage { get; set; } = "No results found";
     [Parameter] public int TabIndex { get; set; }
@@ -139,6 +139,7 @@ public partial class OpAutoComplete<TValue> : ComponentBase
 
     private string InputClass => BuildClass(
         "p-autocomplete-input p-inputtext",
+        Fluid ? "p-inputtext-fluid" : null,
         Size == "small" ? "p-inputtext-sm" : null,
         Size == "large" ? "p-inputtext-lg" : null,
         Invalid ? "p-invalid" : null,

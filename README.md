@@ -106,11 +106,13 @@ Uso:
 O tema combina um **preset** (`aura`, `lara`, `nora`), uma **primária** e uma **superfície**.
 O padrão é Aura com primária `noir`:
 
-```csharp
-OpTheme.SetPreset("lara");     // themes/lara.css
-OpTheme.SetPrimary("blue");    // noir, emerald, green, lime, orange, amber, yellow, teal, cyan,
+```razor
+@inject OpThemeService Theme
+
+Theme.SetPreset("lara");       // themes/lara.css
+Theme.SetPrimary("blue");      // noir, emerald, green, lime, orange, amber, yellow, teal, cyan,
                                // sky, blue, indigo, violet, purple, fuchsia, pink, rose
-OpTheme.SetSurface("zinc");    // slate, gray, zinc, neutral, stone, soho, viva, ocean (null = do preset)
+Theme.SetSurface("zinc");      // slate, gray, zinc, neutral, stone, soho, viva, ocean (null = do preset)
 ```
 
 Primária e superfície vêm de `themes/palettes.css`, aplicadas pelos atributos `data-op-primary` e
@@ -126,7 +128,9 @@ npm run build     # regenera wwwroot/themes/{aura,lara,nora}.css e palettes.css
 
 Não edite os arquivos gerados à mão; ajustes do OpBlazorUI ficam em `optimus-base.css`.
 
-Modo escuro e RTL via `_content/OpBlazorUI.Base/optimus.interop.js` (`setDarkMode`, `setRtl`).
+Modo escuro e RTL: `Theme.SetDarkMode(true)` / `Theme.ToggleDarkMode()` e `Theme.SetRtl(true)`. O
+`OpThemeService` é scoped (um estado por usuário no Server) e, com `PersistTheme`, salva as escolhas no
+`localStorage`.
 
 ## Componentes portados
 

@@ -19,9 +19,8 @@
                     <OpIcon Name="angle-left" CssClass="p-paginator-prev-icon"/>
                 </button>
                 <span class="p-paginator-pages">
-                    @for (var p = 0; p < PageCount; p++)
+                    @foreach (var page in PageLinks)
                     {
-                        var page = p;
                         <button type="button"
                                 class="p-paginator-page @(_currentPage == page ? "p-paginator-page-selected" : "")"
                                 aria-current="@(_currentPage == page ? "page" : null)" aria-label="@(page + 1)"
@@ -133,9 +132,8 @@
                     <OpIcon Name="angle-left" CssClass="p-paginator-prev-icon"/>
                 </button>
                 <span class="p-paginator-pages">
-                    @for (var p = 0; p < PageCount; p++)
+                    @foreach (var page in PageLinks)
                     {
-                        var page = p;
                         <button type="button"
                                 class="p-paginator-page @(_currentPage == page ? "p-paginator-page-selected" : "")"
                                 aria-current="@(_currentPage == page ? "page" : null)" aria-label="@(page + 1)"

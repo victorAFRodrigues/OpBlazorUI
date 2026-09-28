@@ -248,6 +248,7 @@ public partial class OpDatePicker : ComponentBase
 
     private string InputClass => BuildClass(
         "p-inputtext p-datepicker-input",
+        Fluid ? "p-inputtext-fluid" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         Invalid ? "p-invalid" : null,
         InputStyleClass,

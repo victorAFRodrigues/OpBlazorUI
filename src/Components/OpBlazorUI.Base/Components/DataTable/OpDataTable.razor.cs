@@ -105,10 +105,25 @@ public partial class OpDataTable<TItem> : ComponentBase
         Selection ? "p-datatable-selectable-row" : null,
         IsSelected(item) ? "p-datatable-row-selected" : null);
 
+    [Parameter] public int PageLinkSize { get; set; } = 5;
+
+    // Janela de páginas como o p-paginator do upstream (pageLinkSize).
+    private IEnumerable<int> PageLinks
+    {
+        get
+        {
+            if (PageCount <= 0) return [];
+            var start = Math.Max(0, _currentPage - PageLinkSize / 2);
+            var end = Math.Min(PageCount, start + PageLinkSize);
+            start = Math.Max(0, end - PageLinkSize);
+            return Enumerable.Range(start, end - start);
+        }
+    }
+
     private string SortIconName(OpDataTableColumn col)
     {
-        if (_sortField != col.Field || _sortOrder == 0) return "chevrons-up-down";
-        return _sortOrder == 1 ? "chevron-up" : "chevron-down";
+        if (_sortField != col.Field || _sortOrder == 0) return "sort-alt";
+        return _sortOrder == 1 ? "sort-amount-up-alt" : "sort-amount-down";
     }
 
     private bool IsSelected(TItem item)

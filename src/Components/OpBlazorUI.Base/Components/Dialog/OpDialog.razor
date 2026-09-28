@@ -4,7 +4,7 @@
 @if (Visible)
 {
     <div class="@MaskClass"
-         style="@MaskStyle"
+         style="@MaskInlineStyle"
          @onclick="OnMaskClick"
          @onkeydown="OnKeydown"
          @attributes="AdditionalAttributes">
@@ -14,7 +14,7 @@
         }
         <div class="@RootClass"
              @ref="_root"
-             style="@Style"
+             style="@RootInlineStyle"
              role="dialog"
              aria-modal="@(Modal ? "true" : null)"
              aria-labelledby="@(_headerId)"

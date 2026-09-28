@@ -127,6 +127,8 @@ public partial class OpVirtualScroller<TItem> : ComponentBase, IAsyncDisposable
     private string RootClass => OpCss.BuildClass(
         "p-virtualscroller p-component",
         Inline ? "p-virtualscroller-inline" : null,
+        Orientation == "horizontal" ? "p-virtualscroller-horizontal p-horizontal-scroll" : null,
+        Orientation == "both" ? "p-virtualscroller-both p-both-scroll" : null,
         StyleClass);
 
     private string RootStyle

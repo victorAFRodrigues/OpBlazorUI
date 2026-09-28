@@ -20,7 +20,7 @@ else
 
         @if (ShowLoader && Loading)
         {
-            <div class="p-virtualscroller-loader">
+            <div class="@(LoaderTemplate == null ? "p-virtualscroller-loader p-virtualscroller-loader-mask" : "p-virtualscroller-loader")">
                 @if (LoaderTemplate != null)
                 {
                     @LoaderTemplate
