@@ -1,16 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpBlazorUI.Base;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Showcase.Components.Layout;
 
 public sealed record OpPalette(string Name, string Swatch);
 
-/// <summary>
-/// Estado do configurador do Showcase. Cores e preset ficam no <see cref="OpTheme"/> da biblioteca
-/// (aplicados via themes/palettes.css); aqui só ficam as amostras e o RTL.
-/// </summary>
+/// <summary>Amostras de cor do configurador. O estado do tema fica no <see cref="OpThemeService"/>.</summary>
 public static class OpConfig
 {
     // Amostra = tom 500 da paleta; noir usa a cor do texto (preto no claro, branco no escuro).
@@ -31,28 +27,9 @@ public static class OpConfig
 
     public const string DefaultSurface = "slate";
 
-    private static bool _rtl;
-
-    public static event Action? ConfigChanged;
-
-    public static string Primary => OpTheme.Primary ?? OpTheme.DefaultPrimary;
-    public static string Surface => OpTheme.Surface ?? DefaultSurface;
-    public static bool Rtl => _rtl;
-
     public static IReadOnlyList<OpPalette> PrimaryPalettes { get; } =
-        OpTheme.Primaries.Select(p => new OpPalette(p, PrimarySwatches[p])).ToList();
+        OpThemeService.Primaries.Select(p => new OpPalette(p, PrimarySwatches[p])).ToList();
 
     public static IReadOnlyList<OpPalette> SurfacePalettes { get; } =
-        OpTheme.Surfaces.Select(s => new OpPalette(s, SurfaceSwatches[s])).ToList();
-
-    public static void SetPrimary(string name) => OpTheme.SetPrimary(name);
-
-    public static void SetSurface(string name) => OpTheme.SetSurface(name);
-
-    public static void SetRtl(bool rtl)
-    {
-        if (_rtl == rtl) return;
-        _rtl = rtl;
-        ConfigChanged?.Invoke();
-    }
+        OpThemeService.Surfaces.Select(s => new OpPalette(s, SurfaceSwatches[s])).ToList();
 }
