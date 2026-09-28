@@ -8,6 +8,8 @@ namespace OpBlazorUI.Base.Components.AutoComplete;
 
 public partial class OpAutoComplete<TValue> : ComponentBase
 {
+    private ElementReference _rootRef;
+
     private string _id = "";
 
     private bool _overlayVisible;

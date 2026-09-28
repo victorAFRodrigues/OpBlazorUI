@@ -1,9 +1,15 @@
 @using OpBlazorUI.Base.Models
 @using OpBlazorUI.Base.Services
 @namespace OpBlazorUI.Base.Components.Toast
+@using OpBlazorUI.Base.Components.Overlay
 @implements IDisposable
 
-<div class="@RootClass" style="@RootStyle" role="region" aria-live="polite" aria-label="Toast messages">
+<div class="@RootClass" role="region" aria-live="polite" aria-label="Toast messages">
+    @if (AutoZIndex && VisibleMessages.Count > 0)
+    {
+        @* Entra na pilha de z-index ao exibir a primeira mensagem: fica acima de dialogs já abertos. *@
+        <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex"/>
+    }
     @if (Breakpoints != null && Breakpoints.Count > 0)
     {
         <style>

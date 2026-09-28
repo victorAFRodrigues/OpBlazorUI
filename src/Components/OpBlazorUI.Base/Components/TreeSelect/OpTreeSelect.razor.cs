@@ -5,6 +5,8 @@ namespace OpBlazorUI.Base.Components.TreeSelect;
 
 public partial class OpTreeSelect : ComponentBase
 {
+    private ElementReference _rootRef;
+
     private string _id = "";
 
     private bool _overlayVisible;

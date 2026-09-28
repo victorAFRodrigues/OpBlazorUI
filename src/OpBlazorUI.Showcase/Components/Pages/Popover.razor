@@ -27,7 +27,7 @@
                             <div>
                                 <span class="font-medium block mb-2">Convidar membro</span>
                                 <div class="flex items-center gap-2">
-                                    <input class="flex-auto" disabled/>
+                                    <input class="p-inputtext p-component flex-auto" style="min-width:0" value="https://exemplo.com/doc" readonly aria-label="Link do documento"/>
                                     <OpButton Label="Convidar" Icon="pi pi-users"/>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Position", "string", "bottom", "Posição: <code>bottom</code> ou <code>top</code>." },
+                              new[] { "Position", "string", "bottom", "Posição: <code>bottom</code> ou <code>top</code>. Inverte quando não há espaço e acompanha o alvo no scroll." },
                               new[] { "Dismissable", "bool", "true", "Oculta ao clicar fora." },
                               new[] { "FocusOnShow", "bool", "true", "Foca o popover ao abrir." },
                               new[] { "Style", "string?", "null", "Estilos inline." },
