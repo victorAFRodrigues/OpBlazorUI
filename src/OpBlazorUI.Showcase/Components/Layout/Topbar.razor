@@ -1,5 +1,6 @@
 @namespace OpBlazorUI.Showcase.Components.Layout
 @implements IDisposable
+@inject OpThemeService Theme
 
 <div class="layout-topbar layout-topbar-sticky">
     <div class="layout-topbar-inner">
@@ -70,16 +71,16 @@
 </div>
 
 @code {
-    private bool _darkMode;
+    private bool _darkMode => Theme.DarkMode;
     private bool _configOpen;
 
-    protected override void OnInitialized() => DarkModeState.Changed += OnDarkChanged;
+    protected override void OnInitialized() => Theme.Changed += OnDarkChanged;
 
-    private void OnDarkChanged() => _darkMode = DarkModeState.Dark;
+    private void OnDarkChanged() => InvokeAsync(StateHasChanged);
 
-    private void ToggleDarkMode() => DarkModeState.Set(!DarkModeState.Dark);
+    private void ToggleDarkMode() => Theme.ToggleDarkMode();
 
     private void ToggleConfig() => _configOpen = !_configOpen;
 
-    public void Dispose() => DarkModeState.Changed -= OnDarkChanged;
+    public void Dispose() => Theme.Changed -= OnDarkChanged;
 }

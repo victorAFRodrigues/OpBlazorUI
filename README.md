@@ -86,17 +86,29 @@ Uso:
 ## Temas
 
 O tema combina um **preset** (`aura`, `lara`, `nora`), uma **primária** e uma **superfície**.
-O padrão é Aura com primária `noir`:
+O padrão é Aura com primária `noir`. O tema inicial é definido no registro dos serviços:
 
 ```csharp
-OpTheme.SetPreset("lara");     // themes/lara.css
-OpTheme.SetPrimary("blue");    // noir, emerald, green, lime, orange, amber, yellow, teal, cyan,
-                               // sky, blue, indigo, violet, purple, fuchsia, pink, rose
-OpTheme.SetSurface("zinc");    // slate, gray, zinc, neutral, stone, soho, viva, ocean (null = do preset)
+builder.Services.AddOpBlazorUI(theme =>
+{
+    theme.Preset = "lara";      // themes/lara.css
+    theme.Primary = "blue";     // noir, emerald, green, lime, orange, amber, yellow, teal, cyan,
+                                // sky, blue, indigo, violet, purple, fuchsia, pink, rose
+    theme.Surface = "zinc";     // slate, gray, zinc, neutral, stone, soho, viva, ocean (null = do preset)
+    theme.PersistTheme = true;  // salva as escolhas do usuário no localStorage
+});
 ```
 
+Em tempo de execução, injete o `OpThemeService` (scoped, um por usuário/circuito):
+`SetPreset`, `SetPrimary`, `SetSurface`, `SetDarkMode`/`ToggleDarkMode` e `SetRtl`.
+
 Primária e superfície vêm de `themes/palettes.css`, aplicadas pelos atributos `data-op-primary` e
-`data-op-surface` no `<html>`; trocar a cor não carrega outro arquivo.
+`data-op-surface` no `<html>`; trocar a cor não carrega outro arquivo. Para aplicar o tema salvo
+antes do Blazor iniciar (sem flash), inclua no `<head>`:
+
+```html
+<script src="_content/OpBlazorUI.Base/op-theme.js" data-preset="aura" data-primary="noir"></script>
+```
 
 Os temas são gerados a partir dos presets do Optimus UI (`@openng/optimus-ui-themes`, MIT):
 
@@ -108,7 +120,7 @@ npm run build     # regenera wwwroot/themes/{aura,lara,nora}.css e palettes.css
 
 Não edite os arquivos gerados à mão; ajustes do OpBlazorUI ficam em `optimus-base.css`.
 
-Modo escuro e RTL via `_content/OpBlazorUI.Base/optimus.interop.js` (`setDarkMode`, `setRtl`).
+Modo escuro e RTL também ficam no `OpThemeService` (`ToggleDarkMode`, `SetRtl`).
 
 ## Componentes portados
 

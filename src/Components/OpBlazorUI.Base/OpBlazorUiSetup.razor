@@ -1,12 +1,18 @@
 @namespace OpBlazorUI.Base
 @using Microsoft.JSInterop
+@using OpBlazorUI.Base.Services
 @implements IAsyncDisposable
 @inject IJSRuntime Js
+@inject OpThemeService Theme
 
 <HeadContent>
     <link rel="stylesheet" href="_content/OpBlazorUI.Base/openng-icons.css"/>
-    <link id="optimus-theme" rel="stylesheet" href="@_themeUrl"/>
-    <link rel="stylesheet" href="@OpTheme.PalettesUrl"/>
+    @if (_ready)
+    {
+        @* Com PersistTheme, o link só entra após restaurar o preset salvo (até lá vale o do op-theme.js). *@
+        <link id="optimus-theme" rel="stylesheet" href="@Theme.ThemeUrl"/>
+        <link rel="stylesheet" href="@OpThemeService.PalettesUrl"/>
+    }
     <link rel="stylesheet" href="_content/OpBlazorUI.Base/optimus-base.css"/>
     <script src="_content/OpBlazorUI.Base/quill.min.js"></script>
 </HeadContent>
@@ -14,30 +20,67 @@
 @code {
     private const string JsModule = "./_content/OpBlazorUI.Base/optimus.interop.js";
 
-    private string _themeUrl = OpTheme.ThemeUrl;
     private IJSObjectReference? _module;
-    private bool _pendingPalette = true;
+    private bool _ready;
+    private bool _restored;
+    private bool _pendingApply;
 
     protected override void OnInitialized()
     {
-        OpTheme.ThemeChanged += OnThemeChanged;
+        _ready = !Theme.Persist;
+        Theme.Changed += OnThemeChanged;
     }
 
     private void OnThemeChanged()
     {
-        _themeUrl = OpTheme.ThemeUrl;
-        _pendingPalette = true;
+        _pendingApply = true;
         _ = InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!_pendingPalette) return;
-        _pendingPalette = false;
         try
         {
-            _module ??= await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
-            await _module.InvokeVoidAsync("setPalette", OpTheme.Primary, OpTheme.Surface);
+            if (firstRender)
+            {
+                _module = await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
+                var current = await _module.InvokeAsync<ThemeSnapshot>("readTheme");
+                var stored = Theme.Persist ? current.Stored : null;
+                // Antes do Restore: o Changed pode renderizar na hora (WebAssembly) e esse render já
+                // precisa incluir o link do preset; o OnAfterRender seguinte aplica e salva.
+                _ready = true;
+                _restored = true;
+                _pendingApply = true;
+                if (stored is not null)
+                    Theme.Restore(stored.Preset, stored.Primary, stored.Surface, stored.DarkMode, stored.Rtl, hasPalette: true);
+                else
+                    Theme.Restore(null, null, null, current.DarkMode, null, hasPalette: false);
+                StateHasChanged();
+                return;
+            }
+
+            if (!_pendingApply || !_restored || _module is null) return;
+            _pendingApply = false;
+
+            await _module.InvokeVoidAsync("applyTheme", new
+            {
+                primary = Theme.Primary,
+                surface = Theme.Surface,
+                darkMode = Theme.DarkMode,
+                rtl = Theme.Rtl
+            });
+            await _module.InvokeVoidAsync("removeBootThemeLink");
+            if (Theme.Persist)
+            {
+                await _module.InvokeVoidAsync("saveTheme", new
+                {
+                    preset = Theme.Preset,
+                    primary = Theme.Primary,
+                    surface = Theme.Surface,
+                    darkMode = Theme.DarkMode,
+                    rtl = Theme.Rtl
+                });
+            }
         }
         catch (JSDisconnectedException)
         {
@@ -46,7 +89,7 @@
 
     public async ValueTask DisposeAsync()
     {
-        OpTheme.ThemeChanged -= OnThemeChanged;
+        Theme.Changed -= OnThemeChanged;
         if (_module is null) return;
         try
         {
@@ -56,4 +99,8 @@
         {
         }
     }
+
+    private sealed record ThemeSnapshot(StoredTheme? Stored, bool DarkMode);
+
+    private sealed record StoredTheme(string? Preset, string? Primary, string? Surface, bool? DarkMode, bool? Rtl);
 }

@@ -1,10 +1,5 @@
 export function setDarkMode(enabled) {
     document.documentElement.classList.toggle('app-dark', !!enabled);
-    try {
-        localStorage.setItem('op-dark-mode', enabled ? '1' : '0');
-    } catch (e) {
-        // ignore
-    }
 }
 
 // Paletas de themes/palettes.css: null remove o atributo (vale a paleta do preset).
@@ -132,4 +127,49 @@ export function scrollTopTo(element, target, behavior) {
     const scrollEl = isParent ? element.parentElement : (document.scrollingElement || document.documentElement);
     if (!scrollEl) return;
     scrollEl.scrollTo({ top: 0, behavior });
+}
+
+// ---------------------------------------------------------------- tema (OpThemeService)
+
+const THEME_STORAGE_KEY = 'op-theme';
+
+// Aplica o estado do OpThemeService no documento (o <link> do preset é renderizado pelo Blazor).
+export function applyTheme(state) {
+    setPalette(state.primary, state.surface);
+    setDarkMode(state.darkMode);
+    setRtl(state.rtl);
+}
+
+// Estado atual: o salvo (se houver) e o que já está no documento (aplicado pelo op-theme.js ou
+// pelo prefers-color-scheme).
+export function readTheme() {
+    let stored = null;
+    try {
+        stored = JSON.parse(localStorage.getItem(THEME_STORAGE_KEY) || 'null');
+    } catch (_) {
+        stored = null;
+    }
+    return { stored, darkMode: getDarkMode() };
+}
+
+export function saveTheme(state) {
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(state));
+    } catch (_) {
+        // localStorage indisponível
+    }
+}
+
+// Remove o <link> provisório criado pelo op-theme.js depois que o do Blazor carregou
+// (removê-lo antes deixaria a página sem estilo por um instante).
+export function removeBootThemeLink() {
+    const boot = ['op-theme-boot', 'op-theme-boot-palettes'].map(id => document.getElementById(id)).filter(Boolean);
+    if (boot.length === 0) return;
+    const remove = () => boot.forEach(el => el.remove());
+    const theme = document.getElementById('optimus-theme');
+    if (!theme || theme.sheet) remove();
+    else {
+        theme.addEventListener('load', remove, { once: true });
+        theme.addEventListener('error', remove, { once: true });
+    }
 }

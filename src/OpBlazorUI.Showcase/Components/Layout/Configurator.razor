@@ -1,6 +1,7 @@
 @namespace OpBlazorUI.Showcase.Components.Layout
 @using OpBlazorUI.Base.Components.InputSwitch
 @implements IDisposable
+@inject OpThemeService Theme
 
 <div class="config-panel-content">
     <div class="config-panel-colors">
@@ -9,8 +10,8 @@
             @foreach (var palette in OpConfig.PrimaryPalettes)
             {
                 <button type="button" title="@palette.Name"
-                        @onclick="() => OpConfig.SetPrimary(palette.Name)"
-                        class="@(OpConfig.Primary == palette.Name ? "active-color" : null)"
+                        @onclick="() => Theme.SetPrimary(palette.Name)"
+                        class="@(ActivePrimary == palette.Name ? "active-color" : null)"
                         style="background-color: @palette.Swatch;"></button>
             }
         </div>
@@ -22,8 +23,8 @@
             @foreach (var palette in OpConfig.SurfacePalettes)
             {
                 <button type="button" title="@palette.Name"
-                        @onclick="() => OpConfig.SetSurface(palette.Name)"
-                        class="@(OpConfig.Surface == palette.Name ? "active-color" : null)"
+                        @onclick="() => Theme.SetSurface(palette.Name)"
+                        class="@(ActiveSurface == palette.Name ? "active-color" : null)"
                         style="background-color: @palette.Swatch;"></button>
             }
         </div>
@@ -46,7 +47,7 @@
 
     <div class="config-panel-setting-row">
         <span class="config-panel-label">RTL</span>
-        <OpInputSwitch @bind-Checked="_rtl" OnChange="OnRtlChanged"/>
+        <OpInputSwitch Checked="Theme.Rtl" CheckedChanged="OnRtlChanged"/>
     </div>
 </div>
 
@@ -63,22 +64,25 @@
         new("Nora", "nora", true),
     ];
 
-    private bool _rtl = OpConfig.Rtl;
+    protected override void OnInitialized() => Theme.Changed += OnThemeChanged;
 
-    protected override void OnInitialized() => OpTheme.ThemeChanged += OnThemeChanged;
+    private string ActivePrimary => Theme.Primary ?? "emerald";
+
+    // Sem superfície definida, o preset usa slate no claro e zinc no escuro.
+    private string ActiveSurface => Theme.Surface ?? (Theme.DarkMode ? "zinc" : "slate");
 
     private void OnThemeChanged() => InvokeAsync(StateHasChanged);
 
-    private static bool IsActivePreset(ThemePreset preset) =>
-        string.Equals(OpTheme.Preset, preset.Key, StringComparison.Ordinal);
+    private bool IsActivePreset(ThemePreset preset) =>
+        string.Equals(Theme.Preset, preset.Key, StringComparison.Ordinal);
 
     private void SelectPreset(ThemePreset preset)
     {
         if (!preset.Available) return;
-        OpTheme.SetPreset(preset.Key);
+        Theme.SetPreset(preset.Key);
     }
 
-    private static string PresetButtonStyle(ThemePreset preset)
+    private string PresetButtonStyle(ThemePreset preset)
     {
         var active = IsActivePreset(preset);
         var baseCss = "padding:.25rem .75rem;border-radius:6px;font-weight:600;font-size:.875rem;";
@@ -93,7 +97,7 @@
                "cursor:pointer;";
     }
 
-    private void OnRtlChanged(bool value) => OpConfig.SetRtl(value);
+    private void OnRtlChanged(bool value) => Theme.SetRtl(value);
 
-    public void Dispose() => OpTheme.ThemeChanged -= OnThemeChanged;
+    public void Dispose() => Theme.Changed -= OnThemeChanged;
 }

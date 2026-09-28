@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-op-primary="noir" data-op-surface="slate">
+<html lang="en">
 
 <head>
     <meta charset="utf-8"/>
@@ -14,22 +14,9 @@
     <link rel="stylesheet" href="OpBlazorUI.Showcase.styles.css"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
 
-    <script>
-        // Aplica o modo escuro antes da primeira pintura, para o loader global
-        // já aparecer no tema correto e evitar flash (FOUC).
-        (function () {
-            try {
-                var stored = localStorage.getItem('op-dark-mode');
-                var dark = stored === '1' ||
-                    (stored === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                if (dark) {
-                    document.documentElement.classList.add('app-dark');
-                }
-            } catch (e) {
-                // localStorage indisponível — mantém o tema claro.
-            }
-        })();
-    </script>
+    <!-- Tema salvo (preset, cores, modo escuro, RTL) aplicado antes da primeira pintura; os
+         data-* são os padrões do AddOpBlazorUI no Program.cs. -->
+    <script src="_content/OpBlazorUI.Base/op-theme.js" data-preset="aura" data-primary="noir" data-surface="slate"></script>
 </head>
 
 <body>
