@@ -32,15 +32,16 @@
     if (dark) root.classList.add('app-dark');
     if (state.rtl) root.setAttribute('dir', 'rtl');
 
-    // CSS do preset e das paletas antes da primeira pintura; o OpBlazorUiSetup assume depois.
+    // CSS do preset e das paletas antes da primeira pintura. Os mesmos <link> são atualizados
+    // depois pelo OpBlazorUiSetup (optimus.interop.js#applyTheme) ao trocar o tema.
     var base = '_content/OpBlazorUI.Base/themes/';
     var link = document.createElement('link');
-    link.id = 'op-theme-boot';
+    link.id = 'optimus-theme';
     link.rel = 'stylesheet';
     link.href = base + preset + '.css';
     document.head.appendChild(link);
     var palettes = document.createElement('link');
-    palettes.id = 'op-theme-boot-palettes';
+    palettes.id = 'optimus-palettes';
     palettes.rel = 'stylesheet';
     palettes.href = base + 'palettes.css';
     document.head.appendChild(palettes);

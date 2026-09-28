@@ -103,6 +103,9 @@ body {
 
 .op-tooltip-wrapper > .p-tooltip {
     display: block;
+    /* O tooltip é filho do wrapper: sem isso, passar o mouse sobre ele o mantém aberto e ele
+       intercepta cliques nos elementos vizinhos que cobre (no upstream ele some ao sair do alvo). */
+    pointer-events: none;
 }
 
 .p-tooltip-text {

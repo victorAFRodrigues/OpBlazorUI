@@ -18,6 +18,9 @@ public partial class OpToggleButton : ComponentBase
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? StyleClass { get; set; }
 
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
     [Parameter] public EventCallback<bool> OnChange { get; set; }
 
     [Parameter] public RenderFragment<bool>? ContentTemplate { get; set; }

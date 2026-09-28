@@ -133,8 +133,39 @@ export function scrollTopTo(element, target, behavior) {
 
 const THEME_STORAGE_KEY = 'op-theme';
 
-// Aplica o estado do OpThemeService no documento (o <link> do preset é renderizado pelo Blazor).
+const THEMES_BASE = "_content/OpBlazorUI.Base/themes/";
+
+// Os <link> do tema são controlados aqui (e criados pelo op-theme.js antes do boot), não por
+// <HeadContent>: numa Blazor Web App com interatividade por página o <HeadOutlet> é estático e
+// não recebe o HeadContent de componentes interativos. Ficam antes do optimus-base.css, que
+// sobrescreve regras do tema.
+function ensureLink(id, href) {
+    let link = document.getElementById(id);
+    if (link && link.getAttribute("href") === href) return;
+    const next = document.createElement("link");
+    next.id = id;
+    next.rel = "stylesheet";
+    next.href = href;
+    const base = document.querySelector("link[href*=\"optimus-base.css\"]");
+    if (link) {
+        // Troca sem flash: o antigo só sai quando o novo carregou.
+        link.id = id + "-old";
+        link.after(next);
+        const old = link;
+        const drop = () => old.remove();
+        next.addEventListener("load", drop, { once: true });
+        next.addEventListener("error", drop, { once: true });
+    } else if (base) {
+        base.before(next);
+    } else {
+        document.head.appendChild(next);
+    }
+}
+
+// Aplica o estado do OpThemeService no documento.
 export function applyTheme(state) {
+    ensureLink("optimus-theme", THEMES_BASE + state.preset + ".css");
+    ensureLink("optimus-palettes", THEMES_BASE + "palettes.css");
     setPalette(state.primary, state.surface);
     setDarkMode(state.darkMode);
     setRtl(state.rtl);
@@ -157,19 +188,5 @@ export function saveTheme(state) {
         localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(state));
     } catch (_) {
         // localStorage indisponível
-    }
-}
-
-// Remove o <link> provisório criado pelo op-theme.js depois que o do Blazor carregou
-// (removê-lo antes deixaria a página sem estilo por um instante).
-export function removeBootThemeLink() {
-    const boot = ['op-theme-boot', 'op-theme-boot-palettes'].map(id => document.getElementById(id)).filter(Boolean);
-    if (boot.length === 0) return;
-    const remove = () => boot.forEach(el => el.remove());
-    const theme = document.getElementById('optimus-theme');
-    if (!theme || theme.sheet) remove();
-    else {
-        theme.addEventListener('load', remove, { once: true });
-        theme.addEventListener('error', remove, { once: true });
     }
 }

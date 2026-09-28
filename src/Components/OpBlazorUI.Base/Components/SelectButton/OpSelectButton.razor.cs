@@ -21,6 +21,9 @@ public partial class OpSelectButton<TValue> : ComponentBase
     [Parameter] public string? Size { get; set; }
     [Parameter] public string? StyleClass { get; set; }
 
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
     [Parameter] public RenderFragment<(TValue Option, int Index)>? ItemTemplate { get; set; }
 
     [Parameter] public EventCallback<TValue?> OnChange { get; set; }

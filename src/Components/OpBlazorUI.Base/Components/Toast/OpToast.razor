@@ -4,7 +4,7 @@
 @using OpBlazorUI.Base.Components.Overlay
 @implements IDisposable
 
-<div class="@RootClass" role="region" aria-live="polite" aria-label="Toast messages">
+<div class="@RootClass" role="region" aria-live="polite" aria-label="Toast messages" @attributes="AdditionalAttributes">
     @if (AutoZIndex && VisibleMessages.Count > 0)
     {
         @* Entra na pilha de z-index ao exibir a primeira mensagem: fica acima de dialogs já abertos. *@
