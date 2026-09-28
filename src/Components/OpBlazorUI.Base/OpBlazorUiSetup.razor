@@ -1,15 +1,22 @@
 @namespace OpBlazorUI.Base
-@implements IDisposable
+@using Microsoft.JSInterop
+@implements IAsyncDisposable
+@inject IJSRuntime Js
 
 <HeadContent>
     <link rel="stylesheet" href="_content/OpBlazorUI.Base/openng-icons.css"/>
     <link id="optimus-theme" rel="stylesheet" href="@_themeUrl"/>
+    <link rel="stylesheet" href="@OpTheme.PalettesUrl"/>
     <link rel="stylesheet" href="_content/OpBlazorUI.Base/optimus-base.css"/>
     <script src="_content/OpBlazorUI.Base/quill.min.js"></script>
 </HeadContent>
 
 @code {
+    private const string JsModule = "./_content/OpBlazorUI.Base/optimus.interop.js";
+
     private string _themeUrl = OpTheme.ThemeUrl;
+    private IJSObjectReference? _module;
+    private bool _pendingPalette = true;
 
     protected override void OnInitialized()
     {
@@ -19,11 +26,34 @@
     private void OnThemeChanged()
     {
         _themeUrl = OpTheme.ThemeUrl;
+        _pendingPalette = true;
         _ = InvokeAsync(StateHasChanged);
     }
 
-    public void Dispose()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_pendingPalette) return;
+        _pendingPalette = false;
+        try
+        {
+            _module ??= await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
+            await _module.InvokeVoidAsync("setPalette", OpTheme.Primary, OpTheme.Surface);
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+
+    public async ValueTask DisposeAsync()
     {
         OpTheme.ThemeChanged -= OnThemeChanged;
+        if (_module is null) return;
+        try
+        {
+            await _module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
     }
 }

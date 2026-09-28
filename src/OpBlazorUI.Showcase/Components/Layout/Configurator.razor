@@ -51,17 +51,16 @@
 </div>
 
 @code {
-    private sealed record ThemePreset(string Name, string File, bool Available)
+    private sealed record ThemePreset(string Name, string Key, bool Available)
     {
         public string Title => Available ? Name : $"{Name} (em breve)";
     }
 
     private static readonly ThemePreset[] Presets =
     [
-        new("Aura", "aura.css", true),
-        new("Material", "", false),
-        new("Lara", "lara.css", true),
-        new("Nora", "", false),
+        new("Aura", "aura", true),
+        new("Lara", "lara", true),
+        new("Nora", "nora", true),
     ];
 
     private bool _rtl = OpConfig.Rtl;
@@ -70,31 +69,13 @@
 
     private void OnThemeChanged() => InvokeAsync(StateHasChanged);
 
-    private static string ActiveFile
-    {
-        get
-        {
-            var url = OpTheme.ThemeUrl;
-            var idx = url.LastIndexOf('/');
-            return idx >= 0 ? url[(idx + 1)..] : url;
-        }
-    }
-
-    private static bool IsActivePreset(ThemePreset preset)
-    {
-        var isLara = string.Equals(ActiveFile, "lara.css", StringComparison.OrdinalIgnoreCase);
-        return preset.Name switch
-        {
-            "Lara" => isLara,
-            "Aura" => !isLara,
-            _ => false,
-        };
-    }
+    private static bool IsActivePreset(ThemePreset preset) =>
+        string.Equals(OpTheme.Preset, preset.Key, StringComparison.Ordinal);
 
     private void SelectPreset(ThemePreset preset)
     {
         if (!preset.Available) return;
-        OpTheme.SetThemeUrl($"_content/OpBlazorUI.Base/themes/{preset.File}");
+        OpTheme.SetPreset(preset.Key);
     }
 
     private static string PresetButtonStyle(ThemePreset preset)
