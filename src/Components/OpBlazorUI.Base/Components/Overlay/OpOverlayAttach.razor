@@ -43,6 +43,9 @@
     /// <summary>Alinhamento da seta: <c>popover</c>, <c>tooltip</c> ou nulo.</summary>
     [Parameter] public string? Arrow { get; set; }
 
+    /// <summary>Dá ao irmão anterior do painel (a máscara) o z-index do painel menos 1.</summary>
+    [Parameter] public bool MaskPrevious { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender || _disposed) return;
@@ -61,7 +64,8 @@
                 matchWidth = MatchWidth,
                 gap = Gap,
                 keepMargin = KeepMargin,
-                arrow = Arrow
+                arrow = Arrow,
+                maskPrevious = MaskPrevious
             });
             _attached = true;
         }

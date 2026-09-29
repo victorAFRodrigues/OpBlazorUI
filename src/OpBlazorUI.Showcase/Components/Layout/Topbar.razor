@@ -1,6 +1,6 @@
 @namespace OpBlazorUI.Showcase.Components.Layout
-@using OpBlazorUI.Base.Components.Popover
 @implements IDisposable
+@inject OpThemeService Theme
 
 <div class="layout-topbar layout-topbar-sticky">
     <div class="layout-topbar-inner">
@@ -46,20 +46,15 @@
                 </button>
             </li>
             <li class="relative topbar-desktop-item">
-                <button type="button" class="topbar-item config-item" @ref="_trigger" aria-label="Personalizar tema" @onclick="ToggleConfig">
+                <button type="button" class="topbar-item config-item" aria-label="Personalizar tema" @onclick="ToggleConfig">
                     <i class="pi pi-palette"></i>
                 </button>
-                <OpPopover @ref="_configPopover">
-                    <div class="config-panel-content">
-                        <div class="config-panel-header">
-                            <span class="config-panel-title">Configurações</span>
-                            <button type="button" class="config-panel-close" aria-label="Fechar" @onclick="CloseConfig">
-                                <i class="pi pi-times"></i>
-                            </button>
-                        </div>
+                @if (_configOpen)
+                {
+                    <div class="config-panel">
                         <Configurator/>
                     </div>
-                </OpPopover>
+                }
             </li>
             <li class="topbar-desktop-item">
                 <select class="topbar-item" aria-label="Versão" style="width:4rem;height:2rem;border-radius:6px;border:1px solid var(--border-color);background-color:var(--card-background);color:var(--text-color);font-weight:600;padding:0 .5rem;cursor:pointer;">
@@ -76,23 +71,16 @@
 </div>
 
 @code {
-    private bool _darkMode;
-    private ElementReference _trigger;
-    private OpPopover? _configPopover;
+    private bool _darkMode => Theme.DarkMode;
+    private bool _configOpen;
 
-    protected override void OnInitialized() => DarkModeState.Changed += OnDarkChanged;
+    protected override void OnInitialized() => Theme.Changed += OnDarkChanged;
 
-    private void OnDarkChanged()
-    {
-        _darkMode = DarkModeState.Dark;
-        InvokeAsync(StateHasChanged);
-    }
+    private void OnDarkChanged() => InvokeAsync(StateHasChanged);
 
-    private void ToggleDarkMode() => DarkModeState.Set(!DarkModeState.Dark);
+    private void ToggleDarkMode() => Theme.ToggleDarkMode();
 
-    private void ToggleConfig() => _ = _configPopover!.Toggle(_trigger);
+    private void ToggleConfig() => _configOpen = !_configOpen;
 
-    private void CloseConfig() => _ = _configPopover!.Hide();
-
-    public void Dispose() => DarkModeState.Changed -= OnDarkChanged;
+    public void Dispose() => Theme.Changed -= OnDarkChanged;
 }

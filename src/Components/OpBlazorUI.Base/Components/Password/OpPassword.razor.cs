@@ -65,7 +65,6 @@ public partial class OpPassword : ComponentBase
     // ------------------------------------------------------------ computed
     private string RootClass => BuildClass(
         "p-password p-component",
-        Disabled ? "p-disabled" : null,
         Invalid ? "p-invalid" : null,
         Fluid ? "p-password-fluid" : null);
 

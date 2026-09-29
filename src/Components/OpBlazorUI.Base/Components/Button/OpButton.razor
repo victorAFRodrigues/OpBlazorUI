@@ -15,7 +15,7 @@
 
     @if (Loading)
     {
-        <OpButtonLoadingIcon Icon="@LoadingIcon" Template="@LoadingIconTemplate"/>
+        <OpButtonLoadingIcon Icon="@LoadingIcon" IconPos="@IconPos" HasLabel="@HasLabel" Template="@LoadingIconTemplate"/>
     }
     else
     {
@@ -29,14 +29,12 @@
 
     @if (HasBadge)
     {
-        <div class="p-button-badge">
-            <OpBadge Value="@Badge"
-                     Severity="@BadgeSeverity"
-                     Size="@BadgeSize"
-                     StyleClass="@BadgeClass"
-                     Disabled="@BadgeDisabled"
-                     Style="@BadgeStyle"
-                     AdditionalAttributes="@BadgeAdditionalAttributes"/>
-        </div>
+        <OpBadge Value="@Badge"
+                 Severity="@BadgeSeverity"
+                 Size="@BadgeSize"
+                 StyleClass="@BadgeClass"
+                 Disabled="@BadgeDisabled"
+                 Style="@BadgeStyle"
+                 AdditionalAttributes="@BadgeAdditionalAttributes"/>
     }
 </button>

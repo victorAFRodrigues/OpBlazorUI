@@ -1,10 +1,12 @@
 export function setDarkMode(enabled) {
     document.documentElement.classList.toggle('app-dark', !!enabled);
-    try {
-        localStorage.setItem('op-dark-mode', enabled ? '1' : '0');
-    } catch (e) {
-        // ignore
-    }
+}
+
+// Paletas de themes/palettes.css: null remove o atributo (vale a paleta do preset).
+export function setPalette(primary, surface) {
+    const root = document.documentElement;
+    if (primary) root.setAttribute('data-op-primary', primary); else root.removeAttribute('data-op-primary');
+    if (surface) root.setAttribute('data-op-surface', surface); else root.removeAttribute('data-op-surface');
 }
 
 export function getDarkMode() {
@@ -125,4 +127,78 @@ export function scrollTopTo(element, target, behavior) {
     const scrollEl = isParent ? element.parentElement : (document.scrollingElement || document.documentElement);
     if (!scrollEl) return;
     scrollEl.scrollTo({ top: 0, behavior });
+}
+
+// ---------------------------------------------------------------- tema (OpThemeService)
+
+const THEME_STORAGE_KEY = 'op-theme';
+
+const THEMES_BASE = "_content/OpBlazorUI.Base/themes/";
+
+// Os <link> do tema são controlados aqui (e criados pelo op-theme.js antes do boot), não por
+// <HeadContent>: numa Blazor Web App com interatividade por página o <HeadOutlet> é estático e
+// não recebe o HeadContent de componentes interativos. Ficam antes do optimus-base.css, que
+// sobrescreve regras do tema.
+function ensureLink(id, href) {
+    let link = document.getElementById(id);
+    if (link && link.getAttribute("href") === href) return;
+    const next = document.createElement("link");
+    next.id = id;
+    next.rel = "stylesheet";
+    next.href = href;
+    const base = document.querySelector("link[href*=\"optimus-base.css\"]");
+    if (link) {
+        // Troca sem flash: o antigo só sai quando o novo carregou.
+        link.id = id + "-old";
+        link.after(next);
+        const old = link;
+        const drop = () => old.remove();
+        next.addEventListener("load", drop, { once: true });
+        next.addEventListener("error", drop, { once: true });
+    } else if (base) {
+        base.before(next);
+    } else {
+        document.head.appendChild(next);
+    }
+}
+
+// Aplica o estado do OpThemeService no documento.
+export function applyTheme(state) {
+    ensureLink("optimus-theme", THEMES_BASE + state.preset + ".css");
+    ensureLink("optimus-palettes", THEMES_BASE + "palettes.css");
+    setPalette(state.primary, state.surface);
+    setDarkMode(state.darkMode);
+    setRtl(state.rtl);
+}
+
+// Estado atual: o salvo (se houver) e o que já está no documento (aplicado pelo op-theme.js ou
+// pelo prefers-color-scheme).
+export function readTheme() {
+    let stored = null;
+    try {
+        stored = JSON.parse(localStorage.getItem(THEME_STORAGE_KEY) || 'null');
+    } catch (_) {
+        stored = null;
+    }
+    return { stored, darkMode: getDarkMode() };
+}
+
+export function saveTheme(state) {
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(state));
+    } catch (_) {
+        // localStorage indisponível
+    }
+}
+
+// SpeedDial (circle/semi-circle/quarter-circle): centraliza os itens no botão compensando a
+// diferença de tamanho entre o botão e a ação (--item-diff-x/y, como no upstream).
+export function speedDialItemDiff(root) {
+    if (!root) return;
+    const button = root.querySelector('.p-speeddial-button');
+    const list = root.querySelector('.p-speeddial-list');
+    const item = list && list.querySelector('.p-speeddial-item');
+    if (!button || !item) return;
+    list.style.setProperty('--item-diff-x', `${Math.abs(button.offsetWidth - item.offsetWidth) / 2}px`);
+    list.style.setProperty('--item-diff-y', `${Math.abs(button.offsetHeight - item.offsetHeight) / 2}px`);
 }

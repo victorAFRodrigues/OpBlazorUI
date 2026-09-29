@@ -54,19 +54,23 @@ public partial class OpInputNumber : ComponentBase
         ["BRL"] = "R$", ["GBP"] = "£", ["CNY"] = "¥", ["CAD"] = "C$", ["AUD"] = "A$"
     };
 
+    // Classes de inputnumberstyle.ts: layout só com botões; variante e p-filled vão no input.
     private string RootClass => BuildClass(
-        "p-inputnumber p-component",
-        ButtonLayout == "stacked" ? "p-inputnumber-stacked" : null,
-        ButtonLayout == "horizontal" ? "p-inputnumber-horizontal" : null,
-        ButtonLayout == "vertical" ? "p-inputnumber-vertical" : null,
+        "p-inputnumber p-component p-inputwrapper",
+        Value is not null ? "p-inputwrapper-filled" : null,
+        _focused ? "p-inputwrapper-focus" : null,
+        ShowButtons && ButtonLayout == "stacked" ? "p-inputnumber-stacked" : null,
+        ShowButtons && ButtonLayout == "horizontal" ? "p-inputnumber-horizontal" : null,
+        ShowButtons && ButtonLayout == "vertical" ? "p-inputnumber-vertical" : null,
         Fluid ? "p-inputnumber-fluid" : null,
-        Disabled ? "p-disabled" : null,
         Invalid ? "p-invalid" : null,
-        Variant == "filled" ? "p-variant-filled" : null,
         StyleClass);
 
     private string InputClassValue => BuildClass(
         "p-inputnumber-input p-inputtext p-component",
+        Value is not null ? "p-filled" : null,
+        Variant == "filled" ? "p-variant-filled" : null,
+        Fluid ? "p-inputtext-fluid" : null,
         Size == "small" ? "p-inputtext-sm" : null,
         Size == "large" ? "p-inputtext-lg" : null,
         Invalid ? "p-invalid" : null,
@@ -193,8 +197,17 @@ public partial class OpInputNumber : ComponentBase
         }
     }
 
+    private bool _focused;
+
+    private async Task HandleFocus(FocusEventArgs e)
+    {
+        _focused = true;
+        await OnFocus.InvokeAsync(e);
+    }
+
     private async Task HandleBlur(FocusEventArgs e)
     {
+        _focused = false;
         await OnBlur.InvokeAsync(e);
     }
 

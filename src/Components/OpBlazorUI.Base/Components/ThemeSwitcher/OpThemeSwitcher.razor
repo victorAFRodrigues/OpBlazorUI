@@ -1,6 +1,6 @@
 @namespace OpBlazorUI.Base.Components.ThemeSwitcher
 
-<div class="op-theme-switcher @StyleClass" style="display: flex; gap: .375rem; flex-wrap: wrap; align-items: center;">
+<div class="op-theme-switcher @StyleClass" style="display: flex; gap: .375rem; flex-wrap: wrap; align-items: center;" @attributes="AdditionalAttributes">
     <button type="button"
             title="@(_darkMode ? "Modo claro" : "Modo escuro")"
             aria-label="@(_darkMode ? "Modo claro" : "Modo escuro")"

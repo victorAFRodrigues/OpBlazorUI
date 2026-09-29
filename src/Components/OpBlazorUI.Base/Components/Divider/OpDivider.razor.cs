@@ -26,6 +26,27 @@ public partial class OpDivider : ComponentBase
             "dotted" => "p-divider-dotted",
             _ => "p-divider-solid"
         },
-        !string.IsNullOrEmpty(Align) ? $"p-divider-{Align}" : null,
+        AlignClass,
         StyleClass);
+
+    // Mesmas regras do upstream: horizontal aceita left/center/right (padrão left), vertical
+    // aceita top/center/bottom (padrão center); valores de outro layout são ignorados.
+    private string AlignClass => Layout == "vertical"
+        ? Align switch { "top" => "p-divider-top", "bottom" => "p-divider-bottom", _ => "p-divider-center" }
+        : Align switch { "center" => "p-divider-center", "right" => "p-divider-right", _ => "p-divider-left" };
+
+    // Como o inlineStyles do upstream: o tema não alinha o conteúdo pelas classes p-divider-{align}.
+    private string? RootStyle => Layout == "vertical"
+        ? Align switch
+        {
+            "top" => "align-items: flex-start;",
+            "bottom" => "align-items: flex-end;",
+            _ => "align-items: center;"
+        }
+        : Align switch
+        {
+            "left" => "justify-content: flex-start;",
+            "right" => "justify-content: flex-end;",
+            _ => "justify-content: center;"
+        };
 }

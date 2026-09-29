@@ -1,5 +1,7 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.SpeedDial;
@@ -9,7 +11,15 @@ public sealed class SpeedDialButtonContext
     public Action? Toggle { get; init; }
 }
 
-public partial class OpSpeedDial : ComponentBase
+/// <summary>Contexto do <c>ItemTemplate</c>: o item, o índice e a ação de clique (executa o comando e fecha).</summary>
+public sealed class SpeedDialItemContext
+{
+    public required OpMenuItem Item { get; init; }
+    public int Index { get; init; }
+    public required Action Click { get; init; }
+}
+
+public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
 {
     private string _id = "";
     private bool _visible;
@@ -39,7 +49,6 @@ public partial class OpSpeedDial : ComponentBase
     [Parameter] public bool Tooltip { get; set; }
     [Parameter] public string TooltipPosition { get; set; } = "right";
     [Parameter] public string? ButtonSeverity { get; set; }
-    [Parameter] public bool ButtonRounded { get; set; }
     [Parameter] public bool ButtonRaised { get; set; }
     [Parameter] public bool ButtonText { get; set; }
     [Parameter] public bool ButtonOutlined { get; set; }
@@ -53,118 +62,113 @@ public partial class OpSpeedDial : ComponentBase
 
     // templates
     [Parameter] public RenderFragment<SpeedDialButtonContext>? ButtonTemplate { get; set; }
-    [Parameter] public RenderFragment<OpMenuItem>? ItemTemplate { get; set; }
+    [Parameter] public RenderFragment<SpeedDialItemContext>? ItemTemplate { get; set; }
     [Parameter] public RenderFragment? IconTemplate { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
+    [Inject] private IJSRuntime Js { get; set; } = default!;
+
+    private const string JsModule = "./_content/OpBlazorUI.Base/optimus.interop.js";
+    private ElementReference _root;
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<OpSpeedDial>? _selfRef;
+    private bool _listening;
+    private bool _disposed;
+
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
         _id = $"op-speeddial-{Guid.NewGuid():N}";
-        _visible = Visible;
+        _visible = _lastVisibleParam = Visible;
     }
+
+    // Só sincroniza quando o parâmetro muda: um re-render do pai (ex.: o OnClick do ButtonTemplate)
+    // não pode fechar o menu que acabou de abrir sem @bind-Visible.
+    private bool _lastVisibleParam;
 
     protected override void OnParametersSet()
     {
+        if (Visible == _lastVisibleParam) return;
+        _lastVisibleParam = Visible;
         _visible = Visible;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_disposed) return;
+        try
+        {
+            if (firstRender)
+            {
+                _module = await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
+                if (Type != "linear") await _module.InvokeVoidAsync("speedDialItemDiff", _root);
+            }
+
+            if (_module is null) return;
+            var listen = _visible && HideOnClickOutside;
+            if (listen && !_listening)
+            {
+                _listening = true;
+                _selfRef ??= DotNetObjectReference.Create(this);
+                await _module.InvokeVoidAsync("addOutsideClickListener", _root, null, _selfRef);
+            }
+            else if (!listen && _listening)
+            {
+                _listening = false;
+                await _module.InvokeVoidAsync("removeOutsideClickListener", _root);
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+        }
     }
 
     // ------------------------------------------------------------ computed
     private IReadOnlyList<OpMenuItem> Items => Model ?? Array.Empty<OpMenuItem>();
 
-    /// <summary>
-    /// Estilo do container raiz. Para os tipos circulares o container é
-    /// dimensionado para o menor retângulo que comporta o leque de itens e o
-    /// botão é encostado na aresta/canto que serve de centro do arco:
-    /// circle (2R×2R, botão ao centro), semi-circle (2R×R ou R×2R, botão na
-    /// aresta reta) e quarter-circle (R×R, botão no canto).
-    /// </summary>
+    // Classes e inlineStyles como em speeddialstyle.ts.
+    private string RootClass => OpCss.BuildClass(
+        $"p-speeddial p-component p-speeddial-{Type}",
+        Type != "circle" ? $"p-speeddial-direction-{Direction}" : null,
+        _visible ? "p-speeddial-open" : null,
+        Disabled ? "p-disabled" : null,
+        StyleClass);
+
+    private string? FlexDirection => Direction switch
+    {
+        "up" => "column-reverse",
+        "down" => "column",
+        "left" => "row-reverse",
+        "right" => "row",
+        _ => null
+    };
+
     private string RootStyle
     {
         get
         {
-            if (Radius <= 0)
+            var style = Direction switch
             {
-                return Style ?? string.Empty;
-            }
-
-            var basis = Type switch
-            {
-                "circle" => Box(Radius * 2, Radius * 2, Justify.Center, Align.Center),
-                "semi-circle" => Direction switch
-                {
-                    "up" => Box(Radius * 2, Radius, Justify.Center, Align.End),
-                    "down" => Box(Radius * 2, Radius, Justify.Center, Align.Start),
-                    "left" => Box(Radius, Radius * 2, Justify.End, Align.Center),
-                    "right" => Box(Radius, Radius * 2, Justify.Start, Align.Center),
-                    _ => Box(Radius * 2, Radius, Justify.Center, Align.End)
-                },
-                "quarter-circle" => Direction switch
-                {
-                    "up-left" => Box(Radius, Radius, Justify.End, Align.End),
-                    "up-right" => Box(Radius, Radius, Justify.Start, Align.End),
-                    "down-left" => Box(Radius, Radius, Justify.End, Align.Start),
-                    "down-right" => Box(Radius, Radius, Justify.Start, Align.Start),
-                    _ => Box(Radius, Radius, Justify.End, Align.End)
-                },
-                _ => Style ?? string.Empty
+                "up" or "down" => "align-items: center;",
+                "left" or "right" => "justify-content: center;",
+                _ => ""
             };
-
-            return string.IsNullOrEmpty(Style)
-                ? basis
-                : $"{basis} {Style};";
+            if (FlexDirection is not null) style += $" flex-direction: {FlexDirection};";
+            // Desvio consciente do upstream: nos tipos circulares a lista não ocupa espaço (itens absolutos),
+            // mas o gap do root ainda desloca o botão da origem dos itens (arco fora do centro em
+            // circle/direction=up e em quarter-circle *-left). Sem gap, o root coincide com o botão.
+            if (Type != "linear") style += " gap: 0;";
+            return $"{style} {Style}".Trim();
         }
     }
 
-    private static class Justify
-    {
-        public const string Start = "flex-start";
-        public const string Center = "center";
-        public const string End = "flex-end";
-    }
+    private string? ListStyle => FlexDirection is null ? null : $"flex-direction: {FlexDirection};";
 
-    private static class Align
-    {
-        public const string Start = "flex-start";
-        public const string Center = "center";
-        public const string End = "flex-end";
-    }
-
-    private static string Box(int width, int height, string justify, string align) =>
-        $"position:relative; width:{width}px; height:{height}px; display:flex; justify-content:{justify}; align-items:{align};";
-
-    private string RootClass => BuildClass(
-        "p-speeddial p-component",
-        _visible ? "p-speeddial-open" : null,
-        Type != "linear" ? $"p-speeddial-{Type}" : null,
-        $"p-speeddial-{Direction}",
-        StyleClass);
-
-    private string ListStyle
-    {
-        get
-        {
-            if (Type == "linear")
-            {
-                return Direction switch
-                {
-                    "up" => "position:absolute; bottom:calc(100% + 0.5rem); left:50%; transform:translateX(-50%); flex-direction:column;",
-                    "down" => "position:absolute; top:calc(100% + 0.5rem); left:50%; transform:translateX(-50%); flex-direction:column;",
-                    "left" => "position:absolute; right:calc(100% + 0.5rem); top:50%; transform:translateY(-50%); flex-direction:row-reverse;",
-                    "right" => "position:absolute; left:calc(100% + 0.5rem); top:50%; transform:translateY(-50%); flex-direction:row;",
-                    _ => "position:absolute; bottom:calc(100% + 0.5rem); left:50%; transform:translateX(-50%); flex-direction:column;"
-                };
-            }
-
-            return "position:absolute; inset:0;";
-        }
-    }
-
-    private string ButtonClass => BuildClass(
+    private string ButtonClass => OpCss.BuildClass(
         "p-speeddial-button",
-        _visible && RotateAnimation && string.IsNullOrEmpty(HideIcon) ? "p-speeddial-rotate" : null,
+        RotateAnimation && string.IsNullOrEmpty(HideIcon) ? "p-speeddial-rotate" : null,
         ButtonStyleClass);
 
     private string ButtonIconClass
@@ -176,100 +180,68 @@ public partial class OpSpeedDial : ComponentBase
         }
     }
 
+    private string MaskClass => OpCss.BuildClass("p-speeddial-mask p-overlay-mask", MaskStyleClass);
+
+    private static string ItemClass(OpMenuItem item) => OpCss.BuildClass(
+        "p-speeddial-item",
+        item.Visible ? null : "p-hidden",
+        item.StyleClass);
+
+    private SpeedDialItemContext ItemContext(OpMenuItem item, int index)
+        => new() { Item = item, Index = index, Click = () => _ = OnItemClick(item) };
+
     // ------------------------------------------------------------ positioning
     private string ItemStyle(int index)
     {
-        var style = $"transition-delay:{index * TransitionDelay}ms;";
+        var count = Items.Count;
+        var delay = (_visible ? index : count - index - 1) * TransitionDelay;
+        return $"transition-delay: {delay}ms;{PointStyle(index, count)}";
+    }
 
-        if (Type == "linear")
+    // calculatePointStyle do upstream: left/top/right/bottom relativos ao root, com o
+    // --item-diff-x/y (speedDialItemDiff) centralizando a ação no botão.
+    private string PointStyle(int index, int count)
+    {
+        if (Type == "linear" || count == 0) return "";
+
+        var radius = Radius > 0 ? Radius : count * 20;
+
+        if (Type == "circle")
         {
-            return style;
+            var step = 2 * Math.PI / count;
+            return $" left: {Px(radius * Math.Cos(step * index), "x")}; top: {Px(radius * Math.Sin(step * index), "y")};";
         }
 
-        var (x, y) = CalculatePoint(index, Items.Count, Radius, Type, Direction);
-        var scale = _visible ? 1 : 0;
-        var origin = ItemOrigin;
+        var stepSize = Type == "semi-circle"
+            ? Math.PI / Math.Max(count - 1, 1)
+            : Math.PI / (2 * Math.Max(count - 1, 1));
+        var x = Px(radius * Math.Cos(stepSize * index), "x");
+        var y = Px(radius * Math.Sin(stepSize * index), "y");
 
-        style += $"position:absolute; {origin} transform:translate(calc(-50% + {x}px), calc(-50% + {y}px)) scale({scale});";
-
-        return style;
-    }
-
-    /// <summary>
-    /// Origem polar dos itens: o ponto do container que coincide com o centro
-    /// do botão, de onde os itens irradiam.
-    /// </summary>
-    private string ItemOrigin => Type switch
-    {
-        "circle" => "left:50%; top:50%;",
-        "semi-circle" => Direction switch
+        if (Type == "semi-circle")
         {
-            "up" => "left:50%; top:100%;",
-            "down" => "left:50%; top:0%;",
-            "left" => "left:100%; top:50%;",
-            "right" => "left:0%; top:50%;",
-            _ => "left:50%; top:100%;"
-        },
-        "quarter-circle" => Direction switch
+            return Direction switch
+            {
+                "up" => $" left: {x}; bottom: {y};",
+                "down" => $" left: {x}; top: {y};",
+                "left" => $" right: {y}; top: {x};",
+                "right" => $" left: {y}; top: {x};",
+                _ => ""
+            };
+        }
+
+        return Direction switch
         {
-            "up-left" => "left:100%; top:100%;",
-            "up-right" => "left:0%; top:100%;",
-            "down-left" => "left:100%; top:0%;",
-            "down-right" => "left:0%; top:0%;",
-            _ => "left:100%; top:100%;"
-        },
-        _ => "left:50%; top:50%;"
-    };
-
-    private static (double X, double Y) CalculatePoint(int index, int count, int radius, string type, string direction)
-    {
-        var r = (double)radius;
-
-        // Com um único item o passo é zero: ele ocupa o início do arco em vez de sobrepor o botão.
-        var denom = Math.Max(count - 1, 1);
-        var total = Math.Max(count, 1);
-        var semiStep = Math.PI / denom;
-        var quarterStep = Math.PI / (2 * denom);
-
-        return type switch
-        {
-            "circle" => Polar(-Math.PI / 2 - 2 * Math.PI / total * index, r),
-            "semi-circle" => SemiCircle(index, semiStep, r, direction),
-            "quarter-circle" => QuarterCircle(index, quarterStep, r, direction),
-            _ => (0, 0)
+            "up-left" => $" right: {x}; bottom: {y};",
+            "up-right" => $" left: {x}; bottom: {y};",
+            "down-left" => $" right: {y}; top: {x};",
+            "down-right" => $" left: {y}; top: {x};",
+            _ => ""
         };
     }
 
-    private static (double X, double Y) Polar(double theta, double r) => (r * Math.Cos(theta), r * Math.Sin(theta));
-
-    private static (double X, double Y) SemiCircle(int index, double step, double r, string direction)
-    {
-        // Ângulos medidos a partir da origem polar (centro do botão),
-        // no sentido anti-horário, cobrindo exatamente 180°.
-        return direction switch
-        {
-            "up" => Polar(Math.PI + step * index, r),
-            "down" => Polar(step * index, r),
-            "left" => Polar(3 * Math.PI / 2 - step * index, r),
-            "right" => Polar(-Math.PI / 2 + step * index, r),
-            _ => Polar(Math.PI + step * index, r)
-        };
-    }
-
-    private static (double X, double Y) QuarterCircle(int index, double step, double r, string direction)
-    {
-        // Quarter arcs cover exactly 90°, starting at the axis closest to the
-        // button corner and rotating into the target quadrant.
-        var t = step * index;
-        return direction switch
-        {
-            "up-left" => Polar(3 * Math.PI / 2 - t, r),
-            "up-right" => Polar(-Math.PI / 2 + t, r),
-            "down-left" => Polar(Math.PI - t, r),
-            "down-right" => Polar(t, r),
-            _ => Polar(-Math.PI / 2 + t, r)
-        };
-    }
+    private static string Px(double value, string axis)
+        => string.Create(CultureInfo.InvariantCulture, $"calc({value:0.###}px + var(--item-diff-{axis}, 0px))");
 
     // ------------------------------------------------------------ interaction
     private async Task Toggle()
@@ -280,6 +252,7 @@ public partial class OpSpeedDial : ComponentBase
 
     private async Task SetVisibleAsync(bool value)
     {
+        if (_visible == value) return;
         _visible = value;
         await VisibleChanged.InvokeAsync(value);
         if (value)
@@ -294,6 +267,9 @@ public partial class OpSpeedDial : ComponentBase
         StateHasChanged();
     }
 
+    [JSInvokable]
+    public Task OnOutsideClick() => InvokeAsync(() => SetVisibleAsync(false));
+
     private async Task OnButtonClick(MouseEventArgs e)
     {
         await OnClick.InvokeAsync(e);
@@ -303,16 +279,26 @@ public partial class OpSpeedDial : ComponentBase
     private async Task OnItemClick(OpMenuItem item)
     {
         if (item.Disabled) return;
-
-        if (item.Url is not null)
-        {
-            // navegação/link
-        }
-
         item.Command?.Invoke();
         await SetVisibleAsync(false);
     }
 
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        try
+        {
+            if (_module is not null)
+            {
+                if (_listening) await _module.InvokeVoidAsync("removeOutsideClickListener", _root);
+                await _module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+
+        _selfRef?.Dispose();
+    }
 }

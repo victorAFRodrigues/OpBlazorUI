@@ -66,13 +66,13 @@ public partial class OpInputOtp : ComponentBase
 
     private string RootClass => BuildClass(
         "p-inputotp p-component",
-        Invalid ? "p-invalid" : null,
-        Disabled ? "p-disabled" : null,
-        Variant == "filled" ? "p-variant-filled" : null,
         StyleClass);
 
-    private string InputClassValue => BuildClass(
+    // Cada input é um pInputText com size, variant e invalid (inputotp.ts).
+    private string InputClassFor(int index) => BuildClass(
         "p-inputotp-input p-inputtext p-component",
+        TokenAt(index) is not null ? "p-filled" : null,
+        Variant == "filled" ? "p-variant-filled" : null,
         Size == "small" ? "p-inputtext-sm" : null,
         Size == "large" ? "p-inputtext-lg" : null,
         Invalid ? "p-invalid" : null,

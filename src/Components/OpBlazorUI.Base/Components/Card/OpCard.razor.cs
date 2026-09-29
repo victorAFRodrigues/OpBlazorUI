@@ -25,9 +25,5 @@ public partial class OpCard : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private bool HasCaption =>
-        TitleTemplate != null || SubtitleTemplate != null ||
-        !string.IsNullOrEmpty(Header) || !string.IsNullOrEmpty(Subheader);
-
     private string RootClass => OpCss.BuildClass("p-card p-component", StyleClass);
 }

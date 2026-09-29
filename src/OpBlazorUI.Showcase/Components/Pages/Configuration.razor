@@ -18,23 +18,23 @@
 
     <DocSection Label="Temas">
         <Description>
-            <p>Cada tema é um arquivo CSS em <code>_content/OpBlazorUI.Base/themes/</code>. O tema padrão é o <code>aura.css</code> (paleta <strong>noir</strong>), e existem 16 variantes de cor:</p>
+            <p>O tema é a combinação de três escolhas independentes, todas geradas a partir dos presets do Optimus UI:</p>
             <ul>
-                <li><code>emerald</code>, <code>green</code>, <code>lime</code>, <code>orange</code>, <code>amber</code>, <code>yellow</code>, <code>teal</code>, <code>cyan</code></li>
-                <li><code>sky</code>, <code>blue</code>, <code>indigo</code>, <code>violet</code>, <code>purple</code>, <code>fuchsia</code>, <code>pink</code>, <code>rose</code></li>
+                <li><strong>Preset</strong>: o visual base dos componentes, em <code>themes/{preset}.css</code>. Opções: <code>aura</code> (padrão), <code>lara</code> e <code>nora</code>.</li>
+                <li><strong>Primária</strong>: <code>noir</code> (padrão; segue a superfície, preto no claro e branco no escuro), <code>emerald</code>, <code>green</code>, <code>lime</code>, <code>orange</code>, <code>amber</code>, <code>yellow</code>, <code>teal</code>, <code>cyan</code>, <code>sky</code>, <code>blue</code>, <code>indigo</code>, <code>violet</code>, <code>purple</code>, <code>fuchsia</code>, <code>pink</code> e <code>rose</code>.</li>
+                <li><strong>Superfície</strong>: <code>slate</code>, <code>gray</code>, <code>zinc</code>, <code>neutral</code>, <code>stone</code>, <code>soho</code>, <code>viva</code> e <code>ocean</code>. Sem superfície definida, vale a do preset (slate no claro, zinc no escuro).</li>
             </ul>
-            <p>Além das variantes, existe o preset <strong>Lara</strong> (<code>lara.css</code>), uma base completa com visual próprio mantida separada do Aura.</p>
-            <p>Defina o tema padrão informando a URL do arquivo desejado:</p>
+            <p>Primária e superfície não exigem outro arquivo: o <code>&lt;OpBlazorUiSetup /&gt;</code> carrega <code>themes/palettes.css</code> e aplica os atributos <code>data-op-primary</code> e <code>data-op-surface</code> no <code>&lt;html&gt;</code>. Defina o tema inicial ao registrar os serviços, no <code>Program.cs</code>:</p>
         </Description>
         <Code>
             <CodeBlock Language="csharp"
-                       Code="@("OpTheme.SetThemeUrl(\"_content/OpBlazorUI.Base/themes/aura-emerald.css\");")"/>
+                       Code="@("builder.Services.AddOpBlazorUI(theme =>\n{\n    theme.Preset = \"lara\";\n    theme.Primary = \"blue\";\n    theme.Surface = \"zinc\";\n});")"/>
         </Code>
     </DocSection>
 
     <DocSection Label="Trocando o tema em tempo de execução">
         <Description>
-            <p>O componente <code>OpThemeSwitcher</code> renderiza os seletores de cor e o botão de modo escuro. Ao trocar o tema, ele atualiza o <code>OpTheme</code> e o <code>&lt;OpBlazorUiSetup /&gt;</code> recarrega o CSS automaticamente.</p>
+            <p>O componente <code>OpThemeSwitcher</code> renderiza os seletores de cor primária e o botão de modo escuro. Ao escolher uma cor, ele chama <code>OpThemeService.SetPrimary</code> e o <code>&lt;OpBlazorUiSetup /&gt;</code> aplica a paleta na hora, sem recarregar o CSS.</p>
         </Description>
         <ChildContent>
             <OpThemeSwitcher/>
@@ -45,29 +45,41 @@
         </Code>
     </DocSection>
 
-    <DocSection Label="Modo escuro">
+    <DocSection Label="OpThemeService">
         <Description>
-            <p>O modo escuro é aplicado pela classe <code>app-dark</code> no elemento <code>&lt;html&gt;</code>, através do módulo de interop:</p>
+            <p>Em tempo de execução, injete o <code>OpThemeService</code>. Ele guarda o tema de cada usuário (é <em>scoped</em>: no Blazor Server, cada circuito tem o seu) e dispara <code>Changed</code> a cada mudança, então todos os controles de tema da aplicação ficam sincronizados.</p>
         </Description>
         <Code>
-            <CodeBlock Language="csharp"
-                       Code="@("var module = await Js.InvokeAsync<IJSObjectReference>(\"import\",\n    \"./_content/OpBlazorUI.Base/optimus.interop.js\");\n\nawait module.InvokeVoidAsync(\"setDarkMode\", true);")"/>
+            <CodeBlock Language="razor"
+                       Code="@("@inject OpThemeService Theme\n\n<OpButton Label=\"Lara\" @onclick=\"() => Theme.SetPreset(\"lara\")\" />\n<OpButton Label=\"Azul\" @onclick=\"() => Theme.SetPrimary(\"blue\")\" />\n<OpButton Label=\"Escuro\" @onclick=\"Theme.ToggleDarkMode\" />")"/>
         </Code>
+    </DocSection>
+
+    <DocSection Label="Modo escuro">
+        <Description>
+            <p>O modo escuro é a classe <code>app-dark</code> no <code>&lt;html&gt;</code>. Use <code>Theme.SetDarkMode(bool)</code> ou <code>Theme.ToggleDarkMode()</code>; o estado inicial é lido do documento (por exemplo, o <code>prefers-color-scheme</code> aplicado pelo <code>op-theme.js</code>).</p>
+        </Description>
     </DocSection>
 
     <DocSection Label="Direção (RTL)">
         <Description>
-            <p>Para layouts da direita para a esquerda, use <code>setRtl</code>. Ele define o atributo <code>dir</code> do <code>&lt;html&gt;</code> e os estilos usam propriedades lógicas, então o layout se adapta:</p>
+            <p>Para layouts da direita para a esquerda, use <code>Theme.SetRtl(true)</code> (ou <code>theme.Rtl = true</code> no <code>AddOpBlazorUI</code>). O atributo <code>dir</code> do <code>&lt;html&gt;</code> é atualizado e os estilos usam propriedades lógicas, então o layout se adapta.</p>
+        </Description>
+    </DocSection>
+
+    <DocSection Label="Salvando as escolhas">
+        <Description>
+            <p>Com <code>theme.PersistTheme = true</code>, preset, cores, modo escuro e RTL são salvos no <code>localStorage</code> (chave <code>op-theme</code>) e restaurados no próximo acesso. Para aplicá-los <strong>antes</strong> do Blazor iniciar, sem flash, inclua o <code>op-theme.js</code> no <code>&lt;head&gt;</code>, depois do <code>&lt;base href&gt;</code>. Os atributos <code>data-*</code> repetem os padrões do <code>AddOpBlazorUI</code>:</p>
         </Description>
         <Code>
-            <CodeBlock Language="csharp"
-                       Code="@("await module.InvokeVoidAsync(\"setRtl\", true);")"/>
+            <CodeBlock Language="html"
+                       Code="@("<script src=\"_content/OpBlazorUI.Base/op-theme.js\"\n        data-preset=\"aura\" data-primary=\"noir\" data-surface=\"\"></script>")"/>
         </Code>
     </DocSection>
 
     <DocSection Label="Interop JS">
         <Description>
-            <p>Funções exportadas por <code>_content/OpBlazorUI.Base/optimus.interop.js</code>:</p>
+            <p>Funções exportadas por <code>_content/OpBlazorUI.Base/optimus.interop.js</code>. Para o tema, prefira o <code>OpThemeService</code>: estas funções só alteram o documento, sem atualizar o estado do serviço.</p>
         </Description>
         <ChildContent>
             <ApiTable Caption="Interop"
@@ -99,8 +111,10 @@
         "Visão geral",
         "Temas",
         "Trocando o tema em tempo de execução",
+        "OpThemeService",
         "Modo escuro",
         "Direção (RTL)",
+        "Salvando as escolhas",
         "Interop JS",
         "Variáveis CSS"
     ];

@@ -6,140 +6,483 @@
 <PageTitle>Button - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Button"
-              Description="O Button é uma extensão do elemento input padrão, com ícones e temas.">
+              Description="O Button é uma extensão do elemento button padrão, com ícones, estados e temas.">
 
     <Features>
-        <DocSection Label="Importação">
-            <Code>
-                <CodeBlock Language="razor"
-                            Code="@("@using OpBlazorUI.Base.Components.Button\n\n<OpButton Label=\"Salvar\" />")"/>
-            </Code>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O texto exibido no botão é definido pela propriedade <code>Label</code>.
+            </Description>
             <ChildContent>
-                <div class="flex gap-2 flex-wrap">
-                    <OpButton Label="Primário"/>
-                    <OpButton Label="Secundário" Severity="secondary"/>
-                    <OpButton Label="Sucesso" Severity="success"/>
-                    <OpButton Label="Informação" Severity="info"/>
-                    <OpButton Label="Aviso" Severity="warn"/>
-                    <OpButton Label="Perigo" Severity="danger"/>
+                <div class="flex justify-center">
+                    <OpButton Label="Enviar"/>
                 </div>
             </ChildContent>
-            <Code>
-                <CodeBlock Code="@("<OpButton Label=\"Primário\" />\n<OpButton Label=\"Secundário\" Severity=\"secondary\" />\n<OpButton Label=\"Sucesso\" Severity=\"success\" />\n<OpButton Label=\"Informação\" Severity=\"info\" />\n<OpButton Label=\"Aviso\" Severity=\"warn\" />\n<OpButton Label=\"Perigo\" Severity=\"danger\" />")"/>
-            </Code>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Variantes">
+        <DocSection Label="Âncora" Id="anchor">
+            <Description>
+                Não existe diretiva no Blazor como o <code>pButton</code> do Angular. Para estilizar um link
+                (<code>&lt;a&gt;</code> ou <code>NavLink</code>) como botão, aplique as classes
+                <code>p-button p-component</code> no elemento e envolva o texto em <code>p-button-label</code>.
+                Links internos (<code>href="/"</code>) são interceptados pelo roteador do Blazor.
+            </Description>
             <ChildContent>
-                <div class="flex gap-2 flex-wrap">
-                    <OpButton Label="Primário"/>
-                    <OpButton Label="Contornado" Outlined="true"/>
-                    <OpButton Label="Texto" Text="true"/>
-                    <OpButton Label="Elevado" Raised="true"/>
+                <div class="flex justify-center flex-wrap gap-4">
+                    <a href="https://learn.microsoft.com/aspnet/core/blazor" class="p-button p-component" target="_blank" rel="noopener noreferrer">
+                        <span class="p-button-label">Site do Blazor</span>
+                    </a>
+                    <a href="/" class="p-button p-component p-button-outlined">
+                        <span class="p-button-icon p-button-icon-left pi pi-home"></span>
+                        <span class="p-button-label">Link interno</span>
+                    </a>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AnchorCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Link" Id="link">
+            <Description>
+                Com <code>Link="true"</code> o botão é renderizado com a aparência de um link, mas continua sendo um
+                <code>&lt;button&gt;</code> — use-o para ações, não para navegação.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
                     <OpButton Label="Link" Link="true"/>
-                    <OpButton Label="Simples" Plain="true"/>
                 </div>
             </ChildContent>
-            <Code>
-                <CodeBlock Code="@("<OpButton Label=\"Primário\" />\n<OpButton Label=\"Contornado\" Outlined=\"true\" />\n<OpButton Label=\"Texto\" Text=\"true\" />\n<OpButton Label=\"Elevado\" Raised=\"true\" />\n<OpButton Label=\"Link\" Link=\"true\" />\n<OpButton Label=\"Simples\" Plain=\"true\" />")"/>
-            </Code>
+            <Code><CodeBlock Code="@LinkCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ícone">
+        <DocSection Label="Ícones" Id="icons">
+            <Description>
+                O ícone é definido pela propriedade <code>Icon</code> (qualquer classe de ícone, ex.:
+                <code>pi pi-check</code>) e a posição por <code>IconPos</code>: <code>left</code> (padrão),
+                <code>right</code>, <code>top</code> ou <code>bottom</code>. Em <code>top</code>/<code>bottom</code>
+                o botão recebe a classe <code>p-button-vertical</code>.
+            </Description>
             <ChildContent>
-                <div class="flex gap-2 flex-wrap">
-                    <OpButton Label="Pesquisar" Icon="pi pi-search"/>
-                    <OpButton Label="Direita" Icon="pi pi-arrow-right" IconPos="right"/>
-                    <OpButton Icon="pi pi-search" AriaLabel="Pesquisar"/>
+                <div class="flex flex-col items-center gap-4">
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <OpButton Icon="pi pi-home" AriaLabel="Início"/>
+                        <OpButton Label="Perfil" Icon="pi pi-user"/>
+                        <OpButton Label="Salvar" Icon="pi pi-check" IconPos="right"/>
+                    </div>
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <OpButton Label="Pesquisar" Icon="pi pi-search" IconPos="top"/>
+                        <OpButton Label="Atualizar" Icon="pi pi-refresh" IconPos="bottom"/>
+                    </div>
                 </div>
             </ChildContent>
-            <Code>
-                <CodeBlock Code="@("<OpButton Label=\"Pesquisar\" Icon=\"pi pi-search\" />\n<OpButton Label=\"Direita\" Icon=\"pi pi-arrow-right\" IconPos=\"right\" />\n<OpButton Icon=\"pi pi-search\" AriaLabel=\"Pesquisar\" />")"/>
-            </Code>
+            <Code><CodeBlock Code="@IconsCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tamanhos">
+        <DocSection Label="Carregando" Id="loading">
+            <Description>
+                O estado ocupado é controlado pela propriedade <code>Loading</code>. Enquanto ativo, o ícone é trocado
+                por um spinner e o botão fica desabilitado, evitando cliques duplos. Clique no botão para simular uma
+                operação de 2 segundos.
+            </Description>
             <ChildContent>
-                <div class="flex gap-2 items-center flex-wrap">
-                    <OpButton Label="Pequeno" Size="small"/>
-                    <OpButton Label="Normal"/>
-                    <OpButton Label="Grande" Size="large"/>
+                <div class="flex justify-center gap-4">
+                    <OpButton Label="Pesquisar" Icon="pi pi-check" Loading="_loading" OnClick="Load"/>
                 </div>
             </ChildContent>
-            <Code>
-                <CodeBlock Code="@("<OpButton Label=\"Pequeno\" Size=\"small\" />\n<OpButton Label=\"Normal\" />\n<OpButton Label=\"Grande\" Size=\"large\" />")"/>
-            </Code>
+            <Code><CodeBlock Code="@LoadingCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Carregando e Desabilitado">
+        <DocSection Label="Severidade" Id="severity">
+            <Description>
+                A propriedade <code>Severity</code> define o tipo do botão e, com isso, sua cor:
+                <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>,
+                <code>help</code>, <code>danger</code> e <code>contrast</code>. Sem severidade, é usada a cor primária do tema.
+            </Description>
             <ChildContent>
-                <div class="flex gap-2 flex-wrap">
-                    <OpButton Label="Carregando" Loading="true"/>
-                    <OpButton Label="Desabilitado" Disabled="true"/>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    @foreach (var s in Severities)
+                    {
+                        <OpButton Label="@s.Label" Severity="@s.Value"/>
+                    }
                 </div>
             </ChildContent>
-            <Code>
-                <CodeBlock Code="@("<OpButton Label=\"Carregando\" Loading=\"true\" />\n<OpButton Label=\"Desabilitado\" Disabled=\"true\" />")"/>
-            </Code>
+            <Code><CodeBlock Code="@SeverityCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Badge">
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Quando <code>Disabled</code> está ativo, o botão não pode ser clicado nem receber foco.
+            </Description>
             <ChildContent>
-                <div class="flex gap-2 flex-wrap">
-                    <OpButton Label="Emails" Badge="8"/>
-                    <OpButton Label="Mensagens" Badge="24" BadgeSeverity="secondary"/>
-                    <OpButton Label="Notificações" Badge="3" BadgeSeverity="success"/>
-                    <OpButton Label="Sistema" Badge="9" BadgeSeverity="warn" BadgeSize="large"/>
-                    <OpButton Icon="pi pi-bell" Badge="5" BadgeSeverity="danger" AriaLabel="Notificações"/>
+                <div class="flex justify-center">
+                    <OpButton Label="Enviar" Disabled="true"/>
                 </div>
             </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Elevado" Id="raised">
+            <Description>
+                Botões elevados (<code>Raised</code>) exibem uma sombra para indicar elevação.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    @foreach (var s in Severities)
+                    {
+                        <OpButton Label="@s.Label" Severity="@s.Value" Raised="true"/>
+                    }
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RaisedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Arredondado" Id="rounded">
+            <Description>
+                Botões arredondados (<code>Rounded</code>) têm raio de borda circular.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    @foreach (var s in Severities)
+                    {
+                        <OpButton Label="@s.Label" Severity="@s.Value" Rounded="true"/>
+                    }
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RoundedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Texto" Id="text">
+            <Description>
+                Botões de texto (<code>Variant="text"</code> ou <code>Text="true"</code>) são exibidos como
+                elementos textuais, sem fundo nem borda até receberem hover. <code>Plain="true"</code> remove também a cor.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    @foreach (var s in TextSeverities)
+                    {
+                        <OpButton Label="@s.Label" Severity="@s.Value" Variant="text"/>
+                    }
+                    <OpButton Label="Simples" Variant="text" Plain="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TextCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Texto Elevado" Id="raisedtext">
+            <Description>
+                Botões de texto também podem ser elevados, combinando <code>Variant="text"</code> e <code>Raised</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    @foreach (var s in TextSeverities)
+                    {
+                        <OpButton Label="@s.Label" Severity="@s.Value" Variant="text" Raised="true"/>
+                    }
+                    <OpButton Label="Simples" Variant="text" Plain="true" Raised="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RaisedTextCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Contornado" Id="outlined">
+            <Description>
+                Botões contornados (<code>Variant="outlined"</code> ou <code>Outlined="true"</code>) exibem apenas a
+                borda, sem fundo, até receberem hover.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    @foreach (var s in Severities)
+                    {
+                        <OpButton Label="@s.Label" Severity="@s.Value" Variant="outlined"/>
+                    }
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@OutlinedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Somente Ícone" Id="icononly">
+            <Description>
+                Botões podem ter ícone sem rótulo — o botão fica quadrado (ou circular, com <code>Rounded</code>) e
+                recebe a classe <code>p-button-icon-only</code>. Como não há texto visível, sempre informe
+                <code>AriaLabel</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-6">
+                    <div class="flex justify-center flex-wrap gap-4">
+                        @foreach (var s in IconSeverities)
+                        {
+                            <OpButton Icon="@s.Icon" Severity="@s.Value" AriaLabel="@s.Label"/>
+                        }
+                    </div>
+                    <div class="flex justify-center flex-wrap gap-4">
+                        @foreach (var s in IconSeverities)
+                        {
+                            <OpButton Icon="@s.Icon" Severity="@s.Value" AriaLabel="@s.Label" Rounded="true"/>
+                        }
+                    </div>
+                    <div class="flex justify-center flex-wrap gap-4">
+                        @foreach (var s in IconSeverities)
+                        {
+                            <OpButton Icon="@s.Icon" Severity="@s.Value" AriaLabel="@s.Label" Rounded="true" Outlined="true"/>
+                        }
+                    </div>
+                    <div class="flex justify-center flex-wrap gap-4">
+                        @foreach (var s in IconSeverities)
+                        {
+                            <OpButton Icon="@s.Icon" Severity="@s.Value" AriaLabel="@s.Label" Rounded="true" Text="true" Raised="true"/>
+                        }
+                    </div>
+                    <div class="flex justify-center flex-wrap gap-4">
+                        @foreach (var s in IconSeverities)
+                        {
+                            <OpButton Icon="@s.Icon" Severity="@s.Value" AriaLabel="@s.Label" Rounded="true" Text="true"/>
+                        }
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconOnlyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Badge" Id="badge">
+            <Description>
+                O Button tem suporte embutido a badge pelas propriedades <code>Badge</code> (valor),
+                <code>BadgeSeverity</code>, <code>BadgeSize</code> e <code>BadgeClass</code>. Útil para contadores
+                de notificações ou itens pendentes.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center flex-wrap gap-4">
+                    <OpButton Label="E-mails" Badge="2"/>
+                    <OpButton Label="Mensagens" Icon="pi pi-users" Badge="2" BadgeSeverity="contrast" Outlined="true"/>
+                    <OpButton Icon="pi pi-bell" Badge="5" BadgeSeverity="danger" AriaLabel="Notificações" Text="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BadgeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Grupo de Botões" Id="buttongroup">
+            <Description>
+                Vários botões são agrupados quando envolvidos por um elemento com a classe <code>p-buttongroup</code>:
+                as bordas internas são unidas e só as extremidades ficam arredondadas. Use <code>role="group"</code>
+                para que leitores de tela anunciem o agrupamento.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <span class="p-buttongroup p-component" role="group">
+                        <OpButton Label="Salvar" Icon="pi pi-check"/>
+                        <OpButton Label="Excluir" Icon="pi pi-trash"/>
+                        <OpButton Label="Cancelar" Icon="pi pi-times"/>
+                    </span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ButtonGroupCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos" Id="sizes">
+            <Description>
+                O Button oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão,
+                via propriedade <code>Size</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center flex-wrap gap-4 items-center">
+                    <OpButton Label="Pequeno" Icon="pi pi-check" Size="small"/>
+                    <OpButton Label="Normal" Icon="pi pi-check"/>
+                    <OpButton Label="Grande" Icon="pi pi-check" Size="large"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Largura Total" Id="fluid">
+            <Description>
+                Com <code>Fluid="true"</code> o botão ocupa toda a largura do contêiner — comum em formulários
+                de login e em layouts mobile.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width: 100%; max-width: 20rem;">
+                        <OpButton Label="Entrar" Icon="pi pi-sign-in" Fluid="true"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Eventos e Formulários" Id="events">
+            <Description>
+                <code>OnClick</code> recebe um <code>MouseEventArgs</code> e aceita handlers síncronos ou
+                <code>async Task</code>; também há <code>OnFocus</code> e <code>OnBlur</code>. O <code>Type</code>
+                padrão é <code>button</code> (diferente do HTML nativo) para não submeter formulários por acidente —
+                use <code>Type="submit"</code> dentro de um <code>EditForm</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <div class="flex justify-center flex-wrap gap-4 items-center">
+                        <OpButton Label="Incrementar" Icon="pi pi-plus" OnClick="() => _count++"/>
+                        <OpButton Label="Zerar" Severity="secondary" Outlined="true" OnClick="() => _count = 0"/>
+                        <span>Cliques: <b>@_count</b></span>
+                    </div>
+                    <form class="flex flex-wrap gap-4 items-center justify-center" @onsubmit="Submit" @onsubmit:preventDefault>
+                        <OpButton Label="Enviar formulário" Type="submit"/>
+                        <OpButton Label="Botão comum" Severity="secondary" Text="true"/>
+                        @if (_submitted > 0)
+                        {
+                            <span>Enviado @_submitted vez(es)</span>
+                        }
+                    </form>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@EventsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                Conteúdo customizado é definido como filho do componente (<code>ChildContent</code>) — nesse caso
+                <code>Label</code> é ignorado e o layout interno fica por sua conta. Para trocar apenas o ícone use
+                <code>IconTemplate</code>, e para o spinner <code>LoadingIconTemplate</code> (aplique as classes
+                <code>p-button-icon p-button-icon-left</code> para manter o espaçamento).
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center flex-wrap gap-4 items-center">
+                    <OpButton Outlined="true" AriaLabel="OpBlazorUI">
+                        <span style="display: flex; align-items: center; gap: .75rem;">
+                            <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+                                <rect x="2" y="2" width="28" height="28" rx="8" fill="var(--p-primary-color)"/>
+                                <path d="M10 16h12M16 10v12" stroke="var(--p-primary-contrast-color)" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                            <span style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2;">
+                                <b>OpBlazorUI</b>
+                                <small>Conteúdo livre</small>
+                            </span>
+                        </span>
+                    </OpButton>
+                    <OpButton Label="Favoritar">
+                        <IconTemplate>
+                            <span class="p-button-icon p-button-icon-left" aria-hidden="true">★</span>
+                        </IconTemplate>
+                    </OpButton>
+                    <OpButton Label="Sincronizando" Loading="true" Severity="secondary">
+                        <LoadingIconTemplate>
+                            <span class="p-button-icon p-button-icon-left pi pi-sync pi-spin" aria-hidden="true"></span>
+                        </LoadingIconTemplate>
+                    </OpButton>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Button renderiza um elemento <code>&lt;button&gt;</code> nativo, e qualquer atributo extra
+                    (ex.: <code>aria-*</code>, <code>data-*</code>, <code>title</code>) é repassado a ele. O texto que
+                    descreve o botão vem de <code>AriaLabel</code>; se ausente, o leitor usa o <code>Label</code>.
+                    Em botões somente ícone ou com template customizado, informe <code>AriaLabel</code> para que o
+                    elemento seja lido corretamente.
+                </p>
+            </Description>
             <Code>
-                <CodeBlock Code="@("<OpButton Label=\"Emails\" Badge=\"8\" />\n<OpButton Label=\"Mensagens\" Badge=\"24\" BadgeSeverity=\"secondary\" />\n<OpButton Label=\"Notificações\" Badge=\"3\" BadgeSeverity=\"success\" />\n<OpButton Label=\"Sistema\" Badge=\"9\" BadgeSeverity=\"warn\" BadgeSize=\"large\" />\n<OpButton Icon=\"pi pi-bell\" Badge=\"5\" BadgeSeverity=\"danger\" AriaLabel=\"Notificações\" />")"/>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o botão." },
+                              new[] { "enter", "Ativa o botão." },
+                              new[] { "space", "Ativa o botão." }
+                          })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Label", "string?", "null", "Texto exibido no botão." },
                               new[] { "Icon", "string?", "null", "Classe do ícone (ex.: <code>pi pi-search</code>)." },
                               new[] { "IconPos", "string", "left", "Posição do ícone: <code>left</code>, <code>right</code>, <code>top</code>, <code>bottom</code>." },
-                              new[] { "Severity", "string?", "null", "Severidade: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code>, <code>contrast</code>." },
-                              new[] { "Variant", "string?", "null", "Variante: <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>link</code>, <code>plain</code>." },
+                              new[] { "Severity", "string?", "null", "Severidade: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>help</code>, <code>danger</code>, <code>contrast</code>." },
+                              new[] { "Variant", "string?", "null", "Variante: <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>link</code>. Equivale às flags booleanas abaixo." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "Raised", "bool", "false", "Aplica sombra elevada." },
+                              new[] { "Rounded", "bool", "false", "Aplica cantos totalmente arredondados." },
+                              new[] { "Text", "bool", "false", "Renderiza como botão de texto (sem fundo/borda)." },
+                              new[] { "Outlined", "bool", "false", "Renderiza como botão contornado." },
+                              new[] { "Link", "bool", "false", "Renderiza com aparência de link." },
+                              new[] { "Plain", "bool", "false", "Remove a cor (usado com <code>text</code>/<code>outlined</code>)." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura disponível." },
                               new[] { "Loading", "bool", "false", "Exibe o spinner de carregamento e desabilita o botão." },
-                              new[] { "Badge", "string?", "null", "Valor exibido no badge do botão (posicionado no canto superior direito)." },
+                              new[] { "LoadingIcon", "string?", "null", "Classe do ícone de carregamento (padrão: spinner SVG)." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o botão." },
+                              new[] { "Type", "string", "button", "Atributo <code>type</code> do elemento: <code>button</code>, <code>submit</code> ou <code>reset</code>." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível; obrigatório em botões somente ícone." },
+                              new[] { "TabIndex", "int", "0", "Índice de tabulação." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Badge", "string?", "null", "Valor exibido no badge interno do botão." },
                               new[] { "BadgeSeverity", "string?", "null", "Severidade do badge: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code>, <code>contrast</code>." },
                               new[] { "BadgeSize", "string?", "null", "Tamanho do badge: <code>small</code>, <code>large</code>, <code>xlarge</code>." },
                               new[] { "BadgeClass", "string?", "null", "Classes adicionais no badge." },
-                              new[] { "BadgeDisabled", "bool", "false", "Desabilita o badge." },
-                              new[] { "BadgeStyle", "string?", "null", "Estilo inline adicional no badge." },
-                              new[] { "BadgeAdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos adicionais repassados ao badge." },
-                              new[] { "Disabled", "bool", "false", "Desabilita o botão." },
-                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura disponível." },
-                              new[] { "Rounded", "bool", "false", "Aplica cantos totalmente arredondados." },
-                              new[] { "Raised", "bool", "false", "Aplica sombra elevada." },
-                              new[] { "Text", "bool", "false", "Renderiza como botão de texto (sem fundo/borda)." },
-                              new[] { "Outlined", "bool", "false", "Renderiza como botão outlined." },
-                              new[] { "Link", "bool", "false", "Renderiza como link." },
-                              new[] { "Plain", "bool", "false", "Renderiza sem decoração." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo customizado." },
-                              new[] { "IconTemplate", "RenderFragment?", "null", "Template customizado para o ícone." },
-                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "-", "Evento disparado no clique." }
+                              new[] { "BadgeDisabled", "bool", "false", "Exibe o badge com aparência desabilitada." },
+                              new[] { "BadgeStyle", "string?", "null", "Estilo inline do badge." },
+                              new[] { "BadgeAdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos extras repassados ao elemento do badge." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;button&gt;</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado; substitui o rótulo." },
+                              new[] { "IconTemplate", "RenderFragment?", "Template do ícone (usado quando <code>Icon</code> não é informado)." },
+                              new[] { "LoadingIconTemplate", "RenderFragment?", "Template do ícone de carregamento." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado no clique." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando o botão recebe foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando o botão perde o foco." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-button", "Elemento raiz (<code>&lt;button&gt;</code>)." },
+                              new[] { "p-button-label", "Rótulo do botão." },
+                              new[] { "p-button-icon", "Ícone; recebe <code>p-button-icon-{left|right|top|bottom}</code> quando há rótulo." },
+                              new[] { "p-button-loading-icon", "Spinner exibido em <code>Loading</code>." },
+                              new[] { "p-button-icon-only", "Raiz quando há apenas ícone." },
+                              new[] { "p-button-vertical", "Raiz quando <code>IconPos</code> é <code>top</code>/<code>bottom</code>." },
+                              new[] { "p-button-loading", "Raiz durante o carregamento." },
+                              new[] { "p-button-{severity}", "Raiz com <code>Severity</code> (ex.: <code>p-button-success</code>)." },
+                              new[] { "p-button-outlined / -text / -link / -raised / -rounded / -plain", "Raiz conforme a variante." },
+                              new[] { "p-button-sm / p-button-lg", "Raiz conforme <code>Size</code>." },
+                              new[] { "p-button-fluid", "Raiz com <code>Fluid</code>." },
+                              new[] { "p-buttongroup", "Contêiner de agrupamento de botões." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
             <ChildContent>
                 <DocTokens Component="button"/>
             </ChildContent>
@@ -147,7 +490,7 @@
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
                 <div class="doc-section-description">
                     <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>ChildContent</code>, <code>IconTemplate</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
@@ -157,12 +500,263 @@
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
                 <div class="doc-section-description">
-                    <p>Nenhum problema conhecido no momento.</p>
+                    <ul>
+                        <li>Não há componente <code>OpButtonGroup</code>; o agrupamento é feito com a classe <code>p-buttongroup</code> (ver Recursos).</li>
+                        <li>Não há equivalente à diretiva <code>pButton</code>; estilize âncoras aplicando as classes manualmente.</li>
+                    </ul>
                 </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
+
+@code {
+    private bool _loading;
+    private int _count;
+    private int _submitted;
+
+    private async Task Load()
+    {
+        _loading = true;
+        await Task.Delay(2000);
+        _loading = false;
+    }
+
+    private void Submit() => _submitted++;
+
+    private record Sev(string Label, string? Value, string Icon = "");
+
+    private static readonly Sev[] Severities =
+    [
+        new("Primário", null), new("Secundário", "secondary"), new("Sucesso", "success"), new("Informação", "info"),
+        new("Aviso", "warn"), new("Ajuda", "help"), new("Perigo", "danger"), new("Contraste", "contrast")
+    ];
+
+    private static readonly Sev[] TextSeverities = Severities[..^1];
+
+    private static readonly Sev[] IconSeverities =
+    [
+        new("Confirmar", null, "pi pi-check"), new("Favoritos", "secondary", "pi pi-bookmark"),
+        new("Pesquisar", "success", "pi pi-search"), new("Usuário", "info", "pi pi-user"),
+        new("Notificações", "warn", "pi pi-bell"), new("Curtir", "help", "pi pi-heart"),
+        new("Fechar", "danger", "pi pi-times")
+    ];
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Button
+        """;
+
+    private const string BasicCode = """
+        <OpButton Label="Enviar" />
+        """;
+
+    private const string AnchorCode = """
+        <a href="https://learn.microsoft.com/aspnet/core/blazor" class="p-button p-component" target="_blank" rel="noopener noreferrer">
+            <span class="p-button-label">Site do Blazor</span>
+        </a>
+        <a href="/" class="p-button p-component p-button-outlined">
+            <span class="p-button-icon p-button-icon-left pi pi-home"></span>
+            <span class="p-button-label">Link interno</span>
+        </a>
+        """;
+
+    private const string LinkCode = """
+        <OpButton Label="Link" Link="true" />
+        """;
+
+    private const string IconsCode = """
+        <OpButton Icon="pi pi-home" AriaLabel="Início" />
+        <OpButton Label="Perfil" Icon="pi pi-user" />
+        <OpButton Label="Salvar" Icon="pi pi-check" IconPos="right" />
+        <OpButton Label="Pesquisar" Icon="pi pi-search" IconPos="top" />
+        <OpButton Label="Atualizar" Icon="pi pi-refresh" IconPos="bottom" />
+        """;
+
+    private const string LoadingCode = """
+        <OpButton Label="Pesquisar" Icon="pi pi-check" Loading="_loading" OnClick="Load" />
+
+        @code {
+            private bool _loading;
+
+            private async Task Load()
+            {
+                _loading = true;
+                await Task.Delay(2000);
+                _loading = false;
+            }
+        }
+        """;
+
+    private const string SeverityCode = """
+        <OpButton Label="Primário" />
+        <OpButton Label="Secundário" Severity="secondary" />
+        <OpButton Label="Sucesso" Severity="success" />
+        <OpButton Label="Informação" Severity="info" />
+        <OpButton Label="Aviso" Severity="warn" />
+        <OpButton Label="Ajuda" Severity="help" />
+        <OpButton Label="Perigo" Severity="danger" />
+        <OpButton Label="Contraste" Severity="contrast" />
+        """;
+
+    private const string DisabledCode = """
+        <OpButton Label="Enviar" Disabled="true" />
+        """;
+
+    private const string RaisedCode = """
+        <OpButton Label="Primário" Raised="true" />
+        <OpButton Label="Secundário" Raised="true" Severity="secondary" />
+        <OpButton Label="Sucesso" Raised="true" Severity="success" />
+        <OpButton Label="Informação" Raised="true" Severity="info" />
+        <OpButton Label="Aviso" Raised="true" Severity="warn" />
+        <OpButton Label="Ajuda" Raised="true" Severity="help" />
+        <OpButton Label="Perigo" Raised="true" Severity="danger" />
+        <OpButton Label="Contraste" Raised="true" Severity="contrast" />
+        """;
+
+    private const string RoundedCode = """
+        <OpButton Label="Primário" Rounded="true" />
+        <OpButton Label="Secundário" Rounded="true" Severity="secondary" />
+        <OpButton Label="Sucesso" Rounded="true" Severity="success" />
+        <OpButton Label="Informação" Rounded="true" Severity="info" />
+        <OpButton Label="Aviso" Rounded="true" Severity="warn" />
+        <OpButton Label="Ajuda" Rounded="true" Severity="help" />
+        <OpButton Label="Perigo" Rounded="true" Severity="danger" />
+        <OpButton Label="Contraste" Rounded="true" Severity="contrast" />
+        """;
+
+    private const string TextCode = """
+        <OpButton Label="Primário" Variant="text" />
+        <OpButton Label="Secundário" Variant="text" Severity="secondary" />
+        <OpButton Label="Sucesso" Variant="text" Severity="success" />
+        <OpButton Label="Informação" Variant="text" Severity="info" />
+        <OpButton Label="Aviso" Variant="text" Severity="warn" />
+        <OpButton Label="Ajuda" Variant="text" Severity="help" />
+        <OpButton Label="Perigo" Variant="text" Severity="danger" />
+        <OpButton Label="Simples" Variant="text" Plain="true" />
+        """;
+
+    private const string RaisedTextCode = """
+        <OpButton Label="Primário" Variant="text" Raised="true" />
+        <OpButton Label="Secundário" Variant="text" Raised="true" Severity="secondary" />
+        <OpButton Label="Sucesso" Variant="text" Raised="true" Severity="success" />
+        <OpButton Label="Informação" Variant="text" Raised="true" Severity="info" />
+        <OpButton Label="Aviso" Variant="text" Raised="true" Severity="warn" />
+        <OpButton Label="Ajuda" Variant="text" Raised="true" Severity="help" />
+        <OpButton Label="Perigo" Variant="text" Raised="true" Severity="danger" />
+        <OpButton Label="Simples" Variant="text" Raised="true" Plain="true" />
+        """;
+
+    private const string OutlinedCode = """
+        <OpButton Label="Primário" Variant="outlined" />
+        <OpButton Label="Secundário" Variant="outlined" Severity="secondary" />
+        <OpButton Label="Sucesso" Variant="outlined" Severity="success" />
+        <OpButton Label="Informação" Variant="outlined" Severity="info" />
+        <OpButton Label="Aviso" Variant="outlined" Severity="warn" />
+        <OpButton Label="Ajuda" Variant="outlined" Severity="help" />
+        <OpButton Label="Perigo" Variant="outlined" Severity="danger" />
+        <OpButton Label="Contraste" Variant="outlined" Severity="contrast" />
+        """;
+
+    private const string IconOnlyCode = """
+        <!-- Padrão -->
+        <OpButton Icon="pi pi-check" AriaLabel="Confirmar" />
+        <OpButton Icon="pi pi-bookmark" Severity="secondary" AriaLabel="Favoritos" />
+        <OpButton Icon="pi pi-search" Severity="success" AriaLabel="Pesquisar" />
+        <OpButton Icon="pi pi-user" Severity="info" AriaLabel="Usuário" />
+        <OpButton Icon="pi pi-bell" Severity="warn" AriaLabel="Notificações" />
+        <OpButton Icon="pi pi-heart" Severity="help" AriaLabel="Curtir" />
+        <OpButton Icon="pi pi-times" Severity="danger" AriaLabel="Fechar" />
+
+        <!-- Arredondado -->
+        <OpButton Icon="pi pi-check" Rounded="true" AriaLabel="Confirmar" />
+
+        <!-- Arredondado + contornado -->
+        <OpButton Icon="pi pi-check" Rounded="true" Outlined="true" AriaLabel="Confirmar" />
+
+        <!-- Arredondado + texto elevado -->
+        <OpButton Icon="pi pi-check" Rounded="true" Text="true" Raised="true" AriaLabel="Confirmar" />
+
+        <!-- Arredondado + texto -->
+        <OpButton Icon="pi pi-check" Rounded="true" Text="true" AriaLabel="Confirmar" />
+        """;
+
+    private const string BadgeCode = """
+        <OpButton Label="E-mails" Badge="2" />
+        <OpButton Label="Mensagens" Icon="pi pi-users" Badge="2" BadgeSeverity="contrast" Outlined="true" />
+        <OpButton Icon="pi pi-bell" Badge="5" BadgeSeverity="danger" AriaLabel="Notificações" Text="true" />
+        """;
+
+    private const string ButtonGroupCode = """
+        <span class="p-buttongroup p-component" role="group">
+            <OpButton Label="Salvar" Icon="pi pi-check" />
+            <OpButton Label="Excluir" Icon="pi pi-trash" />
+            <OpButton Label="Cancelar" Icon="pi pi-times" />
+        </span>
+        """;
+
+    private const string SizesCode = """
+        <OpButton Label="Pequeno" Icon="pi pi-check" Size="small" />
+        <OpButton Label="Normal" Icon="pi pi-check" />
+        <OpButton Label="Grande" Icon="pi pi-check" Size="large" />
+        """;
+
+    private const string FluidCode = """
+        <OpButton Label="Entrar" Icon="pi pi-sign-in" Fluid="true" />
+        """;
+
+    private const string EventsCode = """
+        <OpButton Label="Incrementar" Icon="pi pi-plus" OnClick="() => _count++" />
+        <OpButton Label="Zerar" Severity="secondary" Outlined="true" OnClick="() => _count = 0" />
+        <span>Cliques: <b>@_count</b></span>
+
+        <EditForm Model="_model" OnValidSubmit="Submit">
+            <OpButton Label="Enviar formulário" Type="submit" />
+            <!-- Type padrão = "button": não submete o formulário -->
+            <OpButton Label="Botão comum" Severity="secondary" Text="true" />
+        </EditForm>
+
+        @code {
+            private int _count;
+            private readonly MeuModelo _model = new();
+
+            private void Submit() { /* ... */ }
+        }
+        """;
+
+    private const string TemplateCode = """
+        <!-- Conteúdo livre -->
+        <OpButton Outlined="true" AriaLabel="OpBlazorUI">
+            <span style="display: flex; align-items: center; gap: .75rem;">
+                <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">...</svg>
+                <span style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <b>OpBlazorUI</b>
+                    <small>Conteúdo livre</small>
+                </span>
+            </span>
+        </OpButton>
+
+        <!-- Apenas o ícone -->
+        <OpButton Label="Favoritar">
+            <IconTemplate>
+                <span class="p-button-icon p-button-icon-left" aria-hidden="true">★</span>
+            </IconTemplate>
+        </OpButton>
+
+        <!-- Apenas o spinner -->
+        <OpButton Label="Sincronizando" Loading="true" Severity="secondary">
+            <LoadingIconTemplate>
+                <span class="p-button-icon p-button-icon-left pi pi-sync pi-spin" aria-hidden="true"></span>
+            </LoadingIconTemplate>
+        </OpButton>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpButton Icon="pi pi-check" AriaLabel="Enviar" />
+
+        <OpButton Label="Enviar" aria-describedby="dica-envio" />
+        <span id="dica-envio">O formulário será enviado para aprovação.</span>
+        """;
+}

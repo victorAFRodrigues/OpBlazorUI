@@ -63,8 +63,6 @@ public partial class OpDrawer : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private string EffectivePosition => FullScreen ? "full" : Position;
-
     protected override void OnInitialized()
     {
         _headerId = $"op-drawer-title-{Guid.NewGuid():N}";
@@ -93,15 +91,15 @@ public partial class OpDrawer : ComponentBase
 
     private string RootClass => OpCss.BuildClass(
         "p-drawer p-component",
-        "p-drawer-enter-active",
+        FullScreen ? "p-drawer-full" : null,
+        "p-drawer-open",
+        $"p-drawer-{Position}",
+        FullScreen ? "p-drawer-enter-full" : $"p-drawer-enter-{Position}",
         StyleClass);
 
     private string MaskClass => OpCss.BuildClass(
-        "p-overlay-mask",
-        "p-drawer-mask",
-        $"p-drawer-{EffectivePosition}",
-        "p-drawer-open",
-        "p-overlay-mask-enter-active",
+        "p-drawer-mask p-overlay-mask p-overlay-mask-enter-active",
+        FullScreen ? "p-drawer-full" : null,
         MaskStyleClass);
 
     private async Task Close(MouseEventArgs _)

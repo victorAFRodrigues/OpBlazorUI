@@ -7,9 +7,18 @@
 @typeparam TValue
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
-    @if (Filter || (IsMultiple && ShowToggleAll) || HeaderTemplate != null || FilterTemplate != null)
+    @if (Filter || (Checkbox && ShowToggleAll) || HeaderTemplate != null || FilterTemplate != null)
     {
         <div class="p-listbox-header">
+            @if (Checkbox && ShowToggleAll)
+            {
+                <div class="p-listbox-header-checkbox">
+                    <OpCheckbox StyleClass="p-listbox-option-check-icon" Checked="@AllSelected"
+                                CheckedChanged="@(c => OnToggleAll(c == true))"
+                                Disabled="@Disabled"
+                                Id="@($"{_id}_all")"/>
+                </div>
+            }
             @if (FilterTemplate != null)
             {
                 @FilterTemplate
@@ -28,16 +37,6 @@
                                @oninput="OnFilterInput"/>
                         <OpInputIcon><OpIcon Name="search"/></OpInputIcon>
                     </OpIconField>
-                </div>
-            }
-
-            @if (IsMultiple && ShowToggleAll)
-            {
-                <div class="p-listbox-header-checkbox">
-                    <OpCheckbox Checked="@AllSelected"
-                                CheckedChanged="@(c => OnToggleAll(c == true))"
-                                Disabled="@Disabled"
-                                Id="@($"{_id}_all")"/>
                 </div>
             }
 
@@ -150,7 +149,7 @@
             @onmouseenter="() => OnOptionMouseEnter(index)">
             @if (Checkbox)
             {
-                <OpCheckbox Checked="@isSelected" Readonly="true" Disabled="@isDisabled" />
+                <OpCheckbox StyleClass="p-listbox-option-check-icon" Checked="@isSelected" Readonly="true" Disabled="@isDisabled" />
             }
 
             @if (Checkmark)

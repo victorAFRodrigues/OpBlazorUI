@@ -44,10 +44,11 @@ public partial class OpButton : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private bool HasIcon => !string.IsNullOrEmpty(Icon) || IconTemplate != null;
+    private bool HasIcon => !string.IsNullOrEmpty(Icon) || IconTemplate != null
+        || !string.IsNullOrEmpty(LoadingIcon) || LoadingIconTemplate != null;
     private bool HasLabel => !string.IsNullOrEmpty(Label);
     private bool HasBadge => !string.IsNullOrEmpty(Badge);
-    private bool IconOnly => HasIcon && !HasLabel && ChildContent == null;
+    private bool IconOnly => HasIcon && !HasLabel && !HasBadge && ChildContent == null;
 
     private string RootClass => BuildClass(
         "p-button p-component",
@@ -55,7 +56,7 @@ public partial class OpButton : ComponentBase
         (IconPos is "top" or "bottom") && HasLabel ? "p-button-vertical" : null,
         Loading ? "p-button-loading" : null,
         Link || Variant == "link" ? "p-button-link" : null,
-        Severity is null ? null : $"p-button-{Severity}",
+        string.IsNullOrEmpty(Severity) ? null : $"p-button-{Severity.ToLowerInvariant()}",
         Raised || Variant == "raised" ? "p-button-raised" : null,
         Rounded ? "p-button-rounded" : null,
         Text || Variant == "text" ? "p-button-text" : null,
@@ -64,7 +65,6 @@ public partial class OpButton : ComponentBase
         Size == "large" ? "p-button-lg" : null,
         Plain ? "p-button-plain" : null,
         Fluid ? "p-button-fluid" : null,
-        HasBadge ? "p-button-has-badge" : null,
         StyleClass);
 
     private static string BuildClass(params string?[] classes)

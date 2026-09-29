@@ -22,49 +22,15 @@
             </Description>
         </DocSection>
 
-        <DocSection Label="Itens Dinâmicos">
-            <Description>
-                Use os botões para adicionar ou remover ações e ver como o layout circular se adapta. O popup também fecha ao clicar fora.
-            </Description>
-            <ChildContent>
-                <OpToast Key="speeddial"/>
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <OpButton Label="Adicionar" Icon="pi pi-plus" Size="small" OnClick="AddItem" Disabled="@(_items.Count >= _pool.Count)"/>
-                    <OpButton Label="Remover" Icon="pi pi-minus" Size="small" Severity="secondary" OnClick="RemoveItem" Disabled="@(_items.Count <= 1)"/>
-                    <OpButton Label="Reset (7)" Icon="pi pi-refresh" Size="small" Severity="help" Outlined="true" OnClick="ResetItems"/>
-                    <span class="text-sm opacity-70">@pluralize(_items.Count, "item", "itens")</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm opacity-70 mb-2"><code>Type="circle"</code></p>
-                        <div style="position:relative; height:320px;" class="flex items-center justify-center">
-                            <OpSpeedDial @bind-Visible="_visible" Model="_items" Radius="100" Type="circle"
-                                         Style="position:absolute;" ButtonSeverity="warn" ButtonRounded="true"
-                                         Tooltip="true" TooltipPosition="left"/>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-sm opacity-70 mb-2"><code>Type="semi-circle"</code> <code>Direction="up"</code></p>
-                        <div style="position:relative; height:320px;">
-                            <OpSpeedDial @bind-Visible="_visibleSemi" Model="_items" Radius="100" Type="semi-circle" Direction="up"
-                                         Style="position:absolute; left:50%; transform:translateX(-50%); bottom:0;"
-                                         ButtonSeverity="info" ButtonRounded="true"/>
-                        </div>
-                    </div>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@DynamicCode"/></Code>
-        </DocSection>
-
         <DocSection Label="Círculo">
             <Description>
-                Os itens são exibidos ao redor do botão quando <code>Type="circle"</code>; <code>Radius</code> define o raio do círculo. O primeiro item fica no topo e os demais se distribuem no sentido anti-horário; o botão ocupa o centro e o container mede 2×<code>Radius</code>.
+                Os itens são exibidos ao redor do botão quando <code>Type="circle"</code>; <code>Radius</code> define o raio do círculo.
             </Description>
             <ChildContent>
                 <OpToast Key="speeddial"/>
                 <div style="position:relative; height:500px;" class="flex items-center justify-center">
                     <OpSpeedDial Model="_items" Radius="80" Type="circle" Style="position:absolute;"
-                                 ButtonSeverity="warn" ButtonRounded="true"/>
+                                 ButtonSeverity="warn"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@CircleCode"/></Code>
@@ -99,7 +65,7 @@
 
         <DocSection Label="Quarto de Círculo">
             <Description>
-                Com <code>Type="quarter-circle"</code>, os itens são exibidos em um quarto de círculo. O botão fica no canto oposto ao quadrante e o container mede <code>Radius</code>×<code>Radius</code>.
+                Com <code>Type="quarter-circle"</code>, os itens são exibidos em um quarto de círculo.
             </Description>
             <ChildContent>
                 <div style="position:relative; height:500px;">
@@ -114,17 +80,44 @@
 
         <DocSection Label="Semicírculo">
             <Description>
-                Com <code>Type="semi-circle"</code>, os itens são exibidos em um semicírculo. O botão fica na aresta reta do arco e o container assume apenas o tamanho necessário (2R×R ou R×2R).
+                Com <code>Type="semi-circle"</code>, os itens são exibidos em um semicírculo.
             </Description>
             <ChildContent>
                 <div style="position:relative; height:500px;">
-                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down" Style="position:absolute; left:50%; transform:translateX(-50%); top:0;"/>
-                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="right" Style="position:absolute; top:50%; transform:translateY(-50%); left:0;"/>
-                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="left" Style="position:absolute; top:50%; transform:translateY(-50%); right:0;"/>
-                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="up" Style="position:absolute; left:50%; transform:translateX(-50%); bottom:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down" Style="position:absolute; left:calc(50% - 2rem); top:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="right" Style="position:absolute; top:calc(50% - 2rem); left:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="left" Style="position:absolute; top:calc(50% - 2rem); right:0;"/>
+                    <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="up" Style="position:absolute; left:calc(50% - 2rem); bottom:0;"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@SemiCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Itens Dinâmicos" Id="dynamic">
+            <Description>
+                O layout é recalculado quando <code>Model</code> muda: use os botões para adicionar ou remover ações e ver
+                o círculo e o semicírculo se reorganizarem. <code>@@bind-Visible</code> mantém o estado aberto/fechado,
+                e o popup fecha ao clicar fora.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    <OpButton Label="Adicionar" Icon="pi pi-plus" Size="small" OnClick="AddItem" Disabled="@(_dynItems.Count >= _pool.Count)"/>
+                    <OpButton Label="Remover" Icon="pi pi-minus" Size="small" Severity="secondary" OnClick="RemoveItem" Disabled="@(_dynItems.Count <= 1)"/>
+                    <OpButton Label="Reset (7)" Icon="pi pi-refresh" Size="small" Severity="help" Outlined="true" OnClick="ResetItems"/>
+                    <span>@_dynItems.Count @(_dynItems.Count == 1 ? "item" : "itens")</span>
+                </div>
+                <div class="flex flex-wrap gap-6">
+                    <div style="position:relative; height:320px; flex:1 1 18rem;" class="flex items-center justify-center">
+                        <OpSpeedDial @bind-Visible="_visibleCircle" Model="_dynItems" Radius="100" Type="circle"
+                                     Style="position:absolute;" ButtonSeverity="warn" Tooltip="true" TooltipPosition="left"/>
+                    </div>
+                    <div style="position:relative; height:320px; flex:1 1 18rem;">
+                        <OpSpeedDial @bind-Visible="_visibleSemi" Model="_dynItems" Radius="100" Type="semi-circle" Direction="up"
+                                     Style="position:absolute; left:calc(50% - 2rem); bottom:0;" ButtonSeverity="info"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template">
@@ -139,10 +132,10 @@
                                 <span class="pi pi-plus"></span>
                             </OpButton>
                         </ButtonTemplate>
-                        <ItemTemplate Context="item">
-                            <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem; padding:.5rem; border:1px solid var(--p-content-border-color); border-radius:6px; width:5rem; cursor:pointer;">
-                                <span class="@item.Icon"></span>
-                                <span>@item.Label</span>
+                        <ItemTemplate Context="ctx">
+                            <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem; padding:.5rem; border:1px solid var(--p-content-border-color); border-radius:6px; width:5rem; cursor:pointer;" @onclick="ctx.Click">
+                                <span class="@ctx.Item.Icon"></span>
+                                <span>@ctx.Item.Label</span>
                             </div>
                         </ItemTemplate>
                     </OpSpeedDial>
@@ -157,8 +150,8 @@
             </Description>
             <ChildContent>
                 <div style="position:relative; height:350px;">
-                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; right:0; bottom:0;" ButtonSeverity="help" ButtonRounded="true" Tooltip="true" TooltipPosition="left"/>
-                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; left:0; bottom:0;" ButtonSeverity="danger" ButtonRounded="true" Tooltip="true" TooltipPosition="right"/>
+                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; right:0; bottom:0;" ButtonSeverity="help" Tooltip="true" TooltipPosition="left"/>
+                    <OpSpeedDial Model="_items" Direction="up" Style="position:absolute; left:0; bottom:0;" ButtonSeverity="danger" Tooltip="true" TooltipPosition="right"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@TooltipCode"/></Code>
@@ -179,7 +172,7 @@
                               new[] { "Direction", "string", "up", "Direção: <code>up</code>, <code>down</code>, <code>left</code>, <code>right</code>, <code>up-left</code>, <code>up-right</code>, <code>down-left</code>, <code>down-right</code>." },
                               new[] { "Mask", "bool", "false", "Exibe uma camada de máscara atrás do popup." },
                               new[] { "Disabled", "bool", "false", "Desabilita o componente." },
-                              new[] { "HideOnClickOutside", "bool", "true", "Fecha ao clicar fora, mesmo sem máscara visível." },
+                              new[] { "HideOnClickOutside", "bool", "true", "Fecha ao clicar fora." },
                               new[] { "ShowIcon", "string?", "pi pi-plus", "Ícone do botão quando fechado." },
                               new[] { "HideIcon", "string?", "null", "Ícone do botão quando aberto." },
                               new[] { "RotateAnimation", "bool", "true", "Rotaciona o ShowIcon quando não há HideIcon." },
@@ -188,7 +181,6 @@
                               new[] { "Style", "string?", "null", "Estilo inline do elemento raiz." },
                               new[] { "StyleClass", "string?", "null", "Classes do elemento raiz." },
                               new[] { "ButtonSeverity", "string?", "null", "Severidade do botão." },
-                              new[] { "ButtonRounded", "bool", "false", "Botão arredondado." },
                               new[] { "ButtonRaised", "bool", "false", "Botão com elevação." },
                               new[] { "ButtonText", "bool", "false", "Botão textual." },
                               new[] { "ButtonOutlined", "bool", "false", "Botão contornado." },
@@ -216,7 +208,7 @@
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "ButtonTemplate", "RenderFragment&lt;SpeedDialButtonContext&gt;?", "Template do botão." },
-                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "Template do item." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;SpeedDialItemContext&gt;?", "Template do item. O contexto traz <code>Item</code>, <code>Index</code> e <code>Click</code> (executa o comando e fecha)." },
                               new[] { "IconTemplate", "RenderFragment?", "Template do ícone." }
                           })"/>
             </ChildContent>
@@ -251,41 +243,26 @@
     [Inject] private NavigationManager Navigation { get; set; } = default!;
 
     private List<OpMenuItem> _items = new();
+
+    // Demo "Itens Dinâmicos": lista própria, recortada de um conjunto maior.
     private List<OpMenuItem> _pool = new();
-    private bool _visible;
+    private List<OpMenuItem> _dynItems = new();
+    private bool _visibleCircle;
     private bool _visibleSemi;
 
     protected override void OnInitialized()
     {
-        _pool = BuildItems();
-        _items = _pool.Take(7).ToList();
+        _items = BuildItems();
+        _pool = [.. BuildItems(), .. BuildExtraItems()];
+        ResetItems();
     }
 
-    private void AddItem()
-    {
-        if (_items.Count < _pool.Count)
-        {
-            _items = _pool.Take(_items.Count + 1).ToList();
-        }
-    }
+    private void AddItem() => _dynItems = _pool.Take(Math.Min(_dynItems.Count + 1, _pool.Count)).ToList();
+    private void RemoveItem() => _dynItems = _pool.Take(Math.Max(_dynItems.Count - 1, 1)).ToList();
+    private void ResetItems() => _dynItems = _pool.Take(7).ToList();
 
-    private void RemoveItem()
+    private List<OpMenuItem> BuildExtraItems() => new()
     {
-        if (_items.Count > 1)
-        {
-            _items = _pool.Take(_items.Count - 1).ToList();
-        }
-    }
-
-    private void ResetItems() => _items = _pool.Take(7).ToList();
-
-    private List<OpMenuItem> BuildItems() => new()
-    {
-        new() { Icon = "pi pi-pencil", Label = "Adicionar", Command = () => Add("info", "Adicionar", "Dado adicionado") },
-        new() { Icon = "pi pi-refresh", Label = "Atualizar", Command = () => Add("success", "Atualizar", "Dado atualizado") },
-        new() { Icon = "pi pi-trash", Label = "Excluir", Command = () => Add("danger", "Excluir", "Dado excluído") },
-        new() { Icon = "pi pi-upload", Label = "Upload", Command = () => Navigation.NavigateTo("/installation") },
-        new() { Icon = "pi pi-external-link", Label = "Website", Url = "https://angular.dev", Target = "_blank" },
         new() { Icon = "pi pi-copy", Label = "Duplicar", Command = () => Add("info", "Duplicar", "Item duplicado") },
         new() { Icon = "pi pi-share-alt", Label = "Compartilhar", Command = () => Add("success", "Compartilhar", "Link copiado") },
         new() { Icon = "pi pi-bookmark", Label = "Favoritar", Command = () => Add("warn", "Favoritar", "Adicionado aos favoritos") },
@@ -295,14 +272,17 @@
         new() { Icon = "pi pi-filter", Label = "Filtrar", Command = () => Add("help", "Filtrar", "Filtro aplicado") }
     };
 
+    private List<OpMenuItem> BuildItems() => new()
+    {
+        new() { Icon = "pi pi-pencil", Label = "Adicionar", Command = () => Add("info", "Adicionar", "Dado adicionado") },
+        new() { Icon = "pi pi-refresh", Label = "Atualizar", Command = () => Add("success", "Atualizar", "Dado atualizado") },
+        new() { Icon = "pi pi-trash", Label = "Excluir", Command = () => Add("danger", "Excluir", "Dado excluído") },
+        new() { Icon = "pi pi-upload", Label = "Upload", Command = () => Navigation.NavigateTo("/installation") },
+        new() { Icon = "pi pi-external-link", Label = "Website", Url = "https://angular.dev", Target = "_blank" }
+    };
+
     private void Add(string severity, string summary, string detail) =>
         MessageService.Add(new OpToastMessage { Key = "speeddial", Severity = severity, Summary = summary, Detail = detail });
-
-    private static string pluralize(int count, string singular, string plural)
-    {
-        var word = count == 1 ? singular : plural;
-        return $"{count} {word}";
-    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.SpeedDial
@@ -313,7 +293,7 @@
 
     private const string CircleCode = """
         <OpSpeedDial Model="_items" Radius="80" Type="circle" Style="position:absolute;"
-                     ButtonSeverity="warn" ButtonRounded="true" />
+                     ButtonSeverity="warn" />
         """;
 
     private const string LinearCode = """
@@ -332,8 +312,7 @@
         """;
 
     private const string SemiCode = """
-        <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down"
-                     Style="position:absolute; left:50%; transform:translateX(-50%); top:0;" />
+        <OpSpeedDial Model="_items" Radius="80" Type="semi-circle" Direction="down" Style="position:absolute; left:calc(50% - 2rem); top:0;" />
         """;
 
     private const string TemplateCode = """
@@ -343,24 +322,33 @@
                     <span class="pi pi-plus"></span>
                 </OpButton>
             </ButtonTemplate>
-            <ItemTemplate Context="item">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem;">
-                    <span class="@item.Icon"></span>
-                    <span>@item.Label</span>
+            <ItemTemplate Context="ctx">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:.25rem;" @onclick="ctx.Click">
+                    <span class="@ctx.Item.Icon"></span>
+                    <span>@ctx.Item.Label</span>
                 </div>
             </ItemTemplate>
         </OpSpeedDial>
         """;
 
-    private const string DynamicCode = """
-        <OpSpeedDial @bind-Visible="visible" Model="_items" Radius="100" Type="circle"
-                     Style="position:absolute;" ButtonRounded="true" Tooltip="true" />
-
-        @* Remova e adicione itens de _items para ver o layout se recalcular. *@
-        """;
-
     private const string TooltipCode = """
         <OpSpeedDial Model="_items" Direction="up" Tooltip="true" TooltipPosition="left"
-                     ButtonSeverity="help" ButtonRounded="true" />
+                     ButtonSeverity="help" />
+        """;
+
+    private const string DynamicCode = """
+        <OpButton Label="Adicionar" Icon="pi pi-plus" Size="small" OnClick="AddItem" />
+        <OpButton Label="Remover" Icon="pi pi-minus" Size="small" Severity="secondary" OnClick="RemoveItem" />
+
+        <OpSpeedDial @bind-Visible="_visible" Model="_items" Radius="100" Type="circle"
+                     Style="position:absolute;" ButtonSeverity="warn" Tooltip="true" TooltipPosition="left" />
+
+        @code {
+            private bool _visible;
+            private List<OpMenuItem> _items = BuildItems();  // o layout se recalcula a cada troca da lista
+
+            private void AddItem() => _items = [.. _items, NovoItem()];
+            private void RemoveItem() => _items = _items.SkipLast(1).ToList();
+        }
         """;
 }
