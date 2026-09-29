@@ -13,7 +13,7 @@
     {
         <OpButton StyleClass="@ButtonClass"
                   Icon="@ButtonIconClass"
-                  IconTemplate="@IconTemplate"
+                  IconTemplate="@(IconTemplate ?? (UseDefaultIcon ? DefaultIcon : null))"
                   Severity="@ButtonSeverity"
                   Rounded="true"
                   Raised="@ButtonRaised"
