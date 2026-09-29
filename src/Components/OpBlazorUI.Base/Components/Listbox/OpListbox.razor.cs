@@ -298,10 +298,10 @@ public partial class OpListbox<TValue> : ComponentBase
         if (IsMultiple)
         {
             var list = SelectedOptions;
-            var existing = list.FirstOrDefault(v => Equals(GetOptionValue((object)v!), GetOptionValue(option)));
-            if (existing is not null)
+            var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue(option)));
+            if (existingIndex >= 0)
             {
-                list.Remove(existing);
+                list.RemoveAt(existingIndex);
             }
             else
             {
