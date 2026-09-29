@@ -126,7 +126,9 @@ public partial class OpDataTable<TItem> : ComponentBase
     private async Task ToggleSort(OpDataTableColumn col)
     {
         if (!Sortable || !col.Sortable) return;
-        if (_sortField != col.Field)
+        // Ciclo: sem ordenação → asc → desc → sem ordenação. Após o reset (_sortOrder == 0) o
+        // próximo clique na mesma coluna precisa recomeçar em asc, e não permanecer em 0.
+        if (_sortField != col.Field || _sortOrder == 0)
         {
             _sortField = col.Field;
             _sortOrder = 1;
