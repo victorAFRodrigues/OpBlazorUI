@@ -75,7 +75,11 @@
 
     protected override void OnInitialized() => DarkModeState.Changed += OnDarkChanged;
 
-    private void OnDarkChanged() => _darkMode = DarkModeState.Dark;
+    private void OnDarkChanged()
+    {
+        _darkMode = DarkModeState.Dark;
+        InvokeAsync(StateHasChanged);
+    }
 
     private void ToggleDarkMode() => DarkModeState.Set(!DarkModeState.Dark);
 
