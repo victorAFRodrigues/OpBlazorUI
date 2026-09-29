@@ -1965,10 +1965,22 @@ thead.p-datatable-thead > tr > th,
     outline-offset: var(--p-button-focus-ring-offset);
 }
 
-.p-button .p-badge {
-    min-width: var(--p-button-badge-size);
-    height: var(--p-button-badge-size);
-    line-height: var(--p-button-badge-size);
+.p-button .p-button-badge {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    transform: translate(50%, -50%);
+    transform-origin: 100% 0;
+    margin: 0;
+    z-index: 1;
+}
+
+.p-button .p-button-badge:dir(rtl) {
+    transform: translate(-50%, -50%);
+}
+
+.p-button-has-badge {
+    overflow: visible;
 }
 
 .p-button-raised {
@@ -12683,7 +12695,7 @@ input.p-select-label {
 }
 
 .p-speeddial-button {
-    z-index: 1;
+    z-index: 3;
 }
 
 .p-speeddial-button.p-speeddial-rotate {
@@ -12727,6 +12739,13 @@ input.p-select-label {
 .p-speeddial-mask {
     position: absolute;
     border-radius: var(--p-content-border-radius);
+    z-index: 0;
+    background: color-mix(in srgb, var(--p-mask-background) 75%, transparent);
+}
+
+.p-speeddial-mask-invisible {
+    background: transparent;
+    border-radius: 0;
 }
 
 .p-speeddial-open .p-speeddial-list {
