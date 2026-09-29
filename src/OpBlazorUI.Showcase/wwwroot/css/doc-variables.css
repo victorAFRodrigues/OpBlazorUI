@@ -21,21 +21,36 @@
     --ground-background: var(--p-surface-50);
     --overlay-background: var(--p-content-background);
     --hover-background: var(--p-content-hover-background);
-    --code-background: var(--p-surface-950);
     --hover-border-color: var(--p-surface-400);
     --mark-background: var(--p-content-hover-background);
     --mark-text-color: var(--p-text-color);
     --selection-background: var(--p-content-hover-background);
     --selection-text-color: var(--p-text-hover-color);
-    --code-button-text-color: var(--p-surface-300);
     --logo-color: var(--text-secondary-color);
+
+    /* Blocos de código: paleta do Rider Dark (New UI), igual nos modos claro e escuro. */
+    --code-background: #1E1F22;
+    --code-text: #BCBEC4;
+    --code-button-text-color: #868A91;
+    --code-tk-tag: #D5B778;
+    --code-tk-component: #C191FF;
+    --code-tk-type: #C191FF;
+    --code-tk-param: #66C3CC;
+    --code-tk-attr: #BABABA;
+    --code-tk-string: #6AAB73;
+    --code-tk-keyword: #CF8E6D;
+    --code-tk-number: #2AACB8;
+    --code-tk-comment: #7A7E85;
+    --code-tk-method: #56A8F5;
+    --code-tk-field: #C77DBB;
+    --code-tk-razor: #B3AE60;
+    --code-tk-punct: #BCBEC4;
 }
 
 .app-dark {
     --topbar-sticky-background: rgba(0, 0, 0, 0.7);
     --mobile-menu-background: var(--p-surface-900);
     --ground-background: var(--p-surface-950);
-    --code-background: var(--p-surface-900);
 }
 
 /* Base (port do bloco base do reference) */

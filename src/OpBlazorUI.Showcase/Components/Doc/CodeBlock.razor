@@ -6,10 +6,22 @@
             <i class="pi pi-copy"></i>
         </button>
     </div>
-    <pre><code class="language-@Language">@Code</code></pre>
+    <pre><code class="language-@Language">@((MarkupString)_html)</code></pre>
 </div>
 
 @code {
     [Parameter] public string Code { get; set; } = "";
     [Parameter] public string Language { get; set; } = "razor";
+
+    private string _html = "";
+    private string? _lastCode;
+    private string? _lastLanguage;
+
+    protected override void OnParametersSet()
+    {
+        if (Code == _lastCode && Language == _lastLanguage) return;
+        _lastCode = Code;
+        _lastLanguage = Language;
+        _html = SyntaxHighlighter.Highlight(Code, Language);
+    }
 }
