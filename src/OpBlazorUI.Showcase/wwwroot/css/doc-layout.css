@@ -379,6 +379,38 @@
     color: var(--text-secondary-color);
 }
 
+/* Categoria recolhível (botão) */
+button.menu-child-category {
+    width: 100%;
+    align-items: center;
+    background: transparent;
+    border: 0 none;
+    border-radius: 6px;
+    font-family: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: color .2s;
+}
+
+button.menu-child-category:hover {
+    color: var(--text-color);
+}
+
+button.menu-child-category:focus-visible {
+    outline: 1px solid var(--primary-color);
+    outline-offset: -1px;
+}
+
+button.menu-child-category .menu-toggle-icon {
+    margin-inline-start: auto;
+    font-size: .75rem;
+    transition: transform .2s;
+}
+
+button.menu-child-category:not(.menu-expanded) .menu-toggle-icon {
+    transform: rotate(-90deg);
+}
+
 .layout-sidebar .drawer-quickaction-divider {
     margin-top: .75rem;
     padding-top: .75rem;

@@ -27,9 +27,17 @@
                                     {
                                         @foreach (var group in entry.Groups)
                                         {
+                                            var groupKey = entry.Label + "/" + group.Label;
+                                            var groupOpen = !_collapsedGroups.Contains(groupKey);
                                             <li>
-                                                <span class="menu-child-category">@group.Label</span>
-                                                <div>
+                                                <button type="button"
+                                                        class="menu-child-category @(groupOpen ? "menu-expanded" : null)"
+                                                        aria-expanded="@(groupOpen ? "true" : "false")"
+                                                        @onclick="() => ToggleGroup(groupKey)">
+                                                    <span>@group.Label</span>
+                                                    <i class="menu-toggle-icon pi pi-angle-down"></i>
+                                                </button>
+                                                <div hidden="@(!groupOpen)">
                                                     <ol>
                                                         @foreach (var item in group.Items)
                                                         {
@@ -120,6 +128,14 @@
     private void Toggle(string label)
     {
         if (!_expanded.Add(label)) _expanded.Remove(label);
+    }
+
+    // Categorias internas (ex.: Components/Button) começam abertas; o usuário recolhe as que quiser.
+    private readonly HashSet<string> _collapsedGroups = new(StringComparer.Ordinal);
+
+    private void ToggleGroup(string key)
+    {
+        if (!_collapsedGroups.Add(key)) _collapsedGroups.Remove(key);
     }
 
     private bool IsActive(string route)
