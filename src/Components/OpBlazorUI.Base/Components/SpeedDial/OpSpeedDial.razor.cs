@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using OpBlazorUI.Base.Components.Icon;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.SpeedDial;
@@ -35,7 +36,9 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
     [Parameter] public bool Mask { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool HideOnClickOutside { get; set; } = true;
-    [Parameter] public string? ShowIcon { get; set; } = "pi pi-plus";
+    // Sem ShowIcon, o botão usa o SVG "plus" (como o PlusIcon do upstream): glyph de fonte em tamanho
+    // pequeno sofre hinting e sai até ~1px fora do centro dependendo do zoom.
+    [Parameter] public string? ShowIcon { get; set; }
     [Parameter] public string? HideIcon { get; set; }
     [Parameter] public bool RotateAnimation { get; set; } = true;
     [Parameter] public string? AriaLabel { get; set; }
@@ -179,6 +182,16 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
             return ShowIcon ?? string.Empty;
         }
     }
+
+    private bool UseDefaultIcon => string.IsNullOrEmpty(ButtonIconClass);
+
+    private static readonly RenderFragment DefaultIcon = builder =>
+    {
+        builder.OpenComponent<OpIcon>(0);
+        builder.AddAttribute(1, nameof(OpIcon.Name), "plus");
+        builder.AddAttribute(2, nameof(OpIcon.CssClass), "p-button-icon");
+        builder.CloseComponent();
+    };
 
     private string MaskClass => OpCss.BuildClass("p-speeddial-mask p-overlay-mask", MaskStyleClass);
 
