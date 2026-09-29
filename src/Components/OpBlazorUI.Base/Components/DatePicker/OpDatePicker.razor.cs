@@ -50,6 +50,8 @@ public sealed class OpDatePickerInputIconContext
 
 public partial class OpDatePicker : ComponentBase
 {
+    private ElementReference _rootRef;
+
     private string? _inputId;
     private bool _overlayVisible;
     private bool _panelRendered;

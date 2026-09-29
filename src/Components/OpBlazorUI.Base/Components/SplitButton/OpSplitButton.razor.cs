@@ -6,6 +6,8 @@ namespace OpBlazorUI.Base.Components.SplitButton;
 
 public partial class OpSplitButton : ComponentBase
 {
+    private ElementReference _rootRef;
+
     private string _id = "";
     private bool _overlayVisible;
     private bool _panelRendered;

@@ -25,7 +25,7 @@ public partial class OpToast : ComponentBase, IDisposable
     [Parameter] public string Position { get; set; } = "top-right";
     [Parameter] public int Life { get; set; } = 3000;
     [Parameter] public bool AutoZIndex { get; set; } = true;
-    [Parameter] public int BaseZIndex { get; set; } = 1000;
+    [Parameter] public int BaseZIndex { get; set; }
     [Parameter] public string? StyleClass { get; set; }
     [Parameter] public Dictionary<string, string>? Breakpoints { get; set; }
     [Parameter] public bool PreventDuplicates { get; set; }
@@ -123,15 +123,6 @@ public partial class OpToast : ComponentBase, IDisposable
         "p-toast p-component",
         $"p-toast-{Position}",
         StyleClass);
-
-    private string RootStyle
-    {
-        get
-        {
-            if (!AutoZIndex) return string.Empty;
-            return $"z-index: {BaseZIndex + 100};";
-        }
-    }
 
     private string GetMessageClass(OpToastMessage msg)
     {

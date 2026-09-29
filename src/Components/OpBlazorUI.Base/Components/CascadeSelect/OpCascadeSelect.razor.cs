@@ -11,6 +11,8 @@ namespace OpBlazorUI.Base.Components.CascadeSelect;
 
 public partial class OpCascadeSelect<TValue> : ComponentBase
 {
+    private ElementReference _rootRef;
+
     private string _id = "";
 
     private bool _overlayVisible;

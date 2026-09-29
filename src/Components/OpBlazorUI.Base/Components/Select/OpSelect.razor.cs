@@ -6,6 +6,8 @@ namespace OpBlazorUI.Base.Components.Select;
 
 public partial class OpSelect<TValue> : ComponentBase
 {
+    private ElementReference _rootRef;
+
     private string _id = "";
 
     private bool _overlayVisible;
