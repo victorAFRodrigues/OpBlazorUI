@@ -156,6 +156,10 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
                 _ => ""
             };
             if (FlexDirection is not null) style += $" flex-direction: {FlexDirection};";
+            // Desvio consciente do upstream: nos tipos circulares a lista não ocupa espaço (itens absolutos),
+            // mas o gap do root ainda desloca o botão da origem dos itens (arco fora do centro em
+            // circle/direction=up e em quarter-circle *-left). Sem gap, o root coincide com o botão.
+            if (Type != "linear") style += " gap: 0;";
             return $"{style} {Style}".Trim();
         }
     }

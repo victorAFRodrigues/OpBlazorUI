@@ -170,9 +170,11 @@ public partial class OpInputNumber : ComponentBase
             return;
         }
 
+        // Min/Max só são aplicados no change (blur/Enter): limitar a cada tecla impede digitar
+        // valores de vários dígitos (ex.: Min=10 transformaria o "5" de "50" em "10").
         if (TryParseNumber(text, out var parsed))
         {
-            await SetValueAsync(Clamp(parsed), true);
+            await SetValueAsync(parsed, true);
         }
     }
 

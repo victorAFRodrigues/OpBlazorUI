@@ -442,10 +442,10 @@ private async Task CloseAsync()
     private async Task ToggleOptionAsync(TValue option)
     {
         var list = SelectedOptions;
-        var existing = list.FirstOrDefault(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
-        if (existing is not null)
+        var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
+        if (existingIndex >= 0)
         {
-            list.Remove(existing);
+            list.RemoveAt(existingIndex);
         }
         else
         {
@@ -492,10 +492,10 @@ private async Task CloseAsync()
     private async Task RemoveOptionAsync(TValue option)
     {
         var list = SelectedOptions;
-        var existing = list.FirstOrDefault(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
-        if (existing is not null)
+        var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
+        if (existingIndex >= 0)
         {
-            list.Remove(existing);
+            list.RemoveAt(existingIndex);
         }
 
         Value = list;

@@ -157,6 +157,12 @@ dotnet build OpBlazorUI.slnx
 dotnet run --project src/OpBlazorUI.Showcase
 ```
 
+Não é necessário Node.js/npm. O Showcase usa um bundle estático do Tailwind
+(`src/OpBlazorUI.Showcase/wwwroot/css/tailwind.css`, ~5 KB) versionado no repositório.
+O tema e os tokens são definidos por CSS em `OpBlazorUI.Base/wwwroot/themes/`.
+Se precisar regenerar o bundle ao adicionar uma classe nova, veja o cabeçalho de
+`wwwroot/css/tailwind.input.css`.
+
 ## Publicação
 
 O workflow `.github/workflows/release.yml` publica no GitHub Packages e cria uma Release

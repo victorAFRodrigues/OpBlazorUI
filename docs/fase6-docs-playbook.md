@@ -39,8 +39,9 @@
    - `dotnet build` do Showcase (rodar fora do repo por causa do `global.json`).
    - Subir na porta 5199 e tirar prints com `%TEMP%/opshot/shot.mjs` (tema claro e escuro).
    - Clicar nas demos interativas (loading, eventos, bind) e checar console sem erros.
-   - Se usou classe Tailwind nova, confirmar que existe em `wwwroot/css/tailwind.css`
-     (ou rodar `npm run build:css` no Showcase).
+   - Se usou classe Tailwind nova, confirmar que existe em `wwwroot/css/tailwind.css` (bundle estático
+     versionado; o Showcase não tem Node). Se faltar, prefira uma classe já presente ou estilo inline; para
+     regenerar o bundle, siga o cabeçalho de `wwwroot/css/tailwind.input.css`.
 
 6. **Checklist final** (§5) e commit `docs(showcase): <Componente> — paridade com a doc de referência`.
 

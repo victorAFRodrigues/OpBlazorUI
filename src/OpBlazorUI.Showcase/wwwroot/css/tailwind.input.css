@@ -1,3 +1,42 @@
+/*
+ * ARQUIVO DE ENTRADA DO TAILWIND — não é carregado pelo navegador.
+ *
+ * O bundle final é wwwroot/css/tailwind.css (~5 KB, minificado) e está
+ * versionado. Este projeto é .NET puro: não há Node, package.json nem
+ * MSBuild chamando npm. O bundle só precisa ser regenerado quando uma
+ * classe Tailwind nova for usada nos .razor do Showcase.
+ *
+ * Para regenerar (requer Node só na máquina de desenvolvimento):
+ *
+ *   mkdir -p /tmp/tw && cd /tmp/tw && npm init -y
+ *   npm i tailwindcss@3.4.10 @openng/optimus-ui-tailwindcss@2.0.2
+ *   cat > tailwind.config.mjs <<'EOF'
+ *   import optimusUiTailwindcss from '@openng/optimus-ui-tailwindcss';
+ *   export default {
+ *       content: [
+ *           '/CAMINHO/OpBlazorUI/src/OpBlazorUI.Showcase/Components/**/*.razor',
+ *           '/CAMINHO/OpBlazorUI/src/OpBlazorUI.Showcase/wwwroot/index.html'
+ *       ],
+ *       darkMode: ['selector', '[class="app-dark"]'],
+ *       corePlugins: { preflight: false },
+ *       theme: {
+ *           screens: {
+ *               sm: '576px', md: '768px', lg: '992px',
+ *               xl: '1200px', '2xl': '1920px'
+ *           }
+ *       },
+ *       plugins: [optimusUiTailwindcss]
+ *   };
+ *   EOF
+ *   npx tailwindcss -i /CAMINHO/.../wwwroot/css/tailwind.input.css \
+ *                  -o /CAMINHO/.../wwwroot/css/tailwind.css --minify
+ *
+ * O plugin @openng/optimus-ui-tailwindcss expõe as CSS variables do tema
+ * Aura/Lara (--p-primary-color, --p-surface-0..950, etc.) como utilitários
+ * Tailwind via color-mix(). Essas variáveis são definidas em tempo de
+ * execução pelos arquivos de tema em OpBlazorUI.Base/wwwroot/themes/.
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

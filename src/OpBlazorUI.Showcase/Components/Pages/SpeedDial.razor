@@ -93,6 +93,33 @@
             <Code><CodeBlock Code="@SemiCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Itens Dinâmicos" Id="dynamic">
+            <Description>
+                O layout é recalculado quando <code>Model</code> muda: use os botões para adicionar ou remover ações e ver
+                o círculo e o semicírculo se reorganizarem. <code>@@bind-Visible</code> mantém o estado aberto/fechado,
+                e o popup fecha ao clicar fora.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    <OpButton Label="Adicionar" Icon="pi pi-plus" Size="small" OnClick="AddItem" Disabled="@(_dynItems.Count >= _pool.Count)"/>
+                    <OpButton Label="Remover" Icon="pi pi-minus" Size="small" Severity="secondary" OnClick="RemoveItem" Disabled="@(_dynItems.Count <= 1)"/>
+                    <OpButton Label="Reset (7)" Icon="pi pi-refresh" Size="small" Severity="help" Outlined="true" OnClick="ResetItems"/>
+                    <span>@_dynItems.Count @(_dynItems.Count == 1 ? "item" : "itens")</span>
+                </div>
+                <div class="flex flex-wrap gap-6">
+                    <div style="position:relative; height:320px; flex:1 1 18rem;" class="flex items-center justify-center">
+                        <OpSpeedDial @bind-Visible="_visibleCircle" Model="_dynItems" Radius="100" Type="circle"
+                                     Style="position:absolute;" ButtonSeverity="warn" Tooltip="true" TooltipPosition="left"/>
+                    </div>
+                    <div style="position:relative; height:320px; flex:1 1 18rem;">
+                        <OpSpeedDial @bind-Visible="_visibleSemi" Model="_dynItems" Radius="100" Type="semi-circle" Direction="up"
+                                     Style="position:absolute; left:calc(50% - 2rem); bottom:0;" ButtonSeverity="info"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Template">
             <Description>
                 Use <code>ButtonTemplate</code> para customizar o botão e <code>ItemTemplate</code> para customizar cada item.
@@ -217,10 +244,33 @@
 
     private List<OpMenuItem> _items = new();
 
+    // Demo "Itens Dinâmicos": lista própria, recortada de um conjunto maior.
+    private List<OpMenuItem> _pool = new();
+    private List<OpMenuItem> _dynItems = new();
+    private bool _visibleCircle;
+    private bool _visibleSemi;
+
     protected override void OnInitialized()
     {
         _items = BuildItems();
+        _pool = [.. BuildItems(), .. BuildExtraItems()];
+        ResetItems();
     }
+
+    private void AddItem() => _dynItems = _pool.Take(Math.Min(_dynItems.Count + 1, _pool.Count)).ToList();
+    private void RemoveItem() => _dynItems = _pool.Take(Math.Max(_dynItems.Count - 1, 1)).ToList();
+    private void ResetItems() => _dynItems = _pool.Take(7).ToList();
+
+    private List<OpMenuItem> BuildExtraItems() => new()
+    {
+        new() { Icon = "pi pi-copy", Label = "Duplicar", Command = () => Add("info", "Duplicar", "Item duplicado") },
+        new() { Icon = "pi pi-share-alt", Label = "Compartilhar", Command = () => Add("success", "Compartilhar", "Link copiado") },
+        new() { Icon = "pi pi-bookmark", Label = "Favoritar", Command = () => Add("warn", "Favoritar", "Adicionado aos favoritos") },
+        new() { Icon = "pi pi-print", Label = "Imprimir", Command = () => Add("info", "Imprimir", "Enviado para impressão") },
+        new() { Icon = "pi pi-archive", Label = "Arquivar", Command = () => Add("secondary", "Arquivar", "Item arquivado") },
+        new() { Icon = "pi pi-eye", Label = "Visualizar", Command = () => Add("info", "Visualizar", "Abrindo visualização") },
+        new() { Icon = "pi pi-filter", Label = "Filtrar", Command = () => Add("help", "Filtrar", "Filtro aplicado") }
+    };
 
     private List<OpMenuItem> BuildItems() => new()
     {
@@ -284,5 +334,21 @@
     private const string TooltipCode = """
         <OpSpeedDial Model="_items" Direction="up" Tooltip="true" TooltipPosition="left"
                      ButtonSeverity="help" />
+        """;
+
+    private const string DynamicCode = """
+        <OpButton Label="Adicionar" Icon="pi pi-plus" Size="small" OnClick="AddItem" />
+        <OpButton Label="Remover" Icon="pi pi-minus" Size="small" Severity="secondary" OnClick="RemoveItem" />
+
+        <OpSpeedDial @bind-Visible="_visible" Model="_items" Radius="100" Type="circle"
+                     Style="position:absolute;" ButtonSeverity="warn" Tooltip="true" TooltipPosition="left" />
+
+        @code {
+            private bool _visible;
+            private List<OpMenuItem> _items = BuildItems();  // o layout se recalcula a cada troca da lista
+
+            private void AddItem() => _items = [.. _items, NovoItem()];
+            private void RemoveItem() => _items = _items.SkipLast(1).ToList();
+        }
         """;
 }
