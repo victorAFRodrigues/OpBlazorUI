@@ -7,16 +7,23 @@
      aria-valuemax="100"
      aria-valuenow="@AriaValueNow"
      @attributes="AdditionalAttributes">
-    <div class="@ValueClass" style="@ValueStyle">
-        @if (ContentTemplate != null)
-        {
-            @ContentTemplate(Value)
-        }
-        else if (ShowValue)
-        {
-            <div class="p-progressbar-label">@($"{Value}{Unit}")</div>
-        }
-    </div>
+    @if (IsIndeterminate)
+    {
+        <div class="@ValueClass" style="@ColorStyle"></div>
+    }
+    else
+    {
+        @* Estrutura do upstream: o label sempre existe; o texto some com valor 0. *@
+        <div class="@ValueClass" style="@($"width: {Value}%; display: flex;{ColorStyle}")">
+            <div class="p-progressbar-label">
+                @if (ShowValue && ContentTemplate == null)
+                {
+                    <div style="display: @(Value != 0 ? "flex" : "none");">@($"{Value}{Unit}")</div>
+                }
+                @ContentTemplate?.Invoke(Value)
+            </div>
+        </div>
+    }
 </div>
 
 @code {
@@ -48,24 +55,7 @@
         ? null
         : Value.ToString();
 
-    private string ValueStyle
-    {
-        get
-        {
-            var sb = new System.Text.StringBuilder();
-            if (string.Equals(Mode, "indeterminate", StringComparison.OrdinalIgnoreCase))
-            {
-                sb.Append("display: flex;");
-            }
-            else
-            {
-                sb.Append($"width: {Value}%; display: flex;");
-            }
-            if (!string.IsNullOrEmpty(Color))
-            {
-                sb.Append($" background: {Color};");
-            }
-            return sb.ToString();
-        }
-    }
+    private bool IsIndeterminate => string.Equals(Mode, "indeterminate", StringComparison.OrdinalIgnoreCase);
+
+    private string? ColorStyle => string.IsNullOrEmpty(Color) ? null : $" background: {Color};";
 }

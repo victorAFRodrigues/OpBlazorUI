@@ -135,6 +135,9 @@ public partial class OpDatePicker : ComponentBase
     [Parameter] public string RangeSeparator { get; set; } = " - ";
     [Parameter] public string? PanelStyleClass { get; set; }
     [Parameter] public string? StyleClass { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
     [Parameter] public string? InputStyleClass { get; set; }
     [Parameter] public bool HideOnDateTimeSelect { get; set; }
     [Parameter] public string? TodayLabel { get; set; } = "Today";
@@ -245,6 +248,7 @@ public partial class OpDatePicker : ComponentBase
 
     private string InputClass => BuildClass(
         "p-inputtext p-datepicker-input",
+        Fluid ? "p-inputtext-fluid" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         Invalid ? "p-invalid" : null,
         InputStyleClass,

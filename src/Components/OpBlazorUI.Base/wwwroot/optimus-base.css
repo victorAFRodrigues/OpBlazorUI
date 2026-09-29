@@ -103,6 +103,9 @@ body {
 
 .op-tooltip-wrapper > .p-tooltip {
     display: block;
+    /* O tooltip é filho do wrapper: sem isso, passar o mouse sobre ele o mantém aberto e ele
+       intercepta cliques nos elementos vizinhos que cobre (no upstream ele some ao sair do alvo). */
+    pointer-events: none;
 }
 
 .p-tooltip-text {
@@ -250,12 +253,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-}
-
-/* Maximizado: por classe (e não style inline), para não apagar o z-index aplicado via JS. */
-.p-dialog-mask.op-dialog-mask-maximized {
-    padding: 0;
 }
 
 .p-dialog-top { align-items: flex-start; }
@@ -292,28 +289,7 @@ body {
 .p-drawer-mask {
     position: fixed;
     inset: 0;
-    z-index: 1000;
-    display: flex;
 }
-
-.p-drawer-mask.p-drawer-left { justify-content: flex-start; }
-.p-drawer-mask.p-drawer-right { justify-content: flex-end; }
-.p-drawer-mask.p-drawer-top { align-items: flex-start; }
-.p-drawer-mask.p-drawer-bottom { align-items: flex-end; }
-.p-drawer-mask.p-drawer-full { align-items: center; justify-content: center; }
-
-/*
- * Divider — alinhamento do conteúdo (o tema não traz as regras de justify/align
- * para left/center/right/top/bottom; apenas os :dir(rtl)).
- */
-.p-divider-vertical { align-items: center; }
-
-.p-divider-horizontal.p-divider-left { justify-content: flex-start; }
-.p-divider-horizontal.p-divider-center { justify-content: center; }
-.p-divider-horizontal.p-divider-right { justify-content: flex-end; }
-.p-divider-vertical.p-divider-top { align-items: flex-start; }
-.p-divider-vertical.p-divider-center { align-items: center; }
-.p-divider-vertical.p-divider-bottom { align-items: flex-end; }
 
 /*
  * BlockUI — máscara centralizada sobre o conteúdo.
@@ -353,25 +329,9 @@ body {
 }
 
 /*
- * VirtualScroller — o tema só traz loader/loading-icon. Classes-base aqui.
+ * Skeleton: o upstream aplica position: relative inline (inlineStyles). Sem isso o ::after
+ * absoluto da animacao wave vaza para fora da forma.
  */
-.p-virtualscroller {
+.p-skeleton {
     position: relative;
-    overflow: auto;
-    height: 100%;
-    width: 100%;
-}
-
-.p-virtualscroller-content {
-    position: relative;
-    overflow: visible;
-    will-change: transform;
-}
-
-.p-virtualscroller-spacer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1px;
-    pointer-events: none;
 }

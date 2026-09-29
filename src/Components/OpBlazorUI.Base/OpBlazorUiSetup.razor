@@ -1,29 +1,94 @@
 @namespace OpBlazorUI.Base
-@implements IDisposable
+@using Microsoft.JSInterop
+@using OpBlazorUI.Base.Services
+@implements IAsyncDisposable
+@inject IJSRuntime Js
+@inject OpThemeService Theme
 
+@*
+    Só assets fixos aqui: numa Blazor Web App com interatividade por página o <HeadOutlet> é estático
+    e só recebe o que este componente renderiza no prerender. Os <link> do tema (preset e paletas)
+    mudam em runtime, então são controlados via JS (optimus.interop.js#applyTheme) e criados antes
+    do boot pelo op-theme.js.
+*@
 <HeadContent>
     <link rel="stylesheet" href="_content/OpBlazorUI.Base/openng-icons.css"/>
-    <link id="optimus-theme" rel="stylesheet" href="@_themeUrl"/>
     <link rel="stylesheet" href="_content/OpBlazorUI.Base/optimus-base.css"/>
     <script src="_content/OpBlazorUI.Base/quill.min.js"></script>
 </HeadContent>
 
 @code {
-    private string _themeUrl = OpTheme.ThemeUrl;
+    private const string JsModule = "./_content/OpBlazorUI.Base/optimus.interop.js";
+
+    private IJSObjectReference? _module;
+    private bool _restored;
+    private bool _pendingApply;
 
     protected override void OnInitialized()
     {
-        OpTheme.ThemeChanged += OnThemeChanged;
+        Theme.Changed += OnThemeChanged;
     }
 
     private void OnThemeChanged()
     {
-        _themeUrl = OpTheme.ThemeUrl;
+        _pendingApply = true;
         _ = InvokeAsync(StateHasChanged);
     }
 
-    public void Dispose()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        OpTheme.ThemeChanged -= OnThemeChanged;
+        try
+        {
+            if (firstRender)
+            {
+                _module = await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
+                var current = await _module.InvokeAsync<ThemeSnapshot>("readTheme");
+                var stored = Theme.Persist ? current.Stored : null;
+                // Antes do Restore: o Changed pode renderizar na hora (WebAssembly); o
+                // OnAfterRender seguinte aplica e salva.
+                _restored = true;
+                _pendingApply = true;
+                if (stored is not null)
+                    Theme.Restore(stored.Preset, stored.Primary, stored.Surface, stored.DarkMode, stored.Rtl, hasPalette: true);
+                else
+                    Theme.Restore(null, null, null, current.DarkMode, null, hasPalette: false);
+                StateHasChanged();
+                return;
+            }
+
+            if (!_pendingApply || !_restored || _module is null) return;
+            _pendingApply = false;
+
+            var state = new
+            {
+                preset = Theme.Preset,
+                primary = Theme.Primary,
+                surface = Theme.Surface,
+                darkMode = Theme.DarkMode,
+                rtl = Theme.Rtl
+            };
+            await _module.InvokeVoidAsync("applyTheme", state);
+            if (Theme.Persist) await _module.InvokeVoidAsync("saveTheme", state);
+        }
+        catch (JSDisconnectedException)
+        {
+        }
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        Theme.Changed -= OnThemeChanged;
+        if (_module is null) return;
+        try
+        {
+            await _module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+
+    private sealed record ThemeSnapshot(StoredTheme? Stored, bool DarkMode);
+
+    private sealed record StoredTheme(string? Preset, string? Primary, string? Surface, bool? DarkMode, bool? Rtl);
 }

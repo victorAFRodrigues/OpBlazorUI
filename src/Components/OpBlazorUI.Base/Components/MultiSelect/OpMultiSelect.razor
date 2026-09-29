@@ -116,23 +116,31 @@
 
             @HeaderTemplate
 
-            @if (Filter)
+            @if (ShowHeader)
             {
                 <div class="p-multiselect-header" @onclick:stopPropagation="true">
-                    <OpIconField IconPosition="left">
-                        <input type="text"
-                               class="p-inputtext p-multiselect-filter"
-                               role="searchbox"
-                               autocomplete="off"
-                               value="@_filterValue"
-                               placeholder="Filter"
-                               aria-owns="@($"{_id}_list")"
-                               aria-label="Filter"
-                               @oninput="OnFilterInput"/>
-                        <OpInputIcon>
-                            <OpIcon Name="search"/>
-                        </OpInputIcon>
-                    </OpIconField>
+                    @if (ShowToggleAll)
+                    {
+                        <OpCheckbox Checked="@AllSelected" Variant="@Variant" Disabled="@Disabled"
+                                    AriaLabel="Selecionar todos" OnChange="_ => ToggleAllAsync()"/>
+                    }
+                    @if (Filter)
+                    {
+                        <OpIconField IconPosition="left" StyleClass="p-multiselect-filter-container">
+                            <input type="text"
+                                   class="p-inputtext p-multiselect-filter"
+                                   role="searchbox"
+                                   autocomplete="off"
+                                   value="@_filterValue"
+                                   placeholder="Filter"
+                                   aria-owns="@($"{_id}_list")"
+                                   aria-label="Filter"
+                                   @oninput="OnFilterInput"/>
+                            <OpInputIcon>
+                                <OpIcon Name="search"/>
+                            </OpInputIcon>
+                        </OpIconField>
+                    }
                 </div>
             }
 

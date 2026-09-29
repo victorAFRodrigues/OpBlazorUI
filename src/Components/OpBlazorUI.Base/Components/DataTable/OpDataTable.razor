@@ -19,9 +19,8 @@
                     <OpIcon Name="angle-left" CssClass="p-paginator-prev-icon"/>
                 </button>
                 <span class="p-paginator-pages">
-                    @for (var p = 0; p < PageCount; p++)
+                    @foreach (var page in PageLinks)
                     {
-                        var page = p;
                         <button type="button"
                                 class="p-paginator-page @(_currentPage == page ? "p-paginator-page-selected" : "")"
                                 aria-current="@(_currentPage == page ? "page" : null)" aria-label="@(page + 1)"
@@ -42,9 +41,10 @@
         </div>
     }
 
-    <div class="p-datatable-table-container">
+    @* Estilos inline do upstream (inlineStyles): tabela larga rola no contêiner em vez de vazar. *@
+    <div class="p-datatable-table-container" style="overflow: auto;">
         <table class="p-datatable-table">
-            <thead class="p-datatable-thead">
+            <thead class="p-datatable-thead" style="position: sticky;">
             <tr>
                 @if (Selection)
                 {
@@ -132,9 +132,8 @@
                     <OpIcon Name="angle-left" CssClass="p-paginator-prev-icon"/>
                 </button>
                 <span class="p-paginator-pages">
-                    @for (var p = 0; p < PageCount; p++)
+                    @foreach (var page in PageLinks)
                     {
-                        var page = p;
                         <button type="button"
                                 class="p-paginator-page @(_currentPage == page ? "p-paginator-page-selected" : "")"
                                 aria-current="@(_currentPage == page ? "page" : null)" aria-label="@(page + 1)"

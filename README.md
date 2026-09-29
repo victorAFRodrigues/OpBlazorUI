@@ -68,14 +68,32 @@ builder.Services.AddOpBlazorUI();
 @using OpBlazorUI.Base.Components.Button
 ```
 
-`App.razor` — injeta o CSS de ícones, o CSS base e o arquivo de tema ativo:
+`App.razor` — o `op-theme.js` carrega o tema antes da primeira pintura (os `data-*` repetem o tema
+do `AddOpBlazorUI`):
 
 ```razor
+<head>
+    <base href="/" />
+    <script src="_content/OpBlazorUI.Base/op-theme.js" data-preset="aura" data-primary="noir"></script>
+    ...
+    <HeadOutlet @rendermode="InteractiveAuto" />
+</head>
 <body>
-    <OpBlazorUiSetup />
-    <Routes @rendermode="InteractiveServer" />
+    <Routes @rendermode="InteractiveAuto" />
 </body>
 ```
+
+`MainLayout.razor` — o `<OpBlazorUiSetup />` precisa ficar **dentro da parte interativa** (ícones,
+CSS base e trocas de tema em runtime):
+
+```razor
+<OpBlazorUiSetup />
+@Body
+```
+
+Os componentes funcionam em Interactive Server, WebAssembly e Auto. Com interatividade por página,
+use no `<OpBlazorUiSetup>` o mesmo `@rendermode` das páginas que trocam o tema; numa Blazor Web App
+com WebAssembly/Auto, chame `AddOpBlazorUI` nos dois `Program.cs` (servidor e `.Client`).
 
 Uso:
 
@@ -85,16 +103,34 @@ Uso:
 
 ## Temas
 
-O tema padrão é `aura.css` (paleta noir). Existem 16 variantes de cor:
+O tema combina um **preset** (`aura`, `lara`, `nora`), uma **primária** e uma **superfície**.
+O padrão é Aura com primária `noir`:
 
-```csharp
-OpTheme.SetThemeUrl("_content/OpBlazorUI.Base/themes/aura-emerald.css");
+```razor
+@inject OpThemeService Theme
+
+Theme.SetPreset("lara");       // themes/lara.css
+Theme.SetPrimary("blue");      // noir, emerald, green, lime, orange, amber, yellow, teal, cyan,
+                               // sky, blue, indigo, violet, purple, fuchsia, pink, rose
+Theme.SetSurface("zinc");      // slate, gray, zinc, neutral, stone, soho, viva, ocean (null = do preset)
 ```
 
-Variantes: `emerald`, `green`, `lime`, `orange`, `amber`, `yellow`, `teal`, `cyan`, `sky`,
-`blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`.
+Primária e superfície vêm de `themes/palettes.css`, aplicadas pelos atributos `data-op-primary` e
+`data-op-surface` no `<html>`; trocar a cor não carrega outro arquivo.
 
-Modo escuro e RTL via `_content/OpBlazorUI.Base/optimus.interop.js` (`setDarkMode`, `setRtl`).
+Os temas são gerados a partir dos presets do Optimus UI (`@openng/optimus-ui-themes`, MIT):
+
+```bash
+cd tools/theme-gen
+npm install
+npm run build     # regenera wwwroot/themes/{aura,lara,nora}.css e palettes.css
+```
+
+Não edite os arquivos gerados à mão; ajustes do OpBlazorUI ficam em `optimus-base.css`.
+
+Modo escuro e RTL: `Theme.SetDarkMode(true)` / `Theme.ToggleDarkMode()` e `Theme.SetRtl(true)`. O
+`OpThemeService` é scoped (um estado por usuário no Server) e, com `PersistTheme`, salva as escolhas no
+`localStorage`.
 
 ## Componentes portados
 

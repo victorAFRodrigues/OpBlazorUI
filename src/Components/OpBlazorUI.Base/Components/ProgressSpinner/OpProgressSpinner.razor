@@ -1,6 +1,6 @@
 @namespace OpBlazorUI.Base.Components.ProgressSpinner
 
-<div class="@RootClass" style="@Style" role="progressbar" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
+<div class="@RootClass" style="@Style" role="progressbar" aria-busy="true" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
     <svg class="p-progressspinner-spin"
          viewBox="25 25 50 50"
          style="@SpinStyle">
@@ -24,7 +24,7 @@
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     private string RootClass => OpCss.BuildClass(
-        "p-progressspinner p-component",
+        "p-progressspinner",
         StyleClass);
 
     private string SpinStyle => $"animation-duration: {AnimationDuration};";

@@ -1,6 +1,7 @@
 @namespace OpBlazorUI.Base.Components.Badge
 
-<span class="@RootClass" style="@Style" @attributes="AdditionalAttributes">
+@* Como o upstream (badgeDisabled): desabilitado some em vez de ficar esmaecido. *@
+<span class="@RootClass" style="@(Disabled ? "display: none;" : Style)" @attributes="AdditionalAttributes">
     @if (Value is not null)
     {
         @Value
@@ -20,6 +21,7 @@
 
     private string RootClass => OpCss.BuildClass(
         "p-badge p-component",
+        string.IsNullOrEmpty(Value) ? "p-badge-dot" : Value.Length == 1 ? "p-badge-circle" : null,
         GetSeverityClass(Severity),
         Size switch
         {
@@ -28,7 +30,6 @@
             "xlarge" => "p-badge-xl",
             _ => null
         },
-        Disabled ? "p-disabled" : null,
         StyleClass);
 
     internal static string? GetSeverityClass(string? severity) => severity?.ToLowerInvariant() switch

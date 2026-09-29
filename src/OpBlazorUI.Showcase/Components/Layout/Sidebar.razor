@@ -1,5 +1,6 @@
 @namespace OpBlazorUI.Showcase.Components.Layout
 @implements IDisposable
+@inject OpThemeService Theme
 
 <aside class="layout-sidebar @(LayoutState.SidebarOpen ? "sidebar-open" : null)">
     <nav>
@@ -26,9 +27,17 @@
                                     {
                                         @foreach (var group in entry.Groups)
                                         {
+                                            var groupKey = entry.Label + "/" + group.Label;
+                                            var groupOpen = !_collapsedGroups.Contains(groupKey);
                                             <li>
-                                                <span class="menu-child-category">@group.Label</span>
-                                                <div>
+                                                <button type="button"
+                                                        class="menu-child-category @(groupOpen ? "menu-expanded" : null)"
+                                                        aria-expanded="@(groupOpen ? "true" : "false")"
+                                                        @onclick="() => ToggleGroup(groupKey)">
+                                                    <span>@group.Label</span>
+                                                    <i class="menu-toggle-icon pi pi-angle-down"></i>
+                                                </button>
+                                                <div hidden="@(!groupOpen)">
                                                     <ol>
                                                         @foreach (var item in group.Items)
                                                         {
@@ -77,8 +86,8 @@
                 </a>
             </li>
             <li class="drawer-quickaction">
-                <button type="button" @onclick="() => DarkModeState.Set(!DarkModeState.Dark)">
-                    <div class="menu-icon"><i class="pi @(DarkModeState.Dark ? "pi-sun" : "pi-moon")"></i></div><span>Modo escuro</span>
+                <button type="button" @onclick="Theme.ToggleDarkMode">
+                    <div class="menu-icon"><i class="pi @(Theme.DarkMode ? "pi-sun" : "pi-moon")"></i></div><span>Modo escuro</span>
                 </button>
             </li>
             <li class="drawer-quickaction">
@@ -103,12 +112,12 @@
     protected override void OnInitialized()
     {
         LayoutState.SidebarToggled += OnSidebarToggled;
-        DarkModeState.Changed += OnDarkChanged;
+        Theme.Changed += OnDarkChanged;
         Nav.LocationChanged += OnLocationChanged;
     }
 
     private void OnSidebarToggled() => StateHasChanged();
-    private void OnDarkChanged() => StateHasChanged();
+    private void OnDarkChanged() => InvokeAsync(StateHasChanged);
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => InvokeAsync(StateHasChanged);
 
     private bool IsExpanded(string label) => _expanded.Contains(label);
@@ -119,6 +128,14 @@
     private void Toggle(string label)
     {
         if (!_expanded.Add(label)) _expanded.Remove(label);
+    }
+
+    // Categorias internas (ex.: Components/Button) começam abertas; o usuário recolhe as que quiser.
+    private readonly HashSet<string> _collapsedGroups = new(StringComparer.Ordinal);
+
+    private void ToggleGroup(string key)
+    {
+        if (!_collapsedGroups.Add(key)) _collapsedGroups.Remove(key);
     }
 
     private bool IsActive(string route)
@@ -135,7 +152,7 @@
     public void Dispose()
     {
         LayoutState.SidebarToggled -= OnSidebarToggled;
-        DarkModeState.Changed -= OnDarkChanged;
+        Theme.Changed -= OnDarkChanged;
         Nav.LocationChanged -= OnLocationChanged;
     }
 }

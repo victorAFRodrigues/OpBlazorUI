@@ -86,14 +86,19 @@ public partial class OpTreeSelect : ComponentBase
     private IEnumerable<TreeNode> AllOptions => Options ?? Array.Empty<TreeNode>();
 
     private string RootClass => BuildClass(
-        "p-treeselect p-component",
+        "p-treeselect p-component p-inputwrapper",
+        Display == "chip" ? "p-treeselect-display-chip" : null,
         Disabled ? "p-disabled" : null,
-        Variant == "filled" ? "p-variant-filled" : null,
-        _focus ? "p-focus" : null,
         Invalid ? "p-invalid" : null,
+        _focus ? "p-focus" : null,
+        Variant == "filled" ? "p-variant-filled" : null,
+        HasSelection ? "p-inputwrapper-filled" : null,
+        _focus || _overlayVisible ? "p-inputwrapper-focus" : null,
+        _overlayVisible ? "p-treeselect-open" : null,
+        ShowClear ? "p-treeselect-clearable" : null,
         Fluid ? "p-treeselect-fluid" : null,
-        Size == "small" ? "p-treeselect-sm" : null,
-        Size == "large" ? "p-treeselect-lg" : null,
+        Size == "small" ? "p-treeselect-sm p-inputfield-sm" : null,
+        Size == "large" ? "p-treeselect-lg p-inputfield-lg" : null,
         StyleClass);
 
     private string LabelClass => BuildClass(

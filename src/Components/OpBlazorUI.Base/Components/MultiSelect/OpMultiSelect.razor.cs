@@ -33,6 +33,9 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     [Parameter] public string Display { get; set; } = "comma";
     [Parameter] public int? MaxSelectedLabels { get; set; }
     [Parameter] public bool Filter { get; set; }
+    [Parameter] public bool ShowHeader { get; set; } = true;
+    [Parameter] public bool ShowToggleAll { get; set; } = true;
+    [Parameter] public bool HighlightOnSelect { get; set; } = true;
     [Parameter] public bool ShowClear { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
@@ -44,7 +47,7 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
     [Parameter] public bool Fluid { get; set; }
-    [Parameter] public string? ScrollHeight { get; set; }
+    [Parameter] public string? ScrollHeight { get; set; } = "200px";
     [Parameter] public bool VirtualScroll { get; set; }
     [Parameter] public int VirtualScrollItemSize { get; set; } = 38;
     [Parameter] public bool Loading { get; set; }
@@ -284,6 +287,7 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     {
         return BuildClass(
             "p-multiselect-option",
+            HighlightOnSelect && IsSelected(option) ? "p-multiselect-option-selected" : null,
             IsOptionDisabled(option) ? "p-disabled" : null);
     }
 
@@ -447,6 +451,37 @@ private async Task CloseAsync()
         {
             list.Add(option);
         }
+
+        Value = list;
+        await ValueChanged.InvokeAsync(list);
+        await OnChange.InvokeAsync(list);
+        StateHasChanged();
+    }
+
+    // Opções visíveis (com o filtro) que o toggle-all do cabeçalho marca ou desmarca.
+    private List<TValue> ToggleableOptions => VisibleOptions
+        .SelectMany(o => Group && IsOptionGroup(o) ? GetOptionGroupChildren(o).Where(MatchesFilter) : [o])
+        .Where(o => !IsOptionDisabled(o))
+        .OfType<TValue>()
+        .ToList();
+
+    private bool AllSelected
+    {
+        get
+        {
+            var options = ToggleableOptions;
+            return options.Count > 0 && options.All(o => IsSelected(o!));
+        }
+    }
+
+    private async Task ToggleAllAsync()
+    {
+        var list = SelectedOptions;
+        var options = ToggleableOptions;
+        if (AllSelected)
+            list.RemoveAll(v => options.Any(o => Equals(GetOptionValue((object)o!), GetOptionValue((object)v!))));
+        else
+            list.AddRange(options.Where(o => !IsSelected(o!)));
 
         Value = list;
         await ValueChanged.InvokeAsync(list);

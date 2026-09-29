@@ -27,7 +27,6 @@ public partial class OpSplitButton : ComponentBase
     [Parameter] public bool Rounded { get; set; }
     [Parameter] public bool Text { get; set; }
     [Parameter] public bool Outlined { get; set; }
-    [Parameter] public bool Plain { get; set; }
     [Parameter] public string? Size { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool ButtonDisabled { get; set; }
@@ -63,8 +62,11 @@ public partial class OpSplitButton : ComponentBase
 
     private string RootClass => BuildClass(
         "p-splitbutton p-component",
-        Rounded ? "p-splitbutton-rounded" : null,
         Raised ? "p-splitbutton-raised" : null,
+        Rounded ? "p-splitbutton-rounded" : null,
+        Outlined ? "p-splitbutton-outlined" : null,
+        Text ? "p-splitbutton-text" : null,
+        Size == "small" ? "p-splitbutton-sm" : Size == "large" ? "p-splitbutton-lg" : null,
         StyleClass);
 
     private string OverlayClass => BuildClass(
