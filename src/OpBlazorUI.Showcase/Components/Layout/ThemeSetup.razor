@@ -31,10 +31,32 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        {
+            // O script do index.html já aplicou o modo escuro salvo (ou o prefers-color-scheme);
+            // sincroniza o estado a partir do DOM em vez de sobrescrevê-lo com o padrão false.
+            await SyncDarkModeFromDomAsync();
+        }
+
         if (firstRender || _pendingApply)
         {
             _pendingApply = false;
             await ApplyAsync();
+        }
+    }
+
+    private async Task SyncDarkModeFromDomAsync()
+    {
+        try
+        {
+            var module = await Js.InvokeAsync<IJSObjectReference>("import",
+                "./_content/OpBlazorUI.Base/optimus.interop.js");
+            _darkMode = await module.InvokeAsync<bool>("getDarkMode");
+            DarkModeState.Set(_darkMode);
+        }
+        catch
+        {
+            // ignore JS errors
         }
     }
 
