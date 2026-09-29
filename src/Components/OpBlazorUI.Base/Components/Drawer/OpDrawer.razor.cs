@@ -37,6 +37,11 @@ public partial class OpDrawer : ComponentBase
 
     [Parameter] public string? MaskStyle { get; set; }
 
+    /// <summary>Aplica o z-index da camada modal (1100 + <see cref="BaseZIndex"/>), acima de topbars e overlays.</summary>
+    [Parameter] public bool AutoZIndex { get; set; } = true;
+
+    [Parameter] public int BaseZIndex { get; set; }
+
     [Parameter] public string? MaskStyleClass { get; set; }
 
     [Parameter] public string CloseIcon { get; set; } = "pi pi-times";

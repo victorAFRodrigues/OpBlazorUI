@@ -1,5 +1,6 @@
 @using OpBlazorUI.Base.Models
 @namespace OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Components.Overlay
 
 @if (!Popup || _panelRendered)
 {
@@ -10,6 +11,10 @@
          @onmousedown="OnPanelMouseDown"
          @onkeydown="OnRootKeydown"
          @attributes="AdditionalAttributes">
+        @if (Popup)
+        {
+            <OpOverlayAttach Anchor="_target" AnchorPrevious="@(_target is null)" Layer="menu" Gap="2"/>
+        }
         @if (StartTemplate != null)
         {
             <div class="p-menu-start">@StartTemplate</div>

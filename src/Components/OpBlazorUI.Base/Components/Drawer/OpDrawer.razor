@@ -1,4 +1,5 @@
 @namespace OpBlazorUI.Base.Components.Drawer
+@using OpBlazorUI.Base.Components.Overlay
 
 @if (Visible)
 {
@@ -7,6 +8,10 @@
          @onclick="OnMaskClick"
          @onkeydown="OnKeydown"
          @attributes="AdditionalAttributes">
+        @if (AutoZIndex)
+        {
+            <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex"/>
+        }
         <div class="@RootClass"
              @ref="_root"
              style="@Style"

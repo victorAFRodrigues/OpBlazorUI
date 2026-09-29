@@ -1,8 +1,10 @@
 @namespace OpBlazorUI.Base.Components.Tooltip
+@using OpBlazorUI.Base.Components.Overlay
 
 <span class="op-tooltip-wrapper"
+      @ref="_wrapperRef"
       style="@WrapperStyle"
-      aria-describedby="@(string.IsNullOrEmpty(Content) ? null : _id)"
+      aria-describedby="@(_visible && !string.IsNullOrEmpty(Content) ? _id : null)"
       @onmouseenter="OnEnter"
       @onmouseleave="OnLeave"
       @onfocusin="OnEnter"
@@ -10,12 +12,11 @@
       @attributes="AdditionalAttributes">
     @ChildContent
 
-    @if (!string.IsNullOrEmpty(Content))
+    @if (_visible && !string.IsNullOrEmpty(Content))
     {
-        <div class="@RootClass"
-             id="@_id"
-             role="tooltip"
-             style="display:@(_visible ? "block" : "none")">
+        @* Sem atributo style: posição, z-index e seta são aplicados pelo overlay.interop.js. *@
+        <div class="@RootClass" id="@_id" role="tooltip">
+            <OpOverlayAttach Anchor="_wrapperRef" Layer="tooltip" Placement="@Position" Align="center" Arrow="tooltip"/>
             <div class="p-tooltip-arrow"></div>
             <div class="p-tooltip-text">@Content</div>
         </div>

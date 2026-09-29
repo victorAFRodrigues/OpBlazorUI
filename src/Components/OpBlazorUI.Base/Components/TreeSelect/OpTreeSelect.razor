@@ -1,4 +1,5 @@
 @namespace OpBlazorUI.Base.Components.TreeSelect
+@using OpBlazorUI.Base.Components.Overlay
 @using OpBlazorUI.Base.Components.Checkbox
 @using OpBlazorUI.Base.Components.Chip
 @using OpBlazorUI.Base.Components.Icon
@@ -6,7 +7,7 @@
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
 
-<div class="@RootClass" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
+<div class="@RootClass" @ref="_rootRef" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
      @attributes="AdditionalAttributes">
     <div class="p-treeselect-label-container"
          role="combobox"
@@ -79,9 +80,9 @@
     @if (_panelRendered)
     {
         <div class="@PanelClass"
-             style="top:100%; left:0;"
              @onmousedown="OnPanelMouseDown"
              @onanimationend="OnPanelAnimationEnd">
+            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2"/>
             <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
 
             @HeaderTemplate

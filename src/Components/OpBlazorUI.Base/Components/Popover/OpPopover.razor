@@ -1,15 +1,20 @@
 @namespace OpBlazorUI.Base.Components.Popover
+@using OpBlazorUI.Base.Components.Overlay
 
 @if (_visible)
 {
+    @* Posição, z-index, seta e .p-popover-flipped são aplicados pelo overlay.interop.js. *@
     <div class="@RootClass"
          @ref="_root"
-         style="@RootStyle"
+         style="@Style"
          role="dialog"
          aria-modal="true"
+         aria-label="@AriaLabel"
+         aria-labelledby="@AriaLabelledBy"
          tabindex="@(FocusOnShow ? 0 : -1)"
          @onkeydown="OnKeydown"
          @attributes="AdditionalAttributes">
+        <OpOverlayAttach Anchor="_target" Placement="@Position" Align="center" KeepMargin="true" Arrow="popover"/>
         <div class="@ContentClass" style="@ContentStyle">@ChildContent</div>
     </div>
 }

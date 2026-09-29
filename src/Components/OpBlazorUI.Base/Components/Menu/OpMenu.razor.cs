@@ -17,6 +17,7 @@ public partial class OpMenu : ComponentBase
     private bool _focusInside;
     private DateTime _lastPanelPointerDown = DateTime.MinValue;
     private ElementReference _listRef;
+    private ElementReference? _target;
 
     [Parameter] public IReadOnlyList<OpMenuItem>? Items { get; set; }
     [Parameter] public IReadOnlyList<OpMenuGroup>? Groups { get; set; }
@@ -63,9 +64,11 @@ public partial class OpMenu : ComponentBase
         item.StyleClass);
 
     // ------------------------------------------------------------ popup
-    public async Task ShowAsync()
+    /// <summary>Abre o menu popup. Sem <paramref name="target"/>, ancora no elemento anterior ao menu.</summary>
+    public async Task ShowAsync(ElementReference? target = null)
     {
         if (_overlayVisible || !Popup) return;
+        _target = target;
         _overlayVisible = true;
         _panelRendered = true;
         _panelClosing = false;
@@ -73,6 +76,12 @@ public partial class OpMenu : ComponentBase
         _focusedItemIndex = -1;
         await OnShow.InvokeAsync();
         StateHasChanged();
+    }
+
+    public async Task ToggleAsync(ElementReference? target = null)
+    {
+        if (_overlayVisible) await HideAsync();
+        else await ShowAsync(target);
     }
 
     public async Task HideAsync()

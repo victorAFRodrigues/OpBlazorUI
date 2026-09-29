@@ -1,7 +1,8 @@
 @using OpBlazorUI.Base.Components.Icon
 @namespace OpBlazorUI.Base.Components.DatePicker
+@using OpBlazorUI.Base.Components.Overlay
 
-<span class="@RootClass" style="position: relative" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
+<span class="@RootClass" @ref="_rootRef" style="position: relative" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
       @onkeydown="OnRootKeydown">
     @if (!Inline)
     {
@@ -97,6 +98,10 @@
              @onmousedown="OnPanelMouseDown"
              @onmousedown:preventDefault="@(!Inline)"
              @onanimationend="OnPanelAnimationEnd">
+            @if (!Inline)
+            {
+                <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2"/>
+            }
 
             @HeaderTemplate
 

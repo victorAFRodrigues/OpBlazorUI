@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -15,12 +14,8 @@ public partial class OpPopover : ComponentBase, IAsyncDisposable
     private DotNetObjectReference<OpPopover>? _selfRef;
     private bool _disposed;
     private bool _visible;
-    private bool _aligning;
-    private bool _aligned;
+    private bool _opening;
     private bool _listening;
-    private double _top;
-    private double _left;
-    private bool _flipped;
 
     [Parameter] public string Position { get; set; } = "bottom";
 
@@ -51,26 +46,18 @@ public partial class OpPopover : ComponentBase, IAsyncDisposable
 
     [Inject] private IJSRuntime Js { get; set; } = default!;
 
-    private string RootClass => OpCss.BuildClass(
-        "p-popover p-component",
-        _flipped ? "p-popover-flipped" : null,
-        StyleClass);
+    // Sem estado de posição aqui: o OpOverlayAttach aplica posição, z-index, a seta e
+    // .p-popover-flipped direto no DOM (e reposiciona no scroll/resize).
+    private string RootClass => OpCss.BuildClass("p-popover p-component", StyleClass);
 
     private string ContentClass => OpCss.BuildClass("p-popover-content", ContentStyleClass);
-
-    private string RootStyle => OpCss.BuildClass(
-        _aligned
-            ? $"position:fixed;top:{_top.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;left:{_left.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;margin:0;z-index:1000;"
-            : "position:fixed;visibility:hidden;margin:0;",
-        Style);
 
     public async Task Show(ElementReference target)
     {
         if (_visible) return;
         _target = target;
         _visible = true;
-        _aligned = false;
-        _aligning = true;
+        _opening = true;
         await OnShow.InvokeAsync();
         StateHasChanged();
     }
@@ -79,8 +66,7 @@ public partial class OpPopover : ComponentBase, IAsyncDisposable
     {
         if (!_visible) return;
         _visible = false;
-        _aligned = false;
-        _aligning = false;
+        _opening = false;
         await RemoveOutsideListenerAsync();
         await OnHide.InvokeAsync();
         StateHasChanged();
@@ -100,44 +86,25 @@ public partial class OpPopover : ComponentBase, IAsyncDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_aligning)
+        if (!_opening) return;
+        _opening = false;
+
+        if (FocusOnShow)
         {
-            _aligning = false;
+            try
+            {
+                await _root.FocusAsync(preventScroll: true);
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        if (Dismissable)
+        {
             var module = await GetModuleAsync();
-            if (module is not null)
-            {
-                try
-                {
-                    var result = await module.InvokeAsync<OpOverlayAlignResult>("alignOverlay", _root, _target, Position);
-                    _top = result.Top;
-                    _left = result.Left;
-                    _flipped = result.Flipped;
-                }
-                catch
-                {
-                    // keep default positioning
-                }
-            }
-
-            _aligned = true;
-            StateHasChanged();
-
-            if (FocusOnShow)
-            {
-                try
-                {
-                    await _root.FocusAsync();
-                }
-                catch
-                {
-                    // ignore
-                }
-            }
-
-            if (Dismissable && module is not null)
-            {
-                await AddOutsideListenerAsync(module);
-            }
+            if (module is not null) await AddOutsideListenerAsync(module);
         }
     }
 
@@ -246,8 +213,3 @@ public partial class OpPopover : ComponentBase, IAsyncDisposable
         }
     }
 }
-
-internal sealed record OpOverlayAlignResult(
-    [property: JsonPropertyName("top")] double Top,
-    [property: JsonPropertyName("left")] double Left,
-    [property: JsonPropertyName("flipped")] bool Flipped);
