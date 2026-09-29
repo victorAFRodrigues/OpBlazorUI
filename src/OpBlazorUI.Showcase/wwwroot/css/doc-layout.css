@@ -575,8 +575,23 @@
     position: relative;
     border-radius: 10px;
     background-color: var(--code-background);
-    color: var(--p-surface-0);
+    color: var(--code-text);
 }
+
+/* Realce de sintaxe (tokens gerados pelo SyntaxHighlighter.cs) */
+.doc-section-code .tk-tag { color: var(--code-tk-tag); }
+.doc-section-code .tk-component { color: var(--code-tk-component); }
+.doc-section-code .tk-type { color: var(--code-tk-type); }
+.doc-section-code .tk-param { color: var(--code-tk-param); }
+.doc-section-code .tk-attr { color: var(--code-tk-attr); }
+.doc-section-code .tk-string { color: var(--code-tk-string); }
+.doc-section-code .tk-keyword { color: var(--code-tk-keyword); }
+.doc-section-code .tk-number { color: var(--code-tk-number); }
+.doc-section-code .tk-comment { color: var(--code-tk-comment); font-style: italic; }
+.doc-section-code .tk-method { color: var(--code-tk-method); }
+.doc-section-code .tk-field { color: var(--code-tk-field); }
+.doc-section-code .tk-razor { color: var(--code-tk-razor); }
+.doc-section-code .tk-punct { color: var(--code-tk-punct); }
 
 .doc-section-code-buttons {
     position: absolute;
