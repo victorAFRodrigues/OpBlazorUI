@@ -4,7 +4,9 @@
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
+@using OpBlazorUI.Base.Components.Forms
 @typeparam TValue
+@inherits OpInputBase<TValue>
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
     @if (Filter || (Checkbox && ShowToggleAll) || HeaderTemplate != null || FilterTemplate != null)
@@ -13,8 +15,8 @@
             @if (Checkbox && ShowToggleAll)
             {
                 <div class="p-listbox-header-checkbox">
-                    <OpCheckbox StyleClass="p-listbox-option-check-icon" Checked="@AllSelected"
-                                CheckedChanged="@(c => OnToggleAll(c == true))"
+                    <OpCheckbox StyleClass="p-listbox-option-check-icon" Value="@AllSelected"
+                                ValueChanged="@(c => OnToggleAll(c == true))"
                                 Disabled="@Disabled"
                                 Id="@($"{_id}_all")"/>
                 </div>
@@ -149,7 +151,7 @@
             @onmouseenter="() => OnOptionMouseEnter(index)">
             @if (Checkbox)
             {
-                <OpCheckbox StyleClass="p-listbox-option-check-icon" Checked="@isSelected" Readonly="true" Disabled="@isDisabled" />
+                <OpCheckbox StyleClass="p-listbox-option-check-icon" Value="@isSelected" Readonly="true" Disabled="@isDisabled" />
             }
 
             @if (Checkmark)

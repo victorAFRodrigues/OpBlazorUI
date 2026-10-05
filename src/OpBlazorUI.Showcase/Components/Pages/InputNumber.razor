@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.InputNumber
+@using System.ComponentModel.DataAnnotations
 @using OpBlazorUI.Base.Components.FloatLabel
 @using OpBlazorUI.Base.Components.IftaLabel
 
@@ -223,6 +224,24 @@
             </ChildContent>
             <Code><CodeBlock Code="@IftaLabelCode"/></Code>
         </DocSection>
+        <DocSection Label="Validação">
+            <Description>
+                O InputNumber herda de <code>InputBase&lt;decimal?&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpInputNumber @bind-Value="_form.Amount" Placeholder="Valor" Min="1" Max="100"/>
+                    <ValidationMessage For="() => _form.Amount"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Valor: @_form.Amount</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
+        </DocSection>
     </Features>
 
     <Api>
@@ -398,5 +417,26 @@
             <OpInputNumber Id="inni1" @bind-Value="_value" Mode="currency" Currency="USD" Locale="en-US" />
             <label for="inni1">Preço</label>
         </OpIftaLabel>
+        """;
+
+    private bool _submitted;
+    private NumberFormModel _form = new();
+
+    private sealed class NumberFormModel
+    {
+        [Required(ErrorMessage = "Informe um valor.")]
+        [Range(1, 100, ErrorMessage = "Informe um valor entre 1 e 100.")]
+        public decimal? Amount { get; set; }
+    }
+
+    private void OnSubmit() => _submitted = true;
+
+    private const string ValidationCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpInputNumber @bind-Value="_form.Amount" Placeholder="Valor" Min="1" Max="100" />
+            <ValidationMessage For="() => _form.Amount" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
         """;
 }

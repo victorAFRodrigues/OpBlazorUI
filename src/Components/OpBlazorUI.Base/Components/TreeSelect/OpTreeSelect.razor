@@ -1,4 +1,6 @@
 @namespace OpBlazorUI.Base.Components.TreeSelect
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<string>
 @using OpBlazorUI.Base.Components.Overlay
 @using OpBlazorUI.Base.Components.Checkbox
 @using OpBlazorUI.Base.Components.Chip
@@ -172,7 +174,7 @@
                  @onclick="() => OnNodeClick(node)">
                 @if (IsCheckbox)
                 {
-                    <OpCheckbox Checked="@selected" Indeterminate="@partial" Readonly="true"/>
+                    <OpCheckbox Value="@selected" Indeterminate="@partial" Readonly="true"/>
                 }
 
                 <button type="button" class="p-tree-node-toggle-button" @onclick="() => ToggleExpand(node)"
@@ -223,7 +225,7 @@
                  @onclick="() => OnNodeClick(node)">
                 @if (IsCheckbox)
                 {
-                    <OpCheckbox Checked="@selected" Indeterminate="@partial" Readonly="true"/>
+                    <OpCheckbox Value="@selected" Indeterminate="@partial" Readonly="true"/>
                 }
 
                 <button type="button" class="p-tree-node-toggle-button" @onclick="() => ToggleExpand(node)"

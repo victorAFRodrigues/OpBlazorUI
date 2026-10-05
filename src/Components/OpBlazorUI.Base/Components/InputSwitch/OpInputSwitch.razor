@@ -1,4 +1,6 @@
 @namespace OpBlazorUI.Base.Components.InputSwitch
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<bool>
 
 <div class="@RootClass" style="position: relative" @attributes="AdditionalAttributes">
     <input type="checkbox"
@@ -6,10 +8,10 @@
            class="p-toggleswitch-input"
            id="@Id"
            name="@Name"
-           checked="@Checked"
+           checked="@CurrentValue"
            required="@Required"
            disabled="@Disabled"
-           aria-checked="@(Checked ? "true" : "false")"
+           aria-checked="@(CurrentValue ? "true" : "false")"
            aria-labelledby="@AriaLabelledBy"
            aria-label="@AriaLabel"
            tabindex="@TabIndex"
@@ -21,7 +23,7 @@
         <div class="p-toggleswitch-handle">
             @if (HandleTemplate != null)
             {
-                @HandleTemplate(Checked)
+                @HandleTemplate(CurrentValue)
             }
         </div>
     </div>

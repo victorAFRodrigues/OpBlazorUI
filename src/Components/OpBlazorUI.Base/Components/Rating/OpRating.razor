@@ -1,4 +1,6 @@
 @namespace OpBlazorUI.Base.Components.Rating
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<int>
 
 <div class="@RootClass" role="radiogroup" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
     @if (Cancel)
@@ -16,7 +18,7 @@
                    class="p-hidden-accessible"
                    name="@Name"
                    value="0"
-                   checked="@(Value == 0)"
+                   checked="@(CurrentValue == 0)"
                    disabled="@Disabled"
                    readonly="@Readonly"
                    tabindex="-1"/>
@@ -26,7 +28,7 @@
     @for (var i = 1; i <= Stars; i++)
     {
         var star = i;
-        var active = star <= Value && Value > 0;
+        var active = star <= CurrentValue && CurrentValue > 0;
         <div class="@OptionClass(star)" @onclick="() => Rate(star)" @onfocus="OnFocus" @onblur="OnBlur">
             @if (active)
             {
@@ -55,7 +57,7 @@
                    class="p-hidden-accessible"
                    name="@Name"
                    value="@star"
-                   checked="@(Value == star)"
+                   checked="@(CurrentValue == star)"
                    disabled="@Disabled"
                    readonly="@Readonly"
                    tabindex="@(Disabled ? -1 : 0)"/>
