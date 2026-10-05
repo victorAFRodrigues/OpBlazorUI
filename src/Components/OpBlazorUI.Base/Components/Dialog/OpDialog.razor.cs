@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.Dialog;
 
-public partial class OpDialog : ComponentBase
+public partial class OpDialog : OpModalBase
 {
     private string _headerId = "";
     private bool _maximized;
@@ -78,6 +79,20 @@ public partial class OpDialog : ComponentBase
         if (Visible && !_lastRenderedVisible)
         {
             await OnShow.InvokeAsync();
+
+            // Trap antes do foco: a base JS captura o gatilho (foco atual) para restaurar depois.
+            if (Modal)
+            {
+                try
+                {
+                    await FocusTrapInitAsync(_root);
+                }
+                catch
+                {
+                    // ignore
+                }
+            }
+
             if (FocusOnShow)
             {
                 try
@@ -88,6 +103,17 @@ public partial class OpDialog : ComponentBase
                 {
                     // ignore
                 }
+            }
+        }
+        else if (!Visible && _lastRenderedVisible && Modal)
+        {
+            try
+            {
+                await FocusTrapDisposeAsync(_root);
+            }
+            catch
+            {
+                // ignore
             }
         }
 
@@ -119,6 +145,20 @@ public partial class OpDialog : ComponentBase
     private async Task CloseAsync()
     {
         _maximized = false;
+
+        // Restaura o foco antes de o diálogo sair do DOM (elemento ainda anexado para o JS).
+        if (Modal && Visible)
+        {
+            try
+            {
+                await FocusTrapDisposeAsync(_root);
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
         Visible = false;
         await VisibleChanged.InvokeAsync(false);
         await OnHide.InvokeAsync();

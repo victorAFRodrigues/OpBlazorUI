@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.Drawer;
 
-public partial class OpDrawer : ComponentBase
+public partial class OpDrawer : OpModalBase
 {
     private string _headerId = "";
     private bool _lastRenderedVisible;
@@ -73,6 +74,20 @@ public partial class OpDrawer : ComponentBase
         if (Visible && !_lastRenderedVisible)
         {
             await OnShow.InvokeAsync();
+
+            // Trap antes do foco: a base JS captura o gatilho (foco atual) para restaurar depois.
+            if (Modal)
+            {
+                try
+                {
+                    await FocusTrapInitAsync(_root);
+                }
+                catch
+                {
+                    // ignore
+                }
+            }
+
             if (FocusOnShow)
             {
                 try
@@ -83,6 +98,17 @@ public partial class OpDrawer : ComponentBase
                 {
                     // ignore
                 }
+            }
+        }
+        else if (!Visible && _lastRenderedVisible && Modal)
+        {
+            try
+            {
+                await FocusTrapDisposeAsync(_root);
+            }
+            catch
+            {
+                // ignore
             }
         }
 
@@ -109,6 +135,19 @@ public partial class OpDrawer : ComponentBase
 
     private async Task CloseAsync()
     {
+        // Restaura o foco antes de o drawer sair do DOM (elemento ainda anexado para o JS).
+        if (Modal && Visible)
+        {
+            try
+            {
+                await FocusTrapDisposeAsync(_root);
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
         Visible = false;
         await VisibleChanged.InvokeAsync(false);
         await OnHide.InvokeAsync();
