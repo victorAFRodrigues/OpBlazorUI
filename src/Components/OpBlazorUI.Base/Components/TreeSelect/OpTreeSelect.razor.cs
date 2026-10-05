@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.TreeSelect;
 
-public partial class OpTreeSelect : ComponentBase
+public partial class OpTreeSelect : OpInputBase<string>
 {
     private ElementReference _rootRef;
 
@@ -20,8 +21,6 @@ public partial class OpTreeSelect : ComponentBase
 
     // ---------------------------------------------------------------- params
     [Parameter] public IReadOnlyList<TreeNode>? Options { get; set; }
-    [Parameter] public string? Value { get; set; }
-    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
     [Parameter] public IReadOnlyDictionary<string, bool>? Selection { get; set; }
     [Parameter] public EventCallback<IReadOnlyDictionary<string, bool>?> SelectionChanged { get; set; }
     [Parameter] public string SelectionMode { get; set; } = "single";
@@ -31,8 +30,6 @@ public partial class OpTreeSelect : ComponentBase
     [Parameter] public string FilterBy { get; set; } = "label";
     [Parameter] public string FilterMode { get; set; } = "lenient";
     [Parameter] public bool ShowClear { get; set; }
-    [Parameter] public bool Disabled { get; set; }
-    [Parameter] public bool Invalid { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
@@ -47,7 +44,6 @@ public partial class OpTreeSelect : ComponentBase
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? InputId { get; set; }
     [Parameter] public string? PanelStyleClass { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
 
     // events
     [Parameter] public EventCallback<TreeNode> OnNodeExpand { get; set; }
@@ -70,9 +66,6 @@ public partial class OpTreeSelect : ComponentBase
     [Parameter] public RenderFragment? LoadingIconTemplate { get; set; }
     [Parameter] public RenderFragment<TreeNode>? ItemTogglerIconTemplate { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
@@ -85,11 +78,11 @@ public partial class OpTreeSelect : ComponentBase
 
     private IEnumerable<TreeNode> AllOptions => Options ?? Array.Empty<TreeNode>();
 
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-treeselect p-component p-inputwrapper",
         Display == "chip" ? "p-treeselect-display-chip" : null,
         Disabled ? "p-disabled" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         _focus ? "p-focus" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         HasSelection ? "p-inputwrapper-filled" : null,
@@ -101,12 +94,12 @@ public partial class OpTreeSelect : ComponentBase
         Size == "large" ? "p-treeselect-lg p-inputfield-lg" : null,
         StyleClass);
 
-    private string LabelClass => BuildClass(
+    private string LabelClass => OpCss.BuildClass(
         "p-treeselect-label",
         !HasSelection && Placeholder is { Length: > 0 } ? "p-placeholder" : null,
         !HasSelection && string.IsNullOrEmpty(Placeholder) ? "p-treeselect-label-empty" : null);
 
-    private string PanelClass => BuildClass(
+    private string PanelClass => OpCss.BuildClass(
         "p-treeselect-overlay p-component",
         PanelStyleClass,
         _panelAnimationClass);
@@ -419,8 +412,7 @@ public partial class OpTreeSelect : ComponentBase
         }
         else
         {
-            Value = node.Key;
-            await ValueChanged.InvokeAsync(node.Key);
+            CurrentValue = node.Key;
             await OnNodeSelect.InvokeAsync(node);
             await CloseAsync();
         }
@@ -521,8 +513,7 @@ public partial class OpTreeSelect : ComponentBase
         }
         else
         {
-            Value = null;
-            await ValueChanged.InvokeAsync(null);
+            CurrentValue = null;
             await OnNodeUnselect.InvokeAsync(node);
         }
     }
@@ -542,13 +533,10 @@ public partial class OpTreeSelect : ComponentBase
         }
         else
         {
-            Value = null;
-            await ValueChanged.InvokeAsync(null);
+            CurrentValue = null;
         }
 
         await OnClear.InvokeAsync();
     }
 
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

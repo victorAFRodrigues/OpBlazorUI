@@ -1,5 +1,7 @@
 @using OpBlazorUI.Base.Components.Icon
 @namespace OpBlazorUI.Base.Components.DatePicker
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<DateTime?>
 @using OpBlazorUI.Base.Components.Overlay
 
 <span class="@RootClass" @ref="_rootRef" style="position: relative" @attributes="AdditionalAttributes" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"

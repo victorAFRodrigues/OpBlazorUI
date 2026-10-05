@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Select
+@using System.ComponentModel.DataAnnotations
 
 <DocComponent Title="Select"
               Description="O Select é usado para escolher um item de uma coleção de opções.">
@@ -81,6 +82,24 @@
                 <div class="mt-2 text-sm">Selecionado: @(_country ?? "—")</div>
             </ChildContent>
             <Code><CodeBlock Code="@GroupedCode"/></Code>
+        </DocSection>
+        <DocSection Label="Validação">
+            <Description>
+                O Select herda de <code>InputBase&lt;TValue&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpSelect TValue="string" @bind-Value="_form.City" Options="Cities" Placeholder="Selecione uma Cidade" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _form.City"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Cidade: @_form.City</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
         </DocSection>
     </Features>
 
@@ -273,5 +292,25 @@
                 public List<string> Items { get; set; } = new();
             }
         }
+        """;
+
+    private bool _submitted;
+    private SelectFormModel _form = new();
+
+    private sealed class SelectFormModel
+    {
+        [Required(ErrorMessage = "Escolha uma cidade.")]
+        public string? City { get; set; }
+    }
+
+    private void OnSubmit() => _submitted = true;
+
+    private const string ValidationCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpSelect TValue="string" @bind-Value="_form.City" Options="Cities" Placeholder="Selecione uma Cidade" />
+            <ValidationMessage For="() => _form.City" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
         """;
 }

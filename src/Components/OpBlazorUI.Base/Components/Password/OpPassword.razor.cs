@@ -1,10 +1,11 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.Password;
 
-public partial class OpPassword : ComponentBase
+public partial class OpPassword : OpInputBase<string>
 {
     private ElementReference _rootRef;
 
@@ -13,16 +14,12 @@ public partial class OpPassword : ComponentBase
     private bool _overlayVisible;
 
     // ---------------------------------------------------------------- params
-    [Parameter] public string? Value { get; set; }
-    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
     [Parameter] public bool Feedback { get; set; } = true;
     [Parameter] public bool ToggleMask { get; set; }
     [Parameter] public bool ShowClear { get; set; }
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
-    [Parameter] public bool Invalid { get; set; }
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
     [Parameter] public bool Fluid { get; set; }
     [Parameter] public string? Autocomplete { get; set; }
@@ -53,9 +50,6 @@ public partial class OpPassword : ComponentBase
     [Parameter] public RenderFragment? ShowIconTemplate { get; set; }
     [Parameter] public RenderFragment? HideIconTemplate { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
@@ -63,22 +57,22 @@ public partial class OpPassword : ComponentBase
     }
 
     // ------------------------------------------------------------ computed
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-password p-component",
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         Fluid ? "p-password-fluid" : null);
 
-    private bool HasValue => !string.IsNullOrEmpty(Value);
+    private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
 
     private int StrengthLevel
     {
         get
         {
-            if (string.IsNullOrEmpty(Value)) return 0;
+            if (string.IsNullOrEmpty(CurrentValue)) return 0;
             try
             {
-                if (Regex.IsMatch(Value, StrongRegex)) return 3;
-                if (Regex.IsMatch(Value, MediumRegex)) return 2;
+                if (Regex.IsMatch(CurrentValue, StrongRegex)) return 3;
+                if (Regex.IsMatch(CurrentValue, MediumRegex)) return 2;
             }
             catch (ArgumentException)
             {
@@ -116,8 +110,7 @@ public partial class OpPassword : ComponentBase
     // ------------------------------------------------------------ handlers
     private async Task HandleInputAsync(string? text)
     {
-        Value = text;
-        await ValueChanged.InvokeAsync(text);
+        CurrentValue = text;
         await OnInput.InvokeAsync(text);
     }
 
@@ -142,11 +135,7 @@ public partial class OpPassword : ComponentBase
 
     private async Task Clear()
     {
-        Value = string.Empty;
-        await ValueChanged.InvokeAsync(string.Empty);
+        CurrentValue = string.Empty;
         await OnClear.InvokeAsync();
     }
-
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

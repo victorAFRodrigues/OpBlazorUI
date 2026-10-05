@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.ToggleButton
+@using System.ComponentModel.DataAnnotations
 
 <DocComponent Title="ToggleButton"
               Description="O ToggleButton é usado para selecionar um valor booleano usando um botão.">
@@ -13,7 +14,7 @@
 
         <DocSection Label="Básico">
             <ChildContent>
-                <OpToggleButton @bind-Checked="_on" OnLabel="Ligado" OffLabel="Desligado"/>
+                <OpToggleButton @bind-Value="_on" OnLabel="Ligado" OffLabel="Desligado"/>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
@@ -21,8 +22,8 @@
         <DocSection Label="Ícones">
             <ChildContent>
                 <div class="flex gap-3">
-                    <OpToggleButton @bind-Checked="_bold" OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Alternar"/>
-                    <OpToggleButton @bind-Checked="_lock" OnLabel="Bloqueado" OffLabel="Desbloqueado" OnIcon="pi pi-lock" OffIcon="pi pi-lock" IconPos="left"/>
+                    <OpToggleButton @bind-Value="_bold" OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Alternar"/>
+                    <OpToggleButton @bind-Value="_lock" OnLabel="Bloqueado" OffLabel="Desbloqueado" OnIcon="pi pi-lock" OffIcon="pi pi-lock" IconPos="left"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@IconCode"/></Code>
@@ -31,12 +32,30 @@
         <DocSection Label="Inválido / Desabilitado / Tamanho">
             <ChildContent>
                 <div class="flex gap-3 items-center">
-                    <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Invalid="true"/>
-                    <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Disabled="true"/>
-                    <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Size="small"/>
+                    <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Invalid="true"/>
+                    <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Disabled="true"/>
+                    <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Size="small"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@StateCode"/></Code>
+        </DocSection>
+        <DocSection Label="Validação">
+            <Description>
+                O ToggleButton herda de <code>InputBase&lt;bool&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpToggleButton @bind-Value="_form.Accepted" OnLabel="Sim" OffLabel="Não"/>
+                    <ValidationMessage For="() => _form.Accepted"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Aceito: @_form.Accepted</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
         </DocSection>
     </Features>
 
@@ -46,8 +65,8 @@
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Checked", "bool", "false", "Estado marcado." },
-                              new[] { "CheckedChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
+                              new[] { "Value", "bool", "false", "Estado marcado." },
+                              new[] { "ValueChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
                               new[] { "OnLabel", "string?", "null", "Texto quando ligado." },
                               new[] { "OffLabel", "string?", "null", "Texto quando desligado." },
                               new[] { "OnIcon", "string?", "null", "Ícone quando ligado." },
@@ -113,11 +132,11 @@
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.ToggleButton
 
-        <OpToggleButton @bind-Checked="_on" OnLabel="Ligado" OffLabel="Desligado" />
+        <OpToggleButton @bind-Value="_on" OnLabel="Ligado" OffLabel="Desligado" />
         """;
 
     private const string BasicCode = """
-        <OpToggleButton @bind-Checked="_on" OnLabel="Ligado" OffLabel="Desligado" />
+        <OpToggleButton @bind-Value="_on" OnLabel="Ligado" OffLabel="Desligado" />
 
         @code {
             private bool _on = true;
@@ -125,13 +144,33 @@
         """;
 
     private const string IconCode = """
-        <OpToggleButton @bind-Checked="_bold" OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Alternar" />
-        <OpToggleButton @bind-Checked="_lock" OnLabel="Bloqueado" OffLabel="Desbloqueado" OnIcon="pi pi-lock" OffIcon="pi pi-lock" />
+        <OpToggleButton @bind-Value="_bold" OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Alternar" />
+        <OpToggleButton @bind-Value="_lock" OnLabel="Bloqueado" OffLabel="Desbloqueado" OnIcon="pi pi-lock" OffIcon="pi pi-lock" />
         """;
 
     private const string StateCode = """
-        <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Invalid="true" />
-        <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Disabled="true" />
-        <OpToggleButton Checked="true" OnLabel="Ligado" OffLabel="Desligado" Size="small" />
+        <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Invalid="true" />
+        <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Disabled="true" />
+        <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Size="small" />
+        """;
+
+    private bool _submitted;
+    private ToggleButtonFormModel _form = new();
+
+    private sealed class ToggleButtonFormModel
+    {
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Ative para continuar.")]
+        public bool Accepted { get; set; }
+    }
+
+    private void OnSubmit() => _submitted = true;
+
+    private const string ValidationCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpToggleButton @bind-Value="_form.Accepted" OnLabel="Sim" OffLabel="Não" />
+            <ValidationMessage For="() => _form.Accepted" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
         """;
 }

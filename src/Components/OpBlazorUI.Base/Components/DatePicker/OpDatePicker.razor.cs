@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.DatePicker;
 
@@ -48,7 +49,7 @@ public sealed class OpDatePickerInputIconContext
     public EventCallback<MouseEventArgs> ClickCallback { get; init; }
 }
 
-public partial class OpDatePicker : ComponentBase
+public partial class OpDatePicker : OpInputBase<DateTime?>
 {
     private ElementReference _rootRef;
 
@@ -77,9 +78,6 @@ public partial class OpDatePicker : ComponentBase
     private List<DateTime?>? _prevRange;
 
     // ---------------------------------------------------------------- params
-    [Parameter] public DateTime? Value { get; set; }
-    [Parameter] public EventCallback<DateTime?> ValueChanged { get; set; }
-
     [Parameter] public IReadOnlyList<DateTime?>? RangeValue { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<DateTime?>?> RangeValueChanged { get; set; }
 
@@ -95,8 +93,6 @@ public partial class OpDatePicker : ComponentBase
     [Parameter] public string? Icon { get; set; }
     [Parameter] public bool ShowClear { get; set; }
     [Parameter] public bool ReadonlyInput { get; set; }
-    [Parameter] public bool Disabled { get; set; }
-    [Parameter] public bool Invalid { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public bool Fluid { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
@@ -134,10 +130,7 @@ public partial class OpDatePicker : ComponentBase
     [Parameter] public string MultipleSeparator { get; set; } = ", ";
     [Parameter] public string RangeSeparator { get; set; } = " - ";
     [Parameter] public string? PanelStyleClass { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
     [Parameter] public string? InputStyleClass { get; set; }
     [Parameter] public bool HideOnDateTimeSelect { get; set; }
     [Parameter] public string? TodayLabel { get; set; } = "Today";
@@ -237,24 +230,24 @@ public partial class OpDatePicker : ComponentBase
     }
 
     // ------------------------------------------------------------ computed
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-datepicker p-component p-inputwrapper",
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         Fluid ? "p-datepicker-fluid" : null,
         HasValue ? "p-inputwrapper-filled" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         _focus || _overlayVisible ? "p-inputwrapper-focus p-focus" : null,
         StyleClass);
 
-    private string InputClass => BuildClass(
+    private string InputClass => OpCss.BuildClass(
         "p-inputtext p-datepicker-input",
         Fluid ? "p-inputtext-fluid" : null,
         Variant == "filled" ? "p-variant-filled" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         InputStyleClass,
         SizeCss);
 
-    private string PanelClass => BuildClass(
+    private string PanelClass => OpCss.BuildClass(
         "p-datepicker-panel p-component",
         Inline ? "p-datepicker-panel-inline" : null,
         Disabled ? "p-disabled" : null,
@@ -446,8 +439,7 @@ public partial class OpDatePicker : ComponentBase
         switch (SelectionMode)
         {
             case OpDateSelectionMode.Single:
-                Value = selected;
-                await ValueChanged.InvokeAsync(selected);
+                CurrentValue = selected;
                 await OnSelect.InvokeAsync(selected);
                 break;
             case OpDateSelectionMode.Multiple:
@@ -764,8 +756,7 @@ public partial class OpDatePicker : ComponentBase
         {
             if (DateTime.TryParse(_inputText, out var parsed))
             {
-                Value = parsed;
-                await ValueChanged.InvokeAsync(parsed);
+                CurrentValue = parsed;
             }
         }
     }
@@ -830,11 +821,10 @@ public partial class OpDatePicker : ComponentBase
 
     private async Task Clear(MouseEventArgs? _ = null)
     {
-        Value = null;
+        CurrentValue = null;
         RangeValue = null;
         MultipleValue = null;
         _inputText = "";
-        await ValueChanged.InvokeAsync(null);
         await OnClear.InvokeAsync();
     }
 
@@ -846,8 +836,7 @@ public partial class OpDatePicker : ComponentBase
         switch (SelectionMode)
         {
             case OpDateSelectionMode.Single:
-                Value = today;
-                await ValueChanged.InvokeAsync(today);
+                CurrentValue = today;
                 await OnSelect.InvokeAsync(today);
                 break;
 
@@ -946,17 +935,13 @@ public partial class OpDatePicker : ComponentBase
             case OpDateSelectionMode.Single:
                 if (Value is { } single)
                 {
-                    var updated = WithCurrentTime(single);
-                    Value = updated;
+                    CurrentValue = WithCurrentTime(single);
                     _inputText = InputValue;
-                    await ValueChanged.InvokeAsync(updated);
                 }
                 else if (TimeOnly)
                 {
-                    var updated = WithCurrentTime(_today);
-                    Value = updated;
+                    CurrentValue = WithCurrentTime(_today);
                     _inputText = InputValue;
-                    await ValueChanged.InvokeAsync(updated);
                 }
 
                 break;
@@ -996,9 +981,6 @@ public partial class OpDatePicker : ComponentBase
         System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month + 1);
 
     private string GetYear(OpMonth month) => month.Year.ToString();
-
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 
     private static string FormatDate(DateTime date, string format)
     {

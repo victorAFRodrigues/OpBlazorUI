@@ -90,11 +90,11 @@
                         <OpInputGroupAddon><OpRadioButton TValue="string" Name="rb1" Value="@("rb1")" @bind-ModelValue="_radio1"/></OpInputGroupAddon>
                     </OpInputGroup>
                     <OpInputGroup>
-                        <OpInputGroupAddon><OpCheckbox @bind-Checked="_checked1"/></OpInputGroupAddon>
+                        <OpInputGroupAddon><OpCheckbox @bind-Value="_checked1"/></OpInputGroupAddon>
                         <OpInputText Placeholder="Usuário"/>
                     </OpInputGroup>
                     <OpInputGroup>
-                        <OpInputGroupAddon><OpCheckbox @bind-Checked="_checked2"/></OpInputGroupAddon>
+                        <OpInputGroupAddon><OpCheckbox @bind-Value="_checked2"/></OpInputGroupAddon>
                         <OpInputText Placeholder="Site"/>
                         <OpInputGroupAddon><OpRadioButton TValue="string" Name="rb2" Value="@("rb2")" @bind-ModelValue="_category"/></OpInputGroupAddon>
                     </OpInputGroup>
@@ -270,7 +270,7 @@
         </OpInputGroup>
 
         <OpInputGroup>
-            <OpInputGroupAddon><OpCheckbox @bind-Checked="_checked1" /></OpInputGroupAddon>
+            <OpInputGroupAddon><OpCheckbox @bind-Value="_checked1" /></OpInputGroupAddon>
             <OpInputText Placeholder="Usuário" />
         </OpInputGroup>
         """;

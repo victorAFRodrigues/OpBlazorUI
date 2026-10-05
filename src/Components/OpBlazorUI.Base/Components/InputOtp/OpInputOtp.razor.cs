@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.InputOtp;
 
@@ -11,19 +12,14 @@ public sealed class OtpTokenContext
     public required EventCallback<KeyboardEventArgs> OnKeyDown { get; init; }
 }
 
-public partial class OpInputOtp : ComponentBase
+public partial class OpInputOtp : OpInputBase<string>
 {
-    [Parameter] public string? Value { get; set; }
-    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
     [Parameter] public int Length { get; set; } = 4;
     [Parameter] public bool Mask { get; set; }
     [Parameter] public bool IntegerOnly { get; set; }
-    [Parameter] public bool Invalid { get; set; }
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
     [Parameter] public string? InputClass { get; set; }
 
     [Parameter] public EventCallback<string?> OnChange { get; set; }
@@ -32,9 +28,6 @@ public partial class OpInputOtp : ComponentBase
     [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
     [Parameter] public RenderFragment<OtpTokenContext>? Template { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     private char?[] _tokens = [];
     private ElementReference[] _inputs = [];
@@ -64,18 +57,18 @@ public partial class OpInputOtp : ComponentBase
         }
     }
 
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-inputotp p-component",
         StyleClass);
 
     // Cada input é um pInputText com size, variant e invalid (inputotp.ts).
-    private string InputClassFor(int index) => BuildClass(
+    private string InputClassFor(int index) => OpCss.BuildClass(
         "p-inputotp-input p-inputtext p-component",
         TokenAt(index) is not null ? "p-filled" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         Size == "small" ? "p-inputtext-sm" : null,
         Size == "large" ? "p-inputtext-lg" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         InputClass);
 
     private void FillTokens(string? value)
@@ -91,8 +84,7 @@ public partial class OpInputOtp : ComponentBase
     {
         var joined = string.Concat(_tokens.Where(c => c.HasValue).Select(c => c!.Value));
         _lastJoined = joined;
-        Value = joined;
-        await ValueChanged.InvokeAsync(joined);
+        CurrentValue = joined;
         await OnChange.InvokeAsync(joined);
     }
 
@@ -149,7 +141,4 @@ public partial class OpInputOtp : ComponentBase
 
         await OnKeyDown.InvokeAsync(e);
     }
-
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

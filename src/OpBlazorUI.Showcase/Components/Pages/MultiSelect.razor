@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.MultiSelect
+@using System.ComponentModel.DataAnnotations
 
 <DocComponent Title="MultiSelect"
               Description="O MultiSelect é usado para selecionar vários itens de uma coleção.">
@@ -48,6 +49,24 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+        <DocSection Label="Validação">
+            <Description>
+                O MultiSelect herda de <code>InputBase&lt;IReadOnlyList&lt;TValue&gt;&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpMultiSelect TValue="string" @bind-Value="_form.Selection" Options="Cities" Placeholder="Selecione as Cidades" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _form.Selection"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Selecionadas: @(_form.Selection is null ? "—" : string.Join(", ", _form.Selection))</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
         </DocSection>
     </Features>
 
@@ -206,5 +225,25 @@
     private const string FilledCode = """
         <OpMultiSelect TValue="string" @bind-Value="_sel" Options="Cities" Variant="filled" Placeholder="Preenchido" />
         <OpMultiSelect TValue="string" Options="Cities" Disabled="true" Placeholder="Desabilitado" />
+        """;
+
+    private bool _submitted;
+    private MultiFormModel _form = new();
+
+    private sealed class MultiFormModel
+    {
+        [Required(ErrorMessage = "Escolha ao menos uma cidade.")]
+        public IReadOnlyList<string>? Selection { get; set; }
+    }
+
+    private void OnSubmit() => _submitted = true;
+
+    private const string ValidationCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpMultiSelect TValue="string" @bind-Value="_form.Selection" Options="Cities" Placeholder="Selecione as Cidades" />
+            <ValidationMessage For="() => _form.Selection" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
         """;
 }
