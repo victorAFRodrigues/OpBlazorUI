@@ -5,5 +5,7 @@
     <Folder Name="/src/Components/">
         <Project Path="src\Components\OpBlazorUI.Base\OpBlazorUI.Base.csproj" />
     </Folder>
-    <Folder Name="/tests/" />
+    <Folder Name="/tests/">
+        <Project Path="tests/OpBlazorUI.Playwright/OpBlazorUI.Playwright.csproj" />
+    </Folder>
 </Solution>
