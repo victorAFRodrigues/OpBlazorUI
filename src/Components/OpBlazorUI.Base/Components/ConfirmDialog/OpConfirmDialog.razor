@@ -1,0 +1,126 @@
+@namespace OpBlazorUI.Base.Components.ConfirmDialog
+@using OpBlazorUI.Base.Components.Common
+@using OpBlazorUI.Base.Components.Overlay
+@inherits OpModalBase
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.ConfirmDialog.Models
+
+@if (_visible)
+{
+    <div class="@MaskClass" style="@MaskInlineStyle" @onclick="OnMaskClick" @onkeydown="OnKeydown">
+        @if (AutoZIndex)
+        {
+            <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex" />
+        }
+
+        <div class="@RootClass"
+             @ref="_root"
+             style="@RootInlineStyle"
+             role="alertdialog"
+             aria-modal="true"
+             aria-labelledby="@_headerId"
+             aria-describedby="@MessageDescribedBy"
+             tabindex="-1"
+             @attributes="AdditionalAttributes"
+             @onclick:stopPropagation="true">
+
+            @if (HeadlessTemplate != null && CurrentOptions != null)
+            {
+                @HeadlessTemplate(new ConfirmHeadlessContext
+                {
+                    Options = CurrentOptions,
+                    OnAccept = OnAcceptClick,
+                    OnReject = OnRejectClick
+                })
+            }
+            else
+            {
+                <div class="p-dialog-header">
+                    @if (HeaderTemplate != null)
+                    {
+                        @HeaderTemplate
+                    }
+                    else if (!string.IsNullOrEmpty(CurrentOptions?.Header) || !string.IsNullOrEmpty(Header))
+                    {
+                        <span class="p-dialog-title" id="@_headerId">@(CurrentOptions?.Header ?? Header)</span>
+                    }
+
+                    <div class="p-dialog-header-actions">
+                        @if (Closable)
+                        {
+                            <button type="button"
+                                    class="p-dialog-header-icon p-dialog-close-button"
+                                    data-pc-focus="close"
+                                    aria-label="@(CurrentOptions?.CloseAriaLabel ?? CloseAriaLabel)"
+                                    @onclick="OnCloseClick">
+                                <span class="@(CurrentOptions?.CloseIcon ?? CloseIcon)" aria-hidden="true"></span>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @* Ícone e mensagem são filhos diretos de .p-dialog-content: o tema aplica
+                   display: flex, align-items: center e o gap neles (p-confirmdialog-content-gap). *@
+                <div class="p-dialog-content">
+                    @if (IconTemplate != null)
+                    {
+                        @IconTemplate
+                    }
+                    else if (MessageTemplate == null && !string.IsNullOrEmpty(IconValue))
+                    {
+                        <i class="@IconClass" aria-hidden="true"></i>
+                    }
+
+                    @if (MessageTemplate != null && CurrentOptions != null)
+                    {
+                        @MessageTemplate(new ConfirmMessageContext { Options = CurrentOptions })
+                    }
+                    else
+                    {
+                        <span class="p-confirmdialog-message" id="@_messageId">@MessageValue</span>
+                    }
+                </div>
+
+                <div class="p-dialog-footer">
+                    @if (FooterTemplate != null)
+                    {
+                        @FooterTemplate
+                    }
+                    else
+                    {
+                        @if (CurrentOptions?.RejectVisible ?? RejectVisible)
+                        {
+                            <OpButton Label="@(CurrentOptions?.RejectLabel ?? RejectLabel)"
+                                      data-pc-focus="reject"
+                                      Icon="@(CurrentOptions?.RejectIcon ?? RejectIcon)"
+                                      StyleClass="@RejectButtonClass"
+                                      Severity="@GetSeverity(CurrentOptions?.RejectButtonProps)"
+                                      Outlined="@GetOutlined(CurrentOptions?.RejectButtonProps)"
+                                      Text="@GetText(CurrentOptions?.RejectButtonProps)"
+                                      Raised="@GetRaised(CurrentOptions?.RejectButtonProps)"
+                                      Rounded="@GetRounded(CurrentOptions?.RejectButtonProps)"
+                                      Variant="@GetVariant(CurrentOptions?.RejectButtonProps)"
+                                      AriaLabel="@(CurrentOptions?.RejectAriaLabel ?? RejectAriaLabel)"
+                                      @onclick="OnRejectClick" />
+                        }
+                        @if (CurrentOptions?.AcceptVisible ?? AcceptVisible)
+                        {
+                            <OpButton Label="@(CurrentOptions?.AcceptLabel ?? AcceptLabel)"
+                                      data-pc-focus="accept"
+                                      Icon="@(CurrentOptions?.AcceptIcon ?? AcceptIcon)"
+                                      StyleClass="@AcceptButtonClass"
+                                      Severity="@GetSeverity(CurrentOptions?.AcceptButtonProps)"
+                                      Outlined="@GetOutlined(CurrentOptions?.AcceptButtonProps)"
+                                      Text="@GetText(CurrentOptions?.AcceptButtonProps)"
+                                      Raised="@GetRaised(CurrentOptions?.AcceptButtonProps)"
+                                      Rounded="@GetRounded(CurrentOptions?.AcceptButtonProps)"
+                                      Variant="@GetVariant(CurrentOptions?.AcceptButtonProps)"
+                                      AriaLabel="@(CurrentOptions?.AcceptAriaLabel ?? AcceptAriaLabel)"
+                                      @onclick="OnAcceptClick" />
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}

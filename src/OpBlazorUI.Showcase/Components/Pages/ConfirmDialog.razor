@@ -1,0 +1,372 @@
+@page "/confirmdialog"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.ConfirmDialog
+@using OpBlazorUI.Base.Components.ConfirmDialog.Models
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Toast
+@using OpBlazorUI.Base.Services
+@using OpBlazorUI.Base.Models
+
+<DocComponent Title="ConfirmDialog"
+              Description="O ConfirmDialog exibe uma janela de confirmação via serviço, podendo ser compartilhada por múltiplas ações.">
+
+    <Features>
+        <DocSection Label="Importação">
+            <Code><CodeBlock Code="@ConfirmDialogCodeSamples.ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O ConfirmDialog usa role <code>alertdialog</code> com <code>aria-labelledby</code> apontando para o cabeçalho e
+                <code>aria-describedby</code> para a mensagem, mais <code>aria-modal="true"</code>. Ao abrir, o foco vai para o
+                contêiner do diálogo; os botões de aceitar/rejeitar têm <code>aria-label</code> próprio
+                (<code>AcceptAriaLabel</code>, <code>RejectAriaLabel</code> e <code>CloseAriaLabel</code>).
+                O <code>FocusTrap</code> e o retorno de foco para o elemento que disparou a ação ainda não foram implementados — veja
+                <a href="#problemas-conhecidos">Problemas Conhecidos</a>.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab / shift+tab", "Navega pelos elementos focáveis na ordem do documento (o foco pode sair do diálogo enquanto o FocusTrap não existir)." },
+                              new[] { "escape", "Fecha o diálogo (quando <code>CloseOnEscape</code> é true)." },
+                              new[] { "enter/espaço", "Executa a ação do botão focado (Aceitar/Rejeitar) e fecha." }
+                          })"/>
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Básico">
+            <Description>
+                O ConfirmDialog é usado via <code>OpConfirmationService</code>: injete o serviço e chame <code>Confirm()</code> com as opções.
+                Coloque um <code><OpConfirmDialog /></code> na página (ou no layout) para renderizar o diálogo.
+                O <code>Key</code> do componente e o <code>Key</code> das opções devem ser iguais — o match é por igualdade estrita,
+                então um componente sem <code>Key</code> (no layout, por exemplo) só atende opções sem <code>Key</code>.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center gap-2">
+                    <OpButton Label="Salvar" Outlined="true" @onclick="ConfirmSave"/>
+                    <OpButton Label="Excluir" Severity="danger" Outlined="true" @onclick="ConfirmDelete"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ConfirmDialogCodeSamples.BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Com Ícone e Botões Customizados">
+            <Description>
+                Personalize ícone, labels e estilo dos botões via <code>AcceptButtonProps</code> e <code>RejectButtonProps</code>.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center gap-2">
+                    <OpButton Label="Confirmar Exclusão" Severity="danger" Outlined="true" @onclick="ConfirmCustom"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ConfirmDialogCodeSamples.CustomCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Posição">
+            <Description>
+                A propriedade <code>Position</code> define onde o dialog aparece: <code>center</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>topleft</code>, <code>topright</code>, <code>bottomleft</code>, <code>bottomright</code>.
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-wrap justify-center gap-2">
+                    <OpButton Label="Centro" @onclick="@(() => ConfirmPosition("center"))" />
+                    <OpButton Label="Topo" @onclick="@(() => ConfirmPosition("top"))" Severity="secondary" Outlined="true" />
+                    <OpButton Label="Base" @onclick="@(() => ConfirmPosition("bottom"))" Severity="secondary" Outlined="true" />
+                    <OpButton Label="Esquerda" @onclick="@(() => ConfirmPosition("left"))" Severity="secondary" Outlined="true" />
+                    <OpButton Label="Direita" @onclick="@(() => ConfirmPosition("right"))" Severity="secondary" Outlined="true" />
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ConfirmDialogCodeSamples.PositionCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Headless">
+            <Description>
+                Modo <code>headless</code> permite customizar toda a UI. Use o template <code>HeadlessTemplate</code> com acesso a <code>OnAccept</code> e <code>OnReject</code>.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar Headless" @onclick="ConfirmHeadless" />
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ConfirmDialogCodeSamples.HeadlessCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template Declarativo">
+            <Description>
+                Defina <code>HeaderTemplate</code>, <code>MessageTemplate</code>, <code>FooterTemplate</code> no componente para conteúdo fixo.
+                Valores passados no <code>Confirm()</code> sobrescrevem os templates.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Confirmar com Template" @onclick="ConfirmTemplate" />
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ConfirmDialogCodeSamples.TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Declarativo (no componente)">
+            <Description>
+                Para casos onde o conteúdo não muda, use templates declarativos no componente e chame <code>ShowDeclarative()</code> via referência do componente.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Ação Declarativa" @onclick="ConfirmDeclarative" />
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ConfirmDialogCodeSamples.DeclarativeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Appearance Badge">
+            <Description>
+                <code>Appearance="Badge"</code> é uma extensão do OpBlazorUI: não existe no OptimusUI/PrimeNG.
+                Mantém o DOM do upstream e troca só o layout — badge circular sobreposto ao topo do card,
+                título e botões centralizados e largura fixa de <code>410px</code>.
+                Cor do badge, do botão primário e contraste vêm dos tokens do tema, então a variante acompanha claro/escuro e os três presets.
+                Defina <code>Header</code> para o título centralizado e use <code>Icon="pi pi-question"</code> para o interrogante dentro do círculo.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar Badge" @onclick="ConfirmBadge" />
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ConfirmDialogCodeSamples.BadgeCode"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="OpConfirmationService">
+            <Description>Serviço injetável para exibir confirmações.</Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Método", "Parâmetros", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Confirm", "ConfirmOptions", "Exibe o dialog com as opções fornecidas." },
+                              new[] { "ConfirmDeclarative", "ConfirmOptions?, string?", "Exibe o dialog usando templates declarativos do componente." },
+                              new[] { "Accept", "—", "Programaticamente aceita a confirmação atual." },
+                              new[] { "Reject", "—", "Programaticamente rejeita a confirmação atual." },
+                              new[] { "Close", "bool? result", "Fecha o dialog sem executar accept/reject." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="ConfirmOptions (Principais)">
+            <Description>Objeto passado para <code>Confirm()</code>.</Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Key", "string?", "null", "Identifica qual <code>OpConfirmDialog</code> exibe a confirmação. O match é por igualdade estrita: um componente sem <code>Key</code> só atende opções sem <code>Key</code>." },
+                              new[] { "Message", "string?", "null", "Mensagem de confirmação, em texto puro (HTML não é interpretado). Se <code>null</code>, usa o <code>Message</code> do componente." },
+                              new[] { "Header", "string?", "null", "Título do diálogo. Se <code>null</code>, usa o <code>Header</code> do componente." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone (ex.: <code>pi pi-info-circle</code>). Se <code>null</code>, usa o <code>Icon</code> do componente." },
+                              new[] { "AcceptLabel", "string?", "\"Sim\"", "Label do botão de aceitar (o componente usa \"Sim\" quando omitido)." },
+                              new[] { "RejectLabel", "string?", "\"Não\"", "Label do botão de rejeitar (o componente usa \"Não\" quando omitido)." },
+                              new[] { "AcceptButtonProps", "Dictionary<string,object>?", "null", "Props extras do botão Aceitar (severity, outlined, text, raised, rounded, variant)." },
+                              new[] { "RejectButtonProps", "Dictionary<string,object>?", "null", "Props extras do botão Rejeitar." },
+                              new[] { "Position", "string?", "\"center\"", "Posição: <code>center</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>topleft</code>, <code>topright</code>, <code>bottomleft</code>, <code>bottomright</code>. Se <code>null</code>, usa o <code>Position</code> do componente." },
+                              new[] { "Appearance", "string?", "null", "<code>\"Badge\"</code> aplica o layout com badge circular sobreposto ao topo, título e botões centralizados e largura de 410px. Extensão do OpBlazorUI (não existe no upstream). Se <code>null</code>, usa o <code>Appearance</code> do componente." },
+                              new[] { "AcceptAriaLabel", "string?", "null", "Nome acessível do botão Aceitar. Por padrão vazio: o nome acessível é o próprio <code>AcceptLabel</code> visível." },
+                              new[] { "RejectAriaLabel", "string?", "null", "Nome acessível do botão Rejeitar. Por padrão vazio: o nome acessível é o próprio <code>RejectLabel</code> visível." },
+                              new[] { "Modal", "bool", "true", "Exibe máscara modal." },
+                              new[] { "CloseOnEscape", "bool", "true", "Fecha com tecla Escape." },
+                              new[] { "DismissableMask", "bool", "false", "Fecha clicando na máscara." },
+                              new[] { "DefaultFocus", "string?", "\"accept\"", "Foco inicial: <code>accept</code>, <code>reject</code>, <code>close</code>, <code>none</code>. Com <code>none</code> nada é focado inicialmente; o foco entra pelo <code>Tab</code>." },
+                              new[] { "Accept", "Action?", "null", "Callback ao aceitar." },
+                              new[] { "Reject", "Action?", "null", "Callback ao rejeitar." },
+                              new[] { "OnClose", "Action<bool>?", "null", "Callback ao fechar (true=accept, false=reject)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Contexto", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "HeaderTemplate", "—", "Cabeçalho customizado." },
+                              new[] { "MessageTemplate", "ConfirmMessageContext", "Customiza a área da mensagem/ícone." },
+                              new[] { "FooterTemplate", "—", "Rodapé customizado (botões)." },
+                              new[] { "IconTemplate", "—", "Ícone customizado." },
+                              new[] { "HeadlessTemplate", "ConfirmHeadlessContext", "Substitui toda a UI (acesso a OnAccept/OnReject)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnHide", "EventCallback<ConfirmEvent>", "Disparado ao fechar; <code>ConfirmEvent.Accepted</code> indica se aceitou." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas">
+            <ChildContent>
+                <DocTokens Component="confirmdialog"/>
+                <div class="doc-section-description">
+                    <p>A variante <code>Appearance="Badge"</code> usa <code>--p-primary-color</code> (fundo do badge),
+                    <code>--p-primary-contrast-color</code> (glifo e texto do botão primário) e <code>--p-text-muted-color</code> (mensagem),
+                    além dos tokens padrão de Dialog. Por isso ela acompanha o tema e o modo claro/escuro sem CSS extra por preset.</p>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>MaskStyleClass</code>, templates e <code>AcceptButtonProps</code>/<code>RejectButtonProps</code> para customização.</p></div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li><code>Target</code> é aceito em <code>ConfirmOptions</code>, mas não é usado: não há <code>aria-expanded</code>/<code>aria-controls</code> no trigger nem reposicionamento em relação a ele.</li>
+                        <li>A mensagem é renderizada como texto puro: HTML (como o <code>innerHTML</code> do upstream) não é interpretado.</li>
+                        <li>Os <code>ariaLabel</code> dos botões vêm de <code>acceptButtonProps</code>/<code>rejectButtonProps</code> e dos parâmetros <code>AcceptAriaLabel</code>/<code>RejectAriaLabel</code>, ambos vazios por padrão: sem <code>aria-label</code>, o nome acessível é o próprio label visível.</li>
+                        <li>A animação de saída é instantânea (sem <code>p-dialog-leave-active</code>).</li>
+                        <li>Não há suporte a <code>draggable</code> e <code>resizable</code> (herdado do Dialog).</li>
+                        <li>O serviço guarda uma confirmação por vez: uma segunda chamada antes de fechar substitui a anterior. Use <code>Key</code> + instâncias separadas para diálogos independentes.</li>
+                    </ul>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+<OpToast />
+
+<OpConfirmDialog Key="basic" />
+<OpConfirmDialog Key="custom" />
+<OpConfirmDialog Key="badge" />
+<OpConfirmDialog Key="position" Position="@_position" />
+<OpConfirmDialog Key="headless">
+    <HeadlessTemplate Context="ctx">
+        @if (ctx.Options != null)
+        {
+            <div class="flex flex-col items-center p-8 bg-surface-0 dark:bg-surface-900 rounded-xl">
+                <div class="rounded-full bg-primary text-primary-contrast inline-flex justify-center items-center h-24 w-24 -mt-20">
+                    <i class="pi pi-question !text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-6">@ctx.Options.Header</span>
+                <p class="mb-0">@ctx.Options.Message</p>
+                <div class="flex items-center gap-2 mt-6">
+                    <OpButton Label="Confirmar" @onclick="ctx.OnAccept" StyleClass="w-32" Severity="danger" />
+                    <OpButton Label="Cancelar" @onclick="ctx.OnReject" StyleClass="w-32" Outlined="true" Severity="secondary" />
+                </div>
+            </div>
+        }
+    </HeadlessTemplate>
+</OpConfirmDialog>
+<OpConfirmDialog Key="template">
+    <MessageTemplate Context="msg">
+        @if (msg.Options != null)
+        {
+            <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+                <i class="@msg.Options.Icon !text-6xl text-primary-500"></i>
+                <p>@msg.Options.Message</p>
+            </div>
+        }
+    </MessageTemplate>
+</OpConfirmDialog>
+<OpConfirmDialog @ref="_confirmDialog" Key="declarative" Header="Confirmação" Message="Tem certeza?" Icon="pi pi-exclamation-triangle"
+                 AcceptLabel="Sim" RejectLabel="Não" AcceptButtonProps="@_acceptProps"
+                 RejectButtonProps="@_rejectProps" />
+
+@code {
+    [Inject] private OpConfirmationService ConfirmationService { get; set; } = default!;
+    [Inject] private OpMessageService MessageService { get; set; } = default!;
+    
+    private string _position = "center";
+    private readonly Dictionary<string, object> _acceptProps = new() { ["severity"] = "success" };
+    private readonly Dictionary<string, object> _rejectProps = new() { ["severity"] = "secondary", ["outlined"] = true };
+    private OpConfirmDialog? _confirmDialog;
+    
+    private void ConfirmSave() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "basic",
+        Header = "Salvar Alterações",
+        Message = "Deseja salvar as alterações?",
+        Icon = "pi pi-save",
+        Accept = () => MessageService.Add(new OpToastMessage { Severity = "success", Summary = "Sucesso", Detail = "Salvo com sucesso" }),
+        Reject = () => MessageService.Add(new OpToastMessage { Severity = "info", Summary = "Cancelado", Detail = "Operação cancelada" })
+    });
+    
+    private void ConfirmDelete() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "basic",
+        Header = "Zona de Perigo",
+        Message = "Deseja excluir este registro?",
+        Icon = "pi pi-exclamation-triangle",
+        AcceptLabel = "Excluir",
+        RejectLabel = "Cancelar",
+        AcceptButtonProps = new() { ["severity"] = "danger" },
+        RejectButtonProps = new() { ["severity"] = "secondary", ["outlined"] = true },
+        Accept = () => MessageService.Add(new OpToastMessage { Severity = "info", Summary = "Confirmado", Detail = "Registro excluído" }),
+        Reject = () => MessageService.Add(new OpToastMessage { Severity = "error", Summary = "Rejeitado", Detail = "Você rejeitou" })
+    });
+    
+    private void ConfirmCustom() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "custom",
+        Header = "Confirmação Personalizada",
+        Message = "Esta ação não pode ser desfeita.",
+        Icon = "pi pi-info-circle",
+        AcceptLabel = "Confirmar",
+        RejectLabel = "Voltar",
+        AcceptButtonProps = new() { ["severity"] = "danger", ["outlined"] = true },
+        RejectButtonProps = new() { ["severity"] = "secondary", ["text"] = true },
+        Accept = () => MessageService.Add(new OpToastMessage { Severity = "success", Summary = "OK", Detail = "Ação confirmada" })
+    });
+    
+    private void ConfirmPosition(string position)
+    {
+        _position = position;
+        ConfirmationService.Confirm(new ConfirmOptions
+        {
+            Key = "position",
+            Header = $"Posição: {position}",
+            Message = $"O dialog abre na posição {position}.",
+            Position = position,
+            Accept = () => MessageService.Add(new OpToastMessage { Severity = "success", Summary = "OK", Detail = $"Posição {position} confirmada" })
+        });
+    }
+    
+    private void ConfirmHeadless() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "headless",
+        Header = "Headless Mode",
+        Message = "Interface totalmente customizada via template.",
+        AcceptLabel = "Salvar",
+        RejectLabel = "Cancelar"
+    });
+    
+    private void ConfirmTemplate() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "template",
+        Header = "Com Template",
+        Message = "Mensagem sobrescrita pelo template!",
+        Icon = "pi pi-check-circle",
+        Accept = () => MessageService.Add(new OpToastMessage { Severity = "success", Summary = "Template", Detail = "Template funcionando" })
+    });
+    
+    private void ConfirmBadge() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "badge",
+        Appearance = "Badge",
+        Header = "Tem certeza?",
+        Message = "Confirme para prosseguir.",
+        Icon = "pi pi-question",
+        AcceptLabel = "Salvar",
+        RejectLabel = "Cancelar",
+        Accept = () => MessageService.Add(new OpToastMessage { Severity = "success", Summary = "OK", Detail = "Ação confirmada" }),
+        Reject = () => MessageService.Add(new OpToastMessage { Severity = "info", Summary = "Cancelado", Detail = "Operação cancelada" })
+    });
+
+    private void ConfirmDeclarative() => _confirmDialog?.ShowDeclarative();
+}
