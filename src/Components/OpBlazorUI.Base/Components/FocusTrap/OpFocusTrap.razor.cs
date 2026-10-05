@@ -33,7 +33,7 @@ public partial class OpFocusTrap : ComponentBase, IAsyncDisposable
             var module = await GetModuleAsync();
             if (module is not null)
             {
-                await module.InvokeVoidAsync("focusTrapInit", _root);
+                await module.InvokeVoidAsync("focusTrapInit", _root, null, false);
             }
         }
     }

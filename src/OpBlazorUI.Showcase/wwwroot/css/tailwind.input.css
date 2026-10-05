@@ -14,7 +14,11 @@
  *   import optimusUiTailwindcss from '@openng/optimus-ui-tailwindcss';
  *   export default {
  *       content: [
- *           '/CAMINHO/OpBlazorUI/src/OpBlazorUI.Showcase/Components/**/*.razor',
+ *           // {**} equivale a ** no fast-glob. Não escreva a forma literal com
+ *           // dois asteriscos entre barras nesta linha: a sequência barra +
+ *           // asterisco encerra este comentário e o PostCSS falha ao ler o
+ *           // arquivo com "Unclosed string".
+ *           '/CAMINHO/OpBlazorUI/src/OpBlazorUI.Showcase/Components/{**}/*.razor',
  *           '/CAMINHO/OpBlazorUI/src/OpBlazorUI.Showcase/wwwroot/index.html'
  *       ],
  *       darkMode: ['selector', '[class="app-dark"]'],

@@ -7,7 +7,7 @@ public static class OpServiceCollectionExtensions
 {
     /// <summary>
     /// Registra os serviços do OpBlazorUI. O tema inicial pode ser configurado:
-    /// <code>builder.Services.AddOpBlazorUI(o =&gt; { o.Preset = "lara"; o.Primary = "blue"; });</code>
+    /// <code>builder.Services.AddOpBlazorUI(o => { o.Preset = "lara"; o.Primary = "blue"; });</code>
     /// </summary>
     public static IServiceCollection AddOpBlazorUI(this IServiceCollection services, Action<OpThemeOptions>? configureTheme = null)
     {
@@ -16,6 +16,7 @@ public static class OpServiceCollectionExtensions
         services.AddSingleton(options);
         services.AddScoped<OpThemeService>();
         services.AddScoped<OpMessageService>();
+        services.AddScoped<OpConfirmationService>();
         return services;
     }
 }
