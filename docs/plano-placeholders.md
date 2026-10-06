@@ -6,6 +6,24 @@
 
 ---
 
+## Status geral
+
+- **Fase B (placeholders):** 3 de 6 lotes concluídos — **29 de 46 páginas** criadas
+  (41 componentes + 5 utilitários).
+- **Fase A (melhorias):** não iniciada.
+- **Branch:** `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`). Push/PR pendentes.
+
+| Lote | Páginas | Commit |
+|------|---------|--------|
+| B1 — P0 Formulário | 7 | `03e5a93` |
+| B2 — P0 Navegação | 13 | `5a2bee0` |
+| B3 — P1 Dados/feedback | 9 | `8ead184` |
+| B4 — P2 Layout/mídia | 8 | pendente |
+| B5 — P3 Baixa | 4 | pendente |
+| B6 — Utilitários | 5 | pendente |
+
+---
+
 ## 1. Estratégia
 
 Duas frentes:
@@ -118,7 +136,7 @@ Ordem de execução pelo ranking (§3):
   `/colorpicker`, `/fileupload`; item "Upload" renomeado para "FileUpload".
 - Verificação: build 0 erros; as 7 rotas renderizam no Showcase sem UI de erro do Blazor.
 - Git: branch `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`); commit
-  `docs(OpBlazorUI.Showcase): adicionar placeholders do P0 Formulário`.
+  `docs(OpBlazorUI.Showcase): adicionar placeholders do P0 Formulário` (`03e5a93`).
 
 ### B2 — P0 Navegação ✅
 
@@ -131,6 +149,7 @@ Ordem de execução pelo ranking (§3):
   `/contextmenu`, `/menubar`, `/tieredmenu`, `/panelmenu`, `/megamenu`, `/stepper`, `/steps`.
 - Verificação: build 0 erros; `Tabs`, `TabMenu`, `PanelMenu` e `Steps` renderizam no Showcase sem
   UI de erro do Blazor.
+- Git: commit `docs(OpBlazorUI.Showcase): adicionar placeholders do P0 Navegação` (`5a2bee0`).
 
 ### B3 — P1 Dados/feedback ✅
 
@@ -143,3 +162,4 @@ Ordem de execução pelo ranking (§3):
   `/confirmpopup`, `/metergroup`, `/inlinemessage`.
 - Verificação: build 0 erros; `Tree`, `DataView` e `InlineMessage` renderizam no Showcase sem UI de
   erro do Blazor.
+- Git: commit `docs(OpBlazorUI.Showcase): adicionar placeholders do P1 (Dados/feedback)` (`8ead184`).
