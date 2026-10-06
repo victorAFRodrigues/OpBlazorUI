@@ -1,0 +1,770 @@
+@page "/chart"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Chart - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Chart"
+              Description="Gráficos baseados no Chart.js. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Chart.js" Id="chartjs">
+            <Description><p>Para começar, primeiro instale o pacote charts.js com o npm e depois inclua-o no seu projeto. Um exemplo com a CLI seria;</p></Description>
+            <Code><CodeBlock Code="@ChartjsCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Um gráfico é configurado com 3 propriedades: <i>type</i>, <i>data</i> e <i>options</i>. O tipo do gráfico é definido pela propriedade <i>type</i>, que aceita <i>pie</i>, <i>doughnut</i>, <i>line</i>, <i>bar</i>, <i>radar</i> e <i>polarArea</i> como valor. O <i>data</i> define os conjuntos de dados representados no gráfico e as <i>options</i> fornecem inúmeras opções de personalização para customizar a apresentação.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Pizza" Id="pie">
+            <Description><p>Um gráfico de pizza é uma representação estatística circular dividida em fatias para ilustrar proporção numérica.</p></Description>
+            <Code><CodeBlock Code="@PieCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Rosca" Id="doughnut">
+            <Description><p>Um gráfico de rosca é uma variante do gráfico de pizza, com o centro vazio, permitindo incluir informações adicionais sobre o conjunto de dados como um todo.</p></Description>
+            <Code><CodeBlock Code="@DoughnutCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Barra Vertical" Id="verticalbar">
+            <Description><p>Um gráfico de barras é um gráfico que apresenta dados agrupados em barras retangulares com comprimentos proporcionais aos valores que representam.</p></Description>
+            <Code><CodeBlock Code="@VerticalBarCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Barra Horizontal" Id="horizontalbar">
+            <Description><p>Um gráfico de barras é renderizado horizontalmente quando a opção <i>indexAxis</i> é definida como <i>y</i>.</p></Description>
+            <Code><CodeBlock Code="@HorizontalBarCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Barra Empilhada" Id="stackedbar">
+            <Description><p>As barras podem ser empilhadas umas sobre as outras quando a opção <i>stacked</i> de uma escala está habilitada.</p></Description>
+            <Code><CodeBlock Code="@StackedBarCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Linha" Id="line">
+            <Description><p>Um gráfico de linhas é um tipo de gráfico que exibe informações como uma série de pontos de dados chamados 'marcadores', conectados por segmentos de reta.</p></Description>
+            <Code><CodeBlock Code="@LineCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Múltiplos Eixos" Id="multiaxis">
+            <Description><p>Múltiplos eixos podem ser adicionados usando a opção <i>scales</i>.</p></Description>
+            <Code><CodeBlock Code="@MultiAxisCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Estilos de Linha" Id="linestyles">
+            <Description><p>Vários estilos de uma série de linha podem ser personalizados para exibir customizações como um gráfico de área.</p></Description>
+            <Code><CodeBlock Code="@LineStyleCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Área Polar" Id="polararea">
+            <Description><p>Gráficos de área polar são semelhantes aos gráficos de pizza, mas cada segmento tem o mesmo ângulo — o raio do segmento varia de acordo com o valor.</p></Description>
+            <Code><CodeBlock Code="@PolarAreaCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Radar" Id="Radar">
+            <Description><p>Um gráfico de radar é um método gráfico de exibir dados multivariados na forma de um gráfico bidimensional de três ou mais variáveis quantitativas representadas em eixos que partem do mesmo ponto.</p></Description>
+            <Code><CodeBlock Code="@RadarCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Combo" Id="combo">
+            <Description><p>Diferentes tipos de gráfico podem ser combinados no mesmo gráfico usando a opção <i>type</i> de um conjunto de dados.</p></Description>
+            <Code><CodeBlock Code="@ComboCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>Os componentes Chart usam internamente o elemento <i>canvas</i>; consulte o guia de <a href="https://www.chartjs.org/docs/latest/general/accessibility.html">acessibilidade do Chart.js</a> para mais informações.</p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode" Language="html"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { ChartModule } from 'primeng/chart';
+        """;
+
+    private const string ChartjsCode = """
+        npm install chart.js --save
+        """;
+
+    private const string BasicCode = """
+        <div class="card">
+            <p-chart type="bar" [data]="basicData" [options]="basicOptions" />
+        </div>
+
+        basicData = {
+            labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+            datasets: [
+                {
+                    label: 'Sales',
+                    data: [540, 325, 702, 620],
+                    backgroundColor: ['rgba(249, 115, 22, 0.2)', 'rgba(6, 182, 212, 0.2)', 'rgb(107, 114, 128, 0.2)', 'rgba(139, 92, 246, 0.2)'],
+                    borderColor: ['rgb(249, 115, 22)', 'rgb(6, 182, 212)', 'rgb(107, 114, 128)', 'rgb(139, 92, 246)'],
+                    borderWidth: 1
+                }
+            ]
+        };
+
+        basicOptions = {
+            maintainAspectRatio: false,
+            aspectRatio: 0.8,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string PieCode = """
+        <div class="card flex justify-center">
+            <p-chart type="pie" [data]="data" [options]="options" class="w-full md:w-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['A', 'B', 'C'],
+            datasets: [
+                {
+                    data: [540, 325, 702],
+                    backgroundColor: [documentStyle.getPropertyValue('--p-cyan-500'), documentStyle.getPropertyValue('--p-orange-500'), documentStyle.getPropertyValue('--p-gray-500')],
+                    hoverBackgroundColor: [documentStyle.getPropertyValue('--p-cyan-400'), documentStyle.getPropertyValue('--p-orange-400'), documentStyle.getPropertyValue('--p-gray-400')]
+                }
+            ]
+        };
+
+        options = {
+            plugins: {
+                legend: {
+                    labels: {
+                        usePointStyle: true,
+                        color: textColor
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string DoughnutCode = """
+        <div class="card flex justify-center">
+            <p-chart type="doughnut" [data]="data" [options]="options" class="w-full md:w-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['A', 'B', 'C'],
+            datasets: [
+                {
+                    data: [300, 50, 100],
+                    backgroundColor: [documentStyle.getPropertyValue('--p-cyan-500'), documentStyle.getPropertyValue('--p-orange-500'), documentStyle.getPropertyValue('--p-gray-500')],
+                    hoverBackgroundColor: [documentStyle.getPropertyValue('--p-cyan-400'), documentStyle.getPropertyValue('--p-orange-400'), documentStyle.getPropertyValue('--p-gray-400')]
+                }
+            ]
+        };
+
+        options = {
+            cutout: '60%',
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string VerticalBarCode = """
+        <div class="card">
+            <p-chart type="bar" [data]="data" [options]="options" class="h-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    label: 'My First dataset',
+                    backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                    label: 'My Second dataset',
+                    backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+            ]
+        };
+
+        options = {
+            maintainAspectRatio: false,
+            aspectRatio: 0.8,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary,
+                        font: {
+                            weight: 500
+                        }
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string HorizontalBarCode = """
+        <div class="card">
+            <p-chart type="bar" [data]="data" [options]="options" class="h-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    label: 'My First dataset',
+                    backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                    label: 'My Second dataset',
+                    backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+            ]
+        };
+
+        options = {
+            indexAxis: 'y',
+            maintainAspectRatio: false,
+            aspectRatio: 0.8,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary,
+                        font: {
+                            weight: 500
+                        }
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string StackedBarCode = """
+        <div class="card">
+            <p-chart type="bar" [data]="data" [options]="options" class="h-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Dataset 1',
+                    backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                    data: [50, 25, 12, 48, 90, 76, 42]
+                },
+                {
+                    type: 'bar',
+                    label: 'Dataset 2',
+                    backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    data: [21, 84, 24, 75, 37, 65, 34]
+                },
+                {
+                    type: 'bar',
+                    label: 'Dataset 3',
+                    backgroundColor: documentStyle.getPropertyValue('--p-orange-500'),
+                    data: [41, 52, 24, 74, 23, 21, 32]
+                }
+            ]
+        };
+
+        options = {
+            maintainAspectRatio: false,
+            aspectRatio: 0.8,
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                },
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    stacked: true,
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string LineCode = """
+        <div class="card">
+            <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    label: 'First Dataset',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    fill: false,
+                    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                    tension: 0.4
+                },
+                {
+                    label: 'Second Dataset',
+                    data: [28, 48, 40, 19, 86, 27, 90],
+                    fill: false,
+                    borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    tension: 0.4
+                }
+            ]
+        };
+
+        options = {
+            maintainAspectRatio: false,
+            aspectRatio: 0.6,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string MultiAxisCode = """
+        <div class="card">
+            <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    label: 'Dataset 1',
+                    fill: false,
+                    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                    yAxisID: 'y',
+                    tension: 0.4,
+                    data: [65, 59, 80, 81, 56, 55, 10]
+                },
+                {
+                    label: 'Dataset 2',
+                    fill: false,
+                    borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    yAxisID: 'y1',
+                    tension: 0.4,
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+            ]
+        };
+
+        options = {
+            stacked: false,
+            maintainAspectRatio: false,
+            aspectRatio: 0.6,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        drawOnChartArea: false,
+                        color: surfaceBorder
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string LineStyleCode = """
+        <div class="card">
+            <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    label: 'First Dataset',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    fill: false,
+                    tension: 0.4,
+                    borderColor: documentStyle.getPropertyValue('--p-cyan-500')
+                },
+                {
+                    label: 'Second Dataset',
+                    data: [28, 48, 40, 19, 86, 27, 90],
+                    fill: false,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    borderColor: documentStyle.getPropertyValue('--p-orange-500')
+                },
+                {
+                    label: 'Third Dataset',
+                    data: [12, 51, 62, 33, 21, 62, 45],
+                    fill: true,
+                    borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    tension: 0.4,
+                    backgroundColor: 'rgba(107, 114, 128, 0.2)'
+                }
+            ]
+        };
+
+        options = {
+            maintainAspectRatio: false,
+            aspectRatio: 0.6,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string PolarAreaCode = """
+        <div class="card flex justify-center">
+            <p-chart type="polarArea" [data]="data" [options]="options" class="w-full md:w-[30rem]" />
+        </div>
+
+        data = {
+            datasets: [
+                {
+                    data: [11, 16, 7, 3, 14],
+                    backgroundColor: [
+                        documentStyle.getPropertyValue('--p-pink-500'),
+                        documentStyle.getPropertyValue('--p-gray-500'),
+                        documentStyle.getPropertyValue('--p-orange-500'),
+                        documentStyle.getPropertyValue('--p-purple-500'),
+                        documentStyle.getPropertyValue('--p-cyan-500')
+                    ],
+                    label: 'My dataset'
+                }
+            ],
+            labels: ['Pink', 'Gray', 'Orange', 'Purple', 'Cyan']
+        };
+
+        options = {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    grid: {
+                        color: surfaceBorder
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string RadarCode = """
+        <div class="card flex justify-center">
+            <p-chart type="radar" [data]="data" [options]="options" class="w-full md:w-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding', 'Cycling', 'Running'],
+            datasets: [
+                {
+                    label: 'My First dataset',
+                    borderColor: documentStyle.getPropertyValue('--p-gray-400'),
+                    pointBackgroundColor: documentStyle.getPropertyValue('--p-gray-400'),
+                    pointBorderColor: documentStyle.getPropertyValue('--p-gray-400'),
+                    pointHoverBackgroundColor: textColor,
+                    pointHoverBorderColor: documentStyle.getPropertyValue('--p-gray-400'),
+                    data: [65, 59, 90, 81, 56, 55, 40]
+                },
+                {
+                    label: 'My Second dataset',
+                    borderColor: documentStyle.getPropertyValue('--p-cyan-400'),
+                    pointBackgroundColor: documentStyle.getPropertyValue('--p-cyan-400'),
+                    pointBorderColor: documentStyle.getPropertyValue('--p-cyan-400'),
+                    pointHoverBackgroundColor: textColor,
+                    pointHoverBorderColor: documentStyle.getPropertyValue('--p-cyan-400'),
+                    data: [28, 48, 40, 19, 96, 27, 100]
+                }
+            ]
+        };
+
+        options = {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    grid: {
+                        color: textColorSecondary
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string ComboCode = """
+        <div class="card">
+            <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />
+        </div>
+
+        data = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    type: 'line',
+                    label: 'Dataset 1',
+                    borderColor: documentStyle.getPropertyValue('--p-orange-500'),
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    data: [50, 25, 12, 48, 56, 76, 42]
+                },
+                {
+                    type: 'bar',
+                    label: 'Dataset 2',
+                    backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+                    data: [21, 84, 24, 75, 37, 65, 34],
+                    borderColor: 'white',
+                    borderWidth: 2
+                },
+                {
+                    type: 'bar',
+                    label: 'Dataset 3',
+                    backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                    data: [41, 52, 24, 74, 23, 21, 32]
+                }
+            ]
+        };
+
+        options = {
+            maintainAspectRatio: false,
+            aspectRatio: 0.6,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                }
+            }
+        };
+        """;
+
+    private const string AccessibilityCode = """
+        <p-chart type="line" [data]="data" ariaLabel="Data" />
+        """;
+}
