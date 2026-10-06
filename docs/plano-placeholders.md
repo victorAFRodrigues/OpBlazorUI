@@ -121,7 +121,7 @@ Ordem de execução pelo ranking (§3):
   Skeleton, Badge, Tag, Chip, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay.
 - **A5 — Médias**: SelectButton, KeyFilter, FloatLabel, IftaLabel, IconField, Rating, Editor,
   InputOtp, InputGroup, InputMask, SpeedDial, Listbox, TreeSelect, CascadeSelect, ConfirmDialog,
-  ToggleButton.
+  ToggleButton. ✅ Concluído.
 
 ---
 
@@ -203,3 +203,19 @@ Ordem de execução pelo ranking (§3):
 
 **Fase B encerrada.** A Fase A começa por A1 — Form básico (InputText, Checkbox, RadioButton,
 ToggleSwitch), aplicando o padrão ouro de `Button.razor`.
+
+### A5 — Médias ✅
+
+- Páginas reescritas (16): `SelectButton.razor`, `KeyFilter.razor`, `FloatLabel.razor`,
+  `IftaLabel.razor`, `IconField.razor`, `Rating.razor`, `Editor.razor`, `InputOtp.razor`,
+  `InputGroup.razor`, `InputMask.razor`, `SpeedDial.razor`, `Listbox.razor`, `TreeSelect.razor`,
+  `CascadeSelect.razor`, `ConfirmDialog.razor`, `ToggleButton.razor`.
+- Seções do `index.ts` upstream na ordem (com subdivisão "Formulários (Template Driven)" /
+  "(Reactive)"), acessibilidade (leitor de tela + tabela de teclado), API do `.razor.cs`, classes
+  CSS, temas e problemas conhecidos reais.
+- `KeyFilter` e `InputMask` não têm componente próprio no port: documentam os parâmetros
+  `KeyFilter`, `Mask`, `SlotChar` e `AutoClear` do `OpInputText` (temas reutilizam `inputtext`).
+- Ajustes técnicos: `DocTheming.cs` ganhou a chave `confirmdialog`; removido o arquivo órfão
+  `ConfirmDialogCodeSamples.cs` (snippets agora são `private const string` no `.razor`); corrigido
+  `Value="@_readonlyText"` no `Editor` (era literal).
+- Verificação: build 0 erros (sem novos avisos); as 16 rotas renderizam no Showcase sem UI de erro.
