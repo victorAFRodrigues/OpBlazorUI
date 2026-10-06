@@ -8,7 +8,7 @@
 
 ## Status geral
 
-- **Fase B (placeholders):** 4 de 6 lotes concluídos — **37 de 46 páginas** criadas
+- **Fase B (placeholders):** 5 de 6 lotes concluídos — **41 de 46 páginas** criadas
   (41 componentes + 5 utilitários).
 - **Fase A (melhorias):** não iniciada.
 - **Branch:** `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`). Push/PR pendentes.
@@ -19,7 +19,7 @@
 | B2 — P0 Navegação | 13 | `5a2bee0` |
 | B3 — P1 Dados/feedback | 9 | `8ead184` |
 | B4 — P2 Layout/mídia | 8 | `c50edbc` |
-| B5 — P3 Baixa | 4 | pendente |
+| B5 — P3 Baixa | 4 | `b7f8780` |
 | B6 — Utilitários | 5 | pendente |
 
 ---
@@ -99,7 +99,7 @@ InlineMessage** — placeholders com seções próprias.
 | B2 — P0 Nav (13) | Tabs, TabMenu, TabView, Accordion, Breadcrumb, Toolbar, ContextMenu, Menubar, TieredMenu, PanelMenu, MegaMenu, Stepper, Steps | ✅ Concluído |
 | B3 — P1 (9) | Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline | ✅ Concluído |
 | B4 — P2 (8) | Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare | ✅ Concluído |
-| B5 — P3 (4) | Knob, Terminal, OrganizationChart, Ripple | ⏳ Pendente |
+| B5 — P3 (4) | Knob, Terminal, OrganizationChart, Ripple | ✅ Concluído |
 | B6 — Utilitários (5) | DynamicDialog, StyleClass, Fluid, Chart.js, AnimateOnScroll | ⏳ Pendente |
 
 Ações transversais por batch: apontar as rotas no `AppMenu.cs` (`ComingSoon = false`) e verificar
@@ -175,3 +175,15 @@ Ordem de execução pelo ranking (§3):
 - Verificação: build 0 erros; `Panel`, `Galleria` e `Image` renderizam no Showcase sem UI de erro do
   Blazor.
 - Git: commit `docs(OpBlazorUI.Showcase): adicionar placeholders do P2 (Layout/mídia)` (`c50edbc`).
+
+### B5 — P3 (componentes menores) ✅
+
+- Páginas criadas: `Knob.razor`, `Terminal.razor`, `OrganizationChart.razor`, `Ripple.razor`.
+- `Ripple` é uma diretiva (seções: import, default, custom, accessibility).
+- Referências baixadas via `gh api` (a API anônima do GitHub estava limitada); `organizationchart`
+  tem um arquivo de seção com nome atípico (`colored.doc.ts`).
+- `AppMenu.cs`: rotas `/knob`, `/terminal`, `/organizationchart`, `/ripple`.
+- Verificação: build 0 erros; `Knob` e `OrganizationChart` renderizam no Showcase sem UI de erro do
+  Blazor.
+- Git: commit `docs(OpBlazorUI.Showcase): adicionar placeholders do P3 (componentes menores)`
+  (`b7f8780`).
