@@ -3,25 +3,39 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Message
 @using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.Icon
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>Message - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Message"
-              Description="O componente Message é usado para exibir mensagens inline.">
+              Description="O Message é usado para exibir mensagens inline.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O componente exige um conteúdo para ser exibido. Sem severidade informada, ele assume a
+                severidade <code>info</code>.
+            </Description>
             <ChildContent>
-                <OpMessage Severity="info">Conteúdo da Mensagem</OpMessage>
+                <div class="flex justify-center">
+                    <OpMessage>Conteúdo da Mensagem</OpMessage>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Severidade">
+        <DocSection Label="Severidade" Id="severity">
+            <Description>
+                A opção <code>Severity</code> especifica o tipo da mensagem.
+            </Description>
             <ChildContent>
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-wrap gap-4 justify-center">
                     <OpMessage Severity="success">Mensagem de Sucesso</OpMessage>
                     <OpMessage Severity="info">Mensagem de Informação</OpMessage>
                     <OpMessage Severity="warn">Mensagem de Aviso</OpMessage>
@@ -33,124 +47,352 @@
             <Code><CodeBlock Code="@SeverityCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Variantes">
+        <DocSection Label="Ícone" Id="icon">
+            <Description>
+                O ícone é definido pela propriedade <code>Icon</code>. Para substituí-lo por conteúdo
+                customizado, use o <code>IconTemplate</code>.
+            </Description>
             <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpMessage Severity="success">Texto (padrão)</OpMessage>
-                    <OpMessage Severity="success" Variant="outlined">Contornada</OpMessage>
-                    <OpMessage Severity="success" Variant="simple">Simples</OpMessage>
+                <div class="flex flex-wrap justify-center items-center gap-4">
+                    <OpMessage Severity="info" Icon="pi pi-send">Mensagem de Informação</OpMessage>
+                    <OpMessage Severity="success">
+                        <IconTemplate>
+                            <OpIcon Name="check" CssClass="p-message-icon"/>
+                        </IconTemplate>
+                        <ChildContent>Como posso ajudar?</ChildContent>
+                    </OpMessage>
                 </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@VariantCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Tamanhos">
-            <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpMessage Size="small" Icon="pi pi-info-circle">Mensagem Pequena</OpMessage>
-                    <OpMessage Icon="pi pi-info-circle">Mensagem Normal</OpMessage>
-                    <OpMessage Size="large" Icon="pi pi-check-circle">Mensagem Grande</OpMessage>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@SizeCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Fechável">
-            <ChildContent>
-                <OpMessage Severity="info" Closable="true">Esta mensagem pode ser fechada</OpMessage>
-            </ChildContent>
-            <Code><CodeBlock Code="@ClosableCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Ícone">
-            <ChildContent>
-                <OpMessage Severity="info" Icon="pi pi-send">Ícone de envio personalizado</OpMessage>
             </ChildContent>
             <Code><CodeBlock Code="@IconCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Duração">
+        <DocSection Label="Outlined" Id="outlined">
+            <Description>
+                Configure <code>Variant="outlined"</code> para mensagens com borda e sem fundo.
+            </Description>
             <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpButton Label="Mostrar Fechamento Automático (3s)" @onclick="() => _showMsg = true" StyleClass="mb-2"/>
-                    @if (_showMsg)
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <OpMessage Severity="success" Variant="outlined">Mensagem de Sucesso</OpMessage>
+                    <OpMessage Severity="info" Variant="outlined">Mensagem de Informação</OpMessage>
+                    <OpMessage Severity="warn" Variant="outlined">Mensagem de Aviso</OpMessage>
+                    <OpMessage Severity="error" Variant="outlined">Mensagem de Erro</OpMessage>
+                    <OpMessage Severity="secondary" Variant="outlined">Mensagem Secundária</OpMessage>
+                    <OpMessage Severity="contrast" Variant="outlined">Mensagem de Contraste</OpMessage>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@OutlinedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Simples" Id="simple">
+            <Description>
+                Configure <code>Variant="simple"</code> para mensagens sem borda e sem fundo.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <OpMessage Severity="success" Variant="simple">Mensagem de Sucesso</OpMessage>
+                    <OpMessage Severity="info" Variant="simple">Mensagem de Informação</OpMessage>
+                    <OpMessage Severity="warn" Variant="simple">Mensagem de Aviso</OpMessage>
+                    <OpMessage Severity="error" Variant="simple">Mensagem de Erro</OpMessage>
+                    <OpMessage Severity="secondary" Variant="simple">Mensagem Secundária</OpMessage>
+                    <OpMessage Severity="contrast" Variant="simple">Mensagem de Contraste</OpMessage>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SimpleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Sizes" Id="sizes">
+            <Description>
+                O Message oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao base.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpMessage Size="small" Icon="pi pi-send">Mensagem Pequena</OpMessage>
+                    <OpMessage Icon="pi pi-user">Mensagem Normal</OpMessage>
+                    <OpMessage Size="large" Icon="pi pi-check">Mensagem Grande</OpMessage>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                Erros de validação de um formulário são exibidos com a severidade <code>error</code>. O
+                <code>OpMessage</code> não é acionado automaticamente pelo <code>EditForm</code>; controle a
+                exibição a partir do resultado da validação (ou use o <code>ValidationSummary</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <EditForm Model="_form" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit" class="flex flex-col gap-4" style="width: 100%; max-width: 24rem;">
+                        <DataAnnotationsValidator/>
+                        @if (_invalid)
+                        {
+                            <OpMessage Severity="error" Icon="pi pi-times-circle">Falha na validação</OpMessage>
+                        }
+                        <div class="flex flex-col gap-1">
+                            <OpInputText @bind-Value="_form.Username" Placeholder="Usuário" StyleClass="w-full"
+                                         Invalid="@(_invalid && string.IsNullOrWhiteSpace(_form.Username))"/>
+                            @if (_invalid && string.IsNullOrWhiteSpace(_form.Username))
+                            {
+                                <OpMessage Severity="error" Variant="simple" Size="small">O usuário é obrigatório</OpMessage>
+                            }
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <OpInputText @bind-Value="_form.Phone" Placeholder="Telefone" StyleClass="w-full"
+                                         Invalid="@(_invalid && string.IsNullOrWhiteSpace(_form.Phone))"/>
+                            @if (_invalid && string.IsNullOrWhiteSpace(_form.Phone))
+                            {
+                                <OpMessage Severity="error" Variant="simple" Size="small">O telefone é obrigatório</OpMessage>
+                            }
+                        </div>
+                        <button type="submit" class="p-button p-component" style="align-self: flex-start;">Enviar</button>
+                        @if (_success)
+                        {
+                            <OpMessage Severity="success">Formulário enviado com sucesso</OpMessage>
+                        }
+                    </EditForm>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Dinâmico" Id="dynamic">
+            <Description>
+                Várias mensagens podem ser exibidas com um bloco <code>@@foreach</code>. No Angular a lista é
+                gerenciada pelo <code>MessageService</code>; o <code>OpMessage</code> é declarativo e não tem
+                serviço próprio (o <code>OpMessageService</code> da biblioteca pertence ao Toast), então a coleção
+                é mantida no próprio componente.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center justify-center gap-4">
+                    <div class="flex gap-2">
+                        <OpButton Label="Mostrar" OnClick="ShowMessages"/>
+                        <OpButton Label="Limpar" Severity="secondary" OnClick="ClearMessages"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        @foreach (var message in _messages)
+                        {
+                            <OpMessage Severity="@message.Severity" Closable="true" OnClose="@(_ => Remove(message))">@message.Content</OpMessage>
+                        }
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Fechável" Id="closable">
+            <Description>
+                Ative <code>Closable</code> para exibir o botão que remove a mensagem. O componente apenas
+                dispara <code>OnClose</code>; cabe a você ocultá-lo.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-start gap-2">
+                    @if (_closableVisible)
                     {
-                        <OpMessage Severity="success" Life="3000" Closable="true" OnClose="@(_ => _showMsg = false)">Desaparece automaticamente em 3 segundos</OpMessage>
+                        <OpMessage Severity="info" Closable="true" OnClose="@(_ => _closableVisible = false)">Mensagem Fechável</OpMessage>
+                    }
+                    else
+                    {
+                        <OpButton Label="Mostrar novamente" Severity="secondary" Outlined="true" OnClick="RestoreClosable"/>
+                    }
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ClosableCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Life" Id="life">
+            <Description>
+                As mensagens podem desaparecer automaticamente definindo <code>Life</code> em milissegundos.
+                Ao fim do tempo, <code>OnClose</code> é disparado.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center justify-center gap-4">
+                    <OpButton Label="Mostrar" Disabled="_lifeVisible" OnClick="ShowLife"/>
+                    @if (_lifeVisible)
+                    {
+                        <OpMessage Severity="success" Life="3000" OnClose="@(_ => _lifeVisible = false)">Mensagem que desaparece automaticamente</OpMessage>
                     }
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@LifeCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Message renderiza um elemento com <code>role="alert"</code>, que já define implicitamente
+                    <code>aria-live="assertive"</code> e <code>aria-atomic="true"</code>. Como qualquer atributo
+                    extra é repassado ao elemento raiz, <code>aria-labelledby</code> e <code>aria-label</code>
+                    também podem ser usados. O botão de fechar é um <code>&lt;button&gt;</code> com
+                    <code>aria-label="Close"</code> fixo — no momento ele não é localizável.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "enter", "Fecha a mensagem." },
+                              new[] { "space", "Fecha a mensagem." }
+                          })"/>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Severity", "string", "info", "Severidade: <code>success</code>, <code>info</code>, <code>warn</code>, <code>error</code>, <code>secondary</code>, <code>contrast</code>." },
-                              new[] { "Variant", "string?", "null", "Variante: <code>text</code> (padrão), <code>outlined</code> ou <code>simple</code>." },
+                              new[] { "Variant", "string?", "null", "Variante: <code>outlined</code> ou <code>simple</code> (base quando nulo)." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
                               new[] { "Closable", "bool", "false", "Exibe o botão de fechar." },
-                              new[] { "Icon", "string?", "null", "Classe do ícone (ex.: <code>pi pi-send</code>)." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone (ex.: <code>pi pi-send</code>). Sem valor, usa o ícone padrão da severidade." },
                               new[] { "CloseIcon", "string", "pi pi-times", "Classe do ícone do botão de fechar." },
-                              new[] { "Life", "int?", "null", "Tempo (ms) para fechar automaticamente." },
-                              new[] { "Style", "string?", "null", "Estilo inline." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Life", "int?", "null", "Tempo (ms) até disparar <code>OnClose</code> automaticamente." },
+                              new[] { "Style", "string?", "null", "Estilo inline do elemento raiz." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
-            <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
-                          Rows="@(new[] {
-                              new[] { "OnClose", "EventCallback&lt;MouseEventArgs&gt;", "Disparado quando a mensagem é fechada (manual ou por <code>Life</code>)." }
-                          })"/>
-            </ChildContent>
-        </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
                 <ApiTable Caption="Templates"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "ChildContent", "RenderFragment?", "Conteúdo da mensagem." },
-                              new[] { "IconTemplate", "RenderFragment?", "Template customizado para o ícone." },
-                              new[] { "CloseIconTemplate", "RenderFragment?", "Template customizado para o ícone de fechar." },
-                              new[] { "ContainerTemplate", "RenderFragment?", "Template customizado do container." }
+                              new[] { "IconTemplate", "RenderFragment?", "Substitui o ícone (quando <code>Icon</code> não é informado)." },
+                              new[] { "CloseIconTemplate", "RenderFragment?", "Substitui o ícone do botão de fechar." },
+                              new[] { "ContainerTemplate", "RenderFragment?", "Substitui o conteúdo interno, no lugar do texto." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnClose", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao fechar (manual ou por <code>Life</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="message"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os
+                tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-message", "Elemento raiz." },
+                              new[] { "p-message-{severity}", "Raiz conforme <code>Severity</code>: <code>info</code>, <code>success</code>, <code>warn</code>, <code>error</code>, <code>secondary</code>, <code>contrast</code>." },
+                              new[] { "p-message-content-wrapper", "Wrapper do conteúdo." },
+                              new[] { "p-message-content", "Container do ícone, do texto e do botão de fechar." },
+                              new[] { "p-message-text", "Texto da mensagem (<code>ChildContent</code>)." },
+                              new[] { "p-message-icon", "Ícone padrão (definido por <code>Icon</code> ou pela severidade)." },
+                              new[] { "p-message-close-button", "Botão de fechar (com <code>Closable</code>)." },
+                              new[] { "p-message-close-icon", "Ícone do botão de fechar." },
+                              new[] { "p-message-outlined / p-message-simple", "Raiz conforme <code>Variant</code>." },
+                              new[] { "p-message-sm / p-message-lg", "Raiz conforme <code>Size</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="message"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
                 <div class="doc-section-description">
-                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Use <code>StyleClass</code>, <code>Style</code>, <code>IconTemplate</code>/<code>CloseIconTemplate</code> e os <code>AdditionalAttributes</code> para customização.</p>
+                    <p>
+                        O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de
+                        estilo, use <code>StyleClass</code>, <code>Style</code>, os templates (<code>IconTemplate</code>,
+                        <code>CloseIconTemplate</code>, <code>ContainerTemplate</code>) e os
+                        <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).
+                    </p>
                 </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há serviço para o <code>OpMessage</code> inline (equivalente ao <code>MessageService</code> do Angular); o <code>OpMessageService</code> da biblioteca pertence ao Toast e mantém <code>OpToastMessage</code>. Por isso o exemplo Dinâmico mantém a coleção no próprio componente.</li>
+                        <li>O <code>OpMessage</code> não se oculta sozinho ao fechar nem ao fim do <code>Life</code>: ele apenas dispara <code>OnClose</code>, e a visibilidade deve ser controlada por quem o consome.</li>
+                        <li>O <code>aria-label</code> do botão de fechar está fixo em <code>Close</code> e não é localizável no momento.</li>
+                        <li>O pass-through (pt) do Angular não foi portado; use <code>StyleClass</code>, <code>Style</code> e os templates.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private bool _showMsg;
+    private bool _closableVisible = true;
+    private bool _lifeVisible;
+    private bool _invalid;
+    private bool _success;
+    private readonly FormModel _form = new();
+    private readonly List<DynamicMessage> _messages = [];
+
+    private record DynamicMessage(string Severity, string Content);
+
+    private sealed class FormModel
+    {
+        [Required(ErrorMessage = "O usuário é obrigatório.")]
+        public string? Username { get; set; }
+
+        [Required(ErrorMessage = "O telefone é obrigatório.")]
+        public string? Phone { get; set; }
+    }
+
+    private void OnValidSubmit()
+    {
+        _invalid = false;
+        _success = true;
+    }
+
+    private void OnInvalidSubmit()
+    {
+        _invalid = true;
+        _success = false;
+    }
+
+    private void ShowMessages()
+    {
+        _messages.Clear();
+        _messages.AddRange(
+        [
+            new DynamicMessage("info", "Mensagem dinâmica de informação"),
+            new DynamicMessage("success", "Mensagem dinâmica de sucesso"),
+            new DynamicMessage("warn", "Mensagem dinâmica de aviso")
+        ]);
+    }
+
+    private void ClearMessages() => _messages.Clear();
+
+    private void Remove(DynamicMessage message) => _messages.Remove(message);
+
+    private void RestoreClosable() => _closableVisible = true;
+
+    private void ShowLife() => _lifeVisible = true;
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Message
@@ -159,7 +401,7 @@
         """;
 
     private const string BasicCode = """
-        <OpMessage Severity="info">Conteúdo da Mensagem</OpMessage>
+        <OpMessage>Conteúdo da Mensagem</OpMessage>
         """;
 
     private const string SeverityCode = """
@@ -171,38 +413,153 @@
         <OpMessage Severity="contrast">Mensagem de Contraste</OpMessage>
         """;
 
-    private const string VariantCode = """
-        <OpMessage Severity="success">Texto (padrão)</OpMessage>
-        <OpMessage Severity="success" Variant="outlined">Contornada</OpMessage>
-        <OpMessage Severity="success" Variant="simple">Simples</OpMessage>
-        """;
-
-    private const string SizeCode = """
-        <OpMessage Size="small" Icon="pi pi-info-circle">Mensagem Pequena</OpMessage>
-        <OpMessage Icon="pi pi-info-circle">Mensagem Normal</OpMessage>
-        <OpMessage Size="large" Icon="pi pi-check-circle">Mensagem Grande</OpMessage>
-        """;
-
-    private const string ClosableCode = """
-        <OpMessage Severity="info" Closable="true">Esta mensagem pode ser fechada</OpMessage>
-        """;
-
     private const string IconCode = """
-        <OpMessage Severity="info" Icon="pi pi-send">Ícone de envio personalizado</OpMessage>
+        <OpMessage Severity="info" Icon="pi pi-send">Mensagem de Informação</OpMessage>
+
+        <OpMessage Severity="success">
+            <IconTemplate>
+                <OpIcon Name="check" CssClass="p-message-icon" />
+            </IconTemplate>
+            Como posso ajudar?
+        </OpMessage>
         """;
 
-    private const string LifeCode = """
-        <OpButton Label="Mostrar" @onclick="() => _show = true" />
+    private const string OutlinedCode = """
+        <OpMessage Severity="success" Variant="outlined">Mensagem de Sucesso</OpMessage>
+        <OpMessage Severity="info" Variant="outlined">Mensagem de Informação</OpMessage>
+        <OpMessage Severity="warn" Variant="outlined">Mensagem de Aviso</OpMessage>
+        <OpMessage Severity="error" Variant="outlined">Mensagem de Erro</OpMessage>
+        <OpMessage Severity="secondary" Variant="outlined">Mensagem Secundária</OpMessage>
+        <OpMessage Severity="contrast" Variant="outlined">Mensagem de Contraste</OpMessage>
+        """;
 
-        @if (_show)
+    private const string SimpleCode = """
+        <OpMessage Severity="success" Variant="simple">Mensagem de Sucesso</OpMessage>
+        <OpMessage Severity="info" Variant="simple">Mensagem de Informação</OpMessage>
+        <OpMessage Severity="warn" Variant="simple">Mensagem de Aviso</OpMessage>
+        <OpMessage Severity="error" Variant="simple">Mensagem de Erro</OpMessage>
+        <OpMessage Severity="secondary" Variant="simple">Mensagem Secundária</OpMessage>
+        <OpMessage Severity="contrast" Variant="simple">Mensagem de Contraste</OpMessage>
+        """;
+
+    private const string SizesCode = """
+        <OpMessage Size="small" Icon="pi pi-send">Mensagem Pequena</OpMessage>
+        <OpMessage Icon="pi pi-user">Mensagem Normal</OpMessage>
+        <OpMessage Size="large" Icon="pi pi-check">Mensagem Grande</OpMessage>
+        """;
+
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit">
+            <DataAnnotationsValidator />
+
+            @if (_invalid)
+            {
+                <OpMessage Severity="error" Icon="pi pi-times-circle">Falha na validação</OpMessage>
+            }
+
+            <OpInputText @bind-Value="_form.Username" Placeholder="Usuário"
+                         Invalid="@(_invalid && string.IsNullOrWhiteSpace(_form.Username))" />
+            @if (_invalid && string.IsNullOrWhiteSpace(_form.Username))
+            {
+                <OpMessage Severity="error" Variant="simple" Size="small">O usuário é obrigatório</OpMessage>
+            }
+
+            <OpInputText @bind-Value="_form.Phone" Placeholder="Telefone"
+                         Invalid="@(_invalid && string.IsNullOrWhiteSpace(_form.Phone))" />
+            @if (_invalid && string.IsNullOrWhiteSpace(_form.Phone))
+            {
+                <OpMessage Severity="error" Variant="simple" Size="small">O telefone é obrigatório</OpMessage>
+            }
+
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private bool _invalid;
+            private readonly FormModel _form = new();
+
+            private sealed class FormModel
+            {
+                [Required(ErrorMessage = "O usuário é obrigatório.")]
+                public string? Username { get; set; }
+
+                [Required(ErrorMessage = "O telefone é obrigatório.")]
+                public string? Phone { get; set; }
+            }
+
+            private void OnValidSubmit() => _invalid = false;
+            private void OnInvalidSubmit() => _invalid = true;
+        }
+        """;
+
+    private const string DynamicCode = """
+        <OpButton Label="Mostrar" OnClick="ShowMessages" />
+        <OpButton Label="Limpar" Severity="secondary" OnClick="ClearMessages" />
+
+        @foreach (var message in _messages)
         {
-            <OpMessage Severity="success" Life="3000" Closable="true" OnClose="@(_ => _show = false)">
-                Desaparece automaticamente em 3 segundos
+            <OpMessage Severity="@message.Severity" Closable="true" OnClose="@(_ => Remove(message))">
+                @message.Content
             </OpMessage>
         }
 
         @code {
-            private bool _show;
+            private readonly List<DynamicMessage> _messages = [];
+
+            private record DynamicMessage(string Severity, string Content);
+
+            private void ShowMessages()
+            {
+                _messages.Clear();
+                _messages.AddRange(
+                [
+                    new DynamicMessage("info", "Mensagem dinâmica de informação"),
+                    new DynamicMessage("success", "Mensagem dinâmica de sucesso"),
+                    new DynamicMessage("warn", "Mensagem dinâmica de aviso")
+                ]);
+            }
+
+            private void ClearMessages() => _messages.Clear();
+
+            private void Remove(DynamicMessage message) => _messages.Remove(message);
         }
+        """;
+
+    private const string ClosableCode = """
+        @if (_closableVisible)
+        {
+            <OpMessage Severity="info" Closable="true" OnClose="@(_ => _closableVisible = false)">
+                Mensagem Fechável
+            </OpMessage>
+        }
+
+        @code {
+            private bool _closableVisible = true;
+        }
+        """;
+
+    private const string LifeCode = """
+        <OpButton Label="Mostrar" Disabled="_lifeVisible" OnClick="ShowLife" />
+
+        @if (_lifeVisible)
+        {
+            <OpMessage Severity="success" Life="3000" OnClose="@(_ => _lifeVisible = false)">
+                Mensagem que desaparece automaticamente
+            </OpMessage>
+        }
+
+        @code {
+            private bool _lifeVisible;
+
+            private void ShowLife() => _lifeVisible = true;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpMessage>Conteúdo da Mensagem</OpMessage>
+
+        <OpMessage Severity="warn" aria-label="Aviso importante">
+            O prazo termina em 24 horas.
+        </OpMessage>
         """;
 }
