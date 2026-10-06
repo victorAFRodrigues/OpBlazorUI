@@ -3,93 +3,154 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.ScrollTop
 
+<PageTitle>ScrollTop - OpBlazorUI</PageTitle>
+
 <DocComponent Title="ScrollTop"
-              Description="O ScrollTop aparece após uma certa posição de scroll e navega rapidamente ao topo da página.">
+              Description="O ScrollTop é um botão que aparece após uma certa posição de rolagem e leva rapidamente ao topo da página.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico (janela)">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                Por padrão o ScrollTop observa a rolagem da janela e exibe o botão quando a posição ultrapassa
+                <code>Threshold</code> (400 px). O botão fica fixado no canto inferior direito e some ao voltar ao topo.
+            </Description>
             <ChildContent>
-                <div class="card flex flex-col items-center">
-                    <p>Role a página para exibir o botão ScrollTop (canto inferior direito).</p>
+                <div class="flex flex-col items-center gap-4">
+                    <p class="m-0">Role a página para exibir o botão ScrollTop no canto inferior direito.</p>
+                    <i class="pi pi-angle-down" style="font-size: 2rem; margin-bottom: 20rem" aria-hidden="true"></i>
                     <OpScrollTop/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Elemento alvo (pai)">
+        <DocSection Label="Elemento Alvo" Id="element">
+            <Description>
+                Com <code>Target="parent"</code> o componente deixa de observar a janela e passa a acompanhar o
+                contêiner rolável que o envolve — um <code>&lt;div&gt;</code> com altura fixa e
+                <code>overflow: auto</code>. O botão é ancorado a esse contêiner (classe <code>p-scrolltop-sticky</code>).
+            </Description>
             <ChildContent>
-                <div class="card flex justify-center">
-                    <div style="width:250px;height:200px;overflow:auto;display:flex;flex-direction:column">
+                <div class="flex justify-center">
+                    <div id="scrolltop-element" style="width: 100%; max-width: 25rem; height: 12rem; overflow: auto; display: flex; flex-direction: column">
                         <p class="m-0">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                            incididunt ut labore et dolore magna aliqua. Vitae et leo duis ut diam. Ultricies mi
-                            quis hendrerit dolor magna eget est lorem. Amet consectetur adipiscing elit ut. Nam
-                            libero justo laoreet sit amet. Pharetra massa massa ultricies mi quis hendrerit dolor
-                            magna. Est ultricies integer quis auctor elit sed vulputate. Consequat ac felis donec
-                            et. Tellus orci ac auctor augue mauris. Semper feugiat nibh sed pulvinar proin gravida
-                            hendrerit lectus a. Tincidunt arcu non sodales neque sodales. Metus aliquam eleifend
-                            mi in nulla posuere sollicitudin aliquam ultrices.
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                            ut labore et dolore magna aliqua. Vitae et leo duis ut diam. Ultricies mi quis hendrerit
+                            dolor magna eget est lorem. Amet consectetur adipiscing elit ut. Nam libero justo laoreet
+                            sit amet. Pharetra massa massa ultricies mi quis hendrerit dolor magna. Est ultricies
+                            integer quis auctor elit sed vulputate. Consequat ac felis donec et. Tellus orci ac auctor
+                            augue mauris. Semper feugiat nibh sed pulvinar proin gravida hendrerit lectus a. Tincidunt
+                            arcu non sodales neque sodales. Metus aliquam eleifend mi in nulla posuere sollicitudin
+                            aliquam ultrices. Sodales ut etiam sit amet nisl purus. Cursus sit amet dictum sit amet.
+                            Tristique senectus et netus et malesuada fames ac turpis egestas. Et tortor consequat id
+                            porta nibh venenatis cras sed.
                         </p>
                         <OpScrollTop Target="parent" Threshold="100" Icon="pi pi-arrow-up"/>
                     </div>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@TargetCode"/></Code>
+            <Code><CodeBlock Code="@ElementCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O ScrollTop renderiza um <code>&lt;button&gt;</code> cujo rótulo acessível vem de
+                    <code>ButtonAriaLabel</code> (equivalente à chave <code>aria.scrollTop</code> da API de locale no
+                    upstream). Como o componente não repassa atributos extras ao botão, defina o rótulo diretamente em
+                    <code>ButtonAriaLabel</code> — especialmente quando o ícone for customizado com
+                    <code>IconTemplate</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "enter", "Rola até o topo." },
+                              new[] { "space", "Rola até o topo." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Target", "string", "window", "Alvo do scroll: <code>window</code> ou <code>parent</code>." },
-                              new[] { "Threshold", "int", "400", "Posição de scroll para exibir o botão." },
-                              new[] { "Icon", "string", "pi pi-angle-up", "Classe do ícone." },
-                              new[] { "Behavior", "string", "smooth", "Comportamento do scroll: <code>auto</code> ou <code>smooth</code>." },
-                              new[] { "ButtonAriaLabel", "string", "Scroll to top", "Label de acessibilidade." },
-                              new[] { "Style", "string?", "null", "Estilos inline." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Target", "string", "window", "Alvo do scroll: <code>window</code> (padrão) ou <code>parent</code>, o contêiner rolável que envolve o componente." },
+                              new[] { "Threshold", "int", "400", "Posição de rolagem, em pixels, a partir da qual o botão fica visível." },
+                              new[] { "Icon", "string", "pi pi-angle-up", "Classe do ícone exibido no botão." },
+                              new[] { "Behavior", "string", "smooth", "Comportamento da rolagem ao clicar: <code>auto</code> ou <code>smooth</code>." },
+                              new[] { "ButtonAriaLabel", "string", "Scroll to top", "Rótulo acessível do botão." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais aplicadas ao botão." },
+                              new[] { "Style", "string?", "null", "Estilos inline aplicados ao botão." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados. No momento são capturados, mas ainda não repassados ao botão (ver Problemas Conhecidos)." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "IconTemplate", "RenderFragment?", "Ícone customizado." }
+                              new[] { "IconTemplate", "RenderFragment?", "Conteúdo do ícone; quando informado, substitui <code>Icon</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas ao botão. Além delas, o componente reaproveita as classes e os tokens do
+                <code>OpButton</code> (<code>p-button</code>, <code>p-button-rounded</code> e <code>p-button-icon</code>).
+            </Description>
             <ChildContent>
-                <div class="doc-section-description"><p>O ScrollTop não possui design tokens próprios no tema; o botão usa o componente <code>OpButton</code> (classes <code>p-button</code>) e apenas o posicionamento (<code>.p-scrolltop</code>) fica em <code>optimus-base.css</code>.</p></div>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-scrolltop", "Botão fixado no canto inferior direito (modo <code>window</code>)." },
+                              new[] { "p-scrolltop-sticky", "Botão ancorado ao contêiner rolável (modo <code>parent</code>)." },
+                              new[] { "p-scrolltop-hidden", "Aplicada enquanto o botão está oculto (opacidade 0)." },
+                              new[] { "p-scrolltop-icon", "Ícone interno do botão (span ao redor do ícone)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="scrolltop"/>
             </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>Style</code> e <code>ButtonAriaLabel</code>.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Posicionamento CSS-only; o modo <code>parent</code> usa <code>position: sticky</code> (o alvo deve ser um contêiner flexível).</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li><code>Target</code> aceita apenas <code>window</code> ou <code>parent</code>; o upstream também aceita um seletor/id de elemento rolável, ainda não suportado no port Blazor.</li>
+                        <li><code>AdditionalAttributes</code> é capturado, mas não repassado ao botão; use <code>ButtonAriaLabel</code>, <code>StyleClass</code> e <code>Style</code>.</li>
+                        <li>O tema gerado não define design tokens para o ScrollTop; o botão reaproveita os tokens do <code>Button</code>.</li>
+                        <li>No modo <code>parent</code>, o botão usa <code>position: sticky</code>; o contêiner precisa de altura fixa e <code>overflow</code> para a rolagem funcionar.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -106,10 +167,16 @@
         <OpScrollTop />
         """;
 
-    private const string TargetCode = """
-        <div style="width:250px;height:200px;overflow:auto;display:flex;flex-direction:column">
+    private const string ElementCode = """
+        <div id="scrolltop-element" style="height: 12rem; overflow: auto; display: flex; flex-direction: column">
             <p>Conteúdo longo...</p>
             <OpScrollTop Target="parent" Threshold="100" Icon="pi pi-arrow-up" />
         </div>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpScrollTop />
+
+        <OpScrollTop ButtonAriaLabel="Voltar ao topo" Icon="pi pi-arrow-up" Behavior="auto" />
         """;
 }

@@ -2,117 +2,176 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.ProgressBar
+@using OpBlazorUI.Base.Components.Button
+
+<PageTitle>ProgressBar - OpBlazorUI</PageTitle>
 
 <DocComponent Title="ProgressBar"
               Description="O ProgressBar é um indicador de status de processo.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O ProgressBar é usado com a propriedade <code>Value</code>, que define o percentual preenchido da
+                barra (0 a 100). O valor também é exibido dentro da barra enquanto <code>ShowValue</code> for
+                <code>true</code>.
+            </Description>
             <ChildContent>
-                <div class="card">
-                    <OpProgressBar Value="50"/>
-                </div>
+                <OpProgressBar Value="50"/>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Sem Valor">
+        <DocSection Label="Dinâmico" Id="dynamic">
+            <Description>
+                O valor é reativo: alterá-lo atualiza a barra imediatamente, com transição de largura definida pelo
+                tema. Os botões abaixo aumentam, diminuem ou reiniciam o progresso.
+            </Description>
             <ChildContent>
-                <div class="card">
-                    <OpProgressBar Value="50" ShowValue="false"/>
+                <OpProgressBar Value="_value"/>
+                <div class="flex flex-wrap gap-2 justify-center mt-2">
+                    <OpButton Label="Aumentar" Icon="pi pi-plus" OnClick="Increase"/>
+                    <OpButton Label="Diminuir" Icon="pi pi-minus" Severity="secondary" Outlined="true" OnClick="Decrease"/>
+                    <OpButton Label="Reiniciar" Icon="pi pi-refresh" Severity="secondary" Text="true" OnClick="Reset"/>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@NoValueCode"/></Code>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Indeterminado">
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O template <code>ContentTemplate</code> permite exibir conteúdo customizado no lugar do valor
+                padrão. O contexto recebe o <code>Value</code> atual, o que possibilita formatar a saída livremente.
+            </Description>
             <ChildContent>
-                <div class="card">
-                    <OpProgressBar Mode="indeterminate" Style="height:6px"/>
-                </div>
+                <OpProgressBar Value="50">
+                    <ContentTemplate Context="v">
+                        <span>@v/100</span>
+                    </ContentTemplate>
+                </OpProgressBar>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Indeterminado" Id="indeterminate">
+            <Description>
+                Para processos sem valor a acompanhar, defina <code>Mode</code> como <code>indeterminate</code>.
+                Nesse modo o <code>aria-valuenow</code> é omitido e a barra exibe uma animação contínua; a altura
+                pode ser ajustada por <code>Style</code>.
+            </Description>
+            <ChildContent>
+                <OpProgressBar Mode="indeterminate" Style="height:6px"/>
             </ChildContent>
             <Code><CodeBlock Code="@IndeterminateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Cor">
-            <ChildContent>
-                <div class="card">
-                    <OpProgressBar Value="75" Color="var(--p-green-500)"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@ColorCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template">
-            <ChildContent>
-                <div class="card">
-                    <OpProgressBar Value="50">
-                        <ContentTemplate Context="v">
-                            <span>@v/100</span>
-                        </ContentTemplate>
-                    </OpProgressBar>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O ProgressBar usa o papel <code>progressbar</code> com os atributos <code>aria-valuemin</code>,
+                    <code>aria-valuemax</code> e <code>aria-valuenow</code> (omitido no modo indeterminado). O texto
+                    que descreve o componente pode ser definido com <code>aria-label</code> ou
+                    <code>aria-labelledby</code>, informados como atributos adicionais.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>Não se aplica: o ProgressBar não é interativo e não recebe foco.</p>
+            </Description>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Value", "int", "0", "Valor atual do progresso." },
-                              new[] { "ShowValue", "bool", "true", "Exibe o valor dentro da barra." },
-                              new[] { "Unit", "string", "%", "Unidade anexada ao valor." },
+                              new[] { "Value", "int", "0", "Percentual preenchido da barra (0 a 100)." },
+                              new[] { "ShowValue", "bool", "true", "Exibe o valor dentro da barra no modo determinado." },
+                              new[] { "Unit", "string", "%", "Unidade anexada ao valor exibido." },
                               new[] { "Mode", "string", "determinate", "Modo: <code>determinate</code> ou <code>indeterminate</code>." },
-                              new[] { "Color", "string?", "null", "Cor de fundo do progresso." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ValueStyleClass", "string?", "null", "Classes do elemento de valor." },
-                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                              new[] { "Color", "string?", "null", "Cor de fundo do preenchimento (ex.: <code>var(--p-green-500)</code>)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "ValueStyleClass", "string?", "null", "Classes adicionais no elemento de valor." },
+                              new[] { "Style", "string?", "null", "Estilos inline no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ContentTemplate", "RenderFragment&lt;int&gt;?", "Conteúdo customizado; recebe o valor via <code>Context</code>." }
+                              new[] { "ContentTemplate", "RenderFragment&lt;int&gt;?", "Conteúdo customizado no lugar do valor; o contexto recebe o <code>Value</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="progressbar"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-progressbar", "Elemento contêiner." },
+                              new[] { "p-progressbar-determinate", "Contêiner de uma barra determinada." },
+                              new[] { "p-progressbar-indeterminate", "Contêiner de uma barra indeterminada." },
+                              new[] { "p-progressbar-value", "Elemento cuja largura varia conforme o valor." },
+                              new[] { "p-progressbar-label", "Elemento do rótulo que exibe o valor atual." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="progressbar"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>ValueStyleClass</code>, <code>ContentTemplate</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há <code>ValueChanged</code>, então <code>@@bind-Value</code> não está disponível; para um valor dinâmico, atualize a variável de estado (ver Dinâmico).</li>
+                        <li>O componente não limita <code>Value</code> ao intervalo 0–100; valores fora da faixa geram uma largura fora de escala.</li>
+                        <li>Não existe parâmetro dedicado para rótulo acessível; use <code>aria-label</code>/<code>aria-labelledby</code> via atributos adicionais.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private int _value = 40;
+
+    private void Increase() => _value = Math.Min(100, _value + 10);
+
+    private void Decrease() => _value = Math.Max(0, _value - 10);
+
+    private void Reset() => _value = 0;
+
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.ProgressBar
 
@@ -123,16 +182,22 @@
         <OpProgressBar Value="50" />
         """;
 
-    private const string NoValueCode = """
-        <OpProgressBar Value="50" ShowValue="false" />
-        """;
+    private const string DynamicCode = """
+        <OpProgressBar Value="_value" />
 
-    private const string IndeterminateCode = """
-        <OpProgressBar Mode="indeterminate" Style="height:6px" />
-        """;
+        <div class="flex flex-wrap gap-2 justify-center mt-2">
+            <OpButton Label="Aumentar" Icon="pi pi-plus" OnClick="Increase" />
+            <OpButton Label="Diminuir" Icon="pi pi-minus" Severity="secondary" Outlined="true" OnClick="Decrease" />
+            <OpButton Label="Reiniciar" Icon="pi pi-refresh" Severity="secondary" Text="true" OnClick="Reset" />
+        </div>
 
-    private const string ColorCode = """
-        <OpProgressBar Value="75" Color="var(--p-green-500)" />
+        @code {
+            private int _value = 40;
+
+            private void Increase() => _value = Math.Min(100, _value + 10);
+            private void Decrease() => _value = Math.Max(0, _value - 10);
+            private void Reset() => _value = 0;
+        }
         """;
 
     private const string TemplateCode = """
@@ -141,5 +206,16 @@
                 <span>@v/100</span>
             </ContentTemplate>
         </OpProgressBar>
+        """;
+
+    private const string IndeterminateCode = """
+        <OpProgressBar Mode="indeterminate" Style="height:6px" />
+        """;
+
+    private const string AccessibilityCode = """
+        <span id="label_status">Status</span>
+        <OpProgressBar aria-labelledby="label_status" />
+
+        <OpProgressBar aria-label="Status" />
         """;
 }
