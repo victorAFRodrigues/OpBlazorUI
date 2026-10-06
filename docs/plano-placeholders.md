@@ -9,9 +9,10 @@
 ## Status geral
 
 - **Fase B (placeholders):** **concluída** — 6 de 6 lotes, **46 de 46 páginas** criadas
-  (41 componentes + 5 utilitários).
-- **Fase A (melhorias):** próxima frente, não iniciada.
-- **Branch:** `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`). Push/PR pendentes.
+  (41 componentes + 5 utilitários); mergeada no `main` (PR #16).
+- **Fase A (melhorias):** em andamento — **A1 concluído** (InputText, Checkbox, RadioButton,
+  ToggleSwitch).
+- **Branch:** `docs/fase-a-inputs` (a partir de `origin/main`).
 
 | Lote | Páginas | Commit |
 |------|---------|--------|
@@ -116,9 +117,9 @@ Ordem de execução pelo ranking (§3):
 - **A1 — Form básico** (define o padrão Binding/Forms/Acessibilidade): InputText, Checkbox,
   RadioButton, ToggleSwitch.
 - **A2 — Seleção complexa**: DatePicker, Select, MultiSelect.
-- **A3 — Overlay/feedback**: Tooltip, Toast, Message, Dialog, Drawer, Popover, BlockUI.
+- **A3 — Overlay/feedback**: Tooltip, Toast, Message, Dialog, Drawer, Popover, BlockUI. ✅ Concluído.
 - **A4 — Dados/misc**: Table, Menu, Paginator, VirtualScroller, ProgressBar, ProgressSpinner,
-  Skeleton, Badge, Tag, Chip, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay.
+  Skeleton, Badge, Tag, Chip, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay. ✅ Concluído.
 - **A5 — Médias**: SelectButton, KeyFilter, FloatLabel, IftaLabel, IconField, Rating, Editor,
   InputOtp, InputGroup, InputMask, SpeedDial, Listbox, TreeSelect, CascadeSelect, ConfirmDialog,
   ToggleButton. ✅ Concluído.

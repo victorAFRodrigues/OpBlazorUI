@@ -6,169 +6,317 @@
 @using OpBlazorUI.Base.Models
 @using OpBlazorUI.Base.Services
 
+<PageTitle>Toast - OpBlazorUI</PageTitle>
+
 <DocComponent Title="Toast"
               Description="O Toast é usado para exibir mensagens em uma sobreposição.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                As mensagens são exibidas chamando <code>Add</code> (ou <code>AddAll</code>) do
+                <code>OpMessageService</code>. Cada item é um <code>OpToastMessage</code> com propriedades como
+                <code>Severity</code>, <code>Summary</code> e <code>Detail</code>; a <code>Key</code> da mensagem
+                precisa casar com a <code>Key</code> do <code>OpToast</code> de destino.
+            </Description>
             <ChildContent>
                 <OpToast Key="basic"/>
-                <OpButton Label="Mostrar" @onclick="ShowBasic"/>
+                <OpButton Label="Mostrar" OnClick="ShowBasic"/>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Severidade">
+        <DocSection Label="Severidade" Id="severity">
+            <Description>
+                A propriedade <code>Severity</code> define o tipo da mensagem: <code>success</code>, <code>info</code>,
+                <code>warn</code>, <code>error</code>, <code>secondary</code> e <code>contrast</code>. Ela determina a
+                cor e o ícone padrão do toast; <code>secondary</code> e <code>contrast</code> não têm ícone automático,
+                então defina <code>Icon</code> caso queira um.
+            </Description>
             <ChildContent>
                 <OpToast Key="severity"/>
                 <div class="flex gap-2 flex-wrap">
-                    <OpButton Label="Sucesso" Severity="success" @onclick="ShowSuccess"/>
-                    <OpButton Label="Informação" Severity="info" @onclick="ShowInfo"/>
-                    <OpButton Label="Aviso" Severity="warn" @onclick="ShowWarn"/>
-                    <OpButton Label="Erro" Severity="danger" @onclick="ShowError"/>
+                    <OpButton Label="Sucesso" Severity="success" OnClick="ShowSuccess"/>
+                    <OpButton Label="Informação" Severity="info" OnClick="ShowInfo"/>
+                    <OpButton Label="Aviso" Severity="warn" OnClick="ShowWarn"/>
+                    <OpButton Label="Erro" Severity="danger" OnClick="ShowError"/>
+                    <OpButton Label="Secundário" Severity="secondary" OnClick="ShowSecondary"/>
+                    <OpButton Label="Contraste" Severity="contrast" OnClick="ShowContrast"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@SeverityCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Duração">
-            <ChildContent>
-                <OpToast Key="life" Life="1000"/>
-                <OpButton Label="Mostrar (1s)" @onclick="ShowLife"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@LifeCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Fixo + Limpar">
-            <ChildContent>
-                <OpToast Key="sticky"/>
-                <div class="flex gap-2">
-                    <OpButton Label="Mostrar Fixo" @onclick="ShowSticky"/>
-                    <OpButton Label="Limpar" Severity="secondary" Outlined="true" @onclick="ClearSticky"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@StickyCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Múltiplo">
-            <ChildContent>
-                <OpToast Key="multiple"/>
-                <OpButton Label="Mostrar Múltiplo" Severity="warn" @onclick="AddMultiple"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@MultipleCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Posição">
+        <DocSection Label="Posição" Id="position">
+            <Description>
+                A posição é controlada por <code>Position</code>: <code>top-left</code>, <code>top-center</code>,
+                <code>top-right</code> (padrão), <code>bottom-left</code>, <code>bottom-center</code>,
+                <code>bottom-right</code> ou <code>center</code>. É possível montar vários <code>OpToast</code> com
+                <code>Key</code> distintas, cada um ancorado em uma posição.
+            </Description>
             <ChildContent>
                 <OpToast Key="tl" Position="top-left"/>
+                <OpToast Key="bl" Position="bottom-left"/>
                 <OpToast Key="br" Position="bottom-right"/>
-                <div class="flex gap-2">
-                    <OpButton Label="Superior Esquerdo" @onclick="ShowTopLeft"/>
-                    <OpButton Label="Inferior Direito" @onclick="ShowBottomRight"/>
+                <div class="flex flex-wrap gap-2">
+                    <OpButton Label="Superior Esquerdo" OnClick="ShowTopLeft"/>
+                    <OpButton Label="Inferior Esquerdo" OnClick="ShowBottomLeft"/>
+                    <OpButton Label="Inferior Direito" OnClick="ShowBottomRight"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@PositionCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template">
+        <DocSection Label="Múltiplo" Id="multiple">
+            <Description>
+                Várias mensagens podem ser exibidas de uma vez passando uma coleção para <code>AddAll</code>. Elas
+                compartilham o mesmo toast quando usam a mesma <code>Key</code>.
+            </Description>
             <ChildContent>
-                <OpToast Key="template">
+                <OpToast Key="multiple"/>
+                <OpButton Label="Múltiplo" Severity="warn" OnClick="ShowMultiple"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Fixo" Id="sticky">
+            <Description>
+                Por padrão a mensagem some depois do tempo definido em <code>Life</code> (3000 ms no toast).
+                Defina <code>Sticky = true</code> na mensagem para ignorar esse tempo e mantê-la aberta até ser fechada
+                manualmente — use <code>Clear</code> para removê-la. O <code>Life</code> também pode ser definido por
+                mensagem, sobrepondo o valor do toast.
+            </Description>
+            <ChildContent>
+                <OpToast Key="sticky"/>
+                <div class="flex flex-wrap gap-2">
+                    <OpButton Label="Fixo" OnClick="ShowSticky"/>
+                    <OpButton Label="Limpar" Severity="secondary" Outlined="true" OnClick="ClearSticky"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StickyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="templating">
+            <Description>
+                O <code>MessageTemplate</code> permite customizar o conteúdo da mensagem; ele recebe o
+                <code>OpToastMessage</code> como contexto. Nesse modo o botão de fechar padrão não é renderizado, então
+                feche a mensagem pelo serviço (<code>Clear</code>) ou use o <code>HeadlessTemplate</code>, que expõe uma
+                ação de fechar.
+            </Description>
+            <ChildContent>
+                <OpToast Key="confirm" Position="bottom-center" OnClose="OnConfirmClose">
                     <MessageTemplate Context="msg">
-                        <div class="flex items-center gap-3 p-3">
-                            <span class="pi @OpSeverityIcon.Get(msg.Severity)" aria-hidden="true"></span>
-                            <div class="flex-1">
-                                <div class="font-semibold">@msg.Summary</div>
-                                <div class="text-sm">@msg.Detail</div>
+                        <div class="flex flex-col items-start flex-auto">
+                            <div class="flex items-center gap-2">
+                                <span class="pi pi-user" aria-hidden="true"
+                                      style="display:flex;align-items:center;justify-content:center;width:2rem;height:2rem;border-radius:50%;background:var(--p-primary-color);color:var(--p-primary-contrast-color);"></span>
+                                <span class="font-bold">Ana Souza</span>
                             </div>
+                            <div class="font-medium text-xl mb-4">@msg.Summary</div>
+                            <OpButton Label="Responder" Severity="success" Size="small" OnClick="Confirm"/>
                         </div>
                     </MessageTemplate>
                 </OpToast>
-                <OpButton Label="Mostrar Template" @onclick="ShowTemplate"/>
+                <OpButton Label="Visualizar" OnClick="ShowConfirm"/>
             </ChildContent>
             <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Headless" Id="headless">
+            <Description>
+                No modo headless o conteúdo inteiro da mensagem é substituído por um layout próprio. O contexto expõe
+                <code>Message</code> e <code>Close</code>, permitindo que botões customizados fechem o toast. O
+                contêiner <code>p-toast-message</code> (posição e animação) permanece.
+            </Description>
+            <ChildContent>
+                <OpToast Key="upload" Position="top-center" OnClose="OnUploadClose">
+                    <HeadlessTemplate Context="ctx">
+                        <section class="flex flex-col gap-3 p-3 w-full"
+                                 style="background:var(--p-primary-color);color:var(--p-primary-contrast-color);border-radius:1rem;">
+                            <div class="flex items-center gap-3">
+                                <span class="pi pi-cloud-upload text-2xl" aria-hidden="true"></span>
+                                <span class="font-bold">@ctx.Message.Summary</span>
+                            </div>
+                            <div class="flex gap-3 justify-end">
+                                <OpButton Label="Confirmar" Size="small" Severity="secondary"
+                                          OnClick="@(() => ctx.Close())"/>
+                                <OpButton Label="Cancelar" Size="small" Severity="secondary" Outlined="true"
+                                          OnClick="@(() => ctx.Close())"/>
+                            </div>
+                        </section>
+                    </HeadlessTemplate>
+                </OpToast>
+                <OpButton Label="Enviar arquivo" OnClick="ShowUpload"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@HeadlessCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Responsivo" Id="responsive">
+            <Description>
+                O estilo do toast pode variar por tamanho de tela com <code>Breakpoints</code>: um dicionário cuja chave
+                é a largura máxima (ex.: <code>920px</code>) e o valor são declarações CSS aplicadas ao contêiner
+                naquela faixa.
+            </Description>
+            <ChildContent>
+                <OpToast Key="responsive" Breakpoints="_breakpoints"/>
+                <OpButton Label="Mostrar" OnClick="ShowResponsive"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ResponsiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Serviço" Id="service">
+            <Description>
+                O <code>OpMessageService</code> é <em>scoped</em> e mantém a lista de mensagens do circuito; o
+                <code>OpToast</code> apenas observa essas mensagens. A extensão <code>AddOpBlazorUI()</code> já registra
+                o serviço — para registro manual use <code>AddScoped&lt;OpMessageService&gt;()</code> — e a injeção é
+                feita com <code>@@inject OpMessageService MessageService</code>.
+            </Description>
+            <ChildContent>
+                <OpToast Key="service"/>
+                <div class="flex flex-wrap gap-2">
+                    <OpButton Label="Sucesso" Severity="success" OnClick="ShowServiceSuccess"/>
+                    <OpButton Label="Erro" Severity="danger" OnClick="ShowServiceError"/>
+                    <OpButton Label="Limpar" Severity="secondary" Outlined="true" OnClick="ClearService"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ServiceCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O contêiner do Toast é renderizado com <code>role="region"</code>, <code>aria-live="polite"</code> e
+                    um <code>aria-label</code>. Cada mensagem usa <code>role="alert"</code> com
+                    <code>aria-live="assertive"</code> e <code>aria-atomic="true"</code>, de modo que o leitor de tela a
+                    anuncie imediatamente. O botão de fechar é um <code>&lt;button&gt;</code> com <code>aria-label</code>;
+                    como os atributos extras são repassados ao contêiner, você pode ajustar textos com
+                    <code>aria-label</code> ou <code>aria-describedby</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "enter", "Fecha a mensagem." },
+                              new[] { "space", "Fecha a mensagem." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Key", "string?", "null", "Chave do toast; mensagens com a mesma chave são exibidas neste toast." },
                               new[] { "Position", "string", "top-right", "Posição: <code>top-left</code>, <code>top-center</code>, <code>top-right</code>, <code>bottom-left</code>, <code>bottom-center</code>, <code>bottom-right</code>, <code>center</code>." },
-                              new[] { "Life", "int", "3000", "Tempo padrão (ms) para fechar a mensagem." },
+                              new[] { "Life", "int", "3000", "Tempo padrão (ms) para fechar a mensagem; <code>0</code> ou negativo não fecha automaticamente." },
                               new[] { "AutoZIndex", "bool", "true", "Coloca o Toast na pilha de z-index ao exibir mensagens (acima de dialogs abertos)." },
                               new[] { "BaseZIndex", "int", "0", "Somado à camada modal (1100) no z-index do contêiner." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "Breakpoints", "Dictionary&lt;string,string&gt;?", "null", "Estilos por media query (max-width → declarações CSS)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no contêiner." },
+                              new[] { "Breakpoints", "Dictionary&lt;string, string&gt;?", "null", "Estilos por media query: chave é a largura máxima e valor são declarações CSS." },
                               new[] { "PreventDuplicates", "bool", "false", "Não exibe mensagens duplicadas." },
-                              new[] { "PreventOpenDuplicates", "bool", "false", "Não abre mensagens duplicadas enquanto exibidas." }
+                              new[] { "PreventOpenDuplicates", "bool", "false", "Não abre mensagens duplicadas enquanto exibidas." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
-                          Rows="@(new[] {
-                              new[] { "OnClose", "EventCallback&lt;OpToastCloseEvent&gt;", "Disparado quando uma mensagem é fechada." }
-                          })"/>
-            </ChildContent>
-        </DocSection>
-        <DocSection Label="Templates">
-            <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "MessageTemplate", "RenderFragment&lt;OpToastMessage&gt;?", "Template customizado do conteúdo da mensagem." },
-                              new[] { "HeadlessTemplate", "RenderFragment&lt;OpToastHeadlessContext&gt;?", "Template headless (substitui toda a UI da mensagem)." }
+                              new[] { "HeadlessTemplate", "RenderFragment&lt;OpToastHeadlessContext&gt;?", "Template headless que substitui todo o conteúdo da mensagem; o contexto expõe <code>Message</code> e <code>Close</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="OpToastMessage">
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="OpToastMessage"
-                          Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnClose", "EventCallback&lt;OpToastCloseEvent&gt;", "Disparado quando uma mensagem é fechada; o evento traz a mensagem e o índice." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+        <DocSection Label="OpToastMessage" Id="api-optoastmessage">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Key", "string?", "null", "Chave do toast de destino." },
-                              new[] { "Severity", "string", "info", "Severidade da mensagem." },
+                              new[] { "Severity", "string", "info", "Severidade: <code>info</code>, <code>success</code>, <code>warn</code>, <code>error</code>, <code>secondary</code>, <code>contrast</code>." },
                               new[] { "Summary", "string?", "null", "Título da mensagem." },
                               new[] { "Detail", "string?", "null", "Detalhe da mensagem." },
-                              new[] { "Life", "int?", "null", "Tempo (ms) desta mensagem (sobrescreve o do toast)." },
+                              new[] { "Life", "int?", "null", "Tempo (ms) desta mensagem, sobrepondo o <code>Life</code> do toast." },
                               new[] { "Sticky", "bool", "false", "Não fecha automaticamente." },
-                              new[] { "Closable", "bool", "true", "Exibe o botão de fechar." },
-                              new[] { "Icon", "string?", "null", "Ícone customizado." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais da mensagem." }
+                              new[] { "Closable", "bool", "true", "Exibe o botão de fechar no layout padrão." },
+                              new[] { "Icon", "string?", "null", "Classe de ícone customizada; por padrão vem da severidade." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento da mensagem." },
+                              new[] { "Data", "object?", "null", "Dados extras para uso em templates." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. O botão de fechar usa <code>p-toast-close-button</code> e
+                <code>p-toast-close-icon</code> (no upstream são chamados de <code>p-toast-icon-close</code>). Para as
+                cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-toast", "Contêiner principal." },
+                              new[] { "p-toast-{position}", "Contêiner conforme <code>Position</code> (ex.: <code>p-toast-top-right</code>)." },
+                              new[] { "p-toast-message", "Contêiner de uma mensagem." },
+                              new[] { "p-toast-message-{severity}", "Mensagem conforme a severidade (ex.: <code>p-toast-message-success</code>)." },
+                              new[] { "p-toast-message-content", "Contêiner do ícone, texto e botão de fechar." },
+                              new[] { "p-toast-message-icon", "Ícone da severidade (inclui a classe <code>pi</code>)." },
+                              new[] { "p-toast-message-text", "Contêiner do resumo e do detalhe." },
+                              new[] { "p-toast-summary", "Título da mensagem." },
+                              new[] { "p-toast-detail", "Detalhe da mensagem." },
+                              new[] { "p-toast-close-button", "Botão de fechar." },
+                              new[] { "p-toast-close-icon", "Ícone do botão de fechar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
             <ChildContent><DocTokens Component="toast"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
                 <div class="doc-section-description">
-                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Use <code>StyleClass</code>, <code>MessageTemplate</code>/<code>HeadlessTemplate</code> e <code>OpToastMessage.StyleClass</code> para customização.</p>
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>MessageTemplate</code>/<code>HeadlessTemplate</code>, <code>OpToastMessage.StyleClass</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao contêiner).</p>
                 </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O modo headless do Blazor substitui apenas o conteúdo interno da mensagem; o contêiner <code>p-toast-message</code> e o posicionamento continuam sendo aplicados.</li>
+                        <li>Com <code>MessageTemplate</code> o botão de fechar padrão não é renderizado; feche pelo serviço (<code>Clear</code>/<code>Remove</code>) ou use <code>HeadlessTemplate</code>, que expõe <code>Close</code>.</li>
+                        <li><code>PreventDuplicates</code> e <code>PreventOpenDuplicates</code> compartilham a mesma verificação (deduplicam por <code>Severity|Summary|Detail</code>), sem o controle temporal do upstream.</li>
+                        <li><code>Breakpoints</code> recebe declarações CSS cruas por media query e é aplicado ao contêiner da posição; não há objeto de estilos aninhados por elemento como no Angular.</li>
+                        <li>O auto-fechamento depende de <code>Task.Delay</code> no circuito e o estado é scoped: mensagens adicionadas durante o prerender estático não sobrevivem à hidratação, e as demos exigem um render mode interativo.</li>
+                        <li><code>Data</code> existe em <code>OpToastMessage</code> mas não é consumido pelo componente; serve apenas para templates.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -177,31 +325,73 @@
 @code {
     [Inject] private OpMessageService MessageService { get; set; } = default!;
 
+    private readonly Dictionary<string, string> _breakpoints = new()
+    {
+        ["920px"] = "width: 50%; right: auto;"
+    };
+
+    private bool _confirmVisible;
+    private bool _uploadVisible;
+
     private void Add(string key, string severity, string summary, string detail)
         => MessageService.Add(new OpToastMessage { Key = key, Severity = severity, Summary = summary, Detail = detail });
 
     private void ShowBasic() => Add("basic", "info", "Informação", "Conteúdo da Mensagem");
-    private void ShowSuccess() => Add("severity", "success", "Sucesso", "Operação concluída");
-    private void ShowInfo() => Add("severity", "info", "Informação", "Mensagem informativa");
-    private void ShowWarn() => Add("severity", "warn", "Aviso", "Algo para verificar");
-    private void ShowError() => Add("severity", "error", "Erro", "Algo deu errado");
-    private void ShowLife() => Add("life", "info", "Duração", "Visível por 1 segundo");
-    private void ShowTopLeft() => Add("tl", "info", "Posição", "Superior Esquerdo");
-    private void ShowBottomRight() => Add("br", "success", "Posição", "Inferior Direito");
-    private void ShowTemplate() => Add("template", "success", "Template Personalizado", "Com conteúdo personalizado");
+
+    private void ShowSuccess() => Add("severity", "success", "Sucesso", "Conteúdo da Mensagem");
+    private void ShowInfo() => Add("severity", "info", "Informação", "Conteúdo da Mensagem");
+    private void ShowWarn() => Add("severity", "warn", "Aviso", "Conteúdo da Mensagem");
+    private void ShowError() => Add("severity", "error", "Erro", "Conteúdo da Mensagem");
+    private void ShowSecondary() => Add("severity", "secondary", "Secundário", "Conteúdo da Mensagem");
+    private void ShowContrast() => Add("severity", "contrast", "Contraste", "Conteúdo da Mensagem");
+
+    private void ShowTopLeft() => Add("tl", "info", "Mensagem de Informação", "Conteúdo da Mensagem");
+    private void ShowBottomLeft() => Add("bl", "warn", "Mensagem de Aviso", "Conteúdo da Mensagem");
+    private void ShowBottomRight() => Add("br", "success", "Mensagem de Sucesso", "Conteúdo da Mensagem");
+
+    private void ShowMultiple()
+        => MessageService.AddAll(
+        [
+            new OpToastMessage { Key = "multiple", Severity = "success", Summary = "Mensagem 1", Detail = "Conteúdo da Mensagem" },
+            new OpToastMessage { Key = "multiple", Severity = "info", Summary = "Mensagem 2", Detail = "Conteúdo da Mensagem" },
+            new OpToastMessage { Key = "multiple", Severity = "warn", Summary = "Mensagem 3", Detail = "Conteúdo da Mensagem" },
+            new OpToastMessage { Key = "multiple", Severity = "error", Summary = "Mensagem 4", Detail = "Conteúdo da Mensagem" }
+        ]);
 
     private void ShowSticky()
-        => MessageService.Add(new OpToastMessage { Key = "sticky", Severity = "info", Summary = "Fixo", Detail = "Não fechará automaticamente", Sticky = true });
+        => MessageService.Add(new OpToastMessage { Key = "sticky", Severity = "info", Summary = "Fixo", Detail = "Conteúdo da Mensagem", Sticky = true });
 
     private void ClearSticky() => MessageService.Clear("sticky");
 
-    private void AddMultiple()
-        => MessageService.AddAll(
-        [
-            new OpToastMessage { Key = "multiple", Severity = "info", Summary = "Mensagem 1", Detail = "Primeira mensagem" },
-            new OpToastMessage { Key = "multiple", Severity = "success", Summary = "Mensagem 2", Detail = "Segunda mensagem" },
-            new OpToastMessage { Key = "multiple", Severity = "warn", Summary = "Mensagem 3", Detail = "Terceira mensagem" }
-        ]);
+    private void ShowConfirm()
+    {
+        if (_confirmVisible) return;
+        MessageService.Add(new OpToastMessage { Key = "confirm", Severity = "success", Summary = "Podemos enviar o relatório?", Sticky = true });
+        _confirmVisible = true;
+    }
+
+    private void Confirm()
+    {
+        MessageService.Clear("confirm");
+        _confirmVisible = false;
+    }
+
+    private void OnConfirmClose(OpToastCloseEvent e) => _confirmVisible = false;
+
+    private void ShowUpload()
+    {
+        if (_uploadVisible) return;
+        MessageService.Add(new OpToastMessage { Key = "upload", Severity = "contrast", Summary = "Enviando seus arquivos...", Sticky = true });
+        _uploadVisible = true;
+    }
+
+    private void OnUploadClose(OpToastCloseEvent e) => _uploadVisible = false;
+
+    private void ShowResponsive() => Add("responsive", "contrast", "Sucesso", "Conteúdo da Mensagem");
+
+    private void ShowServiceSuccess() => Add("service", "success", "Sucesso", "Registro salvo.");
+    private void ShowServiceError() => Add("service", "error", "Erro", "Não foi possível salvar.");
+    private void ClearService() => MessageService.Clear("service");
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Toast
@@ -214,80 +404,226 @@
 
     private const string BasicCode = """
         <OpToast Key="basic" />
-        <OpButton Label="Mostrar" @onclick="Show" />
+        <OpButton Label="Mostrar" OnClick="ShowBasic" />
 
         @code {
             [Inject] private OpMessageService MessageService { get; set; } = default!;
 
-            private void Show() => MessageService.Add(
-                new OpToastMessage { Key = "basic", Severity = "info", Summary = "Informação", Detail = "Conteúdo da Mensagem" });
+            private void ShowBasic() => MessageService.Add(new OpToastMessage
+            {
+                Key = "basic",
+                Severity = "info",
+                Summary = "Informação",
+                Detail = "Conteúdo da Mensagem"
+            });
         }
         """;
 
     private const string SeverityCode = """
         <OpToast Key="severity" />
-        <OpButton Label="Sucesso" Severity="success" @onclick="ShowSuccess" />
-        <OpButton Label="Erro" Severity="danger" @onclick="ShowError" />
+        <OpButton Label="Sucesso" Severity="success" OnClick="ShowSuccess" />
+        <OpButton Label="Informação" Severity="info" OnClick="ShowInfo" />
+        <OpButton Label="Aviso" Severity="warn" OnClick="ShowWarn" />
+        <OpButton Label="Erro" Severity="danger" OnClick="ShowError" />
+        <OpButton Label="Secundário" Severity="secondary" OnClick="ShowSecondary" />
+        <OpButton Label="Contraste" Severity="contrast" OnClick="ShowContrast" />
 
         @code {
             private void ShowSuccess() => MessageService.Add(
-                new OpToastMessage { Key = "severity", Severity = "success", Summary = "Sucesso", Detail = "Operação concluída" });
+                new OpToastMessage { Key = "severity", Severity = "success", Summary = "Sucesso", Detail = "Conteúdo da Mensagem" });
+
+            private void ShowInfo() => MessageService.Add(
+                new OpToastMessage { Key = "severity", Severity = "info", Summary = "Informação", Detail = "Conteúdo da Mensagem" });
+
+            private void ShowWarn() => MessageService.Add(
+                new OpToastMessage { Key = "severity", Severity = "warn", Summary = "Aviso", Detail = "Conteúdo da Mensagem" });
 
             private void ShowError() => MessageService.Add(
-                new OpToastMessage { Key = "severity", Severity = "error", Summary = "Erro", Detail = "Algo deu errado" });
-        }
-        """;
+                new OpToastMessage { Key = "severity", Severity = "error", Summary = "Erro", Detail = "Conteúdo da Mensagem" });
 
-    private const string LifeCode = """
-        <OpToast Key="life" Life="1000" />
-        <OpButton Label="Mostrar (1s)" @onclick="Show" />
-        """;
+            private void ShowSecondary() => MessageService.Add(
+                new OpToastMessage { Key = "severity", Severity = "secondary", Summary = "Secundário", Detail = "Conteúdo da Mensagem" });
 
-    private const string StickyCode = """
-        <OpToast Key="sticky" />
-        <OpButton Label="Mostrar Fixo" @onclick="ShowSticky" />
-        <OpButton Label="Limpar" Severity="secondary" Outlined="true" @onclick="Clear" />
-
-        @code {
-            private void ShowSticky() => MessageService.Add(
-                new OpToastMessage { Key = "sticky", Severity = "info", Summary = "Fixo", Detail = "Não fechará automaticamente", Sticky = true });
-
-            private void Clear() => MessageService.Clear("sticky");
-        }
-        """;
-
-    private const string MultipleCode = """
-        <OpToast Key="multiple" />
-        <OpButton Label="Mostrar Múltiplo" @onclick="ShowMultiple" />
-
-        @code {
-            private void ShowMultiple() => MessageService.AddAll(
-            [
-                new OpToastMessage { Key = "multiple", Severity = "info", Summary = "Mensagem 1", Detail = "Primeira mensagem" },
-                new OpToastMessage { Key = "multiple", Severity = "success", Summary = "Mensagem 2", Detail = "Segunda mensagem" }
-            ]);
+            private void ShowContrast() => MessageService.Add(
+                new OpToastMessage { Key = "severity", Severity = "contrast", Summary = "Contraste", Detail = "Conteúdo da Mensagem" });
         }
         """;
 
     private const string PositionCode = """
         <OpToast Key="tl" Position="top-left" />
+        <OpToast Key="bl" Position="bottom-left" />
         <OpToast Key="br" Position="bottom-right" />
 
-        <OpButton Label="Superior Esquerdo" @onclick="ShowTopLeft" />
-        <OpButton Label="Inferior Direito" @onclick="ShowBottomRight" />
+        <OpButton Label="Superior Esquerdo" OnClick="ShowTopLeft" />
+        <OpButton Label="Inferior Esquerdo" OnClick="ShowBottomLeft" />
+        <OpButton Label="Inferior Direito" OnClick="ShowBottomRight" />
+
+        @code {
+            private void ShowTopLeft() => MessageService.Add(
+                new OpToastMessage { Key = "tl", Severity = "info", Summary = "Mensagem de Informação", Detail = "Conteúdo da Mensagem" });
+
+            private void ShowBottomLeft() => MessageService.Add(
+                new OpToastMessage { Key = "bl", Severity = "warn", Summary = "Mensagem de Aviso", Detail = "Conteúdo da Mensagem" });
+
+            private void ShowBottomRight() => MessageService.Add(
+                new OpToastMessage { Key = "br", Severity = "success", Summary = "Mensagem de Sucesso", Detail = "Conteúdo da Mensagem" });
+        }
+        """;
+
+    private const string MultipleCode = """
+        <OpToast Key="multiple" />
+        <OpButton Label="Múltiplo" Severity="warn" OnClick="ShowMultiple" />
+
+        @code {
+            private void ShowMultiple() => MessageService.AddAll(
+            [
+                new OpToastMessage { Key = "multiple", Severity = "success", Summary = "Mensagem 1", Detail = "Conteúdo da Mensagem" },
+                new OpToastMessage { Key = "multiple", Severity = "info", Summary = "Mensagem 2", Detail = "Conteúdo da Mensagem" },
+                new OpToastMessage { Key = "multiple", Severity = "warn", Summary = "Mensagem 3", Detail = "Conteúdo da Mensagem" },
+                new OpToastMessage { Key = "multiple", Severity = "error", Summary = "Mensagem 4", Detail = "Conteúdo da Mensagem" }
+            ]);
+        }
+        """;
+
+    private const string StickyCode = """
+        <OpToast Key="sticky" />
+        <OpButton Label="Fixo" OnClick="ShowSticky" />
+        <OpButton Label="Limpar" Severity="secondary" Outlined="true" OnClick="ClearSticky" />
+
+        @code {
+            private void ShowSticky() => MessageService.Add(new OpToastMessage
+            {
+                Key = "sticky",
+                Severity = "info",
+                Summary = "Fixo",
+                Detail = "Conteúdo da Mensagem",
+                Sticky = true
+            });
+
+            private void ClearSticky() => MessageService.Clear("sticky");
+        }
         """;
 
     private const string TemplateCode = """
-        <OpToast Key="template">
+        <OpToast Key="confirm" Position="bottom-center" OnClose="OnConfirmClose">
             <MessageTemplate Context="msg">
-                <div class="flex items-center gap-3 p-3">
-                    <span class="pi @OpSeverityIcon.Get(msg.Severity)"></span>
-                    <div class="flex-1">
-                        <div class="font-semibold">@msg.Summary</div>
-                        <div class="text-sm">@msg.Detail</div>
+                <div class="flex flex-col items-start flex-auto">
+                    <div class="flex items-center gap-2">
+                        <span class="pi pi-user" aria-hidden="true"></span>
+                        <span class="font-bold">Ana Souza</span>
                     </div>
+                    <div class="font-medium text-xl mb-4">@msg.Summary</div>
+                    <OpButton Label="Responder" Severity="success" Size="small" OnClick="Confirm" />
                 </div>
             </MessageTemplate>
         </OpToast>
+        <OpButton Label="Visualizar" OnClick="ShowConfirm" />
+
+        @code {
+            private bool _confirmVisible;
+
+            private void ShowConfirm()
+            {
+                if (_confirmVisible) return;
+                MessageService.Add(new OpToastMessage
+                {
+                    Key = "confirm",
+                    Severity = "success",
+                    Summary = "Podemos enviar o relatório?",
+                    Sticky = true
+                });
+                _confirmVisible = true;
+            }
+
+            private void Confirm()
+            {
+                MessageService.Clear("confirm");
+                _confirmVisible = false;
+            }
+
+            private void OnConfirmClose(OpToastCloseEvent e) => _confirmVisible = false;
+        }
+        """;
+
+    private const string HeadlessCode = """
+        <OpToast Key="upload" Position="top-center" OnClose="OnUploadClose">
+            <HeadlessTemplate Context="ctx">
+                <section class="flex flex-col gap-3 p-3 w-full"
+                         style="background:var(--p-primary-color);color:var(--p-primary-contrast-color);border-radius:1rem;">
+                    <div class="flex items-center gap-3">
+                        <span class="pi pi-cloud-upload text-2xl" aria-hidden="true"></span>
+                        <span class="font-bold">@ctx.Message.Summary</span>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <OpButton Label="Confirmar" Size="small" Severity="secondary" OnClick="@(() => ctx.Close())" />
+                        <OpButton Label="Cancelar" Size="small" Severity="secondary" Outlined="true" OnClick="@(() => ctx.Close())" />
+                    </div>
+                </section>
+            </HeadlessTemplate>
+        </OpToast>
+        <OpButton Label="Enviar arquivo" OnClick="ShowUpload" />
+
+        @code {
+            private bool _uploadVisible;
+
+            private void ShowUpload()
+            {
+                if (_uploadVisible) return;
+                MessageService.Add(new OpToastMessage
+                {
+                    Key = "upload",
+                    Severity = "contrast",
+                    Summary = "Enviando seus arquivos...",
+                    Sticky = true
+                });
+                _uploadVisible = true;
+            }
+
+            private void OnUploadClose(OpToastCloseEvent e) => _uploadVisible = false;
+        }
+        """;
+
+    private const string ResponsiveCode = """
+        <OpToast Key="responsive" Breakpoints="_breakpoints" />
+        <OpButton Label="Mostrar" OnClick="ShowResponsive" />
+
+        @code {
+            private readonly Dictionary<string, string> _breakpoints = new()
+            {
+                ["920px"] = "width: 50%; right: auto;"
+            };
+
+            private void ShowResponsive() => MessageService.Add(
+                new OpToastMessage { Key = "responsive", Severity = "contrast", Summary = "Sucesso", Detail = "Conteúdo da Mensagem" });
+        }
+        """;
+
+    private const string ServiceCode = """
+        // Program.cs
+        builder.Services.AddScoped<OpMessageService>();
+
+        // Página ou componente
+        @inject OpMessageService MessageService
+
+        <OpToast Key="service" />
+        <OpButton Label="Sucesso" Severity="success" OnClick="ShowServiceSuccess" />
+
+        @code {
+            private void ShowServiceSuccess() => MessageService.Add(new OpToastMessage
+            {
+                Key = "service",
+                Severity = "success",
+                Summary = "Sucesso",
+                Detail = "Registro salvo."
+            });
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpToast Key="basic" aria-label="Notificações do sistema" />
+
+        @code {
+            private void HandleClose(OpToastCloseEvent e) { /* ... */ }
+        }
         """;
 }

@@ -2,107 +2,256 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Paginator
+@using OpBlazorUI.Base.Components.Button
+
+<PageTitle>Paginator - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Paginator"
               Description="O Paginator exibe dados em formato paginado e oferece navegação entre páginas.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O Paginator é um componente controlado: <code>First</code>, <code>Rows</code> e
+                <code>TotalRecords</code> descrevem o estado atual e <code>OnPageChange</code> devolve o novo
+                <code>OpPaginatorState</code>. O template padrão traz um dropdown para alterar <code>Rows</code>,
+                então informe <code>RowsPerPageOptions</code> para popular as opções.
+            </Description>
             <ChildContent>
                 <div class="card flex justify-center">
                     <OpPaginator First="_first"
                                  Rows="_rows"
                                  TotalRecords="120"
                                  RowsPerPageOptions="_rowsPerPageOptions"
-                                 OnPageChange="OnPageChange"/>
+                                 OnPageChange="OnBasicPageChange"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Relatório de página">
+        <DocSection Label="Template" Id="template">
+            <Description>
+                Os templates permitem sobrescrever o conteúdo ao redor dos controles. <code>TemplateLeft</code> e
+                <code>TemplateRight</code> adicionam conteúdo nas extremidades, e
+                <code>FirstPageLinkIconTemplate</code>, <code>PreviousPageLinkIconTemplate</code>,
+                <code>NextPageLinkIconTemplate</code> e <code>LastPageLinkIconTemplate</code> trocam os ícones dos
+                botões de navegação. Todos são <code>RenderFragment</code>, ou seja, recebem markup livre.
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col gap-4">
+                    <OpPaginator First="_templateFirst"
+                                 Rows="10"
+                                 TotalRecords="120"
+                                 ShowFirstLastIcon="false"
+                                 OnPageChange="OnTemplatePageChange">
+                        <TemplateLeft>
+                            <OpButton Icon="pi pi-star" Outlined="true" AriaLabel="Favoritos"/>
+                        </TemplateLeft>
+                        <TemplateRight>
+                            <OpButton Icon="pi pi-search" AriaLabel="Pesquisar"/>
+                        </TemplateRight>
+                    </OpPaginator>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Relatório de Página" Id="current-page-report">
+            <Description>
+                Com <code>ShowCurrentPageReport</code>, um texto com o estado da paginação é exibido dentro do
+                paginador. O conteúdo é definido por <code>CurrentPageReportTemplate</code>, cujos placeholders
+                disponíveis são <code>{currentPage}</code>, <code>{totalPages}</code>, <code>{rows}</code>,
+                <code>{first}</code>, <code>{last}</code> e <code>{totalRecords}</code>. O valor padrão é
+                <code>{currentPage} of {totalPages}</code>.
+            </Description>
             <ChildContent>
                 <div class="card flex justify-center">
-                    <OpPaginator First="_first2"
+                    <OpPaginator First="_reportFirst"
                                  Rows="10"
                                  TotalRecords="120"
                                  ShowCurrentPageReport="true"
                                  ShowPageLinks="false"
-                                 ShowFirstLastIcon="false"
                                  CurrentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-                                 OnPageChange="OnPageChange2"/>
+                                 OnPageChange="OnReportPageChange"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ReportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Pular para página">
+        <DocSection Label="Imagens" Id="images">
+            <Description>
+                Exemplo de galeria paginada: a página atual de um grid de imagens é derivada de <code>First</code>.
+                Aqui a demo mostra <code>ShowJumpToPageInput</code> (equivalente ao
+                <code>showJumpToPageDropdown</code> do upstream) com <code>ShowPageLinks="false"</code>, e o grid
+                usa estilo inline por não haver utilitária de grid de múltiplas colunas no bundle do Showcase.
+            </Description>
             <ChildContent>
-                <div class="card flex justify-center">
-                    <OpPaginator First="_first3"
-                                 Rows="10"
-                                 TotalRecords="120"
+                <div class="card flex flex-col gap-4 items-center">
+                    <OpPaginator First="_imagesFirst"
+                                 Rows="_imagesRows"
+                                 TotalRecords="_images.Length"
                                  ShowJumpToPageInput="true"
-                                 OnPageChange="OnPageChange3"/>
+                                 ShowPageLinks="false"
+                                 OnPageChange="OnImagesPageChange"/>
+                    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;width:100%;">
+                        @foreach (var url in _images.Skip(_imagesFirst).Take(_imagesRows))
+                        {
+                            <img src="@url" alt="Imagem de natureza" class="w-full rounded-xl"/>
+                        }
+                    </div>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@JumpCode"/></Code>
+            <Code><CodeBlock Code="@ImagesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Paginator é renderizado dentro de um elemento <code>&lt;nav&gt;</code> para indicar uma seção de
+                    navegação. Os botões de primeira, anterior, próxima e última página trazem
+                    <code>aria-label</code> ("First Page", "Previous Page", "Next Page" e "Last Page"); no Blazor
+                    esses rótulos ainda são fixos em inglês, sem a API de locale do Angular.
+                </p>
+                <p>
+                    Os links de página são elementos <code>&lt;button&gt;</code> com <code>aria-label</code> igual ao
+                    número da página, e a página atual recebe <code>aria-current="page"</code>. O relatório da página
+                    atual usa <code>aria-live="polite"</code> para anunciar mudanças de estado.
+                </p>
+                <p>
+                    O seletor de linhas por página é um <code>&lt;select&gt;</code> nativo com
+                    <code>aria-label="Rows per page"</code>, e o input de pular para página é um
+                    <code>&lt;input&gt;</code> com <code>aria-label="Jump to page"</code>. Para customizar rótulos,
+                    sobrescreva os templates ou forneça atributos extras ao elemento raiz.
+                </p>
+            </Description>
+            <Code>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelos elementos do paginador." },
+                              new[] { "enter", "Executa a ação do elemento focado." },
+                              new[] { "space", "Executa a ação do elemento focado." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "First", "int", "0", "Índice (zero-based) do primeiro registro." },
-                              new[] { "Rows", "int", "0", "Registros por página." },
+                              new[] { "First", "int", "0", "Índice (zero-based) do primeiro registro exibido." },
+                              new[] { "Rows", "int", "0", "Quantidade de registros por página." },
                               new[] { "TotalRecords", "int", "0", "Total de registros." },
-                              new[] { "RowsPerPageOptions", "IReadOnlyList&lt;int&gt;?", "null", "Opções do dropdown de linhas por página." },
-                              new[] { "PageLinkSize", "int", "5", "Quantidade de links de página." },
-                              new[] { "AlwaysShow", "bool", "true", "Exibe mesmo com uma única página." },
-                              new[] { "ShowFirstLastIcon", "bool", "true", "Exibe ícones de primeira/última página." },
+                              new[] { "RowsPerPageOptions", "IReadOnlyList&lt;int&gt;?", "null", "Opções exibidas no dropdown de linhas por página. Sem valor, o dropdown não é renderizado." },
+                              new[] { "PageLinkSize", "int", "5", "Quantidade de links de página exibidos." },
+                              new[] { "AlwaysShow", "bool", "true", "Renderiza o paginador mesmo com uma única página." },
+                              new[] { "ShowFirstLastIcon", "bool", "true", "Exibe os botões de primeira e última página." },
+                              new[] { "ShowPageLinks", "bool", "true", "Exibe os links numéricos de página." },
                               new[] { "ShowCurrentPageReport", "bool", "false", "Exibe o relatório da página atual." },
-                              new[] { "CurrentPageReportTemplate", "string", "{currentPage} of {totalPages}", "Template do relatório (placeholders: {currentPage}, {totalPages}, {rows}, {first}, {last}, {totalRecords})." },
-                              new[] { "ShowJumpToPageInput", "bool", "false", "Exibe input para pular de página." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "CurrentPageReportTemplate", "string", "{currentPage} of {totalPages}", "Template do relatório; aceita <code>{currentPage}</code>, <code>{totalPages}</code>, <code>{rows}</code>, <code>{first}</code>, <code>{last}</code> e <code>{totalRecords}</code>." },
+                              new[] { "ShowJumpToPageInput", "bool", "false", "Exibe o input para pular diretamente para uma página." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais aplicadas ao elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz (<code>&lt;nav&gt;</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnPageChange", "EventCallback&lt;OpPaginatorState&gt;", "Disparado ao mudar de página ({ First, Rows, Page, PageCount })." }
+                              new[] { "TemplateLeft", "RenderFragment?", "Conteúdo exibido à esquerda dos controles." },
+                              new[] { "TemplateRight", "RenderFragment?", "Conteúdo exibido à direita dos controles." },
+                              new[] { "FirstPageLinkIconTemplate", "RenderFragment?", "Ícone do botão de primeira página." },
+                              new[] { "PreviousPageLinkIconTemplate", "RenderFragment?", "Ícone do botão de página anterior." },
+                              new[] { "NextPageLinkIconTemplate", "RenderFragment?", "Ícone do botão de próxima página." },
+                              new[] { "LastPageLinkIconTemplate", "RenderFragment?", "Ícone do botão de última página." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnPageChange", "EventCallback&lt;OpPaginatorState&gt;", "Disparado ao navegar entre páginas, trocar as linhas por página ou pular de página." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpPaginatorState" Id="api-state">
+            <Description>
+                Record devolvido por <code>OnPageChange</code> com o novo estado da paginação.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Campo", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "First", "int", "Índice (zero-based) do primeiro registro da página." },
+                              new[] { "Rows", "int", "Quantidade de registros por página." },
+                              new[] { "Page", "int", "Índice (zero-based) da página atual." },
+                              new[] { "PageCount", "int", "Total de páginas." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="paginator"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-paginator", "Elemento raiz (<code>&lt;nav&gt;</code>)." },
+                              new[] { "p-paginator-content", "Contêiner de conteúdo do paginador." },
+                              new[] { "p-paginator-content-start / -end", "Slots de <code>TemplateLeft</code> e <code>TemplateRight</code>." },
+                              new[] { "p-paginator-first / -prev / -next / -last", "Botões de navegação; recebem <code>p-disabled</code> quando indisponíveis." },
+                              new[] { "p-paginator-first-icon / -prev-icon / -next-icon / -last-icon", "Ícones dos botões de navegação." },
+                              new[] { "p-paginator-pages", "Contêiner dos links de página." },
+                              new[] { "p-paginator-page", "Um link de página." },
+                              new[] { "p-paginator-page-selected", "Link da página atual." },
+                              new[] { "p-paginator-current", "Relatório da página atual (<code>aria-live=\"polite\"</code>)." },
+                              new[] { "p-paginator-jtp-input", "Contêiner do input de pular para página." },
+                              new[] { "p-paginator-rpp-dropdown", "Dropdown de linhas por página." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="paginator"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>TemplateLeft</code>/<code>TemplateRight</code> e os templates de ícone para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, os templates (<code>TemplateLeft</code>, <code>TemplateRight</code> e os templates de ícone) e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>O dropdown de linhas por página usa um <code>&lt;select&gt;</code> nativo (o tema não estiliza <code>p-paginator-rpp-dropdown</code>).</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O dropdown de linhas por página usa um <code>&lt;select&gt;</code> nativo; o tema não estiliza <code>p-paginator-rpp-dropdown</code> como um dropdown do PrimeNG.</li>
+                        <li>Os rótulos acessíveis ("First Page", "Previous Page", "Next Page", "Last Page", "Rows per page" e "Jump to page") são fixos em inglês — ainda não há API de locale como no Angular.</li>
+                        <li>Não há o dropdown de pular para página do upstream (<code>showJumpToPageDropdown</code>); apenas o input de pular para página (<code>ShowJumpToPageInput</code>).</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -111,28 +260,43 @@
 @code {
     private int _first;
     private int _rows = 10;
-    private int _first2;
-    private int _first3;
+    private int _templateFirst;
+    private int _reportFirst;
+    private int _imagesFirst;
+    private int _imagesRows = 4;
 
     private static readonly int[] _rowsPerPageOptions = [10, 20, 30];
 
-    private Task OnPageChange(OpPaginatorState state)
+    private static readonly string[] _images =
+    [
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature1.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature2.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature3.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature4.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature5.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature6.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature7.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature8.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature9.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature10.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature11.jpg",
+        "https://primefaces.org/cdn/primeng/images/demo/nature/nature12.jpg"
+    ];
+
+    private void OnBasicPageChange(OpPaginatorState state)
     {
         _first = state.First;
         _rows = state.Rows;
-        return Task.CompletedTask;
     }
 
-    private Task OnPageChange2(OpPaginatorState state)
-    {
-        _first2 = state.First;
-        return Task.CompletedTask;
-    }
+    private void OnTemplatePageChange(OpPaginatorState state) => _templateFirst = state.First;
 
-    private Task OnPageChange3(OpPaginatorState state)
+    private void OnReportPageChange(OpPaginatorState state) => _reportFirst = state.First;
+
+    private void OnImagesPageChange(OpPaginatorState state)
     {
-        _first3 = state.First;
-        return Task.CompletedTask;
+        _imagesFirst = state.First;
+        _imagesRows = state.Rows;
     }
 
     private const string ImportCode = """
@@ -143,17 +307,37 @@
 
     private const string BasicCode = """
         <OpPaginator First="_first"
-                     Rows="10"
+                     Rows="_rows"
                      TotalRecords="120"
-                     RowsPerPageOptions="_options"
+                     RowsPerPageOptions="_rowsPerPageOptions"
                      OnPageChange="OnPageChange" />
 
         @code {
             private int _first;
-            private int[] _options = [10, 20, 30];
+            private int _rows = 10;
+            private readonly int[] _rowsPerPageOptions = [10, 20, 30];
 
-            private void OnPageChange(OpPaginatorState state) => _first = state.First;
+            private void OnPageChange(OpPaginatorState state)
+            {
+                _first = state.First;
+                _rows = state.Rows;
+            }
         }
+        """;
+
+    private const string TemplateCode = """
+        <OpPaginator First="_first"
+                     Rows="10"
+                     TotalRecords="120"
+                     ShowFirstLastIcon="false"
+                     OnPageChange="OnPageChange">
+            <TemplateLeft>
+                <OpButton Icon="pi pi-star" Outlined="true" AriaLabel="Favoritos" />
+            </TemplateLeft>
+            <TemplateRight>
+                <OpButton Icon="pi pi-search" AriaLabel="Pesquisar" />
+            </TemplateRight>
+        </OpPaginator>
         """;
 
     private const string ReportCode = """
@@ -162,16 +346,35 @@
                      TotalRecords="120"
                      ShowCurrentPageReport="true"
                      ShowPageLinks="false"
-                     ShowFirstLastIcon="false"
                      CurrentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
                      OnPageChange="OnPageChange" />
         """;
 
-    private const string JumpCode = """
+    private const string ImagesCode = """
         <OpPaginator First="_first"
-                     Rows="10"
-                     TotalRecords="120"
+                     Rows="_rows"
+                     TotalRecords="_images.Length"
                      ShowJumpToPageInput="true"
+                     ShowPageLinks="false"
                      OnPageChange="OnPageChange" />
+
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;width:100%;">
+            @foreach (var url in _images.Skip(_first).Take(_rows))
+            {
+                <img src="@url" alt="Imagem de natureza" class="w-full rounded-xl" />
+            }
+        </div>
+
+        @code {
+            private int _first;
+            private int _rows = 4;
+            private readonly string[] _images = [ "nature1.jpg", "nature2.jpg" ];
+
+            private void OnPageChange(OpPaginatorState state)
+            {
+                _first = state.First;
+                _rows = state.Rows;
+            }
+        }
         """;
 }

@@ -2,160 +2,663 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.DatePicker
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.IftaLabel
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>DatePicker - OpBlazorUI</PageTitle>
 
 <DocComponent Title="DatePicker"
-              Description="DatePicker é usado para selecionar uma data.">
+              Description="O DatePicker é um componente de entrada para selecionar uma data.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O valor é controlado por <code>Value</code> e atualizado por <code>ValueChanged</code> (ou
+                <code>@@bind-Value</code>). No Blazor não existe <code>ngModel</code>; o vínculo é feito com
+                <code>@@bind-Value</code>.
+            </Description>
             <ChildContent>
-                <OpDatePicker @bind-Value="_basic" Placeholder="Básico"/>
-                <div class="mt-2 text-sm">Valor: @(_basic?.ToString("dd/MM/yyyy") ?? "—")</div>
+                <div class="flex flex-col items-center gap-3">
+                    <OpDatePicker @bind-Value="_basic" Placeholder="Básico"/>
+                    <span class="text-sm">Valor: <b>@(_basic?.ToString("dd/MM/yyyy") ?? "—")</b></span>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ícone">
+        <DocSection Label="Format" Id="format">
+            <Description>
+                O formato padrão é <code>mm/dd/yy</code> e pode ser alterado por <code>DateFormat</code>. Os tokens
+                aceitos são:
+                <ul>
+                    <li><code>d</code> / <code>dd</code> — dia do mês (sem/com zero à esquerda)</li>
+                    <li><code>m</code> / <code>mm</code> — mês do ano (sem/com zero à esquerda)</li>
+                    <li><code>M</code> / <code>MM</code> — nome do mês (abreviado/completo)</li>
+                    <li><code>D</code> / <code>DD</code> — nome do dia da semana (abreviado/completo)</li>
+                    <li><code>yy</code> — ano com 2 dígitos</li>
+                    <li><code>yyyy</code> — ano com 4 dígitos</li>
+                    <li><code>'...'</code> — texto literal</li>
+                </ul>
+            </Description>
             <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpDatePicker @bind-Value="_icon" ShowIcon="true"/>
-                    <OpDatePicker @bind-Value="_clear" ShowIcon="true" IconDisplay="input" ShowClear="true"/>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_format" DateFormat="dd/mm/yyyy"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormatCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Locale" Id="locale">
+            <Description>
+                Não existe um parâmetro <code>Locale</code>: os nomes de mês, dia e a formatação padrão vêm de
+                <code>CultureInfo.CurrentCulture</code>. Defina a cultura no início da aplicação e combine com
+                <code>DateFormat</code> para compor o formato desejado.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_locale" DateFormat="dd 'de' MMMM 'de' yyyy"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LocaleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícone" Id="icon">
+            <Description>
+                Com <code>ShowIcon</code> um ícone é exibido ao lado do input. <code>IconDisplay</code> define o
+                estilo: <code>button</code> (botão separado) ou <code>input</code> (ícone dentro do campo, que também
+                aceita <code>InputIconTemplate</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label for="buttondisplay" class="font-bold">Button</label>
+                        <OpDatePicker @bind-Value="_icon1" ShowIcon="true" ShowOnFocus="false" InputId="buttondisplay"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="icondisplay" class="font-bold">Default Icon</label>
+                        <OpDatePicker @bind-Value="_icon2" ShowIcon="true" IconDisplay="input" InputId="icondisplay"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="templatedisplay" class="font-bold">Custom Icon</label>
+                        <OpDatePicker @bind-Value="_icon3" ShowIcon="true" IconDisplay="input" TimeOnly="true" InputId="templatedisplay">
+                            <InputIconTemplate Context="icon">
+                                <span class="pi pi-clock" style="cursor: pointer" @onclick="icon.ClickCallback"></span>
+                            </InputIconTemplate>
+                        </OpDatePicker>
+                    </div>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@IconCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inline">
+        <DocSection Label="Min / Max" Id="minmax">
+            <Description>
+                <code>MinDate</code> e <code>MaxDate</code> limitam o intervalo selecionável; <code>DisabledDates</code>
+                bloqueia datas específicas e <code>DisabledDays</code> bloqueia dias da semana (0 = domingo).
+                Datas indisponíveis recebem a classe <code>p-disabled</code>.
+            </Description>
             <ChildContent>
-                <OpDatePicker @bind-Value="_inline" Inline="true"/>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label for="minmax" class="font-bold">Min / Max</label>
+                        <OpDatePicker @bind-Value="_minMax" MinDate="_min" MaxDate="_max" ShowIcon="true" IconDisplay="input" InputId="minmax"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="disableddays" class="font-bold">Fins de semana</label>
+                        <OpDatePicker @bind-Value="_disabledDays" DisabledDays="_weekend" ShowIcon="true" IconDisplay="input" InputId="disableddays"/>
+                    </div>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@InlineCode"/></Code>
+            <Code><CodeBlock Code="@MinMaxCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Intervalo + Barra de Botões">
+        <DocSection Label="Multiple" Id="multiple">
+            <Description>
+                Defina <code>SelectionMode="OpDateSelectionMode.Multiple"</code> para escolher várias datas. Nesse
+                modo o vínculo é feito com <code>@@bind-MultipleValue</code> (uma lista de <code>DateTime?</code>).
+            </Description>
             <ChildContent>
-                <OpDatePicker @bind-RangeValue="_range" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true" ShowButtonBar="true"/>
+                <div class="flex flex-col items-center gap-3">
+                    <OpDatePicker @bind-MultipleValue="_multiple" SelectionMode="OpDateSelectionMode.Multiple" ReadonlyInput="true"/>
+                    <span class="text-sm">Selecionadas: <b>@((_multiple?.Count ?? 0).ToString())</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Intervalo" Id="range">
+            <Description>
+                Com <code>SelectionMode="OpDateSelectionMode.Range"</code> o valor é um intervalo, vinculado com
+                <code>@@bind-RangeValue</code>: a lista começa com a data inicial e termina com a final.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-3">
+                    <OpDatePicker @bind-RangeValue="_range" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true"/>
+                    <span class="text-sm">Pontas: <b>@(_range?.Count ?? 0)</b></span>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@RangeCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Seletor de Hora">
+        <DocSection Label="Button Bar" Id="buttonbar">
+            <Description>
+                Com <code>ShowButtonBar</code> os botões <code>TodayLabel</code> ("Today") e <code>ClearLabel</code>
+                ("Clear") aparecem no rodapé do painel. O conteúdo pode ser totalmente substituído por
+                <code>ButtonBarTemplate</code>, cujo contexto expõe <code>TodayCallback</code> e
+                <code>ClearCallback</code>.
+            </Description>
             <ChildContent>
-                <OpDatePicker @bind-Value="_time" ShowTime="true" HourFormat="12"/>
+                <div class="flex flex-wrap justify-center items-start gap-4">
+                    <OpDatePicker @bind-Value="_buttonBarDate" ShowButtonBar="true" Placeholder="Básico"/>
+                    <OpDatePicker @bind-RangeValue="_buttonBarRange" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true" ShowButtonBar="true" Placeholder="Personalizado">
+                        <ButtonBarTemplate Context="bar">
+                            <div class="flex justify-between w-full gap-2">
+                                <OpButton Label="Hoje" Severity="secondary" Variant="outlined" Size="small" OnClick="bar.TodayCallback"/>
+                                <OpButton Icon="pi pi-times" Severity="danger" Variant="text" Size="small" AriaLabel="Limpar" OnClick="bar.ClearCallback"/>
+                            </div>
+                        </ButtonBarTemplate>
+                    </OpDatePicker>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ButtonBarCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Time" Id="time">
+            <Description>
+                Com <code>ShowTime</code> o seletor de hora é exibido, no formato de 12 ou 24 horas conforme
+                <code>HourFormat</code>. Use <code>TimeOnly</code> para ocultar a parte de data e permitir apenas a
+                escolha de horário.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label for="calendar-12h" class="font-bold">12h Format</label>
+                        <OpDatePicker @bind-Value="_time12" ShowTime="true" HourFormat="12" InputId="calendar-12h"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="calendar-24h" class="font-bold">24h Format</label>
+                        <OpDatePicker @bind-Value="_time24" ShowTime="true" HourFormat="24" InputId="calendar-24h"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="calendar-timeonly" class="font-bold">Time Only</label>
+                        <OpDatePicker @bind-Value="_timeOnly" TimeOnly="true" InputId="calendar-timeonly"/>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@TimeCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Seletor de Mês">
+        <DocSection Label="Month Picker" Id="monthpicker">
+            <Description>
+                O seletor de mês é habilitado com <code>View="OpDatePickerView.Month"</code>, em conjunto com um
+                <code>DateFormat</code> adequado.
+            </Description>
             <ChildContent>
-                <OpDatePicker @bind-Value="_month" View="OpDatePickerView.Month" DateFormat="mm/yy" ReadonlyInput="true"/>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_month" View="OpDatePickerView.Month" DateFormat="mm/yy" ReadonlyInput="true"/>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@MonthCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Year Picker" Id="yearpicker">
+            <Description>
+                O seletor de ano é habilitado com <code>View="OpDatePickerView.Year"</code>, também com um
+                <code>DateFormat</code> adequado.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_year" View="OpDatePickerView.Year" DateFormat="yyyy"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@YearCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Multiple Months" Id="multiplemonths">
+            <Description>
+                O número de meses exibidos simultaneamente é definido por <code>NumberOfMonths</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_multipleMonths" NumberOfMonths="2"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MultipleMonthsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Date Template" Id="datetemplate">
+            <Description>
+                Conteúdo customizado pode ser colocado nas células de data com <code>DateTemplate</code>, um
+                <code>RenderFragment&lt;OpDateMeta&gt;</code> que recebe dia, mês, ano e flags como
+                <code>OtherMonth</code>, <code>Today</code> e <code>Selectable</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_dateTemplate">
+                        <DateTemplate Context="meta">
+                            @if (meta.Day > 10 && meta.Day < 15)
+                            {
+                                <strong style="text-decoration: line-through">@meta.Day</strong>
+                            }
+                            else
+                            {
+                                @meta.Day
+                            }
+                        </DateTemplate>
+                    </OpDatePicker>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DateTemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inline" Id="inline">
+            <Description>
+                Por padrão o calendarário é exibido em um popup. Com <code>Inline="true"</code> ele fica sempre
+                visível. Combine com <code>ShowWeek</code> para exibir o número da semana.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_inline" Inline="true" ShowWeek="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InlineCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Float Label" Id="floatlabel">
+            <Description>
+                O <code>OpFloatLabel</code> integra o rótulo ao campo. Use <code>Variant</code>:
+                <code>over</code> (padrão), <code>in</code> e <code>on</code>. O <code>for</code> do
+                <code>&lt;label&gt;</code> precisa apontar para o <code>InputId</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <OpFloatLabel>
+                        <OpDatePicker @bind-Value="_floatOver" InputId="over_label" ShowIcon="true" IconDisplay="input"/>
+                        <label for="over_label">Over Label</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="in">
+                        <OpDatePicker @bind-Value="_floatIn" InputId="in_label" ShowIcon="true" IconDisplay="input"/>
+                        <label for="in_label">In Label</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="on">
+                        <OpDatePicker @bind-Value="_floatOn" InputId="on_label" ShowIcon="true" IconDisplay="input"/>
+                        <label for="on_label">On Label</label>
+                    </OpFloatLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FloatLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ifta Label" Id="iftalabel">
+            <Description>
+                O <code>OpIftaLabel</code> cria rótulos alinhados no topo, dentro do campo. O
+                <code>&lt;label&gt;</code> aponta para o <code>InputId</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpIftaLabel>
+                        <OpDatePicker @bind-Value="_ifta" InputId="date" ShowIcon="true" IconDisplay="input"/>
+                        <label for="date">Date</label>
+                    </OpIftaLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IftaLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Clear Icon" Id="clearicon">
+            <Description>
+                Com <code>ShowClear</code> um ícone de limpar é exibido quando há valor selecionado, permitindo
+                apagar a data.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_clear" ShowClear="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ClearIconCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Sizes" Id="sizes">
+            <Description>
+                O DatePicker oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão,
+                via propriedade <code>Size</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpDatePicker @bind-Value="_size1" Size="small" Placeholder="Small" ShowIcon="true" IconDisplay="input"/>
+                    <OpDatePicker @bind-Value="_size2" Placeholder="Normal" ShowIcon="true" IconDisplay="input"/>
+                    <OpDatePicker @bind-Value="_size3" Size="large" Placeholder="Large" ShowIcon="true" IconDisplay="input"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Fluid" Id="fluid">
+            <Description>
+                Com <code>Fluid="true"</code> o componente ocupa toda a largura do contêiner.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width: 100%; max-width: 20rem;">
+                        <OpDatePicker @bind-Value="_fluid" Fluid="true"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filled" Id="filled">
+            <Description>
+                Defina <code>Variant="filled"</code> para exibir o componente com ênfase visual maior que o estilo
+                <code>outlined</code> padrão.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_filled" Variant="filled"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Quando <code>Disabled="true"</code>, o elemento não pode ser editado nem receber foco.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpDatePicker @bind-Value="_disabled" Disabled="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado inválido é aplicado com <code>Invalid="true"</code> para indicar falha de validação — também
+                é ativado automaticamente pelo <code>EditForm</code> quando o campo tem erro.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpDatePicker @bind-Value="_invalid" Invalid="@(_invalid is null)" Placeholder="Date"/>
+                    <OpDatePicker @bind-Value="_invalidFilled" Invalid="@(_invalidFilled is null)" Variant="filled" Placeholder="Date"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O DatePicker herda de <code>OpInputBase&lt;DateTime?&gt;</code> e, no modo Single, integra-se ao
+                <code>EditForm</code> com <code>DataAnnotationsValidator</code>; o estado inválido aparece
+                automaticamente com <code>ValidationMessage</code>. Isso substitui as abordagens <i>Template Driven</i>
+                e <i>Reactive Forms</i> do Angular. Nos modos Range e Multiple o vínculo é feito pelos valores próprios,
+                que não passam pelo <code>EditForm</code>.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col gap-4 items-start" style="width: 100%; max-width: 16rem;">
+                    <DataAnnotationsValidator/>
+                    <div class="flex flex-col gap-1" style="width: 100%;">
+                        <OpDatePicker @bind-Value="_form.Date" Placeholder="Data" InputId="form-date" ShowIcon="true" IconDisplay="input"/>
+                        <ValidationMessage For="() => _form.Date"/>
+                    </div>
+                    <button type="submit" class="p-button p-component p-button-secondary">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color: var(--p-green-600)">Formulário enviado com sucesso.</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vínculo" Id="binding">
+            <Description>
+                O vínculo depende do <code>SelectionMode</code>: <code>@@bind-Value</code> (Single),
+                <code>@@bind-RangeValue</code> (Range) e <code>@@bind-MultipleValue</code> (Multiple). Também é
+                possível controlar manualmente por <code>ValueChanged</code>, <code>RangeValueChanged</code> e
+                <code>MultipleValueChanged</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-3">
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <OpDatePicker @bind-Value="_bound" Placeholder="Single" ShowIcon="true" IconDisplay="input"/>
+                        <OpDatePicker @bind-RangeValue="_boundRange" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true" Placeholder="Intervalo"/>
+                        <OpDatePicker @bind-MultipleValue="_boundMultiple" SelectionMode="OpDateSelectionMode.Multiple" ReadonlyInput="true" Placeholder="Múltiplo"/>
+                    </div>
+                    <span class="text-sm">Single: <b>@(_bound?.ToString("dd/MM/yyyy") ?? "—")</b> — Intervalo: <b>@(_boundRange?.Count ?? 0)</b> — Múltiplo: <b>@(_boundMultiple?.Count ?? 0)</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BindingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O texto que descreve o componente pode vir de um <code>&lt;label&gt;</code> combinado com
+                    <code>InputId</code>, ou das propriedades <code>AriaLabelledBy</code> e <code>AriaLabel</code>. O
+                    input tem o papel <code>combobox</code> com <code>aria-autocomplete="none"</code>,
+                    <code>aria-haspopup="dialog"</code> e <code>aria-expanded</code>; a relação com o popup é criada por
+                    <code>aria-controls</code>. O popup recebe o papel <code>dialog</code> com <code>aria-modal</code>,
+                    e a tabela de dias usa o papel <code>grid</code>. Datas selecionadas também são anunciadas por um
+                    trecho oculto com <code>aria-live="polite"</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "space", "Abre o popup e move o foco para a data selecionada; se não houver, foca em hoje (botão de escolher data)." },
+                              new[] { "enter", "Abre o popup e move o foco para a data selecionada; se não houver, foca em hoje (botão de escolher data)." },
+                              new[] { "escape", "Fecha o popup e move o foco para o input." },
+                              new[] { "tab", "Move o foco para o próximo elemento focável dentro do popup." },
+                              new[] { "shift + tab", "Move o foco para o elemento focável anterior dentro do popup." },
+                              new[] { "enter", "Dispara a ação do botão (cabeçalho e rodapé)." },
+                              new[] { "space", "Dispara a ação do botão (cabeçalho e rodapé)." },
+                              new[] { "enter", "Seleciona a data, fecha o popup e move o foco para o input (grade de datas)." },
+                              new[] { "space", "Seleciona a data, fecha o popup e move o foco para o input (grade de datas)." },
+                              new[] { "up arrow", "Move o foco para o mesmo dia da semana anterior." },
+                              new[] { "down arrow", "Move o foco para o mesmo dia da semana seguinte." },
+                              new[] { "right arrow", "Move o foco para o próximo dia." },
+                              new[] { "left arrow", "Move o foco para o dia anterior." },
+                              new[] { "home", "Move o foco para o primeiro dia da semana atual." },
+                              new[] { "end", "Move o foco para o último dia da semana atual." },
+                              new[] { "page up", "Muda para o mês anterior no modo data; para o ano anterior no modo mês; para a década anterior no modo ano." },
+                              new[] { "shift + page up", "Muda para o ano anterior no modo data; sem efeito nos modos mês e ano." },
+                              new[] { "page down", "Muda para o próximo mês no modo data; para o próximo ano no modo mês; para a próxima década no modo ano." },
+                              new[] { "shift + page down", "Muda para o próximo ano no modo data; sem efeito nos modos mês e ano." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Value", "DateTime?", "null", "Valor selecionado (modo Single)." },
-                              new[] { "RangeValue", "IReadOnlyList&lt;DateTime?&gt;?", "null", "Valores do modo Range." },
+                              new[] { "Value", "DateTime?", "null", "Valor selecionado no modo Single." },
+                              new[] { "RangeValue", "IReadOnlyList&lt;DateTime?&gt;?", "null", "Valores do modo Range (início e fim)." },
                               new[] { "MultipleValue", "IReadOnlyList&lt;DateTime?&gt;?", "null", "Valores do modo Multiple." },
-                              new[] { "SelectionMode", "OpDateSelectionMode", "Single", "<code>Single</code>, <code>Range</code> ou <code>Multiple</code>." },
-                              new[] { "View", "OpDatePickerView", "Date", "<code>Date</code>, <code>Month</code> ou <code>Year</code>." },
-                              new[] { "DateFormat", "string", "mm/dd/yy", "Formato da data." },
-                              new[] { "Inline", "bool", "false", "Exibe o calendário sempre aberto." },
+                              new[] { "SelectionMode", "OpDateSelectionMode", "Single", "Modo de seleção: <code>Single</code>, <code>Multiple</code> ou <code>Range</code>." },
+                              new[] { "View", "OpDatePickerView", "Date", "Visão inicial: <code>Date</code>, <code>Month</code> ou <code>Year</code>." },
+                              new[] { "DateFormat", "string", "mm/dd/yy", "Formato de exibição do valor." },
+                              new[] { "TodayLabel", "string?", "Today", "Rótulo do botão \"Hoje\" na barra de botões." },
+                              new[] { "ClearLabel", "string?", "Clear", "Rótulo do botão \"Limpar\" na barra de botões." },
+                              new[] { "Inline", "bool", "false", "Exibe o painel sempre aberto, sem popup." },
                               new[] { "ShowIcon", "bool", "false", "Exibe o ícone de calendário." },
-                              new[] { "IconDisplay", "string", "button", "<code>button</code> ou <code>input</code>." },
-                              new[] { "Icon", "string?", "null", "Classe do ícone." },
-                              new[] { "ShowClear", "bool", "false", "Exibe botão de limpar." },
-                              new[] { "ReadonlyInput", "bool", "false", "Input somente leitura." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Invalid", "bool", "false", "Estado inválido." },
-                              new[] { "Required", "bool", "false", "Obrigatório." },
-                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura." },
+                              new[] { "IconDisplay", "string", "button", "Posição do ícone: <code>button</code> ou <code>input</code>." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone quando <code>IconDisplay=\"button\"</code>." },
+                              new[] { "ShowClear", "bool", "false", "Exibe o ícone de limpar quando há valor." },
+                              new[] { "ReadonlyInput", "bool", "false", "Torna o input somente leitura (mas ainda abre o painel)." },
+                              new[] { "Required", "bool", "false", "Marca o input como obrigatório." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura do contêiner." },
                               new[] { "Variant", "string", "outlined", "Variante: <code>outlined</code> ou <code>filled</code>." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
-                              new[] { "Placeholder", "string?", "null", "Placeholder do input." },
-                              new[] { "Name", "string?", "null", "Name do input." },
-                              new[] { "InputId", "string?", "null", "Id do input." },
+                              new[] { "InputSize", "int?", "null", "Atributo <code>size</code> do input." },
+                              new[] { "Placeholder", "string?", "null", "Texto exibido quando vazio." },
+                              new[] { "Name", "string?", "null", "Atributo <code>name</code> do input." },
+                              new[] { "InputId", "string?", "null", "Id do input; use junto do <code>for</code> do label." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do input." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o input." },
+                              new[] { "IconAriaLabel", "string?", "Choose Date", "Rótulo acessível do botão do ícone." },
+                              new[] { "TabIndex", "int", "0", "Índice de tabulação do input." },
+                              new[] { "ShowOnFocus", "bool", "true", "Abre o painel ao focar o input." },
+                              new[] { "ShowWeek", "bool", "false", "Exibe o número da semana." },
+                              new[] { "StartWeekFromFirstDayOfYear", "bool", "false", "Inicia a contagem de semanas no primeiro dia do ano." },
+                              new[] { "FirstDayOfWeek", "int", "0", "Primeiro dia da semana (0 = domingo)." },
                               new[] { "NumberOfMonths", "int", "1", "Número de meses exibidos." },
-                              new[] { "MinDate", "DateTime?", "null", "Data mínima." },
-                              new[] { "MaxDate", "DateTime?", "null", "Data máxima." },
+                              new[] { "MinDate", "DateTime?", "null", "Data mínima selecionável." },
+                              new[] { "MaxDate", "DateTime?", "null", "Data máxima selecionável." },
+                              new[] { "DisabledDates", "IReadOnlyCollection&lt;DateTime&gt;?", "null", "Datas bloqueadas." },
+                              new[] { "DisabledDays", "IReadOnlyCollection&lt;int&gt;?", "null", "Dias da semana bloqueados (0 = domingo)." },
+                              new[] { "SelectOtherMonths", "bool", "false", "Permite selecionar dias de meses adjacentes." },
+                              new[] { "ShowOtherMonths", "bool", "true", "Exibe dias de meses adjacentes." },
                               new[] { "ShowButtonBar", "bool", "false", "Exibe a barra de botões (Hoje/Limpar)." },
+                              new[] { "TodayButtonStyleClass", "string?", "null", "Classes adicionais no botão Hoje." },
+                              new[] { "ClearButtonStyleClass", "string?", "null", "Classes adicionais no botão Limpar." },
                               new[] { "ShowTime", "bool", "false", "Exibe o seletor de hora." },
-                              new[] { "TimeOnly", "bool", "false", "Somente hora." },
-                              new[] { "HideOnDateTimeSelect", "bool", "false", "Fecha o painel ao escolher a data mesmo com o seletor de hora aberto." },
-                              new[] { "HourFormat", "int", "24", "<code>12</code> ou <code>24</code>." },
-                              new[] { "ShowSeconds", "bool", "false", "Exibe segundos." },
-                              new[] { "ShowWeek", "bool", "false", "Exibe número da semana." },
-                              new[] { "FirstDayOfWeek", "int", "0", "Primeiro dia da semana." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "TimeOnly", "bool", "false", "Exibe apenas o seletor de hora." },
+                              new[] { "HourFormat", "int", "24", "Formato de hora: <code>12</code> ou <code>24</code>." },
+                              new[] { "ShowSeconds", "bool", "false", "Exibe o seletor de segundos." },
+                              new[] { "StepHour", "int", "1", "Passo do seletor de hora." },
+                              new[] { "StepMinute", "int", "1", "Passo do seletor de minuto." },
+                              new[] { "StepSecond", "int", "1", "Passo do seletor de segundo." },
+                              new[] { "TimeSeparator", "string", ":", "Separador entre hora, minuto e segundo." },
+                              new[] { "MultipleSeparator", "string", ", ", "Separador entre datas no modo Multiple." },
+                              new[] { "RangeSeparator", "string", " - ", "Separador entre as pontas no modo Range." },
+                              new[] { "PanelStyleClass", "string?", "null", "Classes adicionais no painel." },
+                              new[] { "InputStyleClass", "string?", "null", "Classes adicionais no input." },
+                              new[] { "HideOnDateTimeSelect", "bool", "false", "Fecha o painel ao selecionar a data mesmo com o seletor de hora." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido; também ativado pela validação do <code>EditForm</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnSelect", "EventCallback&lt;DateTime?&gt;", "Disparado ao selecionar." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." },
-                              new[] { "OnShow", "EventCallback", "Disparado ao exibir." },
-                              new[] { "OnClose", "EventCallback", "Disparado ao fechar." },
-                              new[] { "OnClear", "EventCallback", "Disparado ao limpar." },
-                              new[] { "OnInput", "EventCallback&lt;string&gt;", "Disparado ao digitar." },
+                              new[] { "ValueChanged", "EventCallback&lt;DateTime?&gt;", "Disparado quando o valor Single muda (binding)." },
+                              new[] { "RangeValueChanged", "EventCallback&lt;IReadOnlyList&lt;DateTime?&gt;?&gt;", "Disparado quando o intervalo muda (binding)." },
+                              new[] { "MultipleValueChanged", "EventCallback&lt;IReadOnlyList&lt;DateTime?&gt;?&gt;", "Disparado quando a lista de datas muda (binding)." },
+                              new[] { "OnSelect", "EventCallback&lt;DateTime?&gt;", "Disparado ao selecionar uma data." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao receber foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao perder o foco." },
+                              new[] { "OnShow", "EventCallback", "Disparado ao exibir o painel." },
+                              new[] { "OnClose", "EventCallback", "Disparado ao fechar o painel." },
+                              new[] { "OnClear", "EventCallback", "Disparado ao limpar o valor." },
+                              new[] { "OnInput", "EventCallback&lt;string&gt;", "Disparado a cada digitação no input." },
                               new[] { "OnMonthChange", "EventCallback&lt;(int Month, int Year)&gt;", "Disparado ao mudar o mês." },
                               new[] { "OnYearChange", "EventCallback&lt;(int Month, int Year)&gt;", "Disparado ao mudar o ano." },
                               new[] { "OnTodayClick", "EventCallback&lt;DateTime&gt;", "Disparado ao clicar em Hoje." },
                               new[] { "OnClearClick", "EventCallback", "Disparado ao clicar em Limpar." },
-                              new[] { "OnClickOutside", "EventCallback", "Disparado ao clicar fora." }
+                              new[] { "OnClickOutside", "EventCallback", "Disparado ao clicar fora do componente." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "DateTemplate", "RenderFragment&lt;OpDateMeta&gt;?", "Template da célula de data." },
-                              new[] { "HeaderTemplate", "RenderFragment?", "Template do cabeçalho." },
-                              new[] { "FooterTemplate", "RenderFragment?", "Template do rodapé." },
-                              new[] { "PreviousIconTemplate", "RenderFragment?", "Template do ícone anterior." },
-                              new[] { "NextIconTemplate", "RenderFragment?", "Template do ícone próximo." },
-                              new[] { "TriggerIconTemplate", "RenderFragment?", "Template do ícone de gatilho." },
-                              new[] { "ClearIconTemplate", "RenderFragment?", "Template do ícone de limpar." },
-                              new[] { "ButtonBarTemplate", "RenderFragment&lt;OpDatePickerButtonBarContext&gt;?", "Template da barra de botões." }
+                              new[] { "DateTemplate", "RenderFragment&lt;OpDateMeta&gt;?", "Conteúdo customizado de cada célula de data." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo do cabeçalho do painel." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Conteúdo do rodapé do painel." },
+                              new[] { "PreviousIconTemplate", "RenderFragment?", "Ícone do botão de navegação anterior." },
+                              new[] { "NextIconTemplate", "RenderFragment?", "Ícone do botão de navegação próximo." },
+                              new[] { "TriggerIconTemplate", "RenderFragment?", "Ícone do gatilho quando <code>IconDisplay=\"button\"</code>." },
+                              new[] { "ClearIconTemplate", "RenderFragment?", "Ícone de limpar." },
+                              new[] { "InputIconTemplate", "RenderFragment&lt;OpDatePickerInputIconContext&gt;?", "Ícone dentro do input quando <code>IconDisplay=\"input\"</code>." },
+                              new[] { "IncrementIconTemplate", "RenderFragment?", "Ícone de incremento do seletor de hora." },
+                              new[] { "DecrementIconTemplate", "RenderFragment?", "Ícone de decremento do seletor de hora." },
+                              new[] { "DecadeTemplate", "RenderFragment&lt;IReadOnlyList&lt;int&gt;&gt;?", "Conteúdo do título no modo Year (década)." },
+                              new[] { "ButtonBarTemplate", "RenderFragment&lt;OpDatePickerButtonBarContext&gt;?", "Conteúdo customizado da barra de botões." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="datepicker"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-datepicker", "Elemento raiz (wrapper do input)." },
+                              new[] { "p-inputwrapper / p-inputwrapper-filled / p-inputwrapper-focus", "Raiz conforme o estado do valor e do foco." },
+                              new[] { "p-inputtext / p-datepicker-input", "Elemento <code>&lt;input&gt;</code>." },
+                              new[] { "p-datepicker-dropdown", "Botão do ícone de calendário (<code>IconDisplay=\"button\"</code>)." },
+                              new[] { "p-datepicker-input-icon-container / p-datepicker-input-icon", "Contêiner e ícone de calendário dentro do input." },
+                              new[] { "p-datepicker-clear-icon", "Ícone de limpar." },
+                              new[] { "p-datepicker-panel / p-datepicker-panel-inline", "Painel do calendário (overlay ou inline)." },
+                              new[] { "p-datepicker-header / p-datepicker-title", "Cabeçalho e título (mês/ano) do calendário." },
+                              new[] { "p-datepicker-prev-button / p-datepicker-next-button", "Botões de navegação." },
+                              new[] { "p-datepicker-select-month / p-datepicker-select-year / p-datepicker-decade", "Botões e rótulo de troca de visão." },
+                              new[] { "p-datepicker-calendar-container / p-datepicker-calendar", "Contêiner dos meses e um mês." },
+                              new[] { "p-datepicker-day-view", "Tabela de dias." },
+                              new[] { "p-datepicker-weekday-cell / p-datepicker-weekday", "Cabeçalhos dos dias da semana." },
+                              new[] { "p-datepicker-weeknumber / p-datepicker-weeklabel-container", "Número da semana (<code>ShowWeek</code>)." },
+                              new[] { "p-datepicker-day-cell / p-datepicker-day", "Célula e dia." },
+                              new[] { "p-datepicker-day-selected / p-datepicker-day-selected-range", "Dia selecionado e dias dentro do intervalo." },
+                              new[] { "p-datepicker-today / p-datepicker-other-month", "Dia atual e dias de meses adjacentes." },
+                              new[] { "p-datepicker-month-view / p-datepicker-month / p-datepicker-month-selected", "Visão de meses." },
+                              new[] { "p-datepicker-year-view / p-datepicker-year / p-datepicker-year-selected", "Visão de anos." },
+                              new[] { "p-datepicker-time-picker", "Contêiner do seletor de hora." },
+                              new[] { "p-datepicker-hour-picker / p-datepicker-minute-picker / p-datepicker-second-picker / p-datepicker-ampm-picker", "Seletores de hora, minuto, segundo e AM/PM." },
+                              new[] { "p-datepicker-separator", "Separador do seletor de hora (<code>TimeSeparator</code>)." },
+                              new[] { "p-datepicker-buttonbar / p-datepicker-today-button / p-datepicker-clear-button", "Barra de botões e seus botões." },
+                              new[] { "p-datepicker-timeonly", "Painel no modo <code>TimeOnly</code>." },
+                              new[] { "p-datepicker-fluid / p-inputtext-fluid", "Largura total (<code>Fluid</code>)." },
+                              new[] { "p-inputtext-sm / p-inputtext-lg", "Input conforme <code>Size</code>." },
+                              new[] { "p-variant-filled", "Variante <code>filled</code>." },
+                              new[] { "p-invalid / p-disabled", "Estados inválido e desabilitado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="datepicker"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e os templates para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>InputStyleClass</code>, <code>PanelStyleClass</code> e os templates disponíveis.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não existe parâmetro <code>Locale</code>: a localidade vem de <code>CultureInfo.CurrentCulture</code> (nomes de mês/dia e cultura de parsing), combinada com <code>DateFormat</code>.</li>
+                        <li>O <code>DateFormat</code> não é idêntico ao do PrimeNG: usa <code>yyyy</code> para ano de 4 dígitos (no upstream é <code>yy</code>) e não suporta os tokens <code>o</code>/<code>oo</code> (dia do ano), <code>@@</code> (timestamp Unix) nem <code>!</code> (ticks do Windows).</li>
+                        <li>Não há seletor de máscara de digitação: no modo Single o input tenta <code>DateTime.TryParse</code> na cultura atual, e o texto digitado só é aplicado quando o parse é bem-sucedido.</li>
+                        <li>Somente o modo Single integra-se ao <code>EditForm</code>/<code>ValidationMessage</code>; Range e Multiple usam seus próprios valores e não participam da validação de formulário.</li>
+                        <li>Com seletor de hora o painel permanece aberto após escolher a data até o foco sair ou <code>HideOnDateTimeSelect</code> ser habilitado.</li>
+                        <li>O pass-through (pt) do Angular não foi portado.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -163,49 +666,299 @@
 
 @code {
     private DateTime? _basic;
-    private DateTime? _icon;
-    private DateTime? _clear;
-    private DateTime? _inline = DateTime.Today;
+    private DateTime? _format;
+    private DateTime? _locale;
+    private DateTime? _icon1;
+    private DateTime? _icon2;
+    private DateTime? _icon3;
+    private DateTime? _minMax;
+    private DateTime? _disabledDays;
+    private IReadOnlyList<DateTime?>? _multiple;
     private IReadOnlyList<DateTime?>? _range;
-    private DateTime? _time;
+    private DateTime? _buttonBarDate;
+    private IReadOnlyList<DateTime?>? _buttonBarRange;
+    private DateTime? _time12;
+    private DateTime? _time24;
+    private DateTime? _timeOnly;
     private DateTime? _month;
+    private DateTime? _year;
+    private DateTime? _multipleMonths;
+    private DateTime? _dateTemplate;
+    private DateTime? _inline = DateTime.Today;
+    private DateTime? _floatOver;
+    private DateTime? _floatIn;
+    private DateTime? _floatOn;
+    private DateTime? _ifta;
+    private DateTime? _clear = DateTime.Today;
+    private DateTime? _size1;
+    private DateTime? _size2;
+    private DateTime? _size3;
+    private DateTime? _fluid;
+    private DateTime? _filled;
+    private DateTime? _disabled = DateTime.Today;
+    private DateTime? _invalid;
+    private DateTime? _invalidFilled;
+    private bool _submitted;
+    private readonly DateTimeFormModel _form = new();
+    private DateTime? _bound;
+    private IReadOnlyList<DateTime?>? _boundRange;
+    private IReadOnlyList<DateTime?>? _boundMultiple;
+
+    private DateTime? _min;
+    private DateTime? _max;
+    private readonly IReadOnlyCollection<int> _weekend = [0, 6];
+
+    protected override void OnInitialized()
+    {
+        _min = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+        _max = _min.Value.AddMonths(1).AddDays(-1);
+    }
+
+    private void OnSubmit() => _submitted = true;
+
+    private sealed class DateTimeFormModel
+    {
+        [Required(ErrorMessage = "A data é obrigatória.")]
+        public DateTime? Date { get; set; }
+    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.DatePicker
 
-        <OpDatePicker @bind-Value="_date" Placeholder="Básico" />
+        <OpDatePicker @bind-Value="_date" />
         """;
 
     private const string BasicCode = """
         <OpDatePicker @bind-Value="_date" Placeholder="Básico" />
+        <span>Valor: @(_date?.ToString("dd/MM/yyyy") ?? "—")</span>
 
         @code {
             private DateTime? _date;
         }
         """;
 
-    private const string IconCode = """
-        <OpDatePicker @bind-Value="_date" ShowIcon="true" />
-        <OpDatePicker @bind-Value="_date" ShowIcon="true" IconDisplay="input" ShowClear="true" />
+    private const string FormatCode = """
+        <OpDatePicker @bind-Value="_date" DateFormat="dd/mm/yyyy" />
         """;
 
-    private const string InlineCode = """
-        <OpDatePicker @bind-Value="_date" Inline="true" />
+    private const string LocaleCode = """
+        // Program.cs — defina a cultura antes de renderizar o app
+        using System.Globalization;
+
+        CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
+        CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("pt-BR");
+
+        <OpDatePicker @bind-Value="_locale" DateFormat="dd 'de' MMMM 'de' yyyy" />
+        """;
+
+    private const string IconCode = """
+        <OpDatePicker @bind-Value="_date1" ShowIcon="true" ShowOnFocus="false" InputId="buttondisplay" />
+
+        <OpDatePicker @bind-Value="_date2" ShowIcon="true" IconDisplay="input" InputId="icondisplay" />
+
+        <OpDatePicker @bind-Value="_date3" ShowIcon="true" IconDisplay="input" TimeOnly="true" InputId="templatedisplay">
+            <InputIconTemplate Context="icon">
+                <span class="pi pi-clock" style="cursor: pointer" @onclick="icon.ClickCallback"></span>
+            </InputIconTemplate>
+        </OpDatePicker>
+        """;
+
+    private const string MinMaxCode = """
+        <OpDatePicker @bind-Value="_date" MinDate="_min" MaxDate="_max" ShowIcon="true" />
+
+        <OpDatePicker @bind-Value="_date2" DisabledDays="_weekend" ShowIcon="true" />
+
+        @code {
+            private DateTime? _date;
+            private DateTime? _date2;
+            private DateTime? _min;
+            private DateTime? _max;
+            private readonly IReadOnlyCollection<int> _weekend = [0, 6];
+
+            protected override void OnInitialized()
+            {
+                _min = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                _max = _min.Value.AddMonths(1).AddDays(-1);
+            }
+        }
+        """;
+
+    private const string MultipleCode = """
+        <OpDatePicker @bind-MultipleValue="_dates" SelectionMode="OpDateSelectionMode.Multiple" ReadonlyInput="true" />
+
+        @code {
+            private IReadOnlyList<DateTime?>? _dates;
+        }
         """;
 
     private const string RangeCode = """
-        <OpDatePicker @bind-RangeValue="_range" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true" ShowButtonBar="true" />
+        <OpDatePicker @bind-RangeValue="_range" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true" />
 
         @code {
             private IReadOnlyList<DateTime?>? _range;
         }
         """;
 
+    private const string ButtonBarCode = """
+        <OpDatePicker @bind-Value="_date" ShowButtonBar="true" Placeholder="Básico" />
+
+        <OpDatePicker @bind-RangeValue="_dates" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true" ShowButtonBar="true">
+            <ButtonBarTemplate Context="bar">
+                <div class="flex justify-between w-full gap-2">
+                    <OpButton Label="Hoje" Severity="secondary" Variant="outlined" Size="small" OnClick="bar.TodayCallback" />
+                    <OpButton Icon="pi pi-times" Severity="danger" Variant="text" Size="small" AriaLabel="Limpar" OnClick="bar.ClearCallback" />
+                </div>
+            </ButtonBarTemplate>
+        </OpDatePicker>
+
+        @code {
+            private DateTime? _date;
+            private IReadOnlyList<DateTime?>? _dates;
+        }
+        """;
+
     private const string TimeCode = """
-        <OpDatePicker @bind-Value="_date" ShowTime="true" HourFormat="12" />
+        <OpDatePicker @bind-Value="_dt12" ShowTime="true" HourFormat="12" InputId="calendar-12h" />
+
+        <OpDatePicker @bind-Value="_dt24" ShowTime="true" HourFormat="24" InputId="calendar-24h" />
+
+        <OpDatePicker @bind-Value="_time" TimeOnly="true" InputId="calendar-timeonly" />
         """;
 
     private const string MonthCode = """
         <OpDatePicker @bind-Value="_date" View="OpDatePickerView.Month" DateFormat="mm/yy" ReadonlyInput="true" />
+        """;
+
+    private const string YearCode = """
+        <OpDatePicker @bind-Value="_date" View="OpDatePickerView.Year" DateFormat="yyyy" />
+        """;
+
+    private const string MultipleMonthsCode = """
+        <OpDatePicker @bind-Value="_date" NumberOfMonths="2" />
+        """;
+
+    private const string DateTemplateCode = """
+        <OpDatePicker @bind-Value="_date">
+            <DateTemplate Context="meta">
+                @if (meta.Day > 10 && meta.Day < 15)
+                {
+                    <strong style="text-decoration: line-through">@meta.Day</strong>
+                }
+                else
+                {
+                    @meta.Day
+                }
+            </DateTemplate>
+        </OpDatePicker>
+
+        @code {
+            private DateTime? _date;
+        }
+        """;
+
+    private const string InlineCode = """
+        <OpDatePicker @bind-Value="_date" Inline="true" ShowWeek="true" />
+        """;
+
+    private const string FloatLabelCode = """
+        @using OpBlazorUI.Base.Components.FloatLabel
+
+        <OpFloatLabel>
+            <OpDatePicker @bind-Value="_over" InputId="over_label" ShowIcon="true" IconDisplay="input" />
+            <label for="over_label">Over Label</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="in">
+            <OpDatePicker @bind-Value="_in" InputId="in_label" ShowIcon="true" IconDisplay="input" />
+            <label for="in_label">In Label</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpDatePicker @bind-Value="_on" InputId="on_label" ShowIcon="true" IconDisplay="input" />
+            <label for="on_label">On Label</label>
+        </OpFloatLabel>
+        """;
+
+    private const string IftaLabelCode = """
+        @using OpBlazorUI.Base.Components.IftaLabel
+
+        <OpIftaLabel>
+            <OpDatePicker @bind-Value="_value" InputId="date" ShowIcon="true" IconDisplay="input" />
+            <label for="date">Date</label>
+        </OpIftaLabel>
+        """;
+
+    private const string ClearIconCode = """
+        <OpDatePicker @bind-Value="_date" ShowClear="true" />
+        """;
+
+    private const string SizesCode = """
+        <OpDatePicker @bind-Value="_value1" Size="small" Placeholder="Small" ShowIcon="true" IconDisplay="input" />
+        <OpDatePicker @bind-Value="_value2" Placeholder="Normal" ShowIcon="true" IconDisplay="input" />
+        <OpDatePicker @bind-Value="_value3" Size="large" Placeholder="Large" ShowIcon="true" IconDisplay="input" />
+        """;
+
+    private const string FluidCode = """
+        <OpDatePicker @bind-Value="_date" Fluid="true" />
+        """;
+
+    private const string FilledCode = """
+        <OpDatePicker @bind-Value="_date" Variant="filled" />
+        """;
+
+    private const string DisabledCode = """
+        <OpDatePicker @bind-Value="_date" Disabled="true" />
+        """;
+
+    private const string InvalidCode = """
+        <OpDatePicker @bind-Value="_date1" Invalid="@(_date1 is null)" Placeholder="Date" />
+        <OpDatePicker @bind-Value="_date2" Invalid="@(_date2 is null)" Variant="filled" Placeholder="Date" />
+        """;
+
+    private const string FormsCode = """
+        @using System.ComponentModel.DataAnnotations
+
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpDatePicker @bind-Value="_form.Date" Placeholder="Data" InputId="form-date" />
+            <ValidationMessage For="() => _form.Date" />
+            <button type="submit" class="p-button p-component p-button-secondary">Enviar</button>
+        </EditForm>
+
+        @code {
+            private readonly DateTimeFormModel _form = new();
+
+            private void OnSubmit() { /* ... */ }
+
+            private sealed class DateTimeFormModel
+            {
+                [Required(ErrorMessage = "A data é obrigatória.")]
+                public DateTime? Date { get; set; }
+            }
+        }
+        """;
+
+    private const string BindingCode = """
+        <OpDatePicker @bind-Value="_single" Placeholder="Single" />
+
+        <OpDatePicker @bind-RangeValue="_range" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true" />
+
+        <OpDatePicker @bind-MultipleValue="_multiple" SelectionMode="OpDateSelectionMode.Multiple" ReadonlyInput="true" />
+
+        @code {
+            private DateTime? _single;
+            private IReadOnlyList<DateTime?>? _range;
+            private IReadOnlyList<DateTime?>? _multiple;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <label for="date1">Date</label>
+        <OpDatePicker InputId="date1" />
+
+        <span id="date2">Date</span>
+        <OpDatePicker AriaLabelledBy="date2" />
+
+        <OpDatePicker AriaLabel="Date" />
         """;
 }

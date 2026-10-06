@@ -5,127 +5,292 @@
 @using OpBlazorUI.Base.Components.Button
 @using OpBlazorUI.Base.Models
 
+<PageTitle>Menu - OpBlazorUI</PageTitle>
+
 <DocComponent Title="Menu"
-              Description="Menu é um componente de navegação/comando que oferece suporte a posicionamento dinâmico e estático.">
+              Description="O Menu é um componente de navegação e comando que oferece posicionamento dinâmico e estático.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O Menu recebe uma coleção de itens pela propriedade <code>Items</code>. O clique em um item
+                habilitado dispara <code>OnItemClick</code>.
+            </Description>
             <ChildContent>
-                <div style="border:1px solid var(--p-content-border-color); border-radius:6px; width:max-content;">
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); width:max-content;">
                     <OpMenu Items="Items" StyleClass="w-56" OnItemClick="OnItemClick"/>
                 </div>
-                <div class="mt-2 text-sm">Último clique: @_lastClick</div>
+                <div class="mt-2 text-sm">Último item clicado: @_lastClick</div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Agrupado">
+        <DocSection Label="Grupo" Id="group">
+            <Description>
+                Itens podem ser organizados em grupos pela propriedade <code>Groups</code>
+                (<code>IReadOnlyList&lt;OpMenuGroup&gt;</code>), em que cada grupo tem um <code>Label</code> e sua
+                própria lista de itens.
+            </Description>
             <ChildContent>
-                <div style="border:1px solid var(--p-content-border-color); border-radius:6px; width:max-content;">
-                    <OpMenu Groups="Groups" StyleClass="w-56"/>
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); width:max-content;">
+                    <OpMenu Groups="Groups" StyleClass="w-56" OnItemClick="OnItemClick"/>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@GroupedCode"/></Code>
+            <Code><CodeBlock Code="@GroupCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Popup">
+        <DocSection Label="Popup" Id="popup">
+            <Description>
+                O modo popup é ativado com <code>Popup="true"</code> e a abertura é feita chamando
+                <code>ToggleAsync</code> (ou <code>ShowAsync</code>/<code>HideAsync</code>) a partir de um
+                <code>@@ref</code>. O componente não cria um gatilho interno — ancore-o a qualquer elemento,
+                informando a <code>ElementReference</code> do alvo.
+            </Description>
             <ChildContent>
-                <div style="position:relative; display:inline-block;">
-                    <OpButton Label="Abrir menu" Severity="secondary" @onclick="TogglePopup"/>
+                <div style="position: relative; display: inline-block;">
+                    <span @ref="_trigger">
+                        <OpButton Label="Opções" Icon="pi pi-ellipsis-v" Severity="secondary" OnClick="TogglePopup"/>
+                    </span>
                     <OpMenu @ref="_popupMenu" Popup="true" Items="PopupItems" StyleClass="w-56" OnItemClick="OnItemClick"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@PopupCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O conteúdo de cada item é customizado por <code>ItemTemplate</code>, que recebe o
+                <code>OpMenuItem</code>. Os slots <code>StartTemplate</code> e <code>EndTemplate</code> inserem
+                conteúdo antes e depois da lista.
+            </Description>
+            <ChildContent>
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); width:max-content;">
+                    <OpMenu Items="TemplateItems" StyleClass="w-64" OnItemClick="OnItemClick">
+                        <StartTemplate>
+                            <span style="display:flex; align-items:center; gap:.5rem; padding:.5rem .75rem;">
+                                <span class="p-menu-item-icon pi pi-box" aria-hidden="true"></span>
+                                <span style="font-weight:600;">Minha Aplicação</span>
+                            </span>
+                        </StartTemplate>
+                        <ItemTemplate Context="item">
+                            <a class="p-menu-item-link" href="@item.Url" tabindex="-1">
+                                @if (!string.IsNullOrEmpty(item.Icon))
+                                {
+                                    <span class="p-menu-item-icon @item.Icon"></span>
+                                }
+                                <span class="p-menu-item-label">@item.Label</span>
+                                @if (item.Label == "Novidades")
+                                {
+                                    <span style="margin-left:auto; font-size:.7rem; padding:0 .35rem; border-radius:var(--p-content-border-radius); background:var(--p-primary-color); color:var(--p-primary-contrast-color);">novo</span>
+                                }
+                            </a>
+                        </ItemTemplate>
+                        <EndTemplate>
+                            <div style="padding:.5rem .75rem; font-size:.8rem; color:var(--p-text-muted-color);">Rodapé do menu</div>
+                        </EndTemplate>
+                    </OpMenu>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Comando" Id="command">
+            <Description>
+                No Angular o comando de um item é registrado na propriedade <code>command</code>. Nesta versão,
+                <code>OpMenuItem.Command</code> é uma <code>Action</code> e o componente dispara
+                <code>OnItemClick</code>; cabe ao handler invocar <code>item.Command</code> ou executar a ação
+                diretamente.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-start gap-2">
+                    <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); width:max-content;">
+                        <OpMenu Items="CommandItems" StyleClass="w-56" OnItemClick="OnCommandItem"/>
+                    </div>
+                    <div class="text-sm">Resultado: @_commandResult</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CommandCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Router" Id="router">
+            <Description>
+                A navegação é feita pela propriedade <code>Url</code>, que renderiza um elemento âncora
+                (<code>&lt;a&gt;</code>); links internos são tratados pelo roteador do Blazor. Não há equivalente
+                às diretivas <code>routerLink</code> do Angular — para ações use <code>Command</code>, ou trate o
+                clique em <code>OnItemClick</code>.
+            </Description>
+            <ChildContent>
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); width:max-content;">
+                    <OpMenu Items="RouterItems" StyleClass="w-56" OnItemClick="OnItemClick"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RouterCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Menu usa o papel <code>menu</code>, e o valor que o descreve pode ser fornecido por
+                    <code>aria-labelledby</code> ou <code>aria-label</code> (propriedade <code>AriaLabel</code>).
+                    Cada item de lista tem o papel <code>presentation</code>, enquanto os elementos âncora têm o
+                    papel <code>menuitem</code>, com <code>aria-label</code> referindo-se ao rótulo do item e
+                    <code>aria-disabled</code> definido quando o item está desabilitado. Um submenu dentro de um
+                    Menu usa o papel <code>group</code>, com <code>aria-labelledby</code> definido como o id do
+                    rótulo do menuitem raiz do submenu.
+                </p>
+                <p>
+                    No modo popup, o componente gerencia implicitamente os atributos <code>aria-expanded</code>,
+                    <code>aria-haspopup</code> e <code>aria-controls</code> do elemento alvo, para definir a
+                    relação entre o alvo e o popup.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Adiciona foco ao primeiro item quando o foco entra no menu. Se o foco já está dentro do menu, move para o próximo item focável na sequência de tabulação da página." },
+                              new[] { "shift + tab", "Adiciona foco ao último item quando o foco entra no menu. Se o foco já está dentro do menu, move para o item focável anterior na sequência de tabulação da página." },
+                              new[] { "enter", "Ativa o menuitem focado. Se o menu está em modo overlay, o popup é fechado e o foco volta ao alvo." },
+                              new[] { "space", "Ativa o menuitem focado. Se o menu está em modo overlay, o popup é fechado e o foco volta ao alvo." },
+                              new[] { "escape", "Se o menu está em modo overlay, o popup é fechado e o foco volta ao alvo." },
+                              new[] { "down arrow", "Move o foco para o próximo menuitem." },
+                              new[] { "up arrow", "Move o foco para o menuitem anterior." },
+                              new[] { "home", "Move o foco para o primeiro menuitem." },
+                              new[] { "end", "Move o foco para o último menuitem." }
+                          })"/>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Items", "IReadOnlyList&lt;OpMenuItem&gt;?", "null", "Itens do menu (lista simples)." },
-                              new[] { "Groups", "IReadOnlyList&lt;OpMenuGroup&gt;?", "null", "Itens agrupados." },
-                              new[] { "Popup", "bool", "false", "Renderiza como menu popup (overlay)." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "Id", "string?", "null", "Id do elemento raiz." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." }
+                              new[] { "Groups", "IReadOnlyList&lt;OpMenuGroup&gt;?", "null", "Itens organizados em grupos. Tem precedência sobre <code>Items</code>." },
+                              new[] { "Popup", "bool", "false", "Renderiza como overlay ancorado a um gatilho externo." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz; gerado automaticamente quando ausente." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível da lista (<code>aria-label</code>)." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "Disparado ao clicar em um item." },
-                              new[] { "OnShow", "EventCallback", "Disparado ao exibir o popup." },
-                              new[] { "OnHide", "EventCallback", "Disparado ao ocultar o popup." }
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "Disparado ao clicar em um item habilitado." },
+                              new[] { "OnShow", "EventCallback", "Disparado ao abrir o popup." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao fechar o popup." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Métodos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Métodos"
-                          Headers="@(new[] { "Nome", "Parâmetros", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ShowAsync", "ElementReference? target", "Abre o popup ancorado em <code>target</code>; sem ele, ancora no elemento anterior ao menu." },
-                              new[] { "HideAsync", "—", "Fecha o popup." },
-                              new[] { "ToggleAsync", "ElementReference? target", "Alterna entre aberto e fechado." }
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "Template do conteúdo de cada item." },
+                              new[] { "StartTemplate", "RenderFragment?", "Conteúdo exibido antes da lista." },
+                              new[] { "EndTemplate", "RenderFragment?", "Conteúdo exibido depois da lista." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Métodos" Id="api-methods">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Parâmetros", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "Template customizado do item." },
-                              new[] { "StartTemplate", "RenderFragment?", "Conteúdo no topo do menu." },
-                              new[] { "EndTemplate", "RenderFragment?", "Conteúdo no final do menu." }
+                              new[] { "ShowAsync", "ElementReference? target", "Abre o popup ancorado em <code>target</code>; sem ele, ancora no irmão anterior." },
+                              new[] { "ToggleAsync", "ElementReference? target", "Alterna entre aberto e fechado." },
+                              new[] { "HideAsync", "—", "Fecha o popup." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="OpMenuItem">
+
+        <DocSection Label="OpMenuItem" Id="api-menuitem">
             <ChildContent>
-                <ApiTable Caption="OpMenuItem"
-                          Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Label", "string?", "null", "Texto do item." },
-                              new[] { "Icon", "string?", "null", "Classe do ícone." },
-                              new[] { "Url", "string?", "null", "URL do link." },
-                              new[] { "Disabled", "bool", "false", "Item desabilitado." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone (ex.: <code>pi pi-plus</code>)." },
+                              new[] { "Url", "string?", "null", "Endereço do link; renderiza a âncora do item." },
+                              new[] { "Target", "string?", "null", "Destino do link (atributo <code>target</code>)." },
+                              new[] { "Command", "Action?", "null", "Ação associada ao item." },
+                              new[] { "Items", "List&lt;OpMenuItem&gt;?", "null", "Subitens." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o item." },
                               new[] { "Separator", "bool", "false", "Renderiza um separador." },
-                              new[] { "Visible", "bool", "true", "Visibilidade do item." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Visible", "bool", "true", "Controla a visibilidade do item." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no item." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="menu"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-menu", "Elemento raiz do menu." },
+                              new[] { "p-menu-list", "Lista (<code>&lt;ul&gt;</code>) de itens." },
+                              new[] { "p-menu-item", "Item da lista (<code>&lt;li&gt;</code>). No Optimus v21, substitui o antigo <code>p-menuitem</code>." },
+                              new[] { "p-menu-item-content", "Contêiner interno do item (antigo <code>p-menuitem-content</code>)." },
+                              new[] { "p-menu-item-link", "Elemento âncora do item (antigo <code>p-menuitem-link</code>)." },
+                              new[] { "p-menu-item-icon", "Ícone do item (antigo <code>p-menuitem-icon</code>)." },
+                              new[] { "p-menu-item-label", "Rótulo do item (antigo <code>p-menuitem-text</code>)." },
+                              new[] { "p-menu-separator", "Separador entre itens." },
+                              new[] { "p-menu-submenu-label", "Cabeçalho de grupo (antigo <code>p-submenu-header</code>)." },
+                              new[] { "p-menu-overlay", "Elemento raiz em modo popup." },
+                              new[] { "p-menu-start / p-menu-end", "Slots de conteúdo antes e depois da lista." },
+                              new[] { "p-focus", "Item com foco por teclado." },
+                              new[] { "p-disabled", "Item desabilitado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="menu"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>ItemTemplate</code> e <code>StartTemplate</code>/<code>EndTemplate</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização, use <code>StyleClass</code>, <code>ItemTemplate</code>, <code>StartTemplate</code>/<code>EndTemplate</code> e os <code>AdditionalAttributes</code>.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há equivalentes às diretivas <code>pMenuItem</code> e <code>routerLink</code> do Angular; a navegação é feita pela propriedade <code>Url</code> (âncora) e as ações por <code>Command</code>/<code>OnItemClick</code>.</li>
+                        <li><code>OpMenuItem.Command</code> não é invocado automaticamente: o componente dispara <code>OnItemClick</code>, e o handler deve executar a ação.</li>
+                        <li><code>OpMenuItem.Items</code> (subitens) não é renderizado; para agrupar itens use <code>Groups</code>.</li>
+                        <li><code>OpMenuItem.Target</code> não é aplicado à âncora renderizada.</li>
+                        <li>Não há template específico para o cabeçalho do grupo (equivalente ao <code>submenuheader</code> do Angular).</li>
+                        <li>No modo popup, os atributos <code>aria-expanded</code>, <code>aria-haspopup</code> e <code>aria-controls</code> do gatilho não são gerenciados automaticamente, pois o gatilho é externo.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -133,7 +298,19 @@
 
 @code {
     private OpMenu? _popupMenu;
+    private ElementReference _trigger;
     private string _lastClick = "—";
+    private string _commandResult = "—";
+    private List<OpMenuItem> CommandItems = new();
+
+    protected override void OnInitialized()
+    {
+        CommandItems = new()
+        {
+            new() { Label = "Criar", Icon = "pi pi-plus", Command = () => _commandResult = "Criar" },
+            new() { Label = "Pesquisar", Icon = "pi pi-search", Command = () => _commandResult = "Pesquisar" }
+        };
+    }
 
     private static readonly List<OpMenuItem> Items = new()
     {
@@ -158,9 +335,26 @@
         new() { Label = "Excluir", Icon = "pi pi-trash" }
     };
 
+    private static readonly List<OpMenuItem> TemplateItems = new()
+    {
+        new() { Label = "Painel", Icon = "pi pi-home" },
+        new() { Label = "Projetos", Icon = "pi pi-folder" },
+        new() { Label = "Novidades", Icon = "pi pi-bell" }
+    };
+
+    private static readonly List<OpMenuItem> RouterItems = new()
+    {
+        new() { Label = "Button", Icon = "pi pi-check", Url = "/button" },
+        new() { Label = "InputText", Icon = "pi pi-pencil", Url = "/inputtext" },
+        new() { Separator = true },
+        new() { Label = "Documentação do Blazor", Icon = "pi pi-external-link", Url = "https://learn.microsoft.com/aspnet/core/blazor" }
+    };
+
     private void OnItemClick(OpMenuItem item) => _lastClick = item.Label ?? "—";
 
-    private Task TogglePopup() => _popupMenu!.ToggleAsync();
+    private void OnCommandItem(OpMenuItem item) => item.Command?.Invoke();
+
+    private void TogglePopup() => _ = _popupMenu!.ToggleAsync(_trigger);
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Menu
@@ -184,28 +378,98 @@
         }
         """;
 
-    private const string GroupedCode = """
-        <OpMenu Groups="Groups" StyleClass="w-56" />
+    private const string GroupCode = """
+        <OpMenu Groups="Groups" StyleClass="w-56" OnItemClick="OnItemClick" />
 
         @code {
             private static readonly List<OpMenuGroup> Groups = new()
             {
                 new() { Label = "Documentos", Items = new() { new() { Label = "Novo", Icon = "pi pi-plus" }, new() { Label = "Pesquisar", Icon = "pi pi-search" } } },
-                new() { Label = "Perfil", Items = new() { new() { Label = "Configurações", Icon = "pi pi-cog" } } }
+                new() { Label = "Perfil", Items = new() { new() { Label = "Configurações", Icon = "pi pi-cog" }, new() { Label = "Sair", Icon = "pi pi-sign-out" } } }
             };
+
+            private void OnItemClick(OpMenuItem item) { }
         }
         """;
 
     private const string PopupCode = """
-        <div style="position: relative; display: inline-block;">
-            <OpButton Label="Abrir menu" Severity="secondary" @onclick="TogglePopup" />
-            <OpMenu @ref="_popupMenu" Popup="true" Items="PopupItems" StyleClass="w-56" OnItemClick="OnItemClick" />
-        </div>
+        <span @ref="_trigger">
+            <OpButton Label="Opções" Icon="pi pi-ellipsis-v" OnClick="TogglePopup" />
+        </span>
+        <OpMenu @ref="_popupMenu" Popup="true" Items="Items" StyleClass="w-56" OnItemClick="OnItemClick" />
 
         @code {
             private OpMenu? _popupMenu;
+            private ElementReference _trigger;
 
-            private Task TogglePopup() => _popupMenu!.ToggleAsync();
+            private void TogglePopup() => _ = _popupMenu!.ToggleAsync(_trigger);
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpMenu Items="Items" StyleClass="w-64" OnItemClick="OnItemClick">
+            <StartTemplate>
+                <span style="display:flex; align-items:center; gap:.5rem; padding:.5rem .75rem;">
+                    <span class="p-menu-item-icon pi pi-box"></span>
+                    <span style="font-weight:600;">Minha Aplicação</span>
+                </span>
+            </StartTemplate>
+            <ItemTemplate Context="item">
+                <a class="p-menu-item-link" href="@item.Url" tabindex="-1">
+                    <span class="p-menu-item-icon @item.Icon"></span>
+                    <span class="p-menu-item-label">@item.Label</span>
+                </a>
+            </ItemTemplate>
+            <EndTemplate>
+                <div style="padding:.5rem .75rem; font-size:.8rem;">Rodapé do menu</div>
+            </EndTemplate>
+        </OpMenu>
+        """;
+
+    private const string CommandCode = """
+        <OpMenu Items="Items" StyleClass="w-56" OnItemClick="OnItemClick" />
+
+        @code {
+            private string _result = "—";
+
+            private List<OpMenuItem> Items = new()
+            {
+                new() { Label = "Criar", Icon = "pi pi-plus", Command = () => _result = "Criar" },
+                new() { Label = "Pesquisar", Icon = "pi pi-search", Command = () => _result = "Pesquisar" }
+            };
+
+            private void OnItemClick(OpMenuItem item) => item.Command?.Invoke();
+        }
+        """;
+
+    private const string RouterCode = """
+        <OpMenu Items="Items" StyleClass="w-56" OnItemClick="OnItemClick" />
+
+        @code {
+            private static readonly List<OpMenuItem> Items = new()
+            {
+                new() { Label = "Button", Icon = "pi pi-check", Url = "/button" },
+                new() { Label = "InputText", Icon = "pi pi-pencil", Url = "/inputtext" },
+                new() { Separator = true },
+                new() { Label = "Documentação do Blazor", Icon = "pi pi-external-link", Url = "https://learn.microsoft.com/aspnet/core/blazor" }
+            };
+
+            private void OnItemClick(OpMenuItem item) { }
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpMenu Items="Items" AriaLabel="Menu principal" />
+
+        <button type="button" aria-haspopup="true" aria-controls="menu-opcoes" @onclick="Abrir">
+            Opções
+        </button>
+        <OpMenu @ref="_menu" Id="menu-opcoes" Popup="true" Items="Items" />
+
+        @code {
+            private OpMenu? _menu;
+
+            private void Abrir() => _ = _menu!.ShowAsync();
         }
         """;
 }

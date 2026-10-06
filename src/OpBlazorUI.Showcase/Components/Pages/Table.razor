@@ -2,131 +2,495 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Components.Button
 @using OpBlazorUI.Base.Models
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>Table - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Table"
               Description="A tabela exibe dados em formato tabular.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import-demo">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                <code>Items</code> recebe a lista de dados e <code>Columns</code> a definição das colunas.
+                Cada coluna lê uma propriedade pública do item pelo nome informado em <code>Field</code>
+                (a comparação ignora maiúsculas/minúsculas). Como não existe template de célula, o valor é
+                exibido com <code>ToString()</code>.
+            </Description>
             <ChildContent>
                 <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5" Sortable="true" RowHover="true"/>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Seleção + Zebrado + Linhas de Grade">
-            <ChildContent>
-                <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_selected" StripedRows="true" ShowGridlines="true"/>
-                <div class="mt-2 text-sm">Selecionados: @_selected.Count</div>
-            </ChildContent>
-            <Code><CodeBlock Code="@SelectionCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Tamanho / Vazio">
+        <DocSection Label="Colunas Dinâmicas" Id="dynamic">
+            <Description>
+                As colunas são apenas dados: monte a lista de <code>OpDataTableColumn</code> em tempo de execução
+                e atribua a <code>Columns</code>. O exemplo alterna entre o conjunto completo e um reduzido.
+            </Description>
             <ChildContent>
                 <div class="flex flex-col gap-3">
-                    <OpDataTable Items="Products" Columns="Cols" Size="small" Paginator="true" Rows="3"/>
-                    <OpDataTable Items="Array.Empty<Product>()" Columns="Cols" EmptyMessage="Nenhum produto encontrado"/>
+                    <OpDataTable Items="Products" Columns="_dynamicCols"/>
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <OpButton Label="Alternar colunas" Icon="pi pi-table" OnClick="ToggleColumns"/>
+                        <span class="text-sm">@_dynamicCols.Count coluna(s) visível(is)</span>
+                    </div>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@EmptyCode"/></Code>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Carregando">
+        <DocSection Label="Tamanho" Id="size">
+            <Description>
+                <code>Size</code> aceita <code>small</code> ou <code>large</code>; sem valor, a tabela usa o
+                tamanho padrão do tema.
+            </Description>
             <ChildContent>
                 <div class="flex flex-col gap-3">
-                    <OpDataTable Items="Products" Columns="Cols" Loading="true"/>
-                    <OpDataTable Items="Products" Columns="Cols" Loading="true" LoadingMode="skeleton"/>
+                    <OpDataTable Items="Products" Columns="Cols" Size="small"/>
+                    <OpDataTable Items="Products" Columns="Cols"/>
+                    <OpDataTable Items="Products" Columns="Cols" Size="large"/>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@LoadingCode"/></Code>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Linhas de Grade" Id="gridlines">
+            <Description>
+                <code>ShowGridlines</code> desenha as bordas entre as células.
+            </Description>
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="Cols" ShowGridlines="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@GridlinesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Linhas Listradas" Id="striped">
+            <Description>
+                <code>StripedRows</code> alterna o fundo das linhas pares e ímpares.
+            </Description>
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="Cols" StripedRows="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@StripedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Estilo e Realce" Id="table-style">
+            <Description>
+                Não há templates de linha ou célula, então não existe estilo condicional por linha como na
+                referência. O que está disponível é <code>StyleClass</code> (classes extras no contêiner),
+                <code>RowHover</code> (realce ao passar o mouse) e os <code>AdditionalAttributes</code>, que
+                entregam atributos como <code>style</code> ao contêiner raiz.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" StyleClass="w-full"/>
+                    <OpDataTable Items="Products" Columns="Cols" RowHover="false"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TableStyleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Carregamento - Máscara" Id="loading-mask">
+            <Description>
+                <code>Loading</code> sobrepõe uma máscara à tabela. <code>LoadingIconTemplate</code> substitui o
+                spinner padrão. No exemplo, o botão simula uma consulta de 2 segundos.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpButton Label="Carregar (2 s)" Icon="pi pi-refresh" OnClick="LoadMask" Loading="_maskLoading"/>
+                    <OpDataTable Items="Products" Columns="Cols" Loading="_maskLoading">
+                        <LoadingIconTemplate>
+                            <span class="p-datatable-loading-icon pi pi-spin pi-spinner" aria-hidden="true"></span>
+                        </LoadingIconTemplate>
+                    </OpDataTable>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoadingMaskCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Carregamento - Skeleton" Id="loading-skeleton">
+            <Description>
+                Com <code>LoadingMode="skeleton"</code> o componente exibe linhas de esqueleto em vez da máscara.
+                <code>SkeletonRows</code> define quantas linhas mostrar (0 usa <code>Rows</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpButton Label="Carregar (2 s)" Icon="pi pi-refresh" OnClick="LoadSkeleton" Loading="_skeletonLoading"/>
+                    <OpDataTable Items="Products" Columns="Cols" Loading="_skeletonLoading" LoadingMode="skeleton" SkeletonRows="5"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoadingSkeletonCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Paginação - Básico" Id="paginator-basic">
+            <Description>
+                <code>Paginator</code> habilita a paginação e <code>Rows</code> define os itens por página.
+                <code>PaginatorPosition</code> aceita <code>bottom</code> (padrão), <code>top</code> ou
+                <code>both</code>. <code>OnPage</code> informa a página exibida (base 0); a navegação em si é
+                interna ao componente.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5" PaginatorPosition="both" OnPage="OnPageChanged"/>
+                    <div class="text-sm">Última página navegada: @(_page + 1)</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PaginatorCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ordenação - Coluna Única" Id="single-column-sort">
+            <Description>
+                A ordenação é embutida: clicar no cabeçalho percorre ascendente, descendente e sem ordenação,
+                reordenando os itens por reflexão. <code>Sortable</code> desabilita globalmente e
+                <code>OpDataTableColumn.Sortable</code> por coluna. <code>OnSort</code> entrega o par
+                <code>(Field, Order)</code>, com <code>Order</code> em 1 (asc), -1 (desc) ou 0 (sem ordenação).
+                Não há multi-sort, ordenação inicial nem reset programático.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" OnSort="OnSorted"/>
+                    <div class="text-sm">Ordenação: @SortLabel</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SortCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Seleção - Múltipla" Id="multiple-selection">
+            <Description>
+                <code>Selection</code> habilita a coluna de checkboxes e a seleção ao clicar na linha. A lista é
+                controlada por <code>SelectedItems</code> e <code>SelectedItemsChanged</code> (ou pelo atalho
+                <code>@@bind-SelectedItems</code>). O componente sempre trabalha em modo múltiplo; não há modo
+                único nem por radio.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" Selection="true" SelectedItems="_selected" SelectedItemsChanged="@((IReadOnlyList<Product>? items) => OnSelectedChanged(items))"/>
+                    <div class="text-sm">Selecionados: @_selected.Count</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SelectionMultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Eventos de Seleção" Id="selection-events">
+            <Description>
+                <code>OnRowClick</code> dispara ao clicar em qualquer linha, entregando o item clicado. Quando
+                <code>Selection</code> está ativo, a linha é marcada ou desmarcada antes do evento.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_clickSelected" OnRowClick="@((Product item) => OnRowClicked(item))"/>
+                    <div class="text-sm">Última linha clicada: @(_lastClicked?.Name ?? "nenhuma")</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SelectionEventsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vínculo" Id="binding">
+            <Description>
+                <code>@@bind-SelectedItems</code> liga a seleção a um campo do componente que usa a tabela: a cada
+                marcação o Blazor atualiza o campo com a nova lista. Mantenha a lista vinculada como fonte da
+                verdade para habilitar ações que dependem do que está selecionado.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_boundSelected"/>
+                    <div class="text-sm">
+                        <div>Vinculados: @_boundSelected.Count</div>
+                        @if (_boundSelected.Count > 0)
+                        {
+                            <ul style="margin:.25rem 0 0 1.25rem;">
+                                @foreach (var product in _boundSelected)
+                                {
+                                    <li>@product.Name</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BindingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O <code>OpDataTable</code> não herda de <code>InputBase</code>, então não registra um campo no
+                <code>EditContext</code>. Ainda assim, a seleção pode ser validada dentro de um
+                <code>EditForm</code>: vincule a lista a uma propriedade do modelo e aplique um atributo de
+                validação customizado. Como o componente não dispara <code>OnFieldChanged</code>, a mensagem só
+                aparece quando o formulário é enviado (<code>Validate()</code>).
+            </Description>
+            <ChildContent>
+                <EditForm Model="_model" OnValidSubmit="SubmitSelection" class="flex flex-col gap-3">
+                    <DataAnnotationsValidator/>
+                    <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_model.Selected"/>
+                    <ValidationMessage For="() => _model.Selected"/>
+                    <div>
+                        <button type="submit" class="p-button p-component"><span class="p-button-label">Confirmar</span></button>
+                    </div>
+                    @if (_selectionSubmitted)
+                    {
+                        <div class="text-sm">Seleção confirmada: @(_model.Selected?.Count ?? 0) item(ns).</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Recursos não portados" Id="not-ported">
+            <Description>
+                Os recursos abaixo existem na referência Angular (PrimeNG/Optimus UI v21), mas não têm equivalente
+                nesta versão do <code>OpDataTable</code> porque a API necessária não foi portada. Eles não têm
+                demonstração nesta página; os detalhes estão em <strong>Problemas Conhecidos</strong>.
+            </Description>
+            <ChildContent>
+                <ApiTable Caption="Recursos da referência sem equivalente no Blazor"
+                          Headers="@(new[] { "Recurso", "Seção na referência", "Motivo (API ausente)" })"
+                          Rows="NotPortedRows"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O componente usa a marcação semântica nativa (<code>table</code>, <code>thead</code>,
+                    <code>tbody</code>, <code>tr</code>, <code>th</code>, <code>td</code>), então os leitores de
+                    tela inferem os papéis <code>rowgroup</code>, <code>row</code>, <code>columnheader</code> e
+                    <code>cell</code> automaticamente. Ainda faltam <code>aria-sort</code> nos cabeçalhos
+                    ordenáveis, <code>aria-selected</code> nas linhas e rótulo ARIA nas checkboxes de seleção.
+                </p>
+                <p>
+                    Papéis e rótulos podem ser reforçados pelos <code>AdditionalAttributes</code>: qualquer
+                    atributo extra (ex.: <code>aria-label</code>) é repassado ao contêiner raiz.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado implementado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Percorre os botões do paginador. As checkboxes de seleção usam tabindex=\"-1\" e ficam fora da ordem de tabulação." },
+                              new[] { "space", "Aciona o botão do paginador em foco." },
+                              new[] { "enter", "Aciona o botão do paginador em foco." }
+                          })"/>
+                <div class="doc-section-description">
+                    <h3>Suporte da referência ainda não implementado</h3>
+                    <p>Os atalhos abaixo dependem de navegação por foco nas linhas, que não foi portada.</p>
+                </div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função na referência" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco entre os cabeçalhos ordenáveis." },
+                              new[] { "enter", "Ordena a coluna em foco." },
+                              new[] { "space", "Ordena a coluna em foco." },
+                              new[] { "seta para cima / para baixo", "Move o foco entre as linhas." },
+                              new[] { "shift + seta", "Move o foco e alterna a seleção da linha." },
+                              new[] { "control + a", "Seleciona todas as linhas." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Items", "IReadOnlyList&lt;TItem&gt;?", "null", "Dados da tabela." },
-                              new[] { "Columns", "IReadOnlyList&lt;OpDataTableColumn&gt;", "[]", "Definição das colunas." },
-                              new[] { "Sortable", "bool", "true", "Habilita ordenação." },
-                              new[] { "StripedRows", "bool", "false", "Linhas listradas." },
-                              new[] { "ShowGridlines", "bool", "false", "Exibe linhas de grade." },
-                              new[] { "RowHover", "bool", "true", "Realce no hover." },
+                              new[] { "Items", "IReadOnlyList&lt;TItem&gt;?", "null", "Lista de dados exibida." },
+                              new[] { "Columns", "IReadOnlyList&lt;OpDataTableColumn&gt;", "vazio", "Definição das colunas." },
+                              new[] { "Sortable", "bool", "true", "Habilita a ordenação global (combinada com <code>OpDataTableColumn.Sortable</code>)." },
+                              new[] { "StripedRows", "bool", "false", "Alterna o fundo das linhas." },
+                              new[] { "ShowGridlines", "bool", "false", "Desenha as bordas entre as células." },
+                              new[] { "RowHover", "bool", "true", "Realça a linha sob o cursor." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
-                              new[] { "Selection", "bool", "false", "Habilita seleção de linhas." },
-                              new[] { "SelectedItems", "IReadOnlyList&lt;TItem&gt;?", "null", "Itens selecionados." },
+                              new[] { "Selection", "bool", "false", "Habilita a coluna de checkboxes e o clique para selecionar linhas." },
+                              new[] { "SelectedItems", "IReadOnlyList&lt;TItem&gt;?", "null", "Itens selecionados (para <code>@bind-SelectedItems</code>)." },
                               new[] { "SelectedItemsChanged", "EventCallback&lt;IReadOnlyList&lt;TItem&gt;?&gt;", "-", "Callback de seleção." },
-                              new[] { "Paginator", "bool", "false", "Habilita paginação." },
-                              new[] { "PaginatorPosition", "string", "bottom", "Posição do paginador." },
-                              new[] { "Rows", "int", "5", "Linhas por página." },
-                              new[] { "EmptyMessage", "string", "Nenhum resultado encontrado", "Mensagem quando vazio." },
-                              new[] { "Loading", "bool", "false", "Exibe estado de carregamento." },
-                              new[] { "LoadingMode", "string", "mask", "Modo de loading: <code>mask</code> (overlay) ou <code>skeleton</code> (linhas placeholder)." },
-                              new[] { "SkeletonRows", "int", "0", "Quantidade de linhas no modo <code>skeleton</code> (0 usa <code>Rows</code>)." },
-                              new[] { "LoadingIconTemplate", "RenderFragment?", "null", "Template do ícone de carregamento (modo <code>mask</code>)." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Paginator", "bool", "false", "Habilita a paginação." },
+                              new[] { "PaginatorPosition", "string", "bottom", "Posição do paginador: <code>bottom</code>, <code>top</code> ou <code>both</code>." },
+                              new[] { "Rows", "int", "5", "Itens por página." },
+                              new[] { "PageLinkSize", "int", "5", "Quantidade de botões de página visíveis na janela do paginador." },
+                              new[] { "EmptyMessage", "string?", "No results found", "Mensagem exibida quando não há dados." },
+                              new[] { "Loading", "bool", "false", "Exibe o estado de carregamento." },
+                              new[] { "LoadingMode", "string", "mask", "Modo: <code>mask</code> (máscara) ou <code>skeleton</code> (linhas esqueleto)." },
+                              new[] { "SkeletonRows", "int", "0", "Linhas do modo <code>skeleton</code> (0 usa <code>Rows</code>)." },
+                              new[] { "LoadingIconTemplate", "RenderFragment?", "null", "Template do ícone da máscara de carregamento." },
+                              new[] { "StyleClass", "string?", "null", "Classes extras no contêiner raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
                 <ApiTable Caption="Eventos"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnSort", "EventCallback&lt;(string Field, int Order)&gt;", "Disparado ao ordenar." },
-                              new[] { "OnPage", "EventCallback&lt;int&gt;", "Disparado ao mudar de página." },
-                              new[] { "OnRowClick", "EventCallback&lt;TItem&gt;", "Disparado ao clicar em uma linha." }
+                              new[] { "OnSort", "EventCallback&lt;(string Field, int Order)&gt;", "Dispara ao ordenar; <code>Order</code>: 1 asc, -1 desc, 0 sem ordenação." },
+                              new[] { "OnPage", "EventCallback&lt;int&gt;", "Dispara ao mudar de página; o valor é a página (base 0)." },
+                              new[] { "OnRowClick", "EventCallback&lt;TItem&gt;", "Dispara ao clicar em uma linha, com o item clicado." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="OpDataTableColumn">
+
+        <DocSection Label="OpDataTableColumn" Id="api-column">
             <ChildContent>
                 <ApiTable Caption="OpDataTableColumn"
                           Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Field", "string", "", "Nome da propriedade." },
-                              new[] { "Header", "string", "", "Título da coluna." },
-                              new[] { "Sortable", "bool", "true", "Coluna ordenável." },
-                              new[] { "Width", "string?", "null", "Largura da coluna." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Field", "string", "vazio", "Nome da propriedade pública lida por reflexão (case-insensitive)." },
+                              new[] { "Header", "string", "vazio", "Título exibido no cabeçalho." },
+                              new[] { "Sortable", "bool", "true", "Se a coluna pode ser ordenada (combinado com o <code>Sortable</code> global)." },
+                              new[] { "Width", "string?", "null", "Largura aplicada como <code>style=\"width:...\"</code> no <code>th</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes extras no <code>th</code> da coluna." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os
+                tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="StyleRows"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
             <ChildContent><DocTokens Component="datatable"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>OpDataTableColumn.StyleClass</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>
+                        O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização, use
+                        <code>StyleClass</code>, <code>OpDataTableColumn.StyleClass</code>,
+                        <code>OpDataTableColumn.Width</code> e os <code>AdditionalAttributes</code> (repassados ao
+                        contêiner raiz).
+                    </p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>
+                            Não há template de célula ou de linha: cada célula renderiza o <code>ToString()</code>
+                            do campo. Isso impede formatação por célula (moeda, datas, badges, botões de ação).
+                        </li>
+                        <li>
+                            Sem filtro de qualquer tipo (por coluna, global ou avançado).
+                        </li>
+                        <li>
+                            A seleção é sempre múltipla, via checkbox. Não há modo único, por radio, por coluna nem
+                            a distinção de eventos de seleção da referência.
+                        </li>
+                        <li>
+                            A ordenação é de coluna única. Não há multi-sort, ordenação inicial (presort) nem
+                            ordenação removível controlada por código.
+                        </li>
+                        <li>
+                            A paginação é sempre sobre a lista já carregada (client-side). Não há seletor de itens
+                            por página, paginação programática/lazy nem total de registros externo.
+                        </li>
+                        <li>
+                            Sem scroll vertical, flexível, horizontal, colunas/linhas congeladas ou scroll virtual;
+                            tabelas muito largas rolam no contêiner e tabelas muito longas não têm altura fixa.
+                        </li>
+                        <li>
+                            Sem redimensionamento, reordenação, agrupamento ou ocultação de colunas, e sem
+                            exportação ou menu de contexto.
+                        </li>
+                        <li>
+                            Acessibilidade parcial: a marcação é semântica, mas faltam <code>aria-sort</code>,
+                            <code>aria-selected</code>, rótulos ARIA nas checkboxes e navegação por teclado nas
+                            linhas. Os cabeçalhos ordenáveis não são focáveis.
+                        </li>
+                        <li>
+                            <code>EmptyMessage</code> tem padrão em inglês (<code>"No results found"</code>);
+                            informe um texto em pt-BR para manter a consistência.
+                        </li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private bool _extended = true;
+    private List<OpDataTableColumn> _dynamicCols = new(Cols);
+
     private IReadOnlyList<Product> _selected = Array.Empty<Product>();
+    private IReadOnlyList<Product> _clickSelected = Array.Empty<Product>();
+    private IReadOnlyList<Product> _boundSelected = Array.Empty<Product>();
+    private Product? _lastClicked;
+
+    private int _page;
+    private string _sortField = "";
+    private int _sortOrder;
+
+    private bool _maskLoading;
+    private bool _skeletonLoading;
+
+    private SelectionModel _model = new();
+    private bool _selectionSubmitted;
+
+    private string SortLabel => _sortOrder == 0 || string.IsNullOrEmpty(_sortField)
+        ? "sem ordenação"
+        : $"{_sortField} ({(_sortOrder == 1 ? "asc" : "desc")})";
+
+    private void ToggleColumns()
+    {
+        _extended = !_extended;
+        _dynamicCols = _extended ? new List<OpDataTableColumn>(Cols) : new List<OpDataTableColumn>(MinimalColumns);
+    }
+
+    private void OnSelectedChanged(IReadOnlyList<Product>? items) => _selected = items ?? Array.Empty<Product>();
+
+    private void OnRowClicked(Product item) => _lastClicked = item;
+
+    private void OnPageChanged(int page) => _page = page;
+
+    private void OnSorted((string Field, int Order) info)
+    {
+        _sortField = info.Field;
+        _sortOrder = info.Order;
+    }
+
+    private async Task LoadMask()
+    {
+        _maskLoading = true;
+        await Task.Delay(2000);
+        _maskLoading = false;
+    }
+
+    private async Task LoadSkeleton()
+    {
+        _skeletonLoading = true;
+        await Task.Delay(2000);
+        _skeletonLoading = false;
+    }
+
+    private void SubmitSelection() => _selectionSubmitted = true;
 
     private sealed class Product
     {
@@ -134,6 +498,18 @@
         public string Category { get; set; } = "";
         public decimal Price { get; set; }
         public int Stock { get; set; }
+    }
+
+    private sealed class SelectionModel
+    {
+        [AtLeastOneProduct(ErrorMessage = "Selecione ao menos um produto.")]
+        public IReadOnlyList<Product>? Selected { get; set; }
+    }
+
+    private sealed class AtLeastOneProductAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object? value)
+            => value is IReadOnlyList<Product> list && list.Count > 0;
     }
 
     private static readonly List<OpDataTableColumn> Cols = new()
@@ -144,6 +520,12 @@
         new() { Field = "Stock", Header = "Estoque" }
     };
 
+    private static readonly List<OpDataTableColumn> MinimalColumns = new()
+    {
+        new() { Field = "Name", Header = "Nome" },
+        new() { Field = "Stock", Header = "Estoque" }
+    };
+
     private static readonly List<Product> Products = new()
     {
         new() { Name = "Alface", Category = "Hortaliça", Price = 2.5m, Stock = 120 },
@@ -151,8 +533,63 @@
         new() { Name = "Banana", Category = "Fruta", Price = 3.2m, Stock = 200 },
         new() { Name = "Maçã", Category = "Fruta", Price = 5.6m, Stock = 64 },
         new() { Name = "Cenoura", Category = "Legume", Price = 2.1m, Stock = 150 },
-        new() { Name = "Batata", Category = "Legume", Price = 3.8m, Stock = 95 }
+        new() { Name = "Batata", Category = "Legume", Price = 3.8m, Stock = 95 },
+        new() { Name = "Laranja", Category = "Fruta", Price = 4.2m, Stock = 180 },
+        new() { Name = "Cebola", Category = "Hortaliça", Price = 3.5m, Stock = 130 },
+        new() { Name = "Uva", Category = "Fruta", Price = 8.9m, Stock = 45 },
+        new() { Name = "Brócolis", Category = "Hortaliça", Price = 6.3m, Stock = 70 }
     };
+
+    private static readonly string[][] NotPortedRows =
+    [
+        ["Template de célula/coluna", "Template", "OpDataTableColumn não tem RenderFragment; a célula renderiza apenas o ToString() do campo."],
+        ["Filtro (básico e avançado)", "Filter", "Sem Filter, FilterField, FilterMatchMode ou menu de filtro."],
+        ["Expansão de linha", "Row Expansion", "Sem RowExpansionTemplate nem controle de linhas expandidas."],
+        ["Edição de célula/linha", "Edit", "Sem editores de célula/linha nem eventos de salvar/cancelar."],
+        ["Carregamento lazy", "Lazy Load", "Sem Lazy, TotalRecords nem OnLazyLoad."],
+        ["Scroll vertical, flexível e horizontal", "Scroll", "Sem Scrollable, ScrollHeight nem colgroup de largura."],
+        ["Linhas/colunas congeladas", "Frozen Rows/Columns", "Sem FrozenColumns, FrozenRows nem FrozenWidth."],
+        ["Scroll virtual", "Virtual Scroll", "Sem VirtualScroll nem VirtualScrollItemSize."],
+        ["Grupo de colunas", "Column Group", "Sem templates de header/footer com colspan/rowspan."],
+        ["Grupo de linhas, subheader, expansão e rowspan", "Row Group", "Sem RowGroupMode nem templates de agrupamento."],
+        ["Redimensionamento de colunas", "Column Resize (fit/expand/scrollable)", "Sem ResizableColumns nem ColumnResizeMode."],
+        ["Reordenar colunas", "Reorder", "Sem ReorderableColumns nem OnColReorder."],
+        ["Alternar colunas", "Column Toggle", "Sem SelectedColumns; colunas dinâmicas são o único caminho."],
+        ["Exportação (CSV/Excel)", "Export", "Sem ExportFunction nem exportação embutida."],
+        ["Menu de contexto", "Context Menu", "Sem ContextMenuRow nem integração com menu de contexto."],
+        ["Estado persistente", "Stateful", "Sem StateKey/StateStorage."],
+        ["Paginação programática", "Paginator (Programmatic)", "Não há parâmetro de página (First/Page) controlável; apenas OnPage notifica."],
+        ["Multi-sort, presort e sort removível", "Sort", "Ordenação de coluna única; sem MultiSortMeta nem estado inicial de ordenação."],
+        ["Seleção única, por radio e por coluna", "Row Selection", "Selection só oferece seleção múltipla via checkbox."],
+        ["Amostras (Customers/Products)", "Samples", "Páginas de exemplo da referência; não adicionam recurso à API."]
+    ];
+
+    private static readonly string[][] StyleRows =
+    [
+        ["p-datatable / p-component", "Contêiner raiz."],
+        ["p-datatable-hoverable", "Raiz quando RowHover (padrão) ou Selection está ativo."],
+        ["p-datatable-striped", "Raiz com StripedRows."],
+        ["p-datatable-gridlines", "Raiz com ShowGridlines."],
+        ["p-datatable-sm / p-datatable-lg", "Raiz conforme Size."],
+        ["p-datatable-table-container", "Contêiner com overflow: auto."],
+        ["p-datatable-table", "Elemento table."],
+        ["p-datatable-thead", "Elemento thead."],
+        ["p-datatable-tbody", "Elemento tbody."],
+        ["p-datatable-header-cell", "Célula th."],
+        ["p-datatable-sortable-column", "th com ordenação habilitada."],
+        ["p-datatable-column-sorted", "th atualmente ordenada."],
+        ["p-datatable-column-header-content", "Div interna do cabeçalho."],
+        ["p-datatable-column-title", "Span com o título da coluna."],
+        ["p-datatable-sort-icon", "Ícone de ordenação."],
+        ["p-datatable-selectable-row", "Linha quando Selection está ativo."],
+        ["p-datatable-row-selected", "Linha selecionada."],
+        ["p-datatable-selection-column", "th da coluna de seleção."],
+        ["p-datatable-empty-message", "Célula da mensagem de vazio."],
+        ["p-datatable-skeleton-row", "Linhas do modo skeleton."],
+        ["p-datatable-mask", "Máscara de carregamento."],
+        ["p-datatable-loading-icon", "Ícone/spinner da máscara."],
+        ["p-datatable-paginator-top / -bottom", "Contêineres do paginador."]
+    ];
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.DataTable
@@ -165,33 +602,209 @@
         <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5" Sortable="true" RowHover="true" />
 
         @code {
+            private sealed class Product
+            {
+                public string Name { get; set; } = "";
+                public string Category { get; set; } = "";
+                public decimal Price { get; set; }
+                public int Stock { get; set; }
+            }
+
             private static readonly List<OpDataTableColumn> Cols = new()
             {
                 new() { Field = "Name", Header = "Nome" },
                 new() { Field = "Category", Header = "Categoria" },
-                new() { Field = "Price", Header = "Preço" }
+                new() { Field = "Price", Header = "Preço" },
+                new() { Field = "Stock", Header = "Estoque" }
             };
 
-            private static readonly List<Product> Products = new() { ... };
+            private static readonly List<Product> Products = new() { /* ... */ };
         }
         """;
 
-    private const string SelectionCode = """
-        <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_selected"
-                     StripedRows="true" ShowGridlines="true" />
+    private const string DynamicCode = """
+        <OpDataTable Items="Products" Columns="_dynamicCols" />
+        <OpButton Label="Alternar colunas" Icon="pi pi-table" OnClick="ToggleColumns" />
+
+        @code {
+            private bool _extended = true;
+            private List<OpDataTableColumn> _dynamicCols = new(Cols);
+
+            private static readonly List<OpDataTableColumn> MinimalColumns = new()
+            {
+                new() { Field = "Name", Header = "Nome" },
+                new() { Field = "Stock", Header = "Estoque" }
+            };
+
+            private void ToggleColumns()
+            {
+                _extended = !_extended;
+                _dynamicCols = _extended
+                    ? new List<OpDataTableColumn>(Cols)
+                    : new List<OpDataTableColumn>(MinimalColumns);
+            }
+        }
+        """;
+
+    private const string SizeCode = """
+        <OpDataTable Items="Products" Columns="Cols" Size="small" />
+        <OpDataTable Items="Products" Columns="Cols" />
+        <OpDataTable Items="Products" Columns="Cols" Size="large" />
+        """;
+
+    private const string GridlinesCode = """
+        <OpDataTable Items="Products" Columns="Cols" ShowGridlines="true" />
+        """;
+
+    private const string StripedCode = """
+        <OpDataTable Items="Products" Columns="Cols" StripedRows="true" />
+        """;
+
+    private const string TableStyleCode = """
+        <OpDataTable Items="Products" Columns="Cols" StyleClass="w-full" />
+        <OpDataTable Items="Products" Columns="Cols" RowHover="false" />
+        """;
+
+    private const string LoadingMaskCode = """
+        <OpButton Label="Carregar (2 s)" Icon="pi pi-refresh" OnClick="LoadMask" Loading="_maskLoading" />
+        <OpDataTable Items="Products" Columns="Cols" Loading="_maskLoading">
+            <LoadingIconTemplate>
+                <span class="p-datatable-loading-icon pi pi-spin pi-spinner" aria-hidden="true"></span>
+            </LoadingIconTemplate>
+        </OpDataTable>
+
+        @code {
+            private bool _maskLoading;
+
+            private async Task LoadMask()
+            {
+                _maskLoading = true;
+                await Task.Delay(2000);
+                _maskLoading = false;
+            }
+        }
+        """;
+
+    private const string LoadingSkeletonCode = """
+        <OpButton Label="Carregar (2 s)" Icon="pi pi-refresh" OnClick="LoadSkeleton" Loading="_skeletonLoading" />
+        <OpDataTable Items="Products" Columns="Cols" Loading="_skeletonLoading" LoadingMode="skeleton" SkeletonRows="5" />
+
+        @code {
+            private bool _skeletonLoading;
+
+            private async Task LoadSkeleton()
+            {
+                _skeletonLoading = true;
+                await Task.Delay(2000);
+                _skeletonLoading = false;
+            }
+        }
+        """;
+
+    private const string PaginatorCode = """
+        <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5"
+                     PaginatorPosition="both" OnPage="OnPageChanged" />
+        <div>Última página navegada: @(_page + 1)</div>
+
+        @code {
+            private int _page;
+
+            private void OnPageChanged(int page) => _page = page;
+        }
+        """;
+
+    private const string SortCode = """
+        <OpDataTable Items="Products" Columns="Cols" OnSort="OnSorted" />
+        <div>Ordenação: @SortLabel</div>
+
+        @code {
+            private string _sortField = "";
+            private int _sortOrder;
+
+            private void OnSorted((string Field, int Order) info)
+            {
+                _sortField = info.Field;
+                _sortOrder = info.Order;
+            }
+
+            private string SortLabel => _sortOrder == 0 || string.IsNullOrEmpty(_sortField)
+                ? "sem ordenação"
+                : $"{_sortField} ({(_sortOrder == 1 ? "asc" : "desc")})";
+        }
+        """;
+
+    private const string SelectionMultipleCode = """
+        <OpDataTable Items="Products" Columns="Cols" Selection="true"
+                     SelectedItems="_selected"
+                     SelectedItemsChanged="@((IReadOnlyList<Product>? items) => OnSelectedChanged(items))" />
+        <div>Selecionados: @_selected.Count</div>
 
         @code {
             private IReadOnlyList<Product> _selected = Array.Empty<Product>();
+
+            private void OnSelectedChanged(IReadOnlyList<Product>? items)
+                => _selected = items ?? Array.Empty<Product>();
         }
         """;
 
-    private const string EmptyCode = """
-        <OpDataTable Items="Products" Columns="Cols" Size="small" Paginator="true" Rows="3" />
-        <OpDataTable Items="Array.Empty<Product>()" Columns="Cols" EmptyMessage="Nenhum produto encontrado" />
+    private const string SelectionEventsCode = """
+        <OpDataTable Items="Products" Columns="Cols" Selection="true"
+                     @bind-SelectedItems="_clickSelected"
+                     OnRowClick="@((Product item) => OnRowClicked(item))" />
+        <div>Última linha clicada: @(_lastClicked?.Name ?? "nenhuma")</div>
+
+        @code {
+            private IReadOnlyList<Product> _clickSelected = Array.Empty<Product>();
+            private Product? _lastClicked;
+
+            private void OnRowClicked(Product item) => _lastClicked = item;
+        }
         """;
 
-    private const string LoadingCode = """
-        <OpDataTable Items="Products" Columns="Cols" Loading="true" />
-        <OpDataTable Items="Products" Columns="Cols" Loading="true" LoadingMode="skeleton" />
+    private const string BindingCode = """
+        <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_boundSelected" />
+
+        <ul>
+            @foreach (var product in _boundSelected)
+            {
+                <li>@product.Name</li>
+            }
+        </ul>
+
+        @code {
+            private IReadOnlyList<Product> _boundSelected = Array.Empty<Product>();
+        }
+        """;
+
+    private const string FormsCode = """
+        <EditForm Model="_model" OnValidSubmit="SubmitSelection">
+            <DataAnnotationsValidator />
+            <OpDataTable Items="Products" Columns="Cols" Selection="true" @bind-SelectedItems="_model.Selected" />
+            <ValidationMessage For="() => _model.Selected" />
+            <button type="submit" class="p-button p-component"><span class="p-button-label">Confirmar</span></button>
+        </EditForm>
+
+        @code {
+            private SelectionModel _model = new();
+            private bool _selectionSubmitted;
+
+            private void SubmitSelection() => _selectionSubmitted = true;
+
+            private sealed class SelectionModel
+            {
+                [AtLeastOneProduct(ErrorMessage = "Selecione ao menos um produto.")]
+                public IReadOnlyList<Product>? Selected { get; set; }
+            }
+
+            private sealed class AtLeastOneProductAttribute : ValidationAttribute
+            {
+                public override bool IsValid(object? value)
+                    => value is IReadOnlyList<Product> list && list.Count > 0;
+            }
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpDataTable Items="Products" Columns="Cols" aria-label="Tabela de produtos" />
         """;
 }

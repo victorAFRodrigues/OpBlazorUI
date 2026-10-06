@@ -2,89 +2,268 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Skeleton
+@using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Models
+
+<PageTitle>Skeleton - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Skeleton"
               Description="O Skeleton é um placeholder exibido no lugar do conteúdo enquanto ele carrega.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Formas" Id="shapes">
             <Description>
-                O Skeleton usa <code>aria-hidden="true"</code> para ser ignorado por leitores de tela.
-                Agrupe vários skeletons em um contêiner com <code>aria-busy</code> para indicar o carregamento.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Formas">
-            <Description>
-                Retângulo é a forma padrão; use <code>Shape="circle"</code> para círculos e
-                <code>BorderRadius</code> para cantos arredondados.
+                Vários formatos e tamanhos são criados com <code>Shape</code>, <code>Size</code>, <code>Width</code>,
+                <code>Height</code> e <code>BorderRadius</code>. O formato padrão é o retângulo;
+                <code>Shape="circle"</code> adiciona <code>p-skeleton-circle</code> e <code>Size</code> define
+                largura e altura ao mesmo tempo.
             </Description>
             <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpSkeleton class="mb-1"/>
-                    <OpSkeleton Width="10rem" class="mb-1"/>
-                    <OpSkeleton Width="5rem" Height="2rem"/>
-                    <OpSkeleton Shape="circle" Size="3rem"/>
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-2">
+                        <h5>Retângulo</h5>
+                        <OpSkeleton/>
+                        <OpSkeleton Width="10rem"/>
+                        <OpSkeleton Width="5rem"/>
+                        <OpSkeleton Height="2rem"/>
+                        <OpSkeleton Width="10rem" Height="4rem"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <h5>Arredondado</h5>
+                        <OpSkeleton BorderRadius="16px"/>
+                        <OpSkeleton Width="10rem" BorderRadius="16px"/>
+                        <OpSkeleton Width="5rem" BorderRadius="16px"/>
+                        <OpSkeleton Height="2rem" BorderRadius="16px"/>
+                        <OpSkeleton Width="10rem" Height="4rem" BorderRadius="16px"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <h5>Quadrado</h5>
+                        <div class="flex items-end gap-2">
+                            <OpSkeleton Size="2rem"/>
+                            <OpSkeleton Size="3rem"/>
+                            <OpSkeleton Size="4rem"/>
+                            <OpSkeleton Size="5rem"/>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <h5>Círculo</h5>
+                        <div class="flex items-end gap-2">
+                            <OpSkeleton Shape="circle" Size="2rem"/>
+                            <OpSkeleton Shape="circle" Size="3rem"/>
+                            <OpSkeleton Shape="circle" Size="4rem"/>
+                            <OpSkeleton Shape="circle" Size="5rem"/>
+                        </div>
+                    </div>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ShapesCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Sem Animação">
+        <DocSection Label="Card" Id="card">
+            <Description>
+                Exemplo de card montado apenas com skeletons — avatar circular, linhas de texto e uma área de imagem —
+                para reservar o espaço de um conteúdo que ainda será carregado.
+            </Description>
             <ChildContent>
-                <OpSkeleton Width="10rem" Animation="none"/>
+                <div class="rounded border border-surface-200 bg-surface-0 p-8">
+                    <div class="flex gap-3 mb-4">
+                        <OpSkeleton Shape="circle" Size="4rem"/>
+                        <div>
+                            <OpSkeleton Width="10rem" class="mb-2"/>
+                            <OpSkeleton Width="5rem" class="mb-2"/>
+                            <OpSkeleton Height=".5rem"/>
+                        </div>
+                    </div>
+                    <OpSkeleton Width="100%" Height="150px"/>
+                    <div class="flex justify-between mt-4">
+                        <OpSkeleton Width="4rem" Height="2rem"/>
+                        <OpSkeleton Width="4rem" Height="2rem"/>
+                    </div>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@NoAnimationCode"/></Code>
+            <Code><CodeBlock Code="@CardCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Lista" Id="list">
+            <Description>
+                Exemplo de lista em que cada item combina um avatar circular com duas linhas de texto como
+                placeholders, usando os skeletons como conteúdo.
+            </Description>
+            <ChildContent>
+                <div class="rounded border border-surface-200 bg-surface-0 p-8">
+                    <ul class="m-0 p-0" style="list-style: none;">
+                        <li class="mb-4">
+                            <div class="flex gap-3">
+                                <OpSkeleton Shape="circle" Size="4rem"/>
+                                <div style="align-self: center; flex: 1;">
+                                    <OpSkeleton Width="100%" class="mb-2"/>
+                                    <OpSkeleton Width="75%"/>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mb-4">
+                            <div class="flex gap-3">
+                                <OpSkeleton Shape="circle" Size="4rem"/>
+                                <div style="align-self: center; flex: 1;">
+                                    <OpSkeleton Width="100%" class="mb-2"/>
+                                    <OpSkeleton Width="75%"/>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mb-4">
+                            <div class="flex gap-3">
+                                <OpSkeleton Shape="circle" Size="4rem"/>
+                                <div style="align-self: center; flex: 1;">
+                                    <OpSkeleton Width="100%" class="mb-2"/>
+                                    <OpSkeleton Width="75%"/>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex gap-3">
+                                <OpSkeleton Shape="circle" Size="4rem"/>
+                                <div style="align-self: center; flex: 1;">
+                                    <OpSkeleton Width="100%" class="mb-2"/>
+                                    <OpSkeleton Width="75%"/>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ListCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="DataTable" Id="datatable">
+            <Description>
+                O <code>OpDataTable</code> tem o modo de carregamento <code>skeleton</code>, que desenha as linhas
+                com <code>OpSkeleton</code> no lugar dos dados. Use <code>LoadingMode="skeleton"</code> e
+                <code>SkeletonRows</code> para controlar a quantidade de linhas exibidas.
+            </Description>
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="Cols" Loading="true" LoadingMode="skeleton" SkeletonRows="5"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DataTableCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Skeleton renderiza <code>aria-hidden="true"</code> no elemento raiz, então é ignorado por
+                    leitores de tela. Qualquer atributo válido é repassado ao elemento raiz por
+                    <code>AdditionalAttributes</code>. Quando vários skeletons representam o mesmo carregamento,
+                    agrupe-os em um contêiner com <code>aria-busy="true"</code> para anunciar o processo.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description">
+                    <h3>Suporte a teclado</h3>
+                    <p>O Skeleton é puramente visual: não renderiza elementos interativos e não implementa navegação por teclado.</p>
+                </div>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Shape", "string?", "rectangle", "Forma do elemento: <code>rectangle</code> ou <code>circle</code>." },
-                              new[] { "BorderRadius", "string?", "null", "Border radius; usa o do tema se vazio." },
-                              new[] { "Size", "string?", "null", "Define largura e altura juntas (ex.: <code>3rem</code>)." },
-                              new[] { "Width", "string", "100%", "Largura do elemento." },
-                              new[] { "Height", "string", "1rem", "Altura do elemento." },
-                              new[] { "Animation", "string", "wave", "Animação: <code>wave</code> ou <code>none</code>." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                              new[] { "Shape", "string?", "null", "Forma do elemento: <code>circle</code> para círculo; vazio (ou qualquer outro valor) é retângulo." },
+                              new[] { "BorderRadius", "string?", "null", "Raio das bordas; quando vazio usa o do tema." },
+                              new[] { "Size", "string?", "null", "Define largura e altura juntas (ex.: <code>3rem</code>); tem precedência sobre <code>Width</code>/<code>Height</code>." },
+                              new[] { "Width", "string", "100%", "Largura do elemento quando <code>Size</code> não é informado." },
+                              new[] { "Height", "string", "1rem", "Altura do elemento quando <code>Size</code> não é informado." },
+                              new[] { "Animation", "string", "wave", "Animação: <code>wave</code> (padrão) ou <code>none</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="skeleton"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-skeleton", "Elemento raiz." },
+                              new[] { "p-skeleton-circle", "Raiz quando a forma é <code>circle</code>." },
+                              new[] { "p-skeleton-animation-none", "Raiz quando a animação é <code>none</code> (desliga a onda)." },
+                              new[] { "p-skeleton-wave", "Animação de onda (padrão)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="skeleton"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>Style</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há parâmetro para velocidade ou duração da animação; <code>Animation</code> apenas alterna entre a onda padrão e o estado sem animação.</li>
+                        <li>As cores e o gradiente do shimmer não são configuráveis por parâmetro — ajuste os tokens do tema (<code>--p-skeleton-*</code>) ou use <code>Style</code>.</li>
+                        <li>O <code>aria-hidden</code> é sempre aplicado pelo componente; para anunciar o carregamento, defina <code>aria-busy</code> manualmente no contêiner (ver Acessibilidade).</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private sealed class Product
+    {
+        public string Code { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Category { get; set; } = "";
+        public int Quantity { get; set; }
+    }
+
+    private static readonly List<OpDataTableColumn> Cols = new()
+    {
+        new() { Field = "Code", Header = "Código" },
+        new() { Field = "Name", Header = "Nome" },
+        new() { Field = "Category", Header = "Categoria" },
+        new() { Field = "Quantity", Header = "Quantidade" }
+    };
+
+    private static readonly List<Product> Products = new()
+    {
+        new() { Code = "P001", Name = "Produto 1", Category = "Categoria 1", Quantity = 10 },
+        new() { Code = "P002", Name = "Produto 2", Category = "Categoria 2", Quantity = 20 },
+        new() { Code = "P003", Name = "Produto 3", Category = "Categoria 3", Quantity = 30 },
+        new() { Code = "P004", Name = "Produto 4", Category = "Categoria 4", Quantity = 40 },
+        new() { Code = "P005", Name = "Produto 5", Category = "Categoria 5", Quantity = 50 }
+    };
+
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Skeleton
 
@@ -92,13 +271,130 @@
         """;
 
     private const string ShapesCode = """
+        <h5>Retângulo</h5>
         <OpSkeleton />
         <OpSkeleton Width="10rem" />
-        <OpSkeleton Width="5rem" Height="2rem" />
-        <OpSkeleton Shape="circle" Size="3rem" />
+        <OpSkeleton Width="5rem" />
+        <OpSkeleton Height="2rem" />
+        <OpSkeleton Width="10rem" Height="4rem" />
+
+        <h5>Arredondado</h5>
+        <OpSkeleton BorderRadius="16px" />
+        <OpSkeleton Width="10rem" BorderRadius="16px" />
+        <OpSkeleton Width="5rem" BorderRadius="16px" />
+        <OpSkeleton Height="2rem" BorderRadius="16px" />
+        <OpSkeleton Width="10rem" Height="4rem" BorderRadius="16px" />
+
+        <h5>Quadrado</h5>
+        <div class="flex items-end gap-2">
+            <OpSkeleton Size="2rem" />
+            <OpSkeleton Size="3rem" />
+            <OpSkeleton Size="4rem" />
+            <OpSkeleton Size="5rem" />
+        </div>
+
+        <h5>Círculo</h5>
+        <div class="flex items-end gap-2">
+            <OpSkeleton Shape="circle" Size="2rem" />
+            <OpSkeleton Shape="circle" Size="3rem" />
+            <OpSkeleton Shape="circle" Size="4rem" />
+            <OpSkeleton Shape="circle" Size="5rem" />
+        </div>
         """;
 
-    private const string NoAnimationCode = """
-        <OpSkeleton Width="10rem" Animation="none" />
+    private const string CardCode = """
+        <div class="rounded border border-surface-200 bg-surface-0 p-8">
+            <div class="flex gap-3 mb-4">
+                <OpSkeleton Shape="circle" Size="4rem" />
+                <div>
+                    <OpSkeleton Width="10rem" class="mb-2" />
+                    <OpSkeleton Width="5rem" class="mb-2" />
+                    <OpSkeleton Height=".5rem" />
+                </div>
+            </div>
+            <OpSkeleton Width="100%" Height="150px" />
+            <div class="flex justify-between mt-4">
+                <OpSkeleton Width="4rem" Height="2rem" />
+                <OpSkeleton Width="4rem" Height="2rem" />
+            </div>
+        </div>
+        """;
+
+    private const string ListCode = """
+        <div class="rounded border border-surface-200 bg-surface-0 p-8">
+            <ul class="m-0 p-0" style="list-style: none;">
+                <li class="mb-4">
+                    <div class="flex gap-3">
+                        <OpSkeleton Shape="circle" Size="4rem" />
+                        <div style="align-self: center; flex: 1;">
+                            <OpSkeleton Width="100%" class="mb-2" />
+                            <OpSkeleton Width="75%" />
+                        </div>
+                    </div>
+                </li>
+                <li class="mb-4">
+                    <div class="flex gap-3">
+                        <OpSkeleton Shape="circle" Size="4rem" />
+                        <div style="align-self: center; flex: 1;">
+                            <OpSkeleton Width="100%" class="mb-2" />
+                            <OpSkeleton Width="75%" />
+                        </div>
+                    </div>
+                </li>
+                <li class="mb-4">
+                    <div class="flex gap-3">
+                        <OpSkeleton Shape="circle" Size="4rem" />
+                        <div style="align-self: center; flex: 1;">
+                            <OpSkeleton Width="100%" class="mb-2" />
+                            <OpSkeleton Width="75%" />
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex gap-3">
+                        <OpSkeleton Shape="circle" Size="4rem" />
+                        <div style="align-self: center; flex: 1;">
+                            <OpSkeleton Width="100%" class="mb-2" />
+                            <OpSkeleton Width="75%" />
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        """;
+
+    private const string DataTableCode = """
+        @using OpBlazorUI.Base.Components.DataTable
+        @using OpBlazorUI.Base.Models
+
+        <OpDataTable Items="Products" Columns="Cols" Loading="true" LoadingMode="skeleton" SkeletonRows="5" />
+
+        @code {
+            private static readonly List<OpDataTableColumn> Cols = new()
+            {
+                new() { Field = "Code", Header = "Código" },
+                new() { Field = "Name", Header = "Nome" },
+                new() { Field = "Category", Header = "Categoria" },
+                new() { Field = "Quantity", Header = "Quantidade" }
+            };
+
+            private static readonly List<Product> Products = new()
+            {
+                new() { Code = "P001", Name = "Produto 1", Category = "Categoria 1", Quantity = 10 },
+                new() { Code = "P002", Name = "Produto 2", Category = "Categoria 2", Quantity = 20 },
+                new() { Code = "P003", Name = "Produto 3", Category = "Categoria 3", Quantity = 30 },
+                new() { Code = "P004", Name = "Produto 4", Category = "Categoria 4", Quantity = 40 },
+                new() { Code = "P005", Name = "Produto 5", Category = "Categoria 5", Quantity = 50 }
+            };
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpSkeleton Width="10rem" />
+
+        <div aria-busy="true">
+            <OpSkeleton Shape="circle" Size="3rem" />
+            <OpSkeleton Width="75%" />
+        </div>
         """;
 }
