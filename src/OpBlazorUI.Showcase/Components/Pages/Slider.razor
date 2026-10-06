@@ -1,0 +1,160 @@
+@page "/slider"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Slider - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Slider"
+              Description="Entrada numérica por arraste. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular).">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O two-way binding é definido com a diretiva padrão <code>ngModel</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Entrada" Id="input">
+            <Description><p>O Slider é conectado a um campo de entrada usando two-way binding.</p></Description>
+            <Code><CodeBlock Code="@InputCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Passo" Id="step">
+            <Description><p>O tamanho de cada movimento é definido pela propriedade <code>step</code>.</p></Description>
+            <Code><CodeBlock Code="@StepCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Intervalo" Id="range">
+            <Description><p>Com <code>range</code>, o slider fornece dois manípulos para definir dois valores; nesse modo o valor é um array.</p></Description>
+            <Code><CodeBlock Code="@RangeCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filtro" Id="filter">
+            <Description><p>Exemplo de filtro de imagem usando múltiplos sliders.</p></Description>
+            <Code><CodeBlock Code="@FilterCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vertical" Id="vertical">
+            <Description><p>O layout padrão é <code>horizontal</code>; use a propriedade <code>orientation</code> para o modo <code>vertical</code>.</p></Description>
+            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description><p>No Blazor, a integração acontecerá via <code>EditForm</code> + <code>DataAnnotationsValidator</code>, herdando de <code>OpInputBase&lt;TValue&gt;</code>.</p></Description>
+            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template Driven" Id="templatedriven">
+            <Description><p>Uso com formulários template driven do Angular (<code>ngModel</code>).</p></Description>
+            <Code><CodeBlock Code="@TemplateDrivenCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Reactive Forms" Id="reactive">
+            <Description><p>Uso com formulários reativos do Angular (<code>formControlName</code>).</p></Description>
+            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente usa o role <code>slider</code> no manípulo, além dos atributos <code>aria-orientation</code>, <code>aria-valuemin</code>, <code>aria-valuemax</code> e <code>aria-valuenow</code>. O valor descritivo pode ser definido por <code>ariaLabelledBy</code> e <code>ariaLabel</code>.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o slider." },
+                              new[] { "left / up arrow", "Decrementa o valor." },
+                              new[] { "right / down arrow", "Incrementa o valor." },
+                              new[] { "home", "Define o valor mínimo." },
+                              new[] { "end", "Define o valor máximo." },
+                              new[] { "page up", "Incrementa o valor em 10 passos." },
+                              new[] { "page down", "Decrementa o valor em 10 passos." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { SliderModule } from 'primeng/slider';
+        """;
+
+    private const string BasicCode = """
+        <p-slider [(ngModel)]="value" class="w-56" />
+        """;
+
+    private const string InputCode = """
+        <input type="text" pInputText [(ngModel)]="value" class="w-full mb-4" />
+        <p-slider [(ngModel)]="value" class="w-full" />
+        """;
+
+    private const string StepCode = """
+        <p-slider [(ngModel)]="value" [step]="20" class="w-56" />
+        """;
+
+    private const string RangeCode = """
+        <p-slider [(ngModel)]="rangeValues" [range]="true" class="w-56" />
+        """;
+
+    private const string FilterCode = """
+        <div class="flex flex-col items-center">
+            <img alt="user header" class="w-full md:w-80 rounded mb-6" src="https://primefaces.org/cdn/primevue/images/card-vue.jpg" [style]="filterStyle" />
+            <p-selectbutton [(ngModel)]="filter" [options]="filterOptions" optionLabel="label" optionValue="value" class="mb-4" />
+            <p-slider [(ngModel)]="filterValues[filter]" class="w-56" [min]="0" [max]="200" />
+        </div>
+        """;
+
+    private const string VerticalCode = """
+        <p-slider [(ngModel)]="value" orientation="vertical" class="h-56" />
+        """;
+
+    private const string TemplateDrivenCode = """
+        <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4">
+            <p-slider #model="ngModel" [(ngModel)]="value" class="w-56" required name="slider"
+                [invalid]="model.invalid && (model.touched || exampleForm.submitted)" />
+            @if (model.invalid && (model.touched || exampleForm.submitted)) {
+                <p-message severity="error" size="small" variant="simple">Must be greater than 25.</p-message>
+            }
+            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+        </form>
+        """;
+
+    private const string ReactiveCode = """
+        <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+            <p-slider formControlName="value" styleClass="w-56" />
+            @if (isInvalid('value')) {
+                <p-message severity="error" size="small" variant="simple">Must be greater than 25.</p-message>
+            }
+            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+        </form>
+        """;
+}
