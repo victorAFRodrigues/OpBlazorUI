@@ -1,0 +1,80 @@
+@page "/ripple"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Ripple - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Ripple"
+              Description="Diretiva que adiciona um efeito de ondulação ao elemento hospedeiro. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Padrão" Id="default">
+            <Description><p>Conteúdo da demonstração padrão.</p></Description>
+            <Code><CodeBlock Code="@DefaultCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Personalizado" Id="custom">
+            <Description><p>Conteúdo da demonstração de estilização.</p></Description>
+            <Code><CodeBlock Code="@CustomCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O elemento de ondulação tem o atributo <code>aria-hidden</code> como verdadeiro, fazendo com que seja ignorado pelos leitores de tela.</p>
+                <h3>Suporte a teclado</h3>
+                <p>O componente não inclui nenhum elemento interativo.</p>
+            </Description>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { RippleModule } from 'primeng/ripple';
+        """;
+
+    private const string DefaultCode = """
+        <div pRipple class="ripple-box">Default</div>
+        """;
+
+    private const string CustomCode = """
+        <div pRipple class="box" style="border: 1px solid rgba(75, 175, 80, 0.3); --p-ripple-background: rgba(75, 175, 80, 0.3)">
+            Green
+        </div>
+        <div pRipple class="box" style="border: 1px solid rgba(255, 193, 6, 0.3); --p-ripple-background: rgba(255, 193, 6, 0.3)">
+            Orange
+        </div>
+        <div pRipple class="box" style="border: 1px solid rgba(156, 39, 176, 0.3); --p-ripple-background: rgba(156, 39, 176, 0.3)">
+            Purple
+        </div>
+        """;
+}

@@ -1,0 +1,217 @@
+@page "/dynamicdialog"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>DynamicDialog - OpBlazorUI</PageTitle>
+
+<DocComponent Title="DynamicDialog"
+              Description="Dialogs podem ser criados dinamicamente com qualquer componente como conteúdo usando um DialogService. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Uso" Id="usage">
+            <Description><p>Para usar o dynamic dialog, uma referência deve ser declarada como <code>DynamicDialogRef</code> após a injeção do <code>DialogService</code> no componente.</p></Description>
+            <Code><CodeBlock Code="@UsageCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Abrindo um Dialog" Id="open">
+            <Description><p>O método <code>open</code> do <code>DialogService</code> é usado para abrir um Dialog. O primeiro parâmetro é o componente a carregar e o segundo é o objeto de configuração para personalizar o Dialog.</p></Description>
+            <Code><CodeBlock Code="@OpenCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Customização" Id="customization">
+            <Description><p>O DynamicDialog usa internamente o componente Dialog; consulte <a href="/dialog">Dialog</a> para mais informações sobre as propriedades disponíveis.</p></Description>
+            <Code><CodeBlock Code="@CustomizationCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Passando Dados" Id="passingdata">
+            <Description>
+                <p>Para passar dados a um componente carregado dinamicamente, você pode usar a propriedade <code>data</code> ou <code>inputValues</code>, conforme a necessidade. A propriedade <code>data</code> é ideal para passar informações genéricas não diretamente ligadas às entradas do componente, enquanto <code>inputValues</code> permite definir propriedades de entrada específicas do componente de forma mais estruturada e com tipagem segura.</p>
+                <p>Ambas as propriedades podem ser usadas juntas ou independentemente, oferecendo flexibilidade para diferentes casos de uso. Além disso, o componente carregado pode controlar o dialog usando a API do <code>DynamicDialogRef</code>, com controle total sobre o ciclo de vida do dialog. Tanto <code>DynamicDialogConfig</code> quanto <code>DynamicDialogRef</code> são injetáveis pelo construtor.</p>
+            </Description>
+            <Code><CodeBlock Code="@PassingDataCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Fechando um Dialog" Id="close">
+            <Description><p>Na maioria das vezes, o objetivo é retornar um valor do dialog. O método <code>close</code> do <code>DialogRef</code> serve para isso: o parâmetro passado ficará disponível no evento <code>onClose</code> no chamador. A seguir, um exemplo de como fechar o dialog a partir do <code>ProductListDemo</code>, passando um produto selecionado.</p></Description>
+            <Code><CodeBlock Code="@CloseCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Exemplo" Id="example">
+            <Description><p>Dynamic dialogs exigem uma instância de <code>DialogService</code>, responsável por exibir um dialog com um componente como conteúdo. Chamar o método <code>open</code> do <code>DialogService</code> exibirá o dynamic dialog. O primeiro parâmetro do método <code>open</code> é o tipo do componente a carregar e o segundo é a configuração do Dialog, como <code>header</code>, <code>width</code> e mais.</p></Description>
+            <Code><CodeBlock Code="@ExampleCode" Language="html"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { DynamicDialogModule } from 'primeng/dynamicdialog';
+        """;
+
+    private const string UsageCode = """
+        import { Component, OnDestroy } from '@angular/core';
+        import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+        import { Product } from '@/domain/product';
+        import { ProductListDemo } from './productlistdemo';
+
+        @Component({
+            templateUrl: './dynamicdialogdemo.html',
+            providers: [DialogService]
+        })
+        export class DynamicDialogDemo implements OnDestroy {
+
+            ref: DynamicDialogRef | undefined;
+
+            constructor(public dialogService: DialogService) {}
+        }
+        """;
+
+    private const string OpenCode = """
+        import { Component } from '@angular/core';
+        import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+        import { ProductListDemo } from './productlistdemo';
+
+        @Component({
+            templateUrl: './dynamicdialogdemo.html',
+            providers: [DialogService]
+        })
+        export class DynamicDialogDemo {
+
+            ref: DynamicDialogRef | undefined;
+
+            constructor(public dialogService: DialogService) {}
+
+            show() {
+                this.ref = this.dialogService.open(ProductListDemo, { header: 'Select a Product'});
+            }
+        }
+        """;
+
+    private const string CustomizationCode = """
+        import { Component } from '@angular/core';
+        import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+        import { ProductListDemo } from './productlistdemo';
+
+        @Component({
+            templateUrl: './dynamicdialogdemo.html',
+            providers: [DialogService]
+        })
+        export class CustomizationDemo {
+
+            ref: DynamicDialogRef | undefined;
+
+            constructor(public dialogService: DialogService) {}
+            show() {
+                this.ref = this.dialogService.open(ProductListDemo, {
+                    header: 'Select a Product',
+                    width: '50vw',
+                    modal: true,
+                    breakpoints: {
+                        '960px': '75vw',
+                        '640px': '90vw'
+                    },
+                });
+            }
+        }
+        """;
+
+    private const string PassingDataCode = """
+        import { Component } from '@angular/core';
+        import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+        import { ProductListDemo } from './productlistdemo';
+
+        @Component({
+            templateUrl: './dynamicdialogdemo.html',
+            providers: [DialogService]
+        })
+        export class DynamicDialogDemo {
+
+            ref: DynamicDialogRef | undefined;
+
+            constructor(public dialogService: DialogService) {}
+
+            show() {
+                this.ref = this.dialogService.open(ProductListDemo, {
+                    data: {
+                        id: '51gF3'
+                    },
+                    inputValues: {
+                        selectedProduct: 'Laptop',
+                        quantity: 2
+                    },
+                    header: 'Select a Product'
+                });
+            }
+        }
+        """;
+
+    private const string CloseCode = """
+        import { Component, Input } from '@angular/core';
+        import { MessageService } from 'primeng/api';
+        import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+        import { Product } from '@/domain/product';
+        import { ProductListDemo } from './productlistdemo';
+
+        @Component({
+            templateUrl: './dynamicdialogdemo.html',
+            providers: [DialogService, MessageService]
+        })
+        export class DynamicDialogDemo {
+
+            ref: DynamicDialogRef | undefined;
+
+            constructor(public dialogService: DialogService, public messageService: MessageService) {}
+
+            show() {
+                this.ref = this.dialogService.open(ProductListDemo, {
+                    header: 'Select a Product',
+                    width: '70%',
+                    contentStyle: { overflow: 'auto' },
+                    baseZIndex: 10000,
+                    maximizable: true
+                });
+
+                this.ref.onClose.subscribe((product: Product) => {
+                    if (product) {
+                        this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: product.name });
+                    }
+                });
+            }
+        }
+        """;
+
+    private const string ExampleCode = """
+        <div class="card flex justify-center">
+            <p-toast />
+            <p-button (click)="show()" icon="pi pi-search" label="Select a Product" />
+        </div>
+        """;
+}

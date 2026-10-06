@@ -1,0 +1,107 @@
+@page "/image"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Image - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Image"
+              Description="Exibe uma imagem com opções de pré-visualização e transformação. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Image é usado como o elemento nativo <em>img</em> e suporta todas as propriedades que o elemento nativo possui. Para múltiplas imagens, veja <a href="/galleria">Galleria</a>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Pré-visualização" Id="preview">
+            <Description><p>O modo de pré-visualização exibe uma camada modal quando a imagem é clicada, oferecendo opções de transformação como girar e aplicar zoom.</p></Description>
+            <Code><CodeBlock Code="@PreviewCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>Um ícone de olho é exibido por padrão quando a imagem é focalizada no modo de pré-visualização. Use o template <em>indicator</em> para conteúdo personalizado.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O botão de pré-visualização é um elemento <em>button</em> nativo com um <em>aria-label</em> que se refere à propriedade <em>aria.zoomImage</em> da API de <a href="/configuration/#locale">locale</a> por padrão.</p>
+                <p>Quando a pré-visualização está ativa, o role <em>dialog</em> com <em>aria-modal</em> é aplicado ao contêiner de sobreposição da imagem.</p>
+                <p>Os controles de botão usam <em>aria.rotateRight</em>, <em>aria.rotateLeft</em>, <em>aria.zoomIn</em>, <em>aria.zoomOut</em> e <em>aria.close</em> da API de <a href="/configuration/#locale">locale</a> como <em>aria-label</em>.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pela barra de botões." },
+                              new[] { "enter", "Ativa o botão." },
+                              new[] { "space", "Ativa o botão." },
+                              new[] { "esc", "Fecha a pré-visualização da imagem." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { ImageModule } from 'primeng/image';
+        """;
+
+    private const string BasicCode = """
+        <div class="card flex justify-center">
+            <p-image src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" alt="Image" width="250" />
+        </div>
+        """;
+
+    private const string PreviewCode = """
+        <div class="card flex justify-center">
+            <p-image src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" alt="Image" width="250" [preview]="true" />
+        </div>
+        """;
+
+    private const string TemplateCode = """
+        <div class="card flex justify-center">
+            <p-image src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg" [preview]="true" alt="Image" width="250">
+                <ng-template #indicator>
+                    <i class="pi pi-search"></i>
+                </ng-template>
+                <ng-template #image>
+                    <img src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg" alt="image" width="250" />
+                </ng-template>
+                <ng-template #preview let-style="style" let-previewCallback="previewCallback">
+                    <img src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg" alt="image" [style]="style" (click)="previewCallback()" />
+                </ng-template>
+            </p-image>
+        </div>
+        """;
+}

@@ -1,0 +1,106 @@
+@page "/toolbar"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Toolbar - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Toolbar"
+              Description="Componente de agrupamento para botões e outros conteúdos. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Toolbar é um componente de agrupamento para botões e outros conteúdos. Seu conteúdo pode ser colocado dentro das seções <code>start</code>, <code>center</code> e <code>end</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Personalizado" Id="custom">
+            <Description><p>O conteúdo também pode ser posicionado usando os templates <code>start</code>, <code>center</code> e <code>end</code>.</p></Description>
+            <Code><CodeBlock Code="@CustomCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>Toolbar usa o papel <code>toolbar</code> para o elemento raiz; <code>aria-orientation</code> não é incluído pois o padrão é <code>horizontal</code>. Qualquer atributo válido é passado ao elemento raiz, então você pode adicionar propriedades como <code>aria-labelledby</code> e <code>aria-label</code> para definir o elemento, se necessário.</p>
+                <h3>Suporte a teclado</h3>
+                <p>O componente não inclui elementos interativos. Conteúdo arbitrário pode ser colocado por templates, e elementos como botões dentro dele devem seguir a sequência de tabulação da página.</p>
+            </Description>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { ToolbarModule } from 'primeng/toolbar';
+        """;
+
+    private const string BasicCode = """
+        <p-toolbar>
+            <ng-template #start>
+                <p-button icon="pi pi-plus" class="mr-2" text severity="secondary" />
+                <p-button icon="pi pi-print" class="mr-2" text severity="secondary" />
+                <p-button icon="pi pi-upload" text severity="secondary" />
+            </ng-template>
+            <ng-template #center>
+                <p-iconfield iconPosition="left">
+                    <p-inputicon class="pi pi-search" />
+                    <input type="text" pInputText placeholder="Search" />
+                </p-iconfield>
+            </ng-template>
+            <ng-template #end>
+                <p-splitbutton label="Save" [model]="items" />
+            </ng-template>
+        </p-toolbar>
+        """;
+
+    private const string CustomCode = """
+        <p-toolbar [style]="{ 'border-radius': '3rem', 'padding': '1rem 1rem 1rem 1.5rem' }">
+            <ng-template #start>
+                <div class="flex items-center gap-2">
+                    <svg width="31" height="33" viewBox="0 0 31 33" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 2rem; margin-right: 1rem">
+                        <path d="..." fill="var(--p-primary-color)" />
+                        <mask id="mask0_1_52" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="31" height="33"></mask>
+                    </svg>
+                    <p-button label="Files" text plain />
+                    <p-button label="Edit" text plain />
+                    <p-button label="View" text plain />
+                </div>
+            </ng-template>
+
+            <ng-template #end>
+                <div class="flex items-center gap-2">
+                    <p-button label="Share" severity="contrast" size="small" />
+                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" [style]="{ width: '32px', height: '32px' }" />
+                </div>
+            </ng-template>
+        </p-toolbar>
+        """;
+}

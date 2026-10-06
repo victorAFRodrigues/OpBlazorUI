@@ -20,6 +20,10 @@
   integração real com `EditForm`/`DataAnnotations`).
 - Dialog/Drawer modais e ConfirmDialog prendem o foco (`Tab`) e restauram o foco ao gatilho.
 
+**Documentação — Fase B concluída:** 46 páginas de placeholder para os 41 componentes faltantes +
+5 utilitários (textos/exemplos da doc de referência, no PR #16). Detalhes e próximos passos em
+`docs/plano-placeholders.md` e `docs/handoff.md`; a seguir, Fase A (melhoria das páginas existentes).
+
 ---
 
 ## Componentes faltantes (41) por lote

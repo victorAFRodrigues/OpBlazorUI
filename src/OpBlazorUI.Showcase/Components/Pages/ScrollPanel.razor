@@ -1,0 +1,109 @@
+@page "/scrollpanel"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>ScrollPanel - OpBlazorUI</PageTitle>
+
+<DocComponent Title="ScrollPanel"
+              Description="Alternativa leve e multiplataforma à barra de rolagem nativa do navegador. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O ScrollPanel é definido usando dimensões para a viewport rolável.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Personalizado" Id="custom">
+            <Description><p>Os visuais da barra de rolagem podem ser estilizados para uma aparência unificada entre diferentes plataformas.</p></Description>
+            <Code><CodeBlock Code="@CustomCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>As barras de rolagem do ScrollPanel têm o role <code>scrollbar</code> junto ao atributo <code>aria-controls</code>, que se refere ao id do contêiner de conteúdo rolável, e <code>aria-orientation</code> para indicar a orientação da rolagem.</p>
+                <h3>Suporte a teclado do cabeçalho</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "seta para baixo", "Rola o conteúdo para baixo quando a rolagem vertical está disponível." },
+                              new[] { "seta para cima", "Rola o conteúdo para cima quando a rolagem vertical está disponível." },
+                              new[] { "seta para a esquerda", "Rola o conteúdo para a esquerda quando a rolagem horizontal está disponível." },
+                              new[] { "seta para a direita", "Rola o conteúdo para a direita quando a rolagem horizontal está disponível." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { ScrollPanelModule } from 'primeng/scrollpanel';
+        """;
+
+    private const string BasicCode = """
+        <p-scrollpanel [style]="{ width: '100%', height: '150px' }">
+            <p>
+                Lorem ipsum dolor sit amet...
+            </p>
+            <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium...
+            </p>
+            <p class="m-0">
+                At vero eos et accusamus et iusto odio dignissimos...
+            </p>
+        </p-scrollpanel>
+        """;
+
+    private const string CustomCode = """
+        <p-scrollpanel [style]="{ width: '100%', height: '200px' }" >
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+            </p>
+            <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium...
+            </p>
+            <p>
+                At vero eos et accusamus et iusto odio dignissimos...
+            </p>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+            </p>
+            <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium...
+            </p>
+            <p>
+                At vero eos et accusamus et iusto odio dignissimos...
+            </p>
+        </p-scrollpanel>
+        """;
+}

@@ -1,0 +1,72 @@
+@page "/terminal"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Terminal - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Terminal"
+              Description="Interface de usuário baseada em texto. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Os comandos são processados usando observables via <code>TerminalService</code>. Importe esse serviço no seu componente e assine <code>commandHandler</code> para processar comandos, enviando respostas com a função <code>sendResponse</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente Terminal tem um elemento de entrada que pode ser descrito com as props <code>aria-label</code> ou <code>aria-labelledby</code>. O elemento que lista os comandos anteriores tem <code>aria-live</code>, para que as mudanças sejam recebidas pelo leitor de tela.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelo elemento de entrada." },
+                              new[] { "enter", "Executa o comando quando o foco está no elemento de entrada." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { TerminalModule } from 'primeng/terminal';
+        """;
+
+    private const string BasicCode = """
+        <p>Enter "<strong>date</strong>" to display the current date,
+        "<strong>greet &#123;0&#125;</strong>" for a message and "<strong>random</strong>"
+        to get a random number.</p>
+        <p-terminal welcomeMessage="Welcome to PrimeNG" prompt="primeng $" />
+        """;
+}

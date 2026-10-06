@@ -1,0 +1,161 @@
+@page "/timeline"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Timeline - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Timeline"
+              Description="Linha do tempo que visualiza uma série de eventos encadeados. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O Timeline recebe os eventos com a propriedade <code>value</code> como uma coleção de objetos arbitrários. Além disso, o template <code>content</code> é obrigatório para exibir a representação de um evento. O exemplo abaixo é uma amostra de array de eventos usada em toda a documentação.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Alinhamento" Id="alignment">
+            <Description><p>A posição do conteúdo em relação à linha é definida com a propriedade <code>align</code>.</p></Description>
+            <Code><CodeBlock Code="@AlignmentCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Lado Oposto" Id="opposite">
+            <Description><p>Conteúdo adicional no outro lado da linha pode ser fornecido com a propriedade <code>opposite</code>.</p></Description>
+            <Code><CodeBlock Code="@OppositeCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>Implementação de exemplo com conteúdo personalizado e marcadores estilizados.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Horizontal" Id="horizontal">
+            <Description><p>A orientação do Timeline é controlada com a propriedade <code>layout</code>; o padrão é <code>vertical</code>, tendo <code>horizontal</code> como alternativa.</p></Description>
+            <Code><CodeBlock Code="@HorizontalCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O Timeline usa um elemento de lista ordenada semântico para listar os eventos. Nenhum papel específico é imposto; você ainda pode usar qualquer papel e atributo aria, pois qualquer atributo válido é passado para o elemento de lista.</p>
+                <h3>Suporte a teclado</h3>
+                <p>O componente não inclui nenhum elemento interativo.</p>
+            </Description>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { TimelineModule } from 'primeng/timeline';
+        """;
+
+    private const string BasicCode = """
+        <p-timeline [value]="events">
+            <ng-template #content let-event>
+                {{ event.status }}
+            </ng-template>
+        </p-timeline>
+        """;
+
+    private const string AlignmentCode = """
+        <p-timeline [value]="events" class="w-full md:w-80">
+            <ng-template #content let-event>
+                {{ event.status }}
+            </ng-template>
+        </p-timeline>
+
+        <p-timeline [value]="events" class="w-full md:w-80" align="right">
+            <ng-template #content let-event>
+                {{ event.status }}
+            </ng-template>
+        </p-timeline>
+
+        <p-timeline [value]="events" class="w-full md:w-80" align="alternate">
+            <ng-template #content let-event>
+                {{ event.status }}
+            </ng-template>
+        </p-timeline>
+        """;
+
+    private const string OppositeCode = """
+        <p-timeline [value]="events">
+            <ng-template #opposite let-event>
+                <small class="text-surface-500 dark:text-surface-400">{{ event.date }}</small>
+            </ng-template>
+            <ng-template #content let-event>
+                {{ event.status }}
+            </ng-template>
+        </p-timeline>
+        """;
+
+    private const string TemplateCode = """
+        <p-timeline [value]="events" align="alternate" class="customized-timeline">
+            <ng-template #marker let-event>
+                <span class="flex w-8 h-8 items-center justify-center text-white rounded-full z-10 shadow-sm" [style]="{ 'background-color': event.color }">
+                    <i [class]="event.icon"></i>
+                </span>
+            </ng-template>
+            <ng-template #content let-event>
+                <p-card [header]="event.status" [subheader]="event.date">
+                    <img *ngIf="event.image" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + event.image" [alt]="event.name" width="200" class="shadow" />
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate
+                        neque quas!
+                    </p>
+                    <p-button label="Read more" [text]="true" />
+                </p-card>
+            </ng-template>
+        </p-timeline>
+        """;
+
+    private const string HorizontalCode = """
+        <p-timeline [value]="events" layout="horizontal" align="top">
+            <ng-template #content let-event>
+                {{ event }}
+            </ng-template>
+        </p-timeline>
+
+        <p-timeline [value]="events" layout="horizontal" align="bottom">
+            <ng-template #content let-event>
+                {{ event }}
+            </ng-template>
+        </p-timeline>
+
+        <p-timeline [value]="events" layout="horizontal" align="alternate">
+            <ng-template #content let-event>
+                {{ event }}
+            </ng-template>
+            <ng-template #opposite let-event>
+                <span>&nbsp;</span>
+            </ng-template>
+        </p-timeline>
+        """;
+}

@@ -1,0 +1,158 @@
+@page "/styleclass"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>StyleClass - OpBlazorUI</PageTitle>
+
+<DocComponent Title="StyleClass"
+              Description="StyleClass gerencia classes CSS de forma declarativa durante animações de enter/leave ou apenas para alternar classes em um elemento. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Alternar Classe" Id="toggleclass">
+            <Description><p>O <code>StyleClass</code> tem dois modos: <code>toggleClass</code> para simplesmente adicionar/remover uma classe e animações de enter/leave. O elemento alvo cuja estilização será alterada é definido pela propriedade <code>selector</code>, que aceita qualquer seletor CSS válido ou palavras-chave, incluindo <code>@@next</code>, <code>prev</code>, <code>parent</code> e <code>grandparent</code>.</p></Description>
+            <Code><CodeBlock Code="@ToggleClassCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Animação" Id="animation">
+            <Description><p>As classes a aplicar durante as animações de enter e leave são especificadas por meio de <code>enterFromClass</code>, <code>enterActiveClass</code>, <code>enterToClass</code>, <code>leaveFromClass</code>, <code>leaveActiveClass</code> e <code>leaveToClass</code>. Além disso, caso o alvo seja um overlay, <code>hideOnOutsideClick</code> será útil para ocultá-lo quando clicar fora do popup, ou habilite <code>hideOnEscape</code> para fechar o popup ao pressionar a tecla <code>escape</code>.</p></Description>
+            <Code><CodeBlock Code="@AnimationCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ocultar ao Redimensionar" Id="hideonresize">
+            <Description><p>Quando <code>hideOnResize</code> está habilitado, a animação de leave é disparada automaticamente quando ocorre um redimensionamento. Use a propriedade <code>resizeSelector</code> para especificar se deve escutar eventos de redimensionamento da janela ou de um elemento específico. Defina <code>resizeSelector</code> como "window" (padrão) ou "document" para o redimensionamento do navegador, ou um seletor CSS para observar as dimensões do elemento alvo.</p></Description>
+            <Code><CodeBlock Code="@HideOnResizeCode" Language="html"/></Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { StyleClassModule } from 'primeng/styleclass';
+        """;
+
+    private const string ToggleClassCode = """
+        <div class="card flex flex-col items-center">
+            <p-button label="Toggle Display" pStyleClass="@next" toggleClass="hidden" />
+            <input type="text" pInputText class="hidden mt-4" />
+        </div>
+        """;
+
+    private const string AnimationCode = """
+        <div class="card flex items-center justify-center gap-8">
+            <div class="flex flex-col items-center">
+                <div>
+                    <p-button pStyleClass=".box1" enterFromClass="my-hidden" enterActiveClass="my-fadein" label="FadeIn" class="mr-2" />
+                    <p-button
+                        pStyleClass=".box1"
+                        leaveActiveClass="my-fadeout"
+                        leaveToClass="my-hidden"
+                        label="FadeOut"
+                        severity="secondary"
+                    />
+                </div>
+                <div class="h-32">
+                    <div class="my-hidden animate-duration-500 box1">
+                        <div
+                            class="flex bg-primary text-primary-contrast items-center justify-center py-4 rounded-md mt-4 font-bold w-32 h-32"
+                        >
+                            Custom
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col items-center">
+                <div>
+                    <p-button
+                        pStyleClass=".box2"
+                        enterFromClass="hidden"
+                        enterActiveClass="animate-slidedown"
+                        label="SlideDown"
+                        class="mr-2"
+                    />
+                    <p-button
+                        pStyleClass=".box2"
+                        leaveActiveClass="animate-slideup"
+                        leaveToClass="hidden"
+                        label="SlideUp"
+                        severity="secondary"
+                    />
+                </div>
+                <div class="h-32">
+                    <div class="hidden animate-duration-500 box2 overflow-hidden">
+                        <div
+                            class="flex bg-primary text-primary-contrast items-center justify-center py-4 rounded-md mt-4 font-bold w-32 h-32"
+                        >
+                            Content
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """;
+
+    private const string HideOnResizeCode = """
+        <div class="card">
+            <div class="flex flex-wrap justify-center gap-4">
+                <div class="flex flex-col items-center gap-4 w-[25rem]">
+                    <p-button pStyleClass=".window-responsive-box" enterFromClass="hidden" enterActiveClass="animate-fadein" leaveActiveClass="animate-fadeout" leaveToClass="hidden" [hideOnResize]="true" resizeSelector="window" label="Show Window Responsive Content" />
+                    <div class="window-responsive-box hidden animate-duration-300 border border-lg border-surface">
+                        <div class="p-4 flex flex-col gap-2">
+                            <h3 class="text-xl font-bold">Window Responsive Panel</h3>
+                            <p class="text-sm">This panel will hide when you resize the browser window.</p>
+                            <p class="text-sm">Try resizing your browser window to see the effect.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 w-[25rem]">
+                    <p-button
+                        pStyleClass=".resizable-container"
+                        enterFromClass="hidden"
+                        enterActiveClass="animate-fadein"
+                        leaveActiveClass="animate-fadeout"
+                        leaveToClass="hidden"
+                        [hideOnResize]="true"
+                        resizeSelector=".resizable-container"
+                        label="Show Resizable Panel"
+                    />
+
+                    <div class="resizable-container hidden animate-duration-300 border border-lg border-surface w-[20rem] w-max-[25rem] w-min-[15rem] overflow-auto resize">
+                        <div class="p-4 h-full flex flex-col gap-2">
+                            <h3 class="text-xl font-bold">Resizable Panel</h3>
+                            <p class="text-sm">Drag the resize handle in the bottom-right corner to resize this panel.</p>
+                            <p class="text-sm">The panel will hide when you resize it.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """;
+}
