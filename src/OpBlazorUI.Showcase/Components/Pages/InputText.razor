@@ -2,195 +2,526 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Base.Components.IconField
+@using OpBlazorUI.Base.Components.InputIcon
 @using System.ComponentModel.DataAnnotations
 
+<PageTitle>InputText - OpBlazorUI</PageTitle>
+
 <DocComponent Title="InputText"
-              Description="O InputText renderiza um campo de texto para inserir dados.">
+              Description="O InputText é uma extensão do elemento input padrão, com temas e filtragem de teclado.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O InputText é um input controlado: o valor é definido por <code>Value</code> e atualizado por
+                <code>ValueChanged</code> (ou <code>@@bind-Value</code>). Não existe <code>ngModel</code> no Blazor.
+            </Description>
             <ChildContent>
-                <OpInputText Placeholder="Usuário" StyleClass="w-full"/>
+                <div class="flex flex-col items-center gap-3">
+                    <OpInputText @bind-Value="_basic" Placeholder="Digite algo"/>
+                    <span class="text-sm">Valor: <b>@_basic</b></span>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Variantes">
-            <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpInputText Placeholder="Com contorno" StyleClass="w-full"/>
-                    <OpInputText Placeholder="Preenchido" Variant="filled" StyleClass="w-full"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@VariantCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Tamanhos">
-            <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpInputText Placeholder="Pequeno" Size="small" StyleClass="w-full"/>
-                    <OpInputText Placeholder="Normal" StyleClass="w-full"/>
-                    <OpInputText Placeholder="Grande" Size="large" StyleClass="w-full"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@SizeCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Inválido / Desabilitado">
-            <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpInputText Placeholder="Inválido" Invalid="true" StyleClass="w-full"/>
-                    <OpInputText Placeholder="Desabilitado" Disabled="true" StyleClass="w-full"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@StateCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Validação">
+        <DocSection Label="Float Label" Id="floatlabel">
             <Description>
-                O InputText herda de <code>InputBase&lt;string&gt;</code>, então integra-se ao
-                <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado
-                automaticamente quando há erro de validação.
+                O FloatLabel integra o rótulo ao campo. Use <code>OpFloatLabel</code> com <code>Variant</code>:
+                <code>over</code> (padrão), <code>in</code> e <code>on</code>. O <code>for</code> do
+                <code>&lt;label&gt;</code> precisa apontar para o <code>Id</code> do input.
             </Description>
             <ChildContent>
-                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <OpFloatLabel>
+                        <OpInputText Id="over_label" @bind-Value="_over" Autocomplete="off"/>
+                        <label for="over_label">Over Label</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="in">
+                        <OpInputText Id="in_label" @bind-Value="_in" Autocomplete="off"/>
+                        <label for="in_label">In Label</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="on">
+                        <OpInputText Id="on_label" @bind-Value="_on" Autocomplete="off"/>
+                        <label for="on_label">On Label</label>
+                    </OpFloatLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FloatLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ifta Label" Id="iftalabel">
+            <Description>
+                O IftaLabel cria rótulos alinhados no topo, dentro do campo. Use <code>OpIftaLabel</code> com o
+                <code>&lt;label&gt;</code> apontando para o <code>Id</code> do input.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpIftaLabel>
+                        <OpInputText Id="username" @bind-Value="_iftalabel" Autocomplete="off"/>
+                        <label for="username">Username</label>
+                    </OpIftaLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IftaLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos" Id="sizes">
+            <Description>
+                O InputText oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão,
+                via propriedade <code>Size</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpInputText Placeholder="Small" Size="small"/>
+                    <OpInputText Placeholder="Normal"/>
+                    <OpInputText Placeholder="Large" Size="large"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Largura Total" Id="fluid">
+            <Description>
+                Com <code>Fluid="true"</code> o campo ocupa toda a largura do contêiner.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width: 100%; max-width: 20rem;">
+                        <OpInputText @bind-Value="_fluid" Placeholder="Largura total" Fluid="true"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Texto de Ajuda" Id="helptext">
+            <Description>
+                Um texto auxiliar pode ser associado ao campo com a tag semântica <code>&lt;small&gt;</code> e o
+                atributo <code>aria-describedby</code>, que aponta para o <code>Id</code> do texto.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div class="flex flex-col gap-2">
+                        <label for="help-username">Username</label>
+                        <OpInputText Id="help-username" @bind-Value="_help" aria-describedby="username-help"/>
+                        <small id="username-help">Informe o usuário para redefinir sua senha.</small>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@HelpTextCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícones" Id="icons">
+            <Description>
+                No Blazor não existe a diretiva de ícone do Angular. Envolva o input e o ícone em um
+                <code>OpIconField</code> (com <code>IconPosition</code> <code>left</code> ou <code>right</code>) e
+                coloque o ícone dentro de <code>OpInputIcon</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpIconField>
+                        <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+                        <OpInputText @bind-Value="_iconLeft" Placeholder="Pesquisar"/>
+                    </OpIconField>
+                    <OpIconField IconPosition="right">
+                        <OpInputText @bind-Value="_iconRight" Placeholder="Buscando"/>
+                        <OpInputIcon><i class="pi pi-spin pi-spinner"></i></OpInputIcon>
+                    </OpIconField>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filtro de Teclas" Id="keyfilter">
+            <Description>
+                O InputText tem filtragem de teclas embutida pela propriedade <code>KeyFilter</code>, que bloqueia
+                caracteres indesejados. Valores comuns: <code>int</code>, <code>num</code>, <code>alpha</code>,
+                <code>alphanum</code> e <code>hex</code> — ou uma expressão regular.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpInputText @bind-Value="_keyfilter" KeyFilter="int" Placeholder="Inteiros"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@KeyFilterCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Preenchido" Id="filled">
+            <Description>
+                Defina <code>Variant="filled"</code> para exibir o componente com ênfase visual maior que o estilo
+                <code>outlined</code> padrão.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpInputText @bind-Value="_filled" Variant="filled" Placeholder="Preenchido"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Quando <code>Disabled="true"</code>, o elemento não pode ser editado nem receber foco.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpInputText Value="Desabilitado" Disabled="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado inválido é aplicado com <code>Invalid="true"</code> para indicar falha de validação — também
+                é ativado automaticamente pelo <code>EditForm</code> quando o campo tem erro.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpInputText @bind-Value="_invalid" Invalid="@(string.IsNullOrEmpty(_invalid))" Placeholder="Nome"/>
+                    <OpInputText @bind-Value="_invalidFilled" Invalid="@(string.IsNullOrEmpty(_invalidFilled))" Variant="filled" Placeholder="Nome"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O InputText herda de <code>OpInputBase&lt;string&gt;</code>: integra-se ao <code>EditForm</code> com
+                <code>DataAnnotationsValidator</code>, e o estado inválido aparece automaticamente com
+                <code>ValidationMessage</code>. Isso substitui as abordagens <i>Template Driven</i> e
+                <i>Reactive Forms</i> do Angular.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col gap-4" style="width: 100%; max-width: 16rem;">
                     <DataAnnotationsValidator/>
-                    <OpInputText @bind-Value="_form.Name" Placeholder="Usuário" StyleClass="w-full"/>
-                    <ValidationMessage For="() => _form.Name"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
+                    <div class="flex flex-col gap-1">
+                        <OpInputText @bind-Value="_form.Username" Placeholder="Username" Name="username"/>
+                        <ValidationMessage For="() => _form.Username"/>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <OpInputText @bind-Value="_form.Email" Type="email" Placeholder="Email" Name="email"/>
+                        <ValidationMessage For="() => _form.Email"/>
+                    </div>
+                    <button type="submit" class="p-button p-component p-button-secondary">Enviar</button>
                     @if (_submitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Nome: @_form.Name</div>
+                        <div class="text-sm" style="color: var(--p-green-600)">Formulário enviado com sucesso.</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vínculo" Id="binding">
+            <Description>
+                Além do <code>@@bind-Value</code>, o componente expõe <code>ValueChanged</code> e os eventos
+                <code>OnInput</code> (a cada tecla) e <code>OnChange</code> (ao confirmar). Use <code>@@bind-Value:after</code>
+                para reagir a mudanças no próprio componente.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-3">
+                    <OpInputText @bind-Value="_bound" OnInput="() => _typed++" Placeholder="Digite"/>
+                    <span class="text-sm">Valor: <b>@_bound</b> — teclas: <b>@_typed</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BindingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O InputText renderiza um elemento <code>&lt;input&gt;</code> nativo e repassa qualquer atributo
+                    extra. O texto que descreve o campo pode vir de um <code>&lt;label&gt;</code> combinado com o
+                    <code>Id</code>, de <code>aria-labelledby</code> ou de <code>aria-label</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o input." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Value", "string?", "null", "Valor do input." },
-                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "-", "Callback de binding." },
-                              new[] { "Placeholder", "string?", "null", "Placeholder." },
+                              new[] { "Value", "string?", "null", "Valor do campo." },
+                              new[] { "Placeholder", "string?", "null", "Texto exibido quando vazio." },
                               new[] { "Variant", "string", "outlined", "Variante: <code>outlined</code> ou <code>filled</code>." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
-                              new[] { "Invalid", "bool", "false", "Estado inválido." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Type", "string", "text", "Atributo <code>type</code> do input (ex.: <code>email</code>, <code>password</code>)." },
+                              new[] { "Id", "string?", "null", "Id do input; use junto do <code>for</code> do label." },
+                              new[] { "Name", "string?", "null", "Atributo <code>name</code> do input." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do input." },
+                              new[] { "MaxLength", "int?", "null", "Número máximo de caracteres." },
+                              new[] { "Autocomplete", "string?", "null", "Valor do atributo <code>autocomplete</code>." },
                               new[] { "Readonly", "bool", "false", "Somente leitura." },
-                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura." },
-                              new[] { "Type", "string", "text", "Tipo do input (ex.: <code>password</code>)." },
-                              new[] { "Id", "string?", "null", "Id do input." },
-                              new[] { "Name", "string?", "null", "Name do input." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "MaxLength", "int?", "null", "Tamanho máximo." },
-                              new[] { "Autocomplete", "string?", "null", "Valor de autocomplete." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura do contêiner." },
+                              new[] { "Mask", "string?", "null", "Máscara aplicada ao valor (ex.: <code>(999) 999-9999</code>)." },
+                              new[] { "AutoClear", "bool", "true", "Limpa o valor incompleto ao desfocar quando há máscara." },
+                              new[] { "SlotChar", "string", "_", "Caractere reservado dos espaços da máscara." },
+                              new[] { "KeyFilter", "string?", "null", "Filtro de teclas: <code>int</code>, <code>num</code>, <code>alpha</code>, <code>alphanum</code>, <code>hex</code> ou regex." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido; também ativado por validação do <code>EditForm</code>." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o campo." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;input&gt;</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnInput", "EventCallback&lt;string?&gt;", "Disparado ao digitar." },
-                              new[] { "OnChange", "EventCallback&lt;string?&gt;", "Disparado ao mudar o valor." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "Disparado quando o valor muda (binding)." },
+                              new[] { "OnInput", "EventCallback&lt;string?&gt;", "Disparado a cada digitação." },
+                              new[] { "OnChange", "EventCallback&lt;string?&gt;", "Disparado ao confirmar a edição (blur/enter)." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao receber foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao perder o foco." },
+                              new[] { "OnKeyDown", "EventCallback&lt;KeyboardEventArgs&gt;", "Disparado ao pressionar uma tecla." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="inputtext"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-inputtext", "Elemento <code>&lt;input&gt;</code>." },
+                              new[] { "p-component", "Marcador base de componente." },
+                              new[] { "p-filled", "Input com valor preenchido." },
+                              new[] { "p-invalid", "Input no estado inválido." },
+                              new[] { "p-variant-filled", "Input na variante <code>filled</code>." },
+                              new[] { "p-inputtext-sm / p-inputtext-lg", "Input conforme <code>Size</code>." },
+                              new[] { "p-inputtext-fluid", "Input com <code>Fluid</code>." },
+                              new[] { "p-iconfield / p-iconfield-left / p-iconfield-right", "Contêiner de ícone (<code>OpIconField</code>)." },
+                              new[] { "p-inputicon", "Ícone do campo (<code>OpInputIcon</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="inputtext"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e atributos extras para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao <code>&lt;input&gt;</code>) para customização.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há diretiva equivalente ao <code>pInputText</code>: o estilo vem do próprio componente <code>OpInputText</code>. Para ícones, use <code>OpIconField</code>/<code>OpInputIcon</code> no lugar das classes <code>p-input-icon-left</code>/<code>right</code>.</li>
+                        <li>O <code>Mask</code> aceita apenas o formato de máscara do PrimeNG; validação de máscara (ex.: CPF, datas) não está incluída.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InputText
-
-        <OpInputText Placeholder="Usuário" />
-        """;
-
-    private const string BasicCode = """
-        <OpInputText Placeholder="Usuário" StyleClass="w-full" />
-        """;
-
-    private const string VariantCode = """
-        <OpInputText Placeholder="Com contorno" StyleClass="w-full" />
-        <OpInputText Placeholder="Preenchido" Variant="filled" StyleClass="w-full" />
-        """;
-
-    private const string SizeCode = """
-        <OpInputText Placeholder="Pequeno" Size="small" />
-        <OpInputText Placeholder="Normal" />
-        <OpInputText Placeholder="Grande" Size="large" />
-        """;
-
-    private const string StateCode = """
-        <OpInputText Placeholder="Inválido" Invalid="true" />
-        <OpInputText Placeholder="Desabilitado" Disabled="true" />
-        """;
-
+    private string? _basic;
+    private string? _over;
+    private string? _in;
+    private string? _on;
+    private string? _iftalabel;
+    private string? _fluid;
+    private string? _help;
+    private string? _iconLeft;
+    private string? _iconRight;
+    private string? _keyfilter;
+    private string? _filled;
+    private string? _invalid;
+    private string? _invalidFilled;
+    private string? _bound;
+    private int _typed;
     private bool _submitted;
-    private TextFormModel _form = new();
-
-    private sealed class TextFormModel
-    {
-        [Required(ErrorMessage = "O nome é obrigatório.")]
-        public string? Name { get; set; }
-    }
+    private readonly InputTextFormModel _form = new();
 
     private void OnSubmit() => _submitted = true;
 
-    private const string ValidationCode = """
+    private sealed class InputTextFormModel
+    {
+        [Required(ErrorMessage = "O usuário é obrigatório.")]
+        public string? Username { get; set; }
+
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
+        [EmailAddress(ErrorMessage = "Informe um e-mail válido.")]
+        public string? Email { get; set; }
+    }
+
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.InputText
+        """;
+
+    private const string BasicCode = """
+        <OpInputText @bind-Value="_basic" Placeholder="Digite algo" />
+        <span>Valor: @_basic</span>
+
+        @code {
+            private string? _basic;
+        }
+        """;
+
+    private const string FloatLabelCode = """
+        @using OpBlazorUI.Base.Components.FloatLabel
+
+        <OpFloatLabel>
+            <OpInputText Id="over_label" @bind-Value="_over" Autocomplete="off" />
+            <label for="over_label">Over Label</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="in">
+            <OpInputText Id="in_label" @bind-Value="_in" Autocomplete="off" />
+            <label for="in_label">In Label</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpInputText Id="on_label" @bind-Value="_on" Autocomplete="off" />
+            <label for="on_label">On Label</label>
+        </OpFloatLabel>
+        """;
+
+    private const string IftaLabelCode = """
+        @using OpBlazorUI.Base.Components.IftaLabel
+
+        <OpIftaLabel>
+            <OpInputText Id="username" @bind-Value="_iftalabel" Autocomplete="off" />
+            <label for="username">Username</label>
+        </OpIftaLabel>
+        """;
+
+    private const string SizesCode = """
+        <OpInputText Placeholder="Small" Size="small" />
+        <OpInputText Placeholder="Normal" />
+        <OpInputText Placeholder="Large" Size="large" />
+        """;
+
+    private const string FluidCode = """
+        <OpInputText @bind-Value="_fluid" Placeholder="Largura total" Fluid="true" />
+        """;
+
+    private const string HelpTextCode = """
+        <div class="flex flex-col gap-2">
+            <label for="help-username">Username</label>
+            <OpInputText Id="help-username" @bind-Value="_help" aria-describedby="username-help" />
+            <small id="username-help">Informe o usuário para redefinir sua senha.</small>
+        </div>
+        """;
+
+    private const string IconsCode = """
+        @using OpBlazorUI.Base.Components.IconField
+        @using OpBlazorUI.Base.Components.InputIcon
+
+        <OpIconField>
+            <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+            <OpInputText @bind-Value="_iconLeft" Placeholder="Pesquisar" />
+        </OpIconField>
+
+        <OpIconField IconPosition="right">
+            <OpInputText @bind-Value="_iconRight" Placeholder="Buscando" />
+            <OpInputIcon><i class="pi pi-spin pi-spinner"></i></OpInputIcon>
+        </OpIconField>
+        """;
+
+    private const string KeyFilterCode = """
+        <OpInputText @bind-Value="_keyfilter" KeyFilter="int" Placeholder="Inteiros" />
+        """;
+
+    private const string FilledCode = """
+        <OpInputText @bind-Value="_filled" Variant="filled" Placeholder="Preenchido" />
+        """;
+
+    private const string DisabledCode = """
+        <OpInputText Value="Desabilitado" Disabled="true" />
+        """;
+
+    private const string InvalidCode = """
+        <OpInputText @bind-Value="_invalid" Invalid="@(string.IsNullOrEmpty(_invalid))" Placeholder="Nome" />
+        <OpInputText @bind-Value="_invalidFilled" Invalid="@(string.IsNullOrEmpty(_invalidFilled))" Variant="filled" Placeholder="Nome" />
+        """;
+
+    private const string FormsCode = """
+        @using System.ComponentModel.DataAnnotations
+
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
-            <OpInputText @bind-Value="_form.Name" Placeholder="Usuário" />
-            <ValidationMessage For="() => _form.Name" />
-            <button type="submit">Enviar</button>
+            <OpInputText @bind-Value="_form.Username" Placeholder="Username" Name="username" />
+            <ValidationMessage For="() => _form.Username" />
+
+            <OpInputText @bind-Value="_form.Email" Type="email" Placeholder="Email" Name="email" />
+            <ValidationMessage For="() => _form.Email" />
+
+            <button type="submit" class="p-button p-component p-button-secondary">Enviar</button>
         </EditForm>
 
         @code {
-            private bool _submitted;
-            private TextFormModel _form = new();
+            private readonly InputTextFormModel _form = new();
 
-            private sealed class TextFormModel
+            private void OnSubmit() { /* ... */ }
+
+            private sealed class InputTextFormModel
             {
-                [Required(ErrorMessage = "O nome é obrigatório.")]
-                public string? Name { get; set; }
-            }
+                [Required(ErrorMessage = "O usuário é obrigatório.")]
+                public string? Username { get; set; }
 
-            private void OnSubmit() => _submitted = true;
+                [Required(ErrorMessage = "O e-mail é obrigatório.")]
+                [EmailAddress(ErrorMessage = "Informe um e-mail válido.")]
+                public string? Email { get; set; }
+            }
         }
+        """;
+
+    private const string BindingCode = """
+        <OpInputText @bind-Value="_bound" OnInput="() => _typed++" Placeholder="Digite" />
+        <span>Valor: @_bound — teclas: @_typed</span>
+
+        @code {
+            private string? _bound;
+            private int _typed;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <label for="firstname">Firstname</label>
+        <OpInputText Id="firstname" />
+
+        <span id="lastname">Lastname</span>
+        <OpInputText aria-labelledby="lastname" />
+
+        <OpInputText aria-label="Age" />
         """;
 }

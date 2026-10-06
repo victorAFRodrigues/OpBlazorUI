@@ -4,27 +4,34 @@
 @using OpBlazorUI.Base.Components.BlockUI
 @using OpBlazorUI.Base.Components.Button
 @using OpBlazorUI.Base.Components.Card
-@using OpBlazorUI.Base.Components.ProgressSpinner
+
+<PageTitle>BlockUI - OpBlazorUI</PageTitle>
 
 <DocComponent Title="BlockUI"
-              Description="O BlockUI bloqueia outros componentes ou a página inteira.">
+              Description="O BlockUI bloqueia a interação com um conteúdo durante uma operação.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O conteúdo a bloquear deve ser colocado como filho do <code>OpBlockUI</code> e a propriedade
+                <code>Blocked</code> controla o estado. Enquanto bloqueado, uma máscara cobre o conteúdo e
+                impede a interação; sem <code>ContentTemplate</code>, o componente apenas bloqueia, sem exibir
+                nenhum indicador.
+            </Description>
             <ChildContent>
-                <div class="card">
-                    <OpButton Label="Bloquear" Severity="secondary" StyleClass="me-2" @onclick="Block"/>
-                    <OpButton Label="Desbloquear" Severity="secondary" @onclick="Unblock"/>
-
-                    <OpBlockUI Blocked="_blocked" StyleClass="mt-4">
+                <div>
+                    <OpButton Label="Bloquear" Severity="secondary" StyleClass="me-2" OnClick="() => _blocked = true"/>
+                    <OpButton Label="Desbloquear" Severity="secondary" OnClick="() => _blocked = false"/>
+                    <OpBlockUI Blocked="_blocked" StyleClass="mt-6">
                         <OpCard Header="Cabeçalho">
                             <p class="m-0">
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
+                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                             </p>
                         </OpCard>
                     </OpBlockUI>
@@ -33,100 +40,131 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Com loader">
+        <DocSection Label="Documento" Id="document">
             <Description>
-                <p>
-                    Por padrão o BlockUI apenas bloqueia a interação. Para indicar carregamento, passe um loader
-                    no <code>ContentTemplate</code>.
-                </p>
+                No Angular, quando nenhum <code>target</code> é informado, o BlockUI bloqueia o
+                <code>document.body</code> — ou seja, a página inteira. No Blazor não existe essa forma de
+                bloqueio global: o <code>OpBlockUI</code> sempre envolve o próprio conteúdo filho. A demo abaixo
+                representa a página por meio de um contêiner bloqueável; clique em <b>Bloquear página</b> e o
+                desbloqueio ocorre automaticamente após 3 segundos, como no exemplo original. A limitação está
+                registrada em Problemas Conhecidos.
             </Description>
             <ChildContent>
-                <div class="card">
-                    <OpButton Label="Bloquear" Severity="secondary" @onclick="BlockLoader"/>
-
-                    <OpBlockUI Blocked="_loaderBlocked" StyleClass="mt-4">
-                        <ContentTemplate>
-                            <OpProgressSpinner Style="width:3rem;height:3rem" StrokeWidth="4" AriaLabel="Carregando"/>
-                        </ContentTemplate>
-                        <ChildContent>
-                            <OpCard Header="Cabeçalho">
-                                <p class="m-0">Conteúdo bloqueado com um loader sobre a máscara.</p>
-                            </OpCard>
-                        </ChildContent>
+                <div class="flex flex-col items-start gap-4">
+                    <OpButton Label="Bloquear página" OnClick="BlockDocument"/>
+                    <OpBlockUI Blocked="_documentBlocked" StyleClass="w-full"
+                               Style="min-height:10rem; border:1px dashed var(--p-content-border-color); border-radius:var(--p-content-border-radius); padding:1rem;">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="font-semibold">Minha aplicação</span>
+                            <span class="pi pi-user" aria-hidden="true"></span>
+                        </div>
+                        <p class="m-0">
+                            Esta área representa a página inteira. O bloqueio cobre apenas este contêiner, pois
+                            não há suporte a <code>document.body</code>.
+                        </p>
                     </OpBlockUI>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@LoaderCode"/></Code>
+            <Code><CodeBlock Code="@DocumentCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Conteúdo customizado">
-            <ChildContent>
-                <div class="card">
-                    <OpButton Label="Bloquear" Severity="secondary" @onclick="BlockCustom"/>
-
-                    <OpBlockUI Blocked="_customBlocked" StyleClass="mt-4">
-                        <ContentTemplate>
-                            <div class="flex flex-col items-center gap-2">
-                                <span class="pi pi-lock" style="font-size:1.5rem" aria-hidden="true"></span>
-                                <span>Carregando...</span>
-                            </div>
-                        </ContentTemplate>
-                        <ChildContent>
-                            <OpCard Header="Cabeçalho">
-                                <p class="m-0">Conteúdo bloqueável com máscara customizada.</p>
-                            </OpCard>
-                        </ChildContent>
-                    </OpBlockUI>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@CustomCode"/></Code>
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O <code>OpBlockUI</code> gerencia o atributo <code>aria-busy</code> no elemento raiz: ele é
+                    <code>true</code> enquanto o conteúdo está bloqueado e <code>false</code> caso contrário.
+                    Qualquer atributo extra é repassado ao elemento raiz, então <code>role</code> e
+                    <code>aria-live</code> podem ser usados para definir regiões dinâmicas (live regions).
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "—", "O componente não inclui elementos interativos." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Blocked", "bool", "false", "Estado de bloqueio." },
-                              new[] { "AutoZIndex", "bool", "true", "Soma a camada modal (1100) ao BaseZIndex no z-index da máscara." },
+                              new[] { "Blocked", "bool", "false", "Controla o estado de bloqueio: enquanto <code>true</code>, a máscara cobre o conteúdo e a interação é impedida." },
+                              new[] { "AutoZIndex", "bool", "true", "Soma a camada modal (1100) ao <code>BaseZIndex</code> no z-index da máscara." },
                               new[] { "BaseZIndex", "int", "0", "Valor base do z-index da máscara." },
-                              new[] { "Style", "string?", "null", "Estilos inline." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Elemento a bloquear." }
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Style", "string?", "null", "Estilos inline do elemento raiz. Enquanto bloqueado, o componente acrescenta <code>isolation: isolate</code> para conter o z-index da máscara." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz (ex.: <code>role</code>, <code>aria-live</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
                 <ApiTable Caption="Templates"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ContentTemplate", "RenderFragment?", "Conteúdo exibido sobre a máscara, como um loader (padrão: nenhum, apenas bloqueia)." }
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo a bloquear; permanece visível sob a máscara." },
+                              new[] { "ContentTemplate", "RenderFragment?", "Conteúdo exibido sobre a máscara, como um loader. Sem ele, o BlockUI apenas bloqueia." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="blockui"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os
+                tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-blockui", "Elemento raiz que envolve o conteúdo bloqueável (<code>position: relative</code>)." },
+                              new[] { "p-blockui-mask", "Máscara sobreposta ao conteúdo enquanto <code>Blocked</code>; a máscara também recebe <code>p-overlay-mask</code> e <code>p-overlay-mask-enter-active</code>." },
+                              new[] { "p-blockui-content", "Área do conteúdo customizado (<code>ContentTemplate</code>) exibido sobre a máscara." },
+                              new[] { "p-component-overlay", "Classe base de overlay do design system à qual a máscara se associa." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="blockui"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>
+                        O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de
+                        estilo, use <code>StyleClass</code>, <code>Style</code>, o <code>ContentTemplate</code> e
+                        os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).
+                    </p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>O modo "documento" (bloquear a página inteira, sem alvo) não foi portado; o BlockUI envolve o conteúdo filho.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há equivalente ao modo documento do Angular: o <code>OpBlockUI</code> não bloqueia o <code>document.body</code> (a página inteira), apenas o conteúdo filho. Para simular a página inteira, envolva um contêiner que represente toda a área (ver Documento).</li>
+                        <li>A classe de tema <code>p-blockui-mask-document</code> (máscara fixa em tela cheia) existe no tema gerado, mas não é aplicada por não haver modo documento.</li>
+                        <li>O pass-through (pt) do Angular não foi portado; use <code>StyleClass</code>, <code>Style</code>, <code>ContentTemplate</code> e os <code>AdditionalAttributes</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -134,54 +172,69 @@
 
 @code {
     private bool _blocked;
-    private bool _customBlocked;
-    private bool _loaderBlocked;
+    private bool _documentBlocked;
 
-    private void Block() => _blocked = true;
-    private void Unblock() => _blocked = false;
-    private void BlockCustom() => _customBlocked = !_customBlocked;
-    private void BlockLoader() => _loaderBlocked = !_loaderBlocked;
+    private async Task BlockDocument()
+    {
+        _documentBlocked = true;
+        await Task.Delay(3000);
+        _documentBlocked = false;
+    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.BlockUI
-
-        <OpBlockUI Blocked="_blocked">
-            <OpCard Header="Cabeçalho">Conteúdo</OpCard>
-        </OpBlockUI>
         """;
 
     private const string BasicCode = """
-        <OpButton Label="Bloquear" @onclick="Block" />
-        <OpBlockUI Blocked="_blocked">
-            <OpCard Header="Cabeçalho">Conteúdo bloqueável.</OpCard>
-        </OpBlockUI>
+        <div>
+            <OpButton Label="Bloquear" Severity="secondary" StyleClass="me-2" OnClick="() => _blocked = true" />
+            <OpButton Label="Desbloquear" Severity="secondary" OnClick="() => _blocked = false" />
+            <OpBlockUI Blocked="_blocked" StyleClass="mt-6">
+                <OpCard Header="Cabeçalho">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua.
+                    </p>
+                </OpCard>
+            </OpBlockUI>
+        </div>
 
         @code {
             private bool _blocked;
-            private void Block() => _blocked = true;
         }
         """;
 
-    private const string LoaderCode = """
-        <OpBlockUI Blocked="_blocked">
-            <ContentTemplate>
-                <OpProgressSpinner Style="width:3rem;height:3rem" StrokeWidth="4" AriaLabel="Carregando" />
-            </ContentTemplate>
-            <ChildContent>
-                <OpCard Header="Cabeçalho">Conteúdo.</OpCard>
-            </ChildContent>
-        </OpBlockUI>
+    private const string DocumentCode = """
+        <div class="flex flex-col items-start gap-4">
+            <OpButton Label="Bloquear página" OnClick="BlockDocument" />
+            <OpBlockUI Blocked="_documentBlocked" StyleClass="w-full"
+                       Style="min-height:10rem; border:1px dashed var(--p-content-border-color); border-radius:var(--p-content-border-radius); padding:1rem;">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="font-semibold">Minha aplicação</span>
+                    <span class="pi pi-user" aria-hidden="true"></span>
+                </div>
+                <p class="m-0">
+                    Esta área representa a página inteira. O bloqueio cobre apenas este contêiner, pois não há
+                    suporte a <code>document.body</code>.
+                </p>
+            </OpBlockUI>
+        </div>
+
+        @code {
+            private bool _documentBlocked;
+
+            private async Task BlockDocument()
+            {
+                _documentBlocked = true;
+                await Task.Delay(3000);
+                _documentBlocked = false;
+            }
+        }
         """;
 
-    private const string CustomCode = """
-        <OpBlockUI Blocked="_blocked">
-            <ContentTemplate>
-                <div class="flex flex-col items-center gap-2">
-                    <span class="pi pi-lock" aria-hidden="true"></span>
-                    <span>Carregando...</span>
-                </div>
-            </ContentTemplate>
-            <OpCard Header="Cabeçalho">Conteúdo.</OpCard>
+    private const string AccessibilityCode = """
+        <OpBlockUI Blocked="_blocked" role="status" aria-live="polite">
+            <OpCard Header="Cabeçalho">Conteúdo</OpCard>
         </OpBlockUI>
         """;
 }
