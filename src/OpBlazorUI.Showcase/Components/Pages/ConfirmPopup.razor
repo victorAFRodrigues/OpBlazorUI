@@ -1,0 +1,116 @@
+@page "/confirmpopup"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>ConfirmPopup - OpBlazorUI</PageTitle>
+
+<DocComponent Title="ConfirmPopup"
+              Description="Sobrescrita de confirmação exibida relativa ao seu alvo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O ConfirmPopup é definido com a tag <code>p-confirmPopup</code> e uma instância de <code>ConfirmationService</code> é necessária para exibi-lo, chamando o método <code>confirm</code>. Para um diálogo modal, veja <a href="/confirmdialog">ConfirmDialog</a>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>A seção de conteúdo pode ser personalizada com o template <code>content</code>.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Headless" Id="headless">
+            <Description><p>O modo <i>Headless</i> permite personalizar toda a interface do usuário em vez dos elementos padrão.</p></Description>
+            <Code><CodeBlock Code="@HeadlessCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente ConfirmPopup usa o papel <code>alertdialog</code> e, como qualquer atributo é passado para o elemento raiz, você pode definir atributos como <code>aria-label</code> ou <code>aria-labelledby</code> para descrever o conteúdo do popup. Além disso, <code>aria-modal</code> é adicionado, pois o foco é mantido dentro do popup.</p>
+                <p>Recomenda-se usar um componente de gatilho acessível por teclado, como um botão; caso contrário, seria necessário adicionar <code>tabIndex</code>. O ConfirmPopup adiciona o estado <code>aria-expanded</code> e <code>aria-controls</code> ao gatilho, de modo que a relação entre o gatilho e o popup fica definida.</p>
+                <h3>Suporte a teclado do overlay</h3>
+                <p>Quando o popup é aberto, o primeiro elemento focalizável recebe o foco, o que pode ser personalizado adicionando <code>autofocus</code> a um elemento dentro do popup.</p>
+            </Description>
+            <Code>
+                <ApiTable Caption="Suporte a teclado do overlay"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] { new[] { "tab", "Move o foco para o próximo elemento focalizável dentro do popup." }, new[] { "shift + tab", "Move o foco para o elemento focalizável anterior dentro do popup." }, new[] { "escape", "Fecha o popup e move o foco para o gatilho." } })"/>
+                <ApiTable Caption="Suporte a teclado dos botões"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] { new[] { "enter", "Aciona a ação, fecha o popup e move o foco para o gatilho." }, new[] { "space", "Aciona a ação, fecha o popup e move o foco para o gatilho." } })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { ConfirmPopupModule } from 'primeng/confirmpopup';
+        """;
+
+    private const string BasicCode = """
+        <p-toast />
+        <p-confirmpopup />
+        <p-button (onClick)="confirm1($event)" label="Save" [outlined]="true" />
+        <p-button (onClick)="confirm2($event)" label="Delete" severity="danger" [outlined]="true" />
+        """;
+
+    private const string TemplateCode = """
+        <p-toast />
+        <p-confirmpopup>
+            <ng-template #content let-message>
+                <div
+                    class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700 p-4 mb-4 pb-0"
+                >
+                    <i [class]="message.icon" class="!text-6xl text-primary-500"></i>
+                    <p>{{ message.message }}</p>
+                </div>
+            </ng-template>
+        </p-confirmpopup>
+        <p-button (click)="confirm($event)" label="Save" />
+        """;
+
+    private const string HeadlessCode = """
+        <p-toast />
+        <p-confirmpopup #cp>
+            <ng-template #headless let-message>
+                <div class="rounded p-4">
+                    <span>{{ message.message }}</span>
+                    <div class="flex items-center gap-2 mt-4">
+                        <p-button (onClick)="cp.onAccept()" label="Save" size="small" [autofocus]="true" />
+                        <p-button (onClick)="cp.onReject()" label="Cancel" [text]="true" size="small" severity="secondary" />
+                    </div>
+                </div>
+            </ng-template>
+        </p-confirmpopup>
+        <p-button (onClick)="confirm($event)" label="Save" />
+        """;
+}

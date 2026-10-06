@@ -102,9 +102,9 @@ public static class AppMenu
                     Label = "Data",
                     Items =
                     [
-                        GroupItem("DataView"), GroupItem("OrderList"), GroupItem("OrganizationChart"),
-                        GroupItem("Paginator", "/paginator"), GroupItem("PickList"), GroupItem("Table", "/table"),
-                        GroupItem("Timeline"), GroupItem("Tree"), GroupItem("TreeTable"), GroupItem("VirtualScroller", "/virtualscroller")
+                        GroupItem("DataView", "/dataview"), GroupItem("OrderList", "/orderlist"), GroupItem("OrganizationChart"),
+                        GroupItem("Paginator", "/paginator"), GroupItem("PickList", "/picklist"), GroupItem("Table", "/table"),
+                        GroupItem("Timeline", "/timeline"), GroupItem("Tree", "/tree"), GroupItem("TreeTable", "/treetable"), GroupItem("VirtualScroller", "/virtualscroller")
                     ]
                 },
                 new AppMenuGroup
@@ -122,7 +122,7 @@ public static class AppMenu
                     Label = "Overlay",
                     Items =
                     [
-                        GroupItem("ConfirmDialog", "/confirmdialog"), GroupItem("ConfirmPopup"), GroupItem("Dialog", "/dialog"),
+                        GroupItem("ConfirmDialog", "/confirmdialog"), GroupItem("ConfirmPopup", "/confirmpopup"), GroupItem("Dialog", "/dialog"),
                         GroupItem("Drawer", "/drawer"), GroupItem("DynamicDialog"), GroupItem("Popover", "/popover"),
                         GroupItem("Tooltip", "/tooltip")
                     ]
@@ -150,7 +150,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Messages",
-                    Items = [GroupItem("InlineMessage"), GroupItem("Message", "/message"), GroupItem("Toast", "/toast")]
+                    Items = [GroupItem("InlineMessage", "/inlinemessage"), GroupItem("Message", "/message"), GroupItem("Toast", "/toast")]
                 },
                 new AppMenuGroup
                 {
@@ -165,7 +165,7 @@ public static class AppMenu
                         GroupItem("AnimateOnScroll"), GroupItem("AutoFocus"), GroupItem("Avatar", "/avatar"),
                         GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI", "/blockui"), GroupItem("Chip", "/chip"),
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
-                        GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace", "/inplace"), GroupItem("MeterGroup"),
+                        GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace", "/inplace"), GroupItem("MeterGroup", "/metergroup"),
                         GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
                         GroupItem("Ripple"), GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
                         GroupItem("Tag", "/tag"), GroupItem("Terminal")
