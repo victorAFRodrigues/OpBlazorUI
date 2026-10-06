@@ -4,52 +4,151 @@
 @using OpBlazorUI.Base.Components.Checkbox
 @using System.ComponentModel.DataAnnotations
 
+<PageTitle>Checkbox - OpBlazorUI</PageTitle>
+
 <DocComponent Title="Checkbox"
               Description="O Checkbox é uma extensão do elemento checkbox padrão, com temas.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O Checkbox é um input controlado: o estado é definido por <code>Value</code> e atualizado por
+                <code>ValueChanged</code> (ou <code>@@bind-Value</code>). Não existe <code>ngModel</code> nem a
+                flag <code>binary</code> — o componente é sempre binário.
+            </Description>
             <ChildContent>
-                <OpCheckbox @bind-Value="_checked" Id="cb1"/>
-                <label class="ms-2" for="cb1">Checkbox</label>
+                <div class="flex justify-center gap-4">
+                    <OpCheckbox Id="cb1" @bind-Value="_checked"/>
+                    <label class="flex items-center" for="cb1">Checkbox</label>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Indeterminado">
+        <DocSection Label="Indeterminado" Id="indeterminate">
+            <Description>
+                O estado <code>Indeterminate</code> indica que o checkbox não está nem marcado nem desmarcado — útil
+                em seleção parcial.
+            </Description>
             <ChildContent>
-                <OpCheckbox Indeterminate="true"/>
+                <div class="flex justify-center gap-4">
+                    <OpCheckbox Indeterminate="true"/>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@IndeterminateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido / Desabilitado">
+        <DocSection Label="Grupo" Id="group">
+            <Description>
+                No Angular, vários checkboxes compartilham um modelo em lista (<code>value</code> + array). Este
+                componente é binário, então a seleção múltipla é feita com vários checkboxes ligados a um modelo de
+                flags. O agrupamento em lista é uma lacuna registrada em Problemas Conhecidos.
+            </Description>
             <ChildContent>
-                <div class="flex gap-4 items-center">
-                    <OpCheckbox Value="true" Invalid="true"/>
-                    <OpCheckbox Value="true" Disabled="true"/>
+                <div class="flex flex-wrap justify-center gap-4">
+                    @foreach (var ingredient in _ingredients)
+                    {
+                        <div class="flex items-center">
+                            <OpCheckbox Id="@ingredient.Key" Name="pizza" @bind-Value="ingredient.Checked"/>
+                            <label for="@ingredient.Key" class="ml-2">@ingredient.Label</label>
+                        </div>
+                    }
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@StateCode"/></Code>
+            <Code><CodeBlock Code="@GroupCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tamanhos">
+        <DocSection Label="Dinâmico" Id="dynamic">
+            <Description>
+                Os checkboxes podem ser gerados a partir de uma lista de valores, com um modelo por item.
+            </Description>
             <ChildContent>
-                <div class="flex gap-4 items-center">
-                    <OpCheckbox Value="true" Size="small"/>
-                    <OpCheckbox Value="true"/>
-                    <OpCheckbox Value="true" Size="large"/>
+                <div class="flex justify-center">
+                    <div class="flex flex-col gap-4">
+                        @foreach (var category in _categories)
+                        {
+                            <div class="flex items-center">
+                                <OpCheckbox Id="@category.Key" Name="category" @bind-Value="category.Checked"/>
+                                <label for="@category.Key" class="ml-2">@category.Label</label>
+                            </div>
+                        }
+                    </div>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@SizeCode"/></Code>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
         </DocSection>
-        <DocSection Label="Validação">
+
+        <DocSection Label="Preenchido" Id="filled">
             <Description>
-                O Checkbox herda de <code>InputBase&lt;bool?&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+                Defina <code>Variant="filled"</code> para exibir o componente com ênfase visual maior que o estilo
+                <code>outlined</code> padrão.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpCheckbox @bind-Value="_filled" Variant="filled"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos" Id="sizes">
+            <Description>
+                O Checkbox oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <OpCheckbox Id="size_small" @bind-Value="_size" Size="small"/>
+                        <label for="size_small" class="text-sm">Small</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <OpCheckbox Id="size_normal" @bind-Value="_size"/>
+                        <label for="size_normal">Normal</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <OpCheckbox Id="size_large" @bind-Value="_size" Size="large"/>
+                        <label for="size_large" class="text-lg">Large</label>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Quando <code>Disabled="true"</code>, o elemento não pode ser editado nem receber foco.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center gap-2">
+                    <OpCheckbox @bind-Value="_disabledOff" Disabled="true"/>
+                    <OpCheckbox @bind-Value="_disabledOn" Disabled="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado inválido é aplicado com <code>Invalid="true"</code> para indicar falha de validação — também
+                é ativado automaticamente pelo <code>EditForm</code> quando o campo tem erro.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpCheckbox @bind-Value="_invalid" Invalid="@(_invalid != true)"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O Checkbox herda de <code>InputBase&lt;bool?&gt;</code>: integra-se ao <code>EditForm</code> com
+                DataAnnotations, e o estado inválido é aplicado automaticamente quando há erro. Isso substitui as
+                abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
                 <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
@@ -62,71 +161,143 @@
                     <button type="submit" class="p-button p-component">Enviar</button>
                     @if (_submitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Aceito: @_form.Accept</div>
+                        <div class="text-sm" style="color: var(--p-green-600)">Aceito: @_form.Accept</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vínculo" Id="binding">
+            <Description>
+                Use <code>@@bind-Value</code> para o vínculo bidirecional; <code>Value</code>/<code>ValueChanged</code>
+                para controle manual e <code>OnChange</code> para reagir à mudança.
+            </Description>
+            <ChildContent>
+                <div class="flex items-center gap-3">
+                    <OpCheckbox Id="bind-cb" @bind-Value="_bound" OnChange="() => _changes++"/>
+                    <label for="bind-cb">Valor: <b>@_bound</b> — mudanças: <b>@_changes</b></label>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BindingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Checkbox usa internamente um elemento <code>&lt;input type="checkbox"&gt;</code> acessível. O
+                    texto que descreve o componente pode vir de um <code>&lt;label&gt;</code> combinado com o
+                    <code>Id</code>, de <code>AriaLabelledBy</code> ou de <code>AriaLabel</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o checkbox." },
+                              new[] { "space", "Alterna o estado marcado." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Value", "bool?", "null", "Estado marcado." },
-                              new[] { "ValueChanged", "EventCallback&lt;bool?&gt;", "-", "Callback de binding." },
                               new[] { "Indeterminate", "bool", "false", "Estado indeterminado." },
-                              new[] { "Name", "string?", "null", "Name do input." },
-                              new[] { "Id", "string?", "null", "Id do input." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula." },
-                              new[] { "Required", "bool", "false", "Obrigatório." },
+                              new[] { "Name", "string?", "null", "Atributo <code>name</code> do input." },
+                              new[] { "Id", "string?", "null", "Id do input; use junto do <code>for</code> do label." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o checkbox." },
+                              new[] { "Required", "bool", "false", "Marca o input como obrigatório." },
                               new[] { "Readonly", "bool", "false", "Somente leitura." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Invalid", "bool", "false", "Estado inválido." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o checkbox." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido; também ativado por validação do <code>EditForm</code>." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
                               new[] { "Variant", "string", "outlined", "Variante: <code>outlined</code> ou <code>filled</code>." },
-                              new[] { "CheckboxIcon", "string?", "null", "Classe do ícone de marcação." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "InputClass", "string?", "null", "Classes do input." },
-                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." }
+                              new[] { "CheckboxIcon", "string?", "null", "Classe do ícone de marcação (padrão: ícone de check)." },
+                              new[] { "InputClass", "string?", "null", "Classes adicionais no <code>&lt;input&gt;</code>." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;input&gt;</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
+                              new[] { "CheckboxIconTemplate", "RenderFragment&lt;bool&gt;?", "Template do ícone, recebendo o estado marcado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ValueChanged", "EventCallback&lt;bool?&gt;", "Disparado quando o estado muda (binding)." },
                               new[] { "OnChange", "EventCallback&lt;bool&gt;", "Disparado ao mudar o estado." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao receber foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao perder o foco." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="checkbox"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-checkbox", "Elemento raiz." },
+                              new[] { "p-checkbox-box", "Contêiner do ícone." },
+                              new[] { "p-checkbox-icon", "Ícone de marcação." },
+                              new[] { "p-checkbox-input", "Elemento <code>&lt;input&gt;</code> nativo." },
+                              new[] { "p-checkbox-checked / p-highlight", "Raiz no estado marcado." },
+                              new[] { "p-disabled", "Raiz desabilitada." },
+                              new[] { "p-invalid", "Raiz no estado inválido." },
+                              new[] { "p-variant-filled", "Raiz na variante <code>filled</code>." },
+                              new[] { "p-checkbox-sm / p-checkbox-lg", "Raiz conforme <code>Size</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="checkbox"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>InputClass</code> e atributos extras para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>InputClass</code> e os <code>AdditionalAttributes</code> para customização.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O <code>OpCheckbox</code> é binário (<code>bool?</code>): não há o modo de grupo do Angular com <code>value</code> + modelo em lista. Para seleção múltipla, use vários checkboxes ligados a um modelo de flags (ver Grupo/Dinâmico).</li>
+                        <li>O componente não renderiza um <code>&lt;label&gt;</code> interno; associe um label externo com <code>for</code>/<code>Id</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -134,40 +305,40 @@
 
 @code {
     private bool? _checked = true;
-
-    private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Checkbox
-
-        <OpCheckbox @bind-Value="_checked" Id="cb1" />
-        <label for="cb1">Checkbox</label>
-        """;
-
-    private const string BasicCode = """
-        <OpCheckbox @bind-Value="_checked" Id="cb1" />
-        <label for="cb1">Checkbox</label>
-
-        @code {
-            private bool? _checked;
-        }
-        """;
-
-    private const string IndeterminateCode = """
-        <OpCheckbox Indeterminate="true" />
-        """;
-
-    private const string StateCode = """
-        <OpCheckbox Value="true" Invalid="true" />
-        <OpCheckbox Value="true" Disabled="true" />
-        """;
-
-    private const string SizeCode = """
-        <OpCheckbox Value="true" Size="small" />
-        <OpCheckbox Value="true" />
-        <OpCheckbox Value="true" Size="large" />
-        """;
-
+    private bool? _filled;
+    private bool? _size = true;
+    private bool? _disabledOff;
+    private bool? _disabledOn = true;
+    private bool? _invalid;
+    private bool? _bound;
+    private int _changes;
     private bool _submitted;
-    private CheckboxFormModel _form = new();
+    private readonly CheckboxFormModel _form = new();
+
+    private sealed class Option
+    {
+        public string Key { get; init; } = "";
+        public string Label { get; init; } = "";
+        public bool? Checked { get; set; }
+    }
+
+    private readonly List<Option> _ingredients =
+    [
+        new() { Key = "ingredient1", Label = "Cheese" },
+        new() { Key = "ingredient2", Label = "Mushroom" },
+        new() { Key = "ingredient3", Label = "Pepper" },
+        new() { Key = "ingredient4", Label = "Onion" }
+    ];
+
+    private readonly List<Option> _categories =
+    [
+        new() { Key = "A", Label = "Accounting" },
+        new() { Key = "M", Label = "Marketing", Checked = true },
+        new() { Key = "P", Label = "Production" },
+        new() { Key = "R", Label = "Research" }
+    ];
+
+    private void OnSubmit() => _submitted = true;
 
     private sealed class CheckboxFormModel
     {
@@ -175,14 +346,135 @@
         public bool? Accept { get; set; }
     }
 
-    private void OnSubmit() => _submitted = true;
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Checkbox
+        """;
 
-    private const string ValidationCode = """
+    private const string BasicCode = """
+        <OpCheckbox Id="cb1" @bind-Value="_checked" />
+        <label for="cb1">Checkbox</label>
+
+        @code {
+            private bool? _checked = true;
+        }
+        """;
+
+    private const string IndeterminateCode = """
+        <OpCheckbox Indeterminate="true" />
+        """;
+
+    private const string GroupCode = """
+        @foreach (var ingredient in _ingredients)
+        {
+            <div class="flex items-center">
+                <OpCheckbox Id="@ingredient.Key" Name="pizza" @bind-Value="ingredient.Checked" />
+                <label for="@ingredient.Key" class="ml-2">@ingredient.Label</label>
+            </div>
+        }
+
+        @code {
+            private sealed class Option
+            {
+                public string Key { get; init; } = "";
+                public string Label { get; init; } = "";
+                public bool? Checked { get; set; }
+            }
+
+            private readonly List<Option> _ingredients =
+            [
+                new() { Key = "ingredient1", Label = "Cheese" },
+                new() { Key = "ingredient2", Label = "Mushroom" },
+                new() { Key = "ingredient3", Label = "Pepper" },
+                new() { Key = "ingredient4", Label = "Onion" }
+            ];
+        }
+        """;
+
+    private const string DynamicCode = """
+        @foreach (var category in _categories)
+        {
+            <div class="flex items-center">
+                <OpCheckbox Id="@category.Key" Name="category" @bind-Value="category.Checked" />
+                <label for="@category.Key" class="ml-2">@category.Label</label>
+            </div>
+        }
+
+        @code {
+            private readonly List<Option> _categories =
+            [
+                new() { Key = "A", Label = "Accounting" },
+                new() { Key = "M", Label = "Marketing", Checked = true },
+                new() { Key = "P", Label = "Production" },
+                new() { Key = "R", Label = "Research" }
+            ];
+        }
+        """;
+
+    private const string FilledCode = """
+        <OpCheckbox @bind-Value="_filled" Variant="filled" />
+        """;
+
+    private const string SizesCode = """
+        <OpCheckbox Id="size_small" @bind-Value="_size" Size="small" />
+        <label for="size_small" class="text-sm">Small</label>
+
+        <OpCheckbox Id="size_normal" @bind-Value="_size" />
+        <label for="size_normal">Normal</label>
+
+        <OpCheckbox Id="size_large" @bind-Value="_size" Size="large" />
+        <label for="size_large" class="text-lg">Large</label>
+        """;
+
+    private const string DisabledCode = """
+        <OpCheckbox @bind-Value="_disabledOff" Disabled="true" />
+        <OpCheckbox @bind-Value="_disabledOn" Disabled="true" />
+        """;
+
+    private const string InvalidCode = """
+        <OpCheckbox @bind-Value="_invalid" Invalid="@(_invalid != true)" />
+        """;
+
+    private const string FormsCode = """
+        @using System.ComponentModel.DataAnnotations
+
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
-            <OpCheckbox @bind-Value="_form.Accept" />
+            <OpCheckbox Id="frm-accept" @bind-Value="_form.Accept" />
+            <label for="frm-accept">Aceito os termos</label>
             <ValidationMessage For="() => _form.Accept" />
             <button type="submit" class="p-button p-component">Enviar</button>
         </EditForm>
+
+        @code {
+            private readonly CheckboxFormModel _form = new();
+
+            private void OnSubmit() { /* ... */ }
+
+            private sealed class CheckboxFormModel
+            {
+                [Required(ErrorMessage = "É necessário aceitar os termos.")]
+                public bool? Accept { get; set; }
+            }
+        }
+        """;
+
+    private const string BindingCode = """
+        <OpCheckbox Id="bind-cb" @bind-Value="_bound" OnChange="() => _changes++" />
+        <label for="bind-cb">Valor: @_bound — mudanças: @_changes</label>
+
+        @code {
+            private bool? _bound;
+            private int _changes;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <label for="chkbox1">Remember Me</label>
+        <OpCheckbox Id="chkbox1" />
+
+        <span id="chkbox2">Remember Me</span>
+        <OpCheckbox AriaLabelledBy="chkbox2" />
+
+        <OpCheckbox AriaLabel="Remember Me" />
         """;
 }
