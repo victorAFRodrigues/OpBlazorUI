@@ -115,8 +115,8 @@ build + renderização das páginas.
 Ordem de execução pelo ranking (§3):
 
 - **A1 — Form básico** (define o padrão Binding/Forms/Acessibilidade): InputText, Checkbox,
-  RadioButton, ToggleSwitch. ✅ Concluído.
-- **A2 — Seleção complexa**: DatePicker, Select, MultiSelect.
+  RadioButton, ToggleSwitch.
+- **A2 — Seleção complexa**: DatePicker, Select, MultiSelect. ✅ Concluído.
 - **A3 — Overlay/feedback**: Tooltip, Toast, Message, Dialog, Drawer, Popover, BlockUI.
 - **A4 — Dados/misc**: Table, Menu, Paginator, VirtualScroller, ProgressBar, ProgressSpinner,
   Skeleton, Badge, Tag, Chip, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay.
@@ -205,18 +205,20 @@ Ordem de execução pelo ranking (§3):
 **Fase B encerrada.** A Fase A começa por A1 — Form básico (InputText, Checkbox, RadioButton,
 ToggleSwitch), aplicando o padrão ouro de `Button.razor`.
 
-### A1 — Form básico ✅
+### A2 — Seleção complexa ✅
 
-- Páginas reescritas em `src/OpBlazorUI.Showcase/Components/Pages/`: `InputText.razor`,
-  `Checkbox.razor`, `RadioButton.razor`, `ToggleSwitch.razor`.
-- Todas as seções do `index.ts` upstream presentes na ordem (ou adaptadas/justificadas), com
-  `Description`; seções extras Blazor (**Vínculo**, **Formulários**); **Acessibilidade** com leitor
-  de tela + tabela de teclado copiada do upstream; API completa a partir do `.razor.cs`; classes CSS
-  em Temas; **Problemas Conhecidos** com lacunas reais.
-- Adaptações documentadas:
-  - `InputText`: sem diretiva `pInputText`; ícones via `OpIconField`/`OpInputIcon`; `Mask`/`KeyFilter`.
-  - `Checkbox`: binário (`bool?`); sem o modo de grupo do Angular (`value` + lista).
-  - `RadioButton`: genérico (`TValue`), fora do `InputBase` → validação de formulário manual.
-  - `ToggleSwitch`: exposto como `OpInputSwitch` (nome legado); template via `HandleTemplate`.
-- Verificação: build 0 erros; as 4 rotas renderizam no Showcase sem UI de erro do Blazor.
-- Git: branch `docs/fase-a-inputs` (a partir de `origin/main`).
+- Páginas reescritas: `DatePicker.razor` (26 seções), `Select.razor` (21), `MultiSelect.razor` (19),
+  na ordem dos `index.ts` e com **Acessibilidade** fiel (incl. tabela de teclado) e abas API/Theming/
+  Pass Through/Problemas Conhecidos.
+- Adaptações Blazor inseridas antes de Acessibilidade (**Vínculo** e **Formulários**).
+- Limitações registradas em **Problemas Conhecidos** (resumo):
+  - `DatePicker`: sem `Locale` nativo (usa `CultureInfo` + `DateFormat`, tokens divergentes); só o
+    modo Single integra `EditForm`; sem máscara de digitação.
+  - `Select`: *Lazy Virtual Scroll* simulado via `OnFilter` (sem `onLazyLoad`); `Editable` não
+    captura texto; `VirtualScroll` ignorado com `Group`; sem `AriaLabelledBy`.
+  - `MultiSelect`: textos internos fixos em inglês; toggle-all sem estado indeterminado; sem
+    `AriaLabelledBy`/`aria-multiselectable`; `SelectedItemsTemplate` ignora o modo chip.
+- Ajuste: classes de largura Tailwind trocadas por utilitários presentes no bundle (`w-56`/`w-64`,
+  pois `md:w-56`/`w-80` não existem no `tailwind.css`).
+- Verificação: build 0 erros (13 avisos são pré-existentes na lib base); as 3 rotas renderizam no
+  Showcase sem UI de erro do Blazor.
