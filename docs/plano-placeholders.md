@@ -78,7 +78,7 @@ InlineMessage** — placeholders com seções próprias.
 | Batch | Conteúdo | Status |
 |-------|----------|--------|
 | B1 — P0 Form (7) | Textarea, Fieldset, Slider, InputChips, Inplace, ColorPicker, FileUpload | ✅ Concluído |
-| B2 — P0 Nav (13) | Tabs, TabMenu, TabView, Accordion, Breadcrumb, Toolbar, ContextMenu, Menubar, TieredMenu, PanelMenu, MegaMenu, Stepper, Steps | ⏳ Pendente |
+| B2 — P0 Nav (13) | Tabs, TabMenu, TabView, Accordion, Breadcrumb, Toolbar, ContextMenu, Menubar, TieredMenu, PanelMenu, MegaMenu, Stepper, Steps | ✅ Concluído |
 | B3 — P1 (9) | Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline | ⏳ Pendente |
 | B4 — P2 (8) | Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare | ⏳ Pendente |
 | B5 — P3 (4) | Knob, Terminal, OrganizationChart, Ripple | ⏳ Pendente |
@@ -119,3 +119,15 @@ Ordem de execução pelo ranking (§3):
 - Verificação: build 0 erros; as 7 rotas renderizam no Showcase sem UI de erro do Blazor.
 - Git: branch `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`); commit
   `docs(OpBlazorUI.Showcase): adicionar placeholders do P0 Formulário`.
+
+### B2 — P0 Navegação ✅
+
+- Páginas criadas: `Tabs.razor`, `TabView.razor`, `TabMenu.razor`, `Accordion.razor`,
+  `Breadcrumb.razor`, `Toolbar.razor`, `ContextMenu.razor`, `Menubar.razor`, `TieredMenu.razor`,
+  `PanelMenu.razor`, `MegaMenu.razor`, `Stepper.razor`, `Steps.razor`.
+- `TabMenu` e `TabView` sem referência upstream (componentes legados removidos do PrimeNG):
+  seções próprias inspiradas em `Tabs`/`Menubar`, com aviso em `KnownIssues`.
+- `AppMenu.cs`: rotas `/tabs`, `/tabview`, `/tabmenu`, `/accordion`, `/breadcrumb`, `/toolbar`,
+  `/contextmenu`, `/menubar`, `/tieredmenu`, `/panelmenu`, `/megamenu`, `/stepper`, `/steps`.
+- Verificação: build 0 erros; `Tabs`, `TabMenu`, `PanelMenu` e `Steps` renderizam no Showcase sem
+  UI de erro do Blazor.

@@ -112,9 +112,9 @@ public static class AppMenu
                     Label = "Panel",
                     Items =
                     [
-                        GroupItem("Accordion"), GroupItem("Card", "/card"), GroupItem("Divider", "/divider"),
+                        GroupItem("Accordion", "/accordion"), GroupItem("Card", "/card"), GroupItem("Divider", "/divider"),
                         GroupItem("Fieldset", "/fieldset"), GroupItem("Panel"), GroupItem("ScrollPanel"),
-                        GroupItem("Splitter"), GroupItem("Stepper"), GroupItem("Steps"), GroupItem("Tabs"), GroupItem("TabView"), GroupItem("Toolbar")
+                        GroupItem("Splitter"), GroupItem("Stepper", "/stepper"), GroupItem("Steps", "/steps"), GroupItem("Tabs", "/tabs"), GroupItem("TabView", "/tabview"), GroupItem("Toolbar", "/toolbar")
                     ]
                 },
                 new AppMenuGroup
@@ -137,9 +137,9 @@ public static class AppMenu
                     Label = "Menu",
                     Items =
                     [
-                        GroupItem("Breadcrumb"), GroupItem("ContextMenu"), GroupItem("Dock"),
-                        GroupItem("Menu", "/menu"), GroupItem("Menubar"), GroupItem("MegaMenu"),
-                        GroupItem("PanelMenu"), GroupItem("TabMenu"), GroupItem("TieredMenu")
+                        GroupItem("Breadcrumb", "/breadcrumb"), GroupItem("ContextMenu", "/contextmenu"), GroupItem("Dock"),
+                        GroupItem("Menu", "/menu"), GroupItem("Menubar", "/menubar"), GroupItem("MegaMenu", "/megamenu"),
+                        GroupItem("PanelMenu", "/panelmenu"), GroupItem("TabMenu", "/tabmenu"), GroupItem("TieredMenu", "/tieredmenu")
                     ]
                 },
                 new AppMenuGroup

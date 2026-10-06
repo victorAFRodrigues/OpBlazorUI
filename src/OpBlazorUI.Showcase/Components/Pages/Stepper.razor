@@ -1,0 +1,383 @@
+@page "/stepper"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Stepper - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Stepper"
+              Description="O Stepper exibe um fluxo de trabalho estilo assistente, guiando o usuário por uma progressão de múltiplas etapas. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Horizontal" Id="horizontal">
+            <Description><p>O Stepper consiste em uma combinação dos componentes <code>StepList</code>, <code>Step</code>, <code>StepPanels</code> e <code>StepPanel</code>. A propriedade <code>value</code> é essencial para associar <code>Step</code> e <code>StepPanel</code> entre si.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vertical" Id="vertical">
+            <Description><p>O layout vertical requer <code>StepItem</code> como invólucro dos componentes <code>Step</code> e <code>StepPanel</code>.</p></Description>
+            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Linear" Id="linear">
+            <Description><p>Quando a propriedade <code>linear</code> é definida como <code>true</code>, a etapa atual deve ser concluída para avançar para a próxima.</p></Description>
+            <Code><CodeBlock Code="@LinearCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Somente Passos" Id="steps-only">
+            <Description><p>Use o Stepper apenas com um <code>StepList</code> para requisitos customizados onde um indicador de progresso é necessário.</p></Description>
+            <Code><CodeBlock Code="@StepsOnlyCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>O Stepper oferece várias opções de template para customizar o design padrão da interface.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O contêiner do Stepper é definido com o papel <code>tablist</code>; como qualquer atributo é repassado ao elemento contêiner, <code>aria-labelledby</code> pode ser usado opcionalmente para especificar um elemento que descreva o Stepper. Cada cabeçalho do stepper tem o papel <code>tab</code> e <code>aria-controls</code> para se referir ao elemento de conteúdo correspondente. O elemento de conteúdo de cada stepper tem o papel <code>tabpanel</code>, um id que corresponde ao <code>aria-controls</code> do cabeçalho e uma referência <code>aria-labelledby</code> ao cabeçalho como nome acessível.</p>
+                <h3>Suporte a teclado do cabeçalho</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelos cabeçalhos." },
+                              new[] { "enter", "Ativa o cabeçalho do stepper focado." },
+                              new[] { "space", "Ativa o cabeçalho do stepper focado." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { StepperModule } from 'primeng/stepper';
+        """;
+
+    private const string BasicCode = """
+        <p-stepper [value]="1" class="basis-[50rem]">
+            <p-step-list>
+                <p-step [value]="1">Header I</p-step>
+                <p-step [value]="2">Header II</p-step>
+                <p-step [value]="3">Header II</p-step>
+            </p-step-list>
+            <p-step-panels>
+                <p-step-panel [value]="1">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content I
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-end">
+                            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(2)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <p-step-panel [value]="2">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content II
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-between">
+                            <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
+                            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <p-step-panel [value]="3">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content III
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-start">
+                            <p-button label="Back" icon="pi pi-arrow-left" iconPos="right" (onClick)="activateCallback(2)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-panels>
+        </p-stepper>
+        """;
+
+    private const string VerticalCode = """
+        <p-stepper [value]="1">
+            <p-step-item [value]="1">
+                <p-step>Header I</p-step>
+                <p-step-panel>
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content I
+                            </div>
+                        </div>
+                        <div class="py-6">
+                            <p-button label="Next" (onClick)="activateCallback(2)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-item>
+
+            <p-step-item [value]="2">
+                <p-step>Header II</p-step>
+                <p-step-panel>
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content II
+                            </div>
+                        </div>
+                        <div class="flex py-6 gap-2">
+                            <p-button label="Back" severity="secondary" (onClick)="activateCallback(1)" />
+                            <p-button label="Next" (onClick)="activateCallback(3)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-item>
+
+            <p-step-item [value]="3">
+                <p-step>Header III</p-step>
+                <p-step-panel>
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content III
+                            </div>
+                        </div>
+                        <div class="py-6">
+                            <p-button label="Back" severity="secondary" (onClick)="activateCallback(2)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-item>
+        </p-stepper>
+        """;
+
+    private const string LinearCode = """
+        <p-stepper [value]="1" class="basis-[50rem]" [linear]="true">
+            <p-step-list>
+                <p-step [value]="1">Header I</p-step>
+                <p-step [value]="2">Header II</p-step>
+                <p-step [value]="3">Header II</p-step>
+            </p-step-list>
+            <p-step-panels>
+                <p-step-panel [value]="1">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content I
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-end">
+                            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(2)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <p-step-panel [value]="2">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content II
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-between">
+                            <p-button label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
+                            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <p-step-panel [value]="3">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col h-48">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                            >
+                                Content III
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-start">
+                            <p-button label="Back" icon="pi pi-arrow-left" iconPos="right" (onClick)="activateCallback(2)" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-panels>
+        </p-stepper>
+        """;
+
+    private const string StepsOnlyCode = """
+        <p-stepper [value]="1" class="basis-[50rem]">
+            <p-step-list>
+                <p-step [value]="1">Design</p-step>
+                <p-step [value]="2">Development</p-step>
+                <p-step [value]="3">QA</p-step>
+            </p-step-list>
+        </p-stepper>
+        """;
+
+    private const string TemplateCode = """
+        <p-stepper [(value)]="activeStep" class="basis-[40rem]">
+            <p-step-list>
+                <p-step [value]="1" class="flex flex-row flex-auto gap-2">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <span
+                                class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                                [ngClass]="{
+                                    'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                    'border-surface': value > activeStep
+                                }"
+                            >
+                                <i class="pi pi-user"></i>
+                            </span>
+                        </button>
+                    </ng-template>
+                </p-step>
+
+                <p-step [value]="2" class="flex flex-row flex-auto gap-2">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <span
+                                class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                                [ngClass]="{
+                                    'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                    'border-surface': value > activeStep
+                                }"
+                            >
+                                <i class="pi pi-star"></i>
+                            </span>
+                        </button>
+                    </ng-template>
+                </p-step>
+
+                <p-step [value]="3" class="flex flex-row flex-auto gap-2">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <span
+                                class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                                [ngClass]="{
+                                    'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                    'border-surface': value > activeStep
+                                }"
+                            >
+                                <i class="pi pi-id-card"></i>
+                            </span>
+                        </button>
+                    </ng-template>
+                </p-step>
+            </p-step-list>
+
+            <p-step-panels>
+                <p-step-panel [value]="1">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Create your account</div>
+                            <div class="field">
+                                <input [(ngModel)]="name" pInputText id="input" type="text" placeholder="Name" fluid />
+                            </div>
+                            <div class="field">
+                                <input [(ngModel)]="email" pInputText id="email" type="email" placeholder="Email" fluid />
+                            </div>
+                            <div class="field">
+                                <p-password [(ngModel)]="password" placeholder="Password" fluid />
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-end">
+                            <p-button (onClick)="activateCallback(2)" label="Next" icon="pi pi-arrow-right" iconPos="right" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <p-step-panel [value]="2">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 24rem">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Choose your interests</div>
+                            <div class="flex flex-wrap justify-center gap-4">
+                                <p-togglebutton [(ngModel)]="option1" onLabel="Nature" offLabel="Nature" />
+                                <p-togglebutton [(ngModel)]="option2" onLabel="Art" offLabel="Art" />
+                                <p-togglebutton [(ngModel)]="option3" onLabel="Music" offLabel="Music" />
+                                <p-togglebutton [(ngModel)]="option4" onLabel="Design" offLabel="Design" />
+                                <p-togglebutton [(ngModel)]="option5" onLabel="Photography" offLabel="Photography" />
+                                <p-togglebutton [(ngModel)]="option6" onLabel="Movies" offLabel="Movies" />
+                                <p-togglebutton [(ngModel)]="option7" onLabel="Sports" offLabel="Sports" />
+                                <p-togglebutton [(ngModel)]="option8" onLabel="Gaming" offLabel="Gaming" />
+                                <p-togglebutton [(ngModel)]="option9" onLabel="Traveling" offLabel="Traveling" />
+                                <p-togglebutton [(ngModel)]="option10" onLabel="Dancing" offLabel="Dancing" />
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-between">
+                            <p-button (onClick)="activateCallback(1)" label="Back" severity="secondary" icon="pi pi-arrow-left" />
+                            <p-button (onClick)="activateCallback(3)" label="Next" icon="pi pi-arrow-right" iconPos="right" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <p-step-panel [value]="3">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex flex-col items-center gap-2 mx-auto" style="min-height: 16rem; max-width: 24rem">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Account created successfully</div>
+                            <div class="text-center">
+                                <img alt="logo" src="https://primefaces.org/cdn/primeng/images/stepper/content.svg" />
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-start">
+                            <p-button (onClick)="activateCallback(2)" label="Back" severity="secondary" icon="pi pi-arrow-left" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-panels>
+        </p-stepper>
+        """;
+}
