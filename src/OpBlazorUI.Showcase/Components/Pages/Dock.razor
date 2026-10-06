@@ -1,0 +1,150 @@
+@page "/dock"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Dock - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Dock"
+              Description="Dock é um componente de navegação composto por itens de menu. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O Dock exige uma coleção de itens de menu como seu <code>model</code>. O local padrão é <code>bottom</code> e os outros lados também estão disponíveis quando definidos com a propriedade <code>position</code>. O conteúdo do componente dock é definido pelo template <code>item</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Avançado" Id="advanced">
+            <Description><p>Uma interface de desktop simulada implementada com vários componentes além do Dock.</p></Description>
+            <Code><CodeBlock Code="@AdvancedCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente Dock usa o papel <code>menu</code> com <code>aria-orientation</code>, e o valor que descreve o menu pode ser informado por <code>aria-labelledby</code> ou <code>aria-label</code>. Cada item da lista tem o papel <code>presentation</code>, enquanto os elementos âncora têm o papel <code>menuitem</code> com <code>aria-label</code> referente ao rótulo do item e <code>aria-disabled</code> definido se o item estiver desabilitado.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Adiciona foco ao primeiro item se o foco entra no menu. Se o foco já está dentro do menu, move o foco para o próximo item focável na sequência de tabulação da página." },
+                              new[] { "shift + tab", "Adiciona foco ao último item se o foco entra no menu. Se o foco já está dentro do menu, move o foco para o item focável anterior na sequência de tabulação da página." },
+                              new[] { "enter", "Ativa o item de menu focado." },
+                              new[] { "space", "Ativa o item de menu focado." },
+                              new[] { "down arrow", "Move o foco para o próximo item de menu no layout vertical." },
+                              new[] { "up arrow", "Move o foco para o item de menu anterior no layout vertical." },
+                              new[] { "home", "Move o foco para o primeiro item de menu no layout horizontal." },
+                              new[] { "end", "Move o foco para o último item de menu no layout horizontal." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { DockModule } from 'primeng/dock';
+        """;
+
+    private const string BasicCode = """
+        <p-dock [model]="items" [position]="position">
+            <ng-template #item let-item>
+                <img [pTooltip]="item.label" tooltipPosition="top" [src]="item.icon" [alt]="item.label" width="100%" />
+            </ng-template>
+        </p-dock>
+        """;
+
+    private const string AdvancedCode = """
+        <p-menubar [model]="menubarItems">
+            <ng-template #start>
+                <i class="pi pi-apple px-2"></i>
+            </ng-template>
+            <ng-template #end>
+                <i class="pi pi-video px-2"></i>
+                <i class="pi pi-wifi px-2"></i>
+                <i class="pi pi-volume-up px-2"></i>
+                <span class="px-2">Fri 13:07</span>
+                <i class="pi pi-search px-2"></i>
+                <i class="pi pi-bars px-2"></i>
+            </ng-template>
+        </p-menubar>
+        <div class="dock-window">
+            <p-dock [model]="dockItems" position="bottom">
+                <ng-template #item let-item>
+                    <a [pTooltip]="item.label" tooltipPosition="top" class="p-dock-item-link">
+                        <img [alt]="item.label" [src]="item.icon" style="width: 100%" />
+                    </a>
+                </ng-template>
+            </p-dock>
+
+            <p-toast position="top-center" key="tc" />
+
+            <p-dialog
+                [(visible)]="displayFinder"
+                [breakpoints]="{ '960px': '50vw' }"
+                [style]="{ width: '30vw', height: '18rem' }"
+                [draggable]="false"
+                [resizable]="false"
+                header="Finder"
+            >
+                <p-tree [value]="nodes" />
+            </p-dialog>
+
+            <p-dialog
+                [maximizable]="true"
+                [(visible)]="displayTerminal"
+                [breakpoints]="{ '960px': '50vw' }"
+                [style]="{ width: '30vw' }"
+                [draggable]="false"
+                [resizable]="false"
+                header="Terminal"
+            >
+                <p-terminal welcomeMessage="Welcome to PrimeNG (cmd: 'date', 'greet {0}', 'random')" prompt="primeng $" />
+            </p-dialog>
+
+            <p-galleria
+                [(value)]="images"
+                [showThumbnails]="false"
+                [showThumbnailNavigators]="false"
+                [showItemNavigators]="true"
+                [(visible)]="displayGalleria"
+                [circular]="true"
+                [responsiveOptions]="responsiveOptions"
+                [circular]="true"
+                [fullScreen]="true"
+                [containerStyle]="{ width: '400px' }"
+            >
+                <ng-template #item let-item>
+                    <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
+                </ng-template>
+            </p-galleria>
+        """;
+}

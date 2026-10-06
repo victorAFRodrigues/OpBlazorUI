@@ -113,8 +113,8 @@ public static class AppMenu
                     Items =
                     [
                         GroupItem("Accordion", "/accordion"), GroupItem("Card", "/card"), GroupItem("Divider", "/divider"),
-                        GroupItem("Fieldset", "/fieldset"), GroupItem("Panel"), GroupItem("ScrollPanel"),
-                        GroupItem("Splitter"), GroupItem("Stepper", "/stepper"), GroupItem("Steps", "/steps"), GroupItem("Tabs", "/tabs"), GroupItem("TabView", "/tabview"), GroupItem("Toolbar", "/toolbar")
+                        GroupItem("Fieldset", "/fieldset"), GroupItem("Panel", "/panel"), GroupItem("ScrollPanel", "/scrollpanel"),
+                        GroupItem("Splitter", "/splitter"), GroupItem("Stepper", "/stepper"), GroupItem("Steps", "/steps"), GroupItem("Tabs", "/tabs"), GroupItem("TabView", "/tabview"), GroupItem("Toolbar", "/toolbar")
                     ]
                 },
                 new AppMenuGroup
@@ -137,7 +137,7 @@ public static class AppMenu
                     Label = "Menu",
                     Items =
                     [
-                        GroupItem("Breadcrumb", "/breadcrumb"), GroupItem("ContextMenu", "/contextmenu"), GroupItem("Dock"),
+                        GroupItem("Breadcrumb", "/breadcrumb"), GroupItem("ContextMenu", "/contextmenu"), GroupItem("Dock", "/dock"),
                         GroupItem("Menu", "/menu"), GroupItem("Menubar", "/menubar"), GroupItem("MegaMenu", "/megamenu"),
                         GroupItem("PanelMenu", "/panelmenu"), GroupItem("TabMenu", "/tabmenu"), GroupItem("TieredMenu", "/tieredmenu")
                     ]
@@ -155,7 +155,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Media",
-                    Items = [GroupItem("Carousel"), GroupItem("Galleria"), GroupItem("Image"), GroupItem("ImageCompare")]
+                    Items = [GroupItem("Carousel", "/carousel"), GroupItem("Galleria", "/galleria"), GroupItem("Image", "/image"), GroupItem("ImageCompare", "/imagecompare")]
                 },
                 new AppMenuGroup
                 {
