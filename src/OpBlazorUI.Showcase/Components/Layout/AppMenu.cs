@@ -123,7 +123,7 @@ public static class AppMenu
                     Items =
                     [
                         GroupItem("ConfirmDialog", "/confirmdialog"), GroupItem("ConfirmPopup", "/confirmpopup"), GroupItem("Dialog", "/dialog"),
-                        GroupItem("Drawer", "/drawer"), GroupItem("DynamicDialog"), GroupItem("Popover", "/popover"),
+                        GroupItem("Drawer", "/drawer"), GroupItem("DynamicDialog", "/dynamicdialog"), GroupItem("Popover", "/popover"),
                         GroupItem("Tooltip", "/tooltip")
                     ]
                 },
@@ -145,7 +145,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Chart",
-                    Items = [GroupItem("Chart.js")]
+                    Items = [GroupItem("Chart.js", "/chart")]
                 },
                 new AppMenuGroup
                 {
@@ -162,12 +162,12 @@ public static class AppMenu
                     Label = "Misc",
                     Items =
                     [
-                        GroupItem("AnimateOnScroll"), GroupItem("AutoFocus"), GroupItem("Avatar", "/avatar"),
+                        GroupItem("AnimateOnScroll", "/animateonscroll"), GroupItem("AutoFocus"), GroupItem("Avatar", "/avatar"),
                         GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI", "/blockui"), GroupItem("Chip", "/chip"),
-                        GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
+                        GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid", "/fluid"),
                         GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace", "/inplace"), GroupItem("MeterGroup", "/metergroup"),
                         GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
-                        GroupItem("Ripple", "/ripple"), GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
+                        GroupItem("Ripple", "/ripple"), GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass", "/styleclass"),
                         GroupItem("Tag", "/tag"), GroupItem("Terminal", "/terminal")
                     ]
                 },
