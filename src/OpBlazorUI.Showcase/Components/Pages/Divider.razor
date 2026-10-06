@@ -2,16 +2,23 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Divider
+@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.Button
+
+<PageTitle>Divider - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Divider"
-              Description="O Divider é usado para separar conteúdo.">
+              Description="O Divider é usado para separar conteúdos.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O divisor é posicionado entre os itens de conteúdo para separá-los.
+            </Description>
             <ChildContent>
                 <div class="card">
                     <p>
@@ -32,7 +39,11 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tipo">
+        <DocSection Label="Tipo" Id="type">
+            <Description>
+                O estilo da borda é definido por <code>Type</code>: <code>solid</code> (padrão),
+                <code>dashed</code> ou <code>dotted</code>.
+            </Description>
             <ChildContent>
                 <div class="card">
                     <p class="m-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
@@ -47,37 +58,100 @@
             <Code><CodeBlock Code="@TypeCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Conteúdo">
+        <DocSection Label="Vertical" Id="vertical">
+            <Description>
+                Com <code>Layout="vertical"</code> o divisor separa conteúdos lado a lado. Em layout vertical o
+                conteúdo pode ser alinhado por <code>Align</code> com <code>top</code>, <code>center</code>
+                (padrão) ou <code>bottom</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-center" style="min-height: 8rem">
+                        <p class="m-0 flex-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        <OpDivider Layout="vertical"/>
+                        <p class="m-0 flex-1">Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
+                        <OpDivider Layout="vertical"/>
+                        <p class="m-0 flex-1">At vero eos et accusamus et iusto odio dignissimos.</p>
+                    </div>
+                    <div class="flex" style="min-height: 8rem">
+                        <p class="m-0 flex-1">Alinhado ao topo.</p>
+                        <OpDivider Layout="vertical" Align="top"><b>Topo</b></OpDivider>
+                        <p class="m-0 flex-1">Centralizado.</p>
+                        <OpDivider Layout="vertical" Align="center"><b>Centro</b></OpDivider>
+                        <p class="m-0 flex-1">Alinhado à base.</p>
+                        <OpDivider Layout="vertical" Align="bottom"><b>Base</b></OpDivider>
+                        <p class="m-0 flex-1">Fim.</p>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VerticalCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Conteúdo" Id="content">
+            <Description>
+                Os filhos são renderizados dentro dos limites do divisor e sua posição é configurada por
+                <code>Align</code>. No layout horizontal as opções são <code>left</code>, <code>center</code> e
+                <code>right</code>; no vertical, <code>top</code>, <code>center</code> e <code>bottom</code>.
+            </Description>
             <ChildContent>
                 <div class="card">
                     <p class="m-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    <OpDivider Align="left"><b>Esquerda</b></OpDivider>
+                    <OpDivider Align="left" Type="solid"><b>Esquerda</b></OpDivider>
                     <p class="m-0">Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
-                    <OpDivider Align="center"><b>Centro</b></OpDivider>
+                    <OpDivider Align="center" Type="dotted"><b>Centro</b></OpDivider>
                     <p class="m-0">At vero eos et accusamus et iusto odio dignissimos ducimus.</p>
-                    <OpDivider Align="right"><b>Direita</b></OpDivider>
+                    <OpDivider Align="right" Type="dashed"><b>Direita</b></OpDivider>
                     <p class="m-0">Temporibus autem quibusdam et aut officiis debitis aut rerum.</p>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ContentCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Vertical">
+        <DocSection Label="Login" Id="login">
+            <Description>
+                Exemplo de formulário de login que usa o divisor com conteúdo como separador. O original do
+                upstream alterna entre divisor vertical (telas largas) e horizontal (telas estreitas); aqui o
+                layout é simplificado em uma coluna única com divisor horizontal alinhado ao centro.
+            </Description>
             <ChildContent>
-                <div class="card flex items-center" style="min-height:6rem">
-                    <p class="m-0 flex-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    <OpDivider Layout="vertical"/>
-                    <p class="m-0 flex-1">Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
-                    <OpDivider Layout="vertical"><b>OR</b></OpDivider>
-                    <p class="m-0 flex-1">At vero eos et accusamus et iusto odio dignissimos ducimus.</p>
+                <div class="card flex flex-col gap-3" style="max-width: 22rem">
+                    <div class="flex flex-col gap-2">
+                        <label for="login-username">Usuário</label>
+                        <OpInputText Id="login-username" Placeholder="Usuário" StyleClass="w-full"/>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="login-password">Senha</label>
+                        <OpInputText Id="login-password" Type="password" Placeholder="Senha" StyleClass="w-full"/>
+                    </div>
+                    <OpButton Label="Entrar" Icon="pi pi-user" Fluid="true"/>
+                    <OpDivider Align="center"><b>ou</b></OpDivider>
+                    <OpButton Label="Cadastre-se" Icon="pi pi-user-plus" Severity="success" Outlined="true" Fluid="true"/>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@VerticalCode"/></Code>
+            <Code><CodeBlock Code="@LoginCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O divisor é renderizado com <code>role="separator"</code> e <code>aria-orientation</code>
+                    ajustado automaticamente para <code>horizontal</code> ou <code>vertical</code> conforme o
+                    <code>Layout</code>. Atributos extras (ex.: <code>aria-label</code>, <code>id</code>) são
+                    repassados ao elemento raiz via <code>AdditionalAttributes</code>.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>
+                    O componente não inclui elementos interativos e, portanto, não possui navegação por teclado
+                    nem tabela de teclas.
+                </p>
+            </Description>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
@@ -85,31 +159,73 @@
                               new[] { "Layout", "string", "horizontal", "Orientação: <code>horizontal</code> ou <code>vertical</code>." },
                               new[] { "Type", "string", "solid", "Estilo da borda: <code>solid</code>, <code>dashed</code> ou <code>dotted</code>." },
                               new[] { "Align", "string?", "null", "Alinhamento do conteúdo: <code>left</code>/<code>center</code>/<code>right</code> (horizontal) ou <code>top</code>/<code>center</code>/<code>bottom</code> (vertical)." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo dentro do divisor." }
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo do divisor; quando presente, é envolvido por <code>p-divider-content</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="divider"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os
+                tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-divider", "Elemento raiz." },
+                              new[] { "p-divider-horizontal", "Raiz em layout horizontal." },
+                              new[] { "p-divider-vertical", "Raiz em layout vertical." },
+                              new[] { "p-divider-solid", "Raiz com <code>Type=\"solid\"</code>." },
+                              new[] { "p-divider-dashed", "Raiz com <code>Type=\"dashed\"</code>." },
+                              new[] { "p-divider-dotted", "Raiz com <code>Type=\"dotted\"</code>." },
+                              new[] { "p-divider-content", "Contêiner do conteúdo filho." },
+                              new[] { "p-divider-left / p-divider-center / p-divider-right", "Raiz conforme <code>Align</code> no layout horizontal." },
+                              new[] { "p-divider-top / p-divider-center / p-divider-bottom", "Raiz conforme <code>Align</code> no layout vertical." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="divider"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização, use <code>StyleClass</code> e os <code>AdditionalAttributes</code> — qualquer atributo extra (ex.: <code>id</code>, <code>aria-label</code>, <code>data-*</code>) é repassado ao elemento raiz.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O tema PrimeNG não aplica o alinhamento do conteúdo pelas classes <code>p-divider-{align}</code>; o componente define <code>justify-content</code>/<code>align-items</code> inline, como o <code>inlineStyles</code> do upstream.</li>
+                        <li>Valores de <code>Align</code> incompatíveis com o <code>Layout</code> são ignorados: horizontal aceita <code>left</code>/<code>center</code>/<code>right</code> (padrão <code>left</code>) e vertical aceita <code>top</code>/<code>center</code>/<code>bottom</code> (padrão <code>center</code>).</li>
+                        <li>O exemplo de Login do upstream é responsivo (divisor vertical em telas largas e horizontal em telas estreitas); aqui o layout foi simplificado para uma coluna única com divisor horizontal.</li>
+                        <li>Não há suporte a pass-through (pt) por slot de template.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -123,9 +239,13 @@
         """;
 
     private const string BasicCode = """
-        <p>Lorem ipsum dolor sit amet.</p>
-        <OpDivider />
-        <p>Sed ut perspiciatis unde omnis.</p>
+        <div class="card">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <OpDivider />
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
+            <OpDivider />
+            <p>At vero eos et accusamus et iusto odio dignissimos ducimus.</p>
+        </div>
         """;
 
     private const string TypeCode = """
@@ -134,14 +254,54 @@
         <OpDivider Type="dashed" />
         """;
 
-    private const string ContentCode = """
-        <OpDivider Align="left"><b>Esquerda</b></OpDivider>
-        <OpDivider Align="center"><b>Centro</b></OpDivider>
-        <OpDivider Align="right"><b>Direita</b></OpDivider>
+    private const string VerticalCode = """
+        <div class="flex items-center" style="min-height: 8rem">
+            <p class="m-0 flex-1">Lorem ipsum dolor sit amet.</p>
+            <OpDivider Layout="vertical" />
+            <p class="m-0 flex-1">Sed ut perspiciatis unde omnis.</p>
+            <OpDivider Layout="vertical" />
+            <p class="m-0 flex-1">At vero eos et accusamus.</p>
+        </div>
+
+        <div class="flex" style="min-height: 8rem">
+            <p class="m-0 flex-1">Alinhado ao topo.</p>
+            <OpDivider Layout="vertical" Align="top"><b>Topo</b></OpDivider>
+            <p class="m-0 flex-1">Centralizado.</p>
+            <OpDivider Layout="vertical" Align="center"><b>Centro</b></OpDivider>
+            <p class="m-0 flex-1">Alinhado à base.</p>
+            <OpDivider Layout="vertical" Align="bottom"><b>Base</b></OpDivider>
+            <p class="m-0 flex-1">Fim.</p>
+        </div>
         """;
 
-    private const string VerticalCode = """
-        <OpDivider Layout="vertical" />
-        <OpDivider Layout="vertical"><b>OR</b></OpDivider>
+    private const string ContentCode = """
+        <p class="m-0">Lorem ipsum dolor sit amet.</p>
+        <OpDivider Align="left" Type="solid"><b>Esquerda</b></OpDivider>
+        <p class="m-0">Sed ut perspiciatis unde omnis.</p>
+        <OpDivider Align="center" Type="dotted"><b>Centro</b></OpDivider>
+        <p class="m-0">At vero eos et accusamus.</p>
+        <OpDivider Align="right" Type="dashed"><b>Direita</b></OpDivider>
+        """;
+
+    private const string LoginCode = """
+        <div class="card flex flex-col gap-3" style="max-width: 22rem">
+            <div class="flex flex-col gap-2">
+                <label for="login-username">Usuário</label>
+                <OpInputText Id="login-username" Placeholder="Usuário" StyleClass="w-full" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="login-password">Senha</label>
+                <OpInputText Id="login-password" Type="password" Placeholder="Senha" StyleClass="w-full" />
+            </div>
+            <OpButton Label="Entrar" Icon="pi pi-user" Fluid="true" />
+            <OpDivider Align="center"><b>ou</b></OpDivider>
+            <OpButton Label="Cadastre-se" Icon="pi pi-user-plus" Severity="success" Outlined="true" Fluid="true" />
+        </div>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpDivider />
+
+        <OpDivider aria-label="Fim da seção de detalhes" />
         """;
 }

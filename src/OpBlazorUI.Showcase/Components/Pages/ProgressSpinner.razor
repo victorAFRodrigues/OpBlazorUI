@@ -3,68 +3,122 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.ProgressSpinner
 
+<PageTitle>ProgressSpinner - OpBlazorUI</PageTitle>
+
 <DocComponent Title="ProgressSpinner"
-              Description="O ProgressSpinner é um indicador de status de processo.">
+              Description="O ProgressSpinner exibe uma animação de rotação infinita para indicar que um processo está em andamento.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                Uma animação de rotação infinita é exibida por padrão. Como o spinner não tem texto visível,
+                informe <code>AriaLabel</code> para que leitores de tela anunciem o carregamento.
+            </Description>
             <ChildContent>
                 <div class="flex justify-center">
-                    <OpProgressSpinner AriaLabel="loading"/>
+                    <OpProgressSpinner AriaLabel="Carregando"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Customizado">
+        <DocSection Label="Custom" Id="custom">
+            <Description>
+                A aparência é ajustada por <code>StrokeWidth</code> (largura do traço do círculo),
+                <code>Fill</code> (cor de preenchimento do círculo) e <code>AnimationDuration</code> (duração de cada
+                volta). O diâmetro é definido por <code>Style</code>, já que o componente não possui um parâmetro de
+                tamanho próprio.
+            </Description>
             <ChildContent>
                 <div class="flex justify-center">
-                    <OpProgressSpinner StrokeWidth="8" Fill="transparent" AnimationDuration=".5s" Style="width:50px;height:50px"/>
+                    <OpProgressSpinner StrokeWidth="8" Fill="transparent" AnimationDuration=".5s" Style="width:50px;height:50px" AriaLabel="Carregando"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@CustomCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O ProgressSpinner usa o papel <code>progressbar</code> com <code>aria-busy="true"</code>. O texto
+                    que descreve o componente é definido por <code>AriaLabel</code> (equivalente a
+                    <code>aria-label</code>); como não há conteúdo visível, sempre informe esse rótulo. Atributos
+                    adicionais, como <code>aria-labelledby</code>, podem ser repassados via
+                    <code>AdditionalAttributes</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description">
+                    <h3>Suporte a teclado</h3>
+                    <p>O componente não inclui nenhum elemento interativo e, portanto, não participa da navegação por teclado.</p>
+                </div>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "StrokeWidth", "string", "2", "Largura do traço do círculo." },
-                              new[] { "Fill", "string", "none", "Cor de fundo do círculo." },
-                              new[] { "AnimationDuration", "string", "2s", "Duração da animação de rotação." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                              new[] { "Fill", "string", "none", "Cor de preenchimento do círculo." },
+                              new[] { "AnimationDuration", "string", "2s", "Duração de uma volta completa da animação." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do <code>progressbar</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Style", "string?", "null", "Estilos inline do elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-progressspinner", "Elemento raiz com o papel <code>progressbar</code> e <code>aria-busy</code>." },
+                              new[] { "p-progressspinner-spin", "Elemento <code>&lt;svg&gt;</code> que executa a rotação; recebe o <code>animation-duration</code>." },
+                              new[] { "p-progressspinner-circle", "Elemento <code>&lt;circle&gt;</code> animado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
             <ChildContent><DocTokens Component="progressspinner"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>Style</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há parâmetro de tamanho (<code>Size</code>) nem template de conteúdo; o diâmetro é definido por <code>Style</code> ou classes utilitárias.</li>
+                        <li>O componente representa apenas um processo indeterminado (<code>role="progressbar"</code> com <code>aria-busy="true"</code>); para progresso determinado use <code>OpProgressBar</code>.</li>
+                        <li>A doc de referência cita as classes <code>p-progress-spinner*</code>, mas o tema atual aplica <code>p-progressspinner*</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -74,14 +128,18 @@
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.ProgressSpinner
 
-        <OpProgressSpinner />
+        <OpProgressSpinner AriaLabel="Carregando" />
         """;
 
     private const string BasicCode = """
-        <OpProgressSpinner AriaLabel="loading" />
+        <OpProgressSpinner AriaLabel="Carregando" />
         """;
 
     private const string CustomCode = """
-        <OpProgressSpinner StrokeWidth="8" Fill="transparent" AnimationDuration=".5s" Style="width:50px;height:50px" />
+        <OpProgressSpinner StrokeWidth="8" Fill="transparent" AnimationDuration=".5s" Style="width:50px;height:50px" AriaLabel="Carregando" />
+        """;
+
+    private const string AccessibilityCode = """
+        <OpProgressSpinner AriaLabel="Carregando" />
         """;
 }

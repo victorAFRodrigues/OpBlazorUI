@@ -2,27 +2,38 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Badge
+@using OpBlazorUI.Base.Components.Button
+
+<PageTitle>Badge - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Badge"
               Description="O Badge é um pequeno indicador de status para outro elemento.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O conteúdo exibido no badge é definido pela propriedade <code>Value</code>.
+            </Description>
             <ChildContent>
-                <div class="flex gap-2 items-center">
+                <div class="flex justify-center">
                     <OpBadge Value="2"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Severidade">
+        <DocSection Label="Severidade" Id="severity">
+            <Description>
+                A propriedade <code>Severity</code> define a cor do badge; os valores possíveis são
+                <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>,
+                <code>danger</code> e <code>contrast</code>. Sem severidade, é usada a cor primária do tema.
+            </Description>
             <ChildContent>
-                <div class="flex gap-2 flex-wrap">
+                <div class="flex justify-center flex-wrap gap-2">
                     <OpBadge Value="2"/>
                     <OpBadge Value="6" Severity="secondary"/>
                     <OpBadge Value="8" Severity="success"/>
@@ -35,9 +46,14 @@
             <Code><CodeBlock Code="@SeverityCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tamanho">
+        <DocSection Label="Tamanho" Id="size">
+            <Description>
+                O tamanho é ajustado pela propriedade <code>Size</code>, que aceita <code>small</code>,
+                <code>large</code> e <code>xlarge</code> como alternativas ao padrão. No upstream os tamanhos
+                se aplicam apenas ao modo componente; como no Blazor só existe o componente, eles valem sempre.
+            </Description>
             <ChildContent>
-                <div class="flex gap-1 items-end">
+                <div class="flex justify-center items-end gap-1">
                     <OpBadge Value="8" Size="xlarge" Severity="success"/>
                     <OpBadge Value="6" Size="large" Severity="warn"/>
                     <OpBadge Value="4" Severity="info"/>
@@ -47,12 +63,14 @@
             <Code><CodeBlock Code="@SizeCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Overlay">
+        <DocSection Label="Overlay" Id="overlay">
             <Description>
-                Encapsule um elemento com o <code>OpOverlayBadge</code> para posicionar o badge no canto.
+                O badge pode ser adicionado a qualquer elemento encapsulando o conteúdo com o
+                <code>OpOverlayBadge</code>. O componente recebe o alvo como <code>ChildContent</code> e posiciona
+                o badge no canto superior. Sem <code>Value</code>, é exibido apenas o ponto.
             </Description>
             <ChildContent>
-                <div class="flex gap-6 flex-wrap">
+                <div class="flex justify-center flex-wrap gap-6">
                     <OpOverlayBadge Value="2">
                         <i class="pi pi-bell" style="font-size: 2rem"></i>
                     </OpOverlayBadge>
@@ -66,54 +84,128 @@
             </ChildContent>
             <Code><CodeBlock Code="@OverlayCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Button" Id="button">
+            <Description>
+                Botões têm suporte embutido a badges pelas propriedades <code>Badge</code>,
+                <code>BadgeSeverity</code>, <code>BadgeSize</code> e <code>BadgeClass</code>. Também é possível
+                sobrepor um badge a um <code>OpButton</code> envolvendo-o com <code>OpOverlayBadge</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-6">
+                    <div class="flex justify-center flex-wrap gap-4">
+                        <OpButton Label="E-mails" Icon="pi pi-bell" Badge="2"/>
+                        <OpButton Label="Caixa de entrada" Icon="pi pi-inbox" Badge="2" BadgeSeverity="contrast" Outlined="true"/>
+                    </div>
+                    <div class="flex justify-center flex-wrap gap-4">
+                        <OpOverlayBadge Value="3" Severity="danger">
+                            <OpButton Icon="pi pi-bell" Rounded="true" Text="true" AriaLabel="Notificações"/>
+                        </OpOverlayBadge>
+                        <OpOverlayBadge Value="12" Severity="success">
+                            <OpButton Label="Mensagens" Icon="pi pi-envelope" Outlined="true"/>
+                        </OpOverlayBadge>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ButtonBadgeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Badge não inclui papéis (<code>role</code>) nem atributos ARIA por padrão; qualquer atributo
+                    extra é repassado ao elemento raiz, então papéis e atributos podem ser adicionados conforme a
+                    necessidade. Badges dinâmicos podem usar <code>aria-live</code>. Caso o badge precise ser
+                    focável, adicione <code>tabindex</code> e implemente os handlers de teclado manualmente.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3><p>O componente não inclui elementos interativos.</p></div>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Value", "string?", "null", "Valor exibido dentro do badge." },
+                              new[] { "Value", "string?", "null", "Valor exibido dentro do badge. Vazio renderiza um ponto (<code>p-badge-dot</code>); um único caractere ganha <code>p-badge-circle</code>." },
                               new[] { "Severity", "string?", "primary", "Severidade: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code> ou <code>contrast</code>." },
-                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code>, <code>large</code> ou <code>xlarge</code>." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> (<code>p-badge-sm</code>), <code>large</code> (<code>p-badge-lg</code>) ou <code>xlarge</code> (<code>p-badge-xl</code>)." },
+                              new[] { "Disabled", "bool", "false", "Oculta o badge (<code>display: none</code>), como no upstream." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="OverlayBadge">
+
+        <DocSection Label="OverlayBadge" Id="api-overlay">
             <ChildContent>
                 <ApiTable Caption="Propriedades do OpOverlayBadge"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Value", "string?", "null", "Valor exibido dentro do badge." },
-                              new[] { "Severity", "string?", "primary", "Severidade do badge." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo sob o qual o badge é posicionado." }
+                              new[] { "Severity", "string?", "primary", "Severidade: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code> ou <code>contrast</code>." },
+                              new[] { "BadgeSize", "string?", "null", "Tamanho do badge: <code>small</code>, <code>large</code> ou <code>xlarge</code>." },
+                              new[] { "BadgeDisabled", "bool", "false", "Oculta o badge." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Elemento sobre o qual o badge é posicionado." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no badge (não no contêiner)." },
+                              new[] { "Style", "string?", "null", "Estilos inline do badge (não do contêiner)." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner <code>.p-overlaybadge</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="badge"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-badge", "Elemento raiz do badge (<code>&lt;span&gt;</code>)." },
+                              new[] { "p-badge-dot", "Raiz quando <code>Value</code> é vazio." },
+                              new[] { "p-badge-circle", "Raiz quando <code>Value</code> tem um único caractere." },
+                              new[] { "p-badge-{severity}", "Raiz com <code>Severity</code> (ex.: <code>p-badge-success</code>)." },
+                              new[] { "p-badge-{size}", "Raiz conforme <code>Size</code>: <code>p-badge-sm</code>, <code>p-badge-lg</code> ou <code>p-badge-xl</code>." },
+                              new[] { "p-overlaybadge", "Contêiner do <code>OpOverlayBadge</code> que posiciona o badge." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="badge"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>Style</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há equivalente à diretiva <code>pBadge</code> do Angular; para posicionar um badge sobre um elemento use <code>OpOverlayBadge</code>.</li>
+                        <li><code>Disabled</code> e <code>BadgeDisabled</code> ocultam o badge (<code>display: none</code>) em vez de esmaecê-lo — mesmo comportamento do upstream.</li>
+                        <li>No <code>OpOverlayBadge</code>, <code>StyleClass</code> e <code>Style</code> são aplicados ao badge, não ao contêiner; use <code>AdditionalAttributes</code> para estilizar o contêiner.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -122,8 +214,12 @@
 @code {
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Badge
+        @using OpBlazorUI.Base.Components.Button
 
         <OpBadge Value="2" />
+        <OpOverlayBadge Value="2">
+            <i class="pi pi-bell"></i>
+        </OpOverlayBadge>
         """;
 
     private const string BasicCode = """
@@ -151,5 +247,29 @@
         <OpOverlayBadge Value="2">
             <i class="pi pi-bell" style="font-size: 2rem"></i>
         </OpOverlayBadge>
+        <OpOverlayBadge Value="4" Severity="danger">
+            <i class="pi pi-calendar" style="font-size: 2rem"></i>
+        </OpOverlayBadge>
+        <OpOverlayBadge Severity="danger">
+            <i class="pi pi-envelope" style="font-size: 2rem"></i>
+        </OpOverlayBadge>
+        """;
+
+    private const string ButtonBadgeCode = """
+        <OpButton Label="E-mails" Icon="pi pi-bell" Badge="2" />
+        <OpButton Label="Caixa de entrada" Icon="pi pi-inbox" Badge="2" BadgeSeverity="contrast" Outlined="true" />
+
+        <OpOverlayBadge Value="3" Severity="danger">
+            <OpButton Icon="pi pi-bell" Rounded="true" Text="true" AriaLabel="Notificações" />
+        </OpOverlayBadge>
+        <OpOverlayBadge Value="12" Severity="success">
+            <OpButton Label="Mensagens" Icon="pi pi-envelope" Outlined="true" />
+        </OpOverlayBadge>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpBadge Value="2" aria-label="Itens pendentes" />
+
+        <OpBadge Value="@_total" aria-live="polite" />
         """;
 }

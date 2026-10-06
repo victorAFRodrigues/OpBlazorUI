@@ -4,21 +4,30 @@
 @using OpBlazorUI.Base.Components.Overlay
 @using OpBlazorUI.Base.Components.Button
 
+<PageTitle>Overlay - OpBlazorUI</PageTitle>
+
 <DocComponent Title="Overlay"
-              Description="O Overlay é um contêiner base para exibir conteúdo sobreposto (ancorado ou modal).">
+              Description="O Overlay é um contêiner base para exibir conteúdo sobreposto, no ponto de uso (overlay) ou em tela cheia com máscara (modal).">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico (overlay)">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O conteúdo passado como filho é exibido quando <code>Visible</code> é <code>true</code>; use
+                <code>@@bind-Visible</code> para alternar. Em <code>Mode="overlay"</code> o painel é renderizado
+                no ponto de uso, sem portal nem posicionamento automático — para um painel flutuante ancorado
+                prefira Popover ou Select.
+            </Description>
             <ChildContent>
                 <div class="card flex justify-center">
                     <div style="position:relative">
-                        <OpButton Label="Mostrar Overlay" @onclick="ToggleOverlay"/>
-                        <OpOverlay @bind-Visible="_overlayVisible" Mode="overlay">
-                            <span>Conteúdo do overlay ancorado.</span>
+                        <OpButton Label="Mostrar Overlay" @onclick="ToggleBasic"/>
+                        <OpOverlay @bind-Visible="_basicVisible" Mode="overlay"
+                                   ContentStyle="margin-top:1rem;padding:1.5rem;background:var(--p-content-background);border:1px solid var(--p-content-border-color);border-radius:var(--p-content-border-radius);box-shadow:var(--p-overlay-popover-shadow)">
+                            Conteúdo do overlay
                         </OpOverlay>
                     </div>
                 </div>
@@ -26,93 +35,413 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Modal">
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O conteúdo é definido pelo <code>ChildContent</code>. Diferente do <code>#content</code> do
+                Angular, no Blazor não há template nomeado: qualquer markup passado como filho é renderizado
+                dentro do contêiner <code>p-overlay-content</code>.
+            </Description>
             <ChildContent>
                 <div class="card flex justify-center">
-                    <OpButton Label="Mostrar Modal" @onclick="ToggleModal"/>
-                    <OpOverlay @bind-Visible="_modalVisible" Mode="modal" Dismissable="true">
-                        <span>Conteúdo do overlay modal.</span>
+                    <OpButton Label="Mostrar Template" @onclick="ToggleTemplate"/>
+                    <OpOverlay @bind-Visible="_templateVisible" Mode="modal" Dismissable="true"
+                               ContentStyle="width:20rem;padding:1.5rem;background:var(--p-content-background);border-radius:var(--p-content-border-radius);box-shadow:var(--p-overlay-modal-shadow,var(--p-overlay-popover-shadow))">
+                        <div class="flex flex-col gap-3">
+                            <span class="text-xl font-bold">Título do overlay</span>
+                            <span class="text-sm">Conteúdo totalmente customizado como filho do componente.</span>
+                            <OpButton Label="Fechar" @onclick="ToggleTemplate"/>
+                        </div>
                     </OpOverlay>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@ModalCode"/></Code>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Opções" Id="options">
+            <Description>
+                No Angular estas opções são globais, configuradas uma única vez em <code>OverlayOptions</code>.
+                No Blazor não há configuração global: cada <code>OpOverlay</code> recebe os parâmetros
+                diretamente. As propriedades abaixo podem ser combinadas livremente em uma instância.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar com opções" @onclick="ToggleOptions"/>
+                    <OpOverlay @bind-Visible="_optionsVisible" Mode="modal" Dismissable="true" HideOnEscape="true"
+                               Style="z-index:1100"
+                               ContentStyle="padding:2rem;background:var(--p-content-background);border-radius:var(--p-content-border-radius);box-shadow:var(--p-overlay-popover-shadow)">
+                        <div class="flex flex-col items-center gap-3">
+                            <span class="text-xl font-bold">Opções combinadas</span>
+                            <span class="text-sm">Mode, Dismissable, HideOnEscape, Style e ContentStyle.</span>
+                            <OpButton Label="Fechar" @onclick="ToggleOptions"/>
+                        </div>
+                    </OpOverlay>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@OptionsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Modo" Id="mode">
+            <Description>
+                <code>Mode</code> aceita <code>overlay</code> e <code>modal</code>. No modo <code>overlay</code>
+                o painel é um contêiner no ponto de uso; no modo <code>modal</code> ele vira uma máscara fixa em
+                tela cheia com o conteúdo centralizado, semelhante a um diálogo.
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <OpButton Label="overlay" @onclick="UseOverlayMode"/>
+                        <OpButton Label="modal" @onclick="UseModalMode"/>
+                    </div>
+                    <span>Modo atual: <b>@_mode</b></span>
+                    <OpButton Label="Mostrar" @onclick="ToggleMode"/>
+                    <OpOverlay @bind-Visible="_modeVisible" Mode="@_mode" Dismissable="true"
+                               ContentStyle="padding:1.5rem;background:var(--p-content-background);border-radius:var(--p-content-border-radius);box-shadow:var(--p-overlay-popover-shadow)">
+                        <span>Modo atual: <b>@_mode</b></span>
+                    </OpOverlay>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ModeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Responsivo" Id="responsive">
+            <Description>
+                No upstream, a opção <code>responsive</code> escolhe o modo por <code>media</code> ou
+                <code>breakpoint</code>. O port não avalia breakpoints nem possui direção de exibição: para
+                reproduzir o comportamento em telas pequenas, use <code>Mode="modal"</code>.
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <span class="font-medium block mb-2">Valores de <code>direction</code> no upstream (não portados)</span>
+                    <ul class="m-0" style="padding-left:1.25rem">
+                        <li>center (padrão), top, top-start, top-end</li>
+                        <li>bottom, bottom-start, bottom-end</li>
+                        <li>left, left-start, left-end</li>
+                        <li>right, right-start, right-end</li>
+                    </ul>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ResponsiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="AppendTo" Id="append-to">
+            <Description>
+                <code>AppendTo</code> define onde o overlay é montado (<code>self</code>, <code>body</code> ou
+                um elemento). O parâmetro é aceito, mas o port não move o DOM: o overlay permanece no ponto de
+                uso independentemente do valor.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar" @onclick="ToggleAppend"/>
+                    <OpOverlay @bind-Visible="_appendVisible" Mode="modal" AppendTo="body" Dismissable="true"
+                               ContentStyle="padding:1.5rem;background:var(--p-content-background);border-radius:var(--p-content-border-radius)">
+                        <span>AppendTo="body" — sem portal no port</span>
+                    </OpOverlay>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AppendToCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Alvo" Id="target">
+            <Description>
+                No upstream o <code>target</code> localiza o elemento usado para posicionar o overlay, aceitando
+                <code>@@prev</code>, <code>@@next</code>, <code>@@parent</code>, <code>@@grandparent</code> ou um
+                seletor CSS. No Blazor <code>Target</code> é uma <code>string</code> aceita, mas o componente não
+                a utiliza para posicionamento.
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <div id="overlay-target" class="w-40 h-20 border border-surface flex items-center justify-center">
+                        <span>Elemento alvo</span>
+                    </div>
+                    <OpButton Label="Mostrar" @onclick="ToggleTarget"/>
+                    <OpOverlay @bind-Visible="_targetVisible" Mode="overlay" Target="#overlay-target"
+                               ContentStyle="margin-top:1rem;padding:1.5rem;background:var(--p-content-background);border:1px solid var(--p-content-border-color);border-radius:var(--p-content-border-radius)">
+                        <span>Target não posiciona no port</span>
+                    </OpOverlay>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TargetCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Estilo" Id="style">
+            <Description>
+                <code>Style</code> e <code>StyleClass</code> aplicam-se ao elemento raiz; <code>ContentStyle</code>
+                e <code>ContentStyleClass</code> aplicam-se ao conteúdo (<code>p-overlay-content</code>).
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar Estilizado" @onclick="ToggleStyle"/>
+                    <OpOverlay @bind-Visible="_styleVisible" Mode="modal" Dismissable="true"
+                               Style="z-index:1100"
+                               ContentStyle="padding:2rem;background:var(--p-content-background);border-top:4px solid var(--p-primary-color);border-radius:var(--p-border-radius-md)">
+                        <div class="flex flex-col gap-2">
+                            <span class="font-bold">Painel estilizado</span>
+                            <span class="text-sm">Style/StyleClass na raiz e ContentStyle/ContentStyleClass no conteúdo.</span>
+                        </div>
+                    </OpOverlay>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StyleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="BaseZIndex" Id="base-z-index">
+            <Description>
+                No upstream, <code>baseZIndex</code> define o valor base de camada (padrão <code>0</code>). O port
+                não expõe esse parâmetro; para controlar a camada, informe <code>z-index</code> em
+                <code>Style</code>.
+            </Description>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>Sem parâmetro equivalente. O empilhamento é controlado pelo CSS do tema e pode ser
+                    sobrescrito com <code>Style="z-index:…"</code>.</p>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BaseZIndexCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="AutoZIndex" Id="auto-z-index">
+            <Description>
+                No upstream, <code>autoZIndex</code> gerencia a camada automaticamente (padrão <code>false</code>).
+                O port não possui esse parâmetro nem gerenciamento automático de camadas.
+            </Description>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>Sem equivalente. Cada overlay usa o empilhamento padrão do tema.</p>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AutoZIndexCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="HideOnEscape" Id="hide-on-escape">
+            <Description>
+                <code>HideOnEscape</code> (padrão <code>true</code>) oculta o overlay ao pressionar
+                <code>Escape</code>. Como não há focus trap, a tecla só é tratada quando o foco está dentro do
+                overlay ou de um de seus elementos.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpButton Label="Mostrar" @onclick="ToggleEscape"/>
+                    <OpOverlay @bind-Visible="_escapeVisible" Mode="modal" Dismissable="true" HideOnEscape="true"
+                               ContentStyle="padding:1.5rem;background:var(--p-content-background);border-radius:var(--p-content-border-radius)">
+                        <div class="flex flex-col items-center gap-3">
+                            <span>Feche com <b>Esc</b> (com o foco dentro) ou clicando na máscara.</span>
+                            <OpButton Label="Fechar" @onclick="ToggleEscape"/>
+                        </div>
+                    </OpOverlay>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@HideOnEscapeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Opções de Transição" Id="transition-options">
+            <Description>
+                No upstream, <code>showTransitionOptions</code> e <code>hideTransitionOptions</code> configuram a
+                animação. O port não expõe esses parâmetros: a máscara usa as classes fixas
+                <code>p-overlay-mask-enter-active</code> e <code>p-overlay-mask-leave-active</code>, customizáveis
+                por CSS.
+            </Description>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>Para ajustar a duração, sobrescreva a animação das classes de máscara no CSS da aplicação.</p>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TransitionOptionsCode" Language="css"/></Code>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="events">
+            <Description>
+                <code>OnBeforeShow</code>/<code>OnShow</code> e <code>OnBeforeHide</code>/<code>OnHide</code>
+                disparam quando a visibilidade muda por <code>ShowAsync</code>, <code>HideAsync</code> ou
+                <code>ToggleAsync</code> (métodos públicos acessados via <code>@@ref</code>), inclusive ao fechar
+                pela máscara ou por <code>Escape</code>.
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <OpButton Label="Alternar" @onclick="ToggleEvents"/>
+                        <span>Eventos: <b>@_eventsCount</b></span>
+                    </div>
+                    <span>Último: <b>@_eventLog</b></span>
+                    <OpOverlay @ref="_eventsOverlay" @bind-Visible="_eventsVisible" Mode="modal" Dismissable="true"
+                               OnBeforeShow="HandleBeforeShow" OnShow="HandleShow"
+                               OnBeforeHide="HandleBeforeHide" OnHide="HandleHide"
+                               ContentStyle="padding:1.5rem;background:var(--p-content-background);border-radius:var(--p-content-border-radius)">
+                        <div class="flex flex-col items-center gap-3">
+                            <span class="text-sm">Alterne e observe o log de eventos.</span>
+                            <OpButton Label="Fechar" @onclick="ToggleEvents"/>
+                        </div>
+                    </OpOverlay>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@EventsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Overlay usa <code>role="dialog"</code> no elemento raiz e, no modo modal, adiciona
+                    <code>aria-modal="true"</code>. Como qualquer atributo extra é repassado à raiz, descreva o
+                    conteúdo com <code>aria-label</code> ou <code>aria-labelledby</code>. Recomenda-se um gatilho
+                    focável, como um botão. O port não implementa focus trap nem adiciona
+                    <code>aria-expanded</code>/<code>aria-controls</code> ao gatilho.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o próximo elemento focável dentro do popup." },
+                              new[] { "shift + tab", "Move o foco para o elemento focável anterior dentro do popup." },
+                              new[] { "escape", "Fecha o popup e devolve o foco ao gatilho (quando <code>HideOnEscape</code> é <code>true</code>)." }
+                          })"/>
+                <div class="doc-section-description"><h3>Suporte de teclado do botão de fechar</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "enter", "Fecha o popup e devolve o foco ao gatilho." },
+                              new[] { "space", "Fecha o popup e devolve o foco ao gatilho." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Visible", "bool", "false", "Controla a visibilidade." },
-                              new[] { "VisibleChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
-                              new[] { "Mode", "string", "overlay", "Modo: <code>overlay</code> (ancorado) ou <code>modal</code> (centralizado com máscara)." },
-                              new[] { "Style", "string?", "null", "Estilos inline do overlay." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ContentStyle", "string?", "null", "Estilos do conteúdo." },
-                              new[] { "ContentStyleClass", "string?", "null", "Classes do conteúdo." },
-                              new[] { "Target", "string?", "null", "Seletor do alvo (CSS-only no port atual)." },
-                              new[] { "AppendTo", "string?", "self", "Alvo de anexação (aceito, sem portal)." },
-                              new[] { "Dismissable", "bool", "false", "Oculta ao clicar na máscara (modal)." },
-                              new[] { "HideOnEscape", "bool", "true", "Oculta com a tecla Escape." }
+                              new[] { "Visible", "bool", "false", "Controla a visibilidade do overlay." },
+                              new[] { "VisibleChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding; use <code>@bind-Visible</code>." },
+                              new[] { "Mode", "string", "overlay", "Modo: <code>overlay</code> (no ponto de uso) ou <code>modal</code> (máscara fixa em tela cheia com conteúdo centralizado)." },
+                              new[] { "Style", "string?", "null", "Estilos inline no elemento raiz." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "ContentStyle", "string?", "null", "Estilos inline no conteúdo (<code>p-overlay-content</code>)." },
+                              new[] { "ContentStyleClass", "string?", "null", "Classes adicionais no conteúdo." },
+                              new[] { "Target", "string?", "null", "Seletor do elemento de posicionamento; aceito, mas não aplicado no port." },
+                              new[] { "AppendTo", "string?", "self", "Local de anexação; aceito, mas o port não move o DOM." },
+                              new[] { "Dismissable", "bool", "false", "No modo modal, oculta ao clicar na máscara." },
+                              new[] { "HideOnEscape", "bool", "true", "Oculta ao pressionar <code>Escape</code> quando o foco está dentro do overlay." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Métodos">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Métodos (via ref)"
-                          Headers="@(new[] { "Nome", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ShowAsync()", "Exibe o overlay." },
-                              new[] { "HideAsync()", "Oculta o overlay." },
-                              new[] { "ToggleAsync()", "Alterna a visibilidade." }
+                              new[] { "OnBeforeShow", "EventCallback", "Disparado antes de exibir." },
+                              new[] { "OnShow", "EventCallback", "Disparado ao exibir." },
+                              new[] { "OnBeforeHide", "EventCallback", "Disparado antes de ocultar." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao ocultar." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnBeforeShow", "EventCallback", "Antes de exibir." },
-                              new[] { "OnShow", "EventCallback", "Ao exibir." },
-                              new[] { "OnBeforeHide", "EventCallback", "Antes de ocultar." },
-                              new[] { "OnHide", "EventCallback", "Ao ocultar." }
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo renderizado dentro de <code>p-overlay-content</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="overlay"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="css-classes">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-overlay", "Elemento raiz renderizado no modo <code>overlay</code>." },
+                              new[] { "p-overlay-modal", "Elemento raiz renderizado no modo <code>modal</code> (máscara fixa em tela cheia)." },
+                              new[] { "p-overlay-mask", "Máscara de fundo renderizada no modo <code>modal</code>." },
+                              new[] { "p-overlay-content", "Contêiner do conteúdo (filhos de <code>OpOverlay</code>)." },
+                              new[] { "p-overlay-mask-enter-active / p-overlay-mask-leave-active", "Classes de animação da máscara." },
+                              new[] { "p-component-overlay", "Classe compartilhada de overlay do tema; não é aplicada por <code>OpOverlay</code>, que usa <code>p-overlay-mask</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="overlay"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>Style</code>, <code>StyleClass</code>, <code>ContentStyle</code>, <code>ContentStyleClass</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>O posicionamento é CSS-only (sem auto-flip nem portal <code>appendTo</code>).</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há portal nem <code>appendTo</code> real: <code>AppendTo</code> é aceito, mas o DOM permanece no ponto de uso.</li>
+                        <li>O modo <code>overlay</code> não posiciona o painel automaticamente (sem auto-flip nem alinhamento); <code>Target</code> não é usado.</li>
+                        <li>As opções globais do Angular (<code>OverlayOptions</code>), a opção <code>responsive</code> (breakpoint/media/direction) e <code>autofocus</code> de foco inicial não existem; cada instância recebe os parâmetros.</li>
+                        <li><code>BaseZIndex</code>, <code>AutoZIndex</code>, <code>showTransitionOptions</code> e <code>hideTransitionOptions</code> não têm equivalente; as animações da máscara são fixas.</li>
+                        <li>Não há focus trap nem gestão de foco: <code>Tab</code>/<code>Shift+Tab</code> não ficam confinados ao popup e <code>HideOnEscape</code> só funciona com o foco dentro do overlay.</li>
+                        <li>O componente não inclui botão de fechar; a tabela do botão de fechar aplica-se a um botão adicionado pelo consumidor.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private bool _overlayVisible;
-    private bool _modalVisible;
+    private bool _basicVisible;
+    private bool _templateVisible;
+    private bool _optionsVisible;
+    private bool _modeVisible;
+    private bool _appendVisible;
+    private bool _targetVisible;
+    private bool _styleVisible;
+    private bool _escapeVisible;
+    private bool _eventsVisible;
 
-    private void ToggleOverlay() => _overlayVisible = !_overlayVisible;
-    private void ToggleModal() => _modalVisible = !_modalVisible;
+    private string _mode = "overlay";
+    private OpOverlay? _eventsOverlay;
+    private int _eventsCount;
+    private string _eventLog = "—";
+
+    private void ToggleBasic() => _basicVisible = !_basicVisible;
+    private void ToggleTemplate() => _templateVisible = !_templateVisible;
+    private void ToggleOptions() => _optionsVisible = !_optionsVisible;
+    private void ToggleMode() => _modeVisible = !_modeVisible;
+    private void ToggleAppend() => _appendVisible = !_appendVisible;
+    private void ToggleTarget() => _targetVisible = !_targetVisible;
+    private void ToggleStyle() => _styleVisible = !_styleVisible;
+    private void ToggleEscape() => _escapeVisible = !_escapeVisible;
+
+    private void UseOverlayMode() => _mode = "overlay";
+    private void UseModalMode() => _mode = "modal";
+
+    private void ToggleEvents() => _ = _eventsOverlay!.ToggleAsync();
+
+    private void LogEvent(string name)
+    {
+        _eventsCount++;
+        _eventLog = name;
+    }
+
+    private void HandleBeforeShow() => LogEvent("OnBeforeShow");
+    private void HandleShow() => LogEvent("OnShow");
+    private void HandleBeforeHide() => LogEvent("OnBeforeHide");
+    private void HandleHide() => LogEvent("OnHide");
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Overlay
@@ -123,12 +452,10 @@
         """;
 
     private const string BasicCode = """
-        <div style="position:relative">
-            <OpButton Label="Mostrar Overlay" @onclick="Toggle" />
-            <OpOverlay @bind-Visible="_visible" Mode="overlay">
-                <span>Conteúdo do overlay ancorado.</span>
-            </OpOverlay>
-        </div>
+        <OpButton Label="Mostrar Overlay" @onclick="Toggle" />
+        <OpOverlay @bind-Visible="_visible" Mode="overlay">
+            Conteúdo do overlay
+        </OpOverlay>
 
         @code {
             private bool _visible;
@@ -136,10 +463,128 @@
         }
         """;
 
-    private const string ModalCode = """
-        <OpButton Label="Mostrar Modal" @onclick="Toggle" />
+    private const string TemplateCode = """
+        <OpButton Label="Mostrar Template" @onclick="Toggle" />
         <OpOverlay @bind-Visible="_visible" Mode="modal" Dismissable="true">
-            <span>Conteúdo do overlay modal.</span>
+            <div class="flex flex-col gap-3">
+                <span class="text-xl font-bold">Título do overlay</span>
+                <span class="text-sm">Conteúdo totalmente customizado como filho do componente.</span>
+                <OpButton Label="Fechar" @onclick="Toggle" />
+            </div>
+        </OpOverlay>
+
+        @code {
+            private bool _visible;
+            private void Toggle() => _visible = !_visible;
+        }
+        """;
+
+    private const string OptionsCode = """
+        <OpButton Label="Mostrar com opções" @onclick="Toggle" />
+        <OpOverlay @bind-Visible="_visible"
+                   Mode="modal"
+                   Dismissable="true"
+                   HideOnEscape="true"
+                   Style="z-index:1100"
+                   ContentStyle="padding:2rem">
+            Opções combinadas
+        </OpOverlay>
+
+        @code {
+            private bool _visible;
+            private void Toggle() => _visible = !_visible;
+        }
+        """;
+
+    private const string ModeCode = """
+        <OpOverlay @bind-Visible="_visible" Mode="@_mode" Dismissable="true">
+            Modo atual: @_mode
+        </OpOverlay>
+
+        @code {
+            private bool _visible;
+            private string _mode = "overlay";
+            private void UseOverlay() => _mode = "overlay";
+            private void UseModal() => _mode = "modal";
+            private void Toggle() => _visible = !_visible;
+        }
+        """;
+
+    private const string ResponsiveCode = """
+        <OpOverlay @bind-Visible="_visible" Mode="modal">
+            Conteúdo em tela cheia
+        </OpOverlay>
+        """;
+
+    private const string AppendToCode = """
+        <OpOverlay @bind-Visible="_visible" Mode="modal" AppendTo="body" Dismissable="true">
+            <span>AppendTo="body" — sem portal no port</span>
+        </OpOverlay>
+        """;
+
+    private const string TargetCode = """
+        <div id="overlay-target">Elemento alvo</div>
+        <OpOverlay @bind-Visible="_visible" Mode="overlay" Target="#overlay-target">
+            <span>Target não posiciona no port</span>
+        </OpOverlay>
+        """;
+
+    private const string StyleCode = """
+        <OpOverlay @bind-Visible="_visible" Mode="modal" Dismissable="true"
+                   Style="z-index:1100"
+                   ContentStyle="padding:2rem">
+            <span>Painel estilizado</span>
+        </OpOverlay>
+        """;
+
+    private const string BaseZIndexCode = """
+        <OpOverlay @bind-Visible="_visible" Style="z-index:1000">
+            Conteúdo
+        </OpOverlay>
+        """;
+
+    private const string AutoZIndexCode = """
+        <OpOverlay @bind-Visible="_visible" Style="z-index:1000">
+            Conteúdo
+        </OpOverlay>
+        """;
+
+    private const string HideOnEscapeCode = """
+        <OpOverlay @bind-Visible="_visible" Mode="modal" Dismissable="true" HideOnEscape="true">
+            <span>Feche com Esc (com o foco dentro) ou clicando na máscara.</span>
+        </OpOverlay>
+        """;
+
+    private const string TransitionOptionsCode = """
+        .p-overlay-mask-enter-active,
+        .p-overlay-mask-leave-active {
+            animation-duration: 0.3s;
+        }
+        """;
+
+    private const string EventsCode = """
+        <OpOverlay @ref="_overlay" @bind-Visible="_visible" Mode="modal"
+                   OnBeforeShow="HandleBeforeShow" OnShow="HandleShow"
+                   OnBeforeHide="HandleBeforeHide" OnHide="HandleHide">
+            Conteúdo
+        </OpOverlay>
+
+        @code {
+            private OpOverlay? _overlay;
+            private bool _visible;
+            private string _log = "—";
+
+            private void Toggle() => _ = _overlay!.ToggleAsync();
+            private void HandleBeforeShow() => _log = "OnBeforeShow";
+            private void HandleShow() => _log = "OnShow";
+            private void HandleBeforeHide() => _log = "OnBeforeHide";
+            private void HandleHide() => _log = "OnHide";
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpOverlay @bind-Visible="_visible" aria-label="Detalhes do pedido">
+            Conteúdo do overlay
         </OpOverlay>
         """;
 }
