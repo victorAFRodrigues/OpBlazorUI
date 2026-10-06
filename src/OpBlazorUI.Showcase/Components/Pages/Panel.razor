@@ -1,0 +1,124 @@
+@page "/panel"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Panel - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Panel"
+              Description="Contêiner com recurso opcional de alternância de conteúdo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Um Panel simples é criado com a propriedade <code>header</code> junto ao conteúdo como filhos.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Expansível" Id="toggleable">
+            <Description><p>O conteúdo do painel pode ser expandido e recolhido com a opção <code>toggleable</code>; o estado inicial é definido por <code>collapsed</code>. Por padrão, o ícone de alternância é usado para alternar o conteúdo, enquanto definir <code>toggler="header"</code> permite clicar em qualquer lugar do cabeçalho para alternar.</p></Description>
+            <Code><CodeBlock Code="@ToggleableCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>As seções de cabeçalho e rodapé podem ser personalizadas com os templates <code>header</code> e <code>footer</code>. Veja também <a href="/avatar">Avatar</a>, <a href="/button">Button</a> e <a href="/menu">Menu</a>.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>Painéis alternáveis usam um botão de alternância de conteúdo no cabeçalho que possui <code>aria-controls</code> para definir o id da seção de conteúdo, além de <code>aria-expanded</code> para o estado de visibilidade. O valor lido pelo botão é, por padrão, o valor da propriedade <code>header</code> e pode ser personalizado definindo <code>aria-label</code> ou <code>aria-labelledby</code> via a propriedade <code>toggleButtonProps</code>.</p>
+                <p>O conteúdo usa <code>region</code>, define um id que corresponde ao <code>aria-controls</code> do botão de alternância e <code>aria-labelledby</code> referindo-se ao id do cabeçalho.</p>
+                <h3>Suporte a teclado do botão de conteúdo</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o próximo elemento focável da sequência de tabulação da página." },
+                              new[] { "shift + tab", "Move o foco para o elemento focável anterior da sequência de tabulação da página." },
+                              new[] { "enter", "Alterna a visibilidade do conteúdo." },
+                              new[] { "space", "Alterna a visibilidade do conteúdo." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { PanelModule } from 'primeng/panel';
+        """;
+
+    private const string BasicCode = """
+        <p-panel header="Header">
+            <p class="m-0">
+                Lorem ipsum dolor sit amet...
+            </p>
+        </p-panel>
+        """;
+
+    private const string ToggleableCode = """
+        <p-panel header="Header" [toggleable]="true">
+            <p class="m-0">
+                Lorem ipsum dolor sit amet...
+            </p>
+        </p-panel>
+        """;
+
+    private const string TemplateCode = """
+        <p-panel [toggleable]="true">
+            <ng-template #header>
+                <div class="flex items-center gap-2">
+                    <p-avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
+                    <span class="font-bold">Amy Elsner</span>
+                </div>
+            </ng-template>
+            <ng-template #footer>
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <p-button icon="pi pi-user" rounded text></p-button>
+                        <p-button icon="pi pi-bookmark" severity="secondary" rounded text></p-button>
+                    </div>
+                    <span class="text-surface-500 dark:text-surface-400">Updated 2 hours ago</span>
+                </div>
+            </ng-template>
+            <ng-template #icons>
+                <p-button icon="pi pi-cog" severity="secondary" rounded text (click)="menu.toggle($event)" />
+                <p-menu #menu id="config_menu" [model]="items" [popup]="true" />
+            </ng-template>
+            <p class="m-0">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
+                aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+        </p-panel>
+        """;
+}

@@ -1,0 +1,250 @@
+@page "/galleria"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Galleria - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Galleria"
+              Description="Galleria é um componente avançado de galeria de conteúdo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>A Galleria exige um <code>value</code> como uma coleção de imagens, um template <code>item</code> para a imagem em alta resolução e um template <code>thumbnail</code> para exibir como miniatura.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Controlado" Id="controlled">
+            <Description><p>A Galleria pode ser controlada programaticamente usando a propriedade <code>activeIndex</code>.</p></Description>
+            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Miniaturas" Id="thumbnail">
+            <Description><p>A Galleria pode ser controlada programaticamente usando a propriedade <code>activeIndex</code>.</p></Description>
+            <Code><CodeBlock Code="@ThumbnailCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Responsivo" Id="responsive">
+            <Description><p>A responsividade da Galleria é definida com a propriedade <code>responsiveOptions</code>.</p></Description>
+            <Code><CodeBlock Code="@ResponsiveCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Reprodução Automática" Id="autoplay">
+            <Description><p>Uma implementação de apresentação de slides é definida adicionando as propriedades <code>circular</code> e <code>autoPlay</code>.</p></Description>
+            <Code><CodeBlock Code="@AutoPlayCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Legenda" Id="caption">
+            <Description><p>A descrição de uma imagem é especificada com o template <code>caption</code>.</p></Description>
+            <Code><CodeBlock Code="@CaptionCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Avançado" Id="advanced">
+            <Description><p>A Galleria pode ser estendida ainda mais para implementar requisitos complexos.</p></Description>
+            <Code><CodeBlock Code="@AdvancedCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>A Galleria usa o papel <code>region</code> e, como qualquer atributo é repassado ao elemento contêiner principal, atributos como <code>aria-label</code> e <code>aria-roledescription</code> também podem ser usados. O contêiner de slides tem o atributo <code>aria-live</code> definido como "polite" se a galleria não estiver no modo de reprodução automática; caso contrário, o valor em reprodução automática é "off".</p>
+                <p>Um slide tem o papel <code>group</code> com um aria-label que se refere à propriedade <code>aria.slideNumber</code> da API de <a href="/configuration/#locale">locale</a>. Da mesma forma, <code>aria.slide</code> é usado como <code>aria-roledescription</code> do item. Slides inativos são ocultados dos leitores com <code>aria-hidden</code>.</p>
+                <p>Os navegadores Próximo e Anterior são elementos <code>button</code> com atributos <code>aria-label</code> que se referem, por padrão, às propriedades <code>aria.nextPageLabel</code> e <code>aria.firstPageLabel</code> da API de <a href="/configuration/#locale">locale</a>, respectivamente; ainda é possível usar seus próprios papéis e atributos ARIA, pois qualquer atributo válido é repassado aos elementos de botão implicitamente por meio de <code>nextButtonProps</code> e <code>prevButtonProps</code>.</p>
+                <p>Os elementos de navegação rápida e as miniaturas seguem o padrão de abas. Eles são colocados dentro de um elemento com o papel <code>tablist</code>, enquanto cada item tem o papel <code>tab</code> com os atributos <code>aria-selected</code> e <code>aria-controls</code>. O atributo <code>aria-label</code> de um item de navegação rápida refere-se a <code>aria.pageLabel</code> da API de <a href="/configuration/#locale">locale</a>. A página atual é marcada com <code>aria-current</code>.</p>
+                <p>No modo tela cheia, o elemento modal usa o papel <code>dialog</code> com <code>aria-modal</code> habilitado. O botão de fechar obtém o <code>aria-label</code> da propriedade <code>aria.close</code> da API de <a href="/configuration/#locale">locale</a>.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Caption="Navegação Anterior/Próximo"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelos elementos interativos do carrossel." },
+                              new[] { "enter", "Ativa a navegação." },
+                              new[] { "space", "Ativa a navegação." }
+                          })"/>
+                <ApiTable Caption="Navegação Rápida"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelo link do slide ativo." },
+                              new[] { "enter", "Ativa o link do slide focado." },
+                              new[] { "space", "Ativa o link do slide focado." },
+                              new[] { "right arrow", "Move o foco para o próximo link de slide." },
+                              new[] { "left arrow", "Move o foco para o link de slide anterior." },
+                              new[] { "home", "Move o foco para o primeiro link de slide." },
+                              new[] { "end", "Move o foco para o último link de slide." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { GalleriaModule } from 'primeng/galleria';
+        """;
+
+    private const string BasicCode = """
+        <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+            <ng-template #item let-item>
+                <img [src]="item.itemImageSrc" style="width:100%" />
+            </ng-template>
+            <ng-template #thumbnail let-item>
+                <img [src]="item.thumbnailImageSrc" />
+            </ng-template>
+        </p-galleria>
+        """;
+
+    private const string ControlledCode = """
+        <div class="mb-4">
+            <p-button type="button" icon="pi pi-minus" (click)="prev()" />
+            <p-button type="button" icon="pi pi-plus" (click)="next()" severity="secondary" styleClass="ml-2" />
+        </div>
+        <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [(activeIndex)]="activeIndex">
+            <ng-template #item let-item>
+                <img [src]="item.itemImageSrc" style="width: 100%;" />
+            </ng-template>
+            <ng-template #thumbnail let-item>
+                <img [src]="item.thumbnailImageSrc" />
+            </ng-template>
+        </p-galleria>
+        """;
+
+    private const string ThumbnailCode = """
+        <div class="flex flex-wrap gap-4 mb-8">
+            <div *ngFor="let option of positionOptions" class="flex items-center">
+                <p-radiobutton [name]="option.label" [value]="option.value" [label]="option.label" [(ngModel)]="position" [inputId]="label" />
+                <label [for]="option.label" class="ml-2"> {{ option.label }} </label>
+            </div>
+        </div>
+        <p-galleria [(value)]="images" [thumbnailsPosition]="position" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" >
+            <ng-template pTemplate="item" let-item>
+                <img [src]="item.itemImageSrc" style="width: 100%; display: block" />
+            </ng-template>
+            <ng-template pTemplate="thumbnail" let-item>
+                <div class="grid gap-4 justify-center">
+                    <img [src]="item.thumbnailImageSrc" style="width: 100%; display: block" />
+                </div>
+            </ng-template>
+        </p-galleria>
+        """;
+
+    private const string ResponsiveCode = """
+        <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="7" [circular]="true">
+            <ng-template #item let-item>
+                <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
+            </ng-template>
+            <ng-template #thumbnail let-item>
+                <img [src]="item.thumbnailImageSrc" style="width: 100%; display: block;" />
+            </ng-template>
+        </p-galleria>
+        """;
+
+    private const string AutoPlayCode = """
+        <p-galleria [(value)]="images" [autoPlay]="true" [circular]="true" [responsiveOptions]="responsiveOptions" [numVisible]="5" [containerStyle]="{ 'max-width': '640px' }">
+            <ng-template #item let-item>
+                <img [src]="item.itemImageSrc" style="width: 100%; display: block" />
+            </ng-template>
+            <ng-template #thumbnail let-item>
+                <img [src]="item.thumbnailImageSrc" style="display: block" />
+            </ng-template>
+        </p-galleria>
+        """;
+
+    private const string CaptionCode = """
+        <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+            <ng-template #item let-item>
+                <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
+            </ng-template>
+            <ng-template #thumbnail let-item>
+                <img [src]="item.thumbnailImageSrc" style="display: block;" />
+            </ng-template>
+            <ng-template #caption let-item>
+                <div class="text-xl mb-2 font-bold">{{ item.title }}</div>
+                <p class="text-white">{{ item.alt }}</p>
+            </ng-template>
+        </p-galleria>
+        """;
+
+    private const string AdvancedCode = """
+        <p-galleria
+            #galleria
+            [(value)]="images"
+            [(activeIndex)]="activeIndex"
+            [numVisible]="5"
+            [showThumbnails]="showThumbnails"
+            [showItemNavigators]="true"
+            [showItemNavigatorsOnHover]="true"
+            [circular]="true"
+            [autoPlay]="isAutoPlay"
+            [transitionInterval]="3000"
+            [containerStyle]="{ 'max-width': '640px' }"
+            [pt]="galleriaPT"
+        >
+            <ng-template #item let-item>
+                <img [src]="item.itemImageSrc" [ngStyle]="{ width: !fullscreen ? '100%' : '', display: !fullscreen ? 'block' : '' }" />
+            </ng-template>
+            <ng-template #thumbnail let-item>
+                <div class="grid gap-4 justify-center">
+                    <img [src]="item.thumbnailImageSrc" style="display: block" />
+                </div>
+            </ng-template>
+            <ng-template #footer let-item>
+                <div class="flex items-stretch gap-2 bg-surface-950 text-white h-10">
+                    <button
+                        type="button"
+                        pButton
+                        icon="pi pi-th-large"
+                        (click)="onThumbnailButtonClick()"
+                        class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3"
+                    ></button>
+                    <button
+                        type="button"
+                        pButton
+                        [icon]="slideButtonIcon()"
+                        (click)="toggleAutoSlide()"
+                        class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3"
+                    ></button>
+                    <span *ngIf="images" class="flex items-center gap-4 ml-3">
+                        <span class="text-sm">{{ activeIndex + 1 }}/{{ images.length }}</span>
+                        <span class="font-bold text-sm">{{ images[activeIndex].title }}</span>
+                        <span class="text-sm">{{ images[activeIndex].alt }}</span>
+                    </span>
+                    <button
+                        type="button"
+                        pButton
+                        [icon]="fullScreenIcon()"
+                        (click)="toggleFullScreen()"
+                        class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3 ml-auto"
+                    ></button>
+                </div>
+            </ng-template>
+        </p-galleria>
+        """;
+}

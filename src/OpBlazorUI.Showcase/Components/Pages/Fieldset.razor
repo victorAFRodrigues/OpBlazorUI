@@ -1,0 +1,107 @@
+@page "/fieldset"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Fieldset - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Fieldset"
+              Description="Agrupa conteúdo em uma seção com legenda. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular).">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Um Fieldset simples é criado com a propriedade <code>legend</code> e o conteúdo como filhos.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Expansível" Id="toggleable">
+            <Description><p>O conteúdo pode ser expandido e recolhido com a opção <code>toggleable</code>; o estado inicial é definido por <code>collapsed</code>.</p></Description>
+            <Code><CodeBlock Code="@ToggleableCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>A seção de cabeçalho também pode ser definida com conteúdo customizado em vez de um valor primitivo.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente usa o elemento semântico <code>fieldset</code>. Com <code>toggleable</code>, um elemento clicável com role <code>button</code> é incluído dentro do <code>legend</code>, com <code>aria-controls</code> e <code>aria-expanded</code>. O texto lido por padrão é o valor de <code>legend</code>.</p>
+                <h3>Suporte a teclado do botão de conteúdo</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o próximo elemento focável da página." },
+                              new[] { "shift + tab", "Move o foco para o elemento focável anterior." },
+                              new[] { "enter", "Alterna a visibilidade do conteúdo." },
+                              new[] { "space", "Alterna a visibilidade do conteúdo." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { FieldsetModule } from 'primeng/fieldset';
+        """;
+
+    private const string BasicCode = """
+        <p-fieldset legend="Header">
+            <p class="m-0">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
+            </p>
+        </p-fieldset>
+        """;
+
+    private const string ToggleableCode = """
+        <p-fieldset legend="Header" [toggleable]="true">
+            <p style="margin:0">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
+            </p>
+        </p-fieldset>
+        """;
+
+    private const string TemplateCode = """
+        <p-fieldset>
+            <ng-template #header>
+                <div class="flex items-center gap-2 px-2">
+                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
+                    <span class="font-bold">Amy Elsner</span>
+                </div>
+            </ng-template>
+            <p class="m-0">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
+            </p>
+        </p-fieldset>
+        """;
+}

@@ -1,0 +1,364 @@
+@page "/tabs"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Tabs - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Tabs"
+              Description="Contêiner que agrupa conteúdo em abas. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Tabs é definido usando os componentes <code>TabList</code>, <code>Tab</code>, <code>TabPanels</code> e <code>TabPanel</code>. Os componentes Tab e TabPanel são associados por suas propriedades <code>value</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Dinâmico" Id="dynamic">
+            <Description><p>As abas podem ser geradas dinamicamente usando o bloco padrão <code>&#64;for</code>.</p></Description>
+            <Code><CodeBlock Code="@DynamicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Controlado" Id="controlled">
+            <Description><p>As abas podem ser controladas programaticamente usando a propriedade <code>value</code> como modelo.</p></Description>
+            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Rolável" Id="scrollable">
+            <Description><p>Adicionar a propriedade <code>scrollable</code> exibe botões de navegação em cada lado para rolar entre as abas.</p></Description>
+            <Code><CodeBlock Code="@ScrollableCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Carregamento Preguiçoso" Id="lazy">
+            <Description><p>Por padrão, o conteúdo das abas inativas é renderizado (mas oculto). Você pode usar a entrada <code>lazy</code> (globalmente em <code>Tabs</code> ou individualmente em um <code>TabPanel</code>) para mudar esse comportamento, de modo que o conteúdo só seja renderizado quando a aba se tornar ativa. Se uma aba lazy contém componentes complexos que só devem ser inicializados quando ela é ativada, envolva o conteúdo em <code>&lt;ng-template #content&gt;seu conteúdo&lt;/ng-template&gt;</code>.</p></Description>
+            <Code><CodeBlock Code="@LazyCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description><p>Habilitar a propriedade <code>disabled</code> de uma Tab impede a interação do usuário.</p></Description>
+            <Code><CodeBlock Code="@DisabledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>Conteúdo personalizado para uma aba é definido com o ng-content padrão.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Menu de Abas" Id="tabmenu">
+            <Description><p>Um menu de navegação é implementado usando abas sem os painéis, onde o conteúdo de uma aba é fornecido por um componente de rota como <code>router-outlet</code>. Para fins desta demonstração, o <code>router-outlet</code> não está incluído.</p></Description>
+            <Code><CodeBlock Code="@TabMenuCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O contêiner de Tabs é definido com o papel <code>tablist</code>; como qualquer atributo é passado ao elemento contêiner, <code>aria-labelledby</code> pode ser usado opcionalmente para especificar um elemento que descreva as Tabs. Cada cabeçalho de aba tem o papel <code>tab</code>, junto com o atributo de estado <code>aria-selected</code> e <code>aria-controls</code> para referenciar o elemento de conteúdo correspondente. O elemento de conteúdo de cada aba tem o papel <code>tabpanel</code>, um id que corresponde ao <code>aria-controls</code> do cabeçalho e uma referência <code>aria-labelledby</code> ao cabeçalho como nome acessível.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelos cabeçalhos." },
+                              new[] { "enter", "Ativa o cabeçalho de aba em foco." },
+                              new[] { "space", "Ativa o cabeçalho de aba em foco." },
+                              new[] { "right arrow", "Move o foco para o próximo cabeçalho." },
+                              new[] { "left arrow", "Move o foco para o cabeçalho anterior." },
+                              new[] { "home", "Move o foco para o último cabeçalho." },
+                              new[] { "end", "Move o foco para o primeiro cabeçalho." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { TabsModule } from 'primeng/tabs';
+        """;
+
+    private const string BasicCode = """
+        <p-tabs value="0">
+            <p-tablist>
+                <p-tab value="0">Header I</p-tab>
+                <p-tab value="1">Header II</p-tab>
+                <p-tab value="2">Header III</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="0">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+                        anim id est laborum.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel value="1">
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
+                        dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
+                        modi.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel value="2">
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti
+                        atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique
+                        sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum
+                        facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil
+                        impedit quo minus.
+                    </p>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+        """;
+
+    private const string DynamicCode = """
+        <p-tabs value="0">
+            <p-tablist>
+                @for (tab of tabs; track tab.value) {
+                    <p-tab [value]="tab.value">{{ tab.title }}</p-tab>
+                }
+            </p-tablist>
+            <p-tabpanels>
+                @for (tab of tabs; track tab.value) {
+                    <p-tabpanel [value]="tab.value">
+                        <p class="m-0">{{ tab.content }}</p>
+                    </p-tabpanel>
+                }
+            </p-tabpanels>
+        </p-tabs>
+        """;
+
+    private const string ControlledCode = """
+        <div class="flex mb-2 gap-2 justify-end">
+            <p-button (onClick)="value = 0" rounded="true" styleClass="w-8 h-8 p-0" [outlined]="value !== 0" label="1" />
+            <p-button (onClick)="value = 1" rounded="true" styleClass="w-8 h-8 p-0" [outlined]="value !== 1" label="2" />
+            <p-button (onClick)="value = 2" rounded="true" styleClass="w-8 h-8 p-0" [outlined]="value !== 2" label="3" />
+        </div>
+        <p-tabs [value]="value">
+            <p-tablist>
+                <p-tab [value]="0">Header I</p-tab>
+                <p-tab [value]="1">Header II</p-tab>
+                <p-tab [value]="2">Header III</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel [value]="0">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                        laborum.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel [value]="1">
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                        qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel [value]="2">
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque
+                        corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
+                        culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et
+                        expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+        """;
+
+    private const string ScrollableCode = """
+        <p-tabs value="0" scrollable>
+            <p-tablist>
+                @for(tab of scrollableTabs; track tab.value){
+                    <p-tab [value]="tab.value">
+                        {{ tab.title }}
+                    </p-tab>
+                }
+            </p-tablist>
+            <p-tabpanels>
+                @for(tab of scrollableTabs; track tab.value){
+                    <p-tabpanel [value]="tab.value">
+                        <p class="m-0">{{ tab.content }}</p>
+                    </p-tabpanel>
+                }
+            </p-tabpanels>
+        </p-tabs>
+        """;
+
+    private const string LazyCode = """
+        <p-tabs lazy value="0">
+            <p-tablist>
+                <p-tab value="0">Header I</p-tab>
+                <p-tab value="1">Header II</p-tab>
+                <p-tab value="2">Header III</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="0">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+                        anim id est laborum.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel value="1">
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
+                        dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
+                        modi.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel value="2">
+                    <ng-template #content>Complex components that should only be initialized when the tab becomes active</ng-template>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+        """;
+
+    private const string DisabledCode = """
+        <p-tabs value="0">
+            <p-tablist>
+                <p-tab value="0">Header I</p-tab>
+                <p-tab value="1">Header II</p-tab>
+                <p-tab value="2">Header III</p-tab>
+                <p-tab disabled>Header IV</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="0">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+                        anim id est laborum.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel value="1">
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
+                        dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
+                        modi.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel value="2">
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti
+                        atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique
+                        sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum
+                        facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil
+                        impedit quo minus.
+                    </p>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+        """;
+
+    private const string TemplateCode = """
+        <p-tabs value="0" scrollable>
+            <p-tablist>
+                <ng-template #previcon>
+                    <i class="pi pi-minus"></i>
+                </ng-template>
+                <p-tab value="0" class="flex items-center !gap-2">
+                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle"/>
+                    <span class="font-bold whitespace-nowrap">Amy Elsner</span>
+                </p-tab>
+                <p-tab value="1" class="flex items-center !gap-2">
+                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png" shape="circle" />
+                    <span class="font-bold whitespace-nowrap">Onyama Limba</span>
+                </p-tab>
+                <p-tab value="2" class="flex items-center !gap-2">
+                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/ionibowcher.png" shape="circle" />
+                    <span class="font-bold whitespace-nowrap">Ioni Bowcher</span>
+                    <p-badge value="2" />
+                </p-tab>
+                <ng-template #nexticon>
+                    <i class="pi pi-plus"></i>
+                </ng-template>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="0">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+                        anim id est laborum.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel value="1">
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
+                        dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
+                        modi.
+                    </p>
+                </p-tabpanel>
+                <p-tabpanel value="2">
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti
+                        atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique
+                        sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum
+                        facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil
+                        impedit quo minus.
+                    </p>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+        """;
+
+    private const string TabMenuCode = """
+        <p-tabs value="/dashboard">
+            <p-tablist>
+                @for(tab of tabs; track tab.route){
+                    <p-tab [value]="tab.route" [routerLink]="tab.route" class="flex items-center !gap-2 text-inherit">
+                        <i [class]="tab.icon"></i>
+                        <span>{{ tab.label }}</span>
+                    </p-tab>
+                }
+            </p-tablist>
+        </p-tabs>
+        <!--<router-outlet></router-outlet>-->
+        """;
+}

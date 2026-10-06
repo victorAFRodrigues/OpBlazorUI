@@ -1,0 +1,188 @@
+@page "/carousel"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Carousel - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Carousel"
+              Description="Carousel é um controle deslizante de conteúdo com várias opções de customização. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O Carousel exige uma coleção de itens como seu valor, junto com um template para renderizar cada item.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Circular" Id="circular">
+            <Description><p>Quando <code>autoplayInterval</code> é definido em milissegundos, os itens são rolados automaticamente. Além disso, para rolagem infinita, a propriedade <code>circular</code> precisa ser adicionada, sendo habilitada automaticamente no modo de reprodução automática.</p></Description>
+            <Code><CodeBlock Code="@CircularCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Responsivo" Id="responsive">
+            <Description><p>O Carousel suporta configuração específica por tamanho de tela com a propriedade <code>responsiveOptions</code>, que recebe um array de objetos onde cada objeto define o <code>breakpoint</code> de largura máxima, <code>numVisible</code> para o número de itens por página e <code>numScroll</code> para o número de itens a rolar. Quando <code>responsiveOptions</code> é definido, as propriedades <code>numScroll</code> e <code>numVisible</code> do Carousel são usadas como padrão quando não há breakpoint aplicável.</p></Description>
+            <Code><CodeBlock Code="@ResponsiveCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vertical" Id="vertical">
+            <Description><p>Para criar um Carousel vertical, <code>orientation</code> precisa ser definido como <code>vertical</code>, junto com um <code>verticalViewPortHeight</code>.</p></Description>
+            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O Carousel usa o papel <code>region</code> e, como qualquer atributo é repassado ao elemento contêiner principal, atributos como <code>aria-label</code> e <code>aria-roledescription</code> também podem ser usados. O contêiner de slides tem o atributo <code>aria-live</code> definido como "polite" se o carousel não estiver no modo de reprodução automática; caso contrário, o valor em reprodução automática é "off".</p>
+                <p>Um slide tem o papel <code>group</code> com um aria-label que se refere à propriedade <code>aria.slideNumber</code> da API de <a href="/configuration/#locale">locale</a>. Da mesma forma, <code>aria.slide</code> é usado como <code>aria-roledescription</code> do item. Slides inativos são ocultados dos leitores com <code>aria-hidden</code>.</p>
+                <p>Os navegadores Próximo e Anterior são elementos <code>button</code> com atributos <code>aria-label</code> que se referem, por padrão, às propriedades <code>aria.nextPageLabel</code> e <code>aria.firstPageLabel</code> da API de <a href="/configuration/#locale">locale</a>, respectivamente; ainda é possível usar seus próprios papéis e atributos ARIA, pois qualquer atributo válido é repassado aos elementos de botão implicitamente por meio de <code>nextButtonProps</code> e <code>prevButtonProps</code>.</p>
+                <p>Os elementos de navegação rápida são elementos <code>button</code> com um atributo <code>aria-label</code> referente a <code>aria.pageLabel</code> da API de <a href="/configuration/#locale">locale</a>. A página atual é marcada com <code>aria-current</code>.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Caption="Navegação Anterior/Próximo"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelos elementos interativos do carrossel." },
+                              new[] { "enter", "Ativa a navegação." },
+                              new[] { "space", "Ativa a navegação." }
+                          })"/>
+                <ApiTable Caption="Navegação Rápida"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelo link do slide ativo." },
+                              new[] { "enter", "Ativa o link do slide focado." },
+                              new[] { "space", "Ativa o link do slide focado." },
+                              new[] { "right arrow", "Move o foco para o próximo link de slide." },
+                              new[] { "left arrow", "Move o foco para o link de slide anterior." },
+                              new[] { "home", "Move o foco para o primeiro link de slide." },
+                              new[] { "end", "Move o foco para o último link de slide." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { CarouselModule } from 'primeng/carousel';
+        """;
+
+    private const string BasicCode = """
+        <p-carousel [value]="products" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions">
+            <ng-template let-product #item>
+                <div class="border border-surface rounded-border m-2 p-4">
+                    <div class="mb-4">
+                        <div class="relative mx-auto">
+                            <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
+                            <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
+                        </div>
+                    </div>
+                    <div class="mb-4 font-medium">{{ product.name }}</div>
+                    <div class="flex justify-between items-center">
+                        <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
+                        <span>
+                            <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
+                            <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-carousel>
+        """;
+
+    private const string CircularCode = """
+        <p-carousel [value]="products" [numVisible]="3" [numScroll]="1" [circular]="true" [responsiveOptions]="responsiveOptions" autoplayInterval="3000">
+            <ng-template let-product #item>
+                <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
+                    <div class="mb-4">
+                        <div class="relative mx-auto">
+                            <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
+                            <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
+                        </div>
+                    </div>
+                    <div class="mb-4 font-medium">{{ product.name }}</div>
+                    <div class="flex justify-between items-center">
+                        <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
+                        <span>
+                            <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
+                            <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-carousel>
+        """;
+
+    private const string ResponsiveCode = """
+        <p-carousel [value]="products" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions">
+            <ng-template let-product #item>
+                <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
+                    <div class="mb-4">
+                        <div class="relative mx-auto">
+                            <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
+                            <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
+                        </div>
+                    </div>
+                    <div class="mb-4 font-medium">{{ product.name }}</div>
+                    <div class="flex justify-between items-center">
+                        <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
+                        <span>
+                            <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
+                            <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-carousel>
+        """;
+
+    private const string VerticalCode = """
+        <p-carousel [value]="products" [numVisible]="1" [numScroll]="1" orientation="vertical" verticalViewPortHeight="330px" contentClass="flex items-center">
+            <ng-template let-product #item>
+                <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
+                    <div class="mb-4">
+                        <div class="relative mx-auto">
+                            <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded" />
+                            <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
+                        </div>
+                    </div>
+                    <div class="mb-4 font-medium">{{ product.name }}</div>
+                    <div class="flex justify-between items-center">
+                        <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
+                        <span>
+                            <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
+                            <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-carousel>
+        """;
+}

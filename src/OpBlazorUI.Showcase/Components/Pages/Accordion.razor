@@ -1,0 +1,354 @@
+@page "/accordion"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Accordion - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Accordion"
+              Description="Agrupa uma coleção de conteúdos em abas. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Accordion é definido usando os componentes <code>AccordionPanel</code>, <code>AccordionHeader</code> e <code>AccordionContent</code>. Cada AccordionPanel deve conter uma propriedade <code>value</code> única para especificar o item ativo.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Dinâmico" Id="dynamic">
+            <Description><p>AccordionPanel pode ser gerado dinamicamente usando o bloco padrão <code>&#64;for</code>.</p></Description>
+            <Code><CodeBlock Code="@DynamicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Múltiplo" Id="multiple">
+            <Description><p>Por padrão, apenas uma aba por vez pode ficar ativa; habilitar a propriedade <code>multiple</code> muda esse comportamento para permitir várias abas. Nesse caso, <code>activeIndex</code> precisa ser um array.</p></Description>
+            <Code><CodeBlock Code="@MultipleCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description><p>Habilitar a propriedade <code>disabled</code> de um AccordionTab impede a interação do usuário.</p></Description>
+            <Code><CodeBlock Code="@DisabledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Controlado" Id="controlled">
+            <Description><p>Os painéis podem ser controlados programaticamente usando a propriedade <code>value</code> como modelo.</p></Description>
+            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>O Accordion é personalizado com o template <code>toggleicon</code>.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>Os elementos de cabeçalho do Accordion têm o papel <code>button</code> e usam <code>aria-controls</code> para definir o id da seção de conteúdo, além de <code>aria-expanded</code> para o estado de visibilidade. O valor lido de um cabeçalho vem por padrão da propriedade <code>header</code> e pode ser customizado com <code>aria-label</code> ou <code>aria-labelledby</code>. Cabeçalhos desabilitados usam <code>aria-disabled</code> e são excluídos da navegação por teclado. O conteúdo usa o papel <code>region</code>, define um id que corresponde ao <code>aria-controls</code> do cabeçalho e uma referência <code>aria-labelledby</code> ao cabeçalho.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o próximo elemento focável na sequência de tabulação da página." },
+                              new[] { "shift + tab", "Move o foco para o elemento focável anterior na sequência de tabulação da página." },
+                              new[] { "enter", "Alterna a visibilidade do conteúdo." },
+                              new[] { "space", "Alterna a visibilidade do conteúdo." },
+                              new[] { "down arrow", "Move o foco para o próximo cabeçalho." },
+                              new[] { "up arrow", "Move o foco para o cabeçalho anterior." },
+                              new[] { "home", "Move o foco para o primeiro cabeçalho." },
+                              new[] { "end", "Move o foco para o último cabeçalho." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { AccordionModule } from 'primeng/accordion';
+        """;
+
+    private const string BasicCode = """
+        <p-accordion value="0">
+            <p-accordion-panel value="0">
+                <p-accordion-header>Header I</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                        laborum.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="1">
+                <p-accordion-header>Header II</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                        qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="2">
+                <p-accordion-header>Header III</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                        qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+        </p-accordion>
+        """;
+
+    private const string DynamicCode = """
+        <p-accordion [value]="0">
+            @for (tab of tabs; track tab.title) {
+                <p-accordion-panel [value]="tab.value">
+                    <p-accordion-header>{{ tab.title }}</p-accordion-header>
+                    <p-accordion-content>
+                        <p class="m-0">{{ tab.content }}</p>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            }
+        </p-accordion>
+        """;
+
+    private const string MultipleCode = """
+        <p-accordion [value]="['0']" [multiple]="true">
+            <p-accordion-panel value="0">
+                <p-accordion-header>Header I</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                        laborum.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="1">
+                <p-accordion-header>Header II</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                        qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="2">
+                <p-accordion-header>Header III</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque
+                        corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
+                        culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et
+                        expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+        </p-accordion>
+        """;
+
+    private const string DisabledCode = """
+        <p-accordion [value]="['0']" [multiple]="true">
+            <p-accordion-panel value="0">
+                <p-accordion-header>Header I</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                        laborum.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="1">
+                <p-accordion-header>Header II</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                        qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="2">
+                <p-accordion-header>Header III</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque
+                        corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
+                        culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et
+                        expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="3" [disabled]="true">
+                <p-accordion-header>Header IV</p-accordion-header>
+            </p-accordion-panel>
+        </p-accordion>
+        """;
+
+    private const string ControlledCode = """
+        <div class="flex mb-4 gap-2 justify-end">
+            <p-button (onClick)="active = '0'" [rounded]="true" label="1" styleClass="w-8 h-8 p-0" [outlined]="active !== '0'" />
+            <p-button (onClick)="active = '1'" [rounded]="true" label="2" styleClass="w-8 h-8 p-0" [outlined]="active !== '1'" />
+            <p-button (onClick)="active = '2'" [rounded]="true" label="3" styleClass="w-8 h-8 p-0" [outlined]="active !== '2'" />
+        </div>
+
+        <p-accordion [(value)]="active">
+            <p-accordion-panel value="0">
+                <p-accordion-header>Header I</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                        laborum.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="1">
+                <p-accordion-header>Header II</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                        qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="2">
+                <p-accordion-header>Header III</p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque
+                        corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
+                        culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et
+                        expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+        </p-accordion>
+        """;
+
+    private const string TemplateCode = """
+        <p-accordion value="0">
+            <p-accordion-panel value="0">
+                <p-accordion-header>
+                    <ng-template #toggleicon let-active="active">
+                        @if (active) {
+                            <i class="pi pi-minus"></i>
+                        } @else {
+                            <i class="pi pi-plus"></i>
+                        }
+                    </ng-template>
+                    <span class="flex items-center gap-2 w-full">
+                        <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
+                        <span class="font-bold whitespace-nowrap">Amy Elsner</span>
+                        <p-badge value="3" class="ml-auto mr-2" />
+                    </span>
+                </p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                        laborum.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="1">
+                <p-accordion-header>
+                    <ng-template #toggleicon let-active="active">
+                        @if (active) {
+                            <i class="pi pi-minus"></i>
+                        } @else {
+                            <i class="pi pi-plus"></i>
+                        }
+                    </ng-template>
+                    <span class="flex items-center gap-2 w-full">
+                        <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png" shape="circle" />
+                        <span class="font-bold whitespace-nowrap">Onyama Limba</span>
+                        <p-badge value="4" class="ml-auto mr-2" />
+                    </span>
+                </p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+                        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+                        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+                        qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+            <p-accordion-panel value="2">
+                <p-accordion-header>
+                    <ng-template #toggleicon let-active="active">
+                        @if (active) {
+                            <i class="pi pi-minus"></i>
+                        } @else {
+                            <i class="pi pi-plus"></i>
+                        }
+                    </ng-template>
+                    <span class="flex items-center gap-2 w-full">
+                        <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/ionibowcher.png" shape="circle" />
+                        <span class="font-bold whitespace-nowrap">Ioni Bowcher</span>
+                        <p-badge value="2" class="ml-auto mr-2" />
+                    </span>
+                </p-accordion-header>
+                <p-accordion-content>
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque
+                        corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in
+                        culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et
+                        expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+        </p-accordion>
+        """;
+}

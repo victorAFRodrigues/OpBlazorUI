@@ -1,0 +1,82 @@
+@page "/fluid"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Fluid - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Fluid"
+              Description="Fluid é um componente de layout que faz os componentes descendentes ocuparem toda a largura do contêiner. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                <p>Componentes com a opção <i>fluid</i>, como o <i>InputText</i>, têm a capacidade de ocupar toda a largura do componente. Habilitar <i>fluid</i> para cada componente individualmente pode ser trabalhoso, então envolva o conteúdo com <i>Fluid</i> como uma alternativa mais simples.</p>
+                <p>Qualquer componente que tenha a propriedade <i>fluid</i> pode ser aninhado dentro do componente <i>Fluid</i>. A propriedade <i>fluid</i> de um componente filho tem precedência maior que o contêiner fluid, como mostrado no último exemplo.</p>
+            </Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O Fluid não requer nenhum papel ou atributo.</p>
+                <h3>Suporte a teclado</h3>
+                <p>O componente não inclui elementos interativos.</p>
+            </Description>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { FluidModule } from 'primeng/fluid';
+        """;
+
+    private const string BasicCode = """
+        <div>
+            <label for="non-fluid" class="font-bold mb-2 block">Non-Fluid</label>
+            <input type="text" pInputText id="non-fluid" />
+        </div>
+        <div>
+            <label for="fluid" class="font-bold mb-2 block">Fluid Prop</label>
+            <input type="text" pInputText id="fluid" fluid />
+        </div>
+        <p-fluid>
+            <span class="font-bold mb-2 block">Fluid Container</span>
+            <div class="grid grid-cols-2 gap-4">
+                <div><input type="text" pInputText /></div>
+                <div><input type="text" pInputText /></div>
+                <div class="col-span-full"><input type="text" pInputText /></div>
+                <div><input type="text" pInputText [fluid]="false" placeholder="Non-Fluid" /></div>
+            </div>
+        </p-fluid>
+        """;
+}

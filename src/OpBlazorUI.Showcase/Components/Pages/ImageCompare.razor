@@ -1,0 +1,113 @@
+@page "/imagecompare"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>ImageCompare - OpBlazorUI</PageTitle>
+
+<DocComponent Title="ImageCompare"
+              Description="Compara duas imagens lado a lado com um controle deslizante. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>As imagens são definidas usando templates com <em>left</em> e <em>right</em>. Use as propriedades <em>style</em> ou <em>class</em> para definir o tamanho do contêiner.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Responsivo" Id="responsive">
+            <Description><p>Aplique estilos responsivos ao elemento contêiner para otimizar a exibição conforme o tamanho da tela.</p></Description>
+            <Code><CodeBlock Code="@ResponsiveCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente ImageCompare usa internamente um <em>slider</em> do tipo range nativo. O valor para descrever o componente pode ser definido com as props <em>aria-labelledby</em> e <em>aria-label</em>.</p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode" Language="html"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o componente." },
+                              new[] { "left arrow / up arrow", "Decrementa o valor." },
+                              new[] { "right arrow / down arrow", "Incrementa o valor." },
+                              new[] { "home", "Define o valor mínimo." },
+                              new[] { "end", "Define o valor máximo." },
+                              new[] { "page up", "Incrementa o valor em 10 passos." },
+                              new[] { "page down", "Decrementa o valor em 10 passos." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { ImageCompareModule } from 'primeng/imagecompare';
+        """;
+
+    private const string BasicCode = """
+        <div class="card flex justify-center">
+            <p-imagecompare class="shadow-lg rounded-2xl">
+                <ng-template #left>
+                    <img src="https://primefaces.org/cdn/primevue/images/compare/island1.jpg" />
+                </ng-template>
+                <ng-template #right>
+                    <img src="https://primefaces.org/cdn/primevue/images/compare/island2.jpg" />
+                </ng-template>
+            </p-imagecompare>
+        </div>
+        """;
+
+    private const string ResponsiveCode = """
+        <div class="card flex justify-center">
+            <p-imagecompare class="sm:!w-96 shadow-lg rounded-2xl">
+                <ng-template #left>
+                    <img src="https://primefaces.org/cdn/primevue/images/compare/island1.jpg" />
+                </ng-template>
+                <ng-template #right>
+                    <img src="https://primefaces.org/cdn/primevue/images/compare/island2.jpg" />
+                </ng-template>
+            </p-imagecompare>
+        </div>
+        """;
+
+    private const string AccessibilityCode = """
+        <span id="image_label">Compare Images</span>
+        <p-imagecompare class="shadow-lg rounded-2xl" aria-labelledby="image-label">
+            ...
+        </p-imagecompare>
+
+        <p-imagecompare class="shadow-lg rounded-2xl" aria-label="Compare Images">
+            ...
+        </p-imagecompare>
+        """;
+}

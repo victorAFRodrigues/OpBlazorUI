@@ -1,0 +1,229 @@
+@page "/tree"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Tree - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Tree"
+              Description="Árvore que exibe dados hierárquicos. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O componente Tree requer um array de objetos <code>TreeNode</code> como seu <code>value</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Controlado" Id="controlled">
+            <Description><p>Tree requer uma coleção de instâncias de <code>TreeNode</code> como <code>value</code>.</p></Description>
+            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Seleção - Única" Id="single">
+            <Description><p>A seleção de um único nó é configurada definindo <code>selectionMode</code> como <code>single</code>, junto da propriedade <code>selection</code> para gerenciar o vínculo do valor selecionado.</p></Description>
+            <Code><CodeBlock Code="@SingleCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Seleção - Múltipla" Id="multiple">
+            <Description>
+                <p>Mais de um nó pode ser selecionado definindo <code>selectionMode</code> como <code>multiple</code>. Por padrão, no modo de seleção múltipla, é necessário pressionar a metaKey (ex.: <code>⌘</code>) para adicionar às seleções existentes; isso pode ser configurado desabilitando a propriedade <code>metaKeySelection</code>. Note que em dispositivos com toque, o Tree sempre ignora a metaKey.</p>
+                <p>No modo de seleção múltipla, o vínculo de valor deve ser um par chave-valor, onde a chave é a chave do nó e o valor é um booleano que indica a seleção.</p>
+            </Description>
+            <Code><CodeBlock Code="@MultipleCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Seleção - Checkbox" Id="checkbox">
+            <Description><p>A seleção de múltiplos nós via checkboxes é habilitada configurando <code>selectionMode</code> como <code>checkbox</code>.</p></Description>
+            <Code><CodeBlock Code="@CheckboxCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="event">
+            <Description><p>Um evento é fornecido para cada tipo de interação do usuário, como expandir, recolher e selecionar.</p></Description>
+            <Code><CodeBlock Code="@EventCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Lazy" Id="lazy">
+            <Description><p>O carregamento lazy é útil ao lidar com grandes conjuntos de dados; neste exemplo, os nós são carregados dinamicamente sob demanda usando a propriedade <code>loading</code> e o método <code>onNodeExpand</code>.</p></Description>
+            <Code><CodeBlock Code="@LazyCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>O conteúdo personalizado do nó, no lugar do rótulo, é definido com a propriedade <code>pTemplate</code>.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filtro" Id="filter">
+            <Description><p>A filtragem é habilitada adicionando a propriedade <code>filter</code>; por padrão, a propriedade label de um nó é usada para comparar com o valor no campo de texto. Para personalizar qual(is) campo(s) devem ser usados na busca, defina a propriedade <code>filterBy</code>. Além disso, <code>filterMode</code> especifica a estratégia de filtragem. No modo <code>lenient</code>, quando a consulta corresponde a um nó, os filhos do nó não são pesquisados adiante, pois todos os descendentes do nó são incluídos. Por outro lado, no modo <code>strict</code>, quando a consulta corresponde a um nó, a filtragem continua em todos os descendentes.</p></Description>
+            <Code><CodeBlock Code="@FilterCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Virtual Scroll - Preload" Id="preload">
+            <Description><p>VirtualScroller é uma abordagem de desempenho para lidar com grandes volumes de dados de forma eficiente. Definir a propriedade <code>virtualScroll</code> como true e fornecer um <code>virtualScrollItemSize</code> em pixels é o suficiente para habilitar essa funcionalidade.</p></Description>
+            <Code><CodeBlock Code="@PreloadCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Virtual Scroll - Lazy" Id="lazyvirtualscroll">
+            <Description><p>VirtualScroller é uma abordagem de desempenho para lidar com grandes volumes de dados de forma eficiente. Definir a propriedade <code>virtualScroll</code> como true e fornecer um <code>virtualScrollItemSize</code> em pixels é o suficiente para habilitar essa funcionalidade.</p></Description>
+            <Code><CodeBlock Code="@LazyVirtualScrollCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Arrastar e Soltar - Único" Id="dragdrop-single">
+            <Description><p>Os nós podem ser reordenados dentro da mesma árvore e também transferidos entre outras árvores usando arrastar e soltar.</p></Description>
+            <Code><CodeBlock Code="@DragDropSingleCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Arrastar e Soltar - Múltiplo" Id="dragdrop-multiple">
+            <Description><p>Os nós também podem ser transferidos entre várias árvores. As propriedades <code>draggableScope</code> e <code>droppableScope</code> definem chaves para restringir as ações entre as árvores. Neste exemplo, os nós só podem ser transferidos do início para o fim.</p></Description>
+            <Code><CodeBlock Code="@DragDropMultipleCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Menu de Contexto" Id="contextmenu">
+            <Description><p>O Tree tem integração exclusiva com o ContextMenu usando a propriedade <code>contextMenu</code>, junto de <code>contextMenuSelection</code> para gerenciar a seleção.</p></Description>
+            <Code><CodeBlock Code="@ContextMenuCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O valor para descrever o componente pode ser informado via <code>aria-labelledby</code> ou <code>aria-label</code>. O elemento de lista raiz tem o papel <code>tree</code>, enquanto cada item de lista tem o papel <code>treeitem</code>, junto dos atributos <code>aria-label</code>, <code>aria-selected</code> e <code>aria-expanded</code>. Na seleção por checkbox, <code>aria-checked</code> é usado em vez de <code>aria-selected</code>. O elemento contêiner de um nó da árvore tem o papel <code>group</code>. Os ícones de checkbox e toggle são ocultados dos leitores de tela, pois o elemento pai com papel <code>treeitem</code> e seus atributos são usados em seu lugar para leitores e suporte a teclado. Os atributos <code>aria-setsize</code>, <code>aria-posinset</code> e <code>aria-level</code> são calculados implicitamente e adicionados a cada treeitem.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o primeiro nó selecionado quando o foco entra no componente; se não houver nenhum, o primeiro elemento recebe o foco. Se o foco já estiver dentro do componente, move o foco para o próximo elemento focalizável na sequência de tabulação da página." },
+                              new[] { "shift + tab", "Move o foco para o último nó selecionado quando o foco entra no componente; se não houver nenhum, o primeiro elemento recebe o foco. Se o foco já estiver dentro do componente, move o foco para o elemento focalizável anterior na sequência de tabulação da página." },
+                              new[] { "enter", "Seleciona o nó em foco." },
+                              new[] { "space", "Seleciona o nó em foco." },
+                              new[] { "down arrow", "Move o foco para o próximo nó." },
+                              new[] { "up arrow", "Move o foco para o nó anterior." },
+                              new[] { "right arrow", "Se o nó estiver fechado, abre o nó; caso contrário, move o foco para o primeiro nó filho." },
+                              new[] { "left arrow", "Se o nó estiver aberto, fecha o nó; caso contrário, move o foco para o nó pai." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { TreeModule } from 'primeng/tree';
+        """;
+
+    private const string BasicCode = """
+        <p-tree [value]="files()" class="w-full md:w-[30rem]" />
+        """;
+
+    private const string ControlledCode = """
+        <div class="flex flex-wrap gap-2 mb-6">
+            <p-button icon="pi pi-plus" label="Expand all" (click)="expandAll()" />
+            <p-button icon="pi pi-minus" label="Collapse all" (click)="collapseAll()" />
+        </div>
+        <p-tree [value]="files()" class="w-full md:w-[30rem]" />
+        """;
+
+    private const string SingleCode = """
+        <p-tree [value]="files()" class="w-full md:w-[30rem]" selectionMode="single" [(selection)]="selectedFile" />
+        """;
+
+    private const string MultipleCode = """
+        <div class="flex items-center mb-6 gap-2">
+            <p-toggleswitch inputId="input-metakey" [(ngModel)]="metaKeySelection" />
+            <label for="input-metakey">MetaKey</label>
+        </div>
+        <p-tree [metaKeySelection]="metaKeySelection" [value]="files()" class="w-full md:w-[30rem]" selectionMode="multiple" [(selection)]="selectedFiles" />
+        """;
+
+    private const string CheckboxCode = """
+        <p-tree [value]="files()" selectionMode="checkbox" class="w-full md:w-[30rem]" [(selection)]="selectedFiles" />
+        """;
+
+    private const string EventCode = """
+        <p-tree [value]="files()" class="w-full md:w-[30rem]" selectionMode="single" [(selection)]="selectedFile" (onNodeExpand)="nodeExpand($event)" (onNodeCollapse)="nodeCollapse($event)" (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)" />
+        """;
+
+    private const string LazyCode = """
+        <p-tree class="w-full md:w-[30rem]" [value]="nodes()" loadingMode="icon" (onNodeExpand)="onNodeExpand($event)" />
+        """;
+
+    private const string TemplateCode = """
+        <p-tree [value]="nodes()" class="w-full md:w-[30rem]">
+            <ng-template let-node pTemplate="url">
+                <a [href]="node.data" target="_blank" rel="noopener noreferrer" class="text-surface-700 dark:text-surface-100 hover:text-primary">
+                    {{ node.label }}
+                </a>
+            </ng-template>
+            <ng-template let-node pTemplate="default">
+                <b>{{ node.label }}</b>
+            </ng-template>
+        </p-tree>
+        """;
+
+    private const string FilterCode = """
+        <p-tree [value]="files()" [filter]="true" filterPlaceholder="Lenient Filter" />
+        <p-tree [value]="files2()" [filter]="true" filterMode="strict" filterPlaceholder="Strict Filter" />
+        """;
+
+    private const string PreloadCode = """
+        <p-tree [value]="nodes()" scrollHeight="250px" [virtualScroll]="true" [virtualScrollItemSize]="35" />
+        """;
+
+    private const string LazyVirtualScrollCode = """
+        <p-tree [value]="nodes()" scrollHeight="250px" [virtualScroll]="true" [lazy]="true" [virtualScrollItemSize]="35" (onNodeExpand)="nodeExpand($event)" [loading]="loading()" />
+        """;
+
+    private const string DragDropSingleCode = """
+        <p-tree [value]="files()" class="w-full md:w-[30rem]" [draggableNodes]="true" [droppableNodes]="true" draggableScope="self" droppableScope="self" />
+        """;
+
+    private const string DragDropMultipleCode = """
+        <p-tree [value]="value1()" class="flex-1 border border-surface rounded-lg" [draggableNodes]="true" [droppableNodes]="true" draggableScope="first" droppableScope="none">
+            <ng-template #empty> No Items Left </ng-template>
+        </p-tree>
+        <p-tree [value]="value2()" class="flex-1 border border-surface rounded-lg" [draggableNodes]="true" [droppableNodes]="true" draggableScope="second" droppableScope="first">
+            <ng-template #empty> Drag Nodes Here </ng-template>
+        </p-tree>
+        <p-tree [value]="value3()" class="flex-1 border border-surface rounded-lg" [draggableNodes]="true" [droppableNodes]="true" [droppableScope]="['first', 'second']">
+            <ng-template #empty> Drag Nodes Here </ng-template>
+        </p-tree>
+        """;
+
+    private const string ContextMenuCode = """
+        <p-tree
+            [value]="files()"
+            selectionMode="single"
+            [(selection)]="selectedNode"
+            [(contextMenuSelection)]="contextMenuNode"
+            [contextMenu]="cm"
+            contextMenuSelectionMode="separate"
+        />
+        <p-contextmenu #cm [model]="items" />
+        """;
+}

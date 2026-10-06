@@ -1,0 +1,198 @@
+@page "/knob"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Knob - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Knob"
+              Description="Entrada numérica por dial. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Knob é um componente de entrada e é usado com a diretiva padrão <code>ngModel</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Mín/Máx" Id="minmax">
+            <Description><p>Os limites são configurados com as propriedades <code>min</code> e <code>max</code>, cujos padrões são 0 e 100, respectivamente.</p></Description>
+            <Code><CodeBlock Code="@MinMaxCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Passo" Id="step">
+            <Description><p>O tamanho de cada movimento é definido pela propriedade <code>step</code>.</p></Description>
+            <Code><CodeBlock Code="@StepCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>O rótulo é um template de string que pode ser customizado com a propriedade <code>valueTemplate</code>, tendo 60 como placeholder.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Traço" Id="stroke">
+            <Description><p>A espessura da borda é especificada com a propriedade <code>strokeWidth</code> como um número em pixels.</p></Description>
+            <Code><CodeBlock Code="@StrokeCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanho" Id="size">
+            <Description><p>O diâmetro do knob é definido em pixels usando a propriedade <code>size</code>.</p></Description>
+            <Code><CodeBlock Code="@SizeCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Cor" Id="color">
+            <Description><p>As cores são customizadas com as propriedades <code>textColor</code>, <code>rangeColor</code> e <code>valueColor</code>.</p></Description>
+            <Code><CodeBlock Code="@ColorCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Reativo" Id="reactive">
+            <Description><p>O Knob também pode ser controlado com controles customizados.</p></Description>
+            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Somente Leitura" Id="readonly">
+            <Description><p>Com <code>readonly</code> presente, o valor não pode ser editado.</p></Description>
+            <Code><CodeBlock Code="@ReadonlyCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description><p>No Blazor, a integração acontecerá via <code>EditForm</code> + <code>DataAnnotationsValidator</code>, herdando de <code>OpInputBase&lt;TValue&gt;</code>. Abaixo, o equivalente da referência Angular.</p></Description>
+            <Code><CodeBlock Code="@ReactiveFormsCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template Driven" Id="templatedriven">
+            <Description><p>Uso com formulários template driven do Angular (<code>ngModel</code>).</p></Description>
+            <Code><CodeBlock Code="@TemplateDrivenCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Reactive Forms" Id="reactiveforms">
+            <Description><p>O Knob também pode ser usado com formulários reativos. Neste caso, a propriedade <code>formControlName</code> é usada para vincular o componente a um controle de formulário.</p></Description>
+            <Code><CodeBlock Code="@ReactiveFormsCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description><p>Com <code>disabled</code> presente, uma dica visual é aplicada para indicar que o Knob não pode ser interagido.</p></Description>
+            <Code><CodeBlock Code="@DisabledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente Knob usa o role <code>slider</code> além dos atributos <code>aria-valuemin</code>, <code>aria-valuemax</code> e <code>aria-valuenow</code>. O valor para descrever o componente pode ser definido com as props <code>ariaLabelledBy</code> e <code>ariaLabel</code>.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o slider." },
+                              new[] { "seta esquerda / seta baixo", "Decrementa o valor." },
+                              new[] { "seta direita / seta cima", "Incrementa o valor." },
+                              new[] { "home", "Define o valor mínimo." },
+                              new[] { "end", "Define o valor máximo." },
+                              new[] { "page up", "Incrementa o valor em 10 passos." },
+                              new[] { "page down", "Decrementa o valor em 10 passos." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { KnobModule } from 'primeng/knob';
+        """;
+
+    private const string BasicCode = """
+        <p-knob [(ngModel)]="value" />
+        """;
+
+    private const string MinMaxCode = """
+        <p-knob [(ngModel)]="value" [min]="-50" [max]="50" />
+        """;
+
+    private const string StepCode = """
+        <p-knob [(ngModel)]="value" [step]="10" />
+        """;
+
+    private const string TemplateCode = """
+        <p-knob [(ngModel)]="value" valueTemplate="{value}%" />
+        """;
+
+    private const string StrokeCode = """
+        <p-knob [(ngModel)]="value" [strokeWidth]="5" />
+        """;
+
+    private const string SizeCode = """
+        <p-knob [(ngModel)]="value" [size]="200" />
+        """;
+
+    private const string ColorCode = """
+        <p-knob [(ngModel)]="value" valueColor="SlateGray" rangeColor="MediumTurquoise" />
+        """;
+
+    private const string ReactiveCode = """
+        <p-knob [(ngModel)]="value" size="150" readonly="true"/>
+        <div class="flex gap-2">
+            <p-button icon="pi pi-plus" (click)="value = value+1" [disabled]="value >= 100" />
+            <p-button icon="pi pi-minus" (click)="value = value-1" [disabled]="value <= 0" />
+        </div>
+        """;
+
+    private const string ReadonlyCode = """
+        <p-knob [(ngModel)]="value" [readonly]="true" />
+        """;
+
+    private const string TemplateDrivenCode = """
+        <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col items-center gap-4">
+            <div class="flex flex-col items-center gap-1">
+                <p-knob #model="ngModel" [(ngModel)]="value" [invalid]="isInvalid(model)" name="knob" />
+                @if (isInvalid(model)) {
+                    <p-message severity="error" size="small" variant="simple">{{ getErrorMessage(model) }}</p-message>
+                }
+            </div>
+            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+        </form>
+        """;
+
+    private const string ReactiveFormsCode = """
+        <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col items-center gap-4">
+            <div class="flex flex-col items-center gap-1">
+                <p-knob formControlName="value" [invalid]="isInvalid('value')" />
+                @if (isInvalid('value')) {
+                    <p-message severity="error" size="small" variant="simple">{{ getErrorMessage('value') }}</p-message>
+                }
+            </div>
+            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+        </form>
+        """;
+
+    private const string DisabledCode = """
+        <p-knob [(ngModel)]="value" [disabled]="true" />
+        """;
+}

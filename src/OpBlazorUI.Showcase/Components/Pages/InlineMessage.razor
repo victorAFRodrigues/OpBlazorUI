@@ -1,0 +1,75 @@
+@page "/inlinemessage"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>InlineMessage - OpBlazorUI</PageTitle>
+
+<DocComponent Title="InlineMessage"
+              Description="Mensagem exibida em linha, junto ao conteúdo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O InlineMessage é definido com a tag <code>p-inlinemessage</code> e exibe o conteúdo passado diretamente, podendo conter links e outros elementos em linha.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Severidades" Id="severities">
+            <Description><p>As severidades disponíveis são <code>success</code>, <code>info</code>, <code>warn</code> e <code>error</code>, informadas pela propriedade <code>severity</code>.</p></Description>
+            <Code><CodeBlock Code="@SeveritiesCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente renderiza o conteúdo com <code>role="alert"</code>, para que leitores de tela anunciem a mensagem assim que ela aparecer.</p>
+                <h3>Suporte a teclado</h3>
+                <p>O componente não inclui elementos interativos.</p>
+            </Description>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { InlineMessageModule } from 'primeng/inlinemessage';
+        """;
+
+    private const string BasicCode = """
+        <p-inlinemessage severity="success">Order submitted. <a href="#">View</a></p-inlinemessage>
+        """;
+
+    private const string SeveritiesCode = """
+        <p-inlinemessage severity="success">Success Message</p-inlinemessage>
+        <p-inlinemessage severity="info">Info Message</p-inlinemessage>
+        <p-inlinemessage severity="warn">Warn Message</p-inlinemessage>
+        <p-inlinemessage severity="error">Error Message</p-inlinemessage>
+        """;
+}

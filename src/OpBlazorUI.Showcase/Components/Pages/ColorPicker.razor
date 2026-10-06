@@ -1,0 +1,147 @@
+@page "/colorpicker"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>ColorPicker - OpBlazorUI</PageTitle>
+
+<DocComponent Title="ColorPicker"
+              Description="Seletor de cores com popup ou modo embutido. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular).">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>O ColorPicker é usado como uma entrada controlada pela propriedade <code>ngModel</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Embutido" Id="inline">
+            <Description><p>Por padrão o ColorPicker é exibido como popup; adicione a propriedade <code>inline</code> para esse comportamento.</p></Description>
+            <Code><CodeBlock Code="@InlineCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formato" Id="format">
+            <Description><p>O formato padrão no binding é <code>hex</code>; outros valores possíveis são <code>rgb</code> e <code>hsb</code> pela propriedade <code>format</code>.</p></Description>
+            <Code><CodeBlock Code="@FormatCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description><p>No Blazor, a integração acontecerá via <code>EditForm</code> + <code>DataAnnotationsValidator</code>, herdando de <code>OpInputBase&lt;TValue&gt;</code>.</p></Description>
+            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template Driven" Id="templatedriven">
+            <Description><p>Uso com formulários template driven do Angular (<code>ngModel</code>).</p></Description>
+            <Code><CodeBlock Code="@TemplateDrivenCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Reactive Forms" Id="reactive">
+            <Description><p>Uso com formulários reativos do Angular (<code>formControlName</code>).</p></Description>
+            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description><p>Com <code>disabled</code>, o elemento não pode ser editado nem focado.</p></Description>
+            <Code><CodeBlock Code="@DisabledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>A especificação ainda não cobre um seletor de cores e o uso do seletor nativo não é consistente entre navegadores; por isso o componente ainda não é compatível com leitores de tela.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Caption="Estado fechado (popup)"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o botão do seletor." },
+                              new[] { "space", "Abre o popup e move o foco para o slider de cor." }
+                          })"/>
+                <ApiTable Caption="Popup"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "enter", "Seleciona a cor e fecha o popup." },
+                              new[] { "space", "Seleciona a cor e fecha o popup." },
+                              new[] { "escape", "Fecha o popup e move o foco para o input." }
+                          })"/>
+                <ApiTable Caption="Sliders"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "arrow keys", "Altera a cor." },
+                              new[] { "up / down arrow", "Altera o matiz." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { ColorPickerModule } from 'primeng/colorpicker';
+        """;
+
+    private const string BasicCode = """
+        <p-colorpicker [(ngModel)]="color" />
+        """;
+
+    private const string InlineCode = """
+        <p-colorpicker [(ngModel)]="color" [inline]="true" />
+        """;
+
+    private const string FormatCode = """
+        <p-colorpicker [(ngModel)]="color" inputId="cp-hex" />
+        <p-colorpicker [(ngModel)]="colorRGB" format="rgb" inputId="cp-rgb" />
+        <p-colorpicker [(ngModel)]="colorHSB" format="hsb" inputId="cp-hsb" />
+        """;
+
+    private const string TemplateDrivenCode = """
+        <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
+            <p-colorpicker name="color" [(ngModel)]="color" #colorModel="ngModel" required defaultColor="989898" />
+            @if (colorModel.invalid && (colorModel.touched || exampleForm.submitted)) {
+                <p-message severity="error" size="small" variant="simple">Color is required.</p-message>
+            }
+            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+        </form>
+        """;
+
+    private const string ReactiveCode = """
+        <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+            <p-colorpicker formControlName="color" defaultColor="989898" />
+            @if (isInvalid('color')) {
+                <p-message severity="error" size="small" variant="simple">Color is required.</p-message>
+            }
+            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+        </form>
+        """;
+
+    private const string DisabledCode = """
+        <p-colorpicker [(ngModel)]="color" [disabled]="true" />
+        """;
+}

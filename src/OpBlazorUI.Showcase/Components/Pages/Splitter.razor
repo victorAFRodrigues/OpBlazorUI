@@ -1,0 +1,141 @@
+@page "/splitter"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>Splitter - OpBlazorUI</PageTitle>
+
+<DocComponent Title="Splitter"
+              Description="Separa e redimensiona painéis. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Horizontal" Id="horizontal">
+            <Description><p>O Splitter exige dois componentes SplitterPanel como filhos, exibidos horizontalmente por padrão.</p></Description>
+            <Code><CodeBlock Code="@HorizontalCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanho" Id="size">
+            <Description><p>Quando nenhum <code>panelSizes</code> é definido, os painéis são divididos 50/50; use a propriedade <code>panelSizes</code> para definir larguras relativas, por exemplo, <code>[25, 75]</code>.</p></Description>
+            <Code><CodeBlock Code="@SizeCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vertical" Id="vertical">
+            <Description><p>Os painéis são exibidos empilhados ao definir <code>layout</code> como <code>vertical</code>.</p></Description>
+            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Aninhado" Id="nested">
+            <Description><p>Splitters podem ser combinados para criar layouts avançados.</p></Description>
+            <Code><CodeBlock Code="@NestedCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>A barra do Splitter define <code>separator</code> como o role, com <code>aria-orientation</code> definido como horizontal ou vertical.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pela barra do Splitter." },
+                              new[] { "seta para baixo", "Move um Splitter vertical para baixo." },
+                              new[] { "seta para cima", "Move um Splitter vertical para cima." },
+                              new[] { "seta para a esquerda", "Move um Splitter vertical para a esquerda." },
+                              new[] { "seta para a direita", "Move um Splitter vertical para a direita." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { SplitterModule } from 'primeng/splitter';
+        """;
+
+    private const string HorizontalCode = """
+        <p-splitter [style]="{ height: '300px' }" class="mb-8">
+            <ng-template #panel>
+                <div class="flex items-center justify-center h-full">Panel 1</div>
+            </ng-template>
+            <ng-template #panel>
+                <div class="flex items-center justify-center h-full">Panel 2</div>
+            </ng-template>
+        </p-splitter>
+        """;
+
+    private const string SizeCode = """
+        <p-splitter [panelSizes]="[25, 75]" [style]="{ height: '300px' }" class="mb-8">
+            <ng-template #panel>
+                <div class="flex items-center justify-center h-full">Panel 1</div>
+            </ng-template>
+            <ng-template #panel>
+                <div class="flex items-center justify-center h-full">Panel 2</div>
+            </ng-template>
+        </p-splitter>
+        """;
+
+    private const string VerticalCode = """
+        <p-splitter [style]="{ height: '300px' }" class="mb-8" layout="vertical">
+            <ng-template #panel>
+                <div class="flex items-center justify-center h-full">Panel 1</div>
+            </ng-template>
+            <ng-template #panel>
+                <div class="flex items-center justify-center h-full">Panel 2</div>
+            </ng-template>
+        </p-splitter>
+        """;
+
+    private const string NestedCode = """
+        <p-splitter [style]="{ height: '300px' }" [panelSizes]="[20, 80]" [minSizes]="[10, 0]" class="mb-8">
+            <ng-template #panel>
+                <div class="col flex w-full items-center justify-center">Panel 1</div>
+            </ng-template>
+            <ng-template #panel>
+                <p-splitter layout="vertical" [panelSizes]="[50, 50]">
+                    <ng-template #panel>
+                        <div style="flex-grow: 1;" class="flex items-center justify-center">Panel 2</div>
+                    </ng-template>
+                    <ng-template #panel>
+                        <p-splitter [panelSizes]="[20, 80]">
+                            <ng-template #panel>
+                                <div class="col h-full flex items-center justify-center">Panel 3</div>
+                            </ng-template>
+                            <ng-template #panel>
+                                <div class="col h-full flex items-center justify-center">Panel 4</div>
+                            </ng-template>
+                        </p-splitter>
+                    </ng-template>
+                </p-splitter>
+            </ng-template>
+        </p-splitter>
+        """;
+}
