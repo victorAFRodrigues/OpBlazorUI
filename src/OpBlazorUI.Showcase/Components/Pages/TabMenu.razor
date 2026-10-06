@@ -1,0 +1,156 @@
+@page "/tabmenu"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>TabMenu - OpBlazorUI</PageTitle>
+
+<DocComponent Title="TabMenu"
+              Description="TabMenu é um componente de navegação em abas que exibe itens de menu horizontalmente. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>TabMenu requer uma coleção de itens de menu como seu <code>model</code>.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Comando" Id="command">
+            <Description><p>A propriedade <code>command</code> de um item de menu define o callback executado quando o item é ativado por clique ou por evento de teclado.</p></Description>
+            <Code><CodeBlock Code="@CommandCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Roteamento" Id="router">
+            <Description><p>Os itens de menu suportam navegação via <code>routerLink</code>, roteamento programático usando <code>command</code> ou URLs externas.</p></Description>
+            <Code><CodeBlock Code="@RouterCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Item Desabilitado" Id="disabled">
+            <Description><p>Um item de menu pode ser desabilitado definindo <code>disabled</code> como <code>true</code> em seu modelo.</p></Description>
+            <Code><CodeBlock Code="@DisabledCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente TabMenu usa o papel <code>tablist</code>, e o valor para descrever o menu pode ser informado via <code>aria-labelledby</code> ou <code>aria-label</code>. Cada item de lista tem o papel <code>presentation</code>, enquanto os elementos âncora têm o papel <code>tab</code> com <code>aria-label</code> referindo-se ao rótulo do item e <code>aria-disabled</code> definido caso o item esteja desabilitado.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Adiciona foco à aba ativa quando o foco entra no menu. Se o foco já estiver dentro do menu, move o foco para o próximo item focável na sequência de tabulação da página." },
+                              new[] { "enter", "Ativa a aba focada." },
+                              new[] { "space", "Ativa a aba focada." },
+                              new[] { "down arrow", "Move o foco para a próxima aba." },
+                              new[] { "up arrow", "Move o foco para a aba anterior." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { TabMenuModule } from 'primeng/tabmenu';
+        """;
+
+    private const string BasicCode = """
+        <p-tabMenu [model]="items" />
+
+        items = [
+            { label: 'Home', icon: 'pi pi-home' },
+            { label: 'Calendar', icon: 'pi pi-calendar' },
+            { label: 'Edit', icon: 'pi pi-pencil' },
+            { label: 'Documentation', icon: 'pi pi-book' },
+            { label: 'Settings', icon: 'pi pi-cog' }
+        ];
+        """;
+
+    private const string CommandCode = """
+        items = [
+            {
+                label: 'Home',
+                icon: 'pi pi-home'
+            },
+            {
+                label: 'Save',
+                icon: 'pi pi-save',
+                command: () => {
+                    this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Record saved' });
+                }
+            }
+        ];
+        """;
+
+    private const string RouterCode = """
+        items = [
+            {
+                label: 'Home',
+                icon: 'pi pi-home',
+                routerLink: '/'
+            },
+            {
+                label: 'Calendar',
+                icon: 'pi pi-calendar',
+                routerLink: '/calendar'
+            },
+            {
+                label: 'Programmatic',
+                icon: 'pi pi-link',
+                command: () => {
+                    this.router.navigate(['/settings']);
+                }
+            },
+            {
+                label: 'External',
+                icon: 'pi pi-home',
+                url: 'https://angular.dev/'
+            }
+        ];
+        """;
+
+    private const string DisabledCode = """
+        items = [
+            {
+                label: 'Home',
+                icon: 'pi pi-home'
+            },
+            {
+                label: 'Calendar',
+                icon: 'pi pi-calendar',
+                disabled: true
+            },
+            {
+                label: 'Settings',
+                icon: 'pi pi-cog'
+            }
+        ];
+        """;
+}
