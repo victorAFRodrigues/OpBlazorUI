@@ -81,12 +81,12 @@ public static class AppMenu
                         GroupItem("Checkbox", "/checkbox"), GroupItem("ColorPicker"),
                         GroupItem("DatePicker", "/datepicker"), GroupItem("Editor", "/editor"),
                         GroupItem("FloatLabel", "/floatlabel"), GroupItem("IconField", "/iconfield"),
-                        GroupItem("IftaLabel", "/iftalabel"), GroupItem("InputGroup", "/inputgroup"), GroupItem("InputMask", "/inputmask"),
+                        GroupItem("IftaLabel", "/iftalabel"), GroupItem("InputChips"), GroupItem("InputGroup", "/inputgroup"), GroupItem("InputMask", "/inputmask"),
                         GroupItem("InputNumber", "/inputnumber"), GroupItem("InputOtp", "/inputotp"),
-                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"),
+                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"), GroupItem("Knob"),
                         GroupItem("Listbox", "/listbox"), GroupItem("MultiSelect", "/multiselect"),
                         GroupItem("Password", "/password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating", "/rating"),
-                        GroupItem("Select", "/select"), GroupItem("SelectButton", "/selectbutton"),
+                        GroupItem("Select", "/select"), GroupItem("SelectButton", "/selectbutton"), GroupItem("Slider"),
                         GroupItem("Textarea"),
                         GroupItem("ToggleButton", "/togglebutton"), GroupItem("ToggleSwitch", "/toggleswitch"),
                         GroupItem("TreeSelect", "/treeselect")
@@ -102,7 +102,7 @@ public static class AppMenu
                     Label = "Data",
                     Items =
                     [
-                        GroupItem("DataView"), GroupItem("OrderList"),
+                        GroupItem("DataView"), GroupItem("OrderList"), GroupItem("OrganizationChart"),
                         GroupItem("Paginator", "/paginator"), GroupItem("PickList"), GroupItem("Table", "/table"),
                         GroupItem("Timeline"), GroupItem("Tree"), GroupItem("TreeTable"), GroupItem("VirtualScroller", "/virtualscroller")
                     ]
@@ -114,7 +114,7 @@ public static class AppMenu
                     [
                         GroupItem("Accordion"), GroupItem("Card", "/card"), GroupItem("Divider", "/divider"),
                         GroupItem("Fieldset"), GroupItem("Panel"), GroupItem("ScrollPanel"),
-                        GroupItem("Splitter"), GroupItem("Stepper"), GroupItem("Tabs"), GroupItem("Toolbar")
+                        GroupItem("Splitter"), GroupItem("Stepper"), GroupItem("Steps"), GroupItem("Tabs"), GroupItem("TabView"), GroupItem("Toolbar")
                     ]
                 },
                 new AppMenuGroup
@@ -122,7 +122,7 @@ public static class AppMenu
                     Label = "Overlay",
                     Items =
                     [
-                        GroupItem("ConfirmDialog"), GroupItem("ConfirmPopup"), GroupItem("Dialog", "/dialog"),
+                        GroupItem("ConfirmDialog", "/confirmdialog"), GroupItem("ConfirmPopup"), GroupItem("Dialog", "/dialog"),
                         GroupItem("Drawer", "/drawer"), GroupItem("DynamicDialog"), GroupItem("Popover", "/popover"),
                         GroupItem("Tooltip", "/tooltip")
                     ]
@@ -137,9 +137,9 @@ public static class AppMenu
                     Label = "Menu",
                     Items =
                     [
-                        GroupItem("Breadcrumb"), GroupItem("ContextMenu"),
+                        GroupItem("Breadcrumb"), GroupItem("ContextMenu"), GroupItem("Dock"),
                         GroupItem("Menu", "/menu"), GroupItem("Menubar"), GroupItem("MegaMenu"),
-                        GroupItem("PanelMenu"), GroupItem("TieredMenu")
+                        GroupItem("PanelMenu"), GroupItem("TabMenu"), GroupItem("TieredMenu")
                     ]
                 },
                 new AppMenuGroup
@@ -150,7 +150,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Messages",
-                    Items = [GroupItem("Message", "/message"), GroupItem("Toast", "/toast")]
+                    Items = [GroupItem("InlineMessage"), GroupItem("Message", "/message"), GroupItem("Toast", "/toast")]
                 },
                 new AppMenuGroup
                 {
@@ -167,8 +167,8 @@ public static class AppMenu
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
                         GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace"), GroupItem("MeterGroup"),
                         GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
-                        GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
-                        GroupItem("Tag", "/tag")
+                        GroupItem("Ripple"), GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
+                        GroupItem("Tag", "/tag"), GroupItem("Terminal")
                     ]
                 },
                 new AppMenuGroup
