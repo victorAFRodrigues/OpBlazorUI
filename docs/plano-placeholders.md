@@ -79,7 +79,7 @@ InlineMessage** — placeholders com seções próprias.
 |-------|----------|--------|
 | B1 — P0 Form (7) | Textarea, Fieldset, Slider, InputChips, Inplace, ColorPicker, FileUpload | ✅ Concluído |
 | B2 — P0 Nav (13) | Tabs, TabMenu, TabView, Accordion, Breadcrumb, Toolbar, ContextMenu, Menubar, TieredMenu, PanelMenu, MegaMenu, Stepper, Steps | ✅ Concluído |
-| B3 — P1 (9) | Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline | ⏳ Pendente |
+| B3 — P1 (9) | Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline | ✅ Concluído |
 | B4 — P2 (8) | Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare | ⏳ Pendente |
 | B5 — P3 (4) | Knob, Terminal, OrganizationChart, Ripple | ⏳ Pendente |
 | B6 — Utilitários (5) | DynamicDialog, StyleClass, Fluid, Chart.js, AnimateOnScroll | ⏳ Pendente |
@@ -131,3 +131,15 @@ Ordem de execução pelo ranking (§3):
   `/contextmenu`, `/menubar`, `/tieredmenu`, `/panelmenu`, `/megamenu`, `/stepper`, `/steps`.
 - Verificação: build 0 erros; `Tabs`, `TabMenu`, `PanelMenu` e `Steps` renderizam no Showcase sem
   UI de erro do Blazor.
+
+### B3 — P1 Dados/feedback ✅
+
+- Páginas criadas: `Tree.razor`, `TreeTable.razor`, `Timeline.razor`, `DataView.razor`,
+  `OrderList.razor`, `PickList.razor`, `ConfirmPopup.razor`, `MeterGroup.razor`,
+  `InlineMessage.razor`.
+- `InlineMessage` sem referência upstream: seções próprias (Basic, Severidades, Acessibilidade),
+  com aviso em `KnownIssues`.
+- `AppMenu.cs`: rotas `/tree`, `/treetable`, `/timeline`, `/dataview`, `/orderlist`, `/picklist`,
+  `/confirmpopup`, `/metergroup`, `/inlinemessage`.
+- Verificação: build 0 erros; `Tree`, `DataView` e `InlineMessage` renderizam no Showcase sem UI de
+  erro do Blazor.
