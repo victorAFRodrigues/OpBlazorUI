@@ -8,7 +8,7 @@
 
 ## Status geral
 
-- **Fase B (placeholders):** 3 de 6 lotes concluídos — **29 de 46 páginas** criadas
+- **Fase B (placeholders):** 4 de 6 lotes concluídos — **37 de 46 páginas** criadas
   (41 componentes + 5 utilitários).
 - **Fase A (melhorias):** não iniciada.
 - **Branch:** `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`). Push/PR pendentes.
@@ -18,7 +18,7 @@
 | B1 — P0 Formulário | 7 | `03e5a93` |
 | B2 — P0 Navegação | 13 | `5a2bee0` |
 | B3 — P1 Dados/feedback | 9 | `8ead184` |
-| B4 — P2 Layout/mídia | 8 | pendente |
+| B4 — P2 Layout/mídia | 8 | `c50edbc` |
 | B5 — P3 Baixa | 4 | pendente |
 | B6 — Utilitários | 5 | pendente |
 
@@ -98,7 +98,7 @@ InlineMessage** — placeholders com seções próprias.
 | B1 — P0 Form (7) | Textarea, Fieldset, Slider, InputChips, Inplace, ColorPicker, FileUpload | ✅ Concluído |
 | B2 — P0 Nav (13) | Tabs, TabMenu, TabView, Accordion, Breadcrumb, Toolbar, ContextMenu, Menubar, TieredMenu, PanelMenu, MegaMenu, Stepper, Steps | ✅ Concluído |
 | B3 — P1 (9) | Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline | ✅ Concluído |
-| B4 — P2 (8) | Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare | ⏳ Pendente |
+| B4 — P2 (8) | Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare | ✅ Concluído |
 | B5 — P3 (4) | Knob, Terminal, OrganizationChart, Ripple | ⏳ Pendente |
 | B6 — Utilitários (5) | DynamicDialog, StyleClass, Fluid, Chart.js, AnimateOnScroll | ⏳ Pendente |
 
@@ -163,3 +163,15 @@ Ordem de execução pelo ranking (§3):
 - Verificação: build 0 erros; `Tree`, `DataView` e `InlineMessage` renderizam no Showcase sem UI de
   erro do Blazor.
 - Git: commit `docs(OpBlazorUI.Showcase): adicionar placeholders do P1 (Dados/feedback)` (`8ead184`).
+
+### B4 — P2 Layout/mídia ✅
+
+- Páginas criadas: `Panel.razor`, `Splitter.razor`, `ScrollPanel.razor`, `Dock.razor`,
+  `Galleria.razor`, `Carousel.razor`, `Image.razor`, `ImageCompare.razor`.
+- `Image`: a referência upstream fica em `doc/Image` (pasta capitalizada), que o `fetch.sh` não
+  localiza — as docs foram baixadas manualmente.
+- `AppMenu.cs`: rotas `/panel`, `/splitter`, `/scrollpanel`, `/dock`, `/galleria`, `/carousel`,
+  `/image`, `/imagecompare`.
+- Verificação: build 0 erros; `Panel`, `Galleria` e `Image` renderizam no Showcase sem UI de erro do
+  Blazor.
+- Git: commit `docs(OpBlazorUI.Showcase): adicionar placeholders do P2 (Layout/mídia)` (`c50edbc`).
