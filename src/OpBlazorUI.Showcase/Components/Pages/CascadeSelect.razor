@@ -3,172 +3,122 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.CascadeSelect
 @using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.IftaLabel
 @using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.Message
 @using System.ComponentModel.DataAnnotations
+
+<PageTitle>CascadeSelect - OpBlazorUI</PageTitle>
 
 <DocComponent Title="CascadeSelect"
               Description="O CascadeSelect exibe uma estrutura aninhada de opções para selecionar um valor em uma hierarquia (ex.: País → Estado → Cidade).">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O elemento raiz possui <code>role="combobox"</code> além de <code>aria-haspopup</code> e <code>aria-expanded</code>.
-                A relação entre o combobox e o popup é feita via <code>aria-controls</code>, que aponta para o <code>id</code> da lista.
-                A lista usa <code>role="tree"</code>; cada item é um <code>treeitem</code> com <code>aria-label</code>, <code>aria-selected</code>
-                e <code>aria-expanded</code>, e o contêiner dos filhos usa <code>role="group"</code>. <code>aria-setsize</code>, <code>aria-posinset</code>
-                e <code>aria-level</code> são calculados implicitamente.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
-            <Description>
-                O CascadeSelect precisa de um valor vinculado e uma coleção de objetos aninhados. <code>OptionGroupLabel</code> define o texto da categoria,
-                <code>OptionGroupChildren</code> define os níveis de filhos (a ordem importa e deve corresponder à hierarquia) e <code>OptionLabel</code> define o rótulo da folha.
+                O CascadeSelect exige um valor para vincular e uma coleção de objetos aninhados. Use
+                <code>OptionGroupLabel</code> para o texto de uma categoria, <code>OptionLabel</code> para o rótulo
+                das folhas e <code>OptionGroupChildren</code> para os nomes das propriedades de cada nível — a ordem
+                importa e deve corresponder à hierarquia dos dados.
             </Description>
             <ChildContent>
                 <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
                                  OptionLabel="Cname" OptionGroupLabel="Name"
                                  OptionGroupChildren="@GroupChildren"
-                                 Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56"/>
+                                 Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
                 <div class="mt-2 text-sm">Selecionado: @(_selectedCity?.Cname ?? "—")</div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Limpar">
+        <DocSection Label="Template" Id="template">
             <Description>
-                Com <code>ShowClear</code>, um ícone de limpar aparece para remover o valor selecionado.
+                Por padrão o rótulo da opção é o texto exibido no item. Para conteúdo customizado defina
+                <code>ItemTemplate</code>, cujo contexto é a instância da opção (grupo ou folha). Há ainda os slots
+                <code>SelectedItemTemplate</code>, <code>DropdownIconTemplate</code>, <code>LoadingIconTemplate</code>,
+                <code>ClearIconTemplate</code>, <code>OptionGroupIconTemplate</code>, <code>HeaderTemplate</code> e
+                <code>FooterTemplate</code>.
             </Description>
             <ChildContent>
-                <OpCascadeSelect TValue="City" @bind-Value="_selectedCity2" Options="Countries"
-                                 OptionLabel="Cname" OptionGroupLabel="Name"
-                                 OptionGroupChildren="@GroupChildren"
-                                 ShowClear="true" Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@ClearCode"/></Code>
-        </DocSection>
+                <div class="flex flex-col items-center gap-4">
+                    <OpCascadeSelect TValue="City" @bind-Value="_selectedTemplate" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Placeholder="Selecione uma Cidade" StyleClass="w-56">
+                        <ItemTemplate Context="opt">
+                            <div style="display:flex; align-items:center; gap:.5rem;">
+                                <span style="color:var(--p-primary-color)">@NodeMark(opt)</span>
+                                <span>@NodeLabel(opt)</span>
+                            </div>
+                        </ItemTemplate>
+                        <HeaderTemplate>
+                            <div style="padding:.5rem .75rem; font-weight:500;">Países disponíveis</div>
+                        </HeaderTemplate>
+                        <FooterTemplate>
+                            <div style="padding:.5rem .75rem;">
+                                <OpButton Label="Adicionar Novo" Fluid="true" Severity="secondary" Text="true" Size="small"/>
+                            </div>
+                        </FooterTemplate>
+                    </OpCascadeSelect>
 
-        <DocSection Label="Desabilitado / Carregando">
-            <Description>
-                <code>Disabled</code> impede a interação; <code>Loading</code> mostra um spinner no lugar do ícone do dropdown.
-            </Description>
-            <ChildContent>
-                <div class="flex gap-3">
-                    <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname"
-                                     OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Disabled="true" Placeholder="Desabilitado" StyleClass="w-48"/>
-                    <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname"
-                                     OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Loading="true" Placeholder="Carregando..." StyleClass="w-48"/>
+                    <OpCascadeSelect TValue="City" @bind-Value="_selectedTemplate2" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Placeholder="Valor e ícone customizados" StyleClass="w-56">
+                        <SelectedItemTemplate Context="city">
+                            <span style="display:flex; align-items:center; gap:.5rem;">
+                                <span>@city.Cname</span>
+                                <small style="opacity:.6">@city.Code</small>
+                            </span>
+                        </SelectedItemTemplate>
+                        <DropdownIconTemplate>
+                            <span class="pi pi-map" aria-hidden="true"></span>
+                        </DropdownIconTemplate>
+                    </OpCascadeSelect>
                 </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@DisabledCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Preenchido / Inválido">
-            <Description>
-                Use <code>Variant="filled"</code> para o fundo preenchido e <code>Invalid</code> para indicar estado de erro.
-            </Description>
-            <ChildContent>
-                <div class="flex flex-wrap gap-3">
-                    <OpCascadeSelect TValue="City" @bind-Value="_selectedCity3" Options="Countries"
-                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Variant="filled" Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
-                    <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname"
-                                     OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Invalid="true" Placeholder="Inválido" StyleClass="w-56"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@FilledCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Fluido">
-            <Description>
-                Com <code>Fluid</code>, o componente ocupa toda a largura do contêiner.
-            </Description>
-            <ChildContent>
-                <OpCascadeSelect TValue="City" @bind-Value="_selectedCity4" Options="Countries"
-                                 OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                 Fluid="true" Placeholder="Selecione uma Cidade"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@FluidCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Tamanhos">
-            <Description>
-                <code>Size="small"</code> e <code>Size="large"</code> oferecem variações além do tamanho padrão.
-            </Description>
-            <ChildContent>
-                <div class="flex flex-col items-center gap-3">
-                    <OpCascadeSelect TValue="City" @bind-Value="_selectedSmall" Options="Countries"
-                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Size="small" Placeholder="Small" StyleClass="w-56"/>
-                    <OpCascadeSelect TValue="City" @bind-Value="_selectedNormal" Options="Countries"
-                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Placeholder="Normal" StyleClass="w-56"/>
-                    <OpCascadeSelect TValue="City" @bind-Value="_selectedLarge" Options="Countries"
-                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Size="large" Placeholder="Large" StyleClass="w-56"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@SizesCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template">
-            <Description>
-                O rótulo padrão pode ser substituído por <code>ItemTemplate</code> (o contexto é a instância da opção, grupo ou folha).
-                Também há os slots <code>HeaderTemplate</code>, <code>FooterTemplate</code>, <code>DropdownIconTemplate</code> e <code>OptionGroupIconTemplate</code>.
-            </Description>
-            <ChildContent>
-                <OpCascadeSelect TValue="City" @bind-Value="_selectedCity5" Options="Countries"
-                                 OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                 Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56">
-                    <ItemTemplate Context="opt">
-                        <div style="display:flex; align-items:center; gap:.5rem;">
-                            <span style="color:var(--p-primary-color)">@(opt is Country ? "◆" : opt is State ? "◦" : "•")</span>
-                            <span>@NodeLabel(opt)</span>
-                        </div>
-                    </ItemTemplate>
-                    <HeaderTemplate>
-                        <div style="padding:.5rem .75rem; font-weight:500;">Países disponíveis</div>
-                    </HeaderTemplate>
-                    <FooterTemplate>
-                        <div style="padding:.5rem .75rem;">
-                            <OpButton Label="Adicionar Novo" Fluid="true" Severity="secondary" Text="true" Size="small"/>
-                        </div>
-                    </FooterTemplate>
-                </OpCascadeSelect>
             </ChildContent>
             <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="FloatLabel">
+        <DocSection Label="Carregando" Id="loading">
             <Description>
-                Combine com <code>OpFloatLabel</code> para obter um rótulo flutuante. Use <code>InputId</code> no componente e <code>label for</code> correspondente.
+                O estado de carregamento é ativado com <code>Loading</code>, que troca o ícone do dropdown por um
+                spinner. Diferente do Button, o CascadeSelect continua recebendo foco e cliques — use-o apenas como
+                indicação visual.
+            </Description>
+            <ChildContent>
+                <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                                 OptionGroupChildren="@GroupChildren" Loading="true" Placeholder="Carregando..."
+                                 StyleClass="w-56"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoadingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="FloatLabel" Id="float-label">
+            <Description>
+                Combine com <code>OpFloatLabel</code> para obter um rótulo flutuante. Informe <code>InputId</code> no
+                CascadeSelect e um <code>&lt;label for&gt;</code> correspondente; as variantes <code>over</code>
+                (padrão), <code>in</code> e <code>on</code> mudam a posição do rótulo.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap justify-center items-end gap-4">
-                    <OpFloatLabel class="w-full md:w-56">
-                        <OpCascadeSelect TValue="City" @bind-Value="_selectedCity6" InputId="over_label"
+                    <OpFloatLabel class="w-56">
+                        <OpCascadeSelect TValue="City" @bind-Value="_selectedOver" InputId="over_label"
                                          Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
-                                         OptionGroupChildren="@GroupChildren" class="w-full"/>
+                                         OptionGroupChildren="@GroupChildren" StyleClass="w-full"/>
                         <label for="over_label">Sobre</label>
                     </OpFloatLabel>
-                    <OpFloatLabel class="w-full md:w-56" Variant="in">
-                        <OpCascadeSelect TValue="City" @bind-Value="_selectedCity7" InputId="in_label"
+                    <OpFloatLabel class="w-56" Variant="in">
+                        <OpCascadeSelect TValue="City" @bind-Value="_selectedIn" InputId="in_label"
                                          Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
-                                         OptionGroupChildren="@GroupChildren" class="w-full"/>
+                                         OptionGroupChildren="@GroupChildren" StyleClass="w-full"/>
                         <label for="in_label">Dentro</label>
                     </OpFloatLabel>
-                    <OpFloatLabel class="w-full md:w-56" Variant="on">
-                        <OpCascadeSelect TValue="City" @bind-Value="_selectedCity8" InputId="on_label"
+                    <OpFloatLabel class="w-56" Variant="on">
+                        <OpCascadeSelect TValue="City" @bind-Value="_selectedOn" InputId="on_label"
                                          Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
-                                         OptionGroupChildren="@GroupChildren" class="w-full"/>
+                                         OptionGroupChildren="@GroupChildren" StyleClass="w-full"/>
                         <label for="on_label">Na borda</label>
                     </OpFloatLabel>
                 </div>
@@ -176,100 +126,246 @@
             <Code><CodeBlock Code="@FloatLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Formulário">
+        <DocSection Label="IftaLabel" Id="ifta-label">
             <Description>
-                O CascadeSelect funciona com <code>EditForm</code> e <code>DataAnnotationsValidator</code>. A propriedade vinculada
-                (<code>@@bind-Value</code>) participa da validação do modelo.
+                O <code>OpIftaLabel</code> cria um rótulo alinhado no topo, dentro do campo. A ligação é a mesma do
+                FloatLabel: <code>InputId</code> no componente e <code>&lt;label for&gt;</code> no contêiner.
             </Description>
             <ChildContent>
-                <EditForm Model="_formModel" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit" class="flex flex-col gap-2">
-                    <DataAnnotationsValidator/>
-                    <OpCascadeSelect TValue="City" @bind-Value="_formModel.SelectedCity" Options="Countries"
-                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Invalid="@(_submitted && _formModel.SelectedCity is null)"
-                                     Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56"/>
-                    <ValidationMessage For="() => _formModel.SelectedCity"/>
-                    <div>
-                        <OpButton Label="Enviar" Type="submit" Severity="secondary"/>
-                    </div>
-                </EditForm>
-                @if (_success)
-                {
-                    <div class="mt-3">
-                        <OpMessage Severity="success" Size="small" Variant="simple">Formulário enviado com sucesso.</OpMessage>
-                    </div>
-                }
+                <OpIftaLabel class="w-56">
+                    <OpCascadeSelect TValue="City" @bind-Value="_selectedIfta" InputId="cs_city"
+                                     Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                                     OptionGroupChildren="@GroupChildren" StyleClass="w-full"/>
+                    <label for="cs_city">Cidade</label>
+                </OpIftaLabel>
             </ChildContent>
-            <Code><CodeBlock Code="@FormCode"/></Code>
+            <Code><CodeBlock Code="@IftaLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícone de Limpar" Id="clearicon">
+            <Description>
+                Com <code>ShowClear</code>, um ícone de limpar é exibido assim que houver um valor selecionado,
+                permitindo removê-lo.
+            </Description>
+            <ChildContent>
+                <OpCascadeSelect TValue="City" @bind-Value="_selectedClear" Options="Countries"
+                                 OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                 ShowClear="true" Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ClearCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos" Id="sizes">
+            <Description>
+                O CascadeSelect oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao
+                padrão, via propriedade <code>Size</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpCascadeSelect TValue="City" @bind-Value="_selectedSmall" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Size="small" Placeholder="Pequeno" StyleClass="w-56"/>
+                    <OpCascadeSelect TValue="City" @bind-Value="_selectedNormal" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Placeholder="Normal" StyleClass="w-56"/>
+                    <OpCascadeSelect TValue="City" @bind-Value="_selectedLarge" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Size="large" Placeholder="Grande" StyleClass="w-56"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Largura Total" Id="fluid">
+            <Description>
+                Com <code>Fluid="true"</code> o componente ocupa toda a largura do contêiner.
+            </Description>
+            <ChildContent>
+                <div style="width:100%;">
+                    <OpCascadeSelect TValue="City" @bind-Value="_selectedFluid" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Fluid="true" Placeholder="Selecione uma Cidade"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Preenchido" Id="filled">
+            <Description>
+                Defina <code>Variant="filled"</code> para exibir o componente com maior ênfase visual do que o estilo
+                <code>outlined</code> padrão.
+            </Description>
+            <ChildContent>
+                <OpCascadeSelect TValue="City" @bind-Value="_selectedFilled" Options="Countries"
+                                 OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                 Variant="filled" Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Com <code>Disabled="true"</code> o componente não pode ser editado nem focado.
+            </Description>
+            <ChildContent>
+                <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                                 OptionGroupChildren="@GroupChildren" Disabled="true" Placeholder="Desabilitado"
+                                 StyleClass="w-56"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado <code>Invalid="true"</code> indica falha de validação e aplica a classe <code>p-invalid</code>.
+                Dentro de um <code>EditForm</code> esse estado é calculado automaticamente a partir das mensagens do
+                <code>EditContext</code>, então não é preciso informar <code>Invalid</code> manualmente.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpCascadeSelect TValue="City" @bind-Value="_invalid1" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Invalid="@(_invalid1 is null)" Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
+                    <OpCascadeSelect TValue="City" @bind-Value="_invalid2" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Invalid="@(_invalid2 is null)" Variant="filled"
+                                     Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+            <Description>
+                No Blazor não há a distinção do Angular entre template driven e reactive forms: ambos usam
+                <code>EditForm</code>. Aqui o vínculo por <code>@@bind-Value</code> registra o campo no
+                <code>EditContext</code> e o <code>DataAnnotationsValidator</code> valida o modelo — equivalente ao
+                <code>ngModel</code> com <code>required</code>.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpCascadeSelect TValue="City" @bind-Value="_tdModel.City" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
+                    <ValidationMessage For="() => _tdModel.City"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_tdSubmitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_tdModel.City?.Cname</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Reactive)" Id="reactive">
+            <Description>
+                O equivalente ao <code>formControlName</code> é controlar o <code>EditContext</code> explicitamente.
+                Neste exemplo o contexto e um <code>ValidationMessageStore</code> são criados no código e a mensagem é
+                adicionada no envio, sem depender de DataAnnotations.
+            </Description>
+            <ChildContent>
+                <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
+                    <OpCascadeSelect TValue="City" @bind-Value="_reactiveModel.City" Options="Countries"
+                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                                     Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
+                    <ValidationMessage For="() => _reactiveModel.City"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_reactiveSubmitted && _reactiveModel.City is not null)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_reactiveModel.City.Cname</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O valor que descreve o componente pode ser informado com <code>AriaLabelledBy</code> ou
+                    <code>AriaLabel</code>. O campo tem o papel <code>combobox</code>, além de <code>aria-haspopup</code>
+                    e <code>aria-expanded</code>; a relação entre o combobox e o popup é criada por
+                    <code>aria-controls</code>, que aponta para o <code>id</code> da lista.
+                </p>
+                <p>
+                    A lista usa o papel <code>tree</code> e cada item é um <code>treeitem</code> com
+                    <code>aria-label</code>, <code>aria-selected</code> e <code>aria-expanded</code>. O contêiner de um
+                    nó tem o papel <code>group</code>, e <code>aria-setsize</code>, <code>aria-posinset</code> e
+                    <code>aria-level</code> são calculados implicitamente em cada <code>treeitem</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Caption="Estado fechado"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o cascadeselect." },
+                              new[] { "space", "Abre o popup e move o foco para a opção selecionada; se não houver, a primeira recebe o foco." },
+                              new[] { "down arrow", "Abre o popup e move o foco para a opção selecionada; se não houver, a primeira recebe o foco." }
+                          })"/>
+                <ApiTable Caption="Popup aberto"
+                          Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Fecha o popup e move o foco para o próximo elemento tabulável." },
+                              new[] { "shift + tab", "Fecha o popup e move o foco para o elemento tabulável anterior." },
+                              new[] { "enter", "Seleciona a opção focada e fecha o popup." },
+                              new[] { "space", "Seleciona a opção focada e fecha o popup." },
+                              new[] { "escape", "Fecha o popup e move o foco para o cascadeselect." },
+                              new[] { "down arrow", "Move o foco para a próxima opção." },
+                              new[] { "up arrow", "Move o foco para a opção anterior." },
+                              new[] { "right arrow", "Se a opção estiver fechada, abre; caso contrário, move o foco para o primeiro filho." },
+                              new[] { "left arrow", "Se a opção estiver aberta, fecha; caso contrário, move o foco para o pai." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
-            <Description>
-                Parâmetros públicos do componente. A hierarquia é controlada por <code>OptionGroupLabel</code> e <code>OptionGroupChildren</code> (array de níveis).
-            </Description>
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Options", "IReadOnlyList&lt;object&gt;?", "null", "Coleção raiz de itens (os nós do primeiro nível)." },
                               new[] { "OptionLabel", "string?", "null", "Nome da propriedade usada como rótulo das folhas." },
-                              new[] { "OptionValue", "string?", "null", "Nome da propriedade usada como valor. Se omitido, o próprio item é comparado." },
-                              new[] { "OptionDisabled", "string?", "null", "Propriedade booleana que desabilita itens específicos." },
-                              new[] { "OptionGroupLabel", "string", "label", "Propriedade usada como rótulo dos grupos (categorias)." },
-                              new[] { "OptionGroupChildren", "IReadOnlyList&lt;string&gt;?", "null", "Array com os nomes das propriedades de cada nível da hierarquia (ex.: [\"States\", \"Cities\"])." },
-                              new[] { "Value", "TValue?", "null", "Valor selecionado (a folha). Combine com <code>@bind-Value</code>." },
-                              new[] { "ValueChanged", "EventCallback&lt;TValue?&gt;", "-", "Callback de binding do valor selecionado." },
+                              new[] { "OptionValue", "string?", "null", "Nome da propriedade usada como valor/chave de comparação. Se omitido, o próprio item é comparado." },
+                              new[] { "OptionDisabled", "string?", "null", "Nome da propriedade booleana que desabilita itens específicos." },
+                              new[] { "OptionGroupLabel", "string", "label", "Nome da propriedade usada como rótulo dos grupos (categorias)." },
+                              new[] { "OptionGroupChildren", "IReadOnlyList&lt;string&gt;?", "null", "Nomes das propriedades de cada nível da hierarquia (ex.: <code>[\"States\", \"Cities\"]</code>); a ordem deve seguir a hierarquia." },
                               new[] { "Placeholder", "string?", "null", "Texto exibido quando nada está selecionado." },
-                              new[] { "Disabled", "bool", "false", "Desabilita o componente." },
-                              new[] { "Readonly", "bool", "false", "Impede edição mas mantém a interação com o overlay." },
-                              new[] { "Invalid", "bool", "false", "Aplica o estilo de erro." },
-                              new[] { "Required", "bool", "false", "Marca como obrigatório para validação/acessibilidade." },
-                              new[] { "Variant", "string", "outlined", "<code>outlined</code> ou <code>filled</code>." },
-                              new[] { "Size", "string?", "null", "<code>small</code> ou <code>large</code>." },
-                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura disponível." },
-                              new[] { "ShowClear", "bool", "false", "Exibe um ícone para limpar a seleção." },
-                              new[] { "Loading", "bool", "false", "Exibe um spinner no lugar do ícone do dropdown." },
-                              new[] { "DropdownIcon", "string?", "null", "Classe do ícone do dropdown." },
-                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
-                              new[] { "AriaLabel", "string?", "null", "Rótulo de acessibilidade do combobox." },
+                              new[] { "Readonly", "bool", "false", "Impede abrir a lista, mantendo o componente focável." },
+                              new[] { "Required", "bool", "false", "Marca o campo como obrigatório para validação/acessibilidade." },
+                              new[] { "Variant", "string", "outlined", "Variante: <code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura do contêiner." },
+                              new[] { "ShowClear", "bool", "false", "Exibe um ícone para limpar a seleção quando há valor." },
+                              new[] { "Loading", "bool", "false", "Troca o ícone do dropdown por um spinner (não bloqueia a interação)." },
+                              new[] { "DropdownIcon", "string?", "null", "Classe do ícone do dropdown (ex.: <code>pi pi-map</code>)." },
+                              new[] { "TabIndex", "int", "0", "Índice de tabulação do campo." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do combobox." },
                               new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o combobox." },
-                              new[] { "InputId", "string?", "null", "Id do elemento interno (para <code>&lt;label for&gt;</code>)." },
-                              new[] { "ShowOnFocus", "bool", "true", "Abre o overlay ao focar." },
+                              new[] { "InputId", "string?", "null", "Id do campo interno (para <code>&lt;label for&gt;</code>)." },
+                              new[] { "ShowOnFocus", "bool", "true", "Abre o overlay ao receber foco." },
                               new[] { "PanelStyleClass", "string?", "null", "Classes adicionais no overlay." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." }
+                              new[] { "Value", "TValue?", "null", "Valor selecionado (a folha). Combine com <code>@bind-Value</code> (herdado de <code>InputBase&lt;TValue&gt;</code>)." },
+                              new[] { "ValueExpression", "Expression&lt;Func&lt;TValue&gt;&gt;?", "null", "Expressão do campo para integração com o <code>EditForm</code>; gerada por <code>@bind-Value</code> (herdado de <code>InputBase&lt;TValue&gt;</code>)." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente (herdado de <code>OpInputBase&lt;TValue&gt;</code>)." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido, combinado (OR) com as mensagens do <code>EditContext</code> (herdado de <code>OpInputBase&lt;TValue&gt;</code>)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz (herdado de <code>OpInputBase&lt;TValue&gt;</code>)." },
+                              new[] { "AdditionalAttributes", "IReadOnlyDictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
-            <Description>
-                Callbacks disparados por interações do usuário ou mudanças de estado.
-            </Description>
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado quando o valor selecionado muda." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." },
-                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar." },
-                              new[] { "OnShow", "EventCallback", "Disparado ao abrir o overlay." },
-                              new[] { "OnHide", "EventCallback", "Disparado ao fechar o overlay." },
-                              new[] { "OnClear", "EventCallback", "Disparado ao limpar a seleção." }
-                          })"/>
-            </ChildContent>
-        </DocSection>
-        <DocSection Label="Templates">
-            <Description>
-                Slots que substituem partes internas por conteúdo customizado.
-            </Description>
-            <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
-                          Rows="@(new[] {
-                              new[] { "ItemTemplate", "RenderFragment&lt;object&gt;?", "Customiza o conteúdo de cada opção (grupo ou folha)." },
-                              new[] { "SelectedItemTemplate", "RenderFragment&lt;TValue&gt;?", "Customiza o valor selecionado exibido no campo." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;object&gt;?", "Conteúdo customizado de cada opção (grupo ou folha); o contexto é a instância do item." },
+                              new[] { "SelectedItemTemplate", "RenderFragment&lt;TValue&gt;?", "Conteúdo customizado do valor selecionado exibido no campo." },
                               new[] { "OptionGroupIconTemplate", "RenderFragment?", "Substitui o ícone de seta dos grupos." },
                               new[] { "DropdownIconTemplate", "RenderFragment?", "Substitui o ícone do dropdown." },
                               new[] { "LoadingIconTemplate", "RenderFragment?", "Substitui o ícone de carregamento." },
@@ -279,29 +375,85 @@
                           })"/>
             </ChildContent>
         </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado quando o valor selecionado muda." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar o campo." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar o campo." },
+                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar no campo." },
+                              new[] { "OnShow", "EventCallback", "Disparado ao abrir o overlay." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao fechar o overlay." },
+                              new[] { "OnClear", "EventCallback", "Disparado ao limpar a seleção." },
+                              new[] { "ValueChanged", "EventCallback&lt;TValue&gt;", "Notifica a alteração de <code>Value</code> (herdado de <code>InputBase&lt;TValue&gt;</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
             <Description>
-                Classes CSS e design tokens (<code>--p-cascadeselect-*</code>) usados pelo componente. Os valores podem ser sobrescritos via CSS.
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
             </Description>
-            <ChildContent><DocTokens Component="cascadeselect"/></ChildContent>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-cascadeselect", "Elemento contêiner (<code>span</code> raiz)." },
+                              new[] { "p-cascadeselect-label", "Elemento que exibe o rótulo da opção selecionada ou o placeholder." },
+                              new[] { "p-cascadeselect-label-empty", "Rótulo sem valor e sem placeholder." },
+                              new[] { "p-cascadeselect-clear-icon", "Ícone de limpar exibido com <code>ShowClear</code>." },
+                              new[] { "p-cascadeselect-dropdown", "Contêiner do ícone do dropdown." },
+                              new[] { "p-cascadeselect-overlay", "Popup com a árvore de opções." },
+                              new[] { "p-cascadeselect-list", "Lista de opções de um nível." },
+                              new[] { "p-cascadeselect-option", "Item da lista." },
+                              new[] { "p-cascadeselect-option-content", "Conteúdo clicável de um item." },
+                              new[] { "p-cascadeselect-option-list", "Sublista de um grupo expandido." },
+                              new[] { "p-cascadeselect-option-active", "Item de grupo expandido." },
+                              new[] { "p-cascadeselect-option-selected", "Item folha selecionado." },
+                              new[] { "p-cascadeselect-group-icon", "Ícone de seta dos grupos." },
+                              new[] { "p-cascadeselect-fluid", "Raiz com <code>Fluid</code>." },
+                              new[] { "p-cascadeselect-sm / p-cascadeselect-lg", "Raiz conforme <code>Size</code>." },
+                              new[] { "p-inputwrapper / p-inputwrapper-filled / p-inputwrapper-focus", "Estado do contêiner conforme valor e foco." },
+                              new[] { "p-placeholder", "Rótulo exibindo o placeholder." },
+                              new[] { "p-invalid / p-disabled / p-focus", "Estados de validação, desabilitado e foco." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="cascadeselect"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>PanelStyleClass</code> e os templates para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>PanelStyleClass</code>, os templates (<code>ItemTemplate</code>, <code>SelectedItemTemplate</code> etc.) e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz). Para rotular o campo, use <code>AriaLabel</code> ou <code>AriaLabelledBy</code>.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Os subníveis aparecem como flyout à direita (padrão do tema); o modo empilhado (<code>p-cascadeselect-mobile-active</code>) ainda não é alternado automaticamente por largura de tela.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li><code>OptionValue</code> não converte o vínculo para o valor primitivo: o modelo recebe o próprio objeto da opção (<code>TValue</code>); a propriedade só define a chave usada para localizar a seleção.</li>
+                        <li>A tecla <code>space</code> não abre nem seleciona, ao contrário do PrimeNG; use <code>Enter</code>, <code>Home</code>, <code>End</code> ou as setas.</li>
+                        <li><code>Loading</code> apenas troca o ícone do dropdown por um spinner: o componente continua interativo e não é desabilitado.</li>
+                        <li>O modo empilhado mobile (<code>p-cascadeselect-mobile-active</code>) não é aplicado automaticamente por largura de tela; os subníveis aparecem como flyout à direita.</li>
+                        <li><code>OptionGroupChildren</code> depende de reflexão sobre propriedades públicas de instância (case-insensitive); níveis além do tamanho da lista são ignorados.</li>
+                        <li>O overlay é posicionado por JS: em SSR estático (sem interatividade) o painel não abre.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -309,20 +461,20 @@
 
 @code {
     private City? _selectedCity;
-    private City? _selectedCity2;
-    private City? _selectedCity3;
-    private City? _selectedCity4;
-    private City? _selectedCity5;
-    private City? _selectedCity6;
-    private City? _selectedCity7;
-    private City? _selectedCity8;
+    private City? _selectedTemplate;
+    private City? _selectedTemplate2;
+    private City? _selectedClear = new() { Cname = "Sydney", Code = "A-SY" };
+    private City? _selectedOver;
+    private City? _selectedIn;
+    private City? _selectedOn;
+    private City? _selectedIfta;
     private City? _selectedSmall;
     private City? _selectedNormal;
     private City? _selectedLarge;
-
-    private FormModel _formModel = new();
-    private bool _submitted;
-    private bool _success;
+    private City? _selectedFluid;
+    private City? _selectedFilled;
+    private City? _invalid1;
+    private City? _invalid2;
 
     private sealed class Country
     {
@@ -341,12 +493,6 @@
     {
         public string Cname { get; set; } = "";
         public string Code { get; set; } = "";
-    }
-
-    private sealed class FormModel
-    {
-        [Required(ErrorMessage = "Selecione uma cidade.")]
-        public City? SelectedCity { get; set; }
     }
 
     private static readonly string[] GroupChildren = ["States", "Cities"];
@@ -388,17 +534,56 @@
         _ => node.ToString() ?? string.Empty
     };
 
-    private void OnValidSubmit()
+    private static string NodeMark(object node) => node switch
     {
-        _success = true;
-        _submitted = false;
-        _formModel = new FormModel();
+        Country => "\u25C6",
+        State => "\u25E6",
+        _ => "\u2022"
+    };
+
+    private sealed class TemplateDrivenModel
+    {
+        [Required(ErrorMessage = "Selecione uma cidade.")]
+        public City? City { get; set; }
     }
 
-    private void OnInvalidSubmit()
+    private readonly TemplateDrivenModel _tdModel = new();
+    private bool _tdSubmitted;
+
+    private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
+
+    private sealed class ReactiveModel
     {
-        _submitted = true;
-        _success = false;
+        public City? City { get; set; }
+    }
+
+    private readonly ReactiveModel _reactiveModel = new();
+    private EditContext? _reactiveContext;
+    private ValidationMessageStore? _reactiveMessages;
+    private bool _reactiveSubmitted;
+
+    protected override void OnInitialized()
+    {
+        var context = new EditContext(_reactiveModel);
+        _reactiveContext = context;
+        _reactiveMessages = new ValidationMessageStore(context);
+        context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
+    }
+
+    private void OnReactiveSubmit()
+    {
+        _reactiveSubmitted = true;
+        ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.City)));
+    }
+
+    private void ValidateField(FieldIdentifier field)
+    {
+        _reactiveMessages?.Clear(field);
+
+        if (field.FieldName == nameof(ReactiveModel.City) && _reactiveModel.City is null)
+        {
+            _reactiveMessages?.Add(field, "Selecione uma cidade.");
+        }
     }
 
     private const string ImportCode = """
@@ -406,7 +591,7 @@
 
         <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
                          OptionLabel="Cname" OptionGroupLabel="Name"
-                         OptionGroupChildren="@(new[] { "States", "Cities" })"
+                         OptionGroupChildren="@GroupChildren"
                          Placeholder="Selecione uma Cidade" />
         """;
 
@@ -414,7 +599,8 @@
         <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
                          OptionLabel="Cname" OptionGroupLabel="Name"
                          OptionGroupChildren="@GroupChildren"
-                         Placeholder="Selecione uma Cidade" StyleClass="w-full md:w-56" />
+                         Placeholder="Selecione uma Cidade" StyleClass="w-56" />
+        <div class="mt-2 text-sm">Selecionado: @(_selectedCity?.Cname ?? "—")</div>
 
         @code {
             private City? _selectedCity;
@@ -422,50 +608,13 @@
         }
         """;
 
-    private const string ClearCode = """
-        <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
-                         OptionLabel="Cname" OptionGroupLabel="Name"
-                         OptionGroupChildren="@GroupChildren"
-                         ShowClear="true" Placeholder="Selecione uma Cidade" />
-        """;
-
-    private const string DisabledCode = """
-        <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname"
-                         OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                         Disabled="true" Placeholder="Desabilitado" />
-
-        <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname"
-                         OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                         Loading="true" Placeholder="Carregando..." />
-        """;
-
-    private const string FilledCode = """
-        <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
-                         OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                         Variant="filled" Placeholder="Selecione uma Cidade" />
-
-        <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname"
-                         OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                         Invalid="true" Placeholder="Inválido" />
-        """;
-
-    private const string FluidCode = """
-        <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
-                         OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                         Fluid="true" Placeholder="Selecione uma Cidade" />
-        """;
-
-    private const string SizesCode = """
-        <OpCascadeSelect TValue="City" @bind-Value="_v1" Options="Countries" ... Size="small" Placeholder="Small" />
-        <OpCascadeSelect TValue="City" @bind-Value="_v2" Options="Countries" ... Placeholder="Normal" />
-        <OpCascadeSelect TValue="City" @bind-Value="_v3" Options="Countries" ... Size="large" Placeholder="Large" />
-        """;
-
     private const string TemplateCode = """
-        <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
-                         OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren">
+        <OpCascadeSelect TValue="City" @bind-Value="_selectedTemplate" Options="Countries"
+                         OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                         Placeholder="Selecione uma Cidade" StyleClass="w-56">
             <ItemTemplate Context="opt">
                 <div style="display:flex; align-items:center; gap:.5rem;">
+                    <span style="color:var(--p-primary-color)">@NodeMark(opt)</span>
                     <span>@NodeLabel(opt)</span>
                 </div>
             </ItemTemplate>
@@ -474,30 +623,217 @@
             </HeaderTemplate>
             <FooterTemplate>
                 <div style="padding:.5rem .75rem;">
-                    <OpButton Label="Adicionar Novo" Fluid="true" Severity="secondary" Text="true" Size="small"/>
+                    <OpButton Label="Adicionar Novo" Fluid="true" Severity="secondary" Text="true" Size="small" />
                 </div>
             </FooterTemplate>
         </OpCascadeSelect>
+
+        <OpCascadeSelect TValue="City" @bind-Value="_selectedTemplate2" Options="Countries"
+                         OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                         Placeholder="Valor e ícone customizados" StyleClass="w-56">
+            <SelectedItemTemplate Context="city">
+                <span style="display:flex; align-items:center; gap:.5rem;">
+                    <span>@city.Cname</span>
+                    <small style="opacity:.6">@city.Code</small>
+                </span>
+            </SelectedItemTemplate>
+            <DropdownIconTemplate>
+                <span class="pi pi-map" aria-hidden="true"></span>
+            </DropdownIconTemplate>
+        </OpCascadeSelect>
+
+        @code {
+            private City? _selectedTemplate;
+            private City? _selectedTemplate2;
+
+            private static string NodeLabel(object node) => node switch
+            {
+                Country c => c.Name,
+                State s => s.Name,
+                City c => c.Cname,
+                _ => node.ToString() ?? string.Empty
+            };
+
+            private static string NodeMark(object node) => node switch
+            {
+                Country => "◆",
+                State => "◦",
+                _ => "•"
+            };
+        }
+        """;
+
+    private const string LoadingCode = """
+        <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                         OptionGroupChildren="@GroupChildren" Loading="true" Placeholder="Carregando..."
+                         StyleClass="w-56" />
         """;
 
     private const string FloatLabelCode = """
-        <OpFloatLabel class="w-full md:w-56">
-            <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" InputId="over_label"
+        <OpFloatLabel class="w-56">
+            <OpCascadeSelect TValue="City" @bind-Value="_selectedOver" InputId="over_label"
                              Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
-                             OptionGroupChildren="@GroupChildren" class="w-full" />
+                             OptionGroupChildren="@GroupChildren" StyleClass="w-full" />
             <label for="over_label">Sobre</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel class="w-56" Variant="in">
+            <OpCascadeSelect TValue="City" @bind-Value="_selectedIn" InputId="in_label"
+                             Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                             OptionGroupChildren="@GroupChildren" StyleClass="w-full" />
+            <label for="in_label">Dentro</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel class="w-56" Variant="on">
+            <OpCascadeSelect TValue="City" @bind-Value="_selectedOn" InputId="on_label"
+                             Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                             OptionGroupChildren="@GroupChildren" StyleClass="w-full" />
+            <label for="on_label">Na borda</label>
         </OpFloatLabel>
         """;
 
-    private const string FormCode = """
-        <EditForm Model="_formModel" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit">
-            <DataAnnotationsValidator />
-            <OpCascadeSelect TValue="City" @bind-Value="_formModel.SelectedCity" Options="Countries"
+    private const string IftaLabelCode = """
+        <OpIftaLabel class="w-56">
+            <OpCascadeSelect TValue="City" @bind-Value="_selectedIfta" InputId="cs_city"
+                             Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                             OptionGroupChildren="@GroupChildren" StyleClass="w-full" />
+            <label for="cs_city">Cidade</label>
+        </OpIftaLabel>
+        """;
+
+    private const string ClearCode = """
+        <OpCascadeSelect TValue="City" @bind-Value="_selectedClear" Options="Countries"
+                         OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                         ShowClear="true" Placeholder="Selecione uma Cidade" StyleClass="w-56" />
+        """;
+
+    private const string SizesCode = """
+        <OpCascadeSelect TValue="City" @bind-Value="_selectedSmall" Options="Countries" OptionLabel="Cname"
+                         OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren" Size="small"
+                         Placeholder="Pequeno" StyleClass="w-56" />
+        <OpCascadeSelect TValue="City" @bind-Value="_selectedNormal" Options="Countries" OptionLabel="Cname"
+                         OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                         Placeholder="Normal" StyleClass="w-56" />
+        <OpCascadeSelect TValue="City" @bind-Value="_selectedLarge" Options="Countries" OptionLabel="Cname"
+                         OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren" Size="large"
+                         Placeholder="Grande" StyleClass="w-56" />
+        """;
+
+    private const string FluidCode = """
+        <div style="width:100%;">
+            <OpCascadeSelect TValue="City" @bind-Value="_selectedFluid" Options="Countries"
                              OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                             Invalid="@(_submitted && _formModel.SelectedCity is null)"
-                             Placeholder="Selecione uma Cidade" />
-            <ValidationMessage For="() => _formModel.SelectedCity" />
-            <OpButton Label="Enviar" Type="submit" Severity="secondary" />
+                             Fluid="true" Placeholder="Selecione uma Cidade" />
+        </div>
+        """;
+
+    private const string FilledCode = """
+        <OpCascadeSelect TValue="City" @bind-Value="_selectedFilled" Options="Countries"
+                         OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                         Variant="filled" Placeholder="Selecione uma Cidade" StyleClass="w-56" />
+        """;
+
+    private const string DisabledCode = """
+        <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                         OptionGroupChildren="@GroupChildren" Disabled="true" Placeholder="Desabilitado"
+                         StyleClass="w-56" />
+        """;
+
+    private const string InvalidCode = """
+        <OpCascadeSelect TValue="City" @bind-Value="_invalid1" Options="Countries" OptionLabel="Cname"
+                         OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                         Invalid="@(_invalid1 is null)" Placeholder="Selecione uma Cidade" StyleClass="w-56" />
+
+        <OpCascadeSelect TValue="City" @bind-Value="_invalid2" Options="Countries" OptionLabel="Cname"
+                         OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                         Invalid="@(_invalid2 is null)" Variant="filled"
+                         Placeholder="Selecione uma Cidade" StyleClass="w-56" />
+        """;
+
+    private const string TemplateDrivenCode = """
+        <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
+            <DataAnnotationsValidator />
+            <OpCascadeSelect TValue="City" @bind-Value="_tdModel.City" Options="Countries"
+                             OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                             Placeholder="Selecione uma Cidade" StyleClass="w-56" />
+            <ValidationMessage For="() => _tdModel.City" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+            @if (_tdSubmitted)
+            {
+                <div class="text-sm">Enviado: @_tdModel.City?.Cname</div>
+            }
         </EditForm>
+
+        @code {
+            private sealed class TemplateDrivenModel
+            {
+                [Required(ErrorMessage = "Selecione uma cidade.")]
+                public City? City { get; set; }
+            }
+
+            private readonly TemplateDrivenModel _tdModel = new();
+            private bool _tdSubmitted;
+
+            private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
+        }
+        """;
+
+    private const string ReactiveCode = """
+        <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
+            <OpCascadeSelect TValue="City" @bind-Value="_reactiveModel.City" Options="Countries"
+                             OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
+                             Placeholder="Selecione uma Cidade" StyleClass="w-56" />
+            <ValidationMessage For="() => _reactiveModel.City" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+            @if (_reactiveSubmitted && _reactiveModel.City is not null)
+            {
+                <div class="text-sm">Enviado: @_reactiveModel.City.Cname</div>
+            }
+        </EditForm>
+
+        @code {
+            private sealed class ReactiveModel
+            {
+                public City? City { get; set; }
+            }
+
+            private readonly ReactiveModel _reactiveModel = new();
+            private EditContext? _reactiveContext;
+            private ValidationMessageStore? _reactiveMessages;
+            private bool _reactiveSubmitted;
+
+            protected override void OnInitialized()
+            {
+                var context = new EditContext(_reactiveModel);
+                _reactiveContext = context;
+                _reactiveMessages = new ValidationMessageStore(context);
+                context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
+            }
+
+            private void OnReactiveSubmit()
+            {
+                _reactiveSubmitted = true;
+                ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.City)));
+            }
+
+            private void ValidateField(FieldIdentifier field)
+            {
+                _reactiveMessages?.Clear(field);
+
+                if (field.FieldName == nameof(ReactiveModel.City) && _reactiveModel.City is null)
+                {
+                    _reactiveMessages?.Add(field, "Selecione uma cidade.");
+                }
+            }
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <span id="rotulo-cidade">Cidade</span>
+        <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                         OptionGroupChildren="@GroupChildren" AriaLabelledBy="rotulo-cidade" />
+
+        <OpCascadeSelect TValue="City" Options="Countries" OptionLabel="Cname" OptionGroupLabel="Name"
+                         OptionGroupChildren="@GroupChildren" AriaLabel="Cidade" />
         """;
 }

@@ -3,11 +3,13 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.InputText
 
+<PageTitle>KeyFilter - OpBlazorUI</PageTitle>
+
 <DocComponent Title="KeyFilter"
-              Description="O KeyFilter restringe teclas individuais. Para restringir todo o input, use InputNumber ou InputMask.">
+              Description="O KeyFilter restringe as teclas aceitas por um campo de texto. Para restringir todo o input, use InputNumber ou InputMask.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Description>
                 No Angular, o KeyFilter é uma diretiva aplicada a um <code>&lt;input&gt;</code>. No Blazor, ele é um parâmetro
                 <code>KeyFilter</code> do componente <code>OpInputText</code>.
@@ -15,10 +17,27 @@
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Presets">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O KeyFilter oferece vários presets: <code>int</code>, <code>num</code>, <code>money</code>, <code>hex</code>,
-                <code>alpha</code> e <code>alphanum</code>.
+                O filtro é ativado por <code>KeyFilter</code>, que recebe um preset ou uma expressão regular. Combine com
+                <code>@@bind-Value</code> para ler o valor já filtrado; os caracteres que não casam com o padrão são
+                descartados conforme você digita.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <OpInputText @bind-Value="_value" KeyFilter="int" Placeholder="Somente inteiros" StyleClass="w-full"/>
+                    <div class="text-sm">Valor: <b>@_value</b></div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Predefinições" Id="presets">
+            <Description>
+                Os presets são atalhos de expressão regular: <code>int</code> (<code>[0-9]</code>), <code>num</code>
+                (<code>[0-9.]</code>), <code>money</code> (<code>[0-9.,\s]</code>), <code>hex</code>
+                (<code>[0-9a-fA-F]</code>), <code>alpha</code> (<code>[a-zA-Z]</code>) e <code>alphanum</code>
+                (<code>[a-zA-Z0-9]</code>). O nome do preset não diferencia maiúsculas de minúsculas.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap gap-4 mb-6">
@@ -53,9 +72,11 @@
             <Code><CodeBlock Code="@PresetsCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Regex">
+        <DocSection Label="Regex" Id="regex">
             <Description>
-                Além dos presets, uma expressão regular pode ser usada para customização.
+                Além dos presets, <code>KeyFilter</code> aceita qualquer expressão regular. O padrão é testado caractere a
+                caractere, então prefira classes de caracteres (como nos exemplos) em vez de padrões que dependem do valor
+                inteiro. Uma regex inválida é ignorada e nada é filtrado.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap gap-4">
@@ -72,63 +93,151 @@
             <Code><CodeBlock Code="@RegexCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
-                Consulte o InputText para acessibilidade, pois o KeyFilter é um complemento do InputText.
+                <h3>Leitor de tela</h3>
+                <p>
+                    O KeyFilter não adiciona marcação própria: o <code>OpInputText</code> renderiza um
+                    <code>&lt;input&gt;</code> nativo e o filtro apenas restringe os caracteres aceitos. Descreva o campo
+                    com <code>&lt;label&gt;</code> + <code>for</code>/<code>id</code> ou com <code>AriaLabel</code>.
+                    Consulte o InputText para os demais detalhes de acessibilidade.
+                </p>
             </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "caractere válido", "Inserido no campo." },
+                              new[] { "caractere inválido", "Descartado pelo filtro, não é inserido." },
+                              new[] { "tab", "Move o foco para fora do campo." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <Description>
-                Parâmetro adicionado ao <code>OpInputText</code>.
+                A propriedade <code>KeyFilter</code> pertence ao <code>OpInputText</code>; os demais parâmetros são o
+                contexto do campo. Para a lista completa (máscara, variantes, validação), consulte a página InputText.
             </Description>
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "KeyFilter", "string?", "null", "Preset (<code>int</code>, <code>num</code>, <code>money</code>, <code>hex</code>, <code>alpha</code>, <code>alphanum</code>) ou expressão regular." }
+                              new[] { "KeyFilter", "string?", "null", "Preset (<code>int</code>, <code>num</code>, <code>money</code>, <code>hex</code>, <code>alpha</code>, <code>alphanum</code>) ou expressão regular que os caracteres devem casar." },
+                              new[] { "Value", "string?", "null", "Valor do campo (herdado de <code>InputBase&lt;string&gt;</code>)." },
+                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "-", "Callback de binding (herdado)." },
+                              new[] { "Placeholder", "string?", "null", "Texto de dica exibido quando o campo está vazio." },
+                              new[] { "Variant", "string", "outlined", "Variante: <code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido (herdado de <code>OpInputBase</code>)." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o campo (herdado)." },
+                              new[] { "Readonly", "bool", "false", "Torna o campo somente leitura." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura disponível." },
+                              new[] { "Type", "string", "text", "Tipo do input (ex.: <code>password</code>)." },
+                              new[] { "Id", "string?", "null", "Id do input, usado por <code>&lt;label for&gt;</code>." },
+                              new[] { "Name", "string?", "null", "Atributo <code>name</code> do input." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do campo." },
+                              new[] { "MaxLength", "int?", "null", "Número máximo de caracteres." },
+                              new[] { "Autocomplete", "string?", "null", "Valor do atributo <code>autocomplete</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no input (herdado)." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;input&gt;</code> (herdado)." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
-    <Passthrough>
-        <DocSection Label="Pass Through">
+    <Theming>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                O KeyFilter não cria markup próprio — ele altera o valor do <code>OpInputText</code>. As classes estruturais
+                são as do input; para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e atributos extras para customização.</p></div>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-inputtext", "Elemento <code>&lt;input&gt;</code>." },
+                              new[] { "p-component", "Aplicada junto de <code>p-inputtext</code>." },
+                              new[] { "p-filled", "Aplicada quando o campo tem valor." },
+                              new[] { "p-variant-filled", "Aplicada quando <code>Variant</code> é <code>filled</code>." },
+                              new[] { "p-invalid", "Aplicada quando o campo está inválido." },
+                              new[] { "p-inputtext-sm / p-inputtext-lg", "Aplicada conforme <code>Size</code>." },
+                              new[] { "p-inputtext-fluid", "Aplicada com <code>Fluid</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="inputtext"/>
+            </ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao <code>&lt;input&gt;</code>).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O filtro remove caracteres inválidos no evento <code>oninput</code>; ele não bloqueia a tecla no <code>keydown</code>, apenas descarta o caractere do valor.</li>
+                        <li>A validação é caractere a caractere: uma regex pensada para o valor inteiro (como <code>^\d{3}$</code>) não funciona como validação de campo.</li>
+                        <li>Não há tratamento semântico de colagem ou de IME (composição); a colagem é filtrada caractere a caractere e entradas compostas podem se comportar de forma imprevisível.</li>
+                        <li>Presets limitados a <code>int</code>, <code>num</code>, <code>money</code>, <code>hex</code>, <code>alpha</code> e <code>alphanum</code>. Para restringir todo o input, use <code>InputNumber</code> ou <code>InputMask</code>.</li>
+                        <li>Uma expressão regular inválida é ignorada em silêncio e nenhum caractere é filtrado.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private string? _value;
+
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.InputText
 
-        <OpInputText KeyFilter="int" />
+        <OpInputText KeyFilter="int" Placeholder="Somente inteiros" />
+        """;
+
+    private const string BasicCode = """
+        <OpInputText @bind-Value="_value" KeyFilter="int" Placeholder="Somente inteiros" StyleClass="w-full" />
+
+        @code {
+            private string? _value;
+        }
         """;
 
     private const string PresetsCode = """
-        <OpInputText KeyFilter="int" />
-        <OpInputText KeyFilter="num" />
-        <OpInputText KeyFilter="money" />
-        <OpInputText KeyFilter="hex" />
-        <OpInputText KeyFilter="alpha" />
-        <OpInputText KeyFilter="alphanum" />
+        <OpInputText Id="kf1" KeyFilter="int" StyleClass="w-full" />
+        <OpInputText Id="kf2" KeyFilter="num" StyleClass="w-full" />
+        <OpInputText Id="kf3" KeyFilter="money" StyleClass="w-full" />
+        <OpInputText Id="kf4" KeyFilter="hex" StyleClass="w-full" />
+        <OpInputText Id="kf5" KeyFilter="alpha" StyleClass="w-full" />
+        <OpInputText Id="kf6" KeyFilter="alphanum" StyleClass="w-full" />
         """;
 
     private const string RegexCode = """
-        <OpInputText KeyFilter="^[^\s]+$" />
-        <OpInputText KeyFilter="^[^<>*!]+$" />
+        <OpInputText Id="kf7" KeyFilter="^[^\s]+$" StyleClass="w-full" />
+        <OpInputText Id="kf8" KeyFilter="^[^<>*!]+$" StyleClass="w-full" />
+        """;
+
+    private const string AccessibilityCode = """
+        <OpInputText KeyFilter="int" Placeholder="Somente inteiros" AriaLabel="Quantidade" />
+
+        <label for="qtd">Quantidade</label>
+        <OpInputText Id="qtd" KeyFilter="int" />
         """;
 }

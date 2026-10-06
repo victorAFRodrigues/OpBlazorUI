@@ -3,81 +3,169 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.IftaLabel
 @using OpBlazorUI.Base.Components.InputText
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>IftaLabel - OpBlazorUI</PageTitle>
 
 <DocComponent Title="IftaLabel"
               Description="O IftaLabel é usado para criar rótulos alinhados ao topo dentro do campo.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O IftaLabel não requer roles nem atributos ARIA adicionais e não inclui elementos interativos.
-                O vínculo entre o rótulo e o campo é feito pelo atributo <code>for</code> do <code>&lt;label&gt;</code>
-                apontando para o <code>id</code> do input.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
-            <Description>
-                O IftaLabel é usado envolvendo o input e o seu rótulo.
+                O IftaLabel é usado envolvendo o campo e o seu rótulo. O vínculo entre os dois é feito pelo
+                atributo <code>for</code> do <code>&lt;label&gt;</code> apontando para o <code>id</code> do
+                input — o componente em si é apenas um contêiner (uma <code>&lt;div class="p-iftalabel"&gt;</code>)
+                que posiciona o rótulo no topo do campo.
             </Description>
             <ChildContent>
-                <OpIftaLabel>
-                    <OpInputText Id="ift1" @bind-Value="_value" Autocomplete="off"/>
-                    <label for="ift1">Usuário</label>
-                </OpIftaLabel>
+                <div class="flex justify-center">
+                    <div style="width: 100%; max-width: 20rem;">
+                        <OpIftaLabel>
+                            <OpInputText Id="ift_basic" @bind-Value="_value" Fluid="true" Autocomplete="off"/>
+                            <label for="ift_basic">Usuário</label>
+                        </OpIftaLabel>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido">
+        <DocSection Label="Inválido" Id="invalid">
             <Description>
-                Quando o campo está inválido, o rótulo também é destacado.
+                Quando o campo está inválido, o rótulo também é destacado. Basta que o campo filho receba a classe
+                <code>p-invalid</code> (por exemplo, via <code>Invalid="true"</code> no
+                <code>OpInputText</code>): o componente reage pelo seletor
+                <code>.p-iftalabel:has(.p-invalid) label</code>.
             </Description>
             <ChildContent>
-                <OpIftaLabel>
-                    <OpInputText Id="ift2" @bind-Value="_invalid" Invalid="@(string.IsNullOrEmpty(_invalid))" Autocomplete="off"/>
-                    <label for="ift2">Usuário</label>
-                </OpIftaLabel>
+                <div class="flex justify-center">
+                    <div style="width: 100%; max-width: 20rem;">
+                        <OpIftaLabel>
+                            <OpInputText Id="ift_invalid" @bind-Value="_invalid" Invalid="@(string.IsNullOrEmpty(_invalid))" Fluid="true" Autocomplete="off"/>
+                            <label for="ift_invalid">Usuário</label>
+                        </OpIftaLabel>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                Dentro de um <code>EditForm</code>, o estado inválido chega sozinho ao campo pelo
+                <code>EditContext</code>, então o rótulo é destacado sem que se passe <code>Invalid</code> à mão.
+                Use <code>@@bind-Value</code> ligado à propriedade do modelo e o <code>id</code> do campo igual ao
+                <code>for</code> do rótulo.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <div style="width: 20rem;">
+                        <OpIftaLabel>
+                            <OpInputText Id="ift_form" @bind-Value="_form.Name" Fluid="true" Autocomplete="off"/>
+                            <label for="ift_form">Usuário</label>
+                        </OpIftaLabel>
+                    </div>
+                    <ValidationMessage For="() => _form.Name"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Nome: @_form.Name</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O IftaLabel não requer roles nem atributos ARIA adicionais e não inclui elementos interativos.
+                    O vínculo entre o rótulo e o campo é responsabilidade da demo: use o <code>for</code> do
+                    <code>&lt;label&gt;</code> apontando para o <code>id</code> do input, para que o leitor de tela
+                    anuncie o rótulo ao focar o campo. Atributos extras (ex.: <code>aria-*</code>,
+                    <code>data-*</code>) são repassados à <code>&lt;div&gt;</code> raiz.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>Não se aplica: o IftaLabel não é interativo e não recebe foco — a navegação por teclado é do campo filho.</p>
+            </Description>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Input + label." }
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais aplicadas à <code>&lt;div&gt;</code> raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados à <code>&lt;div&gt;</code> raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo do componente: deve conter o campo e o <code>&lt;label&gt;</code> associado por <code>for</code>/<code>id</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="iftalabel"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { ".p-iftalabel", "Elemento raiz (<code>&lt;div&gt;</code>) que posiciona o rótulo no topo do campo." },
+                              new[] { ".p-iftalabel > .p-component", "Campo filho; recebe padding superior para abrir espaço ao rótulo." },
+                              new[] { ".p-iftalabel label", "Rótulo exibido sobre o campo." },
+                              new[] { ".p-iftalabel:has(.p-invalid) label", "Rótulo na cor de inválido quando o campo filho recebe <code>p-invalid</code>." },
+                              new[] { ".p-iftalabel:has(input:focus) label", "Rótulo na cor de foco quando o campo é focalizado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="iftalabel"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ChildContent</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>ChildContent</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O componente não gera o campo nem o <code>&lt;label&gt;</code>: eles fazem parte do <code>ChildContent</code>, e o vínculo acessível só existe se você casar manualmente o <code>for</code> do rótulo com o <code>id</code> do campo.</li>
+                        <li>Não há parâmetro dedicado de inválido; o destaque do rótulo depende do campo filho receber <code>p-invalid</code> (ou do <code>EditContext</code> dentro de um <code>EditForm</code>).</li>
+                        <li>Não há variantes (como <code>in</code>/<code>on</code> do FloatLabel) nem a diretiva <code>pIftaLabel</code> do Angular; o comportamento é puramente de CSS aplicado ao contêiner.</li>
+                        <li>O realce de inválido e de foco usa o seletor <code>:has()</code>; em navegadores que não o suportam o rótulo não muda de cor.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -86,21 +174,31 @@
 @code {
     private string? _value;
     private string? _invalid;
+    private bool _submitted;
+    private UserForm _form = new();
+
+    private sealed class UserForm
+    {
+        [Required(ErrorMessage = "O usuário é obrigatório.")]
+        public string? Name { get; set; }
+    }
+
+    private void OnSubmit() => _submitted = true;
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.IftaLabel
         @using OpBlazorUI.Base.Components.InputText
 
         <OpIftaLabel>
-            <OpInputText Id="ift1" @bind-Value="_value" Autocomplete="off" />
-            <label for="ift1">Usuário</label>
+            <OpInputText Id="username" @bind-Value="_value" Autocomplete="off" />
+            <label for="username">Usuário</label>
         </OpIftaLabel>
         """;
 
     private const string BasicCode = """
         <OpIftaLabel>
-            <OpInputText Id="ift1" @bind-Value="_value" Autocomplete="off" />
-            <label for="ift1">Usuário</label>
+            <OpInputText Id="ift_basic" @bind-Value="_value" Fluid="true" Autocomplete="off" />
+            <label for="ift_basic">Usuário</label>
         </OpIftaLabel>
 
         @code {
@@ -110,8 +208,44 @@
 
     private const string InvalidCode = """
         <OpIftaLabel>
-            <OpInputText Id="ift2" @bind-Value="_value" Invalid="@(string.IsNullOrEmpty(_value))" Autocomplete="off" />
-            <label for="ift2">Usuário</label>
+            <OpInputText Id="ift_invalid" @bind-Value="_invalid" Invalid="@(string.IsNullOrEmpty(_invalid))" Fluid="true" Autocomplete="off" />
+            <label for="ift_invalid">Usuário</label>
+        </OpIftaLabel>
+
+        @code {
+            private string? _invalid;
+        }
+        """;
+
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpIftaLabel>
+                <OpInputText Id="ift_form" @bind-Value="_form.Name" Fluid="true" Autocomplete="off" />
+                <label for="ift_form">Usuário</label>
+            </OpIftaLabel>
+            <ValidationMessage For="() => _form.Name" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private bool _submitted;
+            private UserForm _form = new();
+
+            private sealed class UserForm
+            {
+                [Required(ErrorMessage = "O usuário é obrigatório.")]
+                public string? Name { get; set; }
+            }
+
+            private void OnSubmit() => _submitted = true;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpIftaLabel>
+            <OpInputText Id="username" @bind-Value="_value" AriaLabel="Usuário" Autocomplete="off" />
+            <label for="username">Usuário</label>
         </OpIftaLabel>
         """;
 }
