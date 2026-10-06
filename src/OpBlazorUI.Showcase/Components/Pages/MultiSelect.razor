@@ -2,184 +2,578 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.MultiSelect
+@using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.IftaLabel
 @using System.ComponentModel.DataAnnotations
+
+<PageTitle>MultiSelect - OpBlazorUI</PageTitle>
 
 <DocComponent Title="MultiSelect"
               Description="O MultiSelect é usado para selecionar vários itens de uma coleção.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O MultiSelect é um componente controlado: o valor é vinculado com <code>@@bind-Value</code> e as
+                opções vêm de <code>Options</code>. O rótulo e o valor de cada opção são definidos por
+                <code>OptionLabel</code> e <code>OptionValue</code> — se <code>OptionValue</code> for omitido, o
+                próprio item é usado como valor. Para coleções de primitivos (ex.: <code>string[]</code>), nenhum
+                dos dois é necessário.
+            </Description>
             <ChildContent>
-                <OpMultiSelect TValue="string" @bind-Value="_sel" Options="Cities" Placeholder="Selecione as Cidades" StyleClass="w-full"/>
-                <div class="mt-2 text-sm">Selecionados: @string.Join(", ", _sel ?? [])</div>
+                <div class="flex flex-col items-center gap-2">
+                    <OpMultiSelect TValue="City" @bind-Value="_basic" Options="Cities" OptionLabel="Name"
+                                   MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64"/>
+                    <div class="text-sm">Selecionadas: @Format(_basic)</div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Chips + Limpar">
+        <DocSection Label="Chips" Id="chips">
+            <Description>
+                Por padrão os itens selecionados são exibidos como uma lista separada por vírgulas. Defina
+                <code>Display="chip"</code> para exibi-los como chips removíveis.
+            </Description>
             <ChildContent>
-                <OpMultiSelect TValue="string" @bind-Value="_sel2" Options="Cities" Display="chip" ShowClear="true" Placeholder="Selecione as Cidades" StyleClass="w-full"/>
+                <div class="flex justify-center">
+                    <OpMultiSelect TValue="City" @bind-Value="_chips" Options="Cities" OptionLabel="Name"
+                                   Display="chip" Placeholder="Selecione as Cidades" StyleClass="w-64"/>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@ChipsCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Filtro + Máx. Rótulos">
+        <DocSection Label="Grupo" Id="group">
+            <Description>
+                As opções podem ser agrupadas quando uma estrutura aninhada é fornecida, com <code>Group="true"</code>.
+                <code>OptionGroupLabel</code> e <code>OptionGroupChildren</code> indicam as propriedades do rótulo e
+                da lista de itens de cada grupo.
+            </Description>
             <ChildContent>
-                <OpMultiSelect TValue="string" @bind-Value="_sel3" Options="Cities" Display="chip" Filter="true" MaxSelectedLabels="2" Placeholder="Selecione as Cidades" StyleClass="w-full"/>
+                <div class="flex flex-col items-center gap-2">
+                    <OpMultiSelect TValue="string" @bind-Value="_grouped" Options="CountryGroups"
+                                   Group="true" OptionGroupLabel="Label" OptionGroupChildren="Items"
+                                   Display="chip" ScrollHeight="250px" Placeholder="Selecione as Cidades"
+                                   StyleClass="w-64"/>
+                    <div class="text-sm">Selecionadas: @Format(_grouped)</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@GroupCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                As opções e os itens selecionados podem ser customizados com <code>ItemTemplate</code> e
+                <code>SelectedItemsTemplate</code>. O cabeçalho, o rodapé e os ícones do dropdown, do carregamento e
+                de limpar também são templáveis. O contexto de <code>ItemTemplate</code> é o próprio item
+                (<code>TValue</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpMultiSelect TValue="City" @bind-Value="_template" Options="Cities" OptionLabel="Name"
+                                   Display="chip" ShowHeader="false" Placeholder="Selecione os Países"
+                                   StyleClass="w-64">
+                        <ItemTemplate Context="city">
+                            <div style="display:flex; align-items:center; gap:.5rem;">
+                                <span class="pi pi-map-marker" style="color:var(--p-primary-color)"></span>
+                                <span>@city.Name</span>
+                            </div>
+                        </ItemTemplate>
+                        <DropdownIconTemplate>
+                            <span class="p-multiselect-dropdown-icon pi pi-map" aria-hidden="true"></span>
+                        </DropdownIconTemplate>
+                        <HeaderTemplate>
+                            <div style="font-weight:500; padding:.5rem .75rem;">Cidades disponíveis</div>
+                        </HeaderTemplate>
+                        <FooterTemplate>
+                            <div style="padding:.75rem; display:flex; justify-content:space-between; gap:.5rem;">
+                                <button type="button" class="p-button p-component p-button-secondary p-button-text p-button-sm">Adicionar</button>
+                                <button type="button" class="p-button p-component p-button-danger p-button-text p-button-sm">Remover todos</button>
+                            </div>
+                        </FooterTemplate>
+                    </OpMultiSelect>
+
+                    <OpMultiSelect TValue="City" @bind-Value="_templateSelected" Options="Cities" OptionLabel="Name"
+                                   Placeholder="Selecione as Cidades" StyleClass="w-64">
+                        <SelectedItemsTemplate Context="items">
+                            <span style="display:flex; flex-wrap:wrap; gap:.25rem;">
+                                @foreach (var item in items)
+                                {
+                                    <span style="background:var(--p-primary-100); color:var(--p-primary-700); border-radius:1rem; padding:.125rem .5rem; font-size:.8rem;">@item.Name</span>
+                                }
+                            </span>
+                        </SelectedItemsTemplate>
+                    </OpMultiSelect>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filtro" Id="filter">
+            <Description>
+                O MultiSelect tem filtragem nativa no cabeçalho do overlay, habilitada pela propriedade
+                <code>Filter</code>. O texto digitado pode ser observado com o evento <code>OnFilter</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpMultiSelect TValue="City" @bind-Value="_filter" Options="Cities" OptionLabel="Name"
+                                   Filter="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades"
+                                   StyleClass="w-64"/>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@FilterCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Agrupado">
+        <DocSection Label="Loading State" Id="loadingstate">
+            <Description>
+                O estado de carregamento é ativado com <code>Loading</code>, que troca o ícone do dropdown por um
+                spinner. É possível substituí-lo com <code>LoadingIconTemplate</code>.
+            </Description>
             <ChildContent>
-                <OpMultiSelect TValue="string" @bind-Value="_sel4" Options="CountryGroups" Group="true" OptionGroupLabel="Label" OptionGroupChildren="Items" Placeholder="Selecione os Países" StyleClass="w-full"/>
+                <div class="flex justify-center">
+                    <OpMultiSelect TValue="City" @bind-Value="_loading" Options="Cities" OptionLabel="Name"
+                                   Loading="true" Placeholder="Carregando..." StyleClass="w-64"/>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@GroupedCode"/></Code>
+            <Code><CodeBlock Code="@LoadingStateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Preenchido / Desabilitado">
+        <DocSection Label="VirtualScroll" Id="virtualscroll">
+            <Description>
+                Para listas muito grandes, <code>VirtualScroll="true"</code> renderiza apenas as opções visíveis,
+                evitando problemas de desempenho. Requer <code>ScrollHeight</code> e <code>VirtualScrollItemSize</code>.
+            </Description>
             <ChildContent>
-                <div class="flex gap-3">
-                    <OpMultiSelect TValue="string" @bind-Value="_sel5" Options="Cities" Variant="filled" Placeholder="Preenchido" StyleClass="w-56"/>
-                    <OpMultiSelect TValue="string" Options="Cities" Disabled="true" Placeholder="Desabilitado" StyleClass="w-56"/>
+                <div class="flex flex-col items-center gap-2">
+                    <OpMultiSelect TValue="string" @bind-Value="_virtual" Options="ManyItems"
+                                   VirtualScroll="true" VirtualScrollItemSize="43" ScrollHeight="200px"
+                                   MaxSelectedLabels="3" Placeholder="Selecione Cidades" StyleClass="w-64"/>
+                    <div class="text-sm">Selecionadas: @Format(_virtual)</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VirtualScrollCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Float Label" Id="floatlabel">
+            <Description>
+                O FloatLabel integra o rótulo ao campo. Use <code>OpFloatLabel</code> com <code>Variant</code>:
+                <code>over</code> (padrão), <code>in</code> e <code>on</code>. O <code>for</code> do
+                <code>&lt;label&gt;</code> precisa apontar para o <code>InputId</code> do MultiSelect.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <OpFloatLabel>
+                        <OpMultiSelect TValue="City" InputId="over_label" @bind-Value="_over" Options="Cities"
+                                       OptionLabel="Name" Filter="true" MaxSelectedLabels="3" StyleClass="w-64"/>
+                        <label for="over_label">Over Label</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="in">
+                        <OpMultiSelect TValue="City" InputId="in_label" @bind-Value="_in" Options="Cities"
+                                       OptionLabel="Name" Filter="true" MaxSelectedLabels="3" StyleClass="w-64"/>
+                        <label for="in_label">In Label</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="on">
+                        <OpMultiSelect TValue="City" InputId="on_label" @bind-Value="_on" Options="Cities"
+                                       OptionLabel="Name" Filter="true" MaxSelectedLabels="3" StyleClass="w-64"/>
+                        <label for="on_label">On Label</label>
+                    </OpFloatLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FloatLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ifta Label" Id="iftalabel">
+            <Description>
+                O IftaLabel cria rótulos alinhados no topo, dentro do campo. Use <code>OpIftaLabel</code> com o
+                <code>&lt;label&gt;</code> apontando para o <code>InputId</code> do MultiSelect.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpIftaLabel>
+                        <OpMultiSelect TValue="City" InputId="ms_cities" @bind-Value="_iftalabel" Options="Cities"
+                                       OptionLabel="Name" Filter="true" MaxSelectedLabels="3" StyleClass="w-64"/>
+                        <label for="ms_cities">Cidades</label>
+                    </OpIftaLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IftaLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Clear Icon" Id="clearicon">
+            <Description>
+                Quando <code>ShowClear="true"</code>, um ícone é exibido para remover toda a seleção. O evento
+                <code>OnClear</code> é disparado quando isso acontece. O ícone pode ser substituído com
+                <code>ClearIconTemplate</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpMultiSelect TValue="City" @bind-Value="_clear" Options="Cities" OptionLabel="Name"
+                                   ShowClear="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades"
+                                   StyleClass="w-64"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ClearIconCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Sizes" Id="sizes">
+            <Description>
+                O MultiSelect oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão,
+                via propriedade <code>Size</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpMultiSelect TValue="City" @bind-Value="_small" Options="Cities" OptionLabel="Name"
+                                   Size="small" MaxSelectedLabels="3" Placeholder="Small" StyleClass="w-64"/>
+                    <OpMultiSelect TValue="City" @bind-Value="_normal" Options="Cities" OptionLabel="Name"
+                                   MaxSelectedLabels="3" Placeholder="Normal" StyleClass="w-64"/>
+                    <OpMultiSelect TValue="City" @bind-Value="_large" Options="Cities" OptionLabel="Name"
+                                   Size="large" MaxSelectedLabels="3" Placeholder="Large" StyleClass="w-64"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Fluid" Id="fluid">
+            <Description>
+                Com <code>Fluid="true"</code> o componente ocupa toda a largura do contêiner.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width: 100%; max-width: 20rem;">
+                        <OpMultiSelect TValue="City" @bind-Value="_fluid" Options="Cities" OptionLabel="Name"
+                                       Fluid="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filled" Id="filled">
+            <Description>
+                Defina <code>Variant="filled"</code> para exibir o componente com ênfase visual maior que o estilo
+                <code>outlined</code> padrão.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpMultiSelect TValue="City" @bind-Value="_filled" Options="Cities" OptionLabel="Name"
+                                   Variant="filled" MaxSelectedLabels="3" Placeholder="Selecione as Cidades"
+                                   StyleClass="w-64"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@FilledCode"/></Code>
         </DocSection>
-        <DocSection Label="Validação">
+
+        <DocSection Label="Desabilitado" Id="disabled">
             <Description>
-                O MultiSelect herda de <code>InputBase&lt;IReadOnlyList&lt;TValue&gt;&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+                Quando <code>Disabled="true"</code>, o elemento não pode ser editado nem receber foco.
             </Description>
             <ChildContent>
-                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                <div class="flex justify-center">
+                    <OpMultiSelect TValue="City" Options="Cities" OptionLabel="Name" Disabled="true"
+                                   MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado inválido é aplicado com <code>Invalid="true"</code> para indicar falha de validação — também
+                é ativado automaticamente pelo <code>EditForm</code> quando o campo tem erro.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpMultiSelect TValue="City" @bind-Value="_invalid" Options="Cities" OptionLabel="Name"
+                                   Invalid="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64"/>
+                    <OpMultiSelect TValue="City" @bind-Value="_invalidFilled" Options="Cities" OptionLabel="Name"
+                                   Variant="filled" Invalid="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O MultiSelect herda de <code>OpInputBase&lt;IReadOnlyList&lt;TValue&gt;&gt;</code> (que por sua vez
+                deriva de <code>InputBase</code>), então integra-se ao <code>EditForm</code> com
+                <code>DataAnnotationsValidator</code>, e o estado inválido aparece automaticamente com
+                <code>ValidationMessage</code>. Isso substitui as abordagens <i>Template Driven</i> e
+                <i>Reactive Forms</i> do Angular.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col gap-2" style="width: 100%; max-width: 20rem;">
                     <DataAnnotationsValidator/>
-                    <OpMultiSelect TValue="string" @bind-Value="_form.Selection" Options="Cities" Placeholder="Selecione as Cidades" StyleClass="w-full"/>
-                    <ValidationMessage For="() => _form.Selection"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
+                    <OpMultiSelect TValue="City" @bind-Value="_form.Cities" Options="Cities" OptionLabel="Name"
+                                   MaxSelectedLabels="3" Placeholder="Selecione as Cidades"/>
+                    <ValidationMessage For="() => _form.Cities"/>
+                    <button type="submit" class="p-button p-component p-button-secondary">Enviar</button>
                     @if (_submitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Selecionadas: @(_form.Selection is null ? "—" : string.Join(", ", _form.Selection))</div>
+                        <div class="text-sm" style="color: var(--p-green-600)">Selecionadas: @Format(_form.Cities)</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vínculo" Id="binding">
+            <Description>
+                Além do <code>@@bind-Value</code>, o componente expõe <code>ValueChanged</code> e o evento
+                <code>OnChange</code>, disparado após alternar uma opção. Use <code>@@bind-Value:after</code> para
+                reagir a mudanças no próprio componente.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpMultiSelect TValue="City" @bind-Value="_bound" Options="Cities" OptionLabel="Name"
+                                   OnChange="() => _changes++" MaxSelectedLabels="3"
+                                   Placeholder="Selecione as Cidades" StyleClass="w-64"/>
+                    <span class="text-sm">Selecionadas: <b>@Format(_bound)</b> — mudanças: <b>@_changes</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BindingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O valor que descreve o componente pode ser informado por <code>AriaLabel</code> ou associando um
+                    <code>&lt;label for&gt;</code> ao <code>InputId</code>. O MultiSelect tem role
+                    <code>combobox</code>, com <code>aria-haspopup</code> e <code>aria-expanded</code>; a relação com
+                    o popup é feita por <code>aria-controls</code>, que aponta para o id da lista.
+                </p>
+                <p>
+                    O popup usa role <code>listbox</code> e cada item tem role <code>option</code> com
+                    <code>aria-label</code> e <code>aria-selected</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o MultiSelect (fechado) ou para o próximo elemento focável do popup (aberto)." },
+                              new[] { "shift + tab", "Move o foco para o elemento focável anterior do popup." },
+                              new[] { "space", "Abre o popup e alterna a seleção da opção em foco." },
+                              new[] { "down arrow", "Abre o popup ou move o foco para a próxima opção." },
+                              new[] { "up arrow", "Abre o popup ou move o foco para a opção anterior." },
+                              new[] { "enter", "Alterna a seleção da opção em foco." },
+                              new[] { "escape", "Fecha o popup e devolve o foco ao MultiSelect." },
+                              new[] { "home", "Move o foco para a primeira opção." },
+                              new[] { "end", "Move o foco para a última opção." },
+                              new[] { "qualquer caractere imprimível", "Move o foco para a opção cujo rótulo começa com os caracteres digitados." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Options", "IReadOnlyList&lt;object&gt;?", "null", "Coleção de opções." },
-                              new[] { "OptionLabel", "string?", "null", "Propriedade usada como rótulo da opção." },
-                              new[] { "OptionValue", "string?", "null", "Propriedade usada como valor da opção." },
-                              new[] { "OptionDisabled", "string?", "null", "Propriedade que indica opção desabilitada." },
-                              new[] { "Value", "IReadOnlyList&lt;TValue&gt;?", "null", "Valores selecionados." },
-                              new[] { "ValueChanged", "EventCallback&lt;IReadOnlyList&lt;TValue&gt;?&gt;", "-", "Callback de binding." },
-                              new[] { "Placeholder", "string?", "null", "Texto exibido quando vazio." },
-                              new[] { "Display", "string", "comma", "Modo de exibição: <code>comma</code> ou <code>chip</code>." },
-                              new[] { "MaxSelectedLabels", "int?", "null", "Máximo de labels exibidas." },
-                              new[] { "Filter", "bool", "false", "Habilita filtro." },
-                              new[] { "ShowClear", "bool", "false", "Exibe botão de limpar." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Readonly", "bool", "false", "Somente leitura." },
-                              new[] { "Invalid", "bool", "false", "Estado inválido." },
-                              new[] { "Required", "bool", "false", "Obrigatório." },
-                              new[] { "Group", "bool", "false", "Opções agrupadas." },
-                              new[] { "OptionGroupLabel", "string", "label", "Propriedade do rótulo do grupo." },
-                              new[] { "OptionGroupChildren", "string", "items", "Propriedade dos itens do grupo." },
+                              new[] { "Options", "IReadOnlyList&lt;object&gt;?", "null", "Coleção de opções exibidas no overlay. Aceita objetos (use <code>OptionLabel</code>/<code>OptionValue</code>) ou primitivos." },
+                              new[] { "OptionLabel", "string?", "null", "Propriedade usada como rótulo de cada opção. Se omitida, é usado o <code>ToString()</code> do item." },
+                              new[] { "OptionValue", "string?", "null", "Propriedade usada como valor de cada opção. Se omitida, o próprio item é usado." },
+                              new[] { "OptionDisabled", "string?", "null", "Propriedade booleana que desabilita opções específicas." },
+                              new[] { "Placeholder", "string?", "null", "Texto exibido quando nenhum item está selecionado." },
+                              new[] { "Display", "string", "comma", "Formato dos selecionados: <code>comma</code> ou <code>chip</code>." },
+                              new[] { "MaxSelectedLabels", "int?", "null", "Número máximo de rótulos/chips exibidos antes de resumir a seleção." },
+                              new[] { "Filter", "bool", "false", "Exibe um campo de busca no cabeçalho do overlay." },
+                              new[] { "ShowHeader", "bool", "true", "Exibe o cabeçalho padrão (selecionar tudo e filtro)." },
+                              new[] { "ShowToggleAll", "bool", "true", "Exibe o checkbox de selecionar tudo no cabeçalho." },
+                              new[] { "HighlightOnSelect", "bool", "true", "Aplica a classe de realce às opções selecionadas." },
+                              new[] { "ShowClear", "bool", "false", "Exibe o ícone para limpar a seleção." },
+                              new[] { "Readonly", "bool", "false", "Impede alterar a seleção, mas mantém o overlay acessível." },
+                              new[] { "Required", "bool", "false", "Marca o campo como obrigatório para validação e acessibilidade." },
+                              new[] { "Group", "bool", "false", "Ativa o modo agrupado; as opções passam a vir de grupos." },
+                              new[] { "OptionGroupLabel", "string", "label", "Propriedade do grupo usada como rótulo da categoria." },
+                              new[] { "OptionGroupChildren", "string", "items", "Propriedade do grupo que contém a lista de itens." },
                               new[] { "Variant", "string", "outlined", "Variante: <code>outlined</code> ou <code>filled</code>." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
-                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura." },
-                              new[] { "ScrollHeight", "string?", "null", "Altura máxima da lista (px)." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura do contêiner." },
+                              new[] { "ScrollHeight", "string?", "200px", "Altura máxima da lista de opções, com rolagem." },
                               new[] { "VirtualScroll", "bool", "false", "Virtualiza a lista de opções. Requer <code>ScrollHeight</code>." },
                               new[] { "VirtualScrollItemSize", "int", "38", "Altura (px) de cada opção no virtual scroll (incluindo o gap)." },
-                              new[] { "Loading", "bool", "false", "Exibe estado de carregamento." },
-                              new[] { "DropdownIcon", "string?", "null", "Classe do ícone do dropdown." },
-                              new[] { "EmptyMessage", "string", "No results found", "Mensagem quando não há opções." },
-                              new[] { "EmptyFilterMessage", "string", "No results found", "Mensagem quando o filtro não encontra opções." },
-                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "InputId", "string?", "null", "Id do input." },
-                              new[] { "ShowOnFocus", "bool", "true", "Abre o overlay ao focar." },
-                              new[] { "PanelStyleClass", "string?", "null", "Classes do painel do overlay." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Loading", "bool", "false", "Exibe um spinner no lugar do ícone do dropdown." },
+                              new[] { "DropdownIcon", "string?", "null", "Classe do ícone do dropdown (ex.: <code>pi pi-chevron-down</code>)." },
+                              new[] { "EmptyMessage", "string?", "No results found", "Mensagem exibida quando não há opções." },
+                              new[] { "EmptyFilterMessage", "string?", "No results found", "Mensagem exibida quando o filtro não encontra opções." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação do elemento." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do combobox." },
+                              new[] { "InputId", "string?", "null", "Id do input interno (para associar ao <code>&lt;label for&gt;</code>)." },
+                              new[] { "ShowOnFocus", "bool", "true", "Abre o overlay ao focar o componente." },
+                              new[] { "PanelStyleClass", "string?", "null", "Classes adicionais no painel do overlay." },
+                              new[] { "Value", "IReadOnlyList&lt;TValue&gt;?", "null", "Valores selecionados. Combine com <code>@bind-Value</code>." },
+                              new[] { "ValueChanged", "EventCallback&lt;IReadOnlyList&lt;TValue&gt;?&gt;", "-", "Callback de binding do valor selecionado." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente, impedindo foco e seleção." },
+                              new[] { "Invalid", "bool", "false", "Aplica o estado de erro; também é ativado pela validação do <code>EditForm</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
                 <ApiTable Caption="Eventos"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "OnChange", "EventCallback&lt;IReadOnlyList&lt;TValue&gt;?&gt;", "Disparado ao mudar a seleção." },
-                              new[] { "OnFilter", "EventCallback&lt;string&gt;", "Disparado ao filtrar." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." },
-                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar." },
-                              new[] { "OnShow", "EventCallback", "Disparado ao exibir o overlay." },
-                              new[] { "OnHide", "EventCallback", "Disparado ao ocultar o overlay." },
-                              new[] { "OnClear", "EventCallback", "Disparado ao limpar." }
+                              new[] { "OnFilter", "EventCallback&lt;string&gt;", "Disparado a cada alteração do texto do filtro." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar o componente." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar o componente." },
+                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar no componente." },
+                              new[] { "OnShow", "EventCallback", "Disparado ao abrir o overlay." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao fechar o overlay." },
+                              new[] { "OnClear", "EventCallback", "Disparado quando a seleção é limpa pelo botão de clear." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
                 <ApiTable Caption="Templates"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ItemTemplate", "RenderFragment&lt;TValue&gt;?", "Template do item da lista." },
-                              new[] { "SelectedItemsTemplate", "RenderFragment&lt;IReadOnlyList&lt;TValue&gt;&gt;?", "Template dos itens selecionados." },
-                              new[] { "GroupTemplate", "RenderFragment&lt;object&gt;?", "Template do grupo." },
-                              new[] { "HeaderTemplate", "RenderFragment?", "Template do cabeçalho." },
-                              new[] { "FooterTemplate", "RenderFragment?", "Template do rodapé." },
-                              new[] { "EmptyTemplate", "RenderFragment?", "Template quando vazio." },
-                              new[] { "EmptyFilterTemplate", "RenderFragment?", "Template quando o filtro não encontra opções." },
-                              new[] { "DropdownIconTemplate", "RenderFragment?", "Template do ícone do dropdown." },
-                              new[] { "LoadingIconTemplate", "RenderFragment?", "Template do ícone de carregamento." },
-                              new[] { "ClearIconTemplate", "RenderFragment?", "Template do ícone de limpar." }
+                              new[] { "ItemTemplate", "RenderFragment&lt;TValue&gt;?", "Customiza o conteúdo de cada opção da lista." },
+                              new[] { "SelectedItemsTemplate", "RenderFragment&lt;IReadOnlyList&lt;TValue&gt;&gt;?", "Customiza o conteúdo dos itens selecionados exibido no campo." },
+                              new[] { "GroupTemplate", "RenderFragment&lt;object&gt;?", "Customiza o rótulo de cada grupo." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo extra no topo do overlay." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Conteúdo extra no rodapé do overlay." },
+                              new[] { "EmptyTemplate", "RenderFragment?", "Customiza a mensagem quando não há opções." },
+                              new[] { "EmptyFilterTemplate", "RenderFragment?", "Customiza a mensagem quando o filtro não encontra opções." },
+                              new[] { "DropdownIconTemplate", "RenderFragment?", "Substitui o ícone do dropdown." },
+                              new[] { "LoadingIconTemplate", "RenderFragment?", "Substitui o ícone de carregamento." },
+                              new[] { "ClearIconTemplate", "RenderFragment?", "Substitui o ícone de limpar." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="multiselect"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-multiselect / p-component / p-inputwrapper", "Elemento raiz." },
+                              new[] { "p-multiselect-display-chip", "Raiz no modo <code>chip</code> (<code>Display</code>)." },
+                              new[] { "p-multiselect-fluid", "Raiz com <code>Fluid</code>." },
+                              new[] { "p-multiselect-sm / p-multiselect-lg", "Raiz conforme <code>Size</code>." },
+                              new[] { "p-inputwrapper-filled", "Raiz com itens selecionados." },
+                              new[] { "p-inputwrapper-focus / p-focus", "Raiz focada." },
+                              new[] { "p-multiselect-open", "Raiz com o overlay aberto." },
+                              new[] { "p-variant-filled / p-disabled / p-invalid", "Estados da raiz." },
+                              new[] { "p-multiselect-label-container / p-multiselect-label", "Contêiner e rótulo do campo." },
+                              new[] { "p-placeholder / p-multiselect-label-empty", "Rótulo sem seleção." },
+                              new[] { "p-multiselect-chip-item / p-multiselect-chip / p-multiselect-chip-icon", "Chips dos itens selecionados." },
+                              new[] { "p-multiselect-dropdown / p-multiselect-dropdown-icon", "Gatilho e ícone do dropdown." },
+                              new[] { "p-multiselect-loading-icon / p-multiselect-clear-icon", "Ícones de carregamento e de limpar." },
+                              new[] { "p-multiselect-overlay", "Painel do overlay." },
+                              new[] { "p-multiselect-header / p-multiselect-filter-container / p-multiselect-filter", "Cabeçalho e filtro." },
+                              new[] { "p-multiselect-list-container / p-multiselect-list", "Contêiner e lista de opções." },
+                              new[] { "p-multiselect-option / p-multiselect-option-selected", "Opção e opção selecionada." },
+                              new[] { "p-multiselect-option-label", "Rótulo da opção." },
+                              new[] { "p-multiselect-option-group / p-multiselect-option-group-label", "Grupo e seu rótulo." },
+                              new[] { "p-multiselect-empty-message", "Mensagem quando não há opções." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="multiselect"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>PanelStyleClass</code> e os templates para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>PanelStyleClass</code> e os templates (item, item selecionado, cabeçalho, rodapé e ícones).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há <code>AriaLabelledBy</code>; o rótulo acessível é definido por <code>AriaLabel</code> ou por um <code>&lt;label for&gt;</code> apontando para o <code>InputId</code>.</li>
+                        <li>O checkbox de <code>ShowToggleAll</code> não expõe estado indeterminado, então não há indicação visual de seleção parcial.</li>
+                        <li>Textos internos fixos em inglês: o resumo <code>N items selected</code>, o placeholder/label <code>Filter</code> e as mensagens padrão <code>No results found</code>.</li>
+                        <li><code>VirtualScroll</code> não é aplicado quando <code>Group="true"</code>.</li>
+                        <li>A lista não recebe <code>aria-multiselectable</code>, e as opções não expõem <code>aria-disabled</code> (apenas a classe <code>p-disabled</code>).</li>
+                        <li><code>SelectedItemsTemplate</code> ignora o modo <code>Display="chip"</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private IReadOnlyList<string>? _sel;
-    private IReadOnlyList<string>? _sel2;
-    private IReadOnlyList<string>? _sel3;
-    private IReadOnlyList<string>? _sel4;
-    private IReadOnlyList<string>? _sel5;
+    private IReadOnlyList<City>? _basic;
+    private IReadOnlyList<City>? _chips;
+    private IReadOnlyList<string>? _grouped;
+    private IReadOnlyList<City>? _template;
+    private IReadOnlyList<City>? _templateSelected;
+    private IReadOnlyList<City>? _filter;
+    private IReadOnlyList<City>? _loading;
+    private IReadOnlyList<string>? _virtual;
+    private IReadOnlyList<City>? _over;
+    private IReadOnlyList<City>? _in;
+    private IReadOnlyList<City>? _on;
+    private IReadOnlyList<City>? _iftalabel;
+    private IReadOnlyList<City>? _clear;
+    private IReadOnlyList<City>? _small;
+    private IReadOnlyList<City>? _normal;
+    private IReadOnlyList<City>? _large;
+    private IReadOnlyList<City>? _fluid;
+    private IReadOnlyList<City>? _filled;
+    private IReadOnlyList<City>? _invalid;
+    private IReadOnlyList<City>? _invalidFilled;
+    private IReadOnlyList<City>? _bound;
+    private int _changes;
 
-    private static readonly List<string> Cities = new() { "Nova York", "Roma", "Londres", "Istambul", "Paris", "Barcelona", "Berlim" };
+    private bool _submitted;
+    private readonly MultiSelectFormModel _form = new();
+
+    private void OnSubmit() => _submitted = true;
+
+    private static string Format<T>(IReadOnlyList<T>? values) => values is null || values.Count == 0
+        ? "—"
+        : string.Join(", ", values);
+
+    private sealed class City
+    {
+        public string Name { get; set; } = "";
+        public string Code { get; set; } = "";
+    }
+
+    private static readonly List<City> Cities = new()
+    {
+        new() { Name = "Nova York", Code = "NY" },
+        new() { Name = "Roma", Code = "RM" },
+        new() { Name = "Londres", Code = "LDN" },
+        new() { Name = "Istambul", Code = "IST" },
+        new() { Name = "Paris", Code = "PRS" }
+    };
+
+    private static readonly string[] ManyItems = Enumerable.Range(0, 10000)
+        .Select(i => $"Item #{i}")
+        .ToArray();
 
     private sealed class CountryGroup
     {
@@ -194,56 +588,232 @@
         new() { Label = "Japão", Items = new() { "Quioto", "Osaka", "Tóquio" } }
     };
 
+    private sealed class MultiSelectFormModel
+    {
+        [Required(ErrorMessage = "Escolha ao menos uma cidade.")]
+        public IReadOnlyList<City>? Cities { get; set; }
+    }
+
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.MultiSelect
 
-        <OpMultiSelect TValue="string" @bind-Value="_sel" Options="Cities" Placeholder="Selecione as Cidades" />
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name" />
         """;
 
     private const string BasicCode = """
-        <OpMultiSelect TValue="string" @bind-Value="_sel" Options="Cities" Placeholder="Selecione as Cidades" StyleClass="w-full" />
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name"
+                       MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64" />
 
         @code {
-            private IReadOnlyList<string>? _sel;
-            private static readonly List<string> Cities = new() { "Nova York", "Roma", "Londres", "Istambul", "Paris" };
+            private IReadOnlyList<City>? _selectedCities;
+
+            private sealed class City
+            {
+                public string Name { get; set; } = "";
+                public string Code { get; set; } = "";
+            }
+
+            private static readonly List<City> Cities = new()
+            {
+                new() { Name = "Nova York", Code = "NY" },
+                new() { Name = "Roma", Code = "RM" },
+                new() { Name = "Londres", Code = "LDN" },
+                new() { Name = "Istambul", Code = "IST" },
+                new() { Name = "Paris", Code = "PRS" }
+            };
         }
         """;
 
     private const string ChipsCode = """
-        <OpMultiSelect TValue="string" @bind-Value="_sel" Options="Cities" Display="chip" ShowClear="true" Placeholder="Selecione as Cidades" />
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name"
+                       Display="chip" Placeholder="Selecione as Cidades" StyleClass="w-64" />
+        """;
+
+    private const string GroupCode = """
+        <OpMultiSelect TValue="string" @bind-Value="_selectedCities" Options="CountryGroups" Group="true"
+                       OptionGroupLabel="Label" OptionGroupChildren="Items" Display="chip"
+                       ScrollHeight="250px" Placeholder="Selecione as Cidades" StyleClass="w-64" />
+
+        @code {
+            private IReadOnlyList<string>? _selectedCities;
+
+            private sealed class CountryGroup
+            {
+                public string Label { get; set; } = "";
+                public List<string> Items { get; set; } = new();
+            }
+
+            private static readonly List<CountryGroup> CountryGroups = new()
+            {
+                new() { Label = "Alemanha", Items = new() { "Berlim", "Frankfurt", "Hamburgo" } },
+                new() { Label = "EUA", Items = new() { "Chicago", "Los Angeles", "Nova York" } },
+                new() { Label = "Japão", Items = new() { "Quioto", "Osaka", "Tóquio" } }
+            };
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name"
+                       Display="chip" ShowHeader="false" Placeholder="Selecione os Países">
+            <ItemTemplate Context="city">
+                <div style="display:flex; align-items:center; gap:.5rem;">
+                    <span class="pi pi-map-marker" style="color:var(--p-primary-color)"></span>
+                    <span>@city.Name</span>
+                </div>
+            </ItemTemplate>
+            <DropdownIconTemplate>
+                <span class="p-multiselect-dropdown-icon pi pi-map"></span>
+            </DropdownIconTemplate>
+            <HeaderTemplate>
+                <div style="font-weight:500; padding:.5rem .75rem;">Cidades disponíveis</div>
+            </HeaderTemplate>
+            <FooterTemplate>
+                <div style="padding:.75rem; display:flex; justify-content:space-between;">
+                    <button type="button" class="p-button p-component p-button-secondary p-button-text p-button-sm">Adicionar</button>
+                    <button type="button" class="p-button p-component p-button-danger p-button-text p-button-sm">Remover todos</button>
+                </div>
+            </FooterTemplate>
+        </OpMultiSelect>
+
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name"
+                       Placeholder="Selecione as Cidades">
+            <SelectedItemsTemplate Context="items">
+                @foreach (var item in items)
+                {
+                    <span style="margin-right:.25rem;">@item.Name</span>
+                }
+            </SelectedItemsTemplate>
+        </OpMultiSelect>
         """;
 
     private const string FilterCode = """
-        <OpMultiSelect TValue="string" @bind-Value="_sel" Options="Cities" Display="chip" Filter="true" MaxSelectedLabels="2" Placeholder="Selecione as Cidades" />
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name"
+                       Filter="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64" />
         """;
 
-    private const string GroupedCode = """
-        <OpMultiSelect TValue="string" @bind-Value="_sel" Options="CountryGroups" Group="true"
-                       OptionGroupLabel="Label" OptionGroupChildren="Items" Placeholder="Selecione os Países" />
+    private const string LoadingStateCode = """
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name"
+                       Loading="true" Placeholder="Carregando..." StyleClass="w-64" />
+        """;
+
+    private const string VirtualScrollCode = """
+        <OpMultiSelect TValue="string" @bind-Value="_selectedItems" Options="Items" VirtualScroll="true"
+                       VirtualScrollItemSize="43" ScrollHeight="200px" MaxSelectedLabels="3"
+                       Placeholder="Selecione Cidades" StyleClass="w-64" />
+
+        @code {
+            private IReadOnlyList<string>? _selectedItems;
+
+            private static readonly string[] Items = Enumerable.Range(0, 10000)
+                .Select(i => $"Item #{i}")
+                .ToArray();
+        }
+        """;
+
+    private const string FloatLabelCode = """
+        @using OpBlazorUI.Base.Components.FloatLabel
+
+        <OpFloatLabel>
+            <OpMultiSelect TValue="City" InputId="over_label" @bind-Value="_over" Options="Cities"
+                           OptionLabel="Name" Filter="true" MaxSelectedLabels="3" />
+            <label for="over_label">Over Label</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="in">
+            <OpMultiSelect TValue="City" InputId="in_label" @bind-Value="_in" Options="Cities"
+                           OptionLabel="Name" Filter="true" MaxSelectedLabels="3" />
+            <label for="in_label">In Label</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpMultiSelect TValue="City" InputId="on_label" @bind-Value="_on" Options="Cities"
+                           OptionLabel="Name" Filter="true" MaxSelectedLabels="3" />
+            <label for="on_label">On Label</label>
+        </OpFloatLabel>
+        """;
+
+    private const string IftaLabelCode = """
+        @using OpBlazorUI.Base.Components.IftaLabel
+
+        <OpIftaLabel>
+            <OpMultiSelect TValue="City" InputId="ms_cities" @bind-Value="_selectedCities" Options="Cities"
+                           OptionLabel="Name" Filter="true" MaxSelectedLabels="3" />
+            <label for="ms_cities">Cidades</label>
+        </OpIftaLabel>
+        """;
+
+    private const string ClearIconCode = """
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name"
+                       ShowClear="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64" />
+        """;
+
+    private const string SizesCode = """
+        <OpMultiSelect TValue="City" @bind-Value="_small" Options="Cities" OptionLabel="Name" Size="small" MaxSelectedLabels="3" Placeholder="Small" />
+        <OpMultiSelect TValue="City" @bind-Value="_normal" Options="Cities" OptionLabel="Name" MaxSelectedLabels="3" Placeholder="Normal" />
+        <OpMultiSelect TValue="City" @bind-Value="_large" Options="Cities" OptionLabel="Name" Size="large" MaxSelectedLabels="3" Placeholder="Large" />
+        """;
+
+    private const string FluidCode = """
+        <OpMultiSelect TValue="City" @bind-Value="_fluid" Options="Cities" OptionLabel="Name"
+                       Fluid="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades" />
         """;
 
     private const string FilledCode = """
-        <OpMultiSelect TValue="string" @bind-Value="_sel" Options="Cities" Variant="filled" Placeholder="Preenchido" />
-        <OpMultiSelect TValue="string" Options="Cities" Disabled="true" Placeholder="Desabilitado" />
+        <OpMultiSelect TValue="City" @bind-Value="_filled" Options="Cities" OptionLabel="Name"
+                       Variant="filled" MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64" />
         """;
 
-    private bool _submitted;
-    private MultiFormModel _form = new();
+    private const string DisabledCode = """
+        <OpMultiSelect TValue="City" Options="Cities" OptionLabel="Name" Disabled="true"
+                       MaxSelectedLabels="3" Placeholder="Selecione as Cidades" StyleClass="w-64" />
+        """;
 
-    private sealed class MultiFormModel
-    {
-        [Required(ErrorMessage = "Escolha ao menos uma cidade.")]
-        public IReadOnlyList<string>? Selection { get; set; }
-    }
+    private const string InvalidCode = """
+        <OpMultiSelect TValue="City" @bind-Value="_invalid" Options="Cities" OptionLabel="Name"
+                       Invalid="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades" />
+        <OpMultiSelect TValue="City" @bind-Value="_invalidFilled" Options="Cities" OptionLabel="Name"
+                       Variant="filled" Invalid="true" MaxSelectedLabels="3" Placeholder="Selecione as Cidades" />
+        """;
 
-    private void OnSubmit() => _submitted = true;
+    private const string FormsCode = """
+        @using System.ComponentModel.DataAnnotations
 
-    private const string ValidationCode = """
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
-            <OpMultiSelect TValue="string" @bind-Value="_form.Selection" Options="Cities" Placeholder="Selecione as Cidades" />
-            <ValidationMessage For="() => _form.Selection" />
+            <OpMultiSelect TValue="City" @bind-Value="_form.Cities" Options="Cities" OptionLabel="Name"
+                           MaxSelectedLabels="3" Placeholder="Selecione as Cidades" />
+            <ValidationMessage For="() => _form.Cities" />
             <button type="submit" class="p-button p-component">Enviar</button>
         </EditForm>
+
+        @code {
+            private readonly MultiSelectFormModel _form = new();
+
+            private void OnSubmit() { /* ... */ }
+
+            private sealed class MultiSelectFormModel
+            {
+                [Required(ErrorMessage = "Escolha ao menos uma cidade.")]
+                public IReadOnlyList<City>? Cities { get; set; }
+            }
+        }
+        """;
+
+    private const string BindingCode = """
+        <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name"
+                       OnChange="() => _changes++" Placeholder="Selecione as Cidades" />
+        <span>Selecionadas: @(_selectedCities is null ? "—" : string.Join(", ", _selectedCities.Select(c => c.Name))) — mudanças: @_changes</span>
+
+        @code {
+            private IReadOnlyList<City>? _selectedCities;
+            private int _changes;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <label for="ms_cities">Cidades</label>
+        <OpMultiSelect TValue="City" InputId="ms_cities" Options="Cities" OptionLabel="Name" />
+
+        <OpMultiSelect TValue="City" Options="Cities" OptionLabel="Name" AriaLabel="Cidades" />
         """;
 }

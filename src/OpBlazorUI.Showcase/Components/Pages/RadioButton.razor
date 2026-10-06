@@ -3,133 +3,433 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.RadioButton
 
+<PageTitle>RadioButton - OpBlazorUI</PageTitle>
+
 <DocComponent Title="RadioButton"
               Description="O RadioButton é uma extensão do elemento radio button padrão.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Grupo" Id="group">
+            <Description>
+                RadioButtons são usados como input controlado: cada opção tem um <code>Value</code> e compartilha o
+                mesmo <code>ModelValue</code> do grupo (via <code>@@bind-ModelValue</code>). No Blazor não há
+                <code>ngModel</code>; o tipo do valor é definido pelo parâmetro genérico <code>TValue</code>.
+            </Description>
             <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpRadioButton TValue="string" Value="@("opt1")" @bind-ModelValue="_selected" Name="rb"/>
-                    <OpRadioButton TValue="string" Value="@("opt2")" @bind-ModelValue="_selected" Name="rb"/>
-                    <OpRadioButton TValue="string" Value="@("opt3")" @bind-ModelValue="_selected" Name="rb"/>
+                <div class="flex flex-wrap justify-center gap-4">
+                    @foreach (var ingredient in _ingredients)
+                    {
+                        <div class="flex items-center">
+                            <OpRadioButton TValue="string" Name="pizza" Value="@ingredient.Value" @bind-ModelValue="_ingredient" Id="@ingredient.Id"/>
+                            <label for="@ingredient.Id" class="ml-2">@ingredient.Value</label>
+                        </div>
+                    }
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@BasicCode"/></Code>
+            <Code><CodeBlock Code="@GroupCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido / Desabilitado">
+        <DocSection Label="Dinâmico" Id="dynamic">
+            <Description>
+                Os RadioButtons podem ser gerados a partir de uma lista de valores, usando qualquer tipo em
+                <code>TValue</code> (aqui, um <code>record</code>, cuja igualdade por valor faz a seleção funcionar).
+            </Description>
             <ChildContent>
-                <div class="flex gap-4">
-                    <OpRadioButton TValue="string" Value="@("a")" ModelValue="@("a")" Name="rb2" Invalid="true"/>
-                    <OpRadioButton TValue="string" Value="@("b")" ModelValue="@("b")" Name="rb2" Disabled="true"/>
+                <div class="flex justify-center">
+                    <div class="flex flex-col gap-4">
+                        @foreach (var category in _categories)
+                        {
+                            <div class="flex items-center">
+                                <OpRadioButton TValue="Category" Name="category" Value="@category" @bind-ModelValue="_selectedCategory" Id="@category.Key"/>
+                                <label for="@category.Key" class="ml-2">@category.Name</label>
+                            </div>
+                        }
+                    </div>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@StateCode"/></Code>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tamanhos">
+        <DocSection Label="Preenchido" Id="filled">
+            <Description>
+                Defina <code>Variant="filled"</code> para exibir o componente com ênfase visual maior que o estilo
+                <code>outlined</code> padrão.
+            </Description>
             <ChildContent>
-                <div class="flex gap-4">
-                    <OpRadioButton TValue="string" Value="@("a")" ModelValue="@("a")" Name="rb3" Size="small"/>
-                    <OpRadioButton TValue="string" Value="@("b")" ModelValue="@("b")" Name="rb3"/>
-                    <OpRadioButton TValue="string" Value="@("c")" ModelValue="@("c")" Name="rb3" Size="large"/>
+                <div class="flex justify-center">
+                    <OpRadioButton TValue="string" Value="@("Option")" ModelValue="@("Option")" Variant="filled"/>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@SizeCode"/></Code>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos" Id="sizes">
+            <Description>
+                O RadioButton oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center gap-2">
+                            <OpRadioButton TValue="string" Name="size" Value="@("Small")" @bind-ModelValue="_size" Id="size_small" Size="small"/>
+                            <label for="size_small" class="text-sm">Small</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <OpRadioButton TValue="string" Name="size" Value="@("Normal")" @bind-ModelValue="_size" Id="size_normal"/>
+                            <label for="size_normal">Normal</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <OpRadioButton TValue="string" Name="size" Value="@("Large")" @bind-ModelValue="_size" Id="size_large" Size="large"/>
+                            <label for="size_large" class="text-lg">Large</label>
+                        </div>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Quando <code>Disabled="true"</code>, o elemento não pode ser editado nem receber foco.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center gap-2">
+                    <OpRadioButton TValue="int" Value="@(1)" ModelValue="@(2)" Disabled="true"/>
+                    <OpRadioButton TValue="int" Value="@(2)" ModelValue="@(2)" Disabled="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado inválido é aplicado com <code>Invalid="true"</code> para indicar falha de validação.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpRadioButton TValue="string" Value="@("A")" @bind-ModelValue="_invalid" Invalid="@(string.IsNullOrEmpty(_invalid))"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O <code>OpRadioButton</code> não herda de <code>OpInputBase</code> (é um grupo N→1), então não
+                participa nativamente do <code>EditForm</code>/<code>ValidationMessage</code>. Valide a seleção
+                manualmente no envio, como no exemplo. Isso substitui as abordagens <i>Template Driven</i> e
+                <i>Reactive Forms</i> do Angular.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <div class="flex flex-wrap gap-4">
+                        @foreach (var ingredient in _ingredients)
+                        {
+                            <div class="flex items-center">
+                                <OpRadioButton TValue="string" Name="form-pizza" Value="@ingredient.Value" @bind-ModelValue="_form.Ingredient" Id="@($"form-{ingredient.Id}")"/>
+                                <label for="@($"form-{ingredient.Id}")" class="ml-2">@ingredient.Value</label>
+                            </div>
+                        }
+                    </div>
+                    @if (_submitted && string.IsNullOrEmpty(_form.Ingredient))
+                    {
+                        <small style="color: var(--p-red-500)">Selecione um sabor.</small>
+                    }
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vínculo" Id="binding">
+            <Description>
+                Use <code>@@bind-ModelValue</code> para o vínculo do grupo; <code>ModelValue</code>/
+                <code>ModelValueChanged</code> para controle manual e <code>OnChange</code> para reagir à seleção.
+            </Description>
+            <ChildContent>
+                <div class="flex items-center gap-3">
+                    <OpRadioButton TValue="string" Name="bind" Value="@("A")" @bind-ModelValue="_bound" Id="bind-a" OnChange="() => _changes++"/>
+                    <label for="bind-a">A</label>
+                    <OpRadioButton TValue="string" Name="bind" Value="@("B")" @bind-ModelValue="_bound" Id="bind-b" OnChange="() => _changes++"/>
+                    <label for="bind-b">B</label>
+                    <span class="text-sm">Selecionado: <b>@(_bound ?? "—")</b> — mudanças: <b>@_changes</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BindingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O RadioButton usa internamente um elemento <code>&lt;input type="radio"&gt;</code> acessível. O
+                    texto que descreve o componente pode vir de um <code>&lt;label&gt;</code> combinado com o
+                    <code>Id</code>, de <code>AriaLabelledBy</code> ou de <code>AriaLabel</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o radio marcado; se nenhum estiver marcado, o primeiro recebe o foco." },
+                              new[] { "left / up arrow", "Move o foco para o radio anterior; se não houver, o último recebe o foco." },
+                              new[] { "right / down arrow", "Move o foco para o próximo radio; se não houver, o primeiro recebe o foco." },
+                              new[] { "space", "Se o radio focado estiver desmarcado, marca-o." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Value", "TValue?", "null", "Valor desta opção." },
                               new[] { "ModelValue", "TValue?", "null", "Valor selecionado do grupo." },
-                              new[] { "ModelValueChanged", "EventCallback&lt;TValue?&gt;", "-", "Callback de binding." },
-                              new[] { "Name", "string?", "null", "Name do grupo de radios." },
-                              new[] { "Id", "string?", "null", "Id do input." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula." },
-                              new[] { "Required", "bool", "false", "Obrigatório." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
+                              new[] { "Name", "string?", "null", "Nome do grupo de radios." },
+                              new[] { "Id", "string?", "null", "Id do input; use junto do <code>for</code> do label." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o radio." },
+                              new[] { "Required", "bool", "false", "Marca o input como obrigatório." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o radio." },
                               new[] { "Invalid", "bool", "false", "Estado inválido." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
                               new[] { "Variant", "string", "outlined", "Variante: <code>outlined</code> ou <code>filled</code>." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." }
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;input&gt;</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado ao mudar o valor." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                              new[] { "ModelValueChanged", "EventCallback&lt;TValue?&gt;", "Disparado quando o valor do grupo muda (binding)." },
+                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado ao mudar a seleção." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao receber foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao perder o foco." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="radiobutton"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-radiobutton", "Elemento raiz." },
+                              new[] { "p-radiobutton-box", "Contêiner do ícone." },
+                              new[] { "p-radiobutton-icon", "Ícone interno." },
+                              new[] { "p-radiobutton-input", "Elemento <code>&lt;input&gt;</code> nativo." },
+                              new[] { "p-radiobutton-checked", "Raiz no estado marcado." },
+                              new[] { "p-disabled", "Raiz desabilitada." },
+                              new[] { "p-invalid", "Raiz no estado inválido." },
+                              new[] { "p-variant-filled", "Raiz na variante <code>filled</code>." },
+                              new[] { "p-radiobutton-sm / p-radiobutton-lg", "Raiz conforme <code>Size</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="radiobutton"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e atributos extras para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e os <code>AdditionalAttributes</code> para customização.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O <code>OpRadioButton</code> não herda de <code>OpInputBase</code> e, por ser um grupo N→1, não integra nativamente com <code>EditForm</code>/<code>ValidationMessage</code> — valide a seleção manualmente.</li>
+                        <li>O componente não renderiza um <code>&lt;label&gt;</code> interno; associe um label externo com <code>for</code>/<code>Id</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private string _selected = "opt1";
+    private string? _ingredient;
+    private Category? _selectedCategory;
+    private string? _size;
+    private string? _invalid;
+    private string? _bound = "A";
+    private int _changes;
+    private bool _submitted;
+    private readonly RadioFormModel _form = new();
+
+    private record Category(string Key, string Name);
+
+    private record Ingredient(string Id, string Value);
+
+    private readonly Ingredient[] _ingredients =
+    [
+        new("ingredient1", "Cheese"),
+        new("ingredient2", "Mushroom"),
+        new("ingredient3", "Pepper"),
+        new("ingredient4", "Onion")
+    ];
+
+    private readonly Category[] _categories =
+    [
+        new("A", "Accounting"),
+        new("M", "Marketing"),
+        new("P", "Production"),
+        new("R", "Research")
+    ];
+
+    protected override void OnInitialized() => _selectedCategory = _categories[1];
+
+    private void OnSubmit() => _submitted = true;
+
+    private sealed class RadioFormModel
+    {
+        public string? Ingredient { get; set; }
+    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.RadioButton
-
-        <OpRadioButton TValue="string" Value="@("opt1")" @bind-ModelValue="_selected" Name="rb" />
         """;
 
-    private const string BasicCode = """
-        <OpRadioButton TValue="string" Value="@("opt1")" @bind-ModelValue="_selected" Name="rb" />
-        <OpRadioButton TValue="string" Value="@("opt2")" @bind-ModelValue="_selected" Name="rb" />
-        <OpRadioButton TValue="string" Value="@("opt3")" @bind-ModelValue="_selected" Name="rb" />
+    private const string GroupCode = """
+        <OpRadioButton TValue="string" Name="pizza" Value="@("Cheese")" @bind-ModelValue="_ingredient" Id="ingredient1" />
+        <label for="ingredient1" class="ml-2">Cheese</label>
+
+        <OpRadioButton TValue="string" Name="pizza" Value="@("Mushroom")" @bind-ModelValue="_ingredient" Id="ingredient2" />
+        <label for="ingredient2" class="ml-2">Mushroom</label>
+
+        <OpRadioButton TValue="string" Name="pizza" Value="@("Pepper")" @bind-ModelValue="_ingredient" Id="ingredient3" />
+        <label for="ingredient3" class="ml-2">Pepper</label>
+
+        <OpRadioButton TValue="string" Name="pizza" Value="@("Onion")" @bind-ModelValue="_ingredient" Id="ingredient4" />
+        <label for="ingredient4" class="ml-2">Onion</label>
 
         @code {
-            private string _selected = "opt1";
+            private string? _ingredient;
         }
         """;
 
-    private const string StateCode = """
-        <OpRadioButton TValue="string" Value="@("a")" ModelValue="@("a")" Name="rb" Invalid="true" />
-        <OpRadioButton TValue="string" Value="@("b")" ModelValue="@("b")" Name="rb" Disabled="true" />
+    private const string DynamicCode = """
+        @foreach (var category in _categories)
+        {
+            <div class="flex items-center">
+                <OpRadioButton TValue="Category" Name="category" Value="@category" @bind-ModelValue="_selectedCategory" Id="@category.Key" />
+                <label for="@category.Key" class="ml-2">@category.Name</label>
+            </div>
+        }
+
+        @code {
+            private record Category(string Key, string Name);
+
+            private Category? _selectedCategory;
+
+            private readonly Category[] _categories =
+            [
+                new("A", "Accounting"),
+                new("M", "Marketing"),
+                new("P", "Production"),
+                new("R", "Research")
+            ];
+
+            protected override void OnInitialized() => _selectedCategory = _categories[1];
+        }
         """;
 
-    private const string SizeCode = """
-        <OpRadioButton TValue="string" Value="@("a")" ModelValue="@("a")" Name="rb" Size="small" />
-        <OpRadioButton TValue="string" Value="@("b")" ModelValue="@("b")" Name="rb" />
-        <OpRadioButton TValue="string" Value="@("c")" ModelValue="@("c")" Name="rb" Size="large" />
+    private const string FilledCode = """
+        <OpRadioButton TValue="string" Value="@("Option")" ModelValue="@("Option")" Variant="filled" />
+        """;
+
+    private const string SizesCode = """
+        <OpRadioButton TValue="string" Name="size" Value="@("Small")" @bind-ModelValue="_size" Id="size_small" Size="small" />
+        <label for="size_small" class="text-sm">Small</label>
+
+        <OpRadioButton TValue="string" Name="size" Value="@("Normal")" @bind-ModelValue="_size" Id="size_normal" />
+        <label for="size_normal">Normal</label>
+
+        <OpRadioButton TValue="string" Name="size" Value="@("Large")" @bind-ModelValue="_size" Id="size_large" Size="large" />
+        <label for="size_large" class="text-lg">Large</label>
+        """;
+
+    private const string DisabledCode = """
+        <OpRadioButton TValue="int" Value="@(1)" ModelValue="@(2)" Disabled="true" />
+        <OpRadioButton TValue="int" Value="@(2)" ModelValue="@(2)" Disabled="true" />
+        """;
+
+    private const string InvalidCode = """
+        <OpRadioButton TValue="string" Value="@("A")" @bind-ModelValue="_invalid" Invalid="@(string.IsNullOrEmpty(_invalid))" />
+        """;
+
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <OpRadioButton TValue="string" Name="form-pizza" Value="Cheese" @bind-ModelValue="_form.Ingredient" Id="form-ingredient1" />
+            <label for="form-ingredient1" class="ml-2">Cheese</label>
+            <!-- demais opções ... -->
+
+            @if (_submitted && string.IsNullOrEmpty(_form.Ingredient))
+            {
+                <small style="color: var(--p-red-500)">Selecione um sabor.</small>
+            }
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private readonly RadioFormModel _form = new();
+            private bool _submitted;
+
+            private void OnSubmit() => _submitted = true;
+
+            private sealed class RadioFormModel
+            {
+                public string? Ingredient { get; set; }
+            }
+        }
+        """;
+
+    private const string BindingCode = """
+        <OpRadioButton TValue="string" Name="bind" Value="@("A")" @bind-ModelValue="_bound" Id="bind-a" OnChange="() => _changes++" />
+        <label for="bind-a">A</label>
+        <OpRadioButton TValue="string" Name="bind" Value="@("B")" @bind-ModelValue="_bound" Id="bind-b" OnChange="() => _changes++" />
+        <label for="bind-b">B</label>
+        <span>Selecionado: @(_bound ?? "—") — mudanças: @_changes</span>
+
+        @code {
+            private string? _bound = "A";
+            private int _changes;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <label for="rb1">One</label>
+        <OpRadioButton TValue="string" Value="@("1")" ModelValue="@("1")" Id="rb1" />
+
+        <span id="rb2">Two</span>
+        <OpRadioButton TValue="string" Value="@("2")" AriaLabelledBy="rb2" />
+
+        <OpRadioButton TValue="string" Value="@("3")" AriaLabel="Three" />
         """;
 }
