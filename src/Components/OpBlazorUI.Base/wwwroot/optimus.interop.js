@@ -37,27 +37,53 @@ function getFocusableElements(container) {
     );
 }
 
-export function focusTrapInit(element) {
-    if (!element || element.__opFocusTrapHandler) return;
-    const handler = (e) => {
-        if (e.key !== 'Tab' || element.getAttribute('data-focustrap-disabled') === 'true') return;
-        const focusables = getFocusableElements(element);
-        if (focusables.length === 0) return;
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        const active = document.activeElement;
-        if (e.shiftKey) {
-            if (active === first || !element.contains(active)) {
+// Gatilho (quem tinha o foco antes de abrir) por elemento trap, para restaurar ao fechar.
+const FOCUS_TRAP_RESTORE = new WeakMap();
+
+export function focusTrapInit(element, initialFocusSelector, restoreFocus) {
+    if (!element) return;
+
+    // Captura o gatilho antes de qualquer foco inicial do próprio trap/modal.
+    if (restoreFocus && !FOCUS_TRAP_RESTORE.has(element)) {
+        const trigger = document.activeElement;
+        FOCUS_TRAP_RESTORE.set(element, trigger && trigger !== document.body ? trigger : null);
+    }
+
+    if (!element.__opFocusTrapHandler) {
+        const handler = (e) => {
+            if (e.key !== 'Tab' || element.getAttribute('data-focustrap-disabled') === 'true') return;
+            const focusables = getFocusableElements(element);
+            if (focusables.length === 0) return;
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            const active = document.activeElement;
+            if (e.shiftKey) {
+                if (active === first || !element.contains(active)) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else if (active === last || !element.contains(active)) {
                 e.preventDefault();
-                last.focus();
+                first.focus();
             }
-        } else if (active === last || !element.contains(active)) {
-            e.preventDefault();
-            first.focus();
-        }
-    };
-    element.__opFocusTrapHandler = handler;
-    element.addEventListener('keydown', handler);
+        };
+        element.__opFocusTrapHandler = handler;
+        element.addEventListener('keydown', handler);
+    }
+
+    // Foco inicial só quando há um seletor; sem ele, quem manda é o componente (FocusOnShow).
+    if (initialFocusSelector) {
+        requestAnimationFrame(() => {
+            const target = element.querySelector(initialFocusSelector) || getFocusableElements(element)[0];
+            if (target) {
+                try {
+                    target.focus();
+                } catch (_) {
+                    // ignore
+                }
+            }
+        });
+    }
 }
 
 export function focusTrapDispose(element) {
@@ -65,6 +91,16 @@ export function focusTrapDispose(element) {
     if (element.__opFocusTrapHandler) {
         element.removeEventListener('keydown', element.__opFocusTrapHandler);
         element.__opFocusTrapHandler = null;
+    }
+
+    const previous = FOCUS_TRAP_RESTORE.get(element);
+    FOCUS_TRAP_RESTORE.delete(element);
+    if (previous && typeof previous.focus === 'function' && document.contains(previous)) {
+        try {
+            previous.focus();
+        } catch (_) {
+            // ignore
+        }
     }
 }
 
