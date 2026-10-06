@@ -115,7 +115,7 @@ Ordem de execução pelo ranking (§3):
 
 - **A1 — Form básico** (define o padrão Binding/Forms/Acessibilidade): InputText, Checkbox,
   RadioButton, ToggleSwitch.
-- **A2 — Seleção complexa**: DatePicker, Select, MultiSelect.
+- **A2 — Seleção complexa**: DatePicker, Select, MultiSelect. ✅ Concluído.
 - **A3 — Overlay/feedback**: Tooltip, Toast, Message, Dialog, Drawer, Popover, BlockUI.
 - **A4 — Dados/misc**: Table, Menu, Paginator, VirtualScroller, ProgressBar, ProgressSpinner,
   Skeleton, Badge, Tag, Chip, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay.
@@ -203,3 +203,21 @@ Ordem de execução pelo ranking (§3):
 
 **Fase B encerrada.** A Fase A começa por A1 — Form básico (InputText, Checkbox, RadioButton,
 ToggleSwitch), aplicando o padrão ouro de `Button.razor`.
+
+### A2 — Seleção complexa ✅
+
+- Páginas reescritas: `DatePicker.razor` (26 seções), `Select.razor` (21), `MultiSelect.razor` (19),
+  na ordem dos `index.ts` e com **Acessibilidade** fiel (incl. tabela de teclado) e abas API/Theming/
+  Pass Through/Problemas Conhecidos.
+- Adaptações Blazor inseridas antes de Acessibilidade (**Vínculo** e **Formulários**).
+- Limitações registradas em **Problemas Conhecidos** (resumo):
+  - `DatePicker`: sem `Locale` nativo (usa `CultureInfo` + `DateFormat`, tokens divergentes); só o
+    modo Single integra `EditForm`; sem máscara de digitação.
+  - `Select`: *Lazy Virtual Scroll* simulado via `OnFilter` (sem `onLazyLoad`); `Editable` não
+    captura texto; `VirtualScroll` ignorado com `Group`; sem `AriaLabelledBy`.
+  - `MultiSelect`: textos internos fixos em inglês; toggle-all sem estado indeterminado; sem
+    `AriaLabelledBy`/`aria-multiselectable`; `SelectedItemsTemplate` ignora o modo chip.
+- Ajuste: classes de largura Tailwind trocadas por utilitários presentes no bundle (`w-56`/`w-64`,
+  pois `md:w-56`/`w-80` não existem no `tailwind.css`).
+- Verificação: build 0 erros (13 avisos são pré-existentes na lib base); as 3 rotas renderizam no
+  Showcase sem UI de erro do Blazor.
