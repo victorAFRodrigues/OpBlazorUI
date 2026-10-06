@@ -8,9 +8,9 @@
 
 ## Status geral
 
-- **Fase B (placeholders):** 5 de 6 lotes concluídos — **41 de 46 páginas** criadas
+- **Fase B (placeholders):** **concluída** — 6 de 6 lotes, **46 de 46 páginas** criadas
   (41 componentes + 5 utilitários).
-- **Fase A (melhorias):** não iniciada.
+- **Fase A (melhorias):** próxima frente, não iniciada.
 - **Branch:** `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`). Push/PR pendentes.
 
 | Lote | Páginas | Commit |
@@ -20,7 +20,7 @@
 | B3 — P1 Dados/feedback | 9 | `8ead184` |
 | B4 — P2 Layout/mídia | 8 | `c50edbc` |
 | B5 — P3 Baixa | 4 | `b7f8780` |
-| B6 — Utilitários | 5 | pendente |
+| B6 — Utilitários | 5 | `a78cfdf` |
 
 ---
 
@@ -100,10 +100,12 @@ InlineMessage** — placeholders com seções próprias.
 | B3 — P1 (9) | Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline | ✅ Concluído |
 | B4 — P2 (8) | Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare | ✅ Concluído |
 | B5 — P3 (4) | Knob, Terminal, OrganizationChart, Ripple | ✅ Concluído |
-| B6 — Utilitários (5) | DynamicDialog, StyleClass, Fluid, Chart.js, AnimateOnScroll | ⏳ Pendente |
+| B6 — Utilitários (5) | DynamicDialog, StyleClass, Fluid, Chart.js, AnimateOnScroll | ✅ Concluído |
 
 Ações transversais por batch: apontar as rotas no `AppMenu.cs` (`ComingSoon = false`) e verificar
 build + renderização das páginas.
+
+**Fase B concluída** (6/6 lotes, 46 páginas). Próxima: Fase A (§6).
 
 ---
 
@@ -187,3 +189,17 @@ Ordem de execução pelo ranking (§3):
   Blazor.
 - Git: commit `docs(OpBlazorUI.Showcase): adicionar placeholders do P3 (componentes menores)`
   (`b7f8780`).
+
+### B6 — Utilitários ✅
+
+- Páginas criadas: `DynamicDialog.razor`, `StyleClass.razor`, `Fluid.razor`, `Chart.razor`,
+  `AnimateOnScroll.razor`.
+- `DynamicDialog` e `StyleClass` não têm seção de acessibilidade no upstream; `Chart` tem só
+  "Leitor de tela" (sem tabela de teclado) — reproduzido fielmente.
+- `AppMenu.cs`: rotas `/dynamicdialog`, `/styleclass`, `/fluid`, `/chart`, `/animateonscroll`.
+- Verificação: build 0 erros; `Chart`, `DynamicDialog` e `Fluid` renderizam no Showcase sem UI de
+  erro do Blazor.
+- Git: commit `docs(OpBlazorUI.Showcase): adicionar placeholders dos utilitários` (`a78cfdf`).
+
+**Fase B encerrada.** A Fase A começa por A1 — Form básico (InputText, Checkbox, RadioButton,
+ToggleSwitch), aplicando o padrão ouro de `Button.razor`.
