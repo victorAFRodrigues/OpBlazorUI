@@ -4,33 +4,88 @@
 @using OpBlazorUI.Base.Components.InputSwitch
 @using System.ComponentModel.DataAnnotations
 
+<PageTitle>ToggleSwitch - OpBlazorUI</PageTitle>
+
 <DocComponent Title="ToggleSwitch"
               Description="O ToggleSwitch é usado para selecionar um valor booleano.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O ToggleSwitch é um input controlado: o estado é definido por <code>Value</code> e atualizado por
+                <code>ValueChanged</code> (ou <code>@@bind-Value</code>). Não existe <code>ngModel</code> no Blazor.
+            </Description>
             <ChildContent>
-                <OpInputSwitch @bind-Value="_on"/>
+                <div class="flex justify-center">
+                    <OpInputSwitch @bind-Value="_checked"/>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido / Desabilitado">
+        <DocSection Label="Pré-seleção" Id="preselection">
+            <Description>
+                Defina <code>Value="true"</code> para exibir o componente já ativo na primeira renderização.
+            </Description>
             <ChildContent>
-                <div class="flex gap-4 items-center">
-                    <OpInputSwitch Value="true" Invalid="true"/>
-                    <OpInputSwitch Value="true" Disabled="true"/>
+                <div class="flex justify-center">
+                    <OpInputSwitch @bind-Value="_preselected"/>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@StateCode"/></Code>
+            <Code><CodeBlock Code="@PreselectionCode"/></Code>
         </DocSection>
-        <DocSection Label="Validação">
+
+        <DocSection Label="Template" Id="template">
             <Description>
-                O ToggleSwitch herda de <code>InputBase&lt;bool&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+                O template <code>HandleTemplate</code> permite conteúdo customizado dentro do puxador, recebendo o
+                estado atual como <code>context</code> (<code>bool</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center gap-4">
+                    <OpInputSwitch @bind-Value="_template">
+                        <HandleTemplate>
+                            <i class="@(context ? "pi pi-check" : "pi pi-times") pi text-xs"></i>
+                        </HandleTemplate>
+                    </OpInputSwitch>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Quando <code>Disabled="true"</code>, o elemento não pode ser editado nem receber foco.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpInputSwitch @bind-Value="_disabled" Disabled="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado inválido é aplicado com <code>Invalid="true"</code> para indicar falha de validação — também
+                é ativado automaticamente pelo <code>EditForm</code> quando o campo tem erro.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpInputSwitch @bind-Value="_invalid" Invalid="@(!_invalid)"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O ToggleSwitch herda de <code>InputBase&lt;bool&gt;</code>: integra-se ao <code>EditForm</code> com
+                DataAnnotations, e o estado inválido é aplicado automaticamente quando há erro. Isso substitui as
+                abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
                 <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
@@ -43,94 +98,151 @@
                     <button type="submit" class="p-button p-component">Enviar</button>
                     @if (_submitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Aceito: @_form.Accepted</div>
+                        <div class="text-sm" style="color: var(--p-green-600)">Aceito: @_form.Accepted</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vínculo" Id="binding">
+            <Description>
+                Use <code>@@bind-Value</code> para o vínculo bidirecional; <code>OnChange</code> para reagir à mudança.
+            </Description>
+            <ChildContent>
+                <div class="flex items-center gap-3">
+                    <OpInputSwitch @bind-Value="_bound" OnChange="() => _changes++"/>
+                    <span class="text-sm">Ativo: <b>@_bound</b> — mudanças: <b>@_changes</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BindingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O ToggleSwitch usa internamente um elemento <code>&lt;input type="checkbox"&gt;</code> com papel
+                    <code>switch</code>. O texto que descreve o componente pode vir de um <code>&lt;label&gt;</code>
+                    combinado com o <code>Id</code>, de <code>AriaLabelledBy</code> ou de <code>AriaLabel</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o switch." },
+                              new[] { "space", "Alterna o estado marcado." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Value", "bool", "false", "Estado ligado/desligado." },
-                              new[] { "ValueChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
-                              new[] { "Name", "string?", "null", "Name do input." },
-                              new[] { "Id", "string?", "null", "Id do input." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula." },
-                              new[] { "Required", "bool", "false", "Obrigatório." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Invalid", "bool", "false", "Estado inválido." },
+                              new[] { "Name", "string?", "null", "Atributo <code>name</code> do input." },
+                              new[] { "Id", "string?", "null", "Id do input; use junto do <code>for</code> do label." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o switch." },
+                              new[] { "Required", "bool", "false", "Marca o input como obrigatório." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o switch." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido; também ativado por validação do <code>EditForm</code>." },
                               new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;input&gt;</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
+                              new[] { "HandleTemplate", "RenderFragment&lt;bool&gt;?", "Conteúdo do puxador; recebe o estado atual (<code>context</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ValueChanged", "EventCallback&lt;bool&gt;", "Disparado quando o estado muda (binding)." },
                               new[] { "OnChange", "EventCallback&lt;bool&gt;", "Disparado ao mudar o estado." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao receber foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao perder o foco." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="toggleswitch"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-toggleswitch", "Elemento raiz." },
+                              new[] { "p-toggleswitch-checked", "Raiz no estado ativo." },
+                              new[] { "p-toggleswitch-slider", "Trilho atrás do puxador." },
+                              new[] { "p-toggleswitch-handle", "Puxador (contém o <code>HandleTemplate</code>)." },
+                              new[] { "p-toggleswitch-input", "Elemento <code>&lt;input&gt;</code> nativo." },
+                              new[] { "p-disabled", "Raiz desabilitada." },
+                              new[] { "p-invalid", "Raiz no estado inválido." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="toggleswitch"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>HandleTemplate</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>HandleTemplate</code> e os <code>AdditionalAttributes</code> para customização.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O componente é exposto como <code>OpInputSwitch</code>, no namespace <code>OpBlazorUI.Base.Components.InputSwitch</code>, preservando o nome legado do PrimeNG — a doc usa o nome atual ToggleSwitch.</li>
+                        <li>Não há template de ícone embutido; use <code>HandleTemplate</code> para desenhar o conteúdo do puxador.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private bool _on = true;
-
-    private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InputSwitch
-
-        <OpInputSwitch @bind-Value="_on" />
-        """;
-
-    private const string BasicCode = """
-        <OpInputSwitch @bind-Value="_on" />
-
-        @code {
-            private bool _on = true;
-        }
-        """;
-
-    private const string StateCode = """
-        <OpInputSwitch Value="true" Invalid="true" />
-        <OpInputSwitch Value="true" Disabled="true" />
-        """;
-
+    private bool _checked;
+    private bool _preselected = true;
+    private bool _template;
+    private bool _disabled = true;
+    private bool _invalid;
+    private bool _bound = true;
+    private int _changes;
     private bool _submitted;
-    private ToggleSwitchFormModel _form = new();
+    private readonly ToggleSwitchFormModel _form = new();
+
+    private void OnSubmit() => _submitted = true;
 
     private sealed class ToggleSwitchFormModel
     {
@@ -138,14 +250,89 @@
         public bool Accepted { get; set; }
     }
 
-    private void OnSubmit() => _submitted = true;
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.InputSwitch
+        """;
 
-    private const string ValidationCode = """
+    private const string BasicCode = """
+        <OpInputSwitch @bind-Value="_checked" />
+
+        @code {
+            private bool _checked;
+        }
+        """;
+
+    private const string PreselectionCode = """
+        <OpInputSwitch @bind-Value="_preselected" />
+
+        @code {
+            private bool _preselected = true;
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpInputSwitch @bind-Value="_template">
+            <HandleTemplate>
+                <i class="@(context ? "pi pi-check" : "pi pi-times") pi text-xs"></i>
+            </HandleTemplate>
+        </OpInputSwitch>
+
+        @code {
+            private bool _template;
+        }
+        """;
+
+    private const string DisabledCode = """
+        <OpInputSwitch @bind-Value="_disabled" Disabled="true" />
+        """;
+
+    private const string InvalidCode = """
+        <OpInputSwitch @bind-Value="_invalid" Invalid="@(!_invalid)" />
+        """;
+
+    private const string FormsCode = """
+        @using System.ComponentModel.DataAnnotations
+
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
-            <OpInputSwitch @bind-Value="_form.Accepted" />
+            <label class="flex items-center gap-2">
+                <OpInputSwitch @bind-Value="_form.Accepted" />
+                <span>Aceito os termos</span>
+            </label>
             <ValidationMessage For="() => _form.Accepted" />
             <button type="submit" class="p-button p-component">Enviar</button>
         </EditForm>
+
+        @code {
+            private readonly ToggleSwitchFormModel _form = new();
+
+            private void OnSubmit() { /* ... */ }
+
+            private sealed class ToggleSwitchFormModel
+            {
+                [Range(typeof(bool), "true", "true", ErrorMessage = "Ative para continuar.")]
+                public bool Accepted { get; set; }
+            }
+        }
+        """;
+
+    private const string BindingCode = """
+        <OpInputSwitch @bind-Value="_bound" OnChange="() => _changes++" />
+        <span>Ativo: @_bound — mudanças: @_changes</span>
+
+        @code {
+            private bool _bound = true;
+            private int _changes;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <label for="switch1">Remember Me</label>
+        <OpInputSwitch Id="switch1" />
+
+        <span id="switch2">Remember Me</span>
+        <OpInputSwitch AriaLabelledBy="switch2" />
+
+        <OpInputSwitch AriaLabel="Remember Me" />
         """;
 }
