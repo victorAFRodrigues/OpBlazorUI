@@ -1,0 +1,121 @@
+# Plano — Cobertura de placeholders e melhorias da documentação
+
+> Objetivo: levar cada página do Showcase à paridade com a doc de referência
+> (PrimeNG / Optimus UI v21). Este documento é o acompanhamento vivo do trabalho.
+> Base metodológica: `docs/fase6-docs-playbook.md`; lacunas: `docs/doc-coverage-analysis.md`.
+
+---
+
+## 1. Estratégia
+
+Duas frentes:
+
+- **Fase B — placeholders dos componentes ainda não portados.** Criar páginas com os textos e
+  exemplos da doc de referência (Angular) para que os exemplos sejam substituídos por exemplos
+  Blazor reais quando cada componente for implementado.
+- **Fase A — melhorias das páginas ruins existentes.** Reescrever as páginas de componentes já
+  existentes no padrão ouro (`Button.razor`).
+
+Ordem acordada: **Fase B primeiro** (cobertura imediata), depois Fase A.
+
+---
+
+## 2. Convenções do placeholder
+
+- `@page "/<slug>"`, `DocComponent` com título e descrição traduzidos do upstream.
+- Uma `DocSection` por seção do upstream, **na ordem oficial**, com `Description` em pt-BR e
+  `Code` = **markup Angular da referência** (`CodeBlock Language="html"`).
+- Sem demo funcional (o cartão de demonstração só existirá quando o componente for portado).
+- Sem aba API (o componente não existe); `Theming`, `Passthrough` e `KnownIssues` trazem nota.
+- `KnownIssues` registra que o componente não foi portado e que os exemplos são da referência.
+- Componentes sem página no upstream (adições do Optimus UI) usam seções próprias inspiradas em
+  componentes próximos, com aviso explícito em `KnownIssues`.
+
+Referências são baixadas com `bash tools/doc-upstream/fetch.sh <componente> 21.0.0`.
+
+---
+
+## 3. Ranking das páginas existentes (pior → melhor)
+
+Critério: cobertura das seções do upstream, presença de `Description`, Acessibilidade (leitor de
+tela + tabela de teclado), API completa e KnownIssues — tendo `Button.razor` como modelo ouro.
+
+### Tier 0 — Críticas
+Table, DatePicker, MultiSelect, Select, Checkbox, ToggleSwitch, InputText, RadioButton, Tooltip,
+Toast, Message, Menu, Dialog, Drawer, Paginator, VirtualScroller, ProgressSpinner, ProgressBar,
+Skeleton, Badge, Tag, Chip, BlockUI, Popover, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay.
+
+### Tier 1 — Médias
+SelectButton, KeyFilter, FloatLabel, IftaLabel, IconField, Rating, Editor, InputOtp, InputGroup,
+InputMask, SpeedDial, Listbox, TreeSelect, CascadeSelect, ConfirmDialog, ToggleButton.
+
+### Tier 2 — Boas (sem ação agora)
+AutoComplete, Password, SplitButton, InputNumber.
+
+### Tier 3 — Modelo ouro
+Button.
+
+---
+
+## 4. Componentes faltantes (41) + utilitários (5)
+
+| Lote | Componentes | Ref upstream v21 |
+|------|-------------|------------------|
+| P0 Form (7) | Textarea, Fieldset, Slider, InputChips, Inplace, ColorPicker, FileUpload | 6; sem ref: InputChips |
+| P0 Nav (13) | Tabs, TabMenu, TabView, Accordion, Breadcrumb, Toolbar, ContextMenu, Menubar, TieredMenu, PanelMenu, MegaMenu, Stepper, Steps | 11; sem ref: TabMenu, TabView |
+| P1 Dados/feedback (9) | Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline | 8; sem ref: InlineMessage |
+| P2 Layout/mídia (8) | Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare | 8 |
+| P3 Baixa (4) | Knob, Terminal, OrganizationChart, Ripple | 4 |
+| Utilitários (5) | DynamicDialog, StyleClass, Fluid, Chart.js, AnimateOnScroll | 5 |
+
+Componentes sem página no upstream (adições do Optimus UI): **InputChips, TabMenu, TabView,
+InlineMessage** — placeholders com seções próprias.
+
+---
+
+## 5. Batches (Fase B)
+
+| Batch | Conteúdo | Status |
+|-------|----------|--------|
+| B1 — P0 Form (7) | Textarea, Fieldset, Slider, InputChips, Inplace, ColorPicker, FileUpload | ✅ Concluído |
+| B2 — P0 Nav (13) | Tabs, TabMenu, TabView, Accordion, Breadcrumb, Toolbar, ContextMenu, Menubar, TieredMenu, PanelMenu, MegaMenu, Stepper, Steps | ⏳ Pendente |
+| B3 — P1 (9) | Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline | ⏳ Pendente |
+| B4 — P2 (8) | Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare | ⏳ Pendente |
+| B5 — P3 (4) | Knob, Terminal, OrganizationChart, Ripple | ⏳ Pendente |
+| B6 — Utilitários (5) | DynamicDialog, StyleClass, Fluid, Chart.js, AnimateOnScroll | ⏳ Pendente |
+
+Ações transversais por batch: apontar as rotas no `AppMenu.cs` (`ComingSoon = false`) e verificar
+build + renderização das páginas.
+
+---
+
+## 6. Fase A — Melhorias (depois da Fase B)
+
+Ordem de execução pelo ranking (§3):
+
+- **A1 — Form básico** (define o padrão Binding/Forms/Acessibilidade): InputText, Checkbox,
+  RadioButton, ToggleSwitch.
+- **A2 — Seleção complexa**: DatePicker, Select, MultiSelect.
+- **A3 — Overlay/feedback**: Tooltip, Toast, Message, Dialog, Drawer, Popover, BlockUI.
+- **A4 — Dados/misc**: Table, Menu, Paginator, VirtualScroller, ProgressBar, ProgressSpinner,
+  Skeleton, Badge, Tag, Chip, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay.
+- **A5 — Médias**: SelectButton, KeyFilter, FloatLabel, IftaLabel, IconField, Rating, Editor,
+  InputOtp, InputGroup, InputMask, SpeedDial, Listbox, TreeSelect, CascadeSelect, ConfirmDialog,
+  ToggleButton.
+
+---
+
+## 7. Progresso
+
+### B1 — P0 Formulário ✅
+
+- Páginas criadas em `src/OpBlazorUI.Showcase/Components/Pages/`:
+  `Textarea.razor`, `Fieldset.razor`, `Slider.razor`, `InputChips.razor`, `Inplace.razor`,
+  `ColorPicker.razor`, `FileUpload.razor`.
+- `InputChips` sem referência upstream: seções próprias, usando a classe real do tema
+  `p-inputchips`.
+- `AppMenu.cs`: rotas `/textarea`, `/fieldset`, `/slider`, `/inputchips`, `/inplace`,
+  `/colorpicker`, `/fileupload`; item "Upload" renomeado para "FileUpload".
+- Verificação: build 0 erros; as 7 rotas renderizam no Showcase sem UI de erro do Blazor.
+- Git: branch `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`); commit
+  `docs(OpBlazorUI.Showcase): adicionar placeholders do P0 Formulário`.
