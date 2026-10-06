@@ -118,7 +118,7 @@ Ordem de execução pelo ranking (§3):
 - **A2 — Seleção complexa**: DatePicker, Select, MultiSelect.
 - **A3 — Overlay/feedback**: Tooltip, Toast, Message, Dialog, Drawer, Popover, BlockUI.
 - **A4 — Dados/misc**: Table, Menu, Paginator, VirtualScroller, ProgressBar, ProgressSpinner,
-  Skeleton, Badge, Tag, Chip, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay.
+  Skeleton, Badge, Tag, Chip, Card, Avatar, Divider, ScrollTop, FocusTrap, Overlay. ✅ Concluído.
 - **A5 — Médias**: SelectButton, KeyFilter, FloatLabel, IftaLabel, IconField, Rating, Editor,
   InputOtp, InputGroup, InputMask, SpeedDial, Listbox, TreeSelect, CascadeSelect, ConfirmDialog,
   ToggleButton.
@@ -203,3 +203,21 @@ Ordem de execução pelo ranking (§3):
 
 **Fase B encerrada.** A Fase A começa por A1 — Form básico (InputText, Checkbox, RadioButton,
 ToggleSwitch), aplicando o padrão ouro de `Button.razor`.
+
+### A4 — Dados/misc ✅
+
+- Páginas reescritas (16): `Table.razor` (OpDataTable), `Menu.razor`, `Paginator.razor`,
+  `VirtualScroller.razor` (upstream `scroller`), `ProgressBar.razor`, `ProgressSpinner.razor`,
+  `Skeleton.razor`, `Badge.razor`, `Tag.razor`, `Chip.razor`, `Card.razor`, `Avatar.razor`,
+  `Divider.razor`, `ScrollTop.razor`, `FocusTrap.razor`, `Overlay.razor`.
+- Seções do `index.ts` na ordem, com **Acessibilidade** (leitor de tela + tabela de teclado quando
+  há), API do `.razor.cs`, classes CSS, temas e **Problemas Conhecidos** reais.
+- Adaptações Blazor: `Table` com **Vínculo**/**Formulários** e uma seção consolidada **Recursos não
+  portados** (template de célula, filtro, expansão, edição, lazy, scroll/frozen/virtual, grupos,
+  resize, reorder, toggle, export, context menu, stateful); `Menu` popup via `@ref`
+  (`ShowAsync`/`ToggleAsync`); `Overlay` com `Mode`/`Target`/`AppendTo` parciais.
+- Ajustes técnicos: `DocTheming.cs` ganhou a entrada `scrolltop`; classes Tailwind inexistentes
+  (`items-stretch`, `md:`/`lg:`) removidas/substituídas; correções de compilação (Card com
+  `<ChildContent>`, Table com lambdas explícitas em `SelectedItemsChanged`/`OnRowClick`).
+- Verificação: build 0 erros (13 avisos pré-existentes na lib base); as 16 rotas renderizam no
+  Showcase sem UI de erro do Blazor.
