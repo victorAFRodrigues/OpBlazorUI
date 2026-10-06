@@ -1,10 +1,11 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.Listbox;
 
-public partial class OpListbox<TValue> : ComponentBase
+public partial class OpListbox<TValue> : OpInputBase<TValue>
 {
     private string _id = "";
     private string _filterValue = "";
@@ -15,9 +16,6 @@ public partial class OpListbox<TValue> : ComponentBase
     [Parameter] public string? OptionLabel { get; set; }
     [Parameter] public string? OptionValue { get; set; }
     [Parameter] public string? OptionDisabled { get; set; }
-
-    [Parameter] public TValue? Value { get; set; }
-    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
 
     [Parameter] public IReadOnlyList<TValue>? SelectedValues { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> SelectedValuesChanged { get; set; }
@@ -36,15 +34,12 @@ public partial class OpListbox<TValue> : ComponentBase
     [Parameter] public string? ScrollHeight { get; set; } = "14rem";
     [Parameter] public bool VirtualScroll { get; set; }
     [Parameter] public int VirtualScrollItemSize { get; set; } = 38;
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
-    [Parameter] public bool Invalid { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public int TabIndex { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? EmptyMessage { get; set; } = "No results found";
     [Parameter] public string? EmptyFilterMessage { get; set; } = "No results found";
-    [Parameter] public string? StyleClass { get; set; }
     [Parameter] public string? ListStyleClass { get; set; }
     [Parameter] public string? InputId { get; set; }
 
@@ -68,9 +63,6 @@ public partial class OpListbox<TValue> : ComponentBase
     [Parameter] public RenderFragment? FilterTemplate { get; set; }
     [Parameter] public RenderFragment<bool>? CheckIconTemplate { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
@@ -78,14 +70,14 @@ public partial class OpListbox<TValue> : ComponentBase
     }
 
     // ------------------------------------------------------------ computed
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-listbox p-component",
         Disabled ? "p-disabled" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         Striped ? "p-listbox-striped" : null,
         StyleClass);
 
-    private string ListClass => BuildClass("p-listbox-list", ListStyleClass);
+    private string ListClass => OpCss.BuildClass("p-listbox-list", ListStyleClass);
 
     private string ListContainerStyle => $"max-height:{(ScrollHeight ?? "auto")};";
 
@@ -274,7 +266,7 @@ public partial class OpListbox<TValue> : ComponentBase
     {
         var isDisabled = IsOptionDisabled(option);
         var isSel = IsSelected(option);
-        return BuildClass(
+        return OpCss.BuildClass(
             "p-listbox-option",
             isSel && HighlightOnSelect ? "p-listbox-option-selected" : null,
             isDisabled ? "p-disabled" : null);
@@ -316,8 +308,7 @@ public partial class OpListbox<TValue> : ComponentBase
         {
             if (option is TValue tv)
             {
-                Value = tv;
-                await ValueChanged.InvokeAsync(tv);
+                CurrentValue = tv;
                 await OnChange.InvokeAsync(tv);
             }
         }
@@ -457,7 +448,4 @@ public partial class OpListbox<TValue> : ComponentBase
             }
         }
     }
-
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

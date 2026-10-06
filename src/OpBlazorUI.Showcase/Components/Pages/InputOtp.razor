@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.InputOtp
+@using System.ComponentModel.DataAnnotations
 @using OpBlazorUI.Base.Components.Button
 
 <DocComponent Title="InputOtp"
@@ -95,6 +96,24 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@SampleCode"/></Code>
+        </DocSection>
+        <DocSection Label="Validação">
+            <Description>
+                O InputOtp herda de <code>InputBase&lt;string&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpInputOtp @bind-Value="_form.Code" IntegerOnly="true"/>
+                    <ValidationMessage For="() => _form.Code"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Código: @_form.Code</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
         </DocSection>
     </Features>
 
@@ -206,5 +225,26 @@
         <OpInputOtp @bind-Value="_value" Length="6" />
         <OpButton Label="Reenviar código" Link="true" />
         <OpButton Label="Enviar código" />
+        """;
+
+    private bool _submitted;
+    private OtpFormModel _form = new();
+
+    private sealed class OtpFormModel
+    {
+        [Required(ErrorMessage = "Informe o código.")]
+        [StringLength(4, MinimumLength = 4, ErrorMessage = "Informe os 4 dígitos.")]
+        public string? Code { get; set; }
+    }
+
+    private void OnSubmit() => _submitted = true;
+
+    private const string ValidationCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpInputOtp @bind-Value="_form.Code" IntegerOnly="true" />
+            <ValidationMessage For="() => _form.Code" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
         """;
 }

@@ -1,4 +1,6 @@
 @namespace OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<string>
 
 <input type="@Type"
        class="@RootClass"
@@ -7,7 +9,7 @@
        id="@Id"
        name="@Name"
        aria-label="@AriaLabel"
-       aria-invalid="@(Invalid ? "true" : null)"
+       aria-invalid="@(IsInvalid ? "true" : null)"
        maxlength="@MaxLength"
        autocomplete="@Autocomplete"
        disabled="@Disabled"

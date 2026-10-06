@@ -5,11 +5,12 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Components.Icon;
 
 namespace OpBlazorUI.Base.Components.CascadeSelect;
 
-public partial class OpCascadeSelect<TValue> : ComponentBase
+public partial class OpCascadeSelect<TValue> : OpInputBase<TValue>
 {
     private ElementReference _rootRef;
 
@@ -33,12 +34,8 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
     [Parameter] public string? OptionDisabled { get; set; }
     [Parameter] public string OptionGroupLabel { get; set; } = "label";
     [Parameter] public IReadOnlyList<string>? OptionGroupChildren { get; set; }
-    [Parameter] public TValue? Value { get; set; }
-    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
     [Parameter] public string? Placeholder { get; set; }
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
-    [Parameter] public bool Invalid { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
@@ -52,7 +49,6 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
     [Parameter] public string? InputId { get; set; }
     [Parameter] public bool ShowOnFocus { get; set; } = true;
     [Parameter] public string? PanelStyleClass { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
 
     // events
     [Parameter] public EventCallback<TValue?> OnChange { get; set; }
@@ -73,9 +69,6 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
     [Parameter] public RenderFragment? HeaderTemplate { get; set; }
     [Parameter] public RenderFragment? FooterTemplate { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
@@ -89,12 +82,12 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
 
     private bool HasSelection => SelectedOption is not null;
 
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-cascadeselect p-component p-inputwrapper",
         Disabled ? "p-disabled" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         _focus ? "p-focus" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         HasSelection ? "p-inputwrapper-filled" : null,
         _focus || _overlayVisible ? "p-inputwrapper-focus" : null,
         Fluid ? "p-cascadeselect-fluid" : null,
@@ -110,14 +103,14 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
             // Ela só deve valer quando não há valor nem placeholder (como no PrimeNG);
             // com placeholder, usa-se .p-placeholder (visível e clicável).
             var showPlaceholder = !HasSelection && !string.IsNullOrEmpty(Placeholder);
-            return BuildClass(
+            return OpCss.BuildClass(
                 "p-cascadeselect-label",
                 showPlaceholder ? "p-placeholder" : null,
                 !HasSelection && !showPlaceholder ? "p-cascadeselect-label-empty" : null);
         }
     }
 
-    private string PanelClass => BuildClass(
+    private string PanelClass => OpCss.BuildClass(
         "p-cascadeselect-overlay p-component-overlay p-component",
         PanelStyleClass,
         _panelAnimationClass);
@@ -425,8 +418,7 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
     {
         if (node is TValue tv)
         {
-            Value = tv;
-            await ValueChanged.InvokeAsync(tv);
+            CurrentValue = tv;
             await OnChange.InvokeAsync(tv);
         }
 
@@ -435,8 +427,7 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
 
     private async Task Clear(MouseEventArgs? _ = null)
     {
-        Value = default;
-        await ValueChanged.InvokeAsync(default);
+        CurrentValue = default;
         await OnClear.InvokeAsync();
     }
 
@@ -672,7 +663,7 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
         var selected = IsSelectedNode(option, depth);
         var focused = IsFocused(option);
 
-        var optionClass = BuildClass(
+        var optionClass = OpCss.BuildClass(
             "p-cascadeselect-option",
             expanded ? "p-cascadeselect-option-active" : null,
             selected ? "p-cascadeselect-option-selected" : null,
@@ -738,6 +729,4 @@ public partial class OpCascadeSelect<TValue> : ComponentBase
         builder.CloseElement();
     }
 
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

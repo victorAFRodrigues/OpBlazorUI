@@ -1,6 +1,8 @@
 @namespace OpBlazorUI.Base.Components.SelectButton
 @using OpBlazorUI.Base.Components.ToggleButton
+@using OpBlazorUI.Base.Components.Forms
 @typeparam TValue
+@inherits OpInputBase<TValue>
 
 <div class="@RootClass" role="group" aria-labelledby="@AriaLabelledBy" @attributes="AdditionalAttributes">
     @{
@@ -9,8 +11,8 @@
     @foreach (var option in AllOptions)
     {
         var i = index++;
-        <OpToggleButton Checked="@IsSelected(option)"
-                        CheckedChanged="(v) => OnOptionSelect(option)"
+        <OpToggleButton Value="@IsSelected(option)"
+                        ValueChanged="(v) => OnOptionSelect(option)"
                         OnLabel="@GetOptionLabel(option)"
                         OffLabel="@GetOptionLabel(option)"
                         Disabled="@(Disabled || IsOptionDisabled(option))"

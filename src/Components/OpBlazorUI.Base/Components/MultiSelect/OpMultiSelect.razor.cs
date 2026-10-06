@@ -1,10 +1,11 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.MultiSelect;
 
-public partial class OpMultiSelect<TValue> : ComponentBase
+public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
 {
     private ElementReference _rootRef;
 
@@ -27,8 +28,6 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     [Parameter] public string? OptionLabel { get; set; }
     [Parameter] public string? OptionValue { get; set; }
     [Parameter] public string? OptionDisabled { get; set; }
-    [Parameter] public IReadOnlyList<TValue>? Value { get; set; }
-    [Parameter] public EventCallback<IReadOnlyList<TValue>?> ValueChanged { get; set; }
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string Display { get; set; } = "comma";
     [Parameter] public int? MaxSelectedLabels { get; set; }
@@ -37,9 +36,7 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     [Parameter] public bool ShowToggleAll { get; set; } = true;
     [Parameter] public bool HighlightOnSelect { get; set; } = true;
     [Parameter] public bool ShowClear { get; set; }
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
-    [Parameter] public bool Invalid { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public bool Group { get; set; }
     [Parameter] public string OptionGroupLabel { get; set; } = "label";
@@ -59,7 +56,6 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     [Parameter] public string? InputId { get; set; }
     [Parameter] public bool ShowOnFocus { get; set; } = true;
     [Parameter] public string? PanelStyleClass { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
 
     // events
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> OnChange { get; set; }
@@ -83,9 +79,6 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     [Parameter] public RenderFragment? LoadingIconTemplate { get; set; }
     [Parameter] public RenderFragment? ClearIconTemplate { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
@@ -93,11 +86,11 @@ public partial class OpMultiSelect<TValue> : ComponentBase
     }
 
     // ------------------------------------------------------------ computed
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-multiselect p-component p-inputwrapper",
         Display == "chip" ? "p-multiselect-display-chip" : null,
         Disabled ? "p-disabled" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         _focus ? "p-focus" : null,
         HasSelection ? "p-inputwrapper-filled" : null,
@@ -108,12 +101,12 @@ public partial class OpMultiSelect<TValue> : ComponentBase
         Size == "large" ? "p-multiselect-lg p-inputfield-lg" : null,
         StyleClass);
 
-    private string LabelClass => BuildClass(
+    private string LabelClass => OpCss.BuildClass(
         "p-multiselect-label",
         Placeholder is { Length: > 0 } && !HasSelection ? "p-placeholder" : null,
         string.IsNullOrEmpty(Placeholder) && !HasSelection ? "p-multiselect-label-empty" : null);
 
-    private string PanelClass => BuildClass(
+    private string PanelClass => OpCss.BuildClass(
         "p-multiselect-overlay p-component-overlay p-component",
         PanelStyleClass,
         _panelAnimationClass);
@@ -285,7 +278,7 @@ public partial class OpMultiSelect<TValue> : ComponentBase
 
     private string OptionClass(object option)
     {
-        return BuildClass(
+        return OpCss.BuildClass(
             "p-multiselect-option",
             HighlightOnSelect && IsSelected(option) ? "p-multiselect-option-selected" : null,
             IsOptionDisabled(option) ? "p-disabled" : null);
@@ -452,8 +445,7 @@ private async Task CloseAsync()
             list.Add(option);
         }
 
-        Value = list;
-        await ValueChanged.InvokeAsync(list);
+        CurrentValue = list;
         await OnChange.InvokeAsync(list);
         StateHasChanged();
     }
@@ -483,8 +475,7 @@ private async Task CloseAsync()
         else
             list.AddRange(options.Where(o => !IsSelected(o!)));
 
-        Value = list;
-        await ValueChanged.InvokeAsync(list);
+        CurrentValue = list;
         await OnChange.InvokeAsync(list);
         StateHasChanged();
     }
@@ -498,8 +489,7 @@ private async Task CloseAsync()
             list.RemoveAt(existingIndex);
         }
 
-        Value = list;
-        await ValueChanged.InvokeAsync(list);
+        CurrentValue = list;
         await OnChange.InvokeAsync(list);
     }
 
@@ -658,11 +648,8 @@ private async Task CloseAsync()
 
     private async Task Clear(MouseEventArgs? _ = null)
     {
-        Value = Array.Empty<TValue>();
-        await ValueChanged.InvokeAsync(Array.Empty<TValue>());
+        CurrentValue = Array.Empty<TValue>();
         await OnClear.InvokeAsync();
     }
 
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

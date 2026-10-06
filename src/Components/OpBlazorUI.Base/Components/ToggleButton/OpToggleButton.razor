@@ -1,9 +1,11 @@
 @namespace OpBlazorUI.Base.Components.ToggleButton
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<bool>
 
 <button type="button"
         class="@RootClass"
         role="button"
-        aria-pressed="@(Checked ? "true" : "false")"
+        aria-pressed="@(CurrentValue ? "true" : "false")"
         aria-label="@AriaLabel"
         tabindex="@(Disabled ? -1 : 0)"
         disabled="@Disabled"
@@ -12,7 +14,7 @@
     <span class="p-togglebutton-content">
         @if (ContentTemplate != null)
         {
-            @ContentTemplate(Checked)
+            @ContentTemplate(CurrentValue)
         }
         else
         {
@@ -22,7 +24,7 @@
             }
 
             <span
-                class="p-togglebutton-label">@(Checked ? (HasOnLabel ? OnLabel : "&nbsp;") : (HasOffLabel ? OffLabel : "&nbsp;"))</span>
+                class="p-togglebutton-label">@(CurrentValue ? (HasOnLabel ? OnLabel : "&nbsp;") : (HasOffLabel ? OffLabel : "&nbsp;"))</span>
         }
     </span>
 </button>

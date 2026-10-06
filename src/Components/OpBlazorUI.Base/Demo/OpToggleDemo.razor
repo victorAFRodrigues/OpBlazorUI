@@ -12,19 +12,19 @@
         <label style="display:block; margin-bottom:.5rem; font-weight:600">Checkbox</label>
         <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
             <label style="display:flex; gap:.5rem; align-items:center;">
-                <OpCheckbox @bind-Checked="cb1" Id="cb1"/>
+                <OpCheckbox @bind-Value="cb1" Id="cb1"/>
                 Básico</label>
             <label style="display:flex; gap:.5rem; align-items:center;">
-                <OpCheckbox @bind-Checked="cb2" Id="cb2"/>
+                <OpCheckbox @bind-Value="cb2" Id="cb2"/>
                 Marcado</label>
             <label style="display:flex; gap:.5rem; align-items:center;">
-                <OpCheckbox Checked="false" Indeterminate="true" Id="cb3"/>
+                <OpCheckbox Value="false" Indeterminate="true" Id="cb3"/>
                 Indeterminado</label>
             <label style="display:flex; gap:.5rem; align-items:center;">
-                <OpCheckbox @bind-Checked="cb4" Disabled="true" Id="cb4"/>
+                <OpCheckbox @bind-Value="cb4" Disabled="true" Id="cb4"/>
                 Desabilitado</label>
             <label style="display:flex; gap:.5rem; align-items:center;">
-                <OpCheckbox @bind-Checked="cb5" Invalid="true" Id="cb5"/>
+                <OpCheckbox @bind-Value="cb5" Invalid="true" Id="cb5"/>
                 Inválido</label>
         </div>
     </div>
@@ -49,12 +49,12 @@
         <label style="display:block; margin-bottom:.5rem; font-weight:600">InputSwitch</label>
         <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
             <label style="display:flex; gap:.5rem; align-items:center;">
-                <OpInputSwitch @bind-Checked="sw1"/> @(sw1 ? "Ligado" : "Desligado")</label>
+                <OpInputSwitch @bind-Value="sw1"/> @(sw1 ? "Ligado" : "Desligado")</label>
             <label style="display:flex; gap:.5rem; align-items:center;">
-                <OpInputSwitch @bind-Checked="sw2" Disabled="true"/>
+                <OpInputSwitch @bind-Value="sw2" Disabled="true"/>
                 Desabilitado</label>
             <label style="display:flex; gap:.5rem; align-items:center;">
-                <OpInputSwitch @bind-Checked="sw3" Invalid="true"/>
+                <OpInputSwitch @bind-Value="sw3" Invalid="true"/>
                 Inválido</label>
         </div>
     </div>

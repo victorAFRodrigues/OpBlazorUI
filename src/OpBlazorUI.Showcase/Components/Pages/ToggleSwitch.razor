@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.InputSwitch
+@using System.ComponentModel.DataAnnotations
 
 <DocComponent Title="ToggleSwitch"
               Description="O ToggleSwitch é usado para selecionar um valor booleano.">
@@ -13,7 +14,7 @@
 
         <DocSection Label="Básico">
             <ChildContent>
-                <OpInputSwitch @bind-Checked="_on"/>
+                <OpInputSwitch @bind-Value="_on"/>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
@@ -21,11 +22,32 @@
         <DocSection Label="Inválido / Desabilitado">
             <ChildContent>
                 <div class="flex gap-4 items-center">
-                    <OpInputSwitch Checked="true" Invalid="true"/>
-                    <OpInputSwitch Checked="true" Disabled="true"/>
+                    <OpInputSwitch Value="true" Invalid="true"/>
+                    <OpInputSwitch Value="true" Disabled="true"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@StateCode"/></Code>
+        </DocSection>
+        <DocSection Label="Validação">
+            <Description>
+                O ToggleSwitch herda de <code>InputBase&lt;bool&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <label class="flex items-center gap-2">
+                        <OpInputSwitch @bind-Value="_form.Accepted"/>
+                        <span>Aceito os termos</span>
+                    </label>
+                    <ValidationMessage For="() => _form.Accepted"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Aceito: @_form.Accepted</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
         </DocSection>
     </Features>
 
@@ -35,8 +57,8 @@
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Checked", "bool", "false", "Estado ligado/desligado." },
-                              new[] { "CheckedChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
+                              new[] { "Value", "bool", "false", "Estado ligado/desligado." },
+                              new[] { "ValueChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
                               new[] { "Name", "string?", "null", "Name do input." },
                               new[] { "Id", "string?", "null", "Id do input." },
                               new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
@@ -91,11 +113,11 @@
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.InputSwitch
 
-        <OpInputSwitch @bind-Checked="_on" />
+        <OpInputSwitch @bind-Value="_on" />
         """;
 
     private const string BasicCode = """
-        <OpInputSwitch @bind-Checked="_on" />
+        <OpInputSwitch @bind-Value="_on" />
 
         @code {
             private bool _on = true;
@@ -103,7 +125,27 @@
         """;
 
     private const string StateCode = """
-        <OpInputSwitch Checked="true" Invalid="true" />
-        <OpInputSwitch Checked="true" Disabled="true" />
+        <OpInputSwitch Value="true" Invalid="true" />
+        <OpInputSwitch Value="true" Disabled="true" />
+        """;
+
+    private bool _submitted;
+    private ToggleSwitchFormModel _form = new();
+
+    private sealed class ToggleSwitchFormModel
+    {
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Ative para continuar.")]
+        public bool Accepted { get; set; }
+    }
+
+    private void OnSubmit() => _submitted = true;
+
+    private const string ValidationCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpInputSwitch @bind-Value="_form.Accepted" />
+            <ValidationMessage For="() => _form.Accepted" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
         """;
 }

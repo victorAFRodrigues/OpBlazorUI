@@ -4,7 +4,9 @@
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
+@using OpBlazorUI.Base.Components.Forms
 @typeparam TValue
+@inherits OpInputBase<TValue>
 
 <span class="@RootClass" @ref="_rootRef" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
       @attributes="AdditionalAttributes">

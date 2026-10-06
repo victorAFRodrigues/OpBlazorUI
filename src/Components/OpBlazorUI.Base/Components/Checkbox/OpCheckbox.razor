@@ -1,13 +1,14 @@
 @using OpBlazorUI.Base.Components.Icon
+@using OpBlazorUI.Base.Components.Forms
 @namespace OpBlazorUI.Base.Components.Checkbox
+@inherits OpInputBase<bool?>
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
     <input type="checkbox"
            class="@InputCss"
            id="@Id"
            name="@Name"
-           value="@Value"
-           checked="@(Checked == true)"
+           checked="@(CurrentValue == true)"
            tabindex="@TabIndex"
            required="@Required"
            readonly="@Readonly"
@@ -21,13 +22,13 @@
     <div class="p-checkbox-box">
         @if (CheckboxIconTemplate != null)
         {
-            @CheckboxIconTemplate(Checked == true)
+            @CheckboxIconTemplate(CurrentValue == true)
         }
         else if (Indeterminate)
         {
             <OpIcon Name="minus" CssClass="p-checkbox-icon"/>
         }
-        else if (Checked == true)
+        else if (CurrentValue == true)
         {
             @if (!string.IsNullOrEmpty(CheckboxIcon))
             {

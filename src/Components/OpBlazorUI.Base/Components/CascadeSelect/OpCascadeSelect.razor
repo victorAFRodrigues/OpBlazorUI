@@ -1,7 +1,9 @@
 @namespace OpBlazorUI.Base.Components.CascadeSelect
 @using OpBlazorUI.Base.Components.Overlay
 @using OpBlazorUI.Base.Components.Icon
+@using OpBlazorUI.Base.Components.Forms
 @typeparam TValue
+@inherits OpInputBase<TValue>
 
 <span class="@RootClass" @ref="_rootRef" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
       @attributes="AdditionalAttributes">
