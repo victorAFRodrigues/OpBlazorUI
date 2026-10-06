@@ -2,111 +2,173 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.FocusTrap
+@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.Checkbox
 @using OpBlazorUI.Base.Components.Button
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>FocusTrap - OpBlazorUI</PageTitle>
 
 <DocComponent Title="FocusTrap"
-              Description="O FocusTrap mantém o foco dentro de um elemento ao tabular.">
+              Description="O FocusTrap mantém o foco dentro de um conteúdo enquanto o usuário navega com TAB.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O foco fica preso ao conteúdo filho: ao tabular a partir do último elemento focalizável, o
+                <code>TAB</code> retorna ao primeiro, e <code>SHIFT+TAB</code> no primeiro vai ao último. A
+                demonstração envolve um <code>EditForm</code> para mostrar que a navegação por teclado não
+                escapa do formulário. Com <code>Disabled="true"</code> o trap deixa de interceptar as teclas.
+            </Description>
             <ChildContent>
-                <div class="card flex justify-center">
-                    <OpFocusTrap StyleClass="w-full sm:w-80 flex flex-col gap-6">
-                        <input class="p-inputtext" type="text" placeholder="Nome"/>
-                        <input class="p-inputtext" type="text" placeholder="Email"/>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="ft-accept"/>
-                            <label for="ft-accept">Concordo com os termos e condições.</label>
-                        </div>
-                        <OpButton Label="Enviar" Fluid="true"/>
+                <div class="flex flex-col items-center gap-4">
+                    <OpFocusTrap StyleClass="flex flex-col gap-4" style="width: 100%; max-width: 20rem;">
+                        <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col gap-4">
+                            <DataAnnotationsValidator/>
+                            <OpInputText @bind-Value="_form.Name" Placeholder="Nome" StyleClass="w-full"/>
+                            <OpInputText @bind-Value="_form.Email" Type="email" Placeholder="E-mail" StyleClass="w-full"/>
+                            <div class="flex items-center gap-2">
+                                <OpCheckbox Id="ft-accept" @bind-Value="_form.Accept"/>
+                                <label for="ft-accept">Concordo com os termos e condições.</label>
+                            </div>
+                            <OpButton Type="submit" Label="Enviar" Fluid="true"/>
+                        </EditForm>
                     </OpFocusTrap>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_form.Name</div>
+                    }
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
-
-        <DocSection Label="Desabilitado">
-            <ChildContent>
-                <div class="card flex justify-center">
-                    <OpFocusTrap Disabled="true" StyleClass="w-full sm:w-80 flex flex-col gap-6">
-                        <input class="p-inputtext" type="text" placeholder="Nome"/>
-                        <input class="p-inputtext" type="text" placeholder="Email"/>
-                        <OpButton Label="Enviar" Fluid="true"/>
-                    </OpFocusTrap>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@DisabledCode"/></Code>
-        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Disabled", "bool", "false", "Desabilita o gerenciamento de foco." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo com o foco preso." }
+                              new[] { "Disabled", "bool", "false", "Suspende o gerenciamento de foco; o componente não intercepta <code>TAB</code>/<code>SHIFT+TAB</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo cujo foco é mantido." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;div&gt;</code> raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                O FocusTrap não possui aparência própria: aplica apenas a classe de marcação
+                <code>p-focustrap</code> no elemento raiz e não define design tokens no tema.
+            </Description>
             <ChildContent>
-                <div class="doc-section-description"><p>O FocusTrap é um utilitário invisível: não possui classes CSS nem design tokens próprios no tema.</p></div>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-focustrap", "Elemento raiz (<code>&lt;div&gt;</code>) que envolve o conteúdo." }
+                          })"/>
             </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><DocTokens Component="focustrap"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Use <code>StyleClass</code> e atributos extras para customização — qualquer atributo não mapeado é repassado ao <code>&lt;div&gt;</code> raiz.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>O gerenciamento de foco usa <code>keydown</code> (Tab/Shift+Tab) via JS interop.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O foco é contido apenas por teclado (<code>TAB</code>/<code>SHIFT+TAB</code>). Cliques do mouse ou focos programáticos ainda podem sair do contêiner — o mesmo comportamento existe no upstream.</li>
+                        <li>Depende de JS interop: em renderização estática (SSR sem render mode interativo) o trap não é inicializado.</li>
+                        <li>A doc de referência do FocusTrap não possui seção de acessibilidade; apenas a navegação por teclado é garantida.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private bool _submitted;
+    private FormModel _form = new();
+
+    private void OnSubmit() => _submitted = true;
+
+    private sealed class FormModel
+    {
+        [Required(ErrorMessage = "O nome é obrigatório.")]
+        public string? Name { get; set; }
+
+        public string? Email { get; set; }
+
+        public bool? Accept { get; set; }
+    }
+
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.FocusTrap
+        @using OpBlazorUI.Base.Components.InputText
+        @using OpBlazorUI.Base.Components.Checkbox
+        @using OpBlazorUI.Base.Components.Button
 
         <OpFocusTrap>
-            <input class="p-inputtext" placeholder="Nome" />
+            <OpInputText Placeholder="Nome" />
             <OpButton Label="Enviar" />
         </OpFocusTrap>
         """;
 
     private const string BasicCode = """
-        <OpFocusTrap StyleClass="w-full sm:w-80 flex flex-col gap-6">
-            <input class="p-inputtext" type="text" placeholder="Nome" />
-            <input class="p-inputtext" type="text" placeholder="Email" />
-            <div class="flex items-center gap-2">
-                <input type="checkbox" id="accept" />
-                <label for="accept">Concordo com os termos.</label>
-            </div>
-            <OpButton Label="Enviar" Fluid="true" />
+        <OpFocusTrap StyleClass="flex flex-col gap-4" style="width: 100%; max-width: 20rem;">
+            <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col gap-4">
+                <DataAnnotationsValidator />
+                <OpInputText @bind-Value="_form.Name" Placeholder="Nome" StyleClass="w-full" />
+                <OpInputText @bind-Value="_form.Email" Type="email" Placeholder="E-mail" StyleClass="w-full" />
+                <div class="flex items-center gap-2">
+                    <OpCheckbox Id="ft-accept" @bind-Value="_form.Accept" />
+                    <label for="ft-accept">Concordo com os termos e condições.</label>
+                </div>
+                <OpButton Type="submit" Label="Enviar" Fluid="true" />
+            </EditForm>
         </OpFocusTrap>
-        """;
 
-    private const string DisabledCode = """
-        <OpFocusTrap Disabled="true">
-            <input class="p-inputtext" placeholder="Nome" />
-        </OpFocusTrap>
+        @if (_submitted)
+        {
+            <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_form.Name</div>
+        }
+
+        @code {
+            private bool _submitted;
+            private FormModel _form = new();
+
+            private void OnSubmit() => _submitted = true;
+
+            private sealed class FormModel
+            {
+                [Required(ErrorMessage = "O nome é obrigatório.")]
+                public string? Name { get; set; }
+
+                public string? Email { get; set; }
+
+                public bool? Accept { get; set; }
+            }
+        }
         """;
 }

@@ -3,17 +3,21 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Chip
 
+<PageTitle>Chip - OpBlazorUI</PageTitle>
+
 <DocComponent Title="Chip"
               Description="O Chip representa entidades usando ícones, rótulos e imagens.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                Um chip removível exibe o ícone de excluir e dispara o evento <code>OnRemove</code>.
+                Um chip com texto é criado com a propriedade <code>Label</code>. Com
+                <code>Removable="true"</code> é exibido um ícone de remoção, e o evento
+                <code>OnRemove</code> permite reagir à remoção.
             </Description>
             <ChildContent>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -26,7 +30,11 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ícone">
+        <DocSection Label="Ícone" Id="icon">
+            <Description>
+                Um ícone de fonte é exibido ao lado do rótulo com a propriedade <code>Icon</code>
+                (qualquer classe de ícone, ex.: <code>pi pi-apple</code>).
+            </Description>
             <ChildContent>
                 <div class="flex items-center gap-2 flex-wrap">
                     <OpChip Label="Apple" Icon="pi pi-apple"/>
@@ -38,75 +46,144 @@
             <Code><CodeBlock Code="@IconCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Imagem">
+        <DocSection Label="Imagem" Id="image">
+            <Description>
+                A propriedade <code>Image</code> exibe uma imagem — como um avatar — antes do rótulo;
+                descreva-a com <code>Alt</code> por acessibilidade.
+            </Description>
             <ChildContent>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <OpChip Label="Amy Elsner" Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Alt="Avatar image"/>
-                    <OpChip Label="Asiya Javayant" Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Alt="Avatar image"/>
-                    <OpChip Label="Xuxue Feng" Image="https://optimus.openng.org/demo/avatar/xuxuefeng.png" Alt="Avatar image" Removable="true"/>
+                    <OpChip Label="Amy Elsner" Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Alt="Avatar de Amy Elsner"/>
+                    <OpChip Label="Asiya Javayant" Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Alt="Avatar de Asiya Javayant"/>
+                    <OpChip Label="Onyama Limba" Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Alt="Avatar de Onyama Limba"/>
+                    <OpChip Label="Xuxue Feng" Image="https://optimus.openng.org/demo/avatar/xuxuefeng.png" Alt="Avatar de Xuxue Feng" Removable="true"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ImageCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                Para conteúdo totalmente customizado, defina o filho do componente
+                (<code>ChildContent</code>); nesse caso os modos internos de ícone, imagem e rótulo são
+                ignorados e o layout fica por sua conta.
+            </Description>
+            <ChildContent>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <OpChip Style="padding: 0 1rem 0 0;">
+                        <span style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--p-primary-color); color: var(--p-primary-contrast-color);">P</span>
+                        <span style="font-weight: 500;">PRIME</span>
+                    </OpChip>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    Os atributos extras são repassados ao elemento raiz, então <code>aria-label</code> ou
+                    <code>aria-labelledby</code> podem ser usados para rotular o chip. Chips removíveis
+                    recebem <code>tabindex</code> e podem ser focados com a tecla tab; o ícone de remoção é
+                    um <code>&lt;span&gt;</code> com <code>role="button"</code>.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "backspace", "Remove o chip." },
+                              new[] { "enter", "Remove o chip." }
+                          })"/>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Label", "string?", "null", "Texto a exibir." },
-                              new[] { "Icon", "string?", "null", "Ícone a exibir." },
-                              new[] { "Image", "string?", "null", "URL da imagem." },
-                              new[] { "Alt", "string?", "null", "Atributo alt da imagem." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Removable", "bool", "false", "Exibe o ícone de remover." },
-                              new[] { "RemoveIcon", "string", "pi pi-times-circle", "Ícone do botão de remover." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                              new[] { "Label", "string?", "null", "Texto exibido no chip." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone exibido antes do rótulo (ex.: <code>pi pi-apple</code>)." },
+                              new[] { "Image", "string?", "null", "URL da imagem exibida como avatar." },
+                              new[] { "Alt", "string?", "null", "Texto alternativo da imagem." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o chip e seu ícone de remoção." },
+                              new[] { "Removable", "bool", "false", "Exibe o ícone de remoção." },
+                              new[] { "RemoveIcon", "string", "pi pi-times-circle", "Classe do ícone de remoção." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Style", "string?", "null", "Estilos inline no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado; substitui os modos internos de ícone, imagem e rótulo." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "OnRemove", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao remover o chip." },
                               new[] { "OnImageError", "EventCallback&lt;ErrorEventArgs&gt;", "Disparado ao falhar o carregamento da imagem." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
-            <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
-                          Rows="@(new[] {
-                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado em vez dos modos internos." }
-                          })"/>
-            </ChildContent>
-        </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="chip"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-chip", "Elemento raiz (contêiner)." },
+                              new[] { "p-chip-image", "Imagem (avatar) exibida no modo imagem." },
+                              new[] { "p-chip-icon", "Ícone exibido antes do rótulo." },
+                              new[] { "p-chip-label", "Rótulo do chip." },
+                              new[] { "p-chip-remove-icon", "Ícone de remoção." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="chip"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>Style</code>, <code>ChildContent</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O <code>Label</code> não é associado automaticamente como <code>aria-label</code>; informe um atributo extra quando o chip não tiver texto visível.</li>
+                        <li>O <code>aria-label</code> do ícone de remoção é fixo (<code>Remove</code>) e não é localizável.</li>
+                        <li>Não há templates separados para ícone, imagem ou rótulo; a customização é feita por <code>ChildContent</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -115,21 +192,38 @@
 @code {
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Chip
-
-        <OpChip Label="Action" />
         """;
 
     private const string BasicCode = """
         <OpChip Label="Action" />
+        <OpChip Label="Comedy" />
+        <OpChip Label="Mystery" />
         <OpChip Label="Thriller" Removable="true" />
         """;
 
     private const string IconCode = """
         <OpChip Label="Apple" Icon="pi pi-apple" />
+        <OpChip Label="Facebook" Icon="pi pi-facebook" />
+        <OpChip Label="Google" Icon="pi pi-google" />
         <OpChip Label="Microsoft" Icon="pi pi-microsoft" Removable="true" />
         """;
 
     private const string ImageCode = """
-        <OpChip Label="Amy Elsner" Image="https://optimus.openng.org/demo/avatar/amyelsner.png" />
+        <OpChip Label="Amy Elsner" Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Alt="Avatar de Amy Elsner" />
+        <OpChip Label="Asiya Javayant" Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Alt="Avatar de Asiya Javayant" />
+        <OpChip Label="Onyama Limba" Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Alt="Avatar de Onyama Limba" />
+        <OpChip Label="Xuxue Feng" Image="https://optimus.openng.org/demo/avatar/xuxuefeng.png" Alt="Avatar de Xuxue Feng" Removable="true" />
+        """;
+
+    private const string TemplateCode = """
+        <OpChip Style="padding: 0 1rem 0 0;">
+            <span style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--p-primary-color); color: var(--p-primary-contrast-color);">P</span>
+            <span style="font-weight: 500;">PRIME</span>
+        </OpChip>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpChip Label="Categorias" aria-label="Categoria selecionada" />
+        <OpChip Label="Thriller" Removable="true" />
         """;
 }
