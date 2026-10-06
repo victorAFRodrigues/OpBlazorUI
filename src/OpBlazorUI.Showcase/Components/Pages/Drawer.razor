@@ -3,20 +3,28 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Drawer
 @using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Avatar
+
+<PageTitle>Drawer - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Drawer"
-              Description="O Drawer é um painel exibido como overlay nas bordas da tela.">
+              Description="O Drawer é um painel lateral que sobrepõe a página.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O Drawer é usado como contêiner e sua visibilidade é controlada por <code>Visible</code>,
+                normalmente pelo binding <code>@@bind-Visible</code>. O gatilho fica do lado de fora, no markup da
+                própria página, e o conteúdo é definido como filho do componente.
+            </Description>
             <ChildContent>
-                <div class="card flex justify-center">
-                    <OpButton Label="Abrir" Icon="pi pi-arrow-right" @onclick="ShowLeft"/>
-                    <OpDrawer @bind-Visible="_leftVisible" Header="Drawer">
+                <div class="flex justify-center">
+                    <OpButton Label="Abrir" Icon="pi pi-arrow-right" OnClick="ShowBasic"/>
+                    <OpDrawer @bind-Visible="_basicVisible" Header="Drawer">
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
                             ut labore et dolore magna aliqua.
@@ -27,13 +35,18 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Posição">
+        <DocSection Label="Posição" Id="position">
+            <Description>
+                A posição é definida por <code>Position</code>, que aceita <code>left</code> (padrão),
+                <code>right</code>, <code>top</code> e <code>bottom</code>. Drawers laterais ocupam toda a altura;
+                drawers de topo/base ocupam toda a largura.
+            </Description>
             <ChildContent>
-                <div class="card flex justify-center gap-2">
-                    <OpButton Icon="pi pi-arrow-right" @onclick="ShowLeft"/>
-                    <OpButton Icon="pi pi-arrow-left" @onclick="ShowRight"/>
-                    <OpButton Icon="pi pi-arrow-down" @onclick="ShowTop"/>
-                    <OpButton Icon="pi pi-arrow-up" @onclick="ShowBottom"/>
+                <div class="flex justify-center gap-2">
+                    <OpButton Icon="pi pi-arrow-right" AriaLabel="Esquerda" OnClick="ShowLeft"/>
+                    <OpButton Icon="pi pi-arrow-left" AriaLabel="Direita" OnClick="ShowRight"/>
+                    <OpButton Icon="pi pi-arrow-down" AriaLabel="Topo" OnClick="ShowTop"/>
+                    <OpButton Icon="pi pi-arrow-up" AriaLabel="Base" OnClick="ShowBottom"/>
 
                     <OpDrawer @bind-Visible="_leftVisible" Header="Esquerda" Position="left">
                         <p>Conteúdo do drawer à esquerda.</p>
@@ -41,10 +54,10 @@
                     <OpDrawer @bind-Visible="_rightVisible" Header="Direita" Position="right">
                         <p>Conteúdo do drawer à direita.</p>
                     </OpDrawer>
-                    <OpDrawer @bind-Visible="_topVisible" Header="Topo" Position="top" Style="height:auto">
+                    <OpDrawer @bind-Visible="_topVisible" Header="Topo" Position="top" Style="height: auto">
                         <p>Conteúdo do drawer no topo.</p>
                     </OpDrawer>
-                    <OpDrawer @bind-Visible="_bottomVisible" Header="Base" Position="bottom" Style="height:auto">
+                    <OpDrawer @bind-Visible="_bottomVisible" Header="Base" Position="bottom" Style="height: auto">
                         <p>Conteúdo do drawer na base.</p>
                     </OpDrawer>
                 </div>
@@ -52,13 +65,41 @@
             <Code><CodeBlock Code="@PositionCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tela Cheia">
+        <DocSection Label="Tamanho" Id="size">
+            <Description>
+                Não existe parâmetro de tamanho no Blazor (o <code>styleClass</code> responsivo do Angular não tem
+                equivalente direto). A dimensão vem do tema — <code>20rem</code> de largura e <code>10rem</code> de
+                altura para topo/base — e pode ser sobrescrita com <code>Style</code> (estilo inline) ou
+                <code>StyleClass</code> (classes).
+            </Description>
             <ChildContent>
-                <div class="card flex justify-center">
-                    <OpButton Label="Tela cheia" Icon="pi pi-window-maximize" @onclick="ShowFull"/>
+                <div class="flex justify-center gap-4">
+                    <OpButton Label="Padrão" Icon="pi pi-window-minimize" OnClick="ShowSizeDefault"/>
+                    <OpButton Label="Largo" Icon="pi pi-window-maximize" OnClick="ShowSizeWide"/>
+
+                    <OpDrawer @bind-Visible="_sizeDefaultVisible" Header="Drawer" Position="right">
+                        <p>Largura padrão do tema (20rem).</p>
+                    </OpDrawer>
+                    <OpDrawer @bind-Visible="_sizeWideVisible" Header="Drawer" Position="right" Style="width: 30rem">
+                        <p>Largura sobrescrita com <code>Style="width: 30rem"</code>.</p>
+                    </OpDrawer>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tela Cheia" Id="fullscreen">
+            <Description>
+                Com <code>FullScreen="true"</code> o drawer cobre toda a página, independentemente de
+                <code>Position</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpButton Label="Tela cheia" Icon="pi pi-window-maximize" OnClick="ShowFull"/>
                     <OpDrawer @bind-Visible="_fullVisible" Header="Drawer" FullScreen="true">
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                            ut labore et dolore magna aliqua.
                         </p>
                     </OpDrawer>
                 </div>
@@ -66,121 +107,228 @@
             <Code><CodeBlock Code="@FullCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template">
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O drawer é customizável por <code>HeaderTemplate</code>, <code>ChildContent</code> (conteúdo) e
+                <code>FooterTemplate</code>. Ao informar <code>HeaderTemplate</code>, o valor de <code>Header</code>
+                é ignorado; use <code>Closable</code> para exibir ou não o botão de fechar padrão.
+            </Description>
             <ChildContent>
-                <div class="card flex justify-center">
-                    <OpButton Label="Abrir" Icon="pi pi-plus" @onclick="ShowTemplate"/>
+                <div class="flex justify-center">
+                    <OpButton Label="Abrir" Icon="pi pi-plus" OnClick="ShowTemplate"/>
                     <OpDrawer @bind-Visible="_templateVisible" Closable="false">
                         <HeaderTemplate>
                             <div class="flex items-center gap-2">
-                                <span class="font-bold">Perfil</span>
+                                <OpAvatar Label="AE" Shape="circle"/>
+                                <span class="font-bold">Amy Elsner</span>
                             </div>
                         </HeaderTemplate>
                         <ChildContent>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.
                             </p>
                         </ChildContent>
                         <FooterTemplate>
-                            <OpButton Label="Logout" Icon="pi pi-user" Severity="danger" Text="true" Fluid="true" @onclick="HideTemplate"/>
+                            <div class="flex items-center gap-2">
+                                <OpButton Label="Conta" Icon="pi pi-user" Outlined="true" Fluid="true"/>
+                                <OpButton Label="Sair" Icon="pi pi-sign-out" Severity="danger" Text="true" Fluid="true" OnClick="HideTemplate"/>
+                            </div>
                         </FooterTemplate>
                     </OpDrawer>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Headless" Id="headless">
+            <Description>
+                O modo <i>headless</i> do Angular (que entrega toda a interface para o usuário) não tem equivalente
+                no componente. Para um resultado semelhante, use <code>ShowHeader="false"</code> e forneça o
+                cabeçalho e o conteúdo manualmente dentro de <code>ChildContent</code>, fechando o drawer pelo
+                binding <code>@@bind-Visible</code>. Ajuste a aparência com <code>Style</code>,
+                <code>StyleClass</code> e as variáveis CSS do tema.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpButton Label="Menu" Icon="pi pi-bars" OnClick="ShowHeadless"/>
+                    <OpDrawer @bind-Visible="_headlessVisible" ShowHeader="false" Position="left">
+                        <div style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem;">
+                                <span class="font-bold" style="font-size: 1.25rem; color: var(--p-primary-color);">OpBlazorUI</span>
+                                <OpButton Icon="pi pi-times" Rounded="true" Outlined="true" AriaLabel="Fechar" OnClick="() => _headlessVisible = false"/>
+                            </div>
+                            <ul style="list-style: none; margin: 0; padding: 1rem; display: flex; flex-direction: column; gap: .25rem;">
+                                <li><span style="display: block; padding: .75rem 1rem; border-radius: 6px;">Início</span></li>
+                                <li><span style="display: block; padding: .75rem 1rem; border-radius: 6px;">Button</span></li>
+                                <li><span style="display: block; padding: .75rem 1rem; border-radius: 6px;">Drawer</span></li>
+                            </ul>
+                        </div>
+                    </OpDrawer>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@HeadlessCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Drawer usa o papel <code>complementary</code> por padrão. Como os atributos extras são
+                    repassados ao elemento raiz, o <code>role</code> pode ser alterado conforme o caso de uso e
+                    atributos adicionais (ex.: <code>aria-labelledby</code>) podem ser informados. Além disso,
+                    <code>aria-modal="true"</code> é adicionado quando <code>Modal</code> está ativo, pois o foco
+                    permanece preso dentro do drawer enquanto ele está aberto.
+                </p>
+                <p>
+                    Recomenda-se abrir o drawer por um componente acionável pelo teclado, como um botão; caso
+                    contrário, seria necessário definir <code>TabIndex</code> no elemento que dispara a abertura. O
+                    gatilho também deve tratar <code>aria-expanded</code> e <code>aria-controls</code> explicitamente.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o próximo elemento focável dentro do drawer." },
+                              new[] { "shift + tab", "Move o foco para o elemento focável anterior dentro do drawer." },
+                              new[] { "escape", "Fecha o drawer se <code>CloseOnEscape</code> for <code>true</code>." },
+                              new[] { "enter", "Fecha o drawer pelo botão de fechar." },
+                              new[] { "space", "Fecha o drawer pelo botão de fechar." }
+                          })"/>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Visible", "bool", "false", "Controla a visibilidade." },
-                              new[] { "VisibleChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
-                              new[] { "Position", "string", "left", "Posição: <code>left</code>, <code>right</code>, <code>top</code>, <code>bottom</code>, <code>full</code>." },
-                              new[] { "FullScreen", "bool", "false", "Cobre a tela inteira." },
-                              new[] { "Header", "string?", "null", "Título do drawer." },
-                              new[] { "Modal", "bool", "true", "Exibe a máscara de fundo." },
+                              new[] { "Visible", "bool", "false", "Controla a visibilidade. Combine com <code>@bind-Visible</code>." },
+                              new[] { "VisibleChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding de <code>Visible</code>." },
+                              new[] { "Position", "string", "left", "Posição: <code>left</code>, <code>right</code>, <code>top</code>, <code>bottom</code>." },
+                              new[] { "FullScreen", "bool", "false", "Cobre a tela inteira, ignorando <code>Position</code>." },
+                              new[] { "Header", "string?", "null", "Título do drawer (ignorado quando há <code>HeaderTemplate</code>)." },
+                              new[] { "Modal", "bool", "true", "Exibe a máscara de fundo e mantém o foco preso no drawer." },
                               new[] { "Closable", "bool", "true", "Exibe o botão de fechar." },
                               new[] { "ShowHeader", "bool", "true", "Exibe o cabeçalho." },
                               new[] { "Dismissible", "bool", "true", "Fecha ao clicar na máscara." },
                               new[] { "CloseOnEscape", "bool", "true", "Fecha com a tecla Escape." },
-                              new[] { "FocusOnShow", "bool", "true", "Foca o drawer ao abrir. Em modais, o <code>Tab</code> fica preso no drawer e o foco retorna ao elemento que o abriu ao fechar." },
-                              new[] { "Style", "string?", "null", "Estilos inline do drawer." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
+                              new[] { "FocusOnShow", "bool", "true", "Foca o drawer ao abrir; o foco retorna ao gatilho ao fechar." },
+                              new[] { "Style", "string?", "null", "Estilos inline do drawer (ex.: largura/altura)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no drawer." },
                               new[] { "MaskStyle", "string?", "null", "Estilos da máscara." },
-                              new[] { "AutoZIndex", "bool", "true", "Aplica o z-index da camada modal (1100 + BaseZIndex), acima da página e de overlays." },
+                              new[] { "MaskStyleClass", "string?", "null", "Classes adicionais na máscara." },
+                              new[] { "AutoZIndex", "bool", "true", "Aplica o z-index da camada modal (1100 + <code>BaseZIndex</code>)." },
                               new[] { "BaseZIndex", "int", "0", "Valor somado à camada modal." },
-                              new[] { "MaskStyleClass", "string?", "null", "Classes da máscara." },
                               new[] { "CloseIcon", "string", "pi pi-times", "Classe do ícone de fechar." },
-                              new[] { "AriaCloseLabel", "string", "Close", "Label de acessibilidade do botão de fechar." }
+                              new[] { "AriaCloseLabel", "string", "Close", "Label acessível do botão de fechar." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos extras repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
-                          Rows="@(new[] {
-                              new[] { "OnShow", "EventCallback", "Disparado ao exibir." },
-                              new[] { "OnHide", "EventCallback", "Disparado ao ocultar." }
-                          })"/>
-            </ChildContent>
-        </DocSection>
-        <DocSection Label="Templates">
-            <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "ChildContent", "RenderFragment?", "Conteúdo do drawer." },
                               new[] { "HeaderTemplate", "RenderFragment?", "Cabeçalho customizado." },
                               new[] { "FooterTemplate", "RenderFragment?", "Rodapé customizado." },
-                              new[] { "CloseIconTemplate", "RenderFragment?", "Ícone de fechar customizado." }
+                              new[] { "CloseIconTemplate", "RenderFragment?", "Ícone do botão de fechar customizado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnShow", "EventCallback", "Disparado ao exibir o drawer." },
+                              new[] { "OnHide", "EventCallback", "Disparado ao ocultar o drawer." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-drawer", "Elemento raiz do drawer." },
+                              new[] { "p-drawer-header", "Contêiner do cabeçalho." },
+                              new[] { "p-drawer-title", "Título (quando <code>Header</code> é string)." },
+                              new[] { "p-drawer-content", "Contêiner do conteúdo." },
+                              new[] { "p-drawer-footer", "Contêiner do rodapé (quando há <code>FooterTemplate</code>)." },
+                              new[] { "p-drawer-left / -right / -top / -bottom", "Raiz conforme <code>Position</code>." },
+                              new[] { "p-drawer-full", "Raiz quando <code>FullScreen</code>." },
+                              new[] { "p-drawer-open", "Raiz no estado aberto." },
+                              new[] { "p-drawer-mask", "Máscara modal (quando <code>Modal</code>)." },
+                              new[] { "p-drawer-close-button", "Botão de fechar (quando <code>Closable</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
             <ChildContent><DocTokens Component="drawer"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>MaskStyleClass</code> e atributos extras para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>Style</code>, <code>StyleClass</code>, <code>MaskStyle</code>, <code>MaskStyleClass</code>, os templates (<code>HeaderTemplate</code>, <code>FooterTemplate</code>, <code>CloseIconTemplate</code>) e os <code>AdditionalAttributes</code> (atributos extras repassados ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>O fechamento com animação de saída é instantâneo.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O modo <i>headless</i> do Angular não tem equivalente; use <code>ShowHeader="false"</code> e monte a interface manualmente (ver Headless).</li>
+                        <li>Não há parâmetro de tamanho: largura/altura são definidas via <code>Style</code> ou <code>StyleClass</code>.</li>
+                        <li>O fechamento com animação de saída é instantâneo.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private bool _basicVisible;
     private bool _leftVisible;
     private bool _rightVisible;
     private bool _topVisible;
     private bool _bottomVisible;
+    private bool _sizeDefaultVisible;
+    private bool _sizeWideVisible;
     private bool _fullVisible;
     private bool _templateVisible;
+    private bool _headlessVisible;
 
+    private void ShowBasic() => _basicVisible = true;
     private void ShowLeft() => _leftVisible = true;
     private void ShowRight() => _rightVisible = true;
     private void ShowTop() => _topVisible = true;
     private void ShowBottom() => _bottomVisible = true;
+    private void ShowSizeDefault() => _sizeDefaultVisible = true;
+    private void ShowSizeWide() => _sizeWideVisible = true;
     private void ShowFull() => _fullVisible = true;
     private void ShowTemplate() => _templateVisible = true;
     private void HideTemplate() => _templateVisible = false;
+    private void ShowHeadless() => _headlessVisible = true;
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Drawer
@@ -189,9 +337,12 @@
         """;
 
     private const string BasicCode = """
-        <OpButton Label="Abrir" @onclick="Show" />
+        <OpButton Label="Abrir" Icon="pi pi-arrow-right" OnClick="Show" />
         <OpDrawer @bind-Visible="_visible" Header="Drawer">
-            <p>Conteúdo do drawer.</p>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                ut labore et dolore magna aliqua.
+            </p>
         </OpDrawer>
 
         @code {
@@ -201,27 +352,127 @@
         """;
 
     private const string PositionCode = """
-        <OpDrawer @bind-Visible="_visible" Header="Esquerda" Position="left" />
-        <OpDrawer @bind-Visible="_visible" Header="Direita" Position="right" />
-        <OpDrawer @bind-Visible="_visible" Header="Topo" Position="top" />
-        <OpDrawer @bind-Visible="_visible" Header="Base" Position="bottom" />
+        <OpButton Icon="pi pi-arrow-right" AriaLabel="Esquerda" OnClick="ShowLeft" />
+        <OpButton Icon="pi pi-arrow-left" AriaLabel="Direita" OnClick="ShowRight" />
+        <OpButton Icon="pi pi-arrow-down" AriaLabel="Topo" OnClick="ShowTop" />
+        <OpButton Icon="pi pi-arrow-up" AriaLabel="Base" OnClick="ShowBottom" />
+
+        <OpDrawer @bind-Visible="_leftVisible" Header="Esquerda" Position="left">
+            <p>Conteúdo do drawer à esquerda.</p>
+        </OpDrawer>
+        <OpDrawer @bind-Visible="_rightVisible" Header="Direita" Position="right">
+            <p>Conteúdo do drawer à direita.</p>
+        </OpDrawer>
+        <OpDrawer @bind-Visible="_topVisible" Header="Topo" Position="top" Style="height: auto">
+            <p>Conteúdo do drawer no topo.</p>
+        </OpDrawer>
+        <OpDrawer @bind-Visible="_bottomVisible" Header="Base" Position="bottom" Style="height: auto">
+            <p>Conteúdo do drawer na base.</p>
+        </OpDrawer>
+
+        @code {
+            private bool _leftVisible;
+            private bool _rightVisible;
+            private bool _topVisible;
+            private bool _bottomVisible;
+        }
+        """;
+
+    private const string SizeCode = """
+        <OpButton Label="Padrão" Icon="pi pi-window-minimize" OnClick="ShowDefault" />
+        <OpButton Label="Largo" Icon="pi pi-window-maximize" OnClick="ShowWide" />
+
+        <OpDrawer @bind-Visible="_defaultVisible" Header="Drawer" Position="right">
+            <p>Largura padrão do tema (20rem).</p>
+        </OpDrawer>
+
+        <OpDrawer @bind-Visible="_wideVisible" Header="Drawer" Position="right" Style="width: 30rem">
+            <p>Largura sobrescrita com Style.</p>
+        </OpDrawer>
+
+        @code {
+            private bool _defaultVisible;
+            private bool _wideVisible;
+        }
         """;
 
     private const string FullCode = """
+        <OpButton Label="Tela cheia" Icon="pi pi-window-maximize" OnClick="Show" />
         <OpDrawer @bind-Visible="_visible" Header="Drawer" FullScreen="true">
-            <p>Conteúdo em tela cheia.</p>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                ut labore et dolore magna aliqua.
+            </p>
         </OpDrawer>
+
+        @code {
+            private bool _visible;
+            private void Show() => _visible = true;
+        }
         """;
 
     private const string TemplateCode = """
+        <OpButton Label="Abrir" Icon="pi pi-plus" OnClick="Show" />
         <OpDrawer @bind-Visible="_visible" Closable="false">
             <HeaderTemplate>
-                <span class="font-bold">Perfil</span>
+                <div class="flex items-center gap-2">
+                    <OpAvatar Label="AE" Shape="circle" />
+                    <span class="font-bold">Amy Elsner</span>
+                </div>
             </HeaderTemplate>
-            <p>Conteúdo.</p>
+            <ChildContent>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </ChildContent>
             <FooterTemplate>
-                <OpButton Label="Logout" Severity="danger" Text="true" Fluid="true" />
+                <div class="flex items-center gap-2">
+                    <OpButton Label="Conta" Icon="pi pi-user" Outlined="true" Fluid="true" />
+                    <OpButton Label="Sair" Icon="pi pi-sign-out" Severity="danger" Text="true" Fluid="true" OnClick="Hide" />
+                </div>
             </FooterTemplate>
         </OpDrawer>
+
+        @code {
+            private bool _visible;
+            private void Show() => _visible = true;
+            private void Hide() => _visible = false;
+        }
+        """;
+
+    private const string HeadlessCode = """
+        <OpButton Label="Menu" Icon="pi pi-bars" OnClick="Show" />
+        <OpDrawer @bind-Visible="_visible" ShowHeader="false" Position="left">
+            <div style="display: flex; flex-direction: column; height: 100%;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem;">
+                    <span class="font-bold" style="font-size: 1.25rem; color: var(--p-primary-color);">OpBlazorUI</span>
+                    <OpButton Icon="pi pi-times" Rounded="true" Outlined="true" AriaLabel="Fechar"
+                              OnClick="() => _visible = false" />
+                </div>
+                <ul style="list-style: none; margin: 0; padding: 1rem; display: flex; flex-direction: column; gap: .25rem;">
+                    <li><span style="display: block; padding: .75rem 1rem; border-radius: 6px;">Início</span></li>
+                    <li><span style="display: block; padding: .75rem 1rem; border-radius: 6px;">Button</span></li>
+                    <li><span style="display: block; padding: .75rem 1rem; border-radius: 6px;">Drawer</span></li>
+                </ul>
+            </div>
+        </OpDrawer>
+
+        @code {
+            private bool _visible;
+            private void Show() => _visible = true;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpButton Icon="pi pi-arrow-right" AriaLabel="Abrir drawer"
+                  aria-controls="@(_visible ? "drawer" : null)"
+                  aria-expanded="@_visible"
+                  OnClick="() => _visible = true" />
+
+        <OpDrawer @bind-Visible="_visible" id="drawer" role="region" Header="Drawer">
+            <p>Conteúdo.</p>
+        </OpDrawer>
+
+        @code {
+            private bool _visible;
+        }
         """;
 }
