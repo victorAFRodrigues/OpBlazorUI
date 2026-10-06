@@ -1,0 +1,130 @@
+@page "/inputchips"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+
+<PageTitle>InputChips - OpBlazorUI</PageTitle>
+
+<DocComponent Title="InputChips"
+              Description="Entrada de múltiplos valores como chips. Componente ainda não portado para o Blazor e sem página de referência no PrimeNG v21 (é uma adição do Optimus UI): os textos e exemplos abaixo são ilustrativos e serão substituídos por exemplos reais quando o componente existir.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description><p>Uso controlado por <code>ngModel</code>; cada valor digitado é convertido em um chip.</p></Description>
+            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Separador" Id="separator">
+            <Description><p>A propriedade <code>separator</code> permite adicionar vários chips de uma vez, separando os valores por um caractere.</p></Description>
+            <Code><CodeBlock Code="@SeparatorCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Adicionar ao Sair do Campo" Id="addonblur">
+            <Description><p>Com <code>addOnBlur</code>, o valor pendente é convertido em chip ao sair do campo.</p></Description>
+            <Code><CodeBlock Code="@AddOnBlurCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description><p>O conteúdo de cada chip pode ser customizado com um template <code>item</code>.</p></Description>
+            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Float Label" Id="floatlabel">
+            <Description><p>Um rótulo flutuante aparece sobre o campo quando ele recebe foco. Veja a documentação de <a href="/floatlabel">FloatLabel</a>.</p></Description>
+            <Code><CodeBlock Code="@FloatLabelCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description><p>No Blazor, a integração acontecerá via <code>EditForm</code> + <code>DataAnnotationsValidator</code>, herdando de <code>OpInputBase&lt;TValue&gt;</code>.</p></Description>
+            <Code><CodeBlock Code="@FormsCode" Language="html"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O componente usa roles de lista (<code>listbox</code>/<code>option</code>) para anunciar os chips e um campo de entrada para adicionar novos valores.</p>
+                <h3>Suporte a teclado</h3>
+            </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "enter", "Adiciona o valor digitado como chip." },
+                              new[] { "backspace", "Remove o último chip quando o campo está vazio." },
+                              new[] { "tab", "Move o foco para o próximo elemento focável." }
+                          })"/>
+            </Code>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="API" Id="api">
+            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>, classe <code>p-inputchips</code>); a tabela será adicionada junto com o componente.</p></div></ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Não há página correspondente no PrimeNG v21 (adição do Optimus UI), então as seções acima são um esqueleto baseado em padrões próximos e serão revisadas contra a referência do Optimus UI quando disponível.</p></div></ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        import { InputChipsModule } from 'primeng/inputchips';
+        """;
+
+    private const string BasicCode = """
+        <p-inputchips [(ngModel)]="value"></p-inputchips>
+        """;
+
+    private const string SeparatorCode = """
+        <p-inputchips [(ngModel)]="value" separator=","></p-inputchips>
+        """;
+
+    private const string AddOnBlurCode = """
+        <p-inputchips [(ngModel)]="value" [addOnBlur]="true"></p-inputchips>
+        """;
+
+    private const string TemplateCode = """
+        <p-inputchips [(ngModel)]="value">
+            <ng-template let-item pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                    <span>{{ item }}</span>
+                </div>
+            </ng-template>
+        </p-inputchips>
+        """;
+
+    private const string FloatLabelCode = """
+        <p-floatlabel>
+            <p-inputchips id="chips" [(ngModel)]="value"></p-inputchips>
+            <label for="chips">Tags</label>
+        </p-floatlabel>
+        """;
+
+    private const string FormsCode = """
+        <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+            <p-inputchips formControlName="tags"></p-inputchips>
+            @if (isInvalid('tags')) {
+                <p-message severity="error" size="small" variant="simple">Tags are required.</p-message>
+            }
+            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+        </form>
+        """;
+}
