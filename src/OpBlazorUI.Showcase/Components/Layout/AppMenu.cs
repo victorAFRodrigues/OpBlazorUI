@@ -83,7 +83,7 @@ public static class AppMenu
                         GroupItem("FloatLabel", "/floatlabel"), GroupItem("IconField", "/iconfield"),
                         GroupItem("IftaLabel", "/iftalabel"), GroupItem("InputChips", "/inputchips"), GroupItem("InputGroup", "/inputgroup"), GroupItem("InputMask", "/inputmask"),
                         GroupItem("InputNumber", "/inputnumber"), GroupItem("InputOtp", "/inputotp"),
-                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"), GroupItem("Knob"),
+                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"), GroupItem("Knob", "/knob"),
                         GroupItem("Listbox", "/listbox"), GroupItem("MultiSelect", "/multiselect"),
                         GroupItem("Password", "/password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating", "/rating"),
                         GroupItem("Select", "/select"), GroupItem("SelectButton", "/selectbutton"), GroupItem("Slider", "/slider"),
@@ -102,7 +102,7 @@ public static class AppMenu
                     Label = "Data",
                     Items =
                     [
-                        GroupItem("DataView", "/dataview"), GroupItem("OrderList", "/orderlist"), GroupItem("OrganizationChart"),
+                        GroupItem("DataView", "/dataview"), GroupItem("OrderList", "/orderlist"), GroupItem("OrganizationChart", "/organizationchart"),
                         GroupItem("Paginator", "/paginator"), GroupItem("PickList", "/picklist"), GroupItem("Table", "/table"),
                         GroupItem("Timeline", "/timeline"), GroupItem("Tree", "/tree"), GroupItem("TreeTable", "/treetable"), GroupItem("VirtualScroller", "/virtualscroller")
                     ]
@@ -167,8 +167,8 @@ public static class AppMenu
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid"),
                         GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace", "/inplace"), GroupItem("MeterGroup", "/metergroup"),
                         GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
-                        GroupItem("Ripple"), GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
-                        GroupItem("Tag", "/tag"), GroupItem("Terminal")
+                        GroupItem("Ripple", "/ripple"), GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass"),
+                        GroupItem("Tag", "/tag"), GroupItem("Terminal", "/terminal")
                     ]
                 },
                 new AppMenuGroup
