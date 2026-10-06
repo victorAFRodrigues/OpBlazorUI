@@ -4,208 +4,540 @@
 @using OpBlazorUI.Base.Components.SelectButton
 @using System.ComponentModel.DataAnnotations
 
+<PageTitle>SelectButton - OpBlazorUI</PageTitle>
+
 <DocComponent Title="SelectButton"
-              Description="SelectButton é usado para escolher um ou vários itens de uma lista usando botões.">
+              Description="O SelectButton é usado para escolher um ou vários itens de uma lista usando botões.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O SelectButton exige um valor para vincular e uma coleção de <code>Options</code>. Use
+                <code>OptionLabel</code> e <code>OptionValue</code> para indicar quais propriedades de cada opção são
+                usadas como rótulo e valor. Por padrão, apenas um item pode ser selecionado.
+            </Description>
             <ChildContent>
-                <OpSelectButton TValue="string" @bind-Value="_single" Options="Options"/>
-                <div class="mt-2 text-sm">Selecionado: @(_single ?? "—")</div>
+                <OpSelectButton TValue="StateOption" @bind-Value="_single" Options="StateOptions"
+                                OptionLabel="Label" OptionValue="Value"/>
+                <div class="mt-2 text-sm">Selecionado: @(_single?.Label ?? "—")</div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Múltiplo">
+        <DocSection Label="Múltiplo" Id="multiple">
+            <Description>
+                Por padrão só um item pode ser selecionado; com <code>Multiple="true"</code> é possível escolher mais
+                de um. Nesse modo o vínculo é feito por <code>MultipleValue</code> (uma lista) e não por
+                <code>Value</code>.
+            </Description>
             <ChildContent>
-                <OpSelectButton TValue="string" @bind-MultipleValue="_multiple" Multiple="true" Options="Options"/>
+                <OpSelectButton TValue="StateOption" @bind-MultipleValue="_multiple" Multiple="true"
+                                Options="StateOptions" OptionLabel="Label" OptionValue="Value"/>
+                <div class="mt-2 text-sm">
+                    Selecionados: @string.Join(", ", (_multiple ?? Array.Empty<StateOption>()).Select(o => o.Label))
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@MultipleCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template de Item">
+        <DocSection Label="Template" Id="template">
+            <Description>
+                Para conteúdo customizado em cada opção defina <code>ItemTemplate</code>; o contexto recebe a tupla
+                <code>(Option, Index)</code>, onde <code>Option</code> é o próprio item da lista. O template substitui
+                o rótulo padrão da opção.
+            </Description>
             <ChildContent>
-                <OpSelectButton TValue="string" @bind-Value="_template" Options="Options">
+                <OpSelectButton TValue="JustifyOption" @bind-Value="_template" Options="JustifyOptions" OptionLabel="Name">
                     <ItemTemplate Context="ctx">
-                        <div style="display:flex; align-items:center; gap:.375rem;">
-                            <i class="pi pi-check" style="font-size:.75rem"></i>
-                            <span>@ctx.Option</span>
-                        </div>
+                        <i class="@ctx.Option.Icon"></i>
                     </ItemTemplate>
                 </OpSelectButton>
             </ChildContent>
             <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido / Desabilitado / Fluido / Tamanho">
-            <ChildContent>
-                <div class="flex flex-col gap-3">
-                    <OpSelectButton TValue="string" @bind-Value="_v1" Options="Options" Invalid="true"/>
-                    <OpSelectButton TValue="string" @bind-Value="_v2" Options="Options" Disabled="true"/>
-                    <OpSelectButton TValue="string" @bind-Value="_v3" Options="Options" Fluid="true"/>
-                    <OpSelectButton TValue="string" @bind-Value="_v4" Options="Options" Size="small"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@StateCode"/></Code>
-        </DocSection>
-        <DocSection Label="Validação">
+        <DocSection Label="Tamanhos" Id="sizes">
             <Description>
-                O SelectButton (modo single) herda de <code>InputBase&lt;TValue&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+                O SelectButton oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão,
+                via propriedade <code>Size</code>.
             </Description>
             <ChildContent>
-                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                <div class="flex flex-col items-center gap-4">
+                    <OpSelectButton TValue="StateOption" @bind-Value="_sizeSmall" Options="StateOptions"
+                                    OptionLabel="Label" OptionValue="Value" Size="small"/>
+                    <OpSelectButton TValue="StateOption" @bind-Value="_sizeNormal" Options="StateOptions"
+                                    OptionLabel="Label" OptionValue="Value"/>
+                    <OpSelectButton TValue="StateOption" @bind-Value="_sizeLarge" Options="StateOptions"
+                                    OptionLabel="Label" OptionValue="Value" Size="large"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Largura Total" Id="fluid">
+            <Description>
+                Com <code>Fluid="true"</code> o componente ocupa toda a largura do contêiner, distribuindo os botões
+                ao longo dele.
+            </Description>
+            <ChildContent>
+                <div style="width:100%;">
+                    <OpSelectButton TValue="StateOption" @bind-Value="_fluid" Options="StateOptions"
+                                    OptionLabel="Label" OptionValue="Value" Fluid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Com <code>Disabled="true"</code> o componente não pode ser editado nem focado. Opções individuais podem
+                ser desabilitadas com <code>OptionDisabled</code>, que aponta para uma propriedade booleana do item.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpSelectButton TValue="StateOption" @bind-Value="_disabledVal" Options="StateOptions"
+                                    OptionLabel="Label" OptionValue="Value" Disabled="true"/>
+                    <OpSelectButton TValue="DisabledOption" @bind-Value="_disabledOption" Options="DisabledOptions"
+                                    OptionLabel="Label" OptionDisabled="Constant"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado <code>Invalid="true"</code> indica falha de validação e aplica a classe <code>p-invalid</code>.
+                Dentro de um <code>EditForm</code> esse estado é calculado automaticamente a partir das mensagens do
+                <code>EditContext</code>, então não é preciso informar <code>Invalid</code> manualmente.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpSelectButton TValue="StateOption" @bind-Value="_invalid" Options="StateOptions"
+                                    OptionLabel="Label" OptionValue="Value" Invalid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+            <Description>
+                No Blazor não há a distinção do Angular entre template driven e reactive forms: ambos usam
+                <code>EditForm</code>. Aqui o vínculo por <code>@@bind-Value</code> registra o campo no
+                <code>EditContext</code> e o <code>DataAnnotationsValidator</code> valida o modelo — equivalente ao
+                <code>ngModel</code> com <code>required</code>.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
                     <DataAnnotationsValidator/>
-                    <OpSelectButton TValue="string" @bind-Value="_form.Plan" Options="Options" AllowEmpty="false"/>
-                    <ValidationMessage For="() => _form.Plan"/>
+                    <OpSelectButton TValue="StateOption" @bind-Value="_tdModel.Option" Options="StateOptions"
+                                    OptionLabel="Label" OptionValue="Value" AllowEmpty="false"/>
+                    <ValidationMessage For="() => _tdModel.Option"/>
                     <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_submitted)
+                    @if (_tdSubmitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Plano: @_form.Plan</div>
+                        <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_tdModel.Option?.Label</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Reactive)" Id="reactive">
+            <Description>
+                O equivalente ao <code>formControlName</code> é controlar o <code>EditContext</code> explicitamente.
+                Neste exemplo o contexto e um <code>ValidationMessageStore</code> são criados no código e a mensagem é
+                adicionada no envio, sem depender de DataAnnotations.
+            </Description>
+            <ChildContent>
+                <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
+                    <OpSelectButton TValue="StateOption" @bind-Value="_reactiveModel.Option" Options="StateOptions"
+                                    OptionLabel="Label" OptionValue="Value" AllowEmpty="false"/>
+                    <ValidationMessage For="() => _reactiveModel.Option"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_reactiveSubmitted && _reactiveModel.Option is not null)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_reactiveModel.Option.Label</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O contêiner que envolve os botões tem o papel <code>group</code> e é rotulado por
+                    <code>AriaLabelledBy</code> (ou por <code>aria-label</code>, via atributos adicionais). Cada opção é
+                    renderizada como um botão com <code>aria-pressed</code> atualizado conforme o estado de seleção, e o
+                    texto que descreve a opção vem de <code>OptionLabel</code> — por isso defina um rótulo mesmo quando o
+                    conteúdo exibido for apenas um ícone (<code>ItemTemplate</code>).
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para os botões." },
+                              new[] { "space", "Alterna o estado marcado de um botão." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Options", "IReadOnlyList&lt;object&gt;?", "null", "Coleção de opções." },
-                              new[] { "OptionLabel", "string?", "null", "Propriedade usada como rótulo." },
-                              new[] { "OptionValue", "string?", "null", "Propriedade usada como valor." },
-                              new[] { "OptionDisabled", "string?", "null", "Propriedade que indica opção desabilitada." },
-                              new[] { "Value", "TValue?", "null", "Valor selecionado (single)." },
-                              new[] { "Multiple", "bool", "false", "Seleção múltipla." },
-                              new[] { "MultipleValue", "IReadOnlyList&lt;TValue&gt;?", "null", "Valores selecionados (multiple)." },
-                              new[] { "AllowEmpty", "bool", "true", "Permite desmarcar tudo." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Invalid", "bool", "false", "Estado inválido." },
-                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura." },
+                              new[] { "Options", "IReadOnlyList&lt;object&gt;?", "null", "Coleção de opções exibidas." },
+                              new[] { "OptionLabel", "string?", "null", "Nome da propriedade usada como rótulo de cada opção." },
+                              new[] { "OptionValue", "string?", "null", "Nome da propriedade usada como valor/chave de comparação de cada opção." },
+                              new[] { "OptionDisabled", "string?", "null", "Nome da propriedade booleana que desabilita uma opção." },
+                              new[] { "Multiple", "bool", "false", "Habilita a seleção de mais de uma opção." },
+                              new[] { "MultipleValue", "IReadOnlyList&lt;TValue&gt;?", "null", "Lista de opções selecionadas no modo múltiplo." },
+                              new[] { "AllowEmpty", "bool", "true", "Permite desmarcar a última opção selecionada." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura do contêiner." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o grupo de botões." },
+                              new[] { "Value", "TValue?", "null", "Valor selecionado no modo single (herdado de <code>InputBase&lt;TValue&gt;</code>)." },
+                              new[] { "ValueExpression", "Expression&lt;Func&lt;TValue&gt;&gt;?", "null", "Expressão do campo para integração com o <code>EditForm</code>; gerada por <code>@bind-Value</code>." },
+                              new[] { "Disabled", "bool", "false", "Desabilita todo o componente (herdado de <code>OpInputBase&lt;TValue&gt;</code>)." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido, combinado (OR) com as mensagens do <code>EditContext</code> (herdado de <code>OpInputBase&lt;TValue&gt;</code>)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no contêiner raiz (herdado de <code>OpInputBase&lt;TValue&gt;</code>)." },
+                              new[] { "AdditionalAttributes", "IReadOnlyDictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado ao mudar o valor." }
+                              new[] { "ItemTemplate", "RenderFragment&lt;(TValue Option, int Index)&gt;?", "Conteúdo customizado de cada opção; o contexto traz a opção e o índice." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ItemTemplate", "RenderFragment&lt;(TValue Option, int Index)&gt;?", "Template do item." }
+                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado ao selecionar ou desselecionar uma opção." },
+                              new[] { "MultipleValueChanged", "EventCallback&lt;IReadOnlyList&lt;TValue&gt;?&gt;", "Notifica a alteração de <code>MultipleValue</code> no modo múltiplo." },
+                              new[] { "ValueChanged", "EventCallback&lt;TValue&gt;", "Notifica a alteração de <code>Value</code> no modo single (herdado de <code>InputBase&lt;TValue&gt;</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="selectbutton"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-selectbutton", "Contêiner raiz (<code>role=\"group\"</code>)." },
+                              new[] { "p-selectbutton-fluid", "Contêiner raiz com <code>Fluid</code>." },
+                              new[] { "p-invalid", "Contêiner raiz em estado inválido." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="selectbutton"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ItemTemplate</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>ItemTemplate</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao contêiner raiz). Para rotular o grupo, use <code>AriaLabelledBy</code>.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O pass-through (pt) do Angular não foi portado; a customização é feita por <code>StyleClass</code>, <code>ItemTemplate</code> e <code>AdditionalAttributes</code>.</li>
+                        <li>No modo múltiplo o componente não participa do <code>EditForm</code>: <code>MultipleValue</code> não tem expressão associada nem é registrado no <code>EditContext</code>.</li>
+                        <li><code>OptionValue</code> não converte o vínculo para o valor primitivo: o modelo recebe o próprio objeto da opção (<code>TValue</code>), e <code>OptionLabel</code>/<code>OptionValue</code> só definem o texto exibido e a chave de comparação.</li>
+                        <li>Não há parâmetro para desabilitar opções por predicado; <code>OptionDisabled</code> aceita apenas o nome de uma propriedade booleana do item.</li>
+                        <li>Sem <code>AriaLabelledBy</code>, o grupo é renderizado sem rótulo acessível.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private string? _single;
-    private IReadOnlyList<string>? _multiple;
-    private string? _template;
-    private string? _v1;
-    private string? _v2;
-    private string? _v3;
-    private string? _v4;
+    public sealed record StateOption(string Label, string Value);
+    public sealed record JustifyOption(string Icon, string Name);
+    public sealed record DisabledOption(string Label, bool Constant);
 
-    private static readonly List<string> Options = new() { "Opção 1", "Opção 2", "Opção 3" };
+    private static readonly List<StateOption> StateOptions =
+    [
+        new("Ida", "one-way"),
+        new("Ida e volta", "return")
+    ];
+
+    private static readonly List<JustifyOption> JustifyOptions =
+    [
+        new("pi pi-align-left", "Esquerda"),
+        new("pi pi-align-right", "Direita"),
+        new("pi pi-align-center", "Centro"),
+        new("pi pi-align-justify", "Justificar")
+    ];
+
+    private static readonly List<DisabledOption> DisabledOptions =
+    [
+        new("Opção 1", false),
+        new("Opção 2", true)
+    ];
+
+    private StateOption? _single = StateOptions[0];
+    private IReadOnlyList<StateOption>? _multiple = [StateOptions[0]];
+    private JustifyOption? _template = JustifyOptions[0];
+    private StateOption? _sizeSmall = StateOptions[0];
+    private StateOption? _sizeNormal = StateOptions[0];
+    private StateOption? _sizeLarge = StateOptions[0];
+    private StateOption? _fluid = StateOptions[0];
+    private StateOption? _disabledVal = StateOptions[0];
+    private DisabledOption? _disabledOption = DisabledOptions[0];
+    private StateOption? _invalid;
+
+    private sealed class TemplateDrivenModel
+    {
+        [Required(ErrorMessage = "Selecione uma opção.")]
+        public StateOption? Option { get; set; }
+    }
+
+    private readonly TemplateDrivenModel _tdModel = new();
+    private bool _tdSubmitted;
+
+    private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
+
+    private sealed class ReactiveModel
+    {
+        public StateOption? Option { get; set; }
+    }
+
+    private readonly ReactiveModel _reactiveModel = new();
+    private EditContext? _reactiveContext;
+    private ValidationMessageStore? _reactiveMessages;
+    private bool _reactiveSubmitted;
+
+    protected override void OnInitialized()
+    {
+        var context = new EditContext(_reactiveModel);
+        _reactiveContext = context;
+        _reactiveMessages = new ValidationMessageStore(context);
+        context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
+    }
+
+    private void OnReactiveSubmit()
+    {
+        _reactiveSubmitted = true;
+        ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.Option)));
+    }
+
+    private void ValidateField(FieldIdentifier field)
+    {
+        _reactiveMessages?.Clear(field);
+
+        if (field.FieldName == nameof(ReactiveModel.Option) && _reactiveModel.Option is null)
+        {
+            _reactiveMessages?.Add(field, "Selecione uma opção.");
+        }
+    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.SelectButton
 
-        <OpSelectButton TValue="string" @bind-Value="_single" Options="Options" />
+        <OpSelectButton TValue="StateOption" @bind-Value="_single" Options="StateOptions"
+                        OptionLabel="Label" OptionValue="Value" />
         """;
 
     private const string BasicCode = """
-        <OpSelectButton TValue="string" @bind-Value="_single" Options="Options" />
+        <OpSelectButton TValue="StateOption" @bind-Value="_single" Options="StateOptions"
+                        OptionLabel="Label" OptionValue="Value" />
+        <div class="mt-2 text-sm">Selecionado: @(_single?.Label ?? "—")</div>
 
         @code {
-            private string? _single;
-            private static readonly List<string> Options = new() { "Opção 1", "Opção 2", "Opção 3" };
+            public sealed record StateOption(string Label, string Value);
+
+            private StateOption? _single = StateOptions[0];
+
+            private static readonly List<StateOption> StateOptions =
+            [
+                new("Ida", "one-way"),
+                new("Ida e volta", "return")
+            ];
         }
         """;
 
     private const string MultipleCode = """
-        <OpSelectButton TValue="string" @bind-MultipleValue="_multiple" Multiple="true" Options="Options" />
+        <OpSelectButton TValue="StateOption" @bind-MultipleValue="_multiple" Multiple="true"
+                        Options="StateOptions" OptionLabel="Label" OptionValue="Value" />
+        <div class="mt-2 text-sm">
+            Selecionados: @string.Join(", ", (_multiple ?? Array.Empty<StateOption>()).Select(o => o.Label))
+        </div>
 
         @code {
-            private IReadOnlyList<string>? _multiple;
+            private IReadOnlyList<StateOption>? _multiple = [StateOptions[0]];
         }
         """;
 
     private const string TemplateCode = """
-        <OpSelectButton TValue="string" @bind-Value="_template" Options="Options">
+        <OpSelectButton TValue="JustifyOption" @bind-Value="_template" Options="JustifyOptions" OptionLabel="Name">
             <ItemTemplate Context="ctx">
-                <div style="display:flex; align-items:center; gap:.375rem;">
-                    <i class="pi pi-check" style="font-size:.75rem"></i>
-                    <span>@ctx.Option</span>
-                </div>
+                <i class="@ctx.Option.Icon"></i>
             </ItemTemplate>
         </OpSelectButton>
+
+        @code {
+            public sealed record JustifyOption(string Icon, string Name);
+
+            private JustifyOption? _template = JustifyOptions[0];
+
+            private static readonly List<JustifyOption> JustifyOptions =
+            [
+                new("pi pi-align-left", "Esquerda"),
+                new("pi pi-align-right", "Direita"),
+                new("pi pi-align-center", "Centro"),
+                new("pi pi-align-justify", "Justificar")
+            ];
+        }
         """;
 
-    private const string StateCode = """
-        <OpSelectButton TValue="string" @bind-Value="_v1" Options="Options" Invalid="true" />
-        <OpSelectButton TValue="string" @bind-Value="_v2" Options="Options" Disabled="true" />
-        <OpSelectButton TValue="string" @bind-Value="_v3" Options="Options" Fluid="true" />
-        <OpSelectButton TValue="string" @bind-Value="_v4" Options="Options" Size="small" />
+    private const string SizesCode = """
+        <div class="flex flex-col items-center gap-4">
+            <OpSelectButton TValue="StateOption" @bind-Value="_sizeSmall" Options="StateOptions" OptionLabel="Label" OptionValue="Value" Size="small" />
+            <OpSelectButton TValue="StateOption" @bind-Value="_sizeNormal" Options="StateOptions" OptionLabel="Label" OptionValue="Value" />
+            <OpSelectButton TValue="StateOption" @bind-Value="_sizeLarge" Options="StateOptions" OptionLabel="Label" OptionValue="Value" Size="large" />
+        </div>
         """;
 
-    private bool _submitted;
-    private PlanFormModel _form = new();
+    private const string FluidCode = """
+        <div style="width:100%;">
+            <OpSelectButton TValue="StateOption" @bind-Value="_fluid" Options="StateOptions" OptionLabel="Label" OptionValue="Value" Fluid="true" />
+        </div>
+        """;
 
-    private sealed class PlanFormModel
-    {
-        [Required(ErrorMessage = "Escolha um plano.")]
-        public string? Plan { get; set; }
-    }
+    private const string DisabledCode = """
+        <OpSelectButton TValue="StateOption" @bind-Value="_disabledVal" Options="StateOptions" OptionLabel="Label" OptionValue="Value" Disabled="true" />
+        <OpSelectButton TValue="DisabledOption" @bind-Value="_disabledOption" Options="DisabledOptions" OptionLabel="Label" OptionDisabled="Constant" />
 
-    private void OnSubmit() => _submitted = true;
+        @code {
+            public sealed record DisabledOption(string Label, bool Constant);
 
-    private const string ValidationCode = """
-        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            private static readonly List<DisabledOption> DisabledOptions =
+            [
+                new("Opção 1", false),
+                new("Opção 2", true)
+            ];
+        }
+        """;
+
+    private const string InvalidCode = """
+        <OpSelectButton TValue="StateOption" @bind-Value="_invalid" Options="StateOptions" OptionLabel="Label" OptionValue="Value" Invalid="true" />
+        """;
+
+    private const string TemplateDrivenCode = """
+        <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
             <DataAnnotationsValidator />
-            <OpSelectButton TValue="string" @bind-Value="_form.Plan" Options="Options" AllowEmpty="false" />
-            <ValidationMessage For="() => _form.Plan" />
+            <OpSelectButton TValue="StateOption" @bind-Value="_tdModel.Option" Options="StateOptions"
+                            OptionLabel="Label" OptionValue="Value" AllowEmpty="false" />
+            <ValidationMessage For="() => _tdModel.Option" />
             <button type="submit" class="p-button p-component">Enviar</button>
+            @if (_tdSubmitted)
+            {
+                <div class="text-sm">Enviado: @_tdModel.Option?.Label</div>
+            }
         </EditForm>
+
+        @code {
+            private sealed class TemplateDrivenModel
+            {
+                [Required(ErrorMessage = "Selecione uma opção.")]
+                public StateOption? Option { get; set; }
+            }
+
+            private readonly TemplateDrivenModel _tdModel = new();
+            private bool _tdSubmitted;
+
+            private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
+        }
+        """;
+
+    private const string ReactiveCode = """
+        <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
+            <OpSelectButton TValue="StateOption" @bind-Value="_reactiveModel.Option" Options="StateOptions"
+                            OptionLabel="Label" OptionValue="Value" AllowEmpty="false" />
+            <ValidationMessage For="() => _reactiveModel.Option" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+            @if (_reactiveSubmitted && _reactiveModel.Option is not null)
+            {
+                <div class="text-sm">Enviado: @_reactiveModel.Option.Label</div>
+            }
+        </EditForm>
+
+        @code {
+            private sealed class ReactiveModel
+            {
+                public StateOption? Option { get; set; }
+            }
+
+            private readonly ReactiveModel _reactiveModel = new();
+            private EditContext? _reactiveContext;
+            private ValidationMessageStore? _reactiveMessages;
+            private bool _reactiveSubmitted;
+
+            protected override void OnInitialized()
+            {
+                var context = new EditContext(_reactiveModel);
+                _reactiveContext = context;
+                _reactiveMessages = new ValidationMessageStore(context);
+                context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
+            }
+
+            private void OnReactiveSubmit()
+            {
+                _reactiveSubmitted = true;
+                ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.Option)));
+            }
+
+            private void ValidateField(FieldIdentifier field)
+            {
+                _reactiveMessages?.Clear(field);
+
+                if (field.FieldName == nameof(ReactiveModel.Option) && _reactiveModel.Option is null)
+                {
+                    _reactiveMessages?.Add(field, "Selecione uma opção.");
+                }
+            }
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <span id="rotulo-periodo">Período</span>
+        <OpSelectButton TValue="StateOption" @bind-Value="_a11y" Options="StateOptions"
+                        OptionLabel="Label" OptionValue="Value" AriaLabelledBy="rotulo-periodo" />
         """;
 }

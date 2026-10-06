@@ -2,57 +2,65 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.InputOtp
-@using System.ComponentModel.DataAnnotations
 @using OpBlazorUI.Base.Components.Button
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>InputOtp - OpBlazorUI</PageTitle>
 
 <DocComponent Title="InputOtp"
               Description="O InputOtp é usado para inserir senhas de uso único (one-time passwords).">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O InputOtp usa um conjunto de inputs de texto; consulte o InputText para mais informações sobre leitores de tela.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
-            <Description>
-                O binding de duas vias é feito com <code>@@bind-Value</code>. O número de caracteres é definido por
-                <code>Length</code> (padrão 4).
+                O binding de duas vias é definido com <code>@@bind-Value</code> — o componente herda de
+                <code>InputBase&lt;string&gt;</code> e emite os caracteres concatenados. O número de caracteres é
+                definido por <code>Length</code>, que é <code>4</code> por padrão.
             </Description>
             <ChildContent>
-                <OpInputOtp @bind-Value="_value"/>
+                <div class="flex flex-col items-center gap-3">
+                    <OpInputOtp @bind-Value="_basic"/>
+                    <span>Valor: <code>@(_basic ?? "—")</code></span>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Somente Inteiros">
+        <DocSection Label="Máscara" Id="mask">
             <Description>
-                Com <code>IntegerOnly</code>, apenas inteiros são aceitos.
+                Ative a opção <code>Mask</code> para ocultar os valores nos campos — cada input é renderizado com
+                <code>type="password"</code>.
             </Description>
             <ChildContent>
-                <OpInputOtp @bind-Value="_integer" IntegerOnly="true"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@IntegerCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Máscara">
-            <Description>
-                Com <code>Mask</code>, os valores ficam ocultos nos inputs.
-            </Description>
-            <ChildContent>
-                <OpInputOtp @bind-Value="_mask" Mask="true"/>
+                <div class="flex justify-center">
+                    <OpInputOtp @bind-Value="_mask" Mask="true"/>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@MaskCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tamanhos">
+        <DocSection Label="Somente Inteiros" Id="integeronly">
             <Description>
-                O InputOtp oferece os tamanhos <code>small</code> e <code>large</code>.
+                Com <code>IntegerOnly</code>, apenas dígitos são aceitos; qualquer outro caractere é descartado no
+                momento da digitação.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpInputOtp @bind-Value="_integer" IntegerOnly="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IntegerCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos" Id="sizes">
+            <Description>
+                O InputOtp oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão,
+                via propriedade <code>Size</code>. O tamanho é aplicado a cada campo
+                (<code>p-inputtext-sm</code>/<code>p-inputtext-lg</code>).
             </Description>
             <ChildContent>
                 <div class="flex flex-col items-center gap-4">
@@ -64,31 +72,90 @@
             <Code><CodeBlock Code="@SizeCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template">
+        <DocSection Label="Template" Id="template">
             <Description>
-                Defina um template com seus próprios elementos, vinculando aos eventos e atributos fornecidos.
+                Defina um <code>Template</code> com seus próprios elementos e vincule aos eventos e atributos
+                fornecidos. O contexto (<code>OtpTokenContext</code>) expõe <code>Index</code>, <code>Token</code>,
+                <code>OnInput</code> e <code>OnKeyDown</code> de cada campo. Este template substitui a aparência
+                padrão, então os estilos e o rótulo acessível ficam por sua conta.
             </Description>
             <ChildContent>
-                <OpInputOtp @bind-Value="_custom">
-                    <Template Context="ctx">
-                        <input type="text" maxlength="1" value="@(ctx.Token?.ToString())"
-                               @oninput="ctx.OnInput" @onkeydown="ctx.OnKeyDown"
-                               class="p-inputtext p-component" style="width:2.5rem;text-align:center;margin-inline-end:0.25rem;"/>
-                    </Template>
-                </OpInputOtp>
+                <div class="flex justify-center">
+                    <OpInputOtp @bind-Value="_custom">
+                        <Template Context="ctx">
+                            <input type="text" maxlength="1" value="@(ctx.Token?.ToString())"
+                                   @oninput="ctx.OnInput" @onkeydown="ctx.OnKeyDown"
+                                   style="width:2.5rem;font-size:2rem;text-align:center;border:0;border-bottom:2px solid var(--p-inputtext-border-color);border-radius:0;background:transparent;margin-inline-end:.25rem;"/>
+                        </Template>
+                    </OpInputOtp>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Exemplo">
+        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
             <Description>
-                Uma implementação de exemplo com elementos adicionais.
+                Como herda de <code>InputBase&lt;string&gt;</code>, o InputOtp integra-se ao <code>EditForm</code> com
+                <code>DataAnnotationsValidator</code> e <code>ValidationMessage</code>. O <code>invalid</code> é
+                aplicado automaticamente quando há erro de validação — não passe <code>Invalid</code> manualmente.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_tdForm" OnValidSubmit="SubmitTemplateDriven" class="flex flex-col items-start gap-3">
+                    <DataAnnotationsValidator/>
+                    <OpInputOtp @bind-Value="_tdForm.Code" IntegerOnly="true"/>
+                    <ValidationMessage For="() => _tdForm.Code"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_tdSubmitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Código enviado.</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Reactive)" Id="reactive">
+            <Description>
+                No Angular há duas abordagens (template driven e reactive). No Blazor ambas convergem no
+                <code>EditForm</code>: o <code>@@bind-Value</code> cria o <code>ValueExpression</code> que registra o
+                campo no <code>EditContext</code>. Use <code>OnSubmit</code> quando precisar controlar a validação
+                manualmente com <code>EditContext.Validate()</code>.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_reForm" OnSubmit="SubmitReactive" class="flex flex-col items-start gap-3">
+                    <DataAnnotationsValidator/>
+                    <OpInputOtp @bind-Value="_reForm.Code" IntegerOnly="true"/>
+                    <ValidationMessage For="() => _reForm.Code"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_reMessage is not null)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">@_reMessage</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Exemplo" Id="sample">
+            <Description>
+                Uma implementação de exemplo com <code>Template</code> e elementos adicionais: campos customizados,
+                um separador após o quarto caractere e ações de reenviar/enviar código.
             </Description>
             <ChildContent>
                 <div class="flex flex-col items-center">
                     <div class="font-bold text-xl mb-2">Autentique sua conta</div>
                     <p class="text-muted-color block mb-8">Digite o código enviado para o seu telefone.</p>
-                    <OpInputOtp @bind-Value="_sample" Length="6"/>
+                    <OpInputOtp @bind-Value="_sample" Length="6" style="gap:0">
+                        <Template Context="ctx">
+                            <input type="text" maxlength="1" value="@(ctx.Token?.ToString())"
+                                   @oninput="ctx.OnInput" @onkeydown="ctx.OnKeyDown"
+                                   style="@SampleInputStyle(ctx.Index)"/>
+                            @if (ctx.Index == 3)
+                            {
+                                <div style="display:flex;align-items:center;padding:0 1rem;"><i class="pi pi-minus"></i></div>
+                            }
+                        </Template>
+                    </OpInputOtp>
                     <div class="flex justify-between mt-8 self-stretch">
                         <OpButton Label="Reenviar código" Link="true" StyleClass="p-0"/>
                         <OpButton Label="Enviar código"/>
@@ -97,91 +164,175 @@
             </ChildContent>
             <Code><CodeBlock Code="@SampleCode"/></Code>
         </DocSection>
-        <DocSection Label="Validação">
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
-                O InputOtp herda de <code>InputBase&lt;string&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+                <h3>Leitor de tela</h3>
+                <p>
+                    O InputOtp renderiza um conjunto de campos de texto, um por caractere; cada campo padrão recebe
+                    <code>aria-label="Caractere N"</code>. Para detalhes sobre o suporte a leitores de tela, consulte
+                    o <a href="/inputtext">InputText</a>. Quando <code>Template</code> é usado, os campos padrão não
+                    são renderizados e o rótulo acessível passa a ser responsabilidade do seu markup.
+                </p>
             </Description>
-            <ChildContent>
-                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
-                    <DataAnnotationsValidator/>
-                    <OpInputOtp @bind-Value="_form.Code" IntegerOnly="true"/>
-                    <ValidationMessage For="() => _form.Code"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_submitted)
-                    {
-                        <div class="text-sm" style="color:var(--p-green-600)">Código: @_form.Code</div>
-                    }
-                </EditForm>
-            </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o grupo de campos." },
+                              new[] { "right arrow", "Move o foco para o próximo campo." },
+                              new[] { "left arrow", "Move o foco para o campo anterior." },
+                              new[] { "backspace", "Apaga o campo atual e volta o foco para o campo anterior." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Value", "string?", "null", "Valor concatenado dos tokens." },
-                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "-", "Callback de binding." },
-                              new[] { "Length", "int", "4", "Número de caracteres." },
-                              new[] { "Mask", "bool", "false", "Oculta os valores." },
-                              new[] { "IntegerOnly", "bool", "false", "Aceita apenas inteiros." },
-                              new[] { "Invalid", "bool", "false", "Estado inválido." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Readonly", "bool", "false", "Somente leitura." },
-                              new[] { "Variant", "string", "outlined", "<code>outlined</code> ou <code>filled</code>." },
-                              new[] { "Size", "string?", "null", "<code>small</code> ou <code>large</code>." },
-                              new[] { "Template", "RenderFragment&lt;OtpTokenContext&gt;?", "null", "Template de input customizado." }
+                              new[] { "Length", "int", "4", "Número de caracteres (campos) do componente." },
+                              new[] { "Mask", "bool", "false", "Oculta os valores; cada campo usa <code>type=&quot;password&quot;</code>." },
+                              new[] { "IntegerOnly", "bool", "false", "Aceita apenas dígitos; outros caracteres são descartados." },
+                              new[] { "Readonly", "bool", "false", "Campos somente leitura: não editáveis, mas ainda focáveis." },
+                              new[] { "Variant", "string", "outlined", "Variante visual: <code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "InputClass", "string?", "null", "Classes adicionais aplicadas a cada campo." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no contêiner raiz. (herdado)" },
+                              new[] { "Value", "string?", "null", "Valor concatenado dos tokens. Combine com <code>@@bind-Value</code>. (herdado)" },
+                              new[] { "Invalid", "bool", "false", "Estado de erro; somado ao estado do <code>EditContext</code>. (herdado)" },
+                              new[] { "Disabled", "bool", "false", "Desabilita todos os campos. (herdado)" },
+                              new[] { "ValueExpression", "Expression&lt;Func&lt;string?&gt;&gt;?", "null", "Expressão do campo para o <code>EditForm</code>; gerada por <code>@@bind-Value</code>. (herdado)" },
+                              new[] { "CssClass", "string?", "null", "Classes de validação do campo no <code>EditContext</code>. (herdado)" },
+                              new[] { "DisplayName", "string?", "null", "Nome do campo nas mensagens de validação. (herdado)" },
+                              new[] { "AdditionalAttributes", "IReadOnlyDictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner raiz. (herdado)" }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Template", "RenderFragment&lt;OtpTokenContext&gt;?", "Conteúdo customizado de cada campo; substitui os inputs padrão." }
+                          })"/>
+                <ApiTable Caption="OtpTokenContext"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnChange", "EventCallback&lt;string?&gt;", "Disparado ao mudar o valor." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                              new[] { "Index", "int", "Índice do caractere (base 0)." },
+                              new[] { "Token", "char?", "Caractere atual do campo, ou <code>null</code> se vazio." },
+                              new[] { "OnInput", "EventCallback&lt;ChangeEventArgs&gt;", "Handler para <code>@@oninput</code> do campo." },
+                              new[] { "OnKeyDown", "EventCallback&lt;KeyboardEventArgs&gt;", "Handler para <code>@@onkeydown</code> (backspace e setas)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "Callback de binding de <code>@@bind-Value</code> (herdado)." },
+                              new[] { "OnChange", "EventCallback&lt;string?&gt;", "Disparado a cada alteração, com o valor concatenado." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando um campo recebe foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando um campo perde o foco." },
+                              new[] { "OnKeyDown", "EventCallback&lt;KeyboardEventArgs&gt;", "Disparado a cada tecla pressionada em qualquer campo." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="inputotp"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-inputotp", "Contêiner raiz que agrupa os campos." },
+                              new[] { "p-inputotp-input", "Cada campo de caractere." },
+                              new[] { "p-inputtext", "Estilo base de input aplicado a cada campo." },
+                              new[] { "p-filled", "Campo que já contém um caractere." },
+                              new[] { "p-variant-filled", "Campo com <code>Variant=&quot;filled&quot;</code>." },
+                              new[] { "p-inputtext-sm / p-inputtext-lg", "Campo conforme <code>Size</code>." },
+                              new[] { "p-invalid", "Campo com erro de validação." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="inputotp"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>InputClass</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code> (contêiner raiz), <code>InputClass</code> (campos) e os <code>AdditionalAttributes</code> (qualquer atributo extra, como <code>style</code>, é repassado ao contêiner raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há parâmetros <code>Required</code> ou <code>Name</code>: a obrigatoriedade vem da validação do <code>EditForm</code> (DataAnnotations) ou de atributos nativos passados por <code>AdditionalAttributes</code>.</li>
+                        <li><code>Mask</code> renderiza cada campo como <code>type="password"</code>; o botão nativo de revelar senha do navegador não pode ser desativado por parâmetro.</li>
+                        <li><code>OnChange</code> dispara a cada caractere digitado (comportamento de <code>input</code>), e não apenas ao sair do campo.</li>
+                        <li>Com <code>Template</code>, os campos padrão não são renderizados: foco automático, <code>Mask</code>, <code>IntegerOnly</code> e <code>aria-label="Caractere N"</code> deixam de ser aplicados e devem ser tratados no template.</li>
+                        <li>Alterar <code>Length</code> em tempo de execução recria os tokens e descarta o conteúdo atual dos campos.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private string? _value;
-    private string? _integer;
+    private string? _basic;
     private string? _mask;
+    private string? _integer;
     private string? _s1;
     private string? _s2;
     private string? _s3;
     private string? _custom;
     private string? _sample;
+
+    private bool _tdSubmitted;
+    private OtpFormModel _tdForm = new();
+
+    private OtpFormModel _reForm = new();
+    private string? _reMessage;
+
+    private void SubmitTemplateDriven() => _tdSubmitted = true;
+
+    private void SubmitReactive(EditContext context)
+    {
+        if (context.Validate()) _reMessage = $"Código enviado: {_reForm.Code}";
+        else _reMessage = null;
+    }
+
+    private static string SampleInputStyle(int index) =>
+        "width:3rem;height:3rem;font-size:1.5rem;text-align:center;border:1px solid var(--p-inputtext-border-color);border-right:0;background:transparent;color:var(--p-inputtext-color);"
+        + (index == 0 ? "border-top-left-radius:.75rem;border-bottom-left-radius:.75rem;" : "")
+        + (index == 5 ? "border-right:1px solid var(--p-inputtext-border-color);border-top-right-radius:.75rem;border-bottom-right-radius:.75rem;" : "");
+
+    private sealed class OtpFormModel
+    {
+        [Required(ErrorMessage = "O código é obrigatório.")]
+        [StringLength(4, MinimumLength = 4, ErrorMessage = "Informe os 4 dígitos.")]
+        public string? Code { get; set; }
+    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.InputOtp
@@ -191,24 +342,25 @@
 
     private const string BasicCode = """
         <OpInputOtp @bind-Value="_value" />
+        <span>Valor: <code>@(_value ?? "—")</code></span>
 
         @code {
             private string? _value;
         }
         """;
 
-    private const string IntegerCode = """
-        <OpInputOtp @bind-Value="_value" IntegerOnly="true" />
-        """;
-
     private const string MaskCode = """
         <OpInputOtp @bind-Value="_value" Mask="true" />
         """;
 
+    private const string IntegerCode = """
+        <OpInputOtp @bind-Value="_value" IntegerOnly="true" />
+        """;
+
     private const string SizeCode = """
-        <OpInputOtp @bind-Value="_value" Size="small" />
-        <OpInputOtp @bind-Value="_value" />
-        <OpInputOtp @bind-Value="_value" Size="large" />
+        <OpInputOtp @bind-Value="_value1" Size="small" />
+        <OpInputOtp @bind-Value="_value2" />
+        <OpInputOtp @bind-Value="_value3" Size="large" />
         """;
 
     private const string TemplateCode = """
@@ -216,35 +368,95 @@
             <Template Context="ctx">
                 <input type="text" maxlength="1" value="@(ctx.Token?.ToString())"
                        @oninput="ctx.OnInput" @onkeydown="ctx.OnKeyDown"
-                       class="p-inputtext p-component" />
+                       style="width:2.5rem;font-size:2rem;text-align:center;border:0;border-bottom:2px solid var(--p-inputtext-border-color);border-radius:0;background:transparent;margin-inline-end:.25rem;" />
             </Template>
         </OpInputOtp>
         """;
 
-    private const string SampleCode = """
-        <OpInputOtp @bind-Value="_value" Length="6" />
-        <OpButton Label="Reenviar código" Link="true" />
-        <OpButton Label="Enviar código" />
-        """;
-
-    private bool _submitted;
-    private OtpFormModel _form = new();
-
-    private sealed class OtpFormModel
-    {
-        [Required(ErrorMessage = "Informe o código.")]
-        [StringLength(4, MinimumLength = 4, ErrorMessage = "Informe os 4 dígitos.")]
-        public string? Code { get; set; }
-    }
-
-    private void OnSubmit() => _submitted = true;
-
-    private const string ValidationCode = """
+    private const string TemplateDrivenCode = """
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
             <OpInputOtp @bind-Value="_form.Code" IntegerOnly="true" />
             <ValidationMessage For="() => _form.Code" />
             <button type="submit" class="p-button p-component">Enviar</button>
         </EditForm>
+
+        @code {
+            private OtpFormModel _form = new();
+            private bool _submitted;
+
+            private sealed class OtpFormModel
+            {
+                [Required(ErrorMessage = "O código é obrigatório.")]
+                [StringLength(4, MinimumLength = 4, ErrorMessage = "Informe os 4 dígitos.")]
+                public string? Code { get; set; }
+            }
+
+            private void OnSubmit() => _submitted = true;
+        }
+        """;
+
+    private const string ReactiveCode = """
+        <EditForm Model="_form" OnSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpInputOtp @bind-Value="_form.Code" IntegerOnly="true" />
+            <ValidationMessage For="() => _form.Code" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private OtpFormModel _form = new();
+            private string? _message;
+
+            private sealed class OtpFormModel
+            {
+                [Required(ErrorMessage = "O código é obrigatório.")]
+                [StringLength(4, MinimumLength = 4, ErrorMessage = "Informe os 4 dígitos.")]
+                public string? Code { get; set; }
+            }
+
+            private void OnSubmit(EditContext context)
+            {
+                if (context.Validate()) _message = $"Código enviado: {_form.Code}";
+            }
+        }
+        """;
+
+    private const string SampleCode = """
+        <div class="flex flex-col items-center">
+            <div class="font-bold text-xl mb-2">Autentique sua conta</div>
+            <p class="text-muted-color block mb-8">Digite o código enviado para o seu telefone.</p>
+            <OpInputOtp @bind-Value="_value" Length="6" style="gap:0">
+                <Template Context="ctx">
+                    <input type="text" maxlength="1" value="@(ctx.Token?.ToString())"
+                           @oninput="ctx.OnInput" @onkeydown="ctx.OnKeyDown"
+                           style="@SampleInputStyle(ctx.Index)" />
+                    @if (ctx.Index == 3)
+                    {
+                        <div style="display:flex;align-items:center;padding:0 1rem;"><i class="pi pi-minus"></i></div>
+                    }
+                </Template>
+            </OpInputOtp>
+            <div class="flex justify-between mt-8 self-stretch">
+                <OpButton Label="Reenviar código" Link="true" StyleClass="p-0" />
+                <OpButton Label="Enviar código" />
+            </div>
+        </div>
+
+        @code {
+            private string? _value;
+
+            private static string SampleInputStyle(int index) =>
+                "width:3rem;height:3rem;font-size:1.5rem;text-align:center;border:1px solid var(--p-inputtext-border-color);border-right:0;background:transparent;color:var(--p-inputtext-color);"
+                + (index == 0 ? "border-top-left-radius:.75rem;border-bottom-left-radius:.75rem;" : "")
+                + (index == 5 ? "border-right:1px solid var(--p-inputtext-border-color);border-top-right-radius:.75rem;border-bottom-right-radius:.75rem;" : "");
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <div>
+            <OpInputOtp @bind-Value="_value" aria-describedby="otp_hint" />
+            <span id="otp_hint">Digite o código de 4 dígitos enviado por SMS.</span>
+        </div>
         """;
 }

@@ -7,25 +7,25 @@
 @using OpBlazorUI.Base.Components.FloatLabel
 @using OpBlazorUI.Base.Components.IftaLabel
 
+<PageTitle>IconField - OpBlazorUI</PageTitle>
+
 <DocComponent Title="IconField"
               Description="O IconField envolve um input e um ícone.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O IconField e o InputIcon não requerem roles nem atributos ARIA adicionais e não incluem elementos interativos.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
-            <Description>
-                Um grupo é criado envolvendo o input e o ícone com o <code>OpIconField</code>. Cada ícone é definido
-                dentro de um <code>OpInputIcon</code>. A posição é controlada por <code>IconPosition</code>
-                (<code>left</code> padrão, ou <code>right</code>).
+                Um grupo é criado envolvendo o input e o ícone com o <code>OpIconField</code>. Cada ícone é
+                definido dentro de um <code>OpInputIcon</code>. A posição é controlada por
+                <code>IconPosition</code>: <code>left</code> (padrão no Blazor) ou <code>right</code> — no
+                upstream o padrão é <code>right</code>. O tema posiciona o ícone pela ordem dos filhos
+                (<code>:first-child</code> à esquerda, <code>:last-child</code> à direita), então mantenha o
+                <code>OpInputIcon</code> antes do input para <code>left</code> e depois dele para
+                <code>right</code>.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap justify-center gap-4">
@@ -42,9 +42,34 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Float Label">
+        <DocSection Label="Template" Id="template">
             <Description>
-                O IconField funciona com o FloatLabel.
+                O conteúdo do <code>OpInputIcon</code> é livre (<code>ChildContent</code>): qualquer marcação —
+                classes de ícone (<code>pi</code>), SVG ou outros elementos — é renderizada no lugar do ícone.
+                Diferente do upstream, que oferece um template específico no preview de imagens, no Blazor basta
+                o conteúdo filho do <code>OpInputIcon</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpIconField IconPosition="left">
+                        <OpInputIcon>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M12 2 3 6v6c0 5 3.8 8.4 9 10 5.2-1.6 9-5 9-10V6l-9-4Z" fill="var(--p-primary-color)"/>
+                            </svg>
+                        </OpInputIcon>
+                        <OpInputText Placeholder="Buscar"/>
+                    </OpIconField>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Float Label" Id="floatlabel">
+            <Description>
+                O <code>OpIconField</code> funciona dentro do <code>OpFloatLabel</code>: o rótulo acompanha o
+                foco e o preenchimento do input. Use <code>Variant</code> para escolher <code>over</code>
+                (padrão), <code>in</code> ou <code>on</code> e associe o <code>&lt;label&gt;</code> ao input por
+                <code>for</code>/<code>Id</code>.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap justify-center items-end gap-4">
@@ -74,25 +99,30 @@
             <Code><CodeBlock Code="@FloatLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ifta Label">
+        <DocSection Label="Ifta Label" Id="iftalabel">
             <Description>
-                O IconField também funciona com o IftaLabel.
+                O <code>OpIftaLabel</code> também pode envolver o grupo, criando um rótulo alinhado ao topo
+                dentro do campo. Associe o <code>&lt;label&gt;</code> ao input por <code>for</code>/<code>Id</code>.
             </Description>
             <ChildContent>
-                <OpIftaLabel>
-                    <OpIconField IconPosition="left">
-                        <OpInputIcon><i class="pi pi-user"></i></OpInputIcon>
-                        <OpInputText Id="icif1" @bind-Value="_ifta" Autocomplete="off"/>
-                    </OpIconField>
-                    <label for="icif1">Usuário</label>
-                </OpIftaLabel>
+                <div class="flex justify-center">
+                    <OpIftaLabel>
+                        <OpIconField IconPosition="left">
+                            <OpInputIcon><i class="pi pi-user"></i></OpInputIcon>
+                            <OpInputText Id="icif1" @bind-Value="_ifta" Autocomplete="off"/>
+                        </OpIconField>
+                        <label for="icif1">Usuário</label>
+                    </OpIftaLabel>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@IftaLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tamanhos">
+        <DocSection Label="Tamanhos" Id="sizes">
             <Description>
-                O IconField é compatível com o tamanho (<code>Size</code>) do input.
+                O <code>OpIconField</code> acompanha o tamanho do input definido por <code>Size</code>
+                (<code>small</code> ou <code>large</code>). No exemplo, o terceiro grupo destaca o ícone (com
+                <code>pi-spin</code>) após o input.
             </Description>
             <ChildContent>
                 <div class="flex flex-col items-center gap-4">
@@ -114,59 +144,104 @@
             <Code><CodeBlock Code="@SizeCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template">
+        <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
-                Qualquer conteúdo pode ser usado como ícone dentro do <code>OpInputIcon</code>.
+                <h3>Leitor de tela</h3>
+                <p>
+                    O <code>OpIconField</code> e o <code>OpInputIcon</code> não exigem <code>role</code> nem
+                    atributos ARIA adicionais: renderizam apenas um contêiner (<code>&lt;div&gt;</code>) e um
+                    <code>&lt;span&gt;</code> não interativos. O rótulo acessível do campo vem do próprio input —
+                    use <code>AriaLabel</code> no <code>OpInputText</code> ou associe um
+                    <code>&lt;label&gt;</code> por <code>for</code>/<code>Id</code>. Assim como no FloatLabel, o
+                    componente não gera o <code>Id</code> automaticamente.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>Não se aplica: o ícone e o contêiner não são interativos e não recebem foco; a interação fica inteiramente com o input interno.</p>
             </Description>
-            <ChildContent>
-                <OpIconField IconPosition="left">
-                    <OpInputIcon>
-                        <span style="width:14px;height:16px;display:inline-block;background:var(--p-primary-color);border-radius:2px;"></span>
-                    </OpInputIcon>
-                    <OpInputText Placeholder="Buscar"/>
-                </OpIconField>
-            </ChildContent>
-            <Code><CodeBlock Code="@TemplateCode"/></Code>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="OpIconField"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "IconPosition", "string", "left", "Posição do ícone: <code>left</code> ou <code>right</code>." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Ícone (<code>OpInputIcon</code>) + input." }
+                              new[] { "IconPosition", "string", "left", "Posição pretendida do ícone: <code>left</code> ou <code>right</code>. A posição visual segue a ordem dos filhos." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no contêiner raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;div&gt;</code> raiz." }
                           })"/>
                 <ApiTable Caption="OpInputIcon"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do ícone." }
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;span&gt;</code> do ícone." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Caption="OpIconField"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo do grupo: o ícone (<code>OpInputIcon</code>) e o input." }
+                          })"/>
+                <ApiTable Caption="OpInputIcon"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo do ícone: classes <code>pi</code>, SVG ou qualquer marcação." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="iconfield"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelos componentes. A posição do ícone é definida pela ordem dos
+                filhos: <code>.p-inputicon:first-child</code> fica à esquerda e <code>.p-inputicon:last-child</code>
+                à direita. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-iconfield", "Contêiner raiz do grupo (<code>&lt;div&gt;</code>)." },
+                              new[] { "p-iconfield-left", "Adicionada quando <code>IconPosition=&quot;left&quot;</code>; sem regras nos temas empacotados." },
+                              new[] { "p-iconfield-right", "Adicionada quando <code>IconPosition=&quot;right&quot;</code>; sem regras nos temas empacotados." },
+                              new[] { "p-inputicon", "Contêiner do ícone (<code>&lt;span&gt;</code>), posicionado de forma absoluta sobre o input." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="iconfield"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ChildContent</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>ChildContent</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz de cada componente).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O parâmetro <code>IconPosition</code> apenas adiciona as classes <code>p-iconfield-left</code>/<code>p-iconfield-right</code>, que não têm regras nos temas; a posição real vem da ordem dos filhos (ícone antes do input = esquerda; depois = direita).</li>
+                        <li>O ícone não acompanha o <code>Size</code> do <code>OpInputText</code>: o tema redimensiona o ícone por <code>p-inputfield-sm</code>/<code>p-inputfield-lg</code>, classes emitidas por Select/MultiSelect e afins, mas não pelo <code>OpInputText</code> (que usa <code>p-inputtext-sm</code>/<code>p-inputtext-lg</code>).</li>
+                        <li>O <code>OpIconField</code> é apenas o contêiner: não há detecção automática do input nem geração de <code>Id</code>; o ícone e o campo devem ser declarados manualmente na ordem desejada.</li>
+                        <li>Não há pass-through (pt) portado; a customização fica limitada a <code>StyleClass</code>, <code>ChildContent</code> e atributos adicionais.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -188,7 +263,7 @@
 
         <OpIconField IconPosition="left">
             <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
-            <OpInputText Placeholder="Buscar..." />
+            <OpInputText Placeholder="Buscar" />
         </OpIconField>
         """;
 
@@ -204,50 +279,97 @@
         </OpIconField>
         """;
 
+    private const string TemplateCode = """
+        <OpIconField IconPosition="left">
+            <OpInputIcon>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 2 3 6v6c0 5 3.8 8.4 9 10 5.2-1.6 9-5 9-10V6l-9-4Z" fill="var(--p-primary-color)" />
+                </svg>
+            </OpInputIcon>
+            <OpInputText Placeholder="Buscar" />
+        </OpIconField>
+        """;
+
     private const string FloatLabelCode = """
         <OpFloatLabel>
             <OpIconField IconPosition="left">
                 <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
-                <OpInputText Id="icfl1" @bind-Value="_value" Autocomplete="off" />
+                <OpInputText Id="icfl1" @bind-Value="_fl1" Autocomplete="off" />
             </OpIconField>
             <label for="icfl1">Rótulo Sobre</label>
         </OpFloatLabel>
+
+        <OpFloatLabel Variant="in">
+            <OpIconField IconPosition="left">
+                <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+                <OpInputText Id="icfl2" @bind-Value="_fl2" Autocomplete="off" />
+            </OpIconField>
+            <label for="icfl2">Rótulo Dentro</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpIconField IconPosition="left">
+                <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+                <OpInputText Id="icfl3" @bind-Value="_fl3" Autocomplete="off" />
+            </OpIconField>
+            <label for="icfl3">Rótulo Sobre a Borda</label>
+        </OpFloatLabel>
+
+        @code {
+            private string? _fl1;
+            private string? _fl2;
+            private string? _fl3;
+        }
         """;
 
     private const string IftaLabelCode = """
         <OpIftaLabel>
             <OpIconField IconPosition="left">
                 <OpInputIcon><i class="pi pi-user"></i></OpInputIcon>
-                <OpInputText Id="icif1" @bind-Value="_value" Autocomplete="off" />
+                <OpInputText Id="icif1" @bind-Value="_ifta" Autocomplete="off" />
             </OpIconField>
             <label for="icif1">Usuário</label>
         </OpIftaLabel>
+
+        @code {
+            private string? _ifta;
+        }
         """;
 
     private const string SizeCode = """
         <OpIconField IconPosition="left">
             <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
-            <OpInputText Size="small" Placeholder="Small" />
+            <OpInputText Size="small" @bind-Value="_s1" Placeholder="Small" />
         </OpIconField>
 
         <OpIconField IconPosition="right">
-            <OpInputText Placeholder="Normal" />
+            <OpInputText @bind-Value="_s2" Placeholder="Normal" />
             <OpInputIcon><i class="pi pi-user"></i></OpInputIcon>
         </OpIconField>
 
         <OpIconField IconPosition="left">
             <OpInputIcon><i class="pi pi-lock"></i></OpInputIcon>
-            <OpInputText Size="large" Placeholder="Large" />
+            <OpInputText Size="large" @bind-Value="_s3" Placeholder="Large" />
             <OpInputIcon><i class="pi pi-spinner pi-spin"></i></OpInputIcon>
         </OpIconField>
+
+        @code {
+            private string? _s1;
+            private string? _s2;
+            private string? _s3;
+        }
         """;
 
-    private const string TemplateCode = """
+    private const string AccessibilityCode = """
         <OpIconField IconPosition="left">
-            <OpInputIcon>
-                <span style="width:14px;height:16px;display:inline-block;background:var(--p-primary-color);"></span>
-            </OpInputIcon>
-            <OpInputText Placeholder="Buscar" />
+            <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+            <OpInputText Placeholder="Buscar" AriaLabel="Buscar" />
         </OpIconField>
+
+        <OpIconField IconPosition="left">
+            <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>
+            <OpInputText Placeholder="Buscar" aria-describedby="busca-dica" />
+        </OpIconField>
+        <span id="busca-dica">Digite parte do nome para filtrar.</span>
         """;
 }

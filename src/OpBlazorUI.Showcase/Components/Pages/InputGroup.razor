@@ -10,202 +10,279 @@
 @using OpBlazorUI.Base.Components.FloatLabel
 @using OpBlazorUI.Base.Components.IftaLabel
 
+<PageTitle>InputGroup - OpBlazorUI</PageTitle>
+
 <DocComponent Title="InputGroup"
-              Description="Agrupa texto, ícones, botões e outros conteúdos ao lado de um input.">
+              Description="Texto, ícones, botões e outros conteúdos podem ser agrupados ao lado de um input.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O InputGroup e o InputGroupAddon não requerem roles nem atributos ARIA adicionais e não incluem elementos interativos.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
-            <Description>
-                Um grupo é criado envolvendo o input e os add-ons com o componente <code>OpInputGroup</code>.
-                Cada add-on é definido com <code>OpInputGroupAddon</code>.
+                Um grupo é criado envolvendo o input e os add-ons com o componente <code>OpInputGroup</code>;
+                cada add-on é definido como filho de <code>OpInputGroupAddon</code>. O input interno continua
+                sendo um componente de formulário normal — vincule-o com <code>@@bind-Value</code> ou use os
+                <code>AdditionalAttributes</code>.
             </Description>
             <ChildContent>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <OpInputGroup>
-                        <OpInputGroupAddon><i class="pi pi-user"></i></OpInputGroupAddon>
-                        <OpInputText Placeholder="Usuário"/>
-                    </OpInputGroup>
-                    <OpInputGroup>
-                        <OpInputGroupAddon>$</OpInputGroupAddon>
-                        <OpInputText Placeholder="Preço"/>
-                        <OpInputGroupAddon>.00</OpInputGroupAddon>
-                    </OpInputGroup>
-                    <OpInputGroup>
-                        <OpInputGroupAddon>www</OpInputGroupAddon>
-                        <OpInputText Placeholder="Site"/>
-                    </OpInputGroup>
-                    <OpInputGroup>
-                        <OpInputGroupAddon><i class="pi pi-map"></i></OpInputGroupAddon>
-                        <OpSelect TValue="string" @bind-Value="_city" Options="_cities" Placeholder="Cidade"/>
-                    </OpInputGroup>
+                <div class="flex flex-wrap gap-2">
+                    <div class="w-56">
+                        <OpInputGroup>
+                            <OpInputGroupAddon><i class="pi pi-user"></i></OpInputGroupAddon>
+                            <OpInputText Placeholder="Usuário"/>
+                        </OpInputGroup>
+                    </div>
+                    <div class="w-56">
+                        <OpInputGroup>
+                            <OpInputGroupAddon>$</OpInputGroupAddon>
+                            <OpInputText Placeholder="Preço"/>
+                            <OpInputGroupAddon>.00</OpInputGroupAddon>
+                        </OpInputGroup>
+                    </div>
+                    <div class="w-56">
+                        <OpInputGroup>
+                            <OpInputGroupAddon>www</OpInputGroupAddon>
+                            <OpInputText Placeholder="Site"/>
+                        </OpInputGroup>
+                    </div>
+                    <div class="w-56">
+                        <OpInputGroup>
+                            <OpInputGroupAddon><i class="pi pi-map"></i></OpInputGroupAddon>
+                            <OpSelect TValue="string" @bind-Value="_city" Options="_cities" Placeholder="Cidade"/>
+                        </OpInputGroup>
+                    </div>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Botão">
+        <DocSection Label="Múltiplos Addons" Id="multiple">
             <Description>
-                Botões podem ser posicionados em qualquer lado do input.
+                Vários add-ons podem ser posicionados no mesmo grupo, em qualquer lado do input. A largura
+                acompanha o contêiner; limite-a com <code>StyleClass</code>.
             </Description>
             <ChildContent>
-                <div class="flex flex-col md:flex-row gap-4">
-                    <OpInputGroup>
+                <div class="flex justify-center">
+                    <div style="width:100%;max-width:30rem;">
+                        <OpInputGroup>
+                            <OpInputGroupAddon><i class="pi pi-clock"></i></OpInputGroupAddon>
+                            <OpInputGroupAddon><i class="pi pi-star-fill"></i></OpInputGroupAddon>
+                            <OpInputText Placeholder="Preço"/>
+                            <OpInputGroupAddon>$</OpInputGroupAddon>
+                            <OpInputGroupAddon>.00</OpInputGroupAddon>
+                        </OpInputGroup>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Botão" Id="button">
+            <Description>
+                Botões podem ser colocados em qualquer lado do input. Dentro de um add-on o botão perde o
+                arredondamento para se encaixar ao grupo; botões somente ícone devem trazer
+                <code>AriaLabel</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <OpInputGroup StyleClass="w-56">
                         <OpButton Label="Buscar"/>
                         <OpInputText Placeholder="Palavra-chave"/>
                     </OpInputGroup>
-                    <OpInputGroup>
+                    <OpInputGroup StyleClass="w-56">
                         <OpInputText Placeholder="Palavra-chave"/>
                         <OpInputGroupAddon>
-                            <OpButton Icon="pi pi-search" Severity="secondary" Variant="text"/>
+                            <OpButton Icon="pi pi-search" Severity="secondary" Variant="text" AriaLabel="Pesquisar"/>
                         </OpInputGroupAddon>
                     </OpInputGroup>
-                    <OpInputGroup>
-                        <OpInputGroupAddon><OpButton Icon="pi pi-check" Severity="secondary"/></OpInputGroupAddon>
+                    <OpInputGroup StyleClass="w-56">
+                        <OpInputGroupAddon>
+                            <OpButton Icon="pi pi-check" Severity="secondary" AriaLabel="Confirmar"/>
+                        </OpInputGroupAddon>
                         <OpInputText Placeholder="Votar"/>
-                        <OpInputGroupAddon><OpButton Icon="pi pi-times" Severity="secondary"/></OpInputGroupAddon>
+                        <OpInputGroupAddon>
+                            <OpButton Icon="pi pi-times" Severity="secondary" AriaLabel="Cancelar"/>
+                        </OpInputGroupAddon>
                     </OpInputGroup>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ButtonCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Checkbox & Radio">
+        <DocSection Label="Checkbox e Radio" Id="checkbox">
             <Description>
-                Checkbox e RadioButton podem ser combinados com um input no mesmo grupo.
+                Checkbox e RadioButton podem ser combinados com um input no mesmo grupo. O
+                <code>OpCheckbox</code> vincula um <code>bool?</code>; o <code>OpRadioButton</code> recebe
+                <code>TValue</code>, <code>Name</code>, <code>Value</code> e <code>@@bind-ModelValue</code>.
             </Description>
             <ChildContent>
-                <div class="flex flex-col md:flex-row gap-4">
-                    <OpInputGroup>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <OpInputGroup StyleClass="w-56">
                         <OpInputText Placeholder="Preço"/>
-                        <OpInputGroupAddon><OpRadioButton TValue="string" Name="rb1" Value="@("rb1")" @bind-ModelValue="_radio1"/></OpInputGroupAddon>
+                        <OpInputGroupAddon>
+                            <OpRadioButton TValue="string" Name="rb1" Value="@("rb1")" @bind-ModelValue="_radio1"/>
+                        </OpInputGroupAddon>
                     </OpInputGroup>
-                    <OpInputGroup>
+                    <OpInputGroup StyleClass="w-56">
                         <OpInputGroupAddon><OpCheckbox @bind-Value="_checked1"/></OpInputGroupAddon>
                         <OpInputText Placeholder="Usuário"/>
                     </OpInputGroup>
-                    <OpInputGroup>
+                    <OpInputGroup StyleClass="w-56">
                         <OpInputGroupAddon><OpCheckbox @bind-Value="_checked2"/></OpInputGroupAddon>
                         <OpInputText Placeholder="Site"/>
-                        <OpInputGroupAddon><OpRadioButton TValue="string" Name="rb2" Value="@("rb2")" @bind-ModelValue="_category"/></OpInputGroupAddon>
+                        <OpInputGroupAddon>
+                            <OpRadioButton TValue="string" Name="rb2" Value="@("rb2")" @bind-ModelValue="_category"/>
+                        </OpInputGroupAddon>
                     </OpInputGroup>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@CheckRadioCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Float Label">
+        <DocSection Label="FloatLabel" Id="floatlabel">
             <Description>
-                O FloatLabel integra visualmente um rótulo ao seu elemento de formulário.
+                O FloatLabel integra visualmente um rótulo ao seu elemento de formulário. Use
+                <code>Variant="in"</code> ou <code>Variant="on"</code> (o padrão é <code>over</code>) para
+                escolher o comportamento; veja a página FloatLabel para mais detalhes.
             </Description>
             <ChildContent>
-                <div class="flex flex-col md:flex-row md:items-end gap-4">
-                    <OpInputGroup>
-                        <OpInputGroupAddon><i class="pi pi-user"></i></OpInputGroupAddon>
-                        <OpFloatLabel>
-                            <OpInputText Id="igfl1" @bind-Value="_fl1"/>
-                            <label for="igfl1">Rótulo Sobre</label>
-                        </OpFloatLabel>
-                    </OpInputGroup>
-                    <OpInputGroup>
-                        <OpInputGroupAddon>$</OpInputGroupAddon>
-                        <OpFloatLabel Variant="in">
-                            <OpInputText Id="igfl2" @bind-Value="_fl2"/>
-                            <label for="igfl2">Rótulo Dentro</label>
-                        </OpFloatLabel>
-                        <OpInputGroupAddon>.00</OpInputGroupAddon>
-                    </OpInputGroup>
-                    <OpInputGroup>
-                        <OpInputGroupAddon>www</OpInputGroupAddon>
-                        <OpFloatLabel Variant="on">
-                            <OpInputText Id="igfl3" @bind-Value="_fl3"/>
-                            <label for="igfl3">Rótulo Sobre a Borda</label>
-                        </OpFloatLabel>
-                    </OpInputGroup>
+                <div class="flex flex-wrap gap-2">
+                    <div class="w-56">
+                        <OpInputGroup>
+                            <OpInputGroupAddon><i class="pi pi-user"></i></OpInputGroupAddon>
+                            <OpFloatLabel>
+                                <OpInputText Id="igfl1" @bind-Value="_fl1"/>
+                                <label for="igfl1">Rótulo Sobre</label>
+                            </OpFloatLabel>
+                        </OpInputGroup>
+                    </div>
+                    <div class="w-56">
+                        <OpInputGroup>
+                            <OpInputGroupAddon>$</OpInputGroupAddon>
+                            <OpFloatLabel Variant="in">
+                                <OpInputText Id="igfl2" @bind-Value="_fl2"/>
+                                <label for="igfl2">Rótulo Dentro</label>
+                            </OpFloatLabel>
+                            <OpInputGroupAddon>.00</OpInputGroupAddon>
+                        </OpInputGroup>
+                    </div>
+                    <div class="w-56">
+                        <OpInputGroup>
+                            <OpInputGroupAddon>www</OpInputGroupAddon>
+                            <OpFloatLabel Variant="on">
+                                <OpInputText Id="igfl3" @bind-Value="_fl3"/>
+                                <label for="igfl3">Rótulo Sobre a Borda</label>
+                            </OpFloatLabel>
+                        </OpInputGroup>
+                    </div>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@FloatLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ifta Label">
+        <DocSection Label="IftaLabel" Id="iftalabel">
             <Description>
-                O IftaLabel cria rótulos alinhados ao topo dentro do campo.
+                O IftaLabel cria rótulos alinhados ao topo, dentro do campo, e combina com o grupo da mesma
+                forma que o FloatLabel.
             </Description>
             <ChildContent>
-                <OpInputGroup StyleClass="md:!w-80">
-                    <OpInputGroupAddon><i class="pi pi-shopping-cart"></i></OpInputGroupAddon>
-                    <OpIftaLabel>
-                        <OpInputText Id="igif1" @bind-Value="_if1"/>
-                        <label for="igif1">Preço</label>
-                    </OpIftaLabel>
-                </OpInputGroup>
+                <div class="flex justify-center">
+                    <div class="w-56">
+                        <OpInputGroup>
+                            <OpInputGroupAddon><i class="pi pi-shopping-cart"></i></OpInputGroupAddon>
+                            <OpIftaLabel>
+                                <OpInputText Id="igif1" @bind-Value="_if1"/>
+                                <label for="igif1">Preço</label>
+                            </OpIftaLabel>
+                        </OpInputGroup>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@IftaLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Múltiplos">
+        <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
-                Múltiplos add-ons podem ser posicionados no mesmo grupo.
+                <h3>Leitor de tela</h3>
+                <p>
+                    O InputGroup e o InputGroupAddon são contêineres genéricos (<code>&lt;div&gt;</code>) e não
+                    exigem roles nem atributos ARIA próprios. A semântica vem dos controles internos: associe um
+                    <code>&lt;label&gt;</code> (ou <code>aria-label</code>) aos inputs e marque ícones
+                    decorativos com <code>aria-hidden="true"</code>.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>Não se aplica: o grupo não inclui elementos interativos próprios; a navegação é a dos controles internos.</p>
             </Description>
-            <ChildContent>
-                <OpInputGroup StyleClass="w-full md:!w-[30rem]">
-                    <OpInputGroupAddon><i class="pi pi-clock"></i></OpInputGroupAddon>
-                    <OpInputGroupAddon><i class="pi pi-star-fill"></i></OpInputGroupAddon>
-                    <OpInputText Placeholder="Preço"/>
-                    <OpInputGroupAddon>$</OpInputGroupAddon>
-                    <OpInputGroupAddon>.00</OpInputGroupAddon>
-                </OpInputGroup>
-            </ChildContent>
-            <Code><CodeBlock Code="@MultipleCode"/></Code>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="OpInputGroup"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Input + add-ons." }
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do grupo: o input e um ou mais add-ons." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
                 <ApiTable Caption="OpInputGroupAddon"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do add-on." }
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do add-on (texto, ícone, botão etc.)." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="inputgroup"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os
+                tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-inputgroup", "Elemento contêiner do grupo (<code>&lt;div&gt;</code> flex com largura total)." },
+                              new[] { "p-inputgroupaddon", "Elemento de cada add-on." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="inputgroup"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ChildContent</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code> e <code>ChildContent</code>; qualquer atributo extra é repassado ao elemento raiz via <code>AdditionalAttributes</code>.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O grupo é um <code>&lt;div&gt;</code> flex puramente estrutural e ocupa 100% da largura do contêiner; para limitá-la, use <code>StyleClass</code> (ex.: <code>w-56</code>).</li>
+                        <li>O add-on não propaga estados como <code>Disabled</code> ou <code>Invalid</code> ao controle interno; cada componente dentro do grupo gerencia o próprio estado.</li>
+                        <li>O demo de botão do upstream abre um <code>Menu</code> popup a partir do add-on; essa integração não foi portada, então ligue o botão à sua própria ação via <code>OnClick</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -245,6 +322,26 @@
             <OpInputText Placeholder="Preço" />
             <OpInputGroupAddon>.00</OpInputGroupAddon>
         </OpInputGroup>
+
+        <OpInputGroup>
+            <OpInputGroupAddon>www</OpInputGroupAddon>
+            <OpInputText Placeholder="Site" />
+        </OpInputGroup>
+
+        <OpInputGroup>
+            <OpInputGroupAddon><i class="pi pi-map"></i></OpInputGroupAddon>
+            <OpSelect TValue="string" @bind-Value="_city" Options="_cities" Placeholder="Cidade" />
+        </OpInputGroup>
+        """;
+
+    private const string MultipleCode = """
+        <OpInputGroup>
+            <OpInputGroupAddon><i class="pi pi-clock"></i></OpInputGroupAddon>
+            <OpInputGroupAddon><i class="pi pi-star-fill"></i></OpInputGroupAddon>
+            <OpInputText Placeholder="Preço" />
+            <OpInputGroupAddon>$</OpInputGroupAddon>
+            <OpInputGroupAddon>.00</OpInputGroupAddon>
+        </OpInputGroup>
         """;
 
     private const string ButtonCode = """
@@ -256,7 +353,17 @@
         <OpInputGroup>
             <OpInputText Placeholder="Palavra-chave" />
             <OpInputGroupAddon>
-                <OpButton Icon="pi pi-search" Severity="secondary" Variant="text" />
+                <OpButton Icon="pi pi-search" Severity="secondary" Variant="text" AriaLabel="Pesquisar" />
+            </OpInputGroupAddon>
+        </OpInputGroup>
+
+        <OpInputGroup>
+            <OpInputGroupAddon>
+                <OpButton Icon="pi pi-check" Severity="secondary" AriaLabel="Confirmar" />
+            </OpInputGroupAddon>
+            <OpInputText Placeholder="Votar" />
+            <OpInputGroupAddon>
+                <OpButton Icon="pi pi-times" Severity="secondary" AriaLabel="Cancelar" />
             </OpInputGroupAddon>
         </OpInputGroup>
         """;
@@ -273,14 +380,39 @@
             <OpInputGroupAddon><OpCheckbox @bind-Value="_checked1" /></OpInputGroupAddon>
             <OpInputText Placeholder="Usuário" />
         </OpInputGroup>
+
+        <OpInputGroup>
+            <OpInputGroupAddon><OpCheckbox @bind-Value="_checked2" /></OpInputGroupAddon>
+            <OpInputText Placeholder="Site" />
+            <OpInputGroupAddon>
+                <OpRadioButton TValue="string" Name="rb2" Value="rb2" @bind-ModelValue="_category" />
+            </OpInputGroupAddon>
+        </OpInputGroup>
         """;
 
     private const string FloatLabelCode = """
         <OpInputGroup>
             <OpInputGroupAddon><i class="pi pi-user"></i></OpInputGroupAddon>
             <OpFloatLabel>
-                <OpInputText Id="igfl1" @bind-Value="_value" />
+                <OpInputText Id="igfl1" @bind-Value="_fl1" />
                 <label for="igfl1">Rótulo Sobre</label>
+            </OpFloatLabel>
+        </OpInputGroup>
+
+        <OpInputGroup>
+            <OpInputGroupAddon>$</OpInputGroupAddon>
+            <OpFloatLabel Variant="in">
+                <OpInputText Id="igfl2" @bind-Value="_fl2" />
+                <label for="igfl2">Rótulo Dentro</label>
+            </OpFloatLabel>
+            <OpInputGroupAddon>.00</OpInputGroupAddon>
+        </OpInputGroup>
+
+        <OpInputGroup>
+            <OpInputGroupAddon>www</OpInputGroupAddon>
+            <OpFloatLabel Variant="on">
+                <OpInputText Id="igfl3" @bind-Value="_fl3" />
+                <label for="igfl3">Rótulo Sobre a Borda</label>
             </OpFloatLabel>
         </OpInputGroup>
         """;
@@ -289,19 +421,16 @@
         <OpInputGroup>
             <OpInputGroupAddon><i class="pi pi-shopping-cart"></i></OpInputGroupAddon>
             <OpIftaLabel>
-                <OpInputText Id="igif1" @bind-Value="_value" />
+                <OpInputText Id="igif1" @bind-Value="_if1" />
                 <label for="igif1">Preço</label>
             </OpIftaLabel>
         </OpInputGroup>
         """;
 
-    private const string MultipleCode = """
+    private const string AccessibilityCode = """
         <OpInputGroup>
-            <OpInputGroupAddon><i class="pi pi-clock"></i></OpInputGroupAddon>
-            <OpInputGroupAddon><i class="pi pi-star-fill"></i></OpInputGroupAddon>
-            <OpInputText Placeholder="Preço" />
-            <OpInputGroupAddon>$</OpInputGroupAddon>
-            <OpInputGroupAddon>.00</OpInputGroupAddon>
+            <OpInputGroupAddon><i class="pi pi-user" aria-hidden="true"></i></OpInputGroupAddon>
+            <OpInputText Placeholder="Usuário" aria-label="Usuário" />
         </OpInputGroup>
         """;
 }

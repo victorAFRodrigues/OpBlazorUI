@@ -4,40 +4,41 @@
 @using OpBlazorUI.Base.Components.InputText
 @using OpBlazorUI.Base.Components.FloatLabel
 @using OpBlazorUI.Base.Components.IftaLabel
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>InputMask - OpBlazorUI</PageTitle>
 
 <DocComponent Title="InputMask"
               Description="O InputMask insere dados em um formato específico, como numérico, data, moeda e telefone.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Description>
-                No Angular, o InputMask é uma diretiva aplicada a um <code>&lt;input&gt;</code>. No Blazor, ele é um parâmetro
-                <code>Mask</code> do componente <code>OpInputText</code>.
+                Não existe um componente <code>OpInputMask</code> no port: a máscara é um parâmetro
+                <code>Mask</code> do <code>OpInputText</code>.
             </Description>
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O InputMask usa o input nativo e inclui implicitamente qualquer atributo passado. Descreva o valor com
-                <code>&lt;label&gt;</code> + <code>id</code> ou com <code>aria-label</code>/<code>aria-labelledby</code>.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
-            <Description>
-                O InputMask é usado como um input controlado via <code>@@bind-Value</code>.
+                O InputMask é usado como um input controlado via <code>@@bind-Value</code>; o formato é definido por
+                <code>Mask</code> e o valor resultante já vem formatado.
             </Description>
             <ChildContent>
-                <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="99-999999" StyleClass="w-full"/>
+                <div class="flex flex-col items-center gap-2">
+                    <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="99-999999"/>
+                    <span>Valor: <code>@(_value ?? "—")</code></span>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Máscara">
+        <DocSection Label="Máscara" Id="mask">
             <Description>
-                A máscara aceita <code>a</code> (alfabético), <code>9</code> (numérico) e <code>*</code> (alfanumérico),
-                além de caracteres de formatação como <code>(</code>, <code>)</code> e <code>-</code>.
+                A máscara aceita <code>a</code> (alfabético), <code>9</code> (numérico) e <code>*</code>
+                (alfanumérico), além de caracteres de formatação como <code>(</code>, <code>)</code> e
+                <code>-</code>, que são copiados literalmente.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap gap-4">
@@ -58,28 +59,39 @@
             <Code><CodeBlock Code="@MaskCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Opcional">
+        <DocSection Label="Opcional" Id="optional">
             <Description>
-                Quando o input não completa a máscara, ele é limpo por padrão (use <code>AutoClear</code> para controlar).
-                O <code>?</code> torna opcional tudo que vem depois dele.
+                O <code>?</code> torna opcional tudo que vem depois dele. Quando o input não completa a máscara, ele é
+                limpo ao desfocar por padrão; use <code>AutoClear</code> para manter o valor incompleto.
             </Description>
             <ChildContent>
-                <OpInputText Mask="(999) 999-9999? x99999" @bind-Value="_optional" Placeholder="(999) 999-9999? x99999" StyleClass="w-full"/>
+                <div class="flex flex-col items-center gap-4">
+                    <div class="flex flex-col gap-1">
+                        <label class="font-bold" for="op1">Limpa ao desfocar (padrão)</label>
+                        <OpInputText Id="op1" Mask="(999) 999-9999? x99999" AutoClear="true" @bind-Value="_optional" Placeholder="(999) 999-9999? x99999" StyleClass="w-full"/>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="font-bold" for="op2">Mantém incompleto (<code>AutoClear="false"</code>)</label>
+                        <OpInputText Id="op2" Mask="(999) 999-9999? x99999" AutoClear="false" @bind-Value="_optionalKeep" Placeholder="(999) 999-9999? x99999" StyleClass="w-full"/>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@OptionalCode"/></Code>
         </DocSection>
 
-        <DocSection Label="SlotChar">
+        <DocSection Label="SlotChar" Id="slotchar">
             <Description>
-                O caractere de placeholder da máscara é <code>_</code> por padrão e pode ser alterado com <code>SlotChar</code>.
+                O placeholder das posições vazias é <code>_</code> por padrão e pode ser trocado por um único
+                caractere com <code>SlotChar</code>. No upstream o valor é uma string completa (ex.:
+                <code>mm/dd/yyyy</code>); no port é apenas um caractere (ver Problemas Conhecidos).
             </Description>
             <ChildContent>
-                <OpInputText Mask="99/99/9999" SlotChar="0" @bind-Value="_date" Placeholder="99/99/9999" StyleClass="w-full"/>
+                <OpInputText Mask="99/99/9999" SlotChar="#" @bind-Value="_date" Placeholder="99/99/9999" StyleClass="w-full"/>
             </ChildContent>
             <Code><CodeBlock Code="@SlotCharCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Preenchido">
+        <DocSection Label="Preenchido" Id="filled">
             <Description>
                 Use <code>Variant="filled"</code> para dar maior ênfase visual.
             </Description>
@@ -89,9 +101,10 @@
             <Code><CodeBlock Code="@FilledCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Float Label">
+        <DocSection Label="Float Label" Id="floatlabel">
             <Description>
-                O InputMask funciona com o FloatLabel.
+                O InputMask funciona com o FloatLabel. Veja a documentação do <a href="/floatlabel">FloatLabel</a> para
+                mais informações.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap justify-center items-end gap-4">
@@ -112,9 +125,10 @@
             <Code><CodeBlock Code="@FloatLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ifta Label">
+        <DocSection Label="Ifta Label" Id="iftalabel">
             <Description>
-                O InputMask também funciona com o IftaLabel.
+                O InputMask também funciona com o IftaLabel. Veja a documentação do
+                <a href="/iftalabel">IftaLabel</a> para mais informações.
             </Description>
             <ChildContent>
                 <OpIftaLabel>
@@ -125,9 +139,18 @@
             <Code><CodeBlock Code="@IftaLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tamanhos">
+        <DocSection Label="Ícone de Limpar" Id="clearicon">
             <Description>
-                O InputMask oferece os tamanhos <code>small</code> e <code>large</code>.
+                No upstream, <code>showClear</code> exibe um ícone para apagar o valor. O <code>OpInputText</code> do
+                port ainda não implementa esse botão: o único comportamento de limpeza é o <code>AutoClear</code> ao
+                desfocar, que age apenas quando o valor está incompleto (ver Problemas Conhecidos).
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Tamanhos" Id="sizes">
+            <Description>
+                O InputMask oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao padrão,
+                via propriedade <code>Size</code>.
             </Description>
             <ChildContent>
                 <div class="flex flex-col items-center gap-4">
@@ -139,17 +162,21 @@
             <Code><CodeBlock Code="@SizeCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Fluid">
+        <DocSection Label="Largura Total" Id="fluid">
             <Description>
-                <code>Fluid</code> faz o componente ocupar toda a largura do contêiner.
+                Com <code>Fluid="true"</code> o componente ocupa toda a largura do contêiner.
             </Description>
             <ChildContent>
-                <OpInputText Mask="99-999999" Fluid="true" @bind-Value="_fluid" Placeholder="99-999999"/>
+                <div class="flex justify-center">
+                    <div style="width:100%;max-width:20rem;">
+                        <OpInputText Mask="99-999999" Fluid="true" @bind-Value="_fluid" Placeholder="99-999999"/>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@FluidCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Desabilitado">
+        <DocSection Label="Desabilitado" Id="disabled">
             <Description>
                 Com <code>Disabled</code>, o campo não pode ser editado nem focalizado.
             </Description>
@@ -159,9 +186,10 @@
             <Code><CodeBlock Code="@DisabledCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido">
+        <DocSection Label="Inválido" Id="invalid">
             <Description>
-                O estado inválido é aplicado via <code>Invalid</code>.
+                O estado inválido é aplicado via <code>Invalid</code>, para indicar falha de validação. Dentro de um
+                <code>EditForm</code> o estado vem automaticamente do <code>EditContext</code> (ver Formulários).
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap justify-center gap-4">
@@ -171,46 +199,182 @@
             </ChildContent>
             <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+            <Description>
+                Como o <code>OpInputText</code> herda de <code>InputBase&lt;string&gt;</code>, a integração com o
+                <code>EditForm</code> é automática: <code>@@bind-Value</code> registra o campo no
+                <code>EditContext</code> e o <code>DataAnnotationsValidator</code> valida o modelo. Não passe
+                <code>Invalid</code> manualmente — o estado de erro é aplicado sozinho.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_tdForm" OnValidSubmit="SubmitTemplateDriven" class="flex flex-col items-start gap-3">
+                    <DataAnnotationsValidator/>
+                    <OpInputText Mask="99-999999" @bind-Value="_tdForm.Serial" Placeholder="99-999999" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _tdForm.Serial"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_tdSubmitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Número de série enviado.</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Reactive)" Id="reactive">
+            <Description>
+                No upstream há duas abordagens (<i>Template Driven</i> e <i>Reactive</i>); no Blazor ambas convergem no
+                <code>EditForm</code>. Use <code>OnSubmit</code> com <code>EditContext.Validate()</code> quando quiser
+                controlar a validação manualmente.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_reForm" OnSubmit="SubmitReactive" class="flex flex-col items-start gap-3">
+                    <DataAnnotationsValidator/>
+                    <OpInputText Mask="99-999999" @bind-Value="_reForm.Serial" Placeholder="99-999999" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _reForm.Serial"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_reMessage is not null)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">@_reMessage</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="events">
+            <Description>
+                <code>OnInput</code> dispara a cada tecla, com o valor já mascarado; <code>OnChange</code> dispara ao
+                confirmar a edição e <code>OnBlur</code> ao desfocar (após o <code>AutoClear</code>). Os handlers podem
+                ser síncronos ou <code>async Task</code>; ao precisar de argumentos, use uma lambda explícita.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpInputText Mask="99-999999" @bind-Value="_events" OnInput="() => _inputCount++" Placeholder="99-999999"/>
+                    <span>Eventos de input: <b>@_inputCount</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@EventsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O InputMask renderiza o elemento <code>&lt;input&gt;</code> nativo do <code>OpInputText</code>,
+                    inclui implicitamente qualquer atributo passado e usa o atributo <code>aria-invalid</code> no
+                    estado de erro. Descreva o valor com <code>&lt;label for&gt;</code> + <code>Id</code>, com o
+                    parâmetro <code>AriaLabel</code> ou com <code>aria-labelledby</code> apontando para um texto.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o input." }
+                          })"/>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
-            <Description>
-                Parâmetros adicionados ao <code>OpInputText</code> para a máscara.
-            </Description>
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Mask", "string?", "null", "Padrão da máscara (<code>a</code>, <code>9</code>, <code>*</code>, literais e <code>?</code>)." },
-                              new[] { "AutoClear", "bool", "true", "Limpa o valor incompleto ao desfocar." },
-                              new[] { "SlotChar", "string", "_", "Caractere de placeholder da máscara." }
+                              new[] { "Mask", "string?", "null", "Padrão da máscara: <code>a</code> (letra), <code>9</code> (dígito) e <code>*</code> (alfanumérico), além de literais. <code>?</code> marca o restante como opcional." },
+                              new[] { "AutoClear", "bool", "true", "Limpa o valor incompleto ao desfocar (só quando há <code>Mask</code>)." },
+                              new[] { "SlotChar", "string", "_", "Caractere de placeholder das posições vazias. Aceita apenas um caractere." },
+                              new[] { "KeyFilter", "string?", "null", "Filtro de teclas por preset (<code>int</code>, <code>num</code>, <code>money</code>, <code>hex</code>, <code>alpha</code>, <code>alphanum</code>) ou regex; aplicado antes da máscara." },
+                              new[] { "Placeholder", "string?", "null", "Texto exibido quando o campo está vazio." },
+                              new[] { "Variant", "string", "outlined", "Variante visual: <code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura do contêiner." },
+                              new[] { "Type", "string", "text", "Atributo <code>type</code> do input." },
+                              new[] { "Id", "string?", "null", "Id do input, para associação com <code>&lt;label for&gt;</code>." },
+                              new[] { "Name", "string?", "null", "Atributo <code>name</code> do input." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do input." },
+                              new[] { "MaxLength", "int?", "null", "Comprimento máximo do valor." },
+                              new[] { "Autocomplete", "string?", "null", "Atributo <code>autocomplete</code> do input." },
+                              new[] { "Readonly", "bool", "false", "Somente leitura: não editável, mas ainda focável." },
+                              new[] { "Value", "string?", "null", "Valor do campo. Combine com <code>@bind-Value</code>. (herdado)" },
+                              new[] { "ValueExpression", "Expression&lt;Func&lt;string?&gt;&gt;?", "null", "Expressão de binding do valor, criada por <code>@bind-Value</code>. (herdado)" },
+                              new[] { "Invalid", "bool", "false", "Estado de erro; somado ao estado do <code>EditContext</code>. (herdado)" },
+                              new[] { "Disabled", "bool", "false", "Desabilita o input. (herdado)" },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no input. (herdado)" },
+                              new[] { "CssClass", "string?", "null", "Classes de validação aplicadas pelo <code>EditContext</code>. (herdado)" },
+                              new[] { "DisplayName", "string?", "null", "Nome do campo nas mensagens de validação. (herdado)" },
+                              new[] { "AdditionalAttributes", "IReadOnlyDictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;input&gt;</code>. (herdado)" }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "Callback de binding de <code>@bind-Value</code> (herdado)." },
+                              new[] { "OnInput", "EventCallback&lt;string?&gt;", "Disparado a cada tecla, com o valor já mascarado." },
+                              new[] { "OnChange", "EventCallback&lt;string?&gt;", "Disparado ao confirmar a edição (evento <code>change</code>)." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando o input recebe foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando o input perde o foco, após o <code>AutoClear</code>." },
+                              new[] { "OnKeyDown", "EventCallback&lt;KeyboardEventArgs&gt;", "Disparado a cada tecla pressionada." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Classes CSS" Id="style">
             <Description>
-                O InputMask reutiliza o theming do <code>InputText</code> (<code>.p-inputtext</code> e tokens <code>--p-inputtext-*</code>).
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
             </Description>
-            <ChildContent><DocTokens Component="inputtext"/></ChildContent>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-inputtext", "Elemento <code>&lt;input&gt;</code> (herdado do InputText)." },
+                              new[] { "p-inputtext-fluid", "Input com <code>Fluid</code>." },
+                              new[] { "p-inputtext-sm / p-inputtext-lg", "Input conforme <code>Size</code>." },
+                              new[] { "p-variant-filled", "Input com <code>Variant=&quot;filled&quot;</code>." },
+                              new[] { "p-filled", "Input com valor preenchido." },
+                              new[] { "p-invalid", "Input com erro de validação." },
+                              new[] { "p-inputmask-clear-icon", "Ícone de limpar do upstream; <b>não aplicado pelo port</b> (ver Problemas Conhecidos)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="inputtext"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e atributos extras para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra, como <code>aria-*</code>, é repassado ao <code>&lt;input&gt;</code>).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há componente <code>OpInputMask</code> nem diretiva: a máscara é apenas o parâmetro <code>Mask</code> do <code>OpInputText</code>.</li>
+                        <li>Não existe <code>ShowClear</code> nem ícone de limpar (<code>p-inputmask-clear-icon</code>). O único comportamento de limpeza é o <code>AutoClear</code> no desfoque, e somente quando o valor está incompleto.</li>
+                        <li><code>SlotChar</code> aceita apenas <b>um</b> caractere; o upstream aceita uma string completa (ex.: <code>mm/dd/yyyy</code>). Evite caracteres que colidam com a máscara (ex.: <code>0</code> em máscara numérica), pois o caractere de slot é descartado na extração.</li>
+                        <li>A máscara é aplicada a cada <code>input</code> do usuário. Um valor definido programaticamente em <code>Value</code> não é remascarado até a próxima digitação.</li>
+                        <li>Não há parâmetro para limpar o valor ao completar a máscara ou ao mudar, nem para exigir preenchimento total (<code>Required</code> fica a cargo da validação do <code>EditForm</code>).</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -222,6 +386,7 @@
     private string? _phone;
     private string? _serial;
     private string? _optional;
+    private string? _optionalKeep;
     private string? _date;
     private string? _filled;
     private string? _fl1;
@@ -235,6 +400,28 @@
     private string? _disabled;
     private string? _inv1;
     private string? _inv2;
+    private string? _events;
+    private int _inputCount;
+
+    private bool _tdSubmitted;
+    private SerialFormModel _tdForm = new();
+
+    private SerialFormModel _reForm = new();
+    private string? _reMessage;
+
+    private void SubmitTemplateDriven() => _tdSubmitted = true;
+
+    private void SubmitReactive(EditContext context)
+    {
+        if (context.Validate()) _reMessage = $"Número enviado: {_reForm.Serial}";
+        else _reMessage = null;
+    }
+
+    private sealed class SerialFormModel
+    {
+        [Required(ErrorMessage = "O número de série é obrigatório.")]
+        public string? Serial { get; set; }
+    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.InputText
@@ -244,6 +431,7 @@
 
     private const string BasicCode = """
         <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="99-999999" />
+        <span>Valor: <code>@(_value ?? "—")</code></span>
 
         @code {
             private string? _value;
@@ -251,52 +439,144 @@
         """;
 
     private const string MaskCode = """
-        <OpInputText Mask="999-99-9999" @bind-Value="_ssn" Placeholder="999-99-9999" />
-        <OpInputText Mask="(999) 999-9999" @bind-Value="_phone" Placeholder="(999) 999-9999" />
-        <OpInputText Mask="a*-999-a999" @bind-Value="_serial" Placeholder="a*-999-a999" />
+        <div class="flex flex-wrap gap-4">
+            <div class="flex-auto">
+                <label class="font-bold block mb-2" for="im1">SSN</label>
+                <OpInputText Id="im1" Mask="999-99-9999" @bind-Value="_ssn" Placeholder="999-99-9999" />
+            </div>
+            <div class="flex-auto">
+                <label class="font-bold block mb-2" for="im2">Telefone</label>
+                <OpInputText Id="im2" Mask="(999) 999-9999" @bind-Value="_phone" Placeholder="(999) 999-9999" />
+            </div>
+            <div class="flex-auto">
+                <label class="font-bold block mb-2" for="im3">Número de série</label>
+                <OpInputText Id="im3" Mask="a*-999-a999" @bind-Value="_serial" Placeholder="a*-999-a999" />
+            </div>
+        </div>
         """;
 
     private const string OptionalCode = """
-        <OpInputText Mask="(999) 999-9999? x99999" @bind-Value="_value" Placeholder="(999) 999-9999? x99999" />
+        <OpInputText Mask="(999) 999-9999? x99999" AutoClear="true" @bind-Value="_optional"
+                    Placeholder="(999) 999-9999? x99999" />
+        <OpInputText Mask="(999) 999-9999? x99999" AutoClear="false" @bind-Value="_optionalKeep"
+                    Placeholder="(999) 999-9999? x99999" />
         """;
 
     private const string SlotCharCode = """
-        <OpInputText Mask="99/99/9999" SlotChar="0" @bind-Value="_value" Placeholder="99/99/9999" />
+        <OpInputText Mask="99/99/9999" SlotChar="#" @bind-Value="_date" Placeholder="99/99/9999" />
         """;
 
     private const string FilledCode = """
-        <OpInputText Mask="99-999999" Variant="filled" @bind-Value="_value" Placeholder="99-999999" />
+        <OpInputText Mask="99-999999" Variant="filled" @bind-Value="_filled" Placeholder="99-999999" />
         """;
 
     private const string FloatLabelCode = """
         <OpFloatLabel>
-            <OpInputText Id="imf1" Mask="999-99-9999" @bind-Value="_value" />
+            <OpInputText Id="imf1" Mask="999-99-9999" @bind-Value="_fl1" />
             <label for="imf1">Rótulo Sobre</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="in">
+            <OpInputText Id="imf2" Mask="999-99-9999" @bind-Value="_fl2" />
+            <label for="imf2">Rótulo Dentro</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpInputText Id="imf3" Mask="999-99-9999" @bind-Value="_fl3" />
+            <label for="imf3">Rótulo Sobre a Borda</label>
         </OpFloatLabel>
         """;
 
     private const string IftaLabelCode = """
         <OpIftaLabel>
-            <OpInputText Id="imi1" Mask="999-99-9999" @bind-Value="_value" Autocomplete="off" />
+            <OpInputText Id="imi1" Mask="999-99-9999" @bind-Value="_ifta" Autocomplete="off" />
             <label for="imi1">SSN</label>
         </OpIftaLabel>
         """;
 
     private const string SizeCode = """
-        <OpInputText Size="small" Mask="99-999999" @bind-Value="_value" Placeholder="Small" />
-        <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="Normal" />
-        <OpInputText Size="large" Mask="99-999999" @bind-Value="_value" Placeholder="Large" />
+        <OpInputText Size="small" Mask="99-999999" @bind-Value="_s1" Placeholder="Small" />
+        <OpInputText Mask="99-999999" @bind-Value="_s2" Placeholder="Normal" />
+        <OpInputText Size="large" Mask="99-999999" @bind-Value="_s3" Placeholder="Large" />
         """;
 
     private const string FluidCode = """
-        <OpInputText Mask="99-999999" Fluid="true" @bind-Value="_value" Placeholder="99-999999" />
+        <OpInputText Mask="99-999999" Fluid="true" @bind-Value="_fluid" Placeholder="99-999999" />
         """;
 
     private const string DisabledCode = """
-        <OpInputText Mask="999-99-9999" Disabled="true" @bind-Value="_value" />
+        <OpInputText Mask="999-99-9999" Disabled="true" @bind-Value="_disabled" />
         """;
 
     private const string InvalidCode = """
-        <OpInputText Mask="99-999999" Invalid="@(string.IsNullOrEmpty(_value))" @bind-Value="_value" Placeholder="Chave de série" />
+        <OpInputText Mask="99-999999" Invalid="@(string.IsNullOrEmpty(_inv1))" @bind-Value="_inv1" Placeholder="Chave de série" />
+        <OpInputText Mask="99-999999" Variant="filled" Invalid="@(string.IsNullOrEmpty(_inv2))" @bind-Value="_inv2" Placeholder="Chave de série" />
+        """;
+
+    private const string TemplateDrivenCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpInputText Mask="99-999999" @bind-Value="_form.Serial" Placeholder="99-999999" />
+            <ValidationMessage For="() => _form.Serial" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private SerialFormModel _form = new();
+            private bool _submitted;
+
+            private sealed class SerialFormModel
+            {
+                [Required(ErrorMessage = "O número de série é obrigatório.")]
+                public string? Serial { get; set; }
+            }
+
+            private void OnSubmit() => _submitted = true;
+        }
+        """;
+
+    private const string ReactiveCode = """
+        <EditForm Model="_form" OnSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpInputText Mask="99-999999" @bind-Value="_form.Serial" Placeholder="99-999999" />
+            <ValidationMessage For="() => _form.Serial" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private SerialFormModel _form = new();
+            private string? _message;
+
+            private sealed class SerialFormModel
+            {
+                [Required(ErrorMessage = "O número de série é obrigatório.")]
+                public string? Serial { get; set; }
+            }
+
+            private void OnSubmit(EditContext context)
+            {
+                if (context.Validate()) _message = $"Número enviado: {_form.Serial}";
+            }
+        }
+        """;
+
+    private const string EventsCode = """
+        <OpInputText Mask="99-999999" @bind-Value="_events" OnInput="() => _inputCount++" Placeholder="99-999999" />
+        <span>Eventos de input: <b>@_inputCount</b></span>
+
+        @code {
+            private string? _events;
+            private int _inputCount;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <label for="date">Data</label>
+        <OpInputText Id="date" Mask="99/99/9999" />
+
+        <span id="phone">Telefone</span>
+        <OpInputText Mask="(999) 999-9999" aria-labelledby="phone" />
+
+        <OpInputText Mask="999" AriaLabel="Idade" />
         """;
 }
