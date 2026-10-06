@@ -9,9 +9,10 @@
 ## Status geral
 
 - **Fase B (placeholders):** **concluída** — 6 de 6 lotes, **46 de 46 páginas** criadas
-  (41 componentes + 5 utilitários).
-- **Fase A (melhorias):** próxima frente, não iniciada.
-- **Branch:** `docs/placeholder-coverage` (empilhada sobre `chore/docs-state`). Push/PR pendentes.
+  (41 componentes + 5 utilitários); mergeada no `main` (PR #16).
+- **Fase A (melhorias):** em andamento — **A1 concluído** (InputText, Checkbox, RadioButton,
+  ToggleSwitch).
+- **Branch:** `docs/fase-a-inputs` (a partir de `origin/main`).
 
 | Lote | Páginas | Commit |
 |------|---------|--------|
@@ -114,7 +115,7 @@ build + renderização das páginas.
 Ordem de execução pelo ranking (§3):
 
 - **A1 — Form básico** (define o padrão Binding/Forms/Acessibilidade): InputText, Checkbox,
-  RadioButton, ToggleSwitch.
+  RadioButton, ToggleSwitch. ✅ Concluído.
 - **A2 — Seleção complexa**: DatePicker, Select, MultiSelect.
 - **A3 — Overlay/feedback**: Tooltip, Toast, Message, Dialog, Drawer, Popover, BlockUI.
 - **A4 — Dados/misc**: Table, Menu, Paginator, VirtualScroller, ProgressBar, ProgressSpinner,
@@ -203,3 +204,19 @@ Ordem de execução pelo ranking (§3):
 
 **Fase B encerrada.** A Fase A começa por A1 — Form básico (InputText, Checkbox, RadioButton,
 ToggleSwitch), aplicando o padrão ouro de `Button.razor`.
+
+### A1 — Form básico ✅
+
+- Páginas reescritas em `src/OpBlazorUI.Showcase/Components/Pages/`: `InputText.razor`,
+  `Checkbox.razor`, `RadioButton.razor`, `ToggleSwitch.razor`.
+- Todas as seções do `index.ts` upstream presentes na ordem (ou adaptadas/justificadas), com
+  `Description`; seções extras Blazor (**Vínculo**, **Formulários**); **Acessibilidade** com leitor
+  de tela + tabela de teclado copiada do upstream; API completa a partir do `.razor.cs`; classes CSS
+  em Temas; **Problemas Conhecidos** com lacunas reais.
+- Adaptações documentadas:
+  - `InputText`: sem diretiva `pInputText`; ícones via `OpIconField`/`OpInputIcon`; `Mask`/`KeyFilter`.
+  - `Checkbox`: binário (`bool?`); sem o modo de grupo do Angular (`value` + lista).
+  - `RadioButton`: genérico (`TValue`), fora do `InputBase` → validação de formulário manual.
+  - `ToggleSwitch`: exposto como `OpInputSwitch` (nome legado); template via `HandleTemplate`.
+- Verificação: build 0 erros; as 4 rotas renderizam no Showcase sem UI de erro do Blazor.
+- Git: branch `docs/fase-a-inputs` (a partir de `origin/main`).
