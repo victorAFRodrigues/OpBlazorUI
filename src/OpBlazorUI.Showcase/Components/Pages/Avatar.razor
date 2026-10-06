@@ -2,16 +2,23 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Avatar
+@using OpBlazorUI.Base.Components.Badge
+
+<PageTitle>Avatar - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Avatar"
               Description="O Avatar representa pessoas usando ícones, rótulos e imagens.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Rótulo">
+        <DocSection Label="Label" Id="label">
+            <Description>
+                Um avatar de letra é definido pela propriedade <code>Label</code>. A prioridade dos modos internos
+                é <code>Label</code> &gt; <code>Icon</code> &gt; <code>Image</code>.
+            </Description>
             <ChildContent>
                 <div class="flex gap-2 items-center">
                     <OpAvatar Label="P" Size="xlarge"/>
@@ -22,98 +29,231 @@
             <Code><CodeBlock Code="@LabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ícone">
+        <DocSection Label="Ícone" Id="icon">
+            <Description>
+                Um ícone é exibido quando <code>Icon</code> recebe uma classe de ícone (ex.: <code>pi pi-user</code>).
+                O ícone é marcado com <code>aria-hidden</code>; para descrevê-lo, use <code>AriaLabel</code>.
+            </Description>
             <ChildContent>
                 <div class="flex gap-2 items-center">
                     <OpAvatar Icon="pi pi-user" Size="xlarge" Shape="circle"/>
-                    <OpAvatar Icon="pi pi-user" Size="large"/>
-                    <OpAvatar Icon="pi pi-user"/>
+                    <OpAvatar Icon="pi pi-user" Size="large" Shape="circle"/>
+                    <OpAvatar Icon="pi pi-user" Shape="circle"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@IconCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Imagem">
+        <DocSection Label="Imagem" Id="image">
+            <Description>
+                Use <code>Image</code> para exibir uma foto; <code>Alt</code> fornece o texto alternativo da imagem
+                para leitores de tela.
+            </Description>
             <ChildContent>
                 <div class="flex gap-2 items-center">
-                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="xlarge" Shape="circle"/>
-                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Size="large" Shape="circle"/>
-                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Shape="circle"/>
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="xlarge" Shape="circle" Alt="Amy Elsner"/>
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Size="large" Shape="circle" Alt="Asiya Javayant"/>
+                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Shape="circle" Alt="Onya Malimba"/>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ImageCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Grupo">
+        <DocSection Label="AvatarGroup" Id="avatargroup">
+            <Description>
+                O agrupamento é feito envolvendo vários avatares em <code>OpAvatarGroup</code>. Os avatares são
+                sobrepostos e as bordas internas ficam coladas pelos tokens do grupo.
+            </Description>
             <ChildContent>
-                <OpAvatarGroup>
-                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="large" Shape="circle"/>
-                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Size="large" Shape="circle"/>
-                    <OpAvatar Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Size="large" Shape="circle"/>
-                    <OpAvatar Label="+2" Shape="circle" Size="large"/>
-                </OpAvatarGroup>
+                <div class="flex justify-center">
+                    <OpAvatarGroup>
+                        <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="large" Shape="circle" Alt="Amy Elsner"/>
+                        <OpAvatar Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Size="large" Shape="circle" Alt="Asiya Javayant"/>
+                        <OpAvatar Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Size="large" Shape="circle" Alt="Onya Malimba"/>
+                        <OpAvatar Label="+2" Shape="circle" Size="large"/>
+                    </OpAvatarGroup>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@GroupCode"/></Code>
+            <Code><CodeBlock Code="@AvatarGroupCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanho" Id="size">
+            <Description>
+                <code>Size</code> define o tamanho do avatar com <code>normal</code> (padrão), <code>large</code> e
+                <code>xlarge</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex gap-2 items-center">
+                    <OpAvatar Label="N"/>
+                    <OpAvatar Label="P" Size="large"/>
+                    <OpAvatar Label="T" Size="xlarge"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Forma" Id="shape">
+            <Description>
+                <code>Shape</code> alterna entre o quadrado (padrão, <code>square</code>) e o círculo
+                (<code>circle</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex gap-2 items-center">
+                    <OpAvatar Label="P" Shape="circle"/>
+                    <OpAvatar Label="T"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ShapeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Badge" Id="badge">
+            <Description>
+                O Avatar não tem badge embutido: envolva-o em um <code>OpOverlayBadge</code> (componente
+                <code>OpBlazorUI.Base.Components.Badge</code>) para posicionar um badge no canto. No Angular isso é
+                feito com a diretiva <code>pBadge</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpOverlayBadge Value="4" Severity="danger">
+                        <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="xlarge" Shape="circle" Alt="Amy Elsner"/>
+                    </OpOverlayBadge>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BadgeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                Conteúdo customizado é definido como filho do componente (<code>ChildContent</code>) e substitui os
+                modos internos de rótulo, ícone e imagem. Ajuste as dimensões do conteúdo às do token de tamanho.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpAvatar Size="xlarge">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4" fill="var(--p-primary-color)"/>
+                            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="var(--p-primary-color)"/>
+                        </svg>
+                    </OpAvatar>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Avatar não inclui papéis nem atributos ARIA por padrão. Qualquer atributo é repassado ao
+                    elemento raiz, então você pode adicionar <code>role="img"</code> junto de <code>AriaLabel</code>
+                    ou <code>AriaLabelledBy</code> para descrever o componente. Se o avatar precisar receber foco,
+                    adicione <code>tabindex="0"</code> e implemente os handlers de teclado.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3><p>O componente não inclui elementos interativos.</p></div>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
+                <ApiTable Caption="OpAvatar"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Label", "string?", "null", "Texto a exibir." },
-                              new[] { "Icon", "string?", "null", "Ícone a exibir." },
+                              new[] { "Label", "string?", "null", "Texto exibido no modo rótulo." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone (ex.: <code>pi pi-user</code>)." },
                               new[] { "Image", "string?", "null", "URL da imagem." },
-                              new[] { "Alt", "string?", "null", "Atributo alt da imagem." },
+                              new[] { "Alt", "string?", "null", "Texto alternativo da imagem." },
                               new[] { "Size", "string", "normal", "Tamanho: <code>normal</code>, <code>large</code> ou <code>xlarge</code>." },
                               new[] { "Shape", "string", "square", "Forma: <code>square</code> ou <code>circle</code>." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do elemento raiz." },
                               new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o avatar." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Style", "string?", "null", "Estilos inline do elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+                <ApiTable Caption="OpAvatarGroup"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no contêiner do grupo." },
+                              new[] { "Style", "string?", "null", "Estilos inline do contêiner do grupo." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Avatares que compõem o grupo." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
+                <ApiTable Caption="OpAvatar"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnImageError", "EventCallback&lt;ErrorEventArgs&gt;", "Disparado ao falhar o carregamento da imagem." }
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado renderizado dentro do avatar; use no lugar de <code>Label</code>, <code>Icon</code> ou <code>Image</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Templates"
+                <ApiTable Caption="OpAvatar"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado em vez dos modos internos." }
+                              new[] { "OnImageError", "EventCallback&lt;ErrorEventArgs&gt;", "Disparado quando a imagem falha ao carregar." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="avatar"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-avatar", "Elemento raiz do avatar." },
+                              new[] { "p-avatar-image", "Raiz quando <code>Image</code> é informado." },
+                              new[] { "p-avatar-circle", "Raiz quando <code>Shape</code> é <code>circle</code>." },
+                              new[] { "p-avatar-lg", "Raiz com <code>Size</code> <code>large</code>." },
+                              new[] { "p-avatar-xl", "Raiz com <code>Size</code> <code>xlarge</code>." },
+                              new[] { "p-avatar-label", "Span do rótulo (<code>Label</code>)." },
+                              new[] { "p-avatar-icon", "Span do ícone (<code>Icon</code>)." },
+                              new[] { "p-avatar-group", "Contêiner do <code>OpAvatarGroup</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="avatar"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização use <code>StyleClass</code>, <code>Style</code>, o <code>ChildContent</code> e os atributos extras (qualquer atributo não mapeado é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há diretiva <code>pBadge</code>; para exibir um badge sobre o avatar envolva-o em <code>OpOverlayBadge</code> (ver Recursos).</li>
+                        <li>A doc de referência cita a classe <code>p-avatar-text</code>; nesta implementação o rótulo usa <code>p-avatar-label</code>, sem estilo próprio (herda do elemento raiz).</li>
+                        <li>Papéis e atributos de acessibilidade (<code>role</code>, <code>tabindex</code>) não são gerados automaticamente — passe-os como atributos extras.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -134,18 +274,54 @@
 
     private const string IconCode = """
         <OpAvatar Icon="pi pi-user" Size="xlarge" Shape="circle" />
-        <OpAvatar Icon="pi pi-user" Size="large" />
-        <OpAvatar Icon="pi pi-user" />
+        <OpAvatar Icon="pi pi-user" Size="large" Shape="circle" />
+        <OpAvatar Icon="pi pi-user" Shape="circle" />
         """;
 
     private const string ImageCode = """
-        <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="xlarge" Shape="circle" />
+        <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="xlarge" Shape="circle" Alt="Amy Elsner" />
+        <OpAvatar Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Size="large" Shape="circle" Alt="Asiya Javayant" />
+        <OpAvatar Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Shape="circle" Alt="Onya Malimba" />
         """;
 
-    private const string GroupCode = """
+    private const string AvatarGroupCode = """
         <OpAvatarGroup>
-            <OpAvatar Image="..." Size="large" Shape="circle" />
+            <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="large" Shape="circle" Alt="Amy Elsner" />
+            <OpAvatar Image="https://optimus.openng.org/demo/avatar/asiyajavayant.png" Size="large" Shape="circle" Alt="Asiya Javayant" />
+            <OpAvatar Image="https://optimus.openng.org/demo/avatar/onyamalimba.png" Size="large" Shape="circle" Alt="Onya Malimba" />
             <OpAvatar Label="+2" Shape="circle" Size="large" />
         </OpAvatarGroup>
+        """;
+
+    private const string SizeCode = """
+        <OpAvatar Label="N" />
+        <OpAvatar Label="P" Size="large" />
+        <OpAvatar Label="T" Size="xlarge" />
+        """;
+
+    private const string ShapeCode = """
+        <OpAvatar Label="P" Shape="circle" />
+        <OpAvatar Label="T" />
+        """;
+
+    private const string BadgeCode = """
+        <OpOverlayBadge Value="4" Severity="danger">
+            <OpAvatar Image="https://optimus.openng.org/demo/avatar/amyelsner.png" Size="xlarge" Shape="circle" Alt="Amy Elsner" />
+        </OpOverlayBadge>
+        """;
+
+    private const string TemplateCode = """
+        <OpAvatar Size="xlarge">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" fill="var(--p-primary-color)" />
+                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="var(--p-primary-color)" />
+            </svg>
+        </OpAvatar>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpAvatar Image="foto.jpg" role="img" AriaLabel="Foto de perfil de Amy" />
+
+        <OpAvatar Label="U" AriaLabel="Usuário U" tabindex="0" />
         """;
 }
