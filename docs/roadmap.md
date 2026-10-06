@@ -1,83 +1,62 @@
-# Roadmap — Otimização de componentes (Optimus UI → OpBlazorUI)
+# Roadmap — Estado dos componentes (Optimus UI → OpBlazorUI)
 
-> Fonte: doc oficial da Optimus UI (optimus.openng.org) cruzada com a biblioteca atual.
-> Critério de priorização: **base usado por outros** → já tem CSS no tema (`aura.css`) → esforço baixo.
-
----
-
-## Componentes já portados (31)
-
-Button, CascadeSelect, Checkbox, DataTable, DatePicker, Editor, FloatLabel, Icon, IconField,
-IftaLabel, InputGroup, InputIcon, InputNumber, InputOtp, InputText, KeyFilter (via InputText),
-Listbox, Menu, Message, MultiSelect, Password, RadioButton, Rating, Select, SelectButton,
-SpeedDial, SplitButton, ThemeSwitcher (ToggleSwitch), Toast, ToggleButton, Tooltip, TreeSelect.
+> Fonte canônica: catálogo `@openng/optimus-ui-themes/types` e a doc de referência
+> ([v21.primeng.org](https://v21.primeng.org)).
+> Plano de fundação (formulário + foco): `docs/plano-fundacao.md`.
 
 ---
 
-## Tier 1 — Base de construção (próximo lote recomendado)
+## Estado atual
 
-Pequenos, CSS já no tema, destravam loading/status/avatares e permitem refatorações.
-
-| Componente | Usado por | CSS no tema |
-|---|---|---|
-| Skeleton | DataTable (loading), VirtualScroller (loader), Listbox/Tree (lazy), Card, Image | 17 |
-| Badge (+ OverlayBadge) | Button (badge inline), Menu, Tabs, Avatar | 91 |
-| Avatar (+ AvatarGroup) | Menu, Listbox, DataTable, Chip, comentários | 59 |
-| Chip | MultiSelect/TreeSelect (display=chip — hoje inline), AutoComplete | ✓ |
-| Tag | DataTable (status), standalone | 67 |
-| ProgressSpinner | Button/Select/TreeSelect/DataTable (loading — hoje `pi-spinner` inline) | 23 |
-| ProgressBar | DataTable (progresso), standalone | 28 |
-
-### Refatorações habilitadas pelo Tier 1
-- `OpMultiSelect` / `OpTreeSelect`: usar `OpChip` real em vez do markup `p-chip` inline.
-- `OpButton`: ganhar slot de `Badge` (a doc do Button cita suporte embutido).
-- `OpDataTable` / `OpSelect` / `OpTreeSelect`: usar `OpProgressSpinner` no estado de loading.
-- `OpDataTable`: usar `OpSkeleton` no estado de carregamento das linhas.
-
----
-
-## Tier 2 — Fundação de overlay (bloqueia o grupo Overlay)
-
-| Componente | Observação |
+| Métrica | Valor |
 |---|---|
-| FocusTrap | ⚠️ sem CSS (utilitário invisível) |
-| Overlay API | utilitário base de posicionamento |
-| Popover | base de vários menus/overlays |
-| Dialog | usa Overlay + FocusTrap |
-| Drawer | usa Overlay + FocusTrap |
+| Componentes no upstream | 88 |
+| Já implementados | 47 |
+| Faltando | 41 (todos já têm CSS e tokens no tema) |
 
-Necessários para: ConfirmDialog, ConfirmPopup, ContextMenu, Menubar, MegaMenu e para
-posicionar corretamente os overlays dos selects (hoje `position:absolute` simplificado).
+**Fundação concluída** (não adiciona componentes, mas muda o comportamento da biblioteca):
 
----
-
-## Tier 3 — Data + Painel
-
-| Componente | Observação |
-|---|---|
-| Paginator | hoje o DataTable não tem paginação (CSS: 74) |
-| VirtualScroller | plano detalhado em `docs/virtualscroller-plan.md` |
-| Divider | base de painel (CSS: 34) |
-| Card | container (CSS: 25) |
-| BlockUI | (CSS: 6) |
-| ScrollTop | ⚠️ sem CSS no tema |
+- Todos os inputs derivam de `OpInputBase<TValue>` (`Invalid`/`Disabled`/`StyleClass`,
+  integração real com `EditForm`/`DataAnnotations`).
+- Dialog/Drawer modais e ConfirmDialog prendem o foco (`Tab`) e restauram o foco ao gatilho.
 
 ---
 
-## Pendências já mapeadas
+## Componentes faltantes (41) por lote
 
-- [ ] **Tier 1** — Skeleton, Badge, Avatar, Chip, Tag, ProgressSpinner, ProgressBar.
-- [ ] **Tier 2** — FocusTrap, Overlay API, Popover, Dialog, Drawer.
-- [ ] **Tier 3** — Paginator, VirtualScroller, Divider, Card, BlockUI, ScrollTop.
-- [ ] **VirtualScroller** — implementar conforme `docs/virtualscroller-plan.md` (Opção A, .NET-driven).
+Ordem recomendada de implementação, do mais estruturante ao mais periférico.
+
+### P0 — Formulário (7)
+Textarea, Fieldset, Slider, InputChips, Inplace, ColorPicker, FileUpload.
+
+### P0 — Navegação (13)
+Tabs, TabMenu, TabView, Accordion, Breadcrumb, Toolbar, ContextMenu, Menubar, TieredMenu,
+PanelMenu, MegaMenu, Stepper, Steps.
+
+### P1 — Dados e feedback (9)
+Tree, TreeTable, ConfirmPopup, InlineMessage, DataView, OrderList, PickList, MeterGroup, Timeline.
+
+### P2 — Layout e mídia (8)
+Panel, Splitter, ScrollPanel, Dock, Galleria, Carousel, Image, ImageCompare.
+
+### P3 — Baixa prioridade (4)
+Knob, Terminal, OrganizationChart, Ripple.
+
+Fora dos lotes: Unstyled, RTL, preset PrimeFlex/Tailwind.
+
+---
+
+## Menu do Showcase
+
+A sidebar (`Components/Layout/AppMenu.cs`) segue a categorização do PrimeNG e marca os itens ainda
+não implementados como **em breve** (`/coming-soon/<slug>`). Os 11 itens que faltavam na lista já
+foram incluídos: Dock, OrganizationChart, TabView, TabMenu, Steps, InlineMessage, InputChips, Slider,
+Knob, Terminal, Ripple.
 
 ---
 
 ## Observações gerais
 
-- O `aura.css` já contém classes + design tokens para a maioria dos componentes (skeleton, avatar,
-  badge, tag, progressspinner, progressbar, divider, paginator, card, blockui, ripple, overlay).
-- `focustrap` e `scrolltop` **não** têm CSS no tema (0 ocorrências) → exigiriam CSS próprio ou
-  atualização do tema.
-- Padrão de entrega: um commit por componente + tag + push, como nos lotes anteriores
-  (v1.0.1, v1.1.0, v1.2.0).
+- Todos os 41 faltantes têm classe + tokens no tema; o custo é markup, API e comportamento.
+- Padrão de entrega: fases aprovadas, build verde e conferência no Showcase (claro/escuro, console).
+- Commits seguem `docs/padrao-de-commits.md`; tags `v*` publicam o pacote (ver `AGENTS.md`).
