@@ -3,130 +3,270 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.FloatLabel
 @using OpBlazorUI.Base.Components.InputText
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>FloatLabel - OpBlazorUI</PageTitle>
 
 <DocComponent Title="FloatLabel"
-              Description="O FloatLabel aparece sobre o campo de entrada quando focalizado.">
+              Description="O FloatLabel exibe o rótulo sobre o campo de entrada quando ele está focado ou preenchido.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O FloatLabel não requer roles nem atributos ARIA adicionais e não inclui elementos interativos.
-                O vínculo entre o rótulo e o campo é feito pelo atributo <code>for</code> do <code>&lt;label&gt;</code>
-                apontando para o <code>id</code> do input.
+                O FloatLabel é usado envolvendo o campo de entrada e o seu <code>&lt;label&gt;</code>. O
+                rótulo fica oculto como placeholder e sobe sobre o campo quando ele recebe foco ou já contém
+                valor. O vínculo entre rótulo e campo é feito pelo atributo <code>for</code> do
+                <code>&lt;label&gt;</code> apontando para o <code>Id</code> do input.
             </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
             <ChildContent>
-                <OpFloatLabel>
-                    <OpInputText Id="fl1" @bind-Value="_value" Fluid="true"/>
-                    <label for="fl1">Rótulo Sobre</label>
-                </OpFloatLabel>
+                <div class="flex flex-col gap-2 w-full" style="max-width: 20rem;">
+                    <OpFloatLabel>
+                        <OpInputText Id="fl_basic" @bind-Value="_basic" Fluid="true" Autocomplete="off"/>
+                        <label for="fl_basic">Usuário</label>
+                    </OpFloatLabel>
+                    <span class="text-sm">Valor: <b>@_basic</b></span>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido">
+        <DocSection Label="Variantes" Id="variants">
             <Description>
-                Quando o campo está inválido, o rótulo também é destacado.
+                A propriedade <code>Variant</code> define a posição do rótulo. O valor padrão
+                <code>over</code> mantém o rótulo flutuando sobre o campo; <code>in</code> posiciona o rótulo
+                dentro do campo enquanto vazio; e <code>on</code> desloca o rótulo para sobre a borda.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap justify-center items-end gap-4">
-                    <OpFloatLabel>
-                        <OpInputText Id="fli1" @bind-Value="_invalid1" Invalid="@(string.IsNullOrEmpty(_invalid1))" Autocomplete="off"/>
-                        <label for="fli1">Usuário</label>
-                    </OpFloatLabel>
-                    <OpFloatLabel Variant="in">
-                        <OpInputText Id="fli2" @bind-Value="_invalid2" Invalid="@(string.IsNullOrEmpty(_invalid2))" Autocomplete="off"/>
-                        <label for="fli2">Usuário</label>
-                    </OpFloatLabel>
-                    <OpFloatLabel Variant="on">
-                        <OpInputText Id="fli3" @bind-Value="_invalid3" Invalid="@(string.IsNullOrEmpty(_invalid3))" Autocomplete="off"/>
-                        <label for="fli3">Usuário</label>
-                    </OpFloatLabel>
+                    <div style="width: 14rem;">
+                        <OpFloatLabel>
+                            <OpInputText Id="fl_over" @bind-Value="_variantOver" Fluid="true" Autocomplete="off"/>
+                            <label for="fl_over">Sobre o campo</label>
+                        </OpFloatLabel>
+                    </div>
+                    <div style="width: 14rem;">
+                        <OpFloatLabel Variant="in">
+                            <OpInputText Id="fl_in" @bind-Value="_variantIn" Fluid="true" Autocomplete="off"/>
+                            <label for="fl_in">Dentro do campo</label>
+                        </OpFloatLabel>
+                    </div>
+                    <div style="width: 14rem;">
+                        <OpFloatLabel Variant="on">
+                            <OpInputText Id="fl_on" @bind-Value="_variantOn" Fluid="true" Autocomplete="off"/>
+                            <label for="fl_on">Sobre a borda</label>
+                        </OpFloatLabel>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VariantCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                Quando o campo está inválido, o rótulo também é destacado. Basta que o input receba o estado
+                inválido — por <code>Invalid="true"</code> ou pela validação de um <code>EditForm</code>: o
+                tema aplica a cor de erro ao rótulo por meio da regra
+                <code>.p-floatlabel:has(.p-invalid) label</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <div style="width: 14rem;">
+                        <OpFloatLabel>
+                            <OpInputText Id="fli1" @bind-Value="_value1" Invalid="@(string.IsNullOrEmpty(_value1))" Fluid="true" Autocomplete="off"/>
+                            <label for="fli1">Usuário</label>
+                        </OpFloatLabel>
+                    </div>
+                    <div style="width: 14rem;">
+                        <OpFloatLabel Variant="in">
+                            <OpInputText Id="fli2" @bind-Value="_value2" Invalid="@(string.IsNullOrEmpty(_value2))" Fluid="true" Autocomplete="off"/>
+                            <label for="fli2">Usuário</label>
+                        </OpFloatLabel>
+                    </div>
+                    <div style="width: 14rem;">
+                        <OpFloatLabel Variant="on">
+                            <OpInputText Id="fli3" @bind-Value="_value3" Invalid="@(string.IsNullOrEmpty(_value3))" Fluid="true" Autocomplete="off"/>
+                            <label for="fli3">Usuário</label>
+                        </OpFloatLabel>
+                    </div>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Variantes">
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                Como o FloatLabel apenas posiciona o rótulo, a validação fica a cargo do campo interno. Ao
+                usar <code>OpInputText</code> com <code>@@bind-Value</code> dentro de um <code>EditForm</code>,
+                o estado inválido (<code>p-invalid</code>) é aplicado automaticamente pelo
+                <code>EditContext</code> e o rótulo acompanha o destaque de erro sem nenhuma configuração
+                extra.
+            </Description>
             <ChildContent>
-                <div class="flex flex-col gap-4">
-                    <OpFloatLabel Variant="in">
-                        <OpInputText Id="fl2" Variant="filled" Fluid="true"/>
-                        <label for="fl2">Rótulo Dentro</label>
+                <EditForm Model="_form" OnValidSubmit="SubmitForm" class="flex flex-col gap-2" style="max-width: 20rem;">
+                    <DataAnnotationsValidator/>
+                    <OpFloatLabel>
+                        <OpInputText Id="fl_form" @bind-Value="_form.Name" Fluid="true" Autocomplete="off"/>
+                        <label for="fl_form">Nome</label>
                     </OpFloatLabel>
-                    <OpFloatLabel Variant="on">
-                        <OpInputText Id="fl3" Fluid="true"/>
-                        <label for="fl3">Rótulo Sobre a Borda</label>
-                    </OpFloatLabel>
-                </div>
+                    <ValidationMessage For="() => _form.Name"/>
+                    <button type="submit" class="p-button p-component">Salvar</button>
+                    @if (_submitted)
+                    {
+                        <span class="text-sm">Enviado: <b>@_form.Name</b></span>
+                    }
+                </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@VariantCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O FloatLabel não exige <code>role</code> nem atributos ARIA adicionais. O vínculo entre o
+                    rótulo e o campo é feito pelo atributo <code>for</code> do <code>&lt;label&gt;</code>
+                    apontando para o <code>Id</code> do input; sem esse vínculo o leitor de tela não associa
+                    o texto ao campo. O componente também não gera o <code>Id</code> automaticamente.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>Não se aplica: o FloatLabel não é interativo e não recebe foco; a interação ocorre no campo interno.</p>
+            </Description>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Variant", "string", "over", "Variante: <code>over</code>, <code>in</code> ou <code>on</code>." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Input + label." }
+                              new[] { "Variant", "string", "over", "Posição do rótulo: <code>over</code>, <code>in</code> ou <code>on</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz (<code>&lt;div&gt;</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo envolvido pelo componente: normalmente o campo de entrada e o <code>&lt;label&gt;</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="floatlabel"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os
+                tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-floatlabel", "Elemento contêiner que envolve o campo e o rótulo." },
+                              new[] { "p-floatlabel-over", "Contêiner com <code>Variant=&quot;over&quot;</code> (padrão)." },
+                              new[] { "p-floatlabel-in", "Contêiner com <code>Variant=&quot;in&quot;</code>. Rótulo dentro do campo." },
+                              new[] { "p-floatlabel-on", "Contêiner com <code>Variant=&quot;on&quot;</code>. Rótulo sobre a borda." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="floatlabel"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ChildContent</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O componente não gera nem gerencia o <code>Id</code> do campo: o vínculo <code>for</code>/<code>id</code> precisa ser informado manualmente. Sem ele o rótulo não é associado ao input pelos leitores de tela.</li>
+                        <li>O destaque de inválido é feito por CSS (<code>:has(.p-invalid)</code>) e depende do campo interno receber <code>p-invalid</code>; o FloatLabel não detecta validação por conta própria.</li>
+                        <li>Não há parâmetro de posicionamento fino (top/tamanho do rótulo flutuante); esses valores vêm dos design tokens do tema.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private string? _basic;
+    private string? _variantOver;
+    private string? _variantIn;
+    private string? _variantOn;
+    private string? _value1;
+    private string? _value2;
+    private string? _value3;
+    private bool _submitted;
+    private FormModel _form = new();
+
+    private void SubmitForm() => _submitted = true;
+
+    private sealed class FormModel
+    {
+        [Required(ErrorMessage = "O nome é obrigatório.")]
+        public string? Name { get; set; }
+    }
+
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.FloatLabel
         @using OpBlazorUI.Base.Components.InputText
 
         <OpFloatLabel>
-            <OpInputText Id="fl1" Fluid="true" />
-            <label for="fl1">Rótulo Sobre</label>
+            <OpInputText Id="username" />
+            <label for="username">Usuário</label>
         </OpFloatLabel>
         """;
 
     private const string BasicCode = """
         <OpFloatLabel>
-            <OpInputText Id="fl1" @bind-Value="_value" Fluid="true" />
-            <label for="fl1">Rótulo Sobre</label>
+            <OpInputText Id="fl_basic" @bind-Value="_basic" Fluid="true" />
+            <label for="fl_basic">Usuário</label>
         </OpFloatLabel>
 
+        <span>Valor: @_basic</span>
+
         @code {
-            private string? _value;
+            private string? _basic;
         }
+        """;
+
+    private const string VariantCode = """
+        <OpFloatLabel>
+            <OpInputText Id="fl_over" @bind-Value="_variantOver" Fluid="true" />
+            <label for="fl_over">Sobre o campo</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="in">
+            <OpInputText Id="fl_in" @bind-Value="_variantIn" Fluid="true" />
+            <label for="fl_in">Dentro do campo</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpInputText Id="fl_on" @bind-Value="_variantOn" Fluid="true" />
+            <label for="fl_on">Sobre a borda</label>
+        </OpFloatLabel>
         """;
 
     private const string InvalidCode = """
@@ -144,22 +284,44 @@
             <OpInputText Id="fli3" @bind-Value="_value3" Invalid="@(string.IsNullOrEmpty(_value3))" Autocomplete="off" />
             <label for="fli3">Usuário</label>
         </OpFloatLabel>
+
+        @code {
+            private string? _value1;
+            private string? _value2;
+            private string? _value3;
+        }
         """;
 
-    private const string VariantCode = """
-        <OpFloatLabel Variant="in">
-            <OpInputText Id="fl2" Variant="filled" Fluid="true" />
-            <label for="fl2">Rótulo Dentro</label>
-        </OpFloatLabel>
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="SubmitForm">
+            <DataAnnotationsValidator />
+            <OpFloatLabel>
+                <OpInputText Id="fl_form" @bind-Value="_form.Name" Fluid="true" />
+                <label for="fl_form">Nome</label>
+            </OpFloatLabel>
+            <ValidationMessage For="() => _form.Name" />
+            <button type="submit" class="p-button p-component">Salvar</button>
+        </EditForm>
 
-        <OpFloatLabel Variant="on">
-            <OpInputText Id="fl3" Fluid="true" />
-            <label for="fl3">Rótulo Sobre a Borda</label>
-        </OpFloatLabel>
+        @code {
+            private bool _submitted;
+            private FormModel _form = new();
+
+            private void SubmitForm() => _submitted = true;
+
+            private sealed class FormModel
+            {
+                [Required(ErrorMessage = "O nome é obrigatório.")]
+                public string? Name { get; set; }
+            }
+        }
         """;
 
-    private string? _value;
-    private string? _invalid1;
-    private string? _invalid2;
-    private string? _invalid3;
+    private const string AccessibilityCode = """
+        <!-- O label precisa apontar para o Id do campo -->
+        <OpFloatLabel>
+            <OpInputText Id="username" />
+            <label for="username">Usuário</label>
+        </OpFloatLabel>
+        """;
 }

@@ -4,130 +4,357 @@
 @using OpBlazorUI.Base.Components.ToggleButton
 @using System.ComponentModel.DataAnnotations
 
+<PageTitle>ToggleButton - OpBlazorUI</PageTitle>
+
 <DocComponent Title="ToggleButton"
               Description="O ToggleButton é usado para selecionar um valor booleano usando um botão.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O ToggleButton alterna um valor booleano. Em Blazor o vínculo de mão dupla é feito com
+                <code>@@bind-Value</code>, que também registra o campo no <code>EditContext</code> quando o
+                componente está dentro de um <code>EditForm</code>. Use <code>OnLabel</code> e
+                <code>OffLabel</code> para os textos de cada estado.
+            </Description>
             <ChildContent>
                 <OpToggleButton @bind-Value="_on" OnLabel="Ligado" OffLabel="Desligado"/>
+                <div class="mt-2 text-sm">Valor: @_on</div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ícones">
-            <ChildContent>
-                <div class="flex gap-3">
-                    <OpToggleButton @bind-Value="_bold" OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Alternar"/>
-                    <OpToggleButton @bind-Value="_lock" OnLabel="Bloqueado" OffLabel="Desbloqueado" OnIcon="pi pi-lock" OffIcon="pi pi-lock" IconPos="left"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@IconCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Inválido / Desabilitado / Tamanho">
-            <ChildContent>
-                <div class="flex gap-3 items-center">
-                    <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Invalid="true"/>
-                    <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Disabled="true"/>
-                    <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Size="small"/>
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@StateCode"/></Code>
-        </DocSection>
-        <DocSection Label="Validação">
+        <DocSection Label="Personalizado" Id="customized">
             <Description>
-                O ToggleButton herda de <code>InputBase&lt;bool&gt;</code>, então integra-se ao <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado automaticamente quando há erro de validação.
+                Os rótulos e ícones de cada estado são definidos por <code>OnLabel</code>/<code>OffLabel</code> e
+                <code>OnIcon</code>/<code>OffIcon</code>. A propriedade <code>IconPos</code> posiciona o ícone em
+                <code>left</code> (padrão) ou <code>right</code>.
             </Description>
             <ChildContent>
-                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                <div class="flex flex-wrap justify-center gap-4">
+                    <OpToggleButton @bind-Value="_locked" OnLabel="Bloqueado" OffLabel="Desbloqueado"
+                                    OnIcon="pi pi-lock" OffIcon="pi pi-lock-open" AriaLabel="Bloqueio"
+                                    style="min-width:9rem;"/>
+                    <OpToggleButton @bind-Value="_notified" OnIcon="pi pi-bell" OffIcon="pi pi-bell-slash"
+                                    AriaLabel="Notificações"/>
+                    <OpToggleButton @bind-Value="_subscribed" OnLabel="Assinado" OffLabel="Cancelado"
+                                    OnIcon="pi pi-check" OffIcon="pi pi-times" IconPos="right" AriaLabel="Assinatura"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomizedCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanhos" Id="sizes">
+            <Description>
+                O ToggleButton oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao
+                padrão, via propriedade <code>Size</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <OpToggleButton @bind-Value="_sizeSmall" OnLabel="Ligado" OffLabel="Desligado" Size="small" style="min-width:8rem;"/>
+                    <OpToggleButton @bind-Value="_sizeNormal" OnLabel="Ligado" OffLabel="Desligado" style="min-width:8rem;"/>
+                    <OpToggleButton @bind-Value="_sizeLarge" OnLabel="Ligado" OffLabel="Desligado" Size="large" style="min-width:8rem;"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Largura Total" Id="fluid">
+            <Description>
+                Com <code>Fluid="true"</code> o botão ocupa toda a largura do contêiner — útil em formulários de
+                confirmação e barras de ação.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpToggleButton @bind-Value="_fluid" OnLabel="Ligado" OffLabel="Desligado" Fluid="true"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Quando <code>Disabled="true"</code>, o elemento não pode ser alternado nem focado: o componente
+                recebe a classe <code>p-disabled</code> e sai da ordem de tabulação.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpToggleButton @bind-Value="_disabledOn" OnLabel="Sim" OffLabel="Não"
+                                    OnIcon="pi pi-check" OffIcon="pi pi-times" Disabled="true" AriaLabel="Confirmação"
+                                    style="min-width:8rem;"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                O estado <code>Invalid="true"</code> indica falha de validação e aplica a classe
+                <code>p-invalid</code>. Dentro de um <code>EditForm</code> esse estado é calculado automaticamente
+                a partir das mensagens do <code>EditContext</code> (combinado por OR com o valor informado), então
+                não é preciso passar <code>Invalid</code> manualmente.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpToggleButton @bind-Value="_invalidOn" Invalid="!_invalidOn"
+                                    OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Confirmação"
+                                    style="min-width:8rem;"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+            <Description>
+                No Blazor não há a distinção do Angular entre template driven e reactive forms: ambos usam
+                <code>EditForm</code>. Aqui o vínculo por <code>@@bind-Value</code> registra o campo no
+                <code>EditContext</code> e o <code>DataAnnotationsValidator</code> valida o modelo — equivalente ao
+                <code>ngModel</code> com <code>required</code>.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
                     <DataAnnotationsValidator/>
-                    <OpToggleButton @bind-Value="_form.Accepted" OnLabel="Sim" OffLabel="Não"/>
-                    <ValidationMessage For="() => _form.Accepted"/>
+                    <OpToggleButton @bind-Value="_tdModel.Accepted" OnLabel="Aceitar" OffLabel="Recusar"/>
+                    <ValidationMessage For="() => _tdModel.Accepted"/>
                     <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_submitted)
+                    @if (_tdSubmitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Aceito: @_form.Accepted</div>
+                        <div class="text-sm" style="color:var(--p-green-600)">Aceito: @_tdModel.Accepted</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Reactive)" Id="reactive">
+            <Description>
+                O equivalente ao <code>formControlName</code> é controlar o <code>EditContext</code> explicitamente.
+                Neste exemplo o contexto e um <code>ValidationMessageStore</code> são criados no código e a mensagem
+                é adicionada a cada alteração do campo, sem depender de DataAnnotations.
+            </Description>
+            <ChildContent>
+                <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
+                    <OpToggleButton @bind-Value="_reactiveModel.Accepted" OnLabel="Aceitar" OffLabel="Recusar"/>
+                    <ValidationMessage For="() => _reactiveModel.Accepted"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_reactiveSubmitted && _reactiveModel.Accepted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Aceito.</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Conteúdo Personalizado" Id="template">
+            <Description>
+                O template <code>ContentTemplate</code> substitui o conteúdo interno (ícone e rótulo) e recebe como
+                contexto o valor atual. Como o conteúdo é livre, informe <code>AriaLabel</code> para manter o botão
+                acessível.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpToggleButton @bind-Value="_wifi" AriaLabel="Wi-Fi" style="min-width:8rem;">
+                        <ContentTemplate Context="ativo">
+                            <span class="@ContentIcon(ativo)"></span>
+                            <span class="p-togglebutton-label">@ContentLabel(ativo)</span>
+                        </ContentTemplate>
+                    </OpToggleButton>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O ToggleButton é um <code>&lt;button&gt;</code> com <code>role="button"</code> e atualiza
+                    <code>aria-pressed</code> conforme o estado. Como o rótulo exibido muda com o estado, o leitor
+                    de tela leria textos diferentes a cada foco; para evitar isso, informe sempre um
+                    <code>AriaLabel</code> estável (ou <code>aria-labelledby</code>, via atributos adicionais).
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o botão." },
+                              new[] { "space", "Alterna o estado marcado." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Value", "bool", "false", "Estado marcado." },
-                              new[] { "ValueChanged", "EventCallback&lt;bool&gt;", "-", "Callback de binding." },
-                              new[] { "OnLabel", "string?", "null", "Texto quando ligado." },
-                              new[] { "OffLabel", "string?", "null", "Texto quando desligado." },
-                              new[] { "OnIcon", "string?", "null", "Ícone quando ligado." },
-                              new[] { "OffIcon", "string?", "null", "Ícone quando desligado." },
-                              new[] { "IconPos", "string", "left", "Posição do ícone: <code>left</code> ou <code>right</code>." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Invalid", "bool", "false", "Estado inválido." },
+                              new[] { "OnLabel", "string?", "null", "Texto exibido quando o botão está marcado." },
+                              new[] { "OffLabel", "string?", "null", "Texto exibido quando o botão está desmarcado." },
+                              new[] { "OnIcon", "string?", "null", "Classe do ícone no estado marcado." },
+                              new[] { "OffIcon", "string?", "null", "Classe do ícone no estado desmarcado." },
+                              new[] { "IconPos", "string", "left", "Posição do ícone: <code>left</code> (padrão) ou <code>right</code>." },
                               new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
-                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura do contêiner." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do botão." },
+                              new[] { "Invalid", "bool", "false", "Estado inválido, combinado (OR) com as mensagens do <code>EditContext</code> (herdado de <code>OpInputBase&lt;bool&gt;</code>)." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente (herdado de <code>OpInputBase&lt;bool&gt;</code>)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz (herdado de <code>OpInputBase&lt;bool&gt;</code>)." },
+                              new[] { "Value", "bool?", "null", "Estado marcado (herdado de <code>InputBase&lt;bool&gt;</code>)." },
+                              new[] { "ValueExpression", "Expression&lt;Func&lt;bool&gt;&gt;?", "null", "Expressão do campo para integração com o <code>EditForm</code>; gerada por <code>@bind-Value</code> (herdado de <code>InputBase&lt;bool&gt;</code>)." },
+                              new[] { "DisplayName", "string?", "null", "Nome de exibição usado em mensagens de erro (herdado de <code>InputBase&lt;bool&gt;</code>)." },
+                              new[] { "AdditionalAttributes", "IReadOnlyDictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao <code>&lt;button&gt;</code> (herdado de <code>InputBase&lt;bool&gt;</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnChange", "EventCallback&lt;bool&gt;", "Disparado ao mudar o estado." }
+                              new[] { "ContentTemplate", "RenderFragment&lt;bool&gt;?", "Conteúdo customizado no lugar do ícone e do rótulo; o contexto recebe o valor atual." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ContentTemplate", "RenderFragment&lt;bool&gt;?", "Template customizado do conteúdo." }
+                              new[] { "OnChange", "EventCallback&lt;bool&gt;", "Disparado após a alternância, recebendo o novo valor." },
+                              new[] { "ValueChanged", "EventCallback&lt;bool&gt;", "Notifica a alteração de <code>Value</code> (herdado de <code>InputBase&lt;bool&gt;</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="togglebutton"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-togglebutton", "Elemento raiz (<code>&lt;button&gt;</code>)." },
+                              new[] { "p-togglebutton-checked", "Raiz quando o estado é verdadeiro." },
+                              new[] { "p-togglebutton-content", "Contêiner do ícone e do rótulo." },
+                              new[] { "p-togglebutton-label", "Rótulo do estado atual." },
+                              new[] { "p-togglebutton-icon", "Ícone do estado atual." },
+                              new[] { "p-togglebutton-icon-left / -right", "Posição do ícone conforme <code>IconPos</code>." },
+                              new[] { "p-togglebutton-sm / p-togglebutton-lg", "Raiz conforme <code>Size</code>." },
+                              new[] { "p-togglebutton-fluid", "Raiz com <code>Fluid</code>." },
+                              new[] { "p-invalid", "Raiz em estado inválido." },
+                              new[] { "p-disabled", "Raiz desabilitada." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="togglebutton"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ContentTemplate</code> para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>ContentTemplate</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao <code>&lt;button&gt;</code> raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há parâmetros <code>Required</code>, <code>Name</code> ou <code>Id</code>; a obrigatoriedade é feita pela validação do <code>EditForm</code> e atributos nativos podem ser repassados via <code>AdditionalAttributes</code>.</li>
+                        <li>Não há <code>AriaLabelledBy</code>; para rotular o botão por outro elemento, use <code>aria-labelledby</code> via <code>AdditionalAttributes</code>.</li>
+                        <li><code>IconPos</code> só trata <code>left</code> e <code>right</code>; outros valores são ignorados (nenhuma classe de posição é aplicada).</li>
+                        <li>Mesmo sem <code>OnLabel</code>/<code>OffLabel</code>, o componente sempre renderiza o elemento de rótulo (com um espaço), reservando largura; para um botão apenas com ícone sem esse espaço, use <code>ContentTemplate</code>.</li>
+                        <li><code>OnChange</code> dispara depois da alternância interna e não pode cancelá-la.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private bool _on = true;
-    private bool _bold;
-    private bool _lock;
+    private bool _on;
+    private bool _locked;
+    private bool _notified;
+    private bool _subscribed;
+    private bool _sizeSmall;
+    private bool _sizeNormal;
+    private bool _sizeLarge;
+    private bool _fluid;
+    private bool _disabledOn;
+    private bool _invalidOn;
+    private bool _wifi;
+
+    private sealed class TemplateDrivenModel
+    {
+        [Range(typeof(bool), "true", "true", ErrorMessage = "O aceite é obrigatório.")]
+        public bool Accepted { get; set; }
+    }
+
+    private readonly TemplateDrivenModel _tdModel = new();
+    private bool _tdSubmitted;
+
+    private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
+
+    private sealed class ReactiveModel
+    {
+        public bool Accepted { get; set; }
+    }
+
+    private readonly ReactiveModel _reactiveModel = new();
+    private EditContext? _reactiveContext;
+    private ValidationMessageStore? _reactiveMessages;
+    private bool _reactiveSubmitted;
+
+    protected override void OnInitialized()
+    {
+        var context = new EditContext(_reactiveModel);
+        _reactiveContext = context;
+        _reactiveMessages = new ValidationMessageStore(context);
+        context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
+    }
+
+    private void OnReactiveSubmit()
+    {
+        _reactiveSubmitted = true;
+        ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.Accepted)));
+    }
+
+    private void ValidateField(FieldIdentifier field)
+    {
+        _reactiveMessages?.Clear(field);
+
+        if (field.FieldName == nameof(ReactiveModel.Accepted) && !_reactiveModel.Accepted)
+        {
+            _reactiveMessages?.Add(field, "O aceite é obrigatório.");
+        }
+    }
+
+    private static string ContentIcon(bool on) => on ? "p-togglebutton-icon pi pi-wifi" : "p-togglebutton-icon pi pi-ban";
+
+    private static string ContentLabel(bool on) => on ? "Conectado" : "Offline";
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.ToggleButton
@@ -137,40 +364,150 @@
 
     private const string BasicCode = """
         <OpToggleButton @bind-Value="_on" OnLabel="Ligado" OffLabel="Desligado" />
+        <div class="mt-2 text-sm">Valor: @_on</div>
 
         @code {
-            private bool _on = true;
+            private bool _on;
         }
         """;
 
-    private const string IconCode = """
-        <OpToggleButton @bind-Value="_bold" OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Alternar" />
-        <OpToggleButton @bind-Value="_lock" OnLabel="Bloqueado" OffLabel="Desbloqueado" OnIcon="pi pi-lock" OffIcon="pi pi-lock" />
+    private const string CustomizedCode = """
+        <OpToggleButton @bind-Value="_locked" OnLabel="Bloqueado" OffLabel="Desbloqueado"
+                        OnIcon="pi pi-lock" OffIcon="pi pi-lock-open" AriaLabel="Bloqueio" style="min-width:9rem;" />
+        <OpToggleButton @bind-Value="_notified" OnIcon="pi pi-bell" OffIcon="pi pi-bell-slash" AriaLabel="Notificações" />
+        <OpToggleButton @bind-Value="_subscribed" OnLabel="Assinado" OffLabel="Cancelado"
+                        OnIcon="pi pi-check" OffIcon="pi pi-times" IconPos="right" AriaLabel="Assinatura" />
+
+        @code {
+            private bool _locked;
+            private bool _notified;
+            private bool _subscribed;
+        }
         """;
 
-    private const string StateCode = """
-        <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Invalid="true" />
-        <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Disabled="true" />
-        <OpToggleButton Value="true" OnLabel="Ligado" OffLabel="Desligado" Size="small" />
+    private const string SizesCode = """
+        <div class="flex flex-col items-center gap-4">
+            <OpToggleButton @bind-Value="_sizeSmall" OnLabel="Ligado" OffLabel="Desligado" Size="small" style="min-width:8rem;" />
+            <OpToggleButton @bind-Value="_sizeNormal" OnLabel="Ligado" OffLabel="Desligado" style="min-width:8rem;" />
+            <OpToggleButton @bind-Value="_sizeLarge" OnLabel="Ligado" OffLabel="Desligado" Size="large" style="min-width:8rem;" />
+        </div>
         """;
 
-    private bool _submitted;
-    private ToggleButtonFormModel _form = new();
+    private const string FluidCode = """
+        <div style="width:100%; max-width:20rem;">
+            <OpToggleButton @bind-Value="_fluid" OnLabel="Ligado" OffLabel="Desligado" Fluid="true" />
+        </div>
+        """;
 
-    private sealed class ToggleButtonFormModel
-    {
-        [Range(typeof(bool), "true", "true", ErrorMessage = "Ative para continuar.")]
-        public bool Accepted { get; set; }
-    }
+    private const string DisabledCode = """
+        <OpToggleButton @bind-Value="_disabledOn" OnLabel="Sim" OffLabel="Não"
+                        OnIcon="pi pi-check" OffIcon="pi pi-times" Disabled="true" AriaLabel="Confirmação"
+                        style="min-width:8rem;" />
+        """;
 
-    private void OnSubmit() => _submitted = true;
+    private const string InvalidCode = """
+        <OpToggleButton @bind-Value="_invalidOn" Invalid="!_invalidOn"
+                        OnIcon="pi pi-check" OffIcon="pi pi-times" AriaLabel="Confirmação" style="min-width:8rem;" />
 
-    private const string ValidationCode = """
-        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+        @code {
+            private bool _invalidOn;
+        }
+        """;
+
+    private const string TemplateDrivenCode = """
+        <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
             <DataAnnotationsValidator />
-            <OpToggleButton @bind-Value="_form.Accepted" OnLabel="Sim" OffLabel="Não" />
-            <ValidationMessage For="() => _form.Accepted" />
+            <OpToggleButton @bind-Value="_tdModel.Accepted" OnLabel="Aceitar" OffLabel="Recusar" />
+            <ValidationMessage For="() => _tdModel.Accepted" />
             <button type="submit" class="p-button p-component">Enviar</button>
+            @if (_tdSubmitted)
+            {
+                <div class="text-sm">Aceito: @_tdModel.Accepted</div>
+            }
         </EditForm>
+
+        @code {
+            private sealed class TemplateDrivenModel
+            {
+                [Range(typeof(bool), "true", "true", ErrorMessage = "O aceite é obrigatório.")]
+                public bool Accepted { get; set; }
+            }
+
+            private readonly TemplateDrivenModel _tdModel = new();
+            private bool _tdSubmitted;
+
+            private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
+        }
+        """;
+
+    private const string ReactiveCode = """
+        <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
+            <OpToggleButton @bind-Value="_reactiveModel.Accepted" OnLabel="Aceitar" OffLabel="Recusar" />
+            <ValidationMessage For="() => _reactiveModel.Accepted" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+            @if (_reactiveSubmitted && _reactiveModel.Accepted)
+            {
+                <div class="text-sm">Aceito.</div>
+            }
+        </EditForm>
+
+        @code {
+            private sealed class ReactiveModel
+            {
+                public bool Accepted { get; set; }
+            }
+
+            private readonly ReactiveModel _reactiveModel = new();
+            private EditContext? _reactiveContext;
+            private ValidationMessageStore? _reactiveMessages;
+            private bool _reactiveSubmitted;
+
+            protected override void OnInitialized()
+            {
+                var context = new EditContext(_reactiveModel);
+                _reactiveContext = context;
+                _reactiveMessages = new ValidationMessageStore(context);
+                context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
+            }
+
+            private void OnReactiveSubmit()
+            {
+                _reactiveSubmitted = true;
+                ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.Accepted)));
+            }
+
+            private void ValidateField(FieldIdentifier field)
+            {
+                _reactiveMessages?.Clear(field);
+
+                if (field.FieldName == nameof(ReactiveModel.Accepted) && !_reactiveModel.Accepted)
+                {
+                    _reactiveMessages?.Add(field, "O aceite é obrigatório.");
+                }
+            }
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpToggleButton @bind-Value="_wifi" AriaLabel="Wi-Fi" style="min-width:8rem;">
+            <ContentTemplate Context="ativo">
+                <span class="@ContentIcon(ativo)"></span>
+                <span class="p-togglebutton-label">@ContentLabel(ativo)</span>
+            </ContentTemplate>
+        </OpToggleButton>
+
+        @code {
+            private bool _wifi;
+
+            private static string ContentIcon(bool on) => on ? "p-togglebutton-icon pi pi-wifi" : "p-togglebutton-icon pi pi-ban";
+            private static string ContentLabel(bool on) => on ? "Conectado" : "Offline";
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <span id="aceite">Aceite os termos</span>
+        <OpToggleButton aria-labelledby="aceite" />
+
+        <OpToggleButton AriaLabel="Aceite os termos" />
         """;
 }

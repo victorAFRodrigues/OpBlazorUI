@@ -6,350 +6,626 @@
 @using OpBlazorUI.Base.Components.IftaLabel
 @using System.ComponentModel.DataAnnotations
 
+<PageTitle>TreeSelect - OpBlazorUI</PageTitle>
+
 <DocComponent Title="TreeSelect"
               Description="O TreeSelect é um componente de formulário para escolher dados hierárquicos.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O elemento tem role <code>combobox</code> com <code>aria-haspopup</code> e <code>aria-expanded</code>. A árvore usa <code>tree</code> e cada item usa <code>treeitem</code> com <code>aria-selected</code> e <code>aria-expanded</code>.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
-            <Description>
-                Em modo de seleção única, o valor vinculado é a <code>Key</code> do nó.
+                O TreeSelect funciona como um componente controlado por <code>@@bind-Value</code>, junto de uma
+                coleção <code>Options</code>. Os nós seguem a API <code>TreeNode</code> (<code>Key</code>,
+                <code>Label</code>, <code>Children</code>, <code>Data</code>, <code>Leaf</code>,
+                <code>Loading</code> e <code>Expanded</code>). No modo de seleção única — <code>SelectionMode</code>
+                é <code>single</code> por padrão — o valor vinculado é a <code>Key</code> do nó.
             </Description>
             <ChildContent>
-                <OpTreeSelect @bind-Value="_key" Options="Nodes" Placeholder="Selecione um Item" StyleClass="w-full md:w-80"/>
-                <div class="mt-2 text-sm">Selecionado: @(_key ?? "—")</div>
+                <div class="flex flex-col items-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_basicKey" Options="Nodes" Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    </div>
+                    <div class="mt-2 text-sm">Selecionado: @(_basicKey ?? "—")</div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Checkbox">
+        <DocSection Label="Múltiplo" Id="multiple">
             <Description>
-                A seleção de múltiplos nós via checkboxes é habilitada com <code>SelectionMode="checkbox"</code>.
+                Mais de um nó pode ser selecionado definindo <code>SelectionMode="multiple"</code>. Nesse modo a
+                seleção é um dicionário chave-valor (<code>IReadOnlyDictionary&lt;string,bool&gt;</code>) ligado a
+                <code>@@bind-Selection</code>, onde a chave é a <code>Key</code> do nó e o valor indica se ele está
+                selecionado. Diferente do Angular, não há <code>MetaKeySelection</code>: o clique simples alterna a
+                seleção.
             </Description>
             <ChildContent>
-                <OpTreeSelect @bind-Selection="_selection" Options="Nodes" Display="chip" SelectionMode="checkbox" Placeholder="Selecione um Item" StyleClass="w-full md:w-80"/>
+                <div class="flex flex-col items-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Selection="_multiSelection" Options="Nodes" SelectionMode="multiple"
+                                      Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    </div>
+                    <div class="mt-2 text-sm">Selecionados: @Count(_multiSelection)</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Checkbox" Id="checkbox">
+            <Description>
+                A seleção de múltiplos nós via checkboxes é habilitada com <code>SelectionMode="checkbox"</code>.
+                Marcar um nó propaga a seleção aos descendentes, e os nós pais ficam em estado indeterminado quando
+                apenas parte dos filhos está selecionada. Combine com <code>Display="chip"</code> para exibir as
+                escolhas como chips removíveis.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:22rem;">
+                        <OpTreeSelect @bind-Selection="_checkboxSelection" Options="Nodes" Display="chip"
+                                      SelectionMode="checkbox" Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@CheckboxCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ícone de Limpar">
-            <ChildContent>
-                <OpTreeSelect @bind-Value="_key2" Options="Nodes" Placeholder="Selecione um Item" ShowClear="true" StyleClass="w-full md:w-80"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@ClearIconCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Desabilitado">
-            <ChildContent>
-                <OpTreeSelect @bind-Value="_key3" Options="Nodes" Disabled="true" Placeholder="TreeSelect" StyleClass="w-full md:w-80"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@DisabledCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Preenchido">
-            <ChildContent>
-                <OpTreeSelect @bind-Value="_key4" Options="Nodes" Variant="filled" Placeholder="Selecione um Item" StyleClass="w-full md:w-80"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@FilledCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Filtro">
+        <DocSection Label="Scroll Virtual" Id="virtual-scroll-doc">
             <Description>
-                A filtragem é habilitada com a propriedade <code>Filter</code>.
+                Para grandes volumes de nós, <code>VirtualScroll="true"</code> renderiza apenas os itens visíveis e
+                <code>VirtualScrollItemSize</code> define a altura de cada item em pixels. Como a árvore é achatada
+                para a virtualização, defina <code>ScrollHeight</code> para limitar a área da lista; os filhos só
+                entram na lista quando o nó é expandido.
             </Description>
             <ChildContent>
-                <OpTreeSelect @bind-Value="_key5" Options="Nodes" Placeholder="Selecione um Item" Filter="true" StyleClass="w-full md:w-80"/>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:22rem;">
+                        <OpTreeSelect @bind-Selection="_virtualSelection" Options="_largeNodes" Display="chip"
+                                      SelectionMode="checkbox" VirtualScroll="true" VirtualScrollItemSize="38"
+                                      ScrollHeight="200px" Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VirtualScrollCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Lazy" Id="lazy">
+            <Description>
+                O carregamento sob demanda é feito com <code>OnNodeExpand</code> e a propriedade
+                <code>Loading</code> do nó. Ao expandir um nó sem filhos, o componente o marca como carregando e
+                dispara o callback; no handler você popula <code>Children</code> e zera <code>Loading</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:22rem;">
+                        <OpTreeSelect @bind-Selection="_lazySelection" Options="_lazyNodes" Display="chip"
+                                      SelectionMode="checkbox" Placeholder="Selecione um Item"
+                                      OnNodeExpand="OnLazyNodeExpand" StyleClass="w-full"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LazyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filtro" Id="filter">
+            <Description>
+                A filtragem é habilitada com <code>Filter="true"</code>. Por padrão o campo <code>Label</code> do nó
+                é usado na comparação; <code>FilterBy</code> permite escolher outro campo. <code>FilterMode</code>
+                define a estratégia: em <code>lenient</code> (padrão) quando um nó corresponde, seus descendentes são
+                incluídos sem nova busca; em <code>strict</code> a busca continua nos descendentes.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_filterKey" Options="Nodes" Filter="true"
+                                      Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@FilterCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Fluid">
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O TreeSelect oferece vários templates. <code>HeaderTemplate</code> e <code>FooterTemplate</code>
+                decoram o topo e o rodapé do overlay; <code>DropdownIconTemplate</code> substitui a seta;
+                <code>EmptyTemplate</code> substitui a mensagem de vazio; e <code>ClearIconTemplate</code>,
+                <code>LoadingIconTemplate</code> e <code>ItemTogglerIconTemplate</code> (contexto
+                <code>TreeNode</code>) customizam os ícones.
+            </Description>
             <ChildContent>
-                <OpTreeSelect @bind-Value="_key6" Options="Nodes" Placeholder="Selecione um Item" Fluid="true"/>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_templateKey" Options="Nodes" Placeholder="Selecione um Item">
+                            <DropdownIconTemplate>
+                                <i class="pi pi-search"></i>
+                            </DropdownIconTemplate>
+                            <HeaderTemplate>
+                                <div style="padding:.5rem .75rem; font-weight:500;">Arquivos disponíveis</div>
+                            </HeaderTemplate>
+                            <FooterTemplate>
+                                <div style="padding:.5rem .75rem; display:flex; justify-content:space-between; gap:.5rem;">
+                                    <button type="button" class="p-button p-component p-button-secondary" style="padding:.25rem .5rem;">Adicionar</button>
+                                    <button type="button" class="p-button p-component p-button-danger" style="padding:.25rem .5rem;">Remover Tudo</button>
+                                </div>
+                            </FooterTemplate>
+                        </OpTreeSelect>
+                    </div>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@FluidCode"/></Code>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Float Label">
+        <DocSection Label="FloatLabel" Id="floatlabel">
+            <Description>
+                Combine com <code>OpFloatLabel</code> para obter um rótulo flutuante. Informe <code>InputId</code> no
+                TreeSelect e um <code>&lt;label for&gt;</code> correspondente. A variante é definida no
+                <code>OpFloatLabel</code>: <code>over</code> (padrão), <code>in</code> ou <code>on</code>.
+            </Description>
             <ChildContent>
                 <div class="flex flex-wrap justify-center items-end gap-4">
-                    <OpFloatLabel StyleClass="w-full md:w-80">
-                        <OpTreeSelect @bind-Value="_fl1" InputId="ts_over" Options="Nodes" StyleClass="w-full"/>
-                        <label for="ts_over">Over Label</label>
-                    </OpFloatLabel>
-                    <OpFloatLabel Variant="in" StyleClass="w-full md:w-80">
-                        <OpTreeSelect @bind-Value="_fl2" InputId="ts_in" Options="Nodes" StyleClass="w-full"/>
-                        <label for="ts_in">In Label</label>
-                    </OpFloatLabel>
-                    <OpFloatLabel Variant="on" StyleClass="w-full md:w-80">
-                        <OpTreeSelect @bind-Value="_fl3" InputId="ts_on" Options="Nodes" StyleClass="w-full"/>
-                        <label for="ts_on">On Label</label>
-                    </OpFloatLabel>
+                    <div style="width:100%; max-width:20rem;">
+                        <OpFloatLabel StyleClass="w-full">
+                            <OpTreeSelect @bind-Value="_fl1" InputId="ts_over" Options="Nodes" StyleClass="w-full"/>
+                            <label for="ts_over">Sobre</label>
+                        </OpFloatLabel>
+                    </div>
+                    <div style="width:100%; max-width:20rem;">
+                        <OpFloatLabel Variant="in" StyleClass="w-full">
+                            <OpTreeSelect @bind-Value="_fl2" InputId="ts_in" Options="Nodes" StyleClass="w-full"/>
+                            <label for="ts_in">Dentro</label>
+                        </OpFloatLabel>
+                    </div>
+                    <div style="width:100%; max-width:20rem;">
+                        <OpFloatLabel Variant="on" StyleClass="w-full">
+                            <OpTreeSelect @bind-Value="_fl3" InputId="ts_on" Options="Nodes" StyleClass="w-full"/>
+                            <label for="ts_on">Na borda</label>
+                        </OpFloatLabel>
+                    </div>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@FloatLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ifta Label">
+        <DocSection Label="IftaLabel" Id="iftalabel">
+            <Description>
+                <code>OpIftaLabel</code> cria um rótulo alinhado no topo, dentro do campo. Assim como no FloatLabel,
+                use <code>InputId</code> no TreeSelect e um <code>&lt;label for&gt;</code> correspondente.
+            </Description>
             <ChildContent>
-                <OpIftaLabel StyleClass="w-full md:w-80">
-                    <OpTreeSelect @bind-Value="_ifta" InputId="ts_ifta" Options="Nodes" StyleClass="w-full"/>
-                    <label for="ts_ifta">Arquivo</label>
-                </OpIftaLabel>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpIftaLabel StyleClass="w-full">
+                            <OpTreeSelect @bind-Value="_ifta" InputId="ts_ifta" Options="Nodes" StyleClass="w-full"/>
+                            <label for="ts_ifta">Arquivo</label>
+                        </OpIftaLabel>
+                    </div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@IftaLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido">
+        <DocSection Label="Ícone de Limpar" Id="clearicon">
+            <Description>
+                Com <code>ShowClear="true"</code>, um ícone de limpar aparece quando há seleção, removendo o valor
+                (e disparando <code>OnClear</code>).
+            </Description>
             <ChildContent>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <OpTreeSelect @bind-Value="_inv1" Options="Nodes" Invalid="true" Placeholder="TreeSelect" StyleClass="w-full md:w-80"/>
-                    <OpTreeSelect @bind-Value="_inv2" Options="Nodes" Invalid="true" Variant="filled" Placeholder="TreeSelect" StyleClass="w-full md:w-80"/>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_clearKey" Options="Nodes" ShowClear="true"
+                                      Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    </div>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@InvalidCode"/></Code>
+            <Code><CodeBlock Code="@ClearIconCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Lazy">
+        <DocSection Label="Tamanhos" Id="sizes">
             <Description>
-                O carregamento sob demanda é feito usando <code>OnNodeExpand</code> e a propriedade <code>Loading</code> do nó.
+                O TreeSelect oferece os tamanhos <code>small</code> e <code>large</code> como alternativas ao
+                padrão, via propriedade <code>Size</code>.
             </Description>
-            <ChildContent>
-                <OpTreeSelect @bind-Selection="_lazySelection" Options="_lazyNodes" Display="chip" SelectionMode="checkbox"
-                              Placeholder="Selecione um Item" OnNodeExpand="OnLazyNodeExpand" StyleClass="w-full md:w-80"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@LazyCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Múltiplo">
-            <Description>
-                Mais de um nó pode ser selecionado definindo <code>SelectionMode="multiple"</code>.
-            </Description>
-            <ChildContent>
-                <OpTreeSelect @bind-Selection="_multiSelection" Options="Nodes" SelectionMode="multiple" Placeholder="Selecione um Item" StyleClass="w-full md:w-80"/>
-            </ChildContent>
-            <Code><CodeBlock Code="@MultipleCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Tamanhos">
             <ChildContent>
                 <div class="flex flex-col items-center gap-4">
-                    <OpTreeSelect @bind-Value="_s1" Options="Nodes" Size="small" Placeholder="Small" StyleClass="w-full md:w-80"/>
-                    <OpTreeSelect @bind-Value="_s2" Options="Nodes" Placeholder="Normal" StyleClass="w-full md:w-80"/>
-                    <OpTreeSelect @bind-Value="_s3" Options="Nodes" Size="large" Placeholder="Large" StyleClass="w-full md:w-80"/>
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_size1" Options="Nodes" Size="small" Placeholder="Small" StyleClass="w-full"/>
+                    </div>
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_size2" Options="Nodes" Placeholder="Normal" StyleClass="w-full"/>
+                    </div>
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_size3" Options="Nodes" Size="large" Placeholder="Large" StyleClass="w-full"/>
+                    </div>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@SizesCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template">
+        <DocSection Label="Largura Total" Id="fluid">
             <Description>
-                O TreeSelect oferece vários templates para customização.
+                Com <code>Fluid="true"</code> o componente ocupa toda a largura do contêiner.
             </Description>
             <ChildContent>
-                <OpTreeSelect @bind-Value="_tpl" Options="Nodes" Placeholder="Selecione um Item" StyleClass="w-full md:w-80">
-                    <DropdownIconTemplate><i class="pi pi-search"></i></DropdownIconTemplate>
-                    <HeaderTemplate>
-                        <div class="font-medium" style="padding:.5rem .75rem;">Arquivos Disponíveis</div>
-                    </HeaderTemplate>
-                    <FooterTemplate>
-                        <div style="padding:.5rem .75rem; display:flex; justify-content:space-between;">
-                            <button class="p-button p-component p-button-secondary" style="padding:.25rem .5rem;">Adicionar</button>
-                            <button class="p-button p-component p-button-danger" style="padding:.25rem .5rem;">Remover Tudo</button>
-                        </div>
-                    </FooterTemplate>
-                </OpTreeSelect>
+                <div style="width:100%; max-width:32rem;">
+                    <OpTreeSelect @bind-Value="_fluidKey" Options="Nodes" Fluid="true" Placeholder="Selecione um Item"/>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@TemplateCode"/></Code>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Validação">
+        <DocSection Label="Preenchido" Id="filled">
+            <Description>
+                <code>Variant="filled"</code> exibe o componente com maior ênfase visual que o estilo
+                <code>outlined</code> (padrão).
+            </Description>
             <ChildContent>
-                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col gap-2 w-full md:w-80">
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_filledKey" Options="Nodes" Variant="filled"
+                                      Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Com <code>Disabled="true"</code> o componente não pode ser editado nem focado.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_disabledKey" Options="Nodes" Disabled="true"
+                                      Placeholder="TreeSelect" StyleClass="w-full"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Inválido" Id="invalid">
+            <Description>
+                <code>Invalid="true"</code> aplica o estado de erro, útil para indicar validação falha fora de um
+                <code>EditForm</code>. Dentro dele, o estado de erro vem do <code>EditContext</code> e
+                <code>Invalid</code> é somado a ele.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_invalidKey1" Options="Nodes" Invalid="true"
+                                      Placeholder="TreeSelect" StyleClass="w-full"/>
+                    </div>
+                    <div style="width:100%; max-width:20rem;">
+                        <OpTreeSelect @bind-Value="_invalidKey2" Options="Nodes" Invalid="true" Variant="filled"
+                                      Placeholder="TreeSelect" StyleClass="w-full"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+            <Description>
+                Como herda de <code>OpInputBase&lt;string&gt;</code> (que estende <code>InputBase&lt;string&gt;</code>),
+                o TreeSelect integra-se ao <code>EditForm</code> com <code>DataAnnotationsValidator</code> e
+                <code>ValidationMessage</code>. O <code>@@bind-Value</code> gera o <code>ValueExpression</code> que
+                registra o campo no <code>EditContext</code>; o <code>p-invalid</code> sai automaticamente quando há
+                erro de validação — não passe <code>Invalid</code> manualmente.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_tdForm" OnValidSubmit="SubmitTemplateDriven" class="flex flex-col items-start gap-3">
                     <DataAnnotationsValidator/>
-                    <OpTreeSelect @bind-Value="_form.Key" Options="Nodes" Placeholder="Selecione um Item" Invalid="@(!_submitted && string.IsNullOrEmpty(_form.Key))"/>
-                    <ValidationMessage For="() => _form.Key"/>
+                    <OpTreeSelect @bind-Value="_tdForm.Key" Options="Nodes" Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _tdForm.Key"/>
                     <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_submitted)
+                    @if (_tdSubmitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Selecionado: @_form.Key</div>
+                        <div class="text-sm" style="color:var(--p-green-600)">Selecionado: @_tdForm.Key</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários (Reactive)" Id="reactive">
+            <Description>
+                No Angular, os <i>Reactive Forms</i> validam o modelo programaticamente com <code>FormBuilder</code>.
+                No Blazor o mesmo <code>EditForm</code> cobre os dois casos: use <code>OnSubmit</code> e
+                <code>EditContext.Validate()</code> para controlar a validação no código.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_reForm" OnSubmit="SubmitReactive" class="flex flex-col items-start gap-3">
+                    <DataAnnotationsValidator/>
+                    <OpTreeSelect @bind-Value="_reForm.Key" Options="Nodes" Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _reForm.Key"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_reMessage is not null)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">@_reMessage</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O valor que descreve o componente pode ser informado com <code>AriaLabel</code>. O campo tem
+                    <code>role="combobox"</code>, <code>aria-haspopup="tree"</code> e <code>aria-expanded</code>; a
+                    relação com o popup é feita por <code>aria-controls</code>, que aponta para o <code>id</code> da
+                    árvore. A árvore usa <code>role="tree"</code>; cada item é um <code>treeitem</code> com
+                    <code>aria-label</code>, <code>aria-selected</code> e <code>aria-expanded</code>, e o contêiner
+                    dos filhos usa <code>role="group"</code>. No modo checkbox os itens usam <code>aria-selected</code>
+                    (não <code>aria-checked</code>).
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description">
+                    <h3>Suporte a teclado</h3>
+                    <p>
+                        A tabela abaixo reflete a especificação de teclado do TreeSelect no upstream; no port atual
+                        apenas <code>escape</code> e <code>tab</code> estão implementados (ver Problemas Conhecidos).
+                    </p>
+                </div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o TreeSelect." },
+                              new[] { "space / down arrow", "Abre o popup e foca o nó selecionado (ou o primeiro nó)." },
+                              new[] { "enter / space", "Seleciona o nó em foco e fecha o popup no modo único." },
+                              new[] { "escape", "Fecha o popup e devolve o foco ao TreeSelect." },
+                              new[] { "down / up arrow", "Move o foco para o próximo/anterior nó." },
+                              new[] { "right arrow", "Abre o nó ou foca o primeiro filho." },
+                              new[] { "left arrow", "Fecha o nó ou foca o nó pai." },
+                              new[] { "shift + tab", "Move o foco para o elemento anterior dentro do popup." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Options", "IReadOnlyList&lt;TreeNode&gt;?", "null", "Coleção de nós da árvore." },
-                              new[] { "Value", "string?", "null", "Chave do nó selecionado (modo single)." },
-                              new[] { "Selection", "IReadOnlyDictionary&lt;string,bool&gt;?", "null", "Seleção por chave (modo multiple/checkbox)." },
-                              new[] { "SelectionMode", "string", "single", "<code>single</code>, <code>multiple</code> ou <code>checkbox</code>." },
-                              new[] { "Display", "string", "comma", "<code>comma</code> ou <code>chip</code>." },
-                              new[] { "Placeholder", "string?", "null", "Texto quando vazio." },
-                              new[] { "Filter", "bool", "false", "Exibe campo de filtro." },
-                              new[] { "FilterBy", "string", "label", "Campo usado no filtro." },
-                              new[] { "FilterMode", "string", "lenient", "<code>lenient</code> ou <code>strict</code>." },
-                              new[] { "ShowClear", "bool", "false", "Exibe ícone de limpar." },
-                              new[] { "Disabled", "bool", "false", "Desabilitado." },
-                              new[] { "Invalid", "bool", "false", "Estado de erro." },
-                              new[] { "Required", "bool", "false", "Obrigatório." },
-                              new[] { "Variant", "string", "outlined", "<code>outlined</code> ou <code>filled</code>." },
-                              new[] { "Size", "string?", "null", "<code>small</code> ou <code>large</code>." },
-                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura." },
-                              new[] { "ScrollHeight", "string?", "400px", "Altura máxima da árvore." },
-                              new[] { "VirtualScroll", "bool", "false", "Virtualiza a árvore (achata os nós visíveis). Requer <code>ScrollHeight</code>." },
-                              new[] { "VirtualScrollItemSize", "int", "38", "Altura (px) de cada nó no virtual scroll (incluindo o gap)." },
-                              new[] { "EmptyMessage", "string", "No results found", "Mensagem quando vazio." },
-                              new[] { "Loading", "bool", "false", "Estado de carregamento." },
-                              new[] { "LoadingMode", "string", "mask", "<code>mask</code> ou <code>icon</code>." },
+                              new[] { "Options", "IReadOnlyList&lt;TreeNode&gt;?", "null", "Coleção raiz de nós da árvore." },
+                              new[] { "Selection", "IReadOnlyDictionary&lt;string, bool&gt;?", "null", "Seleção por chave nos modos <code>multiple</code> e <code>checkbox</code>. Combine com <code>&#64;bind-Selection</code>." },
+                              new[] { "SelectionMode", "string", "single", "Modo de seleção: <code>single</code>, <code>multiple</code> ou <code>checkbox</code>." },
+                              new[] { "Display", "string", "comma", "Formato de exibição das seleções: <code>comma</code> ou <code>chip</code>." },
+                              new[] { "Placeholder", "string?", "null", "Texto exibido quando nada está selecionado." },
+                              new[] { "Filter", "bool", "false", "Habilita o campo de filtro no topo do overlay." },
+                              new[] { "FilterBy", "string", "label", "Campo usado na filtragem. No port atual a busca compara apenas <code>Label</code>." },
+                              new[] { "FilterMode", "string", "lenient", "Estratégia de filtro: <code>lenient</code> ou <code>strict</code>." },
+                              new[] { "ShowClear", "bool", "false", "Exibe o ícone de limpar quando há seleção." },
+                              new[] { "Required", "bool", "false", "Marca o campo como obrigatório (declarativo)." },
+                              new[] { "Variant", "string", "outlined", "Variante visual: <code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura disponível." },
+                              new[] { "ScrollHeight", "string?", "null", "Altura máxima da lista de nós. Quando omitido, usa <code>400px</code>." },
+                              new[] { "VirtualScroll", "bool", "false", "Habilita a renderização virtual dos nós visíveis." },
+                              new[] { "VirtualScrollItemSize", "int", "38", "Altura, em pixels, de cada nó no scroll virtual." },
+                              new[] { "EmptyMessage", "string?", "No results found", "Mensagem exibida quando não há nós." },
+                              new[] { "Loading", "bool", "false", "Exibe o spinner no lugar do ícone do dropdown." },
+                              new[] { "LoadingMode", "string", "mask", "Modo de carregamento: <code>mask</code> ou <code>icon</code>. No port atual o parâmetro não tem efeito." },
                               new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "InputId", "string?", "null", "Id base do componente." },
-                              new[] { "PanelStyleClass", "string?", "null", "Classes do painel." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do combobox." },
+                              new[] { "InputId", "string?", "null", "Id base do componente, usado com <code>&lt;label for&gt;</code>." },
+                              new[] { "PanelStyleClass", "string?", "null", "Classes adicionais no overlay." },
+                              new[] { "Value", "string?", "null", "Chave do nó selecionado no modo <code>single</code>. Combine com <code>&#64;bind-Value</code>. (herdado)" },
+                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "-", "Callback de binding do valor selecionado. (herdado)" },
+                              new[] { "ValueExpression", "Expression&lt;Func&lt;string?&gt;&gt;?", "null", "Expressão do campo para o <code>EditForm</code>; gerada por <code>&#64;bind-Value</code>. (herdado)" },
+                              new[] { "Invalid", "bool", "false", "Estado de erro; somado ao estado do <code>EditContext</code>. (herdado)" },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente. (herdado)" },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz. (herdado)" },
+                              new[] { "CssClass", "string?", "null", "Classes de validação do campo no <code>EditContext</code>. (herdado)" },
+                              new[] { "DisplayName", "string?", "null", "Nome do campo nas mensagens de validação. (herdado)" },
+                              new[] { "AdditionalAttributes", "IReadOnlyDictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz. (herdado)" }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnNodeExpand", "EventCallback&lt;TreeNode&gt;", "Disparado ao expandir um nó." },
+                              new[] { "SelectionChanged", "EventCallback&lt;IReadOnlyDictionary&lt;string, bool&gt;?&gt;", "Callback de binding de <code>Selection</code>; disparado ao alterar a seleção múltipla." },
+                              new[] { "ValueChanged", "EventCallback&lt;string?&gt;", "Callback de binding de <code>Value</code>; disparado ao alterar a seleção única. (herdado)" },
+                              new[] { "OnNodeExpand", "EventCallback&lt;TreeNode&gt;", "Disparado ao expandir (ou carregar) um nó." },
                               new[] { "OnNodeCollapse", "EventCallback&lt;TreeNode&gt;", "Disparado ao recolher um nó." },
                               new[] { "OnNodeSelect", "EventCallback&lt;TreeNode&gt;", "Disparado ao selecionar um nó." },
                               new[] { "OnNodeUnselect", "EventCallback&lt;TreeNode&gt;", "Disparado ao desmarcar um nó." },
+                              new[] { "OnFilter", "EventCallback&lt;string&gt;", "Disparado ao digitar no campo de filtro; recebe o texto atual." },
                               new[] { "OnShow", "EventCallback", "Disparado ao exibir o overlay." },
                               new[] { "OnHide", "EventCallback", "Disparado ao ocultar o overlay." },
-                              new[] { "OnClear", "EventCallback", "Disparado ao limpar." },
-                              new[] { "OnFilter", "EventCallback&lt;string&gt;", "Disparado ao filtrar." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." }
+                              new[] { "OnClear", "EventCallback", "Disparado ao limpar a seleção." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar o campo." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar o campo." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "HeaderTemplate", "RenderFragment?", "Template do cabeçalho." },
-                              new[] { "FooterTemplate", "RenderFragment?", "Template do rodapé." },
-                              new[] { "EmptyTemplate", "RenderFragment?", "Template quando vazio." },
-                              new[] { "ClearIconTemplate", "RenderFragment?", "Template do ícone de limpar." },
-                              new[] { "DropdownIconTemplate", "RenderFragment?", "Template do ícone do dropdown." },
-                              new[] { "LoadingIconTemplate", "RenderFragment?", "Template do ícone de carregamento." },
-                              new[] { "ItemTogglerIconTemplate", "RenderFragment&lt;TreeNode&gt;?", "Template do ícone de expansão." }
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo no topo do overlay, antes do filtro." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Conteúdo no rodapé do overlay." },
+                              new[] { "EmptyTemplate", "RenderFragment?", "Substitui a mensagem de lista vazia." },
+                              new[] { "ClearIconTemplate", "RenderFragment?", "Substitui o ícone de limpar." },
+                              new[] { "DropdownIconTemplate", "RenderFragment?", "Substitui o ícone do dropdown." },
+                              new[] { "LoadingIconTemplate", "RenderFragment?", "Substitui o ícone de carregamento." },
+                              new[] { "ItemTogglerIconTemplate", "RenderFragment&lt;TreeNode&gt;?", "Substitui o ícone de expansão de cada nó; o contexto é o nó." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="treeselect"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens
+                abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-treeselect", "Elemento raiz (contêiner do campo e do overlay)." },
+                              new[] { "p-treeselect-label-container", "Contêiner do rótulo; recebe <code>role=&quot;combobox&quot;</code>." },
+                              new[] { "p-treeselect-label", "Rótulo que exibe as seleções ou o placeholder." },
+                              new[] { "p-treeselect-dropdown", "Botão do dropdown." },
+                              new[] { "p-treeselect-dropdown-icon", "Ícone do dropdown." },
+                              new[] { "p-treeselect-clear-icon", "Ícone de limpar quando <code>ShowClear</code>." },
+                              new[] { "p-treeselect-loading-icon", "Spinner exibido em <code>Loading</code>." },
+                              new[] { "p-treeselect-overlay", "Overlay do painel." },
+                              new[] { "p-treeselect-header / p-treeselect-filter", "Cabeçalho e campo de filtro." },
+                              new[] { "p-treeselect-tree-container", "Contêiner da árvore (área rolável)." },
+                              new[] { "p-treeselect-empty-message", "Mensagem quando não há nós." },
+                              new[] { "p-treeselect-display-chip", "Raiz quando <code>Display</code> é <code>chip</code>." },
+                              new[] { "p-treeselect-clearable / p-treeselect-fluid / p-treeselect-open", "Raiz conforme estado/funcionalidade." },
+                              new[] { "p-treeselect-sm / p-treeselect-lg", "Raiz conforme <code>Size</code>." },
+                              new[] { "p-variant-filled / p-inputwrapper-filled / p-inputwrapper-focus", "Raiz conforme variante e estado." },
+                              new[] { "p-tree / p-tree-root-children / p-tree-node", "Estrutura da árvore interna." },
+                              new[] { "p-tree-node-content / -selected / -selectable", "Conteúdo do nó e estado de seleção." },
+                              new[] { "p-tree-node-toggle-button / p-tree-node-icon", "Botão de expansão e seu ícone." },
+                              new[] { "p-tree-node-label / p-tree-node-children / p-tree-node-leaf", "Rótulo, filhos e folha." },
+                              new[] { "p-invalid / p-disabled", "Estado de erro e desabilitado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="treeselect"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use os templates para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>PanelStyleClass</code>, os templates e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Virtual scroll não foi portado (depende de infraestrutura externa).</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O componente não é genérico: o valor vinculado é sempre a <code>Key</code> (<code>string</code>); não há <code>TValue</code> como em outros seletores.</li>
+                        <li><code>FilterBy</code> é aceito, mas a filtragem compara apenas <code>Label</code>.</li>
+                        <li><code>FilterMode</code> não tem efeito: ao filtrar, a árvore é achatada e todos os nós correspondentes aparecem como raízes, sem preservar a hierarquia.</li>
+                        <li><code>LoadingMode</code> é ignorado; o carregamento é sempre indicado pelo spinner no ícone do dropdown (não há máscara no overlay).</li>
+                        <li><code>Required</code> não é refletido em <code>aria-required</code>; use a validação do <code>EditForm</code>.</li>
+                        <li>A navegação por teclado no overlay (setas, <code>enter</code>/<code>space</code>) não está implementada; apenas <code>escape</code> fecha o overlay.</li>
+                        <li>No modo checkbox os itens usam <code>aria-selected</code> em vez de <code>aria-checked</code>, e não há <code>aria-setsize</code>/<code>aria-posinset</code>/<code>aria-level</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
-    private string? _key;
-    private string? _key2;
-    private string? _key3;
-    private string? _key4;
-    private string? _key5;
-    private string? _key6;
+    private string? _basicKey;
+    private string? _filterKey;
+    private string? _templateKey;
     private string? _fl1;
     private string? _fl2;
     private string? _fl3;
     private string? _ifta;
-    private string? _inv1;
-    private string? _inv2;
-    private string? _s1;
-    private string? _s2;
-    private string? _s3;
-    private string? _tpl;
+    private string? _clearKey;
+    private string? _size1;
+    private string? _size2;
+    private string? _size3;
+    private string? _fluidKey;
+    private string? _filledKey;
+    private string? _disabledKey;
+    private string? _invalidKey1;
+    private string? _invalidKey2;
 
-    private IReadOnlyDictionary<string, bool>? _selection;
-    private IReadOnlyDictionary<string, bool>? _lazySelection;
     private IReadOnlyDictionary<string, bool>? _multiSelection;
-
-    private bool _submitted;
-    private TreeForm _form = new();
+    private IReadOnlyDictionary<string, bool>? _checkboxSelection;
+    private IReadOnlyDictionary<string, bool>? _virtualSelection;
+    private IReadOnlyDictionary<string, bool>? _lazySelection;
 
     private List<TreeNode> _lazyNodes = new();
+    private readonly List<TreeNode> _largeNodes = new();
 
-    private sealed class TreeForm
+    private TreeFormModel _tdForm = new();
+    private bool _tdSubmitted;
+    private TreeFormModel _reForm = new();
+    private string? _reMessage;
+
+    private static int Count(IReadOnlyDictionary<string, bool>? selection)
+        => selection?.Count(kv => kv.Value) ?? 0;
+
+    private void SubmitTemplateDriven() => _tdSubmitted = true;
+
+    private void SubmitReactive(EditContext context)
+    {
+        if (context.Validate()) _reMessage = $"Selecionado: {_reForm.Key}";
+        else _reMessage = null;
+    }
+
+    private sealed class TreeFormModel
     {
         [Required(ErrorMessage = "A seleção é obrigatória.")]
         public string? Key { get; set; }
-    }
-
-    private void OnSubmit()
-    {
-        _submitted = true;
     }
 
     protected override void OnInitialized()
     {
         _lazyNodes = new List<TreeNode>
         {
-            new() { Key = "0", Label = "Node 0", Leaf = false },
-            new() { Key = "1", Label = "Node 1", Leaf = false },
-            new() { Key = "2", Label = "Node 2", Leaf = false }
+            new() { Key = "0", Label = "Node 0" },
+            new() { Key = "1", Label = "Node 1" },
+            new() { Key = "2", Label = "Node 2" }
         };
+
+        for (var i = 0; i < 300; i++)
+        {
+            _largeNodes.Add(new TreeNode
+            {
+                Key = $"n{i}",
+                Label = $"Pasta {i}",
+                Children = new List<TreeNode>
+                {
+                    new() { Key = $"n{i}-0", Label = $"Filho {i}.0", Leaf = true },
+                    new() { Key = $"n{i}-1", Label = $"Filho {i}.1", Leaf = true }
+                }
+            });
+        }
     }
 
     private async Task OnLazyNodeExpand(TreeNode node)
     {
-        if (node.Children is null)
-        {
-            node.Loading = true;
-            await Task.Delay(500);
-            node.Children = new List<TreeNode>();
-            for (var i = 0; i < 3; i++)
-            {
-                node.Children.Add(new TreeNode
-                {
-                    Key = $"{node.Key}-{i}",
-                    Label = $"Lazy {node.Label}-{i}",
-                    Leaf = true
-                });
-            }
+        if (node.Children is not null) return;
 
-            node.Loading = false;
+        node.Loading = true;
+        await Task.Delay(500);
+        node.Children = new List<TreeNode>();
+        for (var i = 0; i < 3; i++)
+        {
+            node.Children.Add(new TreeNode
+            {
+                Key = $"{node.Key}-{i}",
+                Label = $"Lazy {node.Label}-{i}",
+                Leaf = true
+            });
         }
+
+        node.Loading = false;
     }
 
     private static List<TreeNode> Nodes = new()
@@ -392,86 +668,249 @@
 
     private const string BasicCode = """
         <OpTreeSelect @bind-Value="_key" Options="Nodes" Placeholder="Selecione um Item" />
+        <span>Selecionado: @(_key ?? "—")</span>
+
+        @code {
+            private string? _key;
+
+            private static List<TreeNode> Nodes = new()
+            {
+                new TreeNode
+                {
+                    Key = "0", Label = "Documentos",
+                    Children = new List<TreeNode>
+                    {
+                        new() { Key = "0-0", Label = "Trabalho", Leaf = true },
+                        new() { Key = "0-1", Label = "Pessoal", Leaf = true },
+                        new() { Key = "0-2", Label = "Faturas", Leaf = true }
+                    }
+                },
+                new TreeNode
+                {
+                    Key = "1", Label = "Imagens",
+                    Children = new List<TreeNode>
+                    {
+                        new() { Key = "1-0", Label = "Férias", Leaf = true },
+                        new() { Key = "1-1", Label = "Família", Leaf = true }
+                    }
+                },
+                new TreeNode
+                {
+                    Key = "2", Label = "Música",
+                    Children = new List<TreeNode>
+                    {
+                        new() { Key = "2-0", Label = "Rock", Leaf = true },
+                        new() { Key = "2-1", Label = "Jazz", Leaf = true }
+                    }
+                }
+            };
+        }
+        """;
+
+    private const string MultipleCode = """
+        <OpTreeSelect @bind-Selection="_selection" Options="Nodes" SelectionMode="multiple"
+                      Placeholder="Selecione um Item" />
+
+        @code {
+            private IReadOnlyDictionary<string, bool>? _selection;
+        }
         """;
 
     private const string CheckboxCode = """
-        <OpTreeSelect @bind-Selection="_selection" Options="Nodes" Display="chip" SelectionMode="checkbox" Placeholder="Selecione um Item" />
+        <OpTreeSelect @bind-Selection="_selection" Options="Nodes" Display="chip"
+                      SelectionMode="checkbox" Placeholder="Selecione um Item" />
+
+        @code {
+            private IReadOnlyDictionary<string, bool>? _selection;
+        }
         """;
 
-    private const string ClearIconCode = """
-        <OpTreeSelect @bind-Value="_key" Options="Nodes" ShowClear="true" Placeholder="Selecione um Item" />
+    private const string VirtualScrollCode = """
+        <OpTreeSelect @bind-Selection="_selection" Options="_largeNodes" Display="chip"
+                      SelectionMode="checkbox" VirtualScroll="true" VirtualScrollItemSize="38"
+                      ScrollHeight="200px" Placeholder="Selecione um Item" />
+
+        @code {
+            private IReadOnlyDictionary<string, bool>? _selection;
+            private readonly List<TreeNode> _largeNodes = new();
+
+            protected override void OnInitialized()
+            {
+                for (var i = 0; i < 300; i++)
+                {
+                    _largeNodes.Add(new TreeNode
+                    {
+                        Key = $"n{i}",
+                        Label = $"Pasta {i}",
+                        Children = new List<TreeNode>
+                        {
+                            new() { Key = $"n{i}-0", Label = $"Filho {i}.0", Leaf = true },
+                            new() { Key = $"n{i}-1", Label = $"Filho {i}.1", Leaf = true }
+                        }
+                    });
+                }
+            }
+        }
         """;
 
-    private const string DisabledCode = """
-        <OpTreeSelect @bind-Value="_key" Options="Nodes" Disabled="true" Placeholder="TreeSelect" />
-        """;
+    private const string LazyCode = """
+        <OpTreeSelect @bind-Selection="_selection" Options="_nodes" Display="chip"
+                      SelectionMode="checkbox" Placeholder="Selecione um Item"
+                      OnNodeExpand="OnNodeExpand" />
 
-    private const string FilledCode = """
-        <OpTreeSelect @bind-Value="_key" Options="Nodes" Variant="filled" Placeholder="Selecione um Item" />
+        @code {
+            private IReadOnlyDictionary<string, bool>? _selection;
+            private List<TreeNode> _nodes = new()
+            {
+                new() { Key = "0", Label = "Node 0" },
+                new() { Key = "1", Label = "Node 1" },
+                new() { Key = "2", Label = "Node 2" }
+            };
+
+            private async Task OnNodeExpand(TreeNode node)
+            {
+                if (node.Children is not null) return;
+
+                node.Loading = true;
+                await Task.Delay(500);
+                node.Children = new List<TreeNode>();
+                for (var i = 0; i < 3; i++)
+                {
+                    node.Children.Add(new TreeNode
+                    {
+                        Key = $"{node.Key}-{i}",
+                        Label = $"Lazy {node.Label}-{i}",
+                        Leaf = true
+                    });
+                }
+
+                node.Loading = false;
+            }
+        }
         """;
 
     private const string FilterCode = """
         <OpTreeSelect @bind-Value="_key" Options="Nodes" Filter="true" Placeholder="Selecione um Item" />
         """;
 
-    private const string FluidCode = """
-        <OpTreeSelect @bind-Value="_key" Options="Nodes" Fluid="true" Placeholder="Selecione um Item" />
-        """;
-
-    private const string FloatLabelCode = """
-        <OpFloatLabel>
-            <OpTreeSelect @bind-Value="_value" InputId="ts_over" Options="Nodes" />
-            <label for="ts_over">Over Label</label>
-        </OpFloatLabel>
-        """;
-
-    private const string IftaLabelCode = """
-        <OpIftaLabel>
-            <OpTreeSelect @bind-Value="_value" InputId="ts_ifta" Options="Nodes" />
-            <label for="ts_ifta">Arquivo</label>
-        </OpIftaLabel>
-        """;
-
-    private const string InvalidCode = """
-        <OpTreeSelect @bind-Value="_key" Options="Nodes" Invalid="true" Placeholder="TreeSelect" />
-        """;
-
-    private const string LazyCode = """
-        <OpTreeSelect @bind-Selection="_selection" Options="_nodes" Display="chip" SelectionMode="checkbox"
-                      OnNodeExpand="OnNodeExpand" Placeholder="Selecione um Item" />
-        """;
-
-    private const string MultipleCode = """
-        <OpTreeSelect @bind-Selection="_selection" Options="Nodes" SelectionMode="multiple" Placeholder="Selecione um Item" />
-        """;
-
-    private const string SizesCode = """
-        <OpTreeSelect @bind-Value="_key" Options="Nodes" Size="small" Placeholder="Small" />
-        <OpTreeSelect @bind-Value="_key" Options="Nodes" Placeholder="Normal" />
-        <OpTreeSelect @bind-Value="_key" Options="Nodes" Size="large" Placeholder="Large" />
-        """;
-
     private const string TemplateCode = """
         <OpTreeSelect @bind-Value="_key" Options="Nodes" Placeholder="Selecione um Item">
-            <DropdownIconTemplate><i class="pi pi-search"></i></DropdownIconTemplate>
+            <DropdownIconTemplate>
+                <i class="pi pi-search"></i>
+            </DropdownIconTemplate>
             <HeaderTemplate>
-                <div class="font-medium">Arquivos Disponíveis</div>
+                <div style="padding:.5rem .75rem; font-weight:500;">Arquivos disponíveis</div>
             </HeaderTemplate>
             <FooterTemplate>
-                <div style="display:flex; justify-content:space-between;">
-                    <button class="p-button p-component">Adicionar</button>
-                    <button class="p-button p-component">Remover Tudo</button>
+                <div style="padding:.5rem .75rem; display:flex; justify-content:space-between; gap:.5rem;">
+                    <button type="button" class="p-button p-component p-button-secondary" style="padding:.25rem .5rem;">Adicionar</button>
+                    <button type="button" class="p-button p-component p-button-danger" style="padding:.25rem .5rem;">Remover Tudo</button>
                 </div>
             </FooterTemplate>
         </OpTreeSelect>
         """;
 
-    private const string ValidationCode = """
+    private const string FloatLabelCode = """
+        <div class="flex flex-wrap justify-center items-end gap-4">
+            <OpFloatLabel StyleClass="w-full">
+                <OpTreeSelect @bind-Value="_v1" InputId="ts_over" Options="Nodes" StyleClass="w-full" />
+                <label for="ts_over">Sobre</label>
+            </OpFloatLabel>
+
+            <OpFloatLabel Variant="in" StyleClass="w-full">
+                <OpTreeSelect @bind-Value="_v2" InputId="ts_in" Options="Nodes" StyleClass="w-full" />
+                <label for="ts_in">Dentro</label>
+            </OpFloatLabel>
+
+            <OpFloatLabel Variant="on" StyleClass="w-full">
+                <OpTreeSelect @bind-Value="_v3" InputId="ts_on" Options="Nodes" StyleClass="w-full" />
+                <label for="ts_on">Na borda</label>
+            </OpFloatLabel>
+        </div>
+        """;
+
+    private const string IftaLabelCode = """
+        <OpIftaLabel StyleClass="w-full">
+            <OpTreeSelect @bind-Value="_value" InputId="ts_ifta" Options="Nodes" StyleClass="w-full" />
+            <label for="ts_ifta">Arquivo</label>
+        </OpIftaLabel>
+        """;
+
+    private const string ClearIconCode = """
+        <OpTreeSelect @bind-Value="_key" Options="Nodes" ShowClear="true" Placeholder="Selecione um Item" />
+        """;
+
+    private const string SizesCode = """
+        <OpTreeSelect @bind-Value="_v1" Options="Nodes" Size="small" Placeholder="Small" />
+        <OpTreeSelect @bind-Value="_v2" Options="Nodes" Placeholder="Normal" />
+        <OpTreeSelect @bind-Value="_v3" Options="Nodes" Size="large" Placeholder="Large" />
+        """;
+
+    private const string FluidCode = """
+        <OpTreeSelect @bind-Value="_key" Options="Nodes" Fluid="true" Placeholder="Selecione um Item" />
+        """;
+
+    private const string FilledCode = """
+        <OpTreeSelect @bind-Value="_key" Options="Nodes" Variant="filled" Placeholder="Selecione um Item" />
+        """;
+
+    private const string DisabledCode = """
+        <OpTreeSelect @bind-Value="_key" Options="Nodes" Disabled="true" Placeholder="TreeSelect" />
+        """;
+
+    private const string InvalidCode = """
+        <OpTreeSelect @bind-Value="_key" Options="Nodes" Invalid="true" Placeholder="TreeSelect" />
+        <OpTreeSelect @bind-Value="_key2" Options="Nodes" Invalid="true" Variant="filled" Placeholder="TreeSelect" />
+        """;
+
+    private const string TemplateDrivenCode = """
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
-            <OpTreeSelect @bind-Value="_form.Key" Options="Nodes" Invalid="@(!_submitted && string.IsNullOrEmpty(_form.Key))" />
+            <OpTreeSelect @bind-Value="_form.Key" Options="Nodes" Placeholder="Selecione um Item" />
             <ValidationMessage For="() => _form.Key" />
             <button type="submit" class="p-button p-component">Enviar</button>
         </EditForm>
+
+        @code {
+            private TreeFormModel _form = new();
+            private bool _submitted;
+
+            private sealed class TreeFormModel
+            {
+                [Required(ErrorMessage = "A seleção é obrigatória.")]
+                public string? Key { get; set; }
+            }
+
+            private void OnSubmit() => _submitted = true;
+        }
+        """;
+
+    private const string ReactiveCode = """
+        <EditForm Model="_form" OnSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpTreeSelect @bind-Value="_form.Key" Options="Nodes" Placeholder="Selecione um Item" />
+            <ValidationMessage For="() => _form.Key" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private TreeFormModel _form = new();
+            private string? _message;
+
+            private void OnSubmit(EditContext context)
+            {
+                if (context.Validate()) _message = $"Selecionado: {_form.Key}";
+            }
+
+            private sealed class TreeFormModel
+            {
+                [Required(ErrorMessage = "A seleção é obrigatória.")]
+                public string? Key { get; set; }
+            }
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpTreeSelect @bind-Value="_key" Options="Nodes" AriaLabel="Opções" />
         """;
 }

@@ -4,244 +4,377 @@
 @using OpBlazorUI.Base.Components.Listbox
 @using System.ComponentModel.DataAnnotations
 
+<PageTitle>Listbox - OpBlazorUI</PageTitle>
+
 <DocComponent Title="Listbox"
               Description="O Listbox é usado para selecionar um ou mais valores de uma lista de itens.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Básico" Id="basic">
             <Description>
-                O elemento de lista tem role <code>listbox</code> e o atributo <code>aria-multiselectable</code> é habilitado quando a seleção múltipla está ativa. Cada item tem role <code>option</code> com <code>aria-selected</code> e <code>aria-disabled</code>. Use <code>AriaLabel</code> para descrever o componente.
-            </Description>
-        </DocSection>
-
-        <DocSection Label="Básico">
-            <Description>
-                O Listbox é um componente controlado com <code>Options</code> e <code>@@bind-Value</code>. O rótulo e o valor de cada opção são definidos por <code>OptionLabel</code> e <code>OptionValue</code>. Se <code>OptionValue</code> for omitido, o próprio objeto é usado como valor.
+                O Listbox é um componente controlado: forneça <code>Options</code> e conecte o valor com
+                <code>@@bind-Value</code>. O rótulo e o valor de cada opção vêm de <code>OptionLabel</code> e
+                <code>OptionValue</code>. Se <code>OptionValue</code> for omitido, o próprio item é usado como valor —
+                o que dispensa as duas propriedades quando <code>Options</code> é um array de primitivos.
             </Description>
             <ChildContent>
-                <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" OptionValue="Code" StyleClass="w-full md:w-56"/>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" OptionValue="Code" StyleClass="w-56"/>
+                </div>
                 <div class="mt-2 text-sm">Selecionado: @(_city?.Name ?? "—")</div>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Checkbox">
+        <DocSection Label="Marca de Seleção" Id="checkmark">
             <Description>
-                Ative <code>Checkbox</code> para permitir a seleção de itens por meio de checkboxes (seleção múltipla).
+                Uma alternativa ao realce de fundo é exibir um checkmark na opção selecionada. Ative
+                <code>Checkmark</code> e, para ver apenas o ícone, desligue o realce com
+                <code>HighlightOnSelect="false"</code>.
             </Description>
             <ChildContent>
-                <OpListbox TValue="City" @bind-SelectedValues="_cities" Options="Cities" Multiple="true" Checkbox="true" OptionLabel="Name" StyleClass="w-full md:w-56"/>
-                <div class="mt-2 text-sm">Selecionados: @(_cities is null ? "—" : string.Join(", ", _cities.Select(c => c.Name)))</div>
-            </ChildContent>
-            <Code><CodeBlock Code="@CheckboxCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Checkmark">
-            <Description>
-                Uma alternativa para destacar a opção selecionada é exibir um checkmark, em vez do realce de fundo.
-            </Description>
-            <ChildContent>
-                <OpListbox TValue="City" @bind-Value="_city2" Options="Cities" OptionLabel="Name" Checkmark="true" HighlightOnSelect="false" StyleClass="w-full md:w-56"/>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-Value="_cityCheckmark" Options="Cities" OptionLabel="Name" Checkmark="true" HighlightOnSelect="false" StyleClass="w-56"/>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@CheckmarkCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Desabilitado">
+        <DocSection Label="Checkbox" Id="checkbox">
             <Description>
-                Quando <code>Disabled</code> está presente, o elemento não pode ser editado nem focado.
+                Com <code>Checkbox="true"</code> cada item recebe um checkbox. A propriedade implica seleção
+                múltipla, então o valor é uma lista ligada por <code>@@bind-SelectedValues</code>. O checkbox do
+                cabeçalho (selecionar/limpar tudo) aparece por padrão e pode ser controlado com
+                <code>ShowToggleAll</code>.
             </Description>
             <ChildContent>
-                <OpListbox TValue="City" @bind-Value="_city3" Options="Cities" OptionLabel="Name" Disabled="true" StyleClass="w-full md:w-56"/>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-SelectedValues="_citiesCheckbox" Options="Cities" Multiple="true" Checkbox="true" OptionLabel="Name" StyleClass="w-56"/>
+                </div>
+                <div class="mt-2 text-sm">Selecionados: @(_citiesCheckbox is null ? "—" : string.Join(", ", _citiesCheckbox.Select(c => c.Name)))</div>
             </ChildContent>
-            <Code><CodeBlock Code="@DisabledCode"/></Code>
+            <Code><CodeBlock Code="@CheckboxCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Filtro">
+        <DocSection Label="Múltiplo" Id="multiple">
             <Description>
-                O Listbox fornece filtragem nativa, habilitada pela propriedade <code>Filter</code>.
+                Por padrão o Listbox permite escolher um único item; ative <code>Multiple="true"</code> para escolher
+                vários. No Blazor não existe o <code>metaKeySelection</code> do Angular: cada clique alterna a
+                seleção, sem exigir tecla modificadora.
             </Description>
             <ChildContent>
-                <OpListbox TValue="City" @bind-Value="_city4" Options="Cities" OptionLabel="Name" Filter="true" StyleClass="w-full md:w-56"/>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-SelectedValues="_citiesMultiple" Options="Cities" OptionLabel="Name" Multiple="true" StyleClass="w-56"/>
+                </div>
+                <div class="mt-2 text-sm">Selecionados: @(_citiesMultiple is null ? "—" : string.Join(", ", _citiesMultiple.Select(c => c.Name)))</div>
             </ChildContent>
-            <Code><CodeBlock Code="@FilterCode"/></Code>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Agrupado">
+        <DocSection Label="Grupo" Id="group">
             <Description>
-                As opções podem ser agrupadas quando uma estrutura aninhada é fornecida, com <code>Group="true"</code>.
+                As opções podem ser agrupadas quando <code>Options</code> traz uma estrutura aninhada e
+                <code>Group="true"</code> é definido. O rótulo e os itens do grupo são lidos das propriedades
+                indicadas em <code>OptionGroupLabel</code> (padrão <code>label</code>) e
+                <code>OptionGroupChildren</code> (padrão <code>items</code>). O <code>GroupTemplate</code> recebe o
+                grupo e permite customizar o cabeçalho.
             </Description>
             <ChildContent>
-                <OpListbox TValue="string" @bind-Value="_country" Options="CountryGroups" Group="true" OptionGroupLabel="Label" OptionGroupChildren="Items" StyleClass="w-full md:w-56"/>
+                <div class="flex justify-center">
+                    <OpListbox TValue="string" @bind-Value="_country" Options="CountryGroups" Group="true" OptionGroupLabel="Label" OptionGroupChildren="Items" StyleClass="w-56">
+                        <GroupTemplate Context="g">
+                            <div class="flex items-center gap-2">
+                                <span class="pi pi-flag" aria-hidden="true"></span>
+                                <span>@(((CountryGroup)g).Label)</span>
+                            </div>
+                        </GroupTemplate>
+                    </OpListbox>
+                </div>
                 <div class="mt-2 text-sm">Selecionado: @(_country ?? "—")</div>
             </ChildContent>
             <Code><CodeBlock Code="@GroupCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido">
+        <DocSection Label="Filtro" Id="filter">
             <Description>
-                O estado inválido é aplicado usando a propriedade <code>Invalid</code> para indicar falha de validação.
+                O Listbox traz filtragem nativa, habilitada com <code>Filter="true"</code>. O critério de busca é o
+                rótulo da opção; use <code>FilterBy</code> para também casar uma segunda propriedade. A mensagem
+                exibida quando nada é encontrado vem de <code>EmptyFilterMessage</code>.
             </Description>
             <ChildContent>
-                <OpListbox TValue="City" @bind-Value="_city5" Options="Cities" OptionLabel="Name" Invalid="true" StyleClass="w-full md:w-56"/>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-Value="_cityFilter" Options="Cities" OptionLabel="Name" Filter="true" StyleClass="w-56"/>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@InvalidCode"/></Code>
+            <Code><CodeBlock Code="@FilterCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Múltiplo">
+        <DocSection Label="Template" Id="template">
             <Description>
-                O Listbox permite escolher um único item por padrão; ative <code>Multiple</code> para escolher mais de um.
+                Para conteúdo customizado defina <code>ItemTemplate</code>; o contexto é o próprio item
+                (<code>TValue</code>). Há ainda <code>GroupTemplate</code>, <code>HeaderTemplate</code>,
+                <code>FooterTemplate</code>, <code>EmptyTemplate</code>, <code>EmptyFilterTemplate</code>,
+                <code>FilterTemplate</code> e <code>CheckIconTemplate</code>.
             </Description>
             <ChildContent>
-                <OpListbox TValue="City" @bind-SelectedValues="_cities2" Options="Cities" OptionLabel="Name" Multiple="true" StyleClass="w-full md:w-56"/>
-                <div class="mt-2 text-sm">Selecionados: @(_cities2 is null ? "—" : string.Join(", ", _cities2.Select(c => c.Name)))</div>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-Value="_cityTemplate" Options="Cities" OptionLabel="Name" StyleClass="w-56">
+                        <ItemTemplate Context="c">
+                            <div class="flex items-center gap-2">
+                                <span class="pi pi-map-marker" style="color:var(--p-primary-color)"></span>
+                                <span>@c.Name</span>
+                                <span style="margin-left:auto; color:var(--p-text-muted-color); font-size:.8rem;">@c.Code</span>
+                            </div>
+                        </ItemTemplate>
+                    </OpListbox>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@MultipleCode"/></Code>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Virtual Scroll">
+        <DocSection Label="Scroll Virtual" Id="virtualscroll">
             <Description>
-                Para listas muito grandes, ative <code>VirtualScroll</code> (com <code>ScrollHeight</code>) para renderizar apenas as opções visíveis.
+                Para listas muito grandes, ative <code>VirtualScroll="true"</code> e defina <code>ScrollHeight</code>
+                para renderizar apenas as opções visíveis, evitando problemas de desempenho. A altura de cada item
+                pode ser informada em <code>VirtualScrollItemSize</code> (padrão 38).
             </Description>
             <ChildContent>
-                <OpListbox TValue="City" @bind-Value="_virtualCity" Options="ManyCities" OptionLabel="Name" VirtualScroll="true" ScrollHeight="200px" StyleClass="w-full md:w-56"/>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-Value="_virtualCity" Options="ManyCities" OptionLabel="Name" VirtualScroll="true" ScrollHeight="200px" VirtualScrollItemSize="40" Striped="true" StyleClass="w-56"/>
+                </div>
                 <div class="mt-2 text-sm">Selecionado: @(_virtualCity?.Name ?? "—")</div>
             </ChildContent>
             <Code><CodeBlock Code="@VirtualScrollCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template">
+        <DocSection Label="Arrastar e Soltar" Id="drag-drop">
             <Description>
-                Para conteúdo customizado, defina um <code>ItemTemplate</code>; o contexto é o próprio item (<code>TValue</code>).
+                No Optimus UI o <code>dragDrop</code> permite reordenar os itens e depende do pacote
+                <code>@@angular/cdk</code>. Não há recurso equivalente portado para o Blazor — o componente não
+                expõe parâmetro de arrastar e soltar. Veja em <strong>Problemas Conhecidos</strong>.
             </Description>
-            <ChildContent>
-                <OpListbox TValue="City" @bind-Value="_city6" Options="Cities" OptionLabel="Name" StyleClass="w-full md:w-56">
-                    <ItemTemplate Context="c">
-                        <div style="display:flex; align-items:center; gap:.5rem;">
-                            <span class="pi pi-map-marker" style="color:var(--p-primary-color)"></span>
-                            <span>@c.Name</span>
-                            <span style="margin-left:auto; color:var(--p-text-muted-color); font-size:.8rem;">@c.Code</span>
-                        </div>
-                    </ItemTemplate>
-                </OpListbox>
-            </ChildContent>
-            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Validação">
+        <DocSection Label="Inválido" Id="invalid">
             <Description>
-                O Listbox integra-se ao <code>EditForm</code> do Blazor com DataAnnotations; use <code>Invalid</code> para refletir o estado de erro.
+                O estado de erro é aplicado com <code>Invalid="true"</code>, que adiciona <code>p-invalid</code> à
+                raiz. Dentro de um <code>EditForm</code> o estado vem da validação e não precisa ser informado
+                manualmente — use a flag apenas para erros fora do formulário.
             </Description>
             <ChildContent>
-                <EditForm Model="_form" OnValidSubmit="OnValidSubmit" class="flex flex-col gap-2 w-full md:w-56">
-                    <DataAnnotationsValidator/>
-                    <OpListbox TValue="City" @bind-Value="_form.City" Options="Cities" OptionLabel="Name" Invalid="@(!_submitted && _form.City is null)"/>
-                    <ValidationMessage For="() => _form.City"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_submitted)
-                    {
-                        <div class="text-sm" style="color:var(--p-green-600)">Formulário enviado: @_form.City?.Name</div>
-                    }
-                </EditForm>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-Value="_cityInvalid" Options="Cities" OptionLabel="Name" Invalid="true" StyleClass="w-56"/>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@ValidationCode"/></Code>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>
+                Quando <code>Disabled</code> está ativo, o elemento não pode ser editado nem focado.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpListbox TValue="City" @bind-Value="_cityDisabled" Options="Cities" OptionLabel="Name" Disabled="true" StyleClass="w-56"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O Listbox herda de <code>OpInputBase&lt;TValue&gt;</code>, então integra-se ao <code>EditForm</code> do
+                Blazor automaticamente. O <code>@@bind-Value</code> cria o <code>ValueExpression</code> que registra o
+                campo no <code>EditContext</code>; com <code>DataAnnotationsValidator</code> e
+                <code>ValidationMessage</code> o estado <code>p-invalid</code> é aplicado sozinho. No Angular os
+                formulários se dividem em <em>template driven</em> e <em>reactive</em>; no Blazor ambos convergem para
+                o <code>EditForm</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <EditForm Model="_form" OnValidSubmit="OnValidSubmit" class="flex flex-col gap-2">
+                        <DataAnnotationsValidator/>
+                        <OpListbox TValue="City" @bind-Value="_form.City" Options="Cities" OptionLabel="Name" StyleClass="w-56"/>
+                        <ValidationMessage For="() => _form.City"/>
+                        <button type="submit" class="p-button p-component">Enviar</button>
+                        @if (_submitted)
+                        {
+                            <div class="text-sm" style="color:var(--p-green-600)">Formulário enviado: @_form.City?.Name</div>
+                        }
+                    </EditForm>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O elemento de lista tem <code>role="listbox"</code> e recebe <code>aria-multiselectable="true"</code>
+                    no modo múltiplo. Cada item tem <code>role="option"</code> com <code>aria-selected</code> e
+                    <code>aria-disabled</code>. O texto que descreve o componente vem de <code>AriaLabel</code>;
+                    use-o sempre que não houver um rótulo visível associado.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o primeiro item, ou para o primeiro selecionado se houver." },
+                              new[] { "up arrow", "Move o foco para o item anterior." },
+                              new[] { "down arrow", "Move o foco para o próximo item." },
+                              new[] { "enter", "Alterna a seleção do item focado." },
+                              new[] { "space", "Alterna a seleção do item focado." },
+                              new[] { "home", "Move o foco para o primeiro item." },
+                              new[] { "end", "Move o foco para o último item." },
+                              new[] { "letra/dígito", "Busca o próximo item cujo rótulo começa com a tecla digitada (type-ahead)." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Options", "IReadOnlyList&lt;object&gt;?", "null", "Coleção de itens exibidos na lista." },
-                              new[] { "OptionLabel", "string?", "null", "Propriedade do item usada como rótulo de cada opção." },
-                              new[] { "OptionValue", "string?", "null", "Propriedade usada como valor de cada opção. Se omitido, o próprio item é usado." },
+                              new[] { "OptionLabel", "string?", "null", "Propriedade do item usada como rótulo. Se omitida, usa <code>ToString()</code>." },
+                              new[] { "OptionValue", "string?", "null", "Propriedade usada como valor. Se omitida, o próprio item é o valor." },
                               new[] { "OptionDisabled", "string?", "null", "Propriedade booleana que desabilita opções específicas." },
-                              new[] { "Value", "TValue?", "null", "Valor selecionado (modo single). Combine com <code>@bind-Value</code>." },
-                              new[] { "SelectedValues", "IReadOnlyList&lt;TValue&gt;?", "null", "Valores selecionados (modo múltiplo). Combine com <code>@bind-SelectedValues</code>." },
+                              new[] { "SelectedValues", "IReadOnlyList&lt;TValue&gt;?", "null", "Valores selecionados no modo múltiplo. Combine com <code>@bind-SelectedValues</code>." },
                               new[] { "Multiple", "bool", "false", "Permite selecionar mais de um item." },
-                              new[] { "Checkbox", "bool", "false", "Seleção via checkboxes (implica múltipla seleção)." },
-                              new[] { "Checkmark", "bool", "false", "Destaca a seleção com um checkmark." },
-                              new[] { "HighlightOnSelect", "bool", "true", "Aplica a classe de realce à opção selecionada." },
-                              new[] { "Filter", "bool", "false", "Exibe um campo de filtro no topo da lista." },
-                              new[] { "FilterBy", "string?", "null", "Propriedade usada como critério do filtro." },
+                              new[] { "Checkbox", "bool", "false", "Seleção por checkboxes. Implica seleção múltipla." },
+                              new[] { "Checkmark", "bool", "false", "Exibe um checkmark na opção selecionada." },
+                              new[] { "HighlightOnSelect", "bool", "true", "Aplica o realce de fundo à opção selecionada." },
+                              new[] { "Filter", "bool", "false", "Exibe um campo de filtro no cabeçalho da lista." },
+                              new[] { "FilterBy", "string?", "null", "Propriedade adicional considerada no critério do filtro." },
                               new[] { "Group", "bool", "false", "Ativa o modo agrupado." },
                               new[] { "OptionGroupLabel", "string", "label", "Propriedade do rótulo do grupo." },
-                              new[] { "OptionGroupChildren", "string", "items", "Propriedade dos itens do grupo." },
-                              new[] { "ShowToggleAll", "bool", "true", "Exibe o checkbox de selecionar tudo no modo múltiplo." },
-                              new[] { "Striped", "bool", "false", "Linhas com cores alternadas." },
-                              new[] { "ScrollHeight", "string?", "null", "Altura máxima da lista (px), com rolagem." },
-                              new[] { "VirtualScroll", "bool", "false", "Virtualiza a lista (rende apenas as opções visíveis). Requer <code>ScrollHeight</code>." },
-                              new[] { "VirtualScrollItemSize", "int", "38", "Altura (px) de cada opção usada no virtual scroll (incluindo o gap)." },
-                              new[] { "Disabled", "bool", "false", "Desabilita o componente." },
-                              new[] { "Readonly", "bool", "false", "Somente leitura." },
-                              new[] { "Invalid", "bool", "false", "Estado de erro." },
-                              new[] { "Required", "bool", "false", "Marca como obrigatório." },
-                              new[] { "TabIndex", "int", "0", "Ordem de tabulação." },
-                              new[] { "AriaLabel", "string?", "null", "Label de acessibilidade." },
-                              new[] { "EmptyMessage", "string", "No results found", "Mensagem quando não há opções." },
-                              new[] { "EmptyFilterMessage", "string", "No results found", "Mensagem quando o filtro não encontra opções." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
-                              new[] { "ListStyleClass", "string?", "null", "Classes adicionais na lista." }
+                              new[] { "OptionGroupChildren", "string", "items", "Propriedade que contém os itens do grupo." },
+                              new[] { "ShowToggleAll", "bool", "true", "Exibe o checkbox de selecionar tudo no cabeçalho (com <code>Checkbox</code>)." },
+                              new[] { "Striped", "bool", "false", "Alterna o fundo das linhas." },
+                              new[] { "ScrollHeight", "string?", "14rem", "Altura máxima da lista; habilita a rolagem." },
+                              new[] { "VirtualScroll", "bool", "false", "Virtualiza a lista (renderiza só o visível). Requer <code>ScrollHeight</code>." },
+                              new[] { "VirtualScrollItemSize", "int", "38", "Altura (px) de cada item usada no scroll virtual." },
+                              new[] { "Readonly", "bool", "false", "Impede a alteração da seleção." },
+                              new[] { "Required", "bool", "false", "Sinaliza campo obrigatório; não altera o markup (a validação vem do <code>EditForm</code>)." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação do listbox." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível aplicado ao elemento com <code>role=&quot;listbox&quot;</code>." },
+                              new[] { "EmptyMessage", "string?", "No results found", "Mensagem exibida quando não há opções." },
+                              new[] { "EmptyFilterMessage", "string?", "No results found", "Mensagem exibida quando o filtro não retorna opções." },
+                              new[] { "ListStyleClass", "string?", "null", "Classes adicionais aplicadas ao <code>&lt;ul&gt;</code> da lista." },
+                              new[] { "InputId", "string?", "null", "Base do id dos elementos internos (ex.: <code>{InputId}_list</code>); gerado automaticamente se omitido." },
+                              new[] { "Value", "TValue?", "null", "Valor selecionado no modo único. Combine com <code>@bind-Value</code>. (herdado)" },
+                              new[] { "Invalid", "bool", "false", "Estado de erro; também recebe o estado do <code>EditContext</code>. (herdado)" },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente. (herdado)" },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz. (herdado)" },
+                              new[] { "ValueExpression", "Expression&lt;Func&lt;TValue&gt;&gt;?", "null", "Expressão de binding do valor, criada por <code>@bind-Value</code>. (herdado)" },
+                              new[] { "CssClass", "string?", "null", "Classes de validação do campo no <code>EditContext</code>. (herdado)" },
+                              new[] { "DisplayName", "string?", "null", "Nome do campo em mensagens de validação. (herdado)" },
+                              new[] { "AdditionalAttributes", "IReadOnlyDictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner raiz. (herdado)" }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Eventos"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado ao mudar a seleção (modo single)." },
-                              new[] { "OnSelectionChange", "EventCallback&lt;IReadOnlyList&lt;TValue&gt;?&gt;", "Disparado ao mudar a seleção (modo múltiplo)." },
-                              new[] { "OnFilter", "EventCallback&lt;string&gt;", "Disparado ao filtrar." },
-                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao focar." },
-                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao desfocar." },
-                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao clicar." },
-                              new[] { "OnDblClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado ao dar duplo clique." },
-                              new[] { "OnSelectAllChange", "EventCallback&lt;bool&gt;", "Disparado ao alternar selecionar tudo." }
+                              new[] { "ItemTemplate", "RenderFragment&lt;TValue&gt;?", "Conteúdo customizado de cada item; o contexto é o próprio item." },
+                              new[] { "GroupTemplate", "RenderFragment&lt;object&gt;?", "Conteúdo customizado do cabeçalho de cada grupo; o contexto é o grupo." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo extra no cabeçalho da lista." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Conteúdo no rodapé da lista." },
+                              new[] { "EmptyTemplate", "RenderFragment?", "Conteúdo exibido quando não há opções." },
+                              new[] { "EmptyFilterTemplate", "RenderFragment?", "Conteúdo exibido quando o filtro não retorna opções." },
+                              new[] { "FilterTemplate", "RenderFragment?", "Conteúdo customizado do campo de filtro." },
+                              new[] { "CheckIconTemplate", "RenderFragment&lt;bool&gt;?", "Template do ícone de checkmark; o contexto indica se a opção está selecionada." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ItemTemplate", "RenderFragment&lt;TValue&gt;?", "Template do item da lista." },
-                              new[] { "GroupTemplate", "RenderFragment&lt;object&gt;?", "Template do grupo." },
-                              new[] { "HeaderTemplate", "RenderFragment?", "Template do cabeçalho." },
-                              new[] { "FooterTemplate", "RenderFragment?", "Template do rodapé." },
-                              new[] { "EmptyTemplate", "RenderFragment?", "Template quando vazio." },
-                              new[] { "EmptyFilterTemplate", "RenderFragment?", "Template quando o filtro não encontra opções." },
-                              new[] { "FilterTemplate", "RenderFragment?", "Template customizado do filtro." },
-                              new[] { "CheckIconTemplate", "RenderFragment&lt;bool&gt;?", "Template do ícone de checkmark." }
+                              new[] { "ValueChanged", "EventCallback&lt;TValue&gt;", "Callback de binding de <code>@bind-Value</code> (herdado)." },
+                              new[] { "SelectedValuesChanged", "EventCallback&lt;IReadOnlyList&lt;TValue&gt;?&gt;", "Callback de binding de <code>@bind-SelectedValues</code>." },
+                              new[] { "OnChange", "EventCallback&lt;TValue?&gt;", "Disparado ao mudar a seleção no modo único." },
+                              new[] { "OnSelectionChange", "EventCallback&lt;IReadOnlyList&lt;TValue&gt;?&gt;", "Disparado ao mudar a seleção no modo múltiplo." },
+                              new[] { "OnFilter", "EventCallback&lt;string&gt;", "Disparado ao alterar o texto do filtro." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando o componente recebe foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando o componente perde o foco." },
+                              new[] { "OnClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado no clique sobre a lista." },
+                              new[] { "OnDblClick", "EventCallback&lt;MouseEventArgs&gt;", "Disparado no duplo clique sobre uma opção." },
+                              new[] { "OnSelectAllChange", "EventCallback&lt;bool&gt;", "Disparado ao alternar o checkbox de selecionar tudo." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="listbox"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-listbox", "Contêiner raiz." },
+                              new[] { "p-listbox-striped", "Raiz quando <code>Striped</code> está ativo." },
+                              new[] { "p-listbox-header", "Cabeçalho da lista (filtro e selecionar tudo)." },
+                              new[] { "p-listbox-header-checkbox", "Contêiner do checkbox de selecionar tudo." },
+                              new[] { "p-listbox-filter-container", "Contêiner do campo de filtro." },
+                              new[] { "p-listbox-filter", "Campo de entrada do filtro." },
+                              new[] { "p-listbox-list-container", "Contêiner da lista com a altura máxima; também no scroll virtual." },
+                              new[] { "p-listbox-list", "O <code>&lt;ul&gt;</code> com <code>role=&quot;listbox&quot;</code>." },
+                              new[] { "p-listbox-option", "Cada <code>&lt;li&gt;</code> com <code>role=&quot;option&quot;</code>." },
+                              new[] { "p-listbox-option-selected", "Opção selecionada quando <code>HighlightOnSelect</code> está ativo." },
+                              new[] { "p-listbox-option-group", "Cabeçalho de um grupo." },
+                              new[] { "p-listbox-option-check-icon", "Ícone de checkmark / checkbox de cada opção." },
+                              new[] { "p-listbox-option-blank-icon", "Ícone vazio que reserva o espaço do checkmark." },
+                              new[] { "p-listbox-empty-message", "Mensagem de lista vazia." },
+                              new[] { "p-focus", "Opção com foco (teclado ou mouse)." },
+                              new[] { "p-disabled / p-invalid", "Raiz conforme o estado do componente." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="listbox"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>ListStyleClass</code> e os templates para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>ListStyleClass</code> e os templates (<code>ItemTemplate</code>, <code>GroupTemplate</code>, <code>HeaderTemplate</code>, <code>FilterTemplate</code>, etc.). Atributos extras são repassados ao contêiner raiz.</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Virtual scroll e drag &amp; drop não foram portados (dependem de infraestrutura externa).</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há suporte a arrastar e soltar: o <code>dragDrop</code> do upstream (via <code>@@angular/cdk</code>) não foi portado e não existe parâmetro equivalente.</li>
+                        <li>Não há <code>metaKeySelection</code>: no modo múltiplo cada clique alterna a seleção, sem exigir tecla modificadora.</li>
+                        <li>Os atalhos estendidos do upstream (<code>shift</code>/<code>control</code> + setas, <code>control</code> + <code>A</code>, <code>control</code> + <code>shift</code> + <code>home</code>/<code>end</code>) não estão implementados; há apenas navegação, <code>home</code>/<code>end</code> e busca por digitação.</li>
+                        <li>Não há <code>AriaLabelledBy</code>: o rótulo acessível vem apenas de <code>AriaLabel</code>. Atributos extras são aplicados ao contêiner raiz, não ao elemento com <code>role="listbox"</code>.</li>
+                        <li>O parâmetro <code>Required</code> não altera o markup nem adiciona <code>aria-required</code>; use a validação do <code>EditForm</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -249,15 +382,15 @@
 
 @code {
     private City? _city;
-    private City? _city2;
-    private City? _city3;
-    private City? _city4;
-    private City? _city5;
-    private City? _city6;
-    private IReadOnlyList<City>? _cities;
-    private IReadOnlyList<City>? _cities2;
-    private string? _country;
+    private City? _cityCheckmark;
+    private City? _cityFilter;
+    private City? _cityTemplate;
+    private City? _cityInvalid;
+    private City? _cityDisabled;
     private City? _virtualCity;
+    private IReadOnlyList<City>? _citiesCheckbox;
+    private IReadOnlyList<City>? _citiesMultiple;
+    private string? _country;
 
     private bool _submitted;
     private FormModel _form = new();
@@ -268,10 +401,7 @@
         public City? City { get; set; }
     }
 
-    private void OnValidSubmit()
-    {
-        _submitted = true;
-    }
+    private void OnValidSubmit() => _submitted = true;
 
     private sealed class City
     {
@@ -312,59 +442,83 @@
         """;
 
     private const string BasicCode = """
-        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" OptionValue="Code" StyleClass="w-full md:w-56" />
-        """;
-
-    private const string CheckboxCode = """
-        <OpListbox TValue="City" @bind-SelectedValues="_cities" Options="Cities" Multiple="true" Checkbox="true" OptionLabel="Name" />
+        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" OptionValue="Code" StyleClass="w-56" />
         """;
 
     private const string CheckmarkCode = """
-        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" Checkmark="true" HighlightOnSelect="false" />
+        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" Checkmark="true" HighlightOnSelect="false" StyleClass="w-56" />
         """;
 
-    private const string DisabledCode = """
-        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" Disabled="true" />
-        """;
-
-    private const string FilterCode = """
-        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" Filter="true" />
-        """;
-
-    private const string GroupCode = """
-        <OpListbox TValue="string" @bind-Value="_country" Options="CountryGroups" Group="true" OptionGroupLabel="Label" OptionGroupChildren="Items" />
-        """;
-
-    private const string InvalidCode = """
-        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" Invalid="true" />
+    private const string CheckboxCode = """
+        <OpListbox TValue="City" @bind-SelectedValues="_cities" Options="Cities" Multiple="true" Checkbox="true" OptionLabel="Name" StyleClass="w-56" />
         """;
 
     private const string MultipleCode = """
-        <OpListbox TValue="City" @bind-SelectedValues="_cities" Options="Cities" OptionLabel="Name" Multiple="true" />
+        <OpListbox TValue="City" @bind-SelectedValues="_cities" Options="Cities" OptionLabel="Name" Multiple="true" StyleClass="w-56" />
         """;
 
-    private const string VirtualScrollCode = """
-        <OpListbox TValue="City" @bind-Value="_city" Options="ManyCities" OptionLabel="Name"
-                   VirtualScroll="true" ScrollHeight="200px" />
+    private const string GroupCode = """
+        <OpListbox TValue="string" @bind-Value="_country" Options="CountryGroups" Group="true" OptionGroupLabel="Label" OptionGroupChildren="Items" StyleClass="w-56">
+            <GroupTemplate Context="g">
+                <div class="flex items-center gap-2">
+                    <span class="pi pi-flag" aria-hidden="true"></span>
+                    <span>@(((CountryGroup)g).Label)</span>
+                </div>
+            </GroupTemplate>
+        </OpListbox>
+        """;
+
+    private const string FilterCode = """
+        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" Filter="true" StyleClass="w-56" />
         """;
 
     private const string TemplateCode = """
-        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name">
+        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" StyleClass="w-56">
             <ItemTemplate Context="c">
-                <div style="display:flex; align-items:center; gap:.5rem;">
-                    <span class="pi pi-map-marker"></span>
+                <div class="flex items-center gap-2">
+                    <span class="pi pi-map-marker" style="color:var(--p-primary-color)"></span>
                     <span>@c.Name</span>
+                    <span style="margin-left:auto; color:var(--p-text-muted-color); font-size:.8rem;">@c.Code</span>
                 </div>
             </ItemTemplate>
         </OpListbox>
         """;
 
-    private const string ValidationCode = """
+    private const string VirtualScrollCode = """
+        <OpListbox TValue="City" @bind-Value="_city" Options="ManyCities" OptionLabel="Name"
+                   VirtualScroll="true" ScrollHeight="200px" VirtualScrollItemSize="40" Striped="true" StyleClass="w-56" />
+        """;
+
+    private const string InvalidCode = """
+        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" Invalid="true" StyleClass="w-56" />
+        """;
+
+    private const string DisabledCode = """
+        <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" Disabled="true" StyleClass="w-56" />
+        """;
+
+    private const string FormsCode = """
         <EditForm Model="_form" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
-            <OpListbox TValue="City" @bind-Value="_form.City" Options="Cities" OptionLabel="Name" Invalid="@(!_submitted && _form.City is null)" />
+            <OpListbox TValue="City" @bind-Value="_form.City" Options="Cities" OptionLabel="Name" />
             <ValidationMessage For="() => _form.City" />
             <button type="submit" class="p-button p-component">Enviar</button>
         </EditForm>
+
+        @code {
+            private sealed class FormModel
+            {
+                [Required(ErrorMessage = "A cidade é obrigatória.")]
+                public City? City { get; set; }
+            }
+
+            private FormModel _form = new();
+
+            private void OnValidSubmit() { /* ... */ }
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpListbox TValue="City" Options="Cities" OptionLabel="Name" AriaLabel="Cidade" />
         """;
 }
