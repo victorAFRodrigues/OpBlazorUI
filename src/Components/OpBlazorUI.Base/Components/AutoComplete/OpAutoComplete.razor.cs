@@ -2,11 +2,12 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.AutoComplete;
 
-public partial class OpAutoComplete<TValue> : ComponentBase
+public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
 {
     private ElementReference _rootRef;
 
@@ -32,8 +33,6 @@ public partial class OpAutoComplete<TValue> : ComponentBase
     [Parameter] public string? OptionLabel { get; set; }
     [Parameter] public string? OptionValue { get; set; }
     [Parameter] public string? OptionDisabled { get; set; }
-    [Parameter] public TValue? Value { get; set; }
-    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
     [Parameter] public bool Multiple { get; set; }
     [Parameter] public IReadOnlyList<TValue>? MultipleValue { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> MultipleValueChanged { get; set; }
@@ -41,9 +40,7 @@ public partial class OpAutoComplete<TValue> : ComponentBase
     [Parameter] public bool Dropdown { get; set; }
     [Parameter] public string DropdownMode { get; set; } = "blank";
     [Parameter] public bool ShowClear { get; set; }
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
-    [Parameter] public bool Invalid { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public bool Group { get; set; }
     [Parameter] public string OptionGroupLabel { get; set; } = "label";
@@ -65,7 +62,6 @@ public partial class OpAutoComplete<TValue> : ComponentBase
     [Parameter] public string? AriaLabelledBy { get; set; }
     [Parameter] public string? InputId { get; set; }
     [Parameter] public bool AutoFocus { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
     [Parameter] public string? PanelStyleClass { get; set; }
 
     // virtual scroll
@@ -97,9 +93,6 @@ public partial class OpAutoComplete<TValue> : ComponentBase
     [Parameter] public RenderFragment? DropdownIconTemplate { get; set; }
     [Parameter] public RenderFragment? ClearIconTemplate { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
@@ -125,10 +118,10 @@ public partial class OpAutoComplete<TValue> : ComponentBase
     }
 
     // ------------------------------------------------------------ computed
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-autocomplete p-component p-inputwrapper",
         Disabled ? "p-disabled" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         _focus ? "p-focus" : null,
         HasSelection ? "p-inputwrapper-filled" : null,
@@ -137,23 +130,23 @@ public partial class OpAutoComplete<TValue> : ComponentBase
         Fluid ? "p-autocomplete-fluid" : null,
         StyleClass);
 
-    private string InputClass => BuildClass(
+    private string InputClass => OpCss.BuildClass(
         "p-autocomplete-input p-inputtext",
         Fluid ? "p-inputtext-fluid" : null,
         Size == "small" ? "p-inputtext-sm" : null,
         Size == "large" ? "p-inputtext-lg" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         Variant == "filled" ? "p-variant-filled" : null);
 
-    private string MultipleClass => BuildClass(
+    private string MultipleClass => OpCss.BuildClass(
         "p-autocomplete-input-multiple",
         Size == "small" ? "p-inputtext-sm" : null,
         Size == "large" ? "p-inputtext-lg" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         Disabled ? "p-disabled" : null);
 
-    private string PanelClass => BuildClass(
+    private string PanelClass => OpCss.BuildClass(
         "p-autocomplete-overlay p-component-overlay p-component",
         PanelStyleClass,
         _panelAnimationClass);
@@ -265,7 +258,7 @@ public partial class OpAutoComplete<TValue> : ComponentBase
 
     private string OptionClass(object option)
     {
-        return BuildClass(
+        return OpCss.BuildClass(
             "p-autocomplete-option",
             IsSelected(option) ? "p-autocomplete-option-selected" : null,
             IsOptionDisabled(option) ? "p-disabled" : null);
@@ -421,8 +414,7 @@ public partial class OpAutoComplete<TValue> : ComponentBase
             if (!matches)
             {
                 _inputValue = string.Empty;
-                Value = default;
-                await ValueChanged.InvokeAsync(default);
+                CurrentValue = default;
                 await OnChange.InvokeAsync(default);
             }
         }
@@ -620,9 +612,8 @@ public partial class OpAutoComplete<TValue> : ComponentBase
         {
             if (option is TValue tv)
             {
-                Value = tv;
+                CurrentValue = tv;
                 _inputValue = GetOptionLabel(option);
-                await ValueChanged.InvokeAsync(tv);
                 await OnChange.InvokeAsync(tv);
                 await OnSelect.InvokeAsync(new OpAutoCompleteSelectEvent { Option = option });
             }
@@ -700,14 +691,11 @@ public partial class OpAutoComplete<TValue> : ComponentBase
         }
         else
         {
-            Value = default;
+            CurrentValue = default;
             _inputValue = string.Empty;
-            await ValueChanged.InvokeAsync(default);
         }
 
         await OnClear.InvokeAsync();
     }
 
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

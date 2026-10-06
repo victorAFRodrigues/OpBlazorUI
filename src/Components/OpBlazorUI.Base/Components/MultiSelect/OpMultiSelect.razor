@@ -6,7 +6,9 @@
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
+@using OpBlazorUI.Base.Components.Forms
 @typeparam TValue
+@inherits OpInputBase<IReadOnlyList<TValue>>
 
 <div class="@RootClass" @ref="_rootRef" style="position: relative" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
      @onkeydown="OnRootKeydown" @attributes="AdditionalAttributes">
@@ -121,7 +123,7 @@
                 <div class="p-multiselect-header" @onclick:stopPropagation="true">
                     @if (ShowToggleAll)
                     {
-                        <OpCheckbox Checked="@AllSelected" Variant="@Variant" Disabled="@Disabled"
+                        <OpCheckbox Value="@AllSelected" Variant="@Variant" Disabled="@Disabled"
                                     AriaLabel="Selecionar todos" OnChange="_ => ToggleAllAsync()"/>
                     }
                     @if (Filter)
@@ -196,7 +198,7 @@
                             <li class="@OptionClass(child)" role="option" aria-label="@GetOptionLabel(child)"
                                 aria-selected="@(isSel ? "true" : "false")"
                                 @onclick="() => OnOptionClick(child)">
-                                <OpCheckbox Checked="@isSel" TabIndex="-1" Variant="@Variant"/>
+                                <OpCheckbox Value="@isSel" TabIndex="-1" Variant="@Variant"/>
                                 @if (ItemTemplate != null && child is TValue childTv)
                                 {
                                     @ItemTemplate(childTv)
@@ -251,7 +253,7 @@
             data-p-focused="@(_focusedOptionIndex == index ? "true" : null)"
             @onclick="() => OnOptionClick(option)"
             @onmouseenter="() => OnOptionMouseEnter(index)">
-            <OpCheckbox Checked="@isSel" TabIndex="-1" Variant="@Variant"/>
+            <OpCheckbox Value="@isSel" TabIndex="-1" Variant="@Variant"/>
             @if (ItemTemplate != null && option is TValue optTv)
             {
                 @ItemTemplate(optTv)

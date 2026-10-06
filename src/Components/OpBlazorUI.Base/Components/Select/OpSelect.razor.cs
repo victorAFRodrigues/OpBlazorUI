@@ -1,10 +1,11 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.Select;
 
-public partial class OpSelect<TValue> : ComponentBase
+public partial class OpSelect<TValue> : OpInputBase<TValue>
 {
     private ElementReference _rootRef;
 
@@ -25,8 +26,6 @@ public partial class OpSelect<TValue> : ComponentBase
     [Parameter] public string? OptionLabel { get; set; }
     [Parameter] public string? OptionValue { get; set; }
     [Parameter] public string? OptionDisabled { get; set; }
-    [Parameter] public TValue? Value { get; set; }
-    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public bool Filter { get; set; }
     [Parameter] public string? FilterBy { get; set; }
@@ -34,8 +33,6 @@ public partial class OpSelect<TValue> : ComponentBase
     [Parameter] public bool ShowClear { get; set; }
     [Parameter] public bool Editable { get; set; }
     [Parameter] public bool Readonly { get; set; }
-    [Parameter] public bool Disabled { get; set; }
-    [Parameter] public bool Invalid { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public bool Group { get; set; }
     [Parameter] public string OptionGroupLabel { get; set; } = "label";
@@ -55,7 +52,6 @@ public partial class OpSelect<TValue> : ComponentBase
     [Parameter] public string? InputId { get; set; }
     [Parameter] public bool ShowOnFocus { get; set; } = true;
     [Parameter] public string? PanelStyleClass { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
 
     // events
     [Parameter] public EventCallback<TValue?> OnChange { get; set; }
@@ -79,9 +75,6 @@ public partial class OpSelect<TValue> : ComponentBase
     [Parameter] public RenderFragment? LoadingIconTemplate { get; set; }
     [Parameter] public RenderFragment? ClearIconTemplate { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
     {
@@ -89,12 +82,12 @@ public partial class OpSelect<TValue> : ComponentBase
     }
 
     // ------------------------------------------------------------ computed
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-select p-component p-inputwrapper",
         Disabled ? "p-disabled" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         _focus ? "p-focus" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         HasSelection ? "p-inputwrapper-filled" : null,
         _focus || _overlayVisible ? "p-inputwrapper-focus" : null,
         _overlayVisible ? "p-select-open" : null,
@@ -110,14 +103,14 @@ public partial class OpSelect<TValue> : ComponentBase
             // .p-select-label-empty aplica opacity:0; só deve valer sem valor nem
             // placeholder (como no PrimeNG). Com placeholder, usa-se .p-placeholder.
             var showPlaceholder = !Editable && !HasSelection && !string.IsNullOrEmpty(Placeholder);
-            return BuildClass(
+            return OpCss.BuildClass(
                 "p-select-label",
                 showPlaceholder ? "p-placeholder" : null,
                 !Editable && !HasSelection && !showPlaceholder ? "p-select-label-empty" : null);
         }
     }
 
-    private string PanelClass => BuildClass(
+    private string PanelClass => OpCss.BuildClass(
         "p-select-overlay p-component-overlay p-component",
         PanelStyleClass,
         _panelAnimationClass);
@@ -284,7 +277,7 @@ public partial class OpSelect<TValue> : ComponentBase
     {
         var isDisabled = IsOptionDisabled(option);
         var isSel = IsSelected(option);
-        return BuildClass(
+        return OpCss.BuildClass(
             "p-select-option",
             isSel && !Checkmark ? "p-select-option-selected" : null,
             isDisabled ? "p-disabled" : null);
@@ -438,8 +431,7 @@ public partial class OpSelect<TValue> : ComponentBase
     {
         if (option is TValue tv)
         {
-            Value = tv;
-            await ValueChanged.InvokeAsync(tv);
+            CurrentValue = tv;
             await OnChange.InvokeAsync(tv);
         }
 
@@ -610,11 +602,7 @@ public partial class OpSelect<TValue> : ComponentBase
 
     private async Task Clear(MouseEventArgs? _ = null)
     {
-        Value = default;
-        await ValueChanged.InvokeAsync(default);
+        CurrentValue = default;
         await OnClear.InvokeAsync();
     }
-
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

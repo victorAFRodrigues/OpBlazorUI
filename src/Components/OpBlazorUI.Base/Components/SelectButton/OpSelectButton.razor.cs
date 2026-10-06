@@ -1,28 +1,21 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.SelectButton;
 
-public partial class OpSelectButton<TValue> : ComponentBase
+public partial class OpSelectButton<TValue> : OpInputBase<TValue>
 {
     [Parameter] public IReadOnlyList<object>? Options { get; set; }
     [Parameter] public string? OptionLabel { get; set; }
     [Parameter] public string? OptionValue { get; set; }
     [Parameter] public string? OptionDisabled { get; set; }
-    [Parameter] public TValue? Value { get; set; }
-    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
     [Parameter] public bool Multiple { get; set; }
     [Parameter] public IReadOnlyList<TValue>? MultipleValue { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> MultipleValueChanged { get; set; }
     [Parameter] public bool AllowEmpty { get; set; } = true;
-    [Parameter] public bool Disabled { get; set; }
-    [Parameter] public bool Invalid { get; set; }
     [Parameter] public bool Fluid { get; set; }
     [Parameter] public string? Size { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     [Parameter] public RenderFragment<(TValue Option, int Index)>? ItemTemplate { get; set; }
 
@@ -30,9 +23,9 @@ public partial class OpSelectButton<TValue> : ComponentBase
 
     private IEnumerable<object> AllOptions => Options ?? Array.Empty<object>();
 
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-selectbutton p-component",
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         Fluid ? "p-selectbutton-fluid" : null,
         StyleClass);
 
@@ -119,19 +112,14 @@ public partial class OpSelectButton<TValue> : ComponentBase
             if (IsSelected(option))
             {
                 if (!AllowEmpty) return;
-                Value = default;
-                await ValueChanged.InvokeAsync(default);
+                CurrentValue = default;
                 await OnChange.InvokeAsync(default);
             }
             else
             {
-                Value = tv;
-                await ValueChanged.InvokeAsync(tv);
+                CurrentValue = tv;
                 await OnChange.InvokeAsync(tv);
             }
         }
     }
-
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

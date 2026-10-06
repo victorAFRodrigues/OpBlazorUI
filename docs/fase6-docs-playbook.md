@@ -115,11 +115,34 @@ Incluir só as que se aplicam ao componente:
 | Seção | Quando | Conteúdo |
 |---|---|---|
 | **Binding** (`@bind-Value`, `ValueChanged`, `@bind-Value:after`) | todo input/seleção | demo mostrando o valor ao vivo |
-| **Formulários** (`EditForm`, `DataAnnotationsValidator`, `Invalid`) | todo input | substitui "Reactive Forms"/"Template Driven" do upstream |
+| **Formulários** (`EditForm`, `DataAnnotationsValidator`, `Invalid`) | todo input | substitui "Reactive Forms"/"Template Driven" do upstream (ver §3.1) |
 | **Eventos** | componentes com `EventCallback` | handler síncrono e `async Task`, com contador/log |
 | **Largura total** (`Fluid`) | se o parâmetro existir e o upstream não demonstrar | |
 | **Diretiva → markup/classes** | quando o upstream tem `pX` (diretiva) | mostrar as classes CSS equivalentes |
 | **Render modes** | componentes com JS/overlay | nota sobre SSR estático/Server/WASM, se houver comportamento diferente |
+
+### 3.1 Bloco padrão de Formulários
+
+Os componentes de entrada herdam de `OpInputBase<TValue>` (que estende `InputBase<TValue>`), então a
+integração com `EditForm` é automática. Toda página de input deve trazer este bloco:
+
+```razor
+<EditForm Model="_model" OnValidSubmit="HandleValid">
+    <DataAnnotationsValidator/>
+    <OpInputText @bind-Value="_model.Name" Placeholder="Nome"/>
+    <ValidationMessage For="() => _model.Name"/>
+    <OpButton Type="submit">Salvar</OpButton>
+</EditForm>
+```
+
+Regras:
+
+- `@bind-Value` gera o `ValueExpression`, que registra o campo no `EditContext`. Sem ele o componente
+  ainda funciona (a base injeta um `ValueExpression` de fallback), mas fora do formulário.
+- **Não passe `Invalid` manualmente para refletir a validação.** `Invalid` é OR-ed com o estado do
+  `EditContext`; o `p-invalid`/`aria-invalid` saem sozinhos quando há mensagem de erro.
+- Use `Invalid="true"` apenas para erro *fora* de `EditForm` (ex.: estado forçado pela demo).
+- `RadioButton` e `SelectButton` em modo múltiplo não participam do `EditForm` (não são `InputBase` 1:1).
 
 ---
 
@@ -148,6 +171,9 @@ Incluir só as que se aplicam ao componente:
 
 **API**
 - Fonte é o `.razor.cs`, não o upstream. Todo `[Parameter]` público aparece — inclusive `AdditionalAttributes`.
+- **Parâmetros herdados** entram na tabela: de `InputBase<TValue>` (`Value`, `ValueChanged`, `ValueExpression`,
+  `AdditionalAttributes`, `CssClass`, `DisplayName`) e de `OpInputBase<TValue>` (`Invalid`, `Disabled`,
+  `StyleClass`). São API pública do componente.
 - Dividir em Propriedades / Templates / Eventos; na coluna Tipo, escapar genéricos (`EventCallback&lt;T&gt;`).
 - Valores permitidos de strings enumeradas listados na descrição.
 

@@ -1,13 +1,12 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Forms;
 
 namespace OpBlazorUI.Base.Components.InputNumber;
 
-public partial class OpInputNumber : ComponentBase
+public partial class OpInputNumber : OpInputBase<decimal?>
 {
-    [Parameter] public decimal? Value { get; set; }
-    [Parameter] public EventCallback<decimal?> ValueChanged { get; set; }
     [Parameter] public decimal? Min { get; set; }
     [Parameter] public decimal? Max { get; set; }
     [Parameter] public decimal Step { get; set; } = 1;
@@ -25,8 +24,6 @@ public partial class OpInputNumber : ComponentBase
     [Parameter] public bool ShowClear { get; set; }
     [Parameter] public string? IncrementButtonIcon { get; set; } = "pi pi-angle-up";
     [Parameter] public string? DecrementButtonIcon { get; set; } = "pi pi-angle-down";
-    [Parameter] public bool Invalid { get; set; }
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Readonly { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
@@ -35,7 +32,6 @@ public partial class OpInputNumber : ComponentBase
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? Autocomplete { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
     [Parameter] public string? InputClass { get; set; }
 
     [Parameter] public EventCallback<decimal?> OnInput { get; set; }
@@ -45,9 +41,6 @@ public partial class OpInputNumber : ComponentBase
     [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
     [Parameter] public EventCallback OnClear { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
     private static readonly Dictionary<string, string> CurrencySymbols = new(StringComparer.OrdinalIgnoreCase)
     {
         ["USD"] = "$", ["EUR"] = "€", ["INR"] = "₹", ["JPY"] = "¥",
@@ -55,25 +48,25 @@ public partial class OpInputNumber : ComponentBase
     };
 
     // Classes de inputnumberstyle.ts: layout só com botões; variante e p-filled vão no input.
-    private string RootClass => BuildClass(
+    private string RootClass => OpCss.BuildClass(
         "p-inputnumber p-component p-inputwrapper",
-        Value is not null ? "p-inputwrapper-filled" : null,
+        CurrentValue is not null ? "p-inputwrapper-filled" : null,
         _focused ? "p-inputwrapper-focus" : null,
         ShowButtons && ButtonLayout == "stacked" ? "p-inputnumber-stacked" : null,
         ShowButtons && ButtonLayout == "horizontal" ? "p-inputnumber-horizontal" : null,
         ShowButtons && ButtonLayout == "vertical" ? "p-inputnumber-vertical" : null,
         Fluid ? "p-inputnumber-fluid" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         StyleClass);
 
-    private string InputClassValue => BuildClass(
+    private string InputClassValue => OpCss.BuildClass(
         "p-inputnumber-input p-inputtext p-component",
-        Value is not null ? "p-filled" : null,
+        CurrentValue is not null ? "p-filled" : null,
         Variant == "filled" ? "p-variant-filled" : null,
         Fluid ? "p-inputtext-fluid" : null,
         Size == "small" ? "p-inputtext-sm" : null,
         Size == "large" ? "p-inputtext-lg" : null,
-        Invalid ? "p-invalid" : null,
+        IsInvalid ? "p-invalid" : null,
         InputClass);
 
     private CultureInfo GetCulture()
@@ -154,8 +147,7 @@ public partial class OpInputNumber : ComponentBase
 
     private async Task SetValueAsync(decimal? value, bool raiseInput)
     {
-        Value = value;
-        await ValueChanged.InvokeAsync(value);
+        CurrentValue = value;
         if (raiseInput) await OnInput.InvokeAsync(value);
     }
 
@@ -191,8 +183,7 @@ public partial class OpInputNumber : ComponentBase
         if (TryParseNumber(text, out var parsed))
         {
             var clamped = Clamp(parsed);
-            Value = clamped;
-            await ValueChanged.InvokeAsync(clamped);
+            CurrentValue = clamped;
             await OnChange.InvokeAsync(clamped);
         }
     }
@@ -241,7 +232,7 @@ public partial class OpInputNumber : ComponentBase
     private async Task StepAsync(int direction)
     {
         if (Readonly || Disabled) return;
-        var current = Value ?? 0;
+        var current = CurrentValue ?? 0;
         var next = Clamp(current + Step * direction);
         if (next != current)
         {
@@ -254,7 +245,4 @@ public partial class OpInputNumber : ComponentBase
         await SetValueAsync(null, true);
         await OnClear.InvokeAsync();
     }
-
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }

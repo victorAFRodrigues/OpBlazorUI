@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.InputText
+@using System.ComponentModel.DataAnnotations
 
 <DocComponent Title="InputText"
               Description="O InputText renderiza um campo de texto para inserir dados.">
@@ -47,6 +48,27 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@StateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Validação">
+            <Description>
+                O InputText herda de <code>InputBase&lt;string&gt;</code>, então integra-se ao
+                <code>EditForm</code> com DataAnnotations. O estado <code>invalid</code> é aplicado
+                automaticamente quando há erro de validação.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpInputText @bind-Value="_form.Name" Placeholder="Usuário" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _form.Name"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <div class="text-sm" style="color:var(--p-green-600)">Nome: @_form.Name</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
         </DocSection>
     </Features>
 
@@ -137,5 +159,38 @@
     private const string StateCode = """
         <OpInputText Placeholder="Inválido" Invalid="true" />
         <OpInputText Placeholder="Desabilitado" Disabled="true" />
+        """;
+
+    private bool _submitted;
+    private TextFormModel _form = new();
+
+    private sealed class TextFormModel
+    {
+        [Required(ErrorMessage = "O nome é obrigatório.")]
+        public string? Name { get; set; }
+    }
+
+    private void OnSubmit() => _submitted = true;
+
+    private const string ValidationCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpInputText @bind-Value="_form.Name" Placeholder="Usuário" />
+            <ValidationMessage For="() => _form.Name" />
+            <button type="submit">Enviar</button>
+        </EditForm>
+
+        @code {
+            private bool _submitted;
+            private TextFormModel _form = new();
+
+            private sealed class TextFormModel
+            {
+                [Required(ErrorMessage = "O nome é obrigatório.")]
+                public string? Name { get; set; }
+            }
+
+            private void OnSubmit() => _submitted = true;
+        }
         """;
 }
