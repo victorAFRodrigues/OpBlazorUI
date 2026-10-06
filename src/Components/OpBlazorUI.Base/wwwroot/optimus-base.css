@@ -292,6 +292,81 @@ body {
 }
 
 /*
+ * ConfirmDialog — Appearance="Badge".
+ *
+ * Extensão do OpBlazorUI: não existe no OptimusUI/PrimeNG. O DOM segue o upstream
+ * (header/content/footer) e só o layout muda: badge circular sobreposto ao topo do card,
+ * título e ações centralizados e largura fixa. Cor, borda e contraste vêm dos tokens do
+ * tema, então a variante acompanha os modos claro/escuro e os presets Aura, Lara e Nora.
+ */
+.p-confirmdialog-badge {
+    position: relative;
+    width: 25.625rem;
+    max-width: calc(100vw - 2rem);
+    text-align: center;
+}
+
+/* 68px no topo: 45px (metade do badge) ficam fora do card, o resto é o respiro do título. */
+.p-confirmdialog-badge .p-dialog-header {
+    justify-content: center;
+    padding: 4.25rem 1.875rem 0;
+}
+
+.p-confirmdialog-badge .p-dialog-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* O X sai do fluxo do header para não empurrar o título do centro. */
+.p-confirmdialog-badge .p-dialog-header-actions {
+    position: absolute;
+    top: 1rem;
+    inset-inline-end: 1rem;
+}
+
+.p-confirmdialog-badge .p-confirmdialog-icon {
+    position: absolute;
+    top: -2.8125rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 5.625rem;
+    height: 5.625rem;
+    border-radius: 50%;
+    background: var(--p-primary-color);
+    color: var(--p-primary-contrast-color);
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.p-confirmdialog-badge .p-dialog-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.875rem;
+}
+
+.p-confirmdialog-badge .p-confirmdialog-message {
+    font-size: 1rem;
+    color: var(--p-text-muted-color);
+}
+
+.p-confirmdialog-badge .p-dialog-footer {
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 1.875rem 1.875rem;
+}
+
+.p-confirmdialog-badge .p-dialog-footer .p-button {
+    width: 7.5rem;
+    height: 2.25rem;
+    justify-content: center;
+}
+
+/*
  * BlockUI — máscara centralizada sobre o conteúdo.
  */
 .p-blockui-mask {
