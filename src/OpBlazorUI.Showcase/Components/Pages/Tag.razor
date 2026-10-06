@@ -3,15 +3,20 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Tag
 
+<PageTitle>Tag - OpBlazorUI</PageTitle>
+
 <DocComponent Title="Tag"
               Description="O Tag é usado para categorizar conteúdo.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                O texto exibido na tag é definido pela propriedade <code>Value</code>.
+            </Description>
             <ChildContent>
                 <div class="flex justify-center">
                     <OpTag Value="New"/>
@@ -20,100 +25,195 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Severidade">
+        <DocSection Label="Severidade" Id="severity">
+            <Description>
+                A propriedade <code>Severity</code> define a cor da tag: <code>secondary</code>,
+                <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code> e
+                <code>contrast</code>. Sem severidade, é usada a cor primária do tema.
+            </Description>
             <ChildContent>
-                <div class="flex justify-center gap-2 flex-wrap">
-                    <OpTag Value="Primary"/>
-                    <OpTag Severity="secondary" Value="Secondary"/>
-                    <OpTag Severity="success" Value="Success"/>
-                    <OpTag Severity="info" Value="Info"/>
-                    <OpTag Severity="warn" Value="Warn"/>
-                    <OpTag Severity="danger" Value="Danger"/>
-                    <OpTag Severity="contrast" Value="Contrast"/>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    @foreach (var s in Severities)
+                    {
+                        <OpTag Value="@s.Value" Severity="@s.Severity"/>
+                    }
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@SeverityCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Ícone">
+        <DocSection Label="Pill" Id="pill">
+            <Description>
+                Com <code>Rounded="true"</code> a tag é exibida como pílula, com cantos totalmente
+                arredondados (classe <code>p-tag-rounded</code>).
+            </Description>
             <ChildContent>
-                <div class="flex justify-center gap-2 flex-wrap">
-                    <OpTag Icon="pi pi-user" Value="Primary"/>
-                    <OpTag Icon="pi pi-search" Severity="secondary" Value="Secondary"/>
-                    <OpTag Icon="pi pi-check" Severity="success" Value="Success"/>
-                    <OpTag Icon="pi pi-info-circle" Severity="info" Value="Info"/>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    @foreach (var s in Severities)
+                    {
+                        <OpTag Value="@s.Value" Severity="@s.Severity" Rounded="true"/>
+                    }
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PillCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícone" Id="icon">
+            <Description>
+                O ícone ao lado do valor é definido pela propriedade <code>Icon</code> (qualquer classe de ícone,
+                ex.: <code>pi pi-user</code>). O ícone é decorativo e recebe <code>aria-hidden</code>; para
+                substituí-lo, use <code>IconTemplate</code> (ver Template).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    @foreach (var s in IconSeverities)
+                    {
+                        <OpTag Value="@s.Value" Icon="@s.Icon" Severity="@s.Severity"/>
+                    }
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@IconCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Pílula">
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O conteúdo filho (<code>ChildContent</code>) substitui o <code>Value</code>; nesse caso o layout
+                interno fica por sua conta e <code>AdditionalAttributes</code> continua sendo repassado ao elemento
+                raiz. Para trocar apenas o ícone, use <code>IconTemplate</code>.
+            </Description>
             <ChildContent>
-                <div class="flex justify-center gap-2 flex-wrap">
-                    <OpTag Value="Primary" Rounded="true"/>
-                    <OpTag Severity="success" Value="Success" Rounded="true"/>
-                    <OpTag Severity="danger" Value="Danger" Rounded="true"/>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <OpTag Style="border: 2px solid var(--p-content-border-color); background: transparent; color: var(--p-text-color);">
+                        <span style="display: flex; align-items: center; gap: .5rem; padding: 0 .25rem;">
+                            <span style="width: 1rem; height: 1rem; border-radius: 50%; background: var(--p-primary-color);"></span>
+                            <span>Itália</span>
+                        </span>
+                    </OpTag>
+                    <OpTag Value="Pago" Severity="success">
+                        <IconTemplate>
+                            <i class="pi pi-check" aria-hidden="true"></i>
+                        </IconTemplate>
+                    </OpTag>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@PillCode"/></Code>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    A Tag não inclui <code>role</code> nem atributos de acessibilidade por padrão, mas qualquer
+                    atributo extra é repassado ao elemento raiz, então <code>role</code> e <code>aria-*</code> podem
+                    ser adicionados quando necessário. Se as tags forem dinâmicas, <code>aria-live</code> também
+                    pode ser utilizado. Para tornar uma tag focável, informe <code>tabindex</code> e implemente os
+                    manipuladores de teclado.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>O componente não inclui elementos interativos.</p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Value", "string?", "null", "Valor exibido dentro do tag." },
-                              new[] { "Severity", "string?", "primary", "Severidade: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code> ou <code>contrast</code>." },
-                              new[] { "Icon", "string?", "null", "Ícone exibido ao lado do valor." },
-                              new[] { "Rounded", "bool", "false", "Cantos arredondados (pílula)." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "Style", "string?", "null", "Estilos inline adicionais." }
+                              new[] { "Value", "string?", "null", "Texto exibido dentro da tag." },
+                              new[] { "Severity", "string?", "null", "Severidade: <code>secondary</code>, <code>success</code>, <code>info</code>, <code>warn</code>, <code>danger</code> ou <code>contrast</code>. Sem valor, usa a cor primária do tema." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone exibido ao lado do valor (ex.: <code>pi pi-user</code>)." },
+                              new[] { "Rounded", "bool", "false", "Exibe a tag como pílula (cantos totalmente arredondados)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Style", "string?", "null", "Estilos inline adicionais." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz (<code>&lt;span&gt;</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado em vez do valor." },
-                              new[] { "IconTemplate", "RenderFragment?", "Template do ícone." }
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo customizado; substitui o <code>Value</code>." },
+                              new[] { "IconTemplate", "RenderFragment?", "Template do ícone (usado quando <code>Icon</code> não é informado)." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="tag"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-tag", "Elemento raiz (<code>&lt;span&gt;</code>)." },
+                              new[] { "p-tag-{severity}", "Raiz com <code>Severity</code> (ex.: <code>p-tag-success</code>)." },
+                              new[] { "p-tag-rounded", "Raiz com <code>Rounded</code>." },
+                              new[] { "p-tag-icon", "Ícone da tag." },
+                              new[] { "p-tag-label", "Valor da tag." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="tag"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>StyleClass</code>, <code>Style</code>, <code>ChildContent</code>, <code>IconTemplate</code> e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O componente não valida <code>Severity</code>: valores fora da lista caem na cor primária do tema.</li>
+                        <li>A classe do rótulo é <code>p-tag-label</code>; a doc de referência do PrimeNG v21 lista <code>p-tag-value</code>.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private record Sev(string Value, string? Severity);
+
+    private static readonly Sev[] Severities =
+    [
+        new("Primary", null), new("Secondary", "secondary"), new("Success", "success"), new("Info", "info"),
+        new("Warn", "warn"), new("Danger", "danger"), new("Contrast", "contrast")
+    ];
+
+    private record IconSev(string Value, string Icon, string? Severity);
+
+    private static readonly IconSev[] IconSeverities =
+    [
+        new("Primary", "pi pi-user", null), new("Secondary", "pi pi-search", "secondary"),
+        new("Success", "pi pi-check", "success"), new("Info", "pi pi-info-circle", "info"),
+        new("Warn", "pi pi-exclamation-triangle", "warn"), new("Danger", "pi pi-times", "danger"),
+        new("Contrast", "pi pi-cog", "contrast")
+    ];
+
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Tag
-
-        <OpTag Value="New" />
         """;
 
     private const string BasicCode = """
@@ -122,21 +222,52 @@
 
     private const string SeverityCode = """
         <OpTag Value="Primary" />
-        <OpTag Severity="secondary" Value="Secondary" />
-        <OpTag Severity="success" Value="Success" />
-        <OpTag Severity="info" Value="Info" />
-        <OpTag Severity="warn" Value="Warn" />
-        <OpTag Severity="danger" Value="Danger" />
-        <OpTag Severity="contrast" Value="Contrast" />
-        """;
-
-    private const string IconCode = """
-        <OpTag Icon="pi pi-user" Value="Primary" />
-        <OpTag Icon="pi pi-check" Severity="success" Value="Success" />
+        <OpTag Value="Secondary" Severity="secondary" />
+        <OpTag Value="Success" Severity="success" />
+        <OpTag Value="Info" Severity="info" />
+        <OpTag Value="Warn" Severity="warn" />
+        <OpTag Value="Danger" Severity="danger" />
+        <OpTag Value="Contrast" Severity="contrast" />
         """;
 
     private const string PillCode = """
         <OpTag Value="Primary" Rounded="true" />
-        <OpTag Severity="success" Value="Success" Rounded="true" />
+        <OpTag Value="Secondary" Severity="secondary" Rounded="true" />
+        <OpTag Value="Success" Severity="success" Rounded="true" />
+        <OpTag Value="Info" Severity="info" Rounded="true" />
+        <OpTag Value="Warn" Severity="warn" Rounded="true" />
+        <OpTag Value="Danger" Severity="danger" Rounded="true" />
+        <OpTag Value="Contrast" Severity="contrast" Rounded="true" />
+        """;
+
+    private const string IconCode = """
+        <OpTag Value="Primary" Icon="pi pi-user" />
+        <OpTag Value="Secondary" Icon="pi pi-search" Severity="secondary" />
+        <OpTag Value="Success" Icon="pi pi-check" Severity="success" />
+        <OpTag Value="Info" Icon="pi pi-info-circle" Severity="info" />
+        <OpTag Value="Warn" Icon="pi pi-exclamation-triangle" Severity="warn" />
+        <OpTag Value="Danger" Icon="pi pi-times" Severity="danger" />
+        <OpTag Value="Contrast" Icon="pi pi-cog" Severity="contrast" />
+        """;
+
+    private const string TemplateCode = """
+        <OpTag Style="border: 2px solid var(--p-content-border-color); background: transparent; color: var(--p-text-color);">
+            <span style="display: flex; align-items: center; gap: .5rem; padding: 0 .25rem;">
+                <span style="width: 1rem; height: 1rem; border-radius: 50%; background: var(--p-primary-color);"></span>
+                <span>Itália</span>
+            </span>
+        </OpTag>
+
+        <OpTag Value="Pago" Severity="success">
+            <IconTemplate>
+                <i class="pi pi-check" aria-hidden="true"></i>
+            </IconTemplate>
+        </OpTag>
+        """;
+
+    private const string AccessibilityCode = """
+        <div aria-live="polite">
+            <OpTag Value="Novo" role="status" />
+        </div>
         """;
 }

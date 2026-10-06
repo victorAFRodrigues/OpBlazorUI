@@ -3,89 +3,236 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.Tooltip
 @using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.InputText
+
+<PageTitle>Tooltip - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Tooltip"
-              Description="Tooltip exibe informações de orientação para um componente.">
+              Description="O Tooltip fornece informações de ajuda ao passar o mouse ou focar um elemento.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Posição" Id="position">
+            <Description>
+                A posição é definida pela propriedade <code>Position</code>. Os valores válidos são
+                <code>top</code>, <code>bottom</code>, <code>right</code> e <code>left</code>; o padrão é
+                <code>right</code>. Quando não há espaço, o balão é invertido para o lado oposto.
+            </Description>
             <ChildContent>
-                <OpTooltip Content="Eu sou um tooltip">
-                    <OpButton Label="Passe o mouse"/>
-                </OpTooltip>
-            </ChildContent>
-            <Code><CodeBlock Code="@BasicCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Posição">
-            <ChildContent>
-                <div class="flex gap-3 flex-wrap">
-                    <OpTooltip Content="Acima" Position="top"><OpButton Label="Acima" Severity="secondary" Outlined="true"/></OpTooltip>
-                    <OpTooltip Content="Abaixo" Position="bottom"><OpButton Label="Abaixo" Severity="secondary" Outlined="true"/></OpTooltip>
-                    <OpTooltip Content="Esquerda" Position="left"><OpButton Label="Esquerda" Severity="secondary" Outlined="true"/></OpTooltip>
-                    <OpTooltip Content="Direita" Position="right"><OpButton Label="Direita" Severity="secondary" Outlined="true"/></OpTooltip>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <OpTooltip Content="Digite seu usuário" Position="right">
+                        <OpInputText Placeholder="Direita" StyleClass="w-40"/>
+                    </OpTooltip>
+                    <OpTooltip Content="Digite seu usuário" Position="top">
+                        <OpInputText Placeholder="Acima" StyleClass="w-40"/>
+                    </OpTooltip>
+                    <OpTooltip Content="Digite seu usuário" Position="bottom">
+                        <OpInputText Placeholder="Abaixo" StyleClass="w-40"/>
+                    </OpTooltip>
+                    <OpTooltip Content="Digite seu usuário" Position="left">
+                        <OpInputText Placeholder="Esquerda" StyleClass="w-40"/>
+                    </OpTooltip>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@PositionCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Atraso / Desabilitado">
+        <DocSection Label="Eventos" Id="event">
+            <Description>
+                No upstream o tooltip é exibido no <i>hover</i> por padrão, com a opção de disparar no <i>focus</i>
+                via <code>tooltipEvent</code>. No Blazor o <code>OpTooltip</code> abre tanto por <i>hover</i> quanto por
+                foco — não há como escolher o evento de disparo. Além disso, o componente <b>não expõe eventos</b>
+                (<code>onShow</code>, <code>onHide</code>, <code>onBeforeShow</code>, <code>onBeforeHide</code>): para
+                reagir à exibição, observe o foco/hover do próprio gatilho com <code>@@onfocusin</code> e
+                <code>@@onmouseenter</code>. Abaixo, ao focar o campo, o tooltip aparece e o estado do gatilho é
+                registrado em separado.
+            </Description>
             <ChildContent>
-                <div class="flex gap-3 flex-wrap">
-                    <OpTooltip Content="Com atraso" ShowDelay="500" HideDelay="500"><OpButton Label="Atraso" Severity="secondary" Outlined="true"/></OpTooltip>
-                    <OpTooltip Content="Tooltip desabilitado" Disabled="true"><OpButton Label="Desabilitado" Severity="secondary" Outlined="true"/></OpTooltip>
+                <div class="flex flex-col items-center gap-3">
+                    <OpTooltip Content="Digite seu usuário">
+                        <input class="p-inputtext p-component w-40"
+                               placeholder="Foque para exibir"
+                               @onfocusin="@(() => _targetFocused = true)"
+                               @onfocusout="@(() => _targetFocused = false)"/>
+                    </OpTooltip>
+                    <span class="text-sm">Gatilho com foco: <b>@(_targetFocused ? "sim" : "não")</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@EventCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Auto Hide" Id="autohide">
+            <Description>
+                No upstream, um alvo pode manter o tooltip aberto mesmo quando o mouse sai (interagindo com o próprio
+                balão) definindo <code>autoHide=false</code>. O <code>OpTooltip</code> <b>não suporta</b> esse
+                comportamento: como o conteúdo é sempre um texto simples, o balão fecha ao sair o mouse ou ao perder o
+                foco do gatilho.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <OpTooltip Content="O conteúdo do tooltip é somente texto e não pode ser interagido">
+                        <OpInputText Placeholder="autoHide não suportado" StyleClass="w-56"/>
+                    </OpTooltip>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AutoHideCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Delay" Id="delay">
+            <Description>
+                Os atrasos para exibir e ocultar são definidos por <code>ShowDelay</code> e <code>HideDelay</code>,
+                em milissegundos. <code>ShowDelay="500"</code>, por exemplo, aguarda meio segundo com o ponteiro sobre
+                o alvo antes de abrir.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpTooltip Content="Confirme para prosseguir" ShowDelay="1000" HideDelay="300">
+                        <OpButton Label="Salvar"/>
+                    </OpTooltip>
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@DelayCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Custom" Id="custom">
+            <Description>
+                No upstream o conteúdo pode ser uma <i>string</i> ou um <i>TemplateRef</i>, permitindo markup rico
+                dentro do balão. No Blazor apenas a propriedade <code>Content</code> (string) é suportada — não há
+                template de conteúdo. Para textos mais ricos, limite-se a formatação simples na própria string.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpTooltip Content="Usuário confirmado ✓" Position="bottom">
+                        <OpButton Label="Confirmar" Severity="secondary"/>
+                    </OpTooltip>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Options" Id="options">
+            <Description>
+                O upstream agrupa as opções em um único objeto <code>tooltipOptions</code>
+                (<code>showDelay</code>, <code>hideDelay</code>, <code>autoHide</code>, <code>tooltipEvent</code>,
+                <code>tooltipPosition</code>). No Blazor cada opção é um parâmetro individual do componente:
+                <code>Position</code>, <code>ShowDelay</code>, <code>HideDelay</code> e <code>Disabled</code>.
+                As opções <code>autoHide</code> e <code>tooltipEvent</code> não existem (veja Auto Hide e Eventos).
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpTooltip Content="Digite seu usuário" Position="left" ShowDelay="150">
+                        <OpInputText Placeholder="passe o mouse" StyleClass="w-48"/>
+                    </OpTooltip>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@OptionsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Tooltip usa a role <code>tooltip</code> e, quando fica visível, o id gerado do balão é definido
+                    como <code>aria-describedby</code> do elemento gatilho.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "escape", "Fecha o tooltip quando o foco está no gatilho." }
+                          })"/>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Content", "string?", "null", "Conteúdo do tooltip." },
+                              new[] { "Content", "string?", "null", "Texto exibido no balão. Sem conteúdo o tooltip não abre." },
                               new[] { "Position", "string", "right", "Posição: <code>right</code>, <code>left</code>, <code>top</code>, <code>bottom</code>. Inverte para o lado oposto quando não há espaço." },
                               new[] { "Disabled", "bool", "false", "Desabilita o tooltip." },
                               new[] { "ShowDelay", "int", "0", "Atraso (ms) para exibir." },
                               new[] { "HideDelay", "int", "0", "Atraso (ms) para ocultar." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." },
-                              new[] { "ChildContent", "RenderFragment?", "null", "Elemento âncora do tooltip." }
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no balão (raiz <code>p-tooltip</code>)." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Elemento gatilho do tooltip." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner (<code>span.op-tooltip-wrapper</code>)." }
                           })"/>
             </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <Description>
+                Nenhum evento é exposto no Blazor. O upstream oferece <code>onShow</code>, <code>onHide</code>,
+                <code>onBeforeShow</code> e <code>onBeforeHide</code> pelo <code>tooltipOptions</code>, mas o
+                <code>OpTooltip</code> ainda não os implementa. Para reagir à exibição/ocultação, observe o foco e o
+                hover do próprio gatilho (<code>@@onfocusin</code>, <code>@@onmouseenter</code>).
+            </Description>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="tooltip"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-tooltip", "Contêiner do balão (<code>role=\"tooltip\"</code>)." },
+                              new[] { "p-tooltip-arrow", "Seta do balão." },
+                              new[] { "p-tooltip-text", "Texto do balão." },
+                              new[] { "p-tooltip-{right|left|top|bottom}", "Modificador de posição do contêiner." },
+                              new[] { "op-tooltip-wrapper", "Contêiner que envolve o gatilho (<code>span</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="tooltip"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code> e <code>ChildContent</code> (âncora) para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização, use <code>StyleClass</code> (aplicado ao balão) e os <code>AdditionalAttributes</code> (repassados ao contêiner <code>span.op-tooltip-wrapper</code>).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não expõe eventos (<code>OnShow</code>, <code>OnHide</code>, <code>OnBeforeShow</code>, <code>OnBeforeHide</code>).</li>
+                        <li>Não há opção <code>tooltipEvent</code>: o tooltip abre tanto por hover quanto por foco.</li>
+                        <li>Não há <code>autoHide</code>; o balão sempre fecha ao sair o mouse/perder o foco, pois o conteúdo é texto simples.</li>
+                        <li>Não há template de conteúdo — apenas a string de <code>Content</code>.</li>
+                        <li>Posicionamento, z-index e seta são aplicados por JS (<code>overlay.interop.js</code>), sobrepondo estilos inline nesses elementos.</li>
+                        <li>A tecla <code>escape</code> não é tratada pelo componente.</li>
+                        <li>Não há objeto <code>tooltipOptions</code>: cada opção é um parâmetro individual.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private bool _targetFocused;
+
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Tooltip
 
@@ -94,26 +241,62 @@
         </OpTooltip>
         """;
 
-    private const string BasicCode = """
-        <OpTooltip Content="Eu sou um tooltip">
-            <OpButton Label="Passe o mouse" />
+    private const string PositionCode = """
+        <OpTooltip Content="Digite seu usuário" Position="right">
+            <OpInputText Placeholder="Direita" />
+        </OpTooltip>
+        <OpTooltip Content="Digite seu usuário" Position="top">
+            <OpInputText Placeholder="Acima" />
+        </OpTooltip>
+        <OpTooltip Content="Digite seu usuário" Position="bottom">
+            <OpInputText Placeholder="Abaixo" />
+        </OpTooltip>
+        <OpTooltip Content="Digite seu usuário" Position="left">
+            <OpInputText Placeholder="Esquerda" />
         </OpTooltip>
         """;
 
-    private const string PositionCode = """
-        <OpTooltip Content="Acima" Position="top"><OpButton Label="Acima" /></OpTooltip>
-        <OpTooltip Content="Abaixo" Position="bottom"><OpButton Label="Abaixo" /></OpTooltip>
-        <OpTooltip Content="Esquerda" Position="left"><OpButton Label="Esquerda" /></OpTooltip>
-        <OpTooltip Content="Direita" Position="right"><OpButton Label="Direita" /></OpTooltip>
+    private const string EventCode = """
+        <OpTooltip Content="Digite seu usuário">
+            <input class="p-inputtext p-component"
+                   placeholder="Foque para exibir"
+                   @onfocusin="() => _targetFocused = true"
+                   @onfocusout="() => _targetFocused = false" />
+        </OpTooltip>
+        <span>Gatilho com foco: <b>@(_targetFocused ? "sim" : "não")</b></span>
+
+        @code {
+            private bool _targetFocused;
+        }
+        """;
+
+    private const string AutoHideCode = """
+        <OpTooltip Content="O conteúdo do tooltip é somente texto e não pode ser interagido">
+            <OpInputText Placeholder="autoHide não suportado" />
+        </OpTooltip>
         """;
 
     private const string DelayCode = """
-        <OpTooltip Content="Com atraso" ShowDelay="500" HideDelay="500">
-            <OpButton Label="Atraso" />
+        <OpTooltip Content="Confirme para prosseguir" ShowDelay="1000" HideDelay="300">
+            <OpButton Label="Salvar" />
         </OpTooltip>
+        """;
 
-        <OpTooltip Content="Tooltip desabilitado" Disabled="true">
-            <OpButton Label="Desabilitado" />
+    private const string CustomCode = """
+        <OpTooltip Content="Usuário confirmado ✓" Position="bottom">
+            <OpButton Label="Confirmar" Severity="secondary" />
+        </OpTooltip>
+        """;
+
+    private const string OptionsCode = """
+        <OpTooltip Content="Digite seu usuário" Position="left" ShowDelay="150">
+            <OpInputText Placeholder="passe o mouse" />
+        </OpTooltip>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpTooltip Content="Digite seu usuário">
+            <OpInputText Placeholder="Usuário" />
         </OpTooltip>
         """;
 }

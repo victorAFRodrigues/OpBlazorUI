@@ -4,15 +4,21 @@
 @using OpBlazorUI.Base.Components.Card
 @using OpBlazorUI.Base.Components.Button
 
+<PageTitle>Card - OpBlazorUI</PageTitle>
+
 <DocComponent Title="Card"
-              Description="O Card é um contêiner flexível.">
+              Description="O Card é um contêiner flexível para agrupar conteúdo relacionado, com suporte a cabeçalho, título, subtítulo e rodapé.">
 
     <Features>
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                Um Card simples é criado com a propriedade <code>Header</code> e o conteúdo como filho do
+                componente. O Card não define largura própria; neste exemplo ela vem do <code>Style</code>.
+            </Description>
             <ChildContent>
                 <div class="card flex justify-center">
                     <OpCard Header="Card Simples" Style="width:25rem">
@@ -26,7 +32,13 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Avançado">
+        <DocSection Label="Avançado" Id="advanced">
+            <Description>
+                Cabeçalho, título, subtítulo e rodapé podem ser totalmente customizados pelos templates
+                <code>HeaderTemplate</code>, <code>TitleTemplate</code>, <code>SubtitleTemplate</code> e
+                <code>FooterTemplate</code>. Os templates têm precedência sobre as propriedades de texto
+                equivalentes (<code>Header</code> e <code>Subheader</code>).
+            </Description>
             <ChildContent>
                 <div class="card flex justify-center">
                     <OpCard Style="width:25rem;overflow:hidden">
@@ -56,54 +68,96 @@
             </ChildContent>
             <Code><CodeBlock Code="@AdvancedCode"/></Code>
         </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>
+                    O Card pode ser usado em muitos contextos, por isso nenhum <code>role</code> é imposto — para
+                    fins apenas de apresentação ele pode nem ser necessário. Qualquer atributo válido é repassado
+                    ao contêiner, então use <code>role="region"</code> (ou outro papel de
+                    <em>landmark</em>) quando o Card representar uma região significativa da página.
+                </p>
+            </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><p>O componente não inclui elementos interativos, portanto não há suporte a teclado.</p></div>
+            </Code>
+        </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Caption="Propriedades"
-                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Header", "string?", "null", "Título do card." },
-                              new[] { "Subheader", "string?", "null", "Subtítulo do card." },
-                              new[] { "Style", "string?", "null", "Estilos inline." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais." }
+                              new[] { "Header", "string?", "null", "Título do card; ignorado quando <code>TitleTemplate</code> é usado." },
+                              new[] { "Subheader", "string?", "null", "Subtítulo exibido abaixo do título; ignorado quando <code>SubtitleTemplate</code> é usado." },
+                              new[] { "Style", "string?", "null", "Estilos inline aplicados ao elemento raiz." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais aplicadas ao elemento raiz (somadas a <code>p-card p-component</code>)." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner raiz." }
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Caption="Templates"
-                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "ChildContent", "RenderFragment?", "Conteúdo do card." },
-                              new[] { "HeaderTemplate", "RenderFragment?", "Cabeçalho (imagem) customizado." },
-                              new[] { "TitleTemplate", "RenderFragment?", "Título customizado." },
-                              new[] { "SubtitleTemplate", "RenderFragment?", "Subtítulo customizado." },
-                              new[] { "FooterTemplate", "RenderFragment?", "Rodapé customizado." }
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo principal do card, renderizado em <code>p-card-content</code>." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Cabeçalho customizado (imagem, etc.), renderizado em <code>p-card-header</code>." },
+                              new[] { "TitleTemplate", "RenderFragment?", "Título customizado; tem precedência sobre <code>Header</code>." },
+                              new[] { "SubtitleTemplate", "RenderFragment?", "Subtítulo customizado; tem precedência sobre <code>Subheader</code>." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Rodapé customizado, renderizado em <code>p-card-footer</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
-            <ChildContent><DocTokens Component="card"/></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-card", "Elemento raiz do card." },
+                              new[] { "p-card-header", "Cabeçalho customizado (<code>HeaderTemplate</code>)." },
+                              new[] { "p-card-body", "Contêiner do título, conteúdo e rodapé." },
+                              new[] { "p-card-title", "Título (<code>Header</code> ou <code>TitleTemplate</code>)." },
+                              new[] { "p-card-subtitle", "Subtítulo (<code>Subheader</code> ou <code>SubtitleTemplate</code>)." },
+                              new[] { "p-card-content", "Conteúdo principal." },
+                              new[] { "p-card-footer", "Rodapé (<code>FooterTemplate</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
+            <ChildContent>
+                <DocTokens Component="card"/>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>Style</code>, <code>StyleClass</code> e atributos extras para customização.</p></div>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização de estilo, use <code>Style</code>, <code>StyleClass</code>, os templates (<code>HeaderTemplate</code>, <code>TitleTemplate</code>, <code>SubtitleTemplate</code>, <code>FooterTemplate</code>) e os <code>AdditionalAttributes</code> (qualquer atributo extra é repassado ao elemento raiz).</p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
-                <div class="doc-section-description"><p>Nenhum problema conhecido no momento.</p></div>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Título e subtítulo não são envolvidos em <code>p-card-caption</code> (classe presente no tema); eles são renderizados diretamente no <code>p-card-body</code>, o que muda os seletores de espaçamento em relação ao upstream.</li>
+                    </ul>
+                </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
@@ -112,32 +166,40 @@
 @code {
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Card
-
-        <OpCard Header="Card Simples">
-            <p>Conteúdo</p>
-        </OpCard>
         """;
 
     private const string BasicCode = """
         <OpCard Header="Card Simples" Style="width:25rem">
-            <p class="m-0">Conteúdo do card.</p>
+            <p class="m-0">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error
+                repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis.
+            </p>
         </OpCard>
         """;
 
     private const string AdvancedCode = """
         <OpCard Style="width:25rem;overflow:hidden">
             <HeaderTemplate>
-                <img alt="Card" class="w-full" src=".../card-ng.jpg" />
+                <img alt="Card" class="w-full" src="https://optimus.openng.org/demo/card-ng.jpg" />
             </HeaderTemplate>
             <TitleTemplate>Card Avançado</TitleTemplate>
             <SubtitleTemplate>Subtítulo do card</SubtitleTemplate>
-            <p>Conteúdo.</p>
+            <p class="m-0">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error
+                repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis.
+            </p>
             <FooterTemplate>
                 <div class="flex gap-4 mt-1">
                     <OpButton Label="Cancelar" Severity="secondary" Outlined="true" Fluid="true" />
                     <OpButton Label="Salvar" Fluid="true" />
                 </div>
             </FooterTemplate>
+        </OpCard>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpCard role="region" Header="Título">
+            Conteúdo
         </OpCard>
         """;
 }

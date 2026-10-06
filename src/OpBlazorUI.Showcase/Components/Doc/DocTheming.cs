@@ -55,6 +55,7 @@ public static class DocTheming
         ["divider"] = [".p-divider", ".p-divider-content", ".p-divider-horizontal", ".p-divider-vertical", ".p-divider-solid", ".p-divider-dashed", ".p-divider-dotted"],
         ["card"] = [".p-card", ".p-card-header", ".p-card-body", ".p-card-caption", ".p-card-title", ".p-card-subtitle", ".p-card-content", ".p-card-footer"],
         ["blockui"] = [".p-blockui", ".p-blockui-mask"],
+        ["scrolltop"] = [".p-scrolltop", ".p-scrolltop-sticky"],
         ["virtualscroller"] = [".p-virtualscroller", ".p-virtualscroller-content", ".p-virtualscroller-spacer", ".p-virtualscroller-loader", ".p-virtualscroller-loading-icon"],
     };
 
