@@ -30,7 +30,6 @@ public partial class OpConfirmDialog : OpModalBase
     [Parameter] public bool DismissableMask { get; set; } = false;
     [Parameter] public string Position { get; set; } = "center";
     [Parameter] public string? Style { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
     [Parameter] public string? MaskStyleClass { get; set; }
     [Parameter] public string CloseIcon { get; set; } = "pi pi-times";
     [Parameter] public string CloseAriaLabel { get; set; } = "Fechar";
@@ -57,9 +56,6 @@ public partial class OpConfirmDialog : OpModalBase
     [Parameter] public RenderFragment<ConfirmHeadlessContext>? HeadlessTemplate { get; set; }
 
     [Parameter] public EventCallback<ConfirmEvent> OnHide { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     private bool _visible;
     private ElementReference _root;

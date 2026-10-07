@@ -1,16 +1,13 @@
 @namespace OpBlazorUI.Base.Components.Overlay
 @using Microsoft.JSInterop
-@implements IAsyncDisposable
-@inject IJSRuntime Js
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
 
 @* Marcador invisível: o painel conectado é o elemento pai deste span. *@
 <span @ref="_marker" hidden aria-hidden="true" data-op-overlay-marker></span>
 
 @code {
-    private const string JsModule = "./_content/OpBlazorUI.Base/overlay.interop.js";
-
     private ElementReference _marker;
-    private IJSObjectReference? _module;
     private bool _attached;
     private bool _disposed;
 
@@ -51,9 +48,7 @@
         if (!firstRender || _disposed) return;
         try
         {
-            _module = await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
-            if (_disposed) return;
-            await _module.InvokeVoidAsync("attachParent", _marker, Anchor, new
+            await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "attachParent", _marker, Anchor, new
             {
                 layer = Layer,
                 baseZIndex = BaseZIndex,
@@ -67,6 +62,7 @@
                 arrow = Arrow,
                 maskPrevious = MaskPrevious
             });
+            if (_disposed) return;
             _attached = true;
         }
         catch (JSDisconnectedException)
@@ -80,25 +76,26 @@
     /// <summary>Recalcula a posição (ex.: após o conteúdo do painel mudar de tamanho).</summary>
     public async Task UpdateAsync()
     {
-        if (_module is null || !_attached) return;
+        if (!_attached) return;
         try
         {
-            await _module.InvokeVoidAsync("updateParent", _marker);
+            await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "updateParent", _marker);
         }
         catch (JSDisconnectedException)
         {
         }
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (_disposed) return;
         _disposed = true;
-        if (_module is null) return;
         try
         {
-            if (_attached) await _module.InvokeVoidAsync("detachParent", _marker);
-            await _module.DisposeAsync();
+            if (_attached)
+            {
+                await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "detachParent", _marker);
+            }
         }
         catch (JSDisconnectedException)
         {
@@ -106,5 +103,7 @@
         catch (TaskCanceledException)
         {
         }
+
+        await base.DisposeAsync();
     }
 }

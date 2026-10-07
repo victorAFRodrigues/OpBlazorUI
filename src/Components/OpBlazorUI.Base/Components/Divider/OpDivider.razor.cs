@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Components;
+using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.Divider;
 
-public partial class OpDivider : ComponentBase
+public partial class OpDivider : OpComponentBase
 {
     [Parameter] public string Layout { get; set; } = "horizontal";
 
@@ -10,12 +11,7 @@ public partial class OpDivider : ComponentBase
 
     [Parameter] public string? Align { get; set; }
 
-    [Parameter] public string? StyleClass { get; set; }
-
     [Parameter] public RenderFragment? ChildContent { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     private string RootClass => OpCss.BuildClass(
         "p-divider p-component",

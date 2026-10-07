@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using OpBlazorUI.Base.Components.Common;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.SpeedDial;
@@ -19,7 +20,7 @@ public sealed class SpeedDialItemContext
     public required Action Click { get; init; }
 }
 
-public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
+public partial class OpSpeedDial : OpComponentBase
 {
     private string _id = "";
     private bool _visible;
@@ -35,14 +36,12 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
     [Parameter] public bool Mask { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool HideOnClickOutside { get; set; } = true;
-    // Sem ShowIcon, o botão usa o SVG "plus" (como o PlusIcon do upstream): glyph de fonte em tamanho
-    // pequeno sofre hinting e sai até ~1px fora do centro dependendo do zoom.
+    // Sem ShowIcon, o botão usa o glyph "plus" da fonte (como o PlusIcon do upstream).
     [Parameter] public string? ShowIcon { get; set; }
     [Parameter] public string? HideIcon { get; set; }
     [Parameter] public bool RotateAnimation { get; set; } = true;
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? AriaLabelledBy { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
     [Parameter] public string? Style { get; set; }
     [Parameter] public string? ButtonStyleClass { get; set; }
     [Parameter] public string? ButtonStyle { get; set; }
@@ -67,14 +66,7 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
     [Parameter] public RenderFragment<SpeedDialItemContext>? ItemTemplate { get; set; }
     [Parameter] public RenderFragment? IconTemplate { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
-    [Inject] private IJSRuntime Js { get; set; } = default!;
-
-    private const string JsModule = "./_content/OpBlazorUI.Base/optimus.interop.js";
     private ElementReference _root;
-    private IJSObjectReference? _module;
     private DotNetObjectReference<OpSpeedDial>? _selfRef;
     private bool _listening;
     private bool _disposed;
@@ -102,24 +94,23 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
         if (_disposed) return;
         try
         {
-            if (firstRender)
+            if (firstRender && Type != "linear")
             {
-                _module = await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
-                if (Type != "linear") await _module.InvokeVoidAsync("speedDialItemDiff", _root);
+                await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "speedDialItemDiff", _root);
             }
 
-            if (_module is null) return;
             var listen = _visible && HideOnClickOutside;
             if (listen && !_listening)
             {
                 _listening = true;
                 _selfRef ??= DotNetObjectReference.Create(this);
-                await _module.InvokeVoidAsync("addOutsideClickListener", _root, null, _selfRef);
+                await Interop.InvokeVoidAsync(
+                    OpInterop.OptimusInterop, "addOutsideClickListener", _root, null, _selfRef);
             }
             else if (!listen && _listening)
             {
                 _listening = false;
-                await _module.InvokeVoidAsync("removeOutsideClickListener", _root);
+                await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "removeOutsideClickListener", _root);
             }
         }
         catch (JSDisconnectedException)
@@ -294,16 +285,15 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
         await SetVisibleAsync(false);
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (_disposed) return;
         _disposed = true;
         try
         {
-            if (_module is not null)
+            if (_listening)
             {
-                if (_listening) await _module.InvokeVoidAsync("removeOutsideClickListener", _root);
-                await _module.DisposeAsync();
+                await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "removeOutsideClickListener", _root);
             }
         }
         catch (JSDisconnectedException)
@@ -311,5 +301,6 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
         }
 
         _selfRef?.Dispose();
+        await base.DisposeAsync();
     }
 }

@@ -1,27 +1,17 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.FocusTrap;
 
-public partial class OpFocusTrap : ComponentBase, IAsyncDisposable
+public partial class OpFocusTrap : OpComponentBase
 {
-    private const string JsModule = "./_content/OpBlazorUI.Base/optimus.interop.js";
-
     private ElementReference _root;
-    private Lazy<Task<IJSObjectReference>>? _module;
     private bool _initialized;
     private bool _disposed;
 
     [Parameter] public bool Disabled { get; set; }
 
-    [Parameter] public string? StyleClass { get; set; }
-
     [Parameter] public RenderFragment? ChildContent { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
-    [Inject] private IJSRuntime Js { get; set; } = default!;
 
     private string RootClass => OpCss.BuildClass("p-focustrap", StyleClass);
 
@@ -30,33 +20,11 @@ public partial class OpFocusTrap : ComponentBase, IAsyncDisposable
         if (firstRender && !_initialized && !_disposed)
         {
             _initialized = true;
-            var module = await GetModuleAsync();
-            if (module is not null)
-            {
-                await module.InvokeVoidAsync("focusTrapInit", _root, null, false);
-            }
+            await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusTrapInit", _root, null, false);
         }
     }
 
-    private async Task<IJSObjectReference?> GetModuleAsync()
-    {
-        if (_module is null)
-        {
-            _module = new Lazy<Task<IJSObjectReference>>(() =>
-                Js.InvokeAsync<IJSObjectReference>("import", JsModule).AsTask());
-        }
-
-        try
-        {
-            return await _module.Value;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (_disposed) return;
         _disposed = true;
@@ -65,11 +33,7 @@ public partial class OpFocusTrap : ComponentBase, IAsyncDisposable
         {
             try
             {
-                var module = await GetModuleAsync();
-                if (module is not null)
-                {
-                    await module.InvokeVoidAsync("focusTrapDispose", _root);
-                }
+                await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusTrapDispose", _root);
             }
             catch
             {
@@ -77,17 +41,6 @@ public partial class OpFocusTrap : ComponentBase, IAsyncDisposable
             }
         }
 
-        if (_module is { IsValueCreated: true })
-        {
-            try
-            {
-                var module = await _module.Value;
-                await module.DisposeAsync();
-            }
-            catch
-            {
-                // ignore
-            }
-        }
+        await base.DisposeAsync();
     }
 }

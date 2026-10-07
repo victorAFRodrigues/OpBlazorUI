@@ -1,16 +1,15 @@
 using Microsoft.AspNetCore.Components;
+using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.Card;
 
-public partial class OpCard : ComponentBase
+public partial class OpCard : OpComponentBase
 {
     [Parameter] public string? Header { get; set; }
 
     [Parameter] public string? Subheader { get; set; }
 
     [Parameter] public string? Style { get; set; }
-
-    [Parameter] public string? StyleClass { get; set; }
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
@@ -21,9 +20,6 @@ public partial class OpCard : ComponentBase
     [Parameter] public RenderFragment? SubtitleTemplate { get; set; }
 
     [Parameter] public RenderFragment? FooterTemplate { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     private string RootClass => OpCss.BuildClass("p-card p-component", StyleClass);
 }

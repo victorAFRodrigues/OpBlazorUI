@@ -1,20 +1,18 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.Editor;
 
-public partial class OpEditor : ComponentBase, IAsyncDisposable
+public partial class OpEditor : OpComponentBase
 {
     private string _id = "";
     private ElementReference _contentRef;
     private ElementReference _toolbarRef;
-    private IJSObjectReference? _module;
     private DotNetObjectReference<OpEditor>? _selfRef;
     private bool _initialized;
     private bool _appliedReadOnly;
     private string? _lastValue;
-
-    [Inject] private IJSRuntime Js { get; set; } = default!;
 
     // ---------------------------------------------------------------- params
     [Parameter] public string? Value { get; set; }
@@ -24,7 +22,6 @@ public partial class OpEditor : ComponentBase, IAsyncDisposable
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool Invalid { get; set; }
     [Parameter] public string? Style { get; set; }
-    [Parameter] public string? StyleClass { get; set; }
     [Parameter] public IReadOnlyList<string>? Formats { get; set; }
 
     // events
@@ -35,9 +32,6 @@ public partial class OpEditor : ComponentBase, IAsyncDisposable
 
     // templates
     [Parameter] public RenderFragment? HeaderTemplate { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     // ------------------------------------------------------------ lifecycle
     protected override void OnInitialized()
@@ -55,24 +49,24 @@ public partial class OpEditor : ComponentBase, IAsyncDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        if (!_initialized || _module is null) return;
+        if (!_initialized) return;
 
         if (!string.Equals(Value, _lastValue, StringComparison.Ordinal))
         {
             _lastValue = Value;
-            await _module.InvokeVoidAsync("setHtml", _id, Value);
+            await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "setHtml", _id, Value);
         }
 
         var readOnly = Readonly || Disabled;
         if (readOnly != _appliedReadOnly)
         {
             _appliedReadOnly = readOnly;
-            await _module.InvokeVoidAsync("setReadOnly", _id, readOnly);
+            await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "setReadOnly", _id, readOnly);
         }
     }
 
     // ------------------------------------------------------------ computed
-    private string RootClass => BuildClass(
+    private string RootClass => Class(
         "p-editor p-component",
         Disabled ? "p-disabled" : null,
         Invalid ? "p-invalid" : null,
@@ -81,8 +75,6 @@ public partial class OpEditor : ComponentBase, IAsyncDisposable
     // ------------------------------------------------------------ interop
     private async Task InitAsync()
     {
-        _module = await Js.InvokeAsync<IJSObjectReference>("import",
-            "./_content/OpBlazorUI.Base/editor.interop.js");
         _selfRef = DotNetObjectReference.Create(this);
 
         var config = new Dictionary<string, object?>
@@ -94,19 +86,19 @@ public partial class OpEditor : ComponentBase, IAsyncDisposable
             config["formats"] = Formats;
         }
 
-        await _module.InvokeVoidAsync("init", _selfRef, _id, _contentRef, _toolbarRef, config);
+        await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "init", _selfRef, _id, _contentRef, _toolbarRef, config);
         _initialized = true;
         _appliedReadOnly = Readonly || Disabled;
         _lastValue = Value;
 
         if (_appliedReadOnly)
         {
-            await _module.InvokeVoidAsync("setReadOnly", _id, true);
+            await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "setReadOnly", _id, true);
         }
 
         if (!string.IsNullOrEmpty(Value))
         {
-            await _module.InvokeVoidAsync("setHtml", _id, Value);
+            await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "setHtml", _id, Value);
         }
     }
 
@@ -133,13 +125,13 @@ public partial class OpEditor : ComponentBase, IAsyncDisposable
     }
 
     // ------------------------------------------------------------ dispose
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
-        if (_initialized && _module is not null)
+        if (_initialized)
         {
             try
             {
-                await _module.InvokeVoidAsync("destroy", _id);
+                await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "destroy", _id);
             }
             catch
             {
@@ -148,8 +140,6 @@ public partial class OpEditor : ComponentBase, IAsyncDisposable
         }
 
         _selfRef?.Dispose();
+        await base.DisposeAsync();
     }
-
-    private static string BuildClass(params string?[] classes)
-        => string.Join(' ', classes.Where(c => !string.IsNullOrWhiteSpace(c)));
 }
