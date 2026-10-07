@@ -12,7 +12,6 @@ Instruções para agentes de código (OpenCode e similares) neste repositório. 
   - `src/OpBlazorUI.Showcase` — site de documentação (Blazor WebAssembly, publicado no GitHub Pages).
   - `tools/theme-gen` — gerador dos temas (Aura, Lara, Nora) a partir de `@openng/optimus-ui-themes`.
   - `tools/doc-upstream/fetch.sh` — baixa as seções da doc do PrimeNG de um componente.
-  - `docs/` — roadmap, planos e o playbook de documentação.
 
 ## Regras de trabalho
 
@@ -28,8 +27,9 @@ Instruções para agentes de código (OpenCode e similares) neste repositório. 
 - **Showcase sem Node**: o Tailwind é um bundle estático versionado (`wwwroot/css/tailwind.css`). Antes de usar
   uma classe Tailwind nova, confirme que ela existe no bundle; se não existir, use uma classe já presente ou
   estilo inline. Para regenerar, siga o cabeçalho de `wwwroot/css/tailwind.input.css`.
-- **Documentação de componente**: siga `docs/fase6-docs-playbook.md` (esqueleto da página, convenções, checklist).
-  A página-modelo é `src/OpBlazorUI.Showcase/Components/Pages/Button.razor`.
+- **Documentação de componente**: mantenha o padrão da página-modelo
+  `src/OpBlazorUI.Showcase/Components/Pages/Button.razor` (seções do upstream na ordem, acessibilidade com
+  leitor de tela + tabela de teclado, API completa, temas e problemas conhecidos reais).
 
 ## Build e verificação
 
@@ -43,7 +43,7 @@ dotnet run --project src/OpBlazorUI.Showcase
 
 ## Commits, branches e releases
 
-- Padrão de commit (detalhes em `docs/padrao-de-commits.md`):
+- Padrão de commit:
 
   ```
   tipo(Escopo): descrição

@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Documentos internos de planejamento (não fazem parte do projeto)
+/docs/
