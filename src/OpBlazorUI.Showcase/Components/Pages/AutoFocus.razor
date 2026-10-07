@@ -1,0 +1,101 @@
+@page "/autofocus"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Directives
+
+<PageTitle>AutoFocus - OpBlazorUI</PageTitle>
+
+<DocComponent Title="AutoFocus"
+              Description="O AutoFocus gerencia o foco de um elemento focável ao montar, restaurando o foco anterior ao desmontar. No Blazor é um componente contêiner.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                Envolva o campo com <code>OpAutoFocus</code>: o primeiro elemento focável do conteúdo
+                recebe o foco ao montar. O foco anterior é restaurado quando o componente é removido.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpAutoFocus>
+                        <input type="text" class="p-inputtext" placeholder="Focado automaticamente"/>
+                    </OpAutoFocus>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O foco é movido programaticamente para o elemento focável; nenhum papel ou atributo é adicionado.</p>
+                <h3>Suporte a teclado</h3>
+                <p>O componente não inclui elementos interativos próprios — o foco vai para o primeiro campo focável do conteúdo.</p>
+            </Description>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Enabled", "bool", "true", "Quando falso, não foca nem restaura o foco." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo que contém o elemento focável." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao wrapper." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Classes CSS" Id="style">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O componente não adiciona classes estruturais; renderiza
+                        <code>&lt;span style="display:contents"&gt;</code> (sem caixa própria).</p>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não será portado como tal.</p>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O upstream aplica a diretiva ao próprio input; aqui o componente renderiza um
+                            <code>&lt;span style="display:contents"&gt;</code> em volta dele (desvio consciente).</li>
+                        <li>O foco ocorre no primeiro render interativo; em prerender estático (SSR) não há
+                            efeito, o que é o comportamento esperado.</li>
+                    </ul>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string ImportCode = """
+        @using OpBlazorUI.Base.Components.Directives
+        """;
+
+    private const string BasicCode = """
+        <OpAutoFocus>
+            <input type="text" class="p-inputtext" placeholder="Focado automaticamente" />
+        </OpAutoFocus>
+        """;
+}

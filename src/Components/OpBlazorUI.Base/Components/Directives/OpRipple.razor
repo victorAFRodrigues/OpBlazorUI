@@ -1,0 +1,8 @@
+@namespace OpBlazorUI.Base.Components.Directives
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+@* Host do ripple: o efeito é injetado pelo directives.interop.js. *@
+<div class="@RootClass" style="@Style" @ref="_host" @attributes="AdditionalAttributes">
+    @ChildContent
+</div>

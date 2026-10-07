@@ -1,0 +1,8 @@
+@namespace OpBlazorUI.Base.Components.Directives
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+@* Envolve o elemento focável; o foco inicial/restauração é feito pelo directives.interop.js. *@
+<span style="display: contents" @ref="_host" @attributes="AdditionalAttributes">
+    @ChildContent
+</span>

@@ -1,158 +1,216 @@
 @page "/styleclass"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Directives
 
 <PageTitle>StyleClass - OpBlazorUI</PageTitle>
 
+<style>
+    .sc-invisible {
+        opacity: 0;
+    }
+
+    @@keyframes sc-fadein {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @@keyframes sc-fadeout {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    .sc-fadein {
+        animation: sc-fadein .4s ease forwards;
+    }
+
+    .sc-fadeout {
+        animation: sc-fadeout .4s ease forwards;
+    }
+
+    .sc-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 8rem;
+        height: 8rem;
+        font-weight: 700;
+        border-radius: 6px;
+        background: var(--p-primary-color);
+        color: var(--p-primary-contrast-color);
+    }
+</style>
+
 <DocComponent Title="StyleClass"
-              Description="StyleClass gerencia classes CSS de forma declarativa durante animações de enter/leave ou apenas para alternar classes em um elemento. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O StyleClass gerencia classes CSS de um alvo de forma declarativa, para alternar classes ou executar animações de enter/leave. No Blazor é um componente que envolve o gatilho do clique.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Alternar Classe" Id="toggleclass">
-            <Description><p>O <code>StyleClass</code> tem dois modos: <code>toggleClass</code> para simplesmente adicionar/remover uma classe e animações de enter/leave. O elemento alvo cuja estilização será alterada é definido pela propriedade <code>selector</code>, que aceita qualquer seletor CSS válido ou palavras-chave, incluindo <code>@@next</code>, <code>prev</code>, <code>parent</code> e <code>grandparent</code>.</p></Description>
-            <Code><CodeBlock Code="@ToggleClassCode" Language="html"/></Code>
+            <Description>
+                <p>Com <code>ToggleClass</code>, o alvo (definido por <code>Target</code>) tem as classes
+                    alternadas a cada clique. <code>Target</code> aceita qualquer seletor CSS ou as
+                    palavras-chave <code>@@next</code>, <code>prev</code>, <code>parent</code> e
+                    <code>grandparent</code> (relativas ao wrapper).</p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <OpStyleClass Target="@("@next")" ToggleClass="hidden">
+                        <OpButton Label="Toggle Display"/>
+                    </OpStyleClass>
+                    <input type="text" class="p-inputtext hidden" placeholder="Texto"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ToggleClassCode"/></Code>
         </DocSection>
 
         <DocSection Label="Animação" Id="animation">
-            <Description><p>As classes a aplicar durante as animações de enter e leave são especificadas por meio de <code>enterFromClass</code>, <code>enterActiveClass</code>, <code>enterToClass</code>, <code>leaveFromClass</code>, <code>leaveActiveClass</code> e <code>leaveToClass</code>. Além disso, caso o alvo seja um overlay, <code>hideOnOutsideClick</code> será útil para ocultá-lo quando clicar fora do popup, ou habilite <code>hideOnEscape</code> para fechar o popup ao pressionar a tecla <code>escape</code>.</p></Description>
-            <Code><CodeBlock Code="@AnimationCode" Language="html"/></Code>
+            <Description>
+                <p>As classes aplicadas durante as animações de enter/leave são definidas por
+                    <code>EnterFromClass</code>, <code>EnterActiveClass</code>, <code>EnterToClass</code>,
+                    <code>LeaveFromClass</code>, <code>LeaveActiveClass</code> e <code>LeaveToClass</code>.
+                    Quando só as propriedades de enter (ou só as de leave) são informadas, o gatilho
+                    executa sempre aquele sentido.</p>
+            </Description>
+            <ChildContent>
+                <div class="card flex items-center justify-center gap-8">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="flex gap-2">
+                            <OpStyleClass Target=".sc-box1" EnterFromClass="sc-invisible" EnterActiveClass="sc-fadein">
+                                <OpButton Label="FadeIn"/>
+                            </OpStyleClass>
+                            <OpStyleClass Target=".sc-box1" LeaveActiveClass="sc-fadeout" LeaveToClass="sc-invisible">
+                                <OpButton Label="FadeOut" Severity="secondary"/>
+                            </OpStyleClass>
+                        </div>
+                        <div class="sc-box1 sc-invisible sc-box">Custom</div>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AnimationCode"/></Code>
         </DocSection>
 
         <DocSection Label="Ocultar ao Redimensionar" Id="hideonresize">
-            <Description><p>Quando <code>hideOnResize</code> está habilitado, a animação de leave é disparada automaticamente quando ocorre um redimensionamento. Use a propriedade <code>resizeSelector</code> para especificar se deve escutar eventos de redimensionamento da janela ou de um elemento específico. Defina <code>resizeSelector</code> como "window" (padrão) ou "document" para o redimensionamento do navegador, ou um seletor CSS para observar as dimensões do elemento alvo.</p></Description>
-            <Code><CodeBlock Code="@HideOnResizeCode" Language="html"/></Code>
+            <Description>
+                <p>Com <code>HideOnResize</code>, a animação de leave é disparada ao redimensionar.
+                    <code>ResizeSelector</code> define o que observar: <code>window</code> (padrão),
+                    <code>document</code> ou um seletor CSS.</p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-wrap justify-center gap-4">
+                    <div class="flex flex-col items-center gap-4" style="width:25rem">
+                        <OpStyleClass Target=".sc-resize-box" EnterFromClass="hidden" EnterActiveClass="sc-fadein"
+                                      LeaveActiveClass="sc-fadeout" LeaveToClass="hidden"
+                                      HideOnResize="true" ResizeSelector="window">
+                            <OpButton Label="Show Window Responsive Content"/>
+                        </OpStyleClass>
+                        <div class="sc-resize-box hidden"
+                             style="width:100%;border:1px solid var(--p-content-border-color);border-radius:12px">
+                            <div class="p-4 flex flex-col gap-2">
+                                <h3 class="font-bold">Window Responsive Panel</h3>
+                                <p class="text-muted-color">This panel will hide when you resize the browser window.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@HideOnResizeCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Target", "string?", "null", "Seletor do alvo (CSS ou <code>@next</code>/<code>prev</code>/<code>parent</code>/<code>grandparent</code>). Sem valor, o alvo é o próprio wrapper." },
+                              new[] { "ToggleClass", "string?", "null", "Modo simples: classes alternadas a cada clique." },
+                              new[] { "EnterFromClass", "string?", "null", "Classe(s) iniciais da animação de enter." },
+                              new[] { "EnterActiveClass", "string?", "null", "Classe(s) ativas durante a animação de enter." },
+                              new[] { "EnterToClass", "string?", "null", "Classe(s) finais da animação de enter." },
+                              new[] { "LeaveFromClass", "string?", "null", "Classe(s) iniciais da animação de leave." },
+                              new[] { "LeaveActiveClass", "string?", "null", "Classe(s) ativas durante a animação de leave." },
+                              new[] { "LeaveToClass", "string?", "null", "Classe(s) finais da animação de leave." },
+                              new[] { "HideOnOutsideClick", "bool", "false", "Dispara o leave quando o clique ocorre fora do alvo." },
+                              new[] { "HideOnEscape", "bool", "false", "Dispara o leave ao pressionar <code>Escape</code>." },
+                              new[] { "HideOnResize", "bool", "false", "Dispara o leave ao redimensionar." },
+                              new[] { "ResizeSelector", "string", "\"window\"", "Alvo do <code>HideOnResize</code>: <code>window</code>, <code>document</code> ou seletor CSS." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Elemento gatilho do clique." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>As classes manipuladas são definidas pelo consumidor; o componente não adiciona
+                        classes estruturais além do wrapper <code>&lt;span style="display:contents"&gt;</code>.</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
         <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não será portado como tal; a customização é feita pelos
+                        parâmetros do componente.</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
         <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O upstream aplica a diretiva ao próprio gatilho; aqui o componente renderiza um
+                            <code>&lt;span style="display:contents"&gt;</code> em volta dele (desvio consciente).</li>
+                        <li>As palavras-chave relativas (<code>@@next</code>, <code>parent</code>, …) são
+                            resolvidas a partir do wrapper, não do gatilho interno.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
     private const string ImportCode = """
-        import { StyleClassModule } from 'primeng/styleclass';
+        @using OpBlazorUI.Base.Components.Directives
         """;
 
     private const string ToggleClassCode = """
-        <div class="card flex flex-col items-center">
-            <p-button label="Toggle Display" pStyleClass="@next" toggleClass="hidden" />
-            <input type="text" pInputText class="hidden mt-4" />
-        </div>
+        <OpStyleClass Target="@("@next")" ToggleClass="hidden">
+            <OpButton Label="Toggle Display" />
+        </OpStyleClass>
+        <input type="text" class="p-inputtext hidden" />
         """;
 
     private const string AnimationCode = """
-        <div class="card flex items-center justify-center gap-8">
-            <div class="flex flex-col items-center">
-                <div>
-                    <p-button pStyleClass=".box1" enterFromClass="my-hidden" enterActiveClass="my-fadein" label="FadeIn" class="mr-2" />
-                    <p-button
-                        pStyleClass=".box1"
-                        leaveActiveClass="my-fadeout"
-                        leaveToClass="my-hidden"
-                        label="FadeOut"
-                        severity="secondary"
-                    />
-                </div>
-                <div class="h-32">
-                    <div class="my-hidden animate-duration-500 box1">
-                        <div
-                            class="flex bg-primary text-primary-contrast items-center justify-center py-4 rounded-md mt-4 font-bold w-32 h-32"
-                        >
-                            Custom
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col items-center">
-                <div>
-                    <p-button
-                        pStyleClass=".box2"
-                        enterFromClass="hidden"
-                        enterActiveClass="animate-slidedown"
-                        label="SlideDown"
-                        class="mr-2"
-                    />
-                    <p-button
-                        pStyleClass=".box2"
-                        leaveActiveClass="animate-slideup"
-                        leaveToClass="hidden"
-                        label="SlideUp"
-                        severity="secondary"
-                    />
-                </div>
-                <div class="h-32">
-                    <div class="hidden animate-duration-500 box2 overflow-hidden">
-                        <div
-                            class="flex bg-primary text-primary-contrast items-center justify-center py-4 rounded-md mt-4 font-bold w-32 h-32"
-                        >
-                            Content
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <OpStyleClass Target=".box1" EnterFromClass="sc-invisible" EnterActiveClass="sc-fadein">
+            <OpButton Label="FadeIn" />
+        </OpStyleClass>
+        <OpStyleClass Target=".box1" LeaveActiveClass="sc-fadeout" LeaveToClass="sc-invisible">
+            <OpButton Label="FadeOut" Severity="secondary" />
+        </OpStyleClass>
+        <div class="box1 sc-invisible sc-box">Custom</div>
         """;
 
     private const string HideOnResizeCode = """
-        <div class="card">
-            <div class="flex flex-wrap justify-center gap-4">
-                <div class="flex flex-col items-center gap-4 w-[25rem]">
-                    <p-button pStyleClass=".window-responsive-box" enterFromClass="hidden" enterActiveClass="animate-fadein" leaveActiveClass="animate-fadeout" leaveToClass="hidden" [hideOnResize]="true" resizeSelector="window" label="Show Window Responsive Content" />
-                    <div class="window-responsive-box hidden animate-duration-300 border border-lg border-surface">
-                        <div class="p-4 flex flex-col gap-2">
-                            <h3 class="text-xl font-bold">Window Responsive Panel</h3>
-                            <p class="text-sm">This panel will hide when you resize the browser window.</p>
-                            <p class="text-sm">Try resizing your browser window to see the effect.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col items-center gap-4 w-[25rem]">
-                    <p-button
-                        pStyleClass=".resizable-container"
-                        enterFromClass="hidden"
-                        enterActiveClass="animate-fadein"
-                        leaveActiveClass="animate-fadeout"
-                        leaveToClass="hidden"
-                        [hideOnResize]="true"
-                        resizeSelector=".resizable-container"
-                        label="Show Resizable Panel"
-                    />
-
-                    <div class="resizable-container hidden animate-duration-300 border border-lg border-surface w-[20rem] w-max-[25rem] w-min-[15rem] overflow-auto resize">
-                        <div class="p-4 h-full flex flex-col gap-2">
-                            <h3 class="text-xl font-bold">Resizable Panel</h3>
-                            <p class="text-sm">Drag the resize handle in the bottom-right corner to resize this panel.</p>
-                            <p class="text-sm">The panel will hide when you resize it.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <OpStyleClass Target=".panel" EnterFromClass="hidden" EnterActiveClass="sc-fadein"
+                      LeaveActiveClass="sc-fadeout" LeaveToClass="hidden"
+                      HideOnResize="true" ResizeSelector="window">
+            <OpButton Label="Show Window Responsive Content" />
+        </OpStyleClass>
+        <div class="panel hidden">...</div>
         """;
 }

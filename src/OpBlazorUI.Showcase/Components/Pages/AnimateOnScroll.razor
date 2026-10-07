@@ -1,28 +1,100 @@
 @page "/animateonscroll"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Directives
 
 <PageTitle>AnimateOnScroll - OpBlazorUI</PageTitle>
 
+<style>
+    .aos-demo {
+        transition: opacity .6s ease, transform .6s ease;
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    .aos-demo.aos-enter {
+        opacity: 1;
+        transform: none;
+    }
+
+    .aos-demo.aos-leave {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    .aos-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        max-width: 20rem;
+        padding: 2rem;
+        border: 1px solid var(--p-content-border-color);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+        text-align: center;
+    }
+
+    .aos-spacer {
+        height: 32rem;
+    }
+</style>
+
 <DocComponent Title="AnimateOnScroll"
-              Description="AnimateOnScroll é usado para aplicar animações a elementos ao entrar ou sair da viewport durante a rolagem. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O AnimateOnScroll aplica animações a elementos ao entrar ou sair da viewport durante a rolagem. No Blazor é um componente que envolve o conteúdo observado (IntersectionObserver).">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
             <Description>
-                <p>As classes de animação são definidas com as propriedades <i>enterClass</i> e <i>leaveClass</i>. Este exemplo utiliza as animações do plugin tailwindcss-primeui, porém qualquer animação CSS válida é suportada.</p>
+                As classes de animação são definidas com <code>EnterClass</code> e <code>LeaveClass</code>.
+                Qualquer animação CSS válida é suportada; este exemplo usa classes customizadas definidas na página.
             </Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <span class="font-bold">Scroll Down</span>
+                    <span class="flex items-center justify-center rounded-full"
+                          style="width:2rem;height:2rem;background:var(--p-primary-color);color:var(--p-primary-contrast-color)">
+                        <i class="pi pi-arrow-down"></i>
+                    </span>
+
+                    <div class="aos-spacer"></div>
+
+                    <OpAnimateOnScroll EnterClass="aos-enter" LeaveClass="aos-leave" StyleClass="aos-demo aos-card">
+                        <i class="pi pi-user" style="font-size:2rem"></i>
+                        <span class="font-bold">Individual</span>
+                        <span class="text-muted-color">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
+                    </OpAnimateOnScroll>
+
+                    <div class="aos-spacer"></div>
+
+                    <OpAnimateOnScroll EnterClass="aos-enter" LeaveClass="aos-leave" StyleClass="aos-demo aos-card">
+                        <i class="pi pi-users" style="font-size:2rem"></i>
+                        <span class="font-bold">Team</span>
+                        <span class="text-muted-color">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
+                    </OpAnimateOnScroll>
+
+                    <div class="aos-spacer"></div>
+
+                    <OpAnimateOnScroll EnterClass="aos-enter" LeaveClass="aos-leave" StyleClass="aos-demo aos-card">
+                        <i class="pi pi-building" style="font-size:2rem"></i>
+                        <span class="font-bold">Enterprise</span>
+                        <span class="text-muted-color">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
+                    </OpAnimateOnScroll>
+
+                    <div class="aos-spacer"></div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O AnimateOnScroll não requer nenhum papel ou atributo.</p>
+                <p>O componente não requer nenhum papel ou atributo (a animação é puramente visual).</p>
                 <h3>Suporte a teclado</h3>
                 <p>O componente não inclui elementos interativos.</p>
             </Description>
@@ -30,159 +102,69 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "EnterClass", "string?", "null", "Classes aplicadas quando o elemento entra na viewport." },
+                              new[] { "LeaveClass", "string?", "null", "Classes aplicadas quando o elemento sai da viewport." },
+                              new[] { "Threshold", "double", "0", "Fração do elemento visível necessária para disparar o observer (0 a 1)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais aplicadas ao contêiner." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo observado/animado." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao contêiner." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O componente não adiciona classes estruturais próprias além do contêiner
+                        <code>&lt;div&gt;</code>; as classes de animação são definidas pelo consumidor via
+                        <code>EnterClass</code>/<code>LeaveClass</code>.</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
         <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não será portado como tal; a customização é feita por
+                        <code>StyleClass</code> e <code>AdditionalAttributes</code>.</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
         <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O upstream aplica a diretiva ao próprio elemento hospedeiro; aqui o componente
+                            renderiza um <code>&lt;div&gt;</code> contêiner que é o elemento observado/animado
+                            (desvio consciente).</li>
+                        <li>Estados iniciais dependem das classes do consumidor: se o elemento já estiver na
+                            viewport no primeiro render, a animação de enter dispara imediatamente.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
     private const string ImportCode = """
-        import { AnimateOnScrollModule } from 'primeng/animateonscroll';
+        @using OpBlazorUI.Base.Components.Directives
         """;
 
     private const string BasicCode = """
-        <div class="card flex flex-col items-center overflow-hidden">
-            <div class="flex flex-col items-center gap-2">
-                <span class="text-xl font-medium">Scroll Down</span>
-                <span class="animate-bounce h-8 w-8 bg-primary text-primary-contrast rounded-full inline-flex items-center justify-center">
-                    <i class="pi pi-arrow-down"></i>
-                </span>
-            </div>
-            <div class="h-[40rem]"></div>
-            <div class="flex flex-wrap justify-center gap-8">
-                <div
-                    pAnimateOnScroll
-                    enterClass="animate-enter fade-in-10 slide-in-from-l-8 animate-duration-1000"
-                    leaveClass="animate-leave fade-out-0"
-                    class="flex flex-col border border-surface shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
-                >
-                    <div class="rounded-full bg-primary text-primary-contrast w-12 h-12 flex items-center justify-center">
-                        <i class="pi pi-user !text-2xl"></i>
-                    </div>
-                    <span class="text-2xl font-bold">Individual</span>
-                    <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-                <div
-                    pAnimateOnScroll
-                    enterClass="animate-enter fade-in-10 animate-duration-1000"
-                    leaveClass="animate-leave fade-out-0"
-                    class="flex flex-col border border-surface shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
-                >
-                    <div class="rounded-full bg-primary text-primary-contrast w-12 h-12 flex items-center justify-center">
-                        <i class="pi pi-users !text-2xl"></i>
-                    </div>
-                    <span class="text-2xl font-bold">Team</span>
-                    <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-                <div
-                    pAnimateOnScroll
-                    enterClass="animate-enter fade-in-10 slide-in-from-r-8 animate-duration-1000"
-                    leaveClass="animate-leave fade-out-0"
-                    class="flex flex-col border border-surface shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
-                >
-                    <div class="rounded-full bg-primary text-primary-contrast w-12 h-12 flex items-center justify-center">
-                        <i class="pi pi-building !text-2xl"></i>
-                    </div>
-                    <span class="text-2xl font-bold">Enterprise</span>
-                    <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-            </div>
-            <div class="h-[30rem]"></div>
-            <div class="flex flex-wrap justify-center gap-8">
-                <div
-                    pAnimateOnScroll
-                    enterClass="animate-enter fade-in-10 slide-in-from-t-20 animate-duration-1000"
-                    leaveClass="animate-leave fade-out-0"
-                    class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
-                >
-                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" size="xlarge" />
-                    <span class="text-2xl font-medium">Jenna Thompson</span>
-                    <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-
-                <div pAnimateOnScroll enterClass="animate-enter fade-in-10 slide-in-from-b-20 animate-duration-1000" class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/asiyajavayant.png" shape="circle" size="xlarge" />
-                    <span class="text-2xl font-medium">Isabel Garcia</span>
-                    <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-                <div pAnimateOnScroll enterClass="animate-enter fade-in-10 slide-in-from-t-20 animate-duration-1000" class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png" shape="circle" size="xlarge" />
-                    <span class="text-2xl font-medium">Xavier Mason</span>
-                    <span class="text-muted-color text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-            </div>
-            <div class="h-[30rem]"></div>
-            <div class="flex flex-wrap justify-center gap-8">
-                <div
-                    pAnimateOnScroll
-                    enterClass="animate-enter fade-in-10 spin-in-45 slide-in-from-t-12 animate-duration-1000"
-                    class="flex flex-col bg-primary text-primary-contrast border-primary shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
-                >
-                    <span class="bg-white/20 text-xl font-medium rounded-xl px-4 py-2">850K</span>
-                    <span class="text-2xl font-bold">Customers</span>
-                    <span class="text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-                <div
-                    pAnimateOnScroll="{ enterClass: 'animate-enter fade-in-10 zoom-in-50 slide-in-from-t-20 animate-duration-1000' }"
-                    class="flex flex-col bg-primary text-primary-contrast border-primary shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
-                >
-                    <span class="bg-white/20 text-xl font-medium rounded-xl px-4 py-2">$1.5M</span>
-                    <span class="text-2xl font-bold">Revenue</span>
-                    <span class="text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-                <div
-                    pAnimateOnScroll
-                    enterClass="animate-enter fade-in-10 spin-in-[-45deg] slide-in-from-t-16 animate-duration-1000"
-                    class="flex flex-col bg-primary text-primary-contrast border-primary shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
-                >
-                    <span class="bg-white/20 text-xl font-medium rounded-xl px-4 py-2">140K</span>
-                    <span class="text-2xl font-bold">Sales</span>
-                    <span class="text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-            </div>
-            <div class="h-[30rem]"></div>
-            <div class="flex flex-wrap justify-center gap-8">
-                <div pAnimateOnScroll enterClass="animate-enter fade-in-10 zoom-in-50 animate-duration-1000" class="flex flex-col bg-purple-500 text-white border-purple-500 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <div class="rounded-full border-2 border-white w-12 h-12 flex items-center justify-center">
-                        <i class="pi pi-wifi !text-2xl"></i>
-                    </div>
-                    <span class="text-2xl font-bold">Bandwidth</span>
-                    <span class="text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-                <div pAnimateOnScroll enterClass="animate-enter fade-in-10 zoom-in-75 animate-duration-1000" class="flex flex-col bg-teal-500 text-white border-teal-500 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <div class="rounded-full border-2 border-white w-12 h-12 flex items-center justify-center">
-                        <i class="pi pi-database !text-2xl"></i>
-                    </div>
-                    <span class="text-2xl font-bold">Storage</span>
-                    <span class="text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-                <div pAnimateOnScroll enterClass="animate-enter fade-in-10 zoom-in-50 animate-duration-1000" class="flex flex-col bg-indigo-500 text-white border-indigo-500 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4">
-                    <div class="rounded-full border-2 border-white w-12 h-12 flex items-center justify-center">
-                        <i class="pi pi-arrows-v !text-2xl"></i>
-                    </div>
-                    <span class="text-2xl font-bold">Requests</span>
-                    <span class="text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                </div>
-            </div>
-        </div>
+        <OpAnimateOnScroll EnterClass="aos-enter" LeaveClass="aos-leave">
+            <!-- conteúdo -->
+        </OpAnimateOnScroll>
         """;
 }

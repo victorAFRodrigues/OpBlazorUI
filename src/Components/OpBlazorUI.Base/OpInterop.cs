@@ -13,6 +13,7 @@ public sealed class OpInterop : IAsyncDisposable
     public const string OverlayInterop = "./_content/OpBlazorUI.Base/overlay.interop.js";
     public const string VirtualScrollerInterop = "./_content/OpBlazorUI.Base/virtualscroller.interop.js";
     public const string EditorInterop = "./_content/OpBlazorUI.Base/editor.interop.js";
+    public const string DirectivesInterop = "./_content/OpBlazorUI.Base/directives.interop.js";
 
     private readonly IJSRuntime _js;
     private readonly Dictionary<string, Task<IJSObjectReference>> _modules = new(StringComparer.Ordinal);

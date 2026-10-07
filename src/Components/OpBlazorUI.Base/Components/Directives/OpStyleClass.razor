@@ -1,0 +1,8 @@
+@namespace OpBlazorUI.Base.Components.Directives
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+@* Envolve o gatilho: o clique alterna/anima as classes do alvo (via directives.interop.js). *@
+<span class="p-styleclass" style="display: contents" @ref="_host" @attributes="AdditionalAttributes">
+    @ChildContent
+</span>
