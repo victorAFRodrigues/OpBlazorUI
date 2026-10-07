@@ -1,6 +1,5 @@
 @namespace OpBlazorUI.Base.Components.DataTable
 @using OpBlazorUI.Base.Components.Checkbox
-@using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.Skeleton
 @typeparam TItem
 
@@ -11,12 +10,12 @@
             <div class="p-paginator-content">
                 <button type="button" class="p-paginator-first @(_currentPage == 0 ? "p-disabled" : "")"
                         aria-label="First Page" disabled="@(_currentPage == 0)" @onclick="() => GoToPage(0)">
-                    <OpIcon Name="angle-double-left" CssClass="p-paginator-first-icon"/>
+                    <i class="p-icon pi pi-angle-double-left p-paginator-first-icon"></i>
                 </button>
                 <button type="button" class="p-paginator-prev @(_currentPage == 0 ? "p-disabled" : "")"
                         aria-label="Previous Page" disabled="@(_currentPage == 0)"
                         @onclick="() => GoToPage(_currentPage - 1)">
-                    <OpIcon Name="angle-left" CssClass="p-paginator-prev-icon"/>
+                    <i class="p-icon pi pi-angle-left p-paginator-prev-icon"></i>
                 </button>
                 <span class="p-paginator-pages">
                     @foreach (var page in PageLinks)
@@ -30,12 +29,12 @@
                 <button type="button" class="p-paginator-next @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
                         aria-label="Next Page" disabled="@(_currentPage >= PageCount - 1)"
                         @onclick="() => GoToPage(_currentPage + 1)">
-                    <OpIcon Name="angle-right" CssClass="p-paginator-next-icon"/>
+                    <i class="p-icon pi pi-angle-right p-paginator-next-icon"></i>
                 </button>
                 <button type="button" class="p-paginator-last @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
                         aria-label="Last Page" disabled="@(_currentPage >= PageCount - 1)"
                         @onclick="() => GoToPage(PageCount - 1)">
-                    <OpIcon Name="angle-double-right" CssClass="p-paginator-last-icon"/>
+                    <i class="p-icon pi pi-angle-double-right p-paginator-last-icon"></i>
                 </button>
             </div>
         </div>
@@ -60,7 +59,7 @@
                             <span class="p-datatable-column-title">@col.Header</span>
                             @if (col.Sortable && Sortable)
                             {
-                                <OpIcon Name="@SortIconName(col)" CssClass="p-datatable-sort-icon"/>
+                                <i class="p-icon pi pi-@(SortIconName(col)) p-datatable-sort-icon"></i>
                             }
                         </div>
                     </th>
@@ -124,12 +123,12 @@
             <div class="p-paginator-content">
                 <button type="button" class="p-paginator-first @(_currentPage == 0 ? "p-disabled" : "")"
                         aria-label="First Page" disabled="@(_currentPage == 0)" @onclick="() => GoToPage(0)">
-                    <OpIcon Name="angle-double-left" CssClass="p-paginator-first-icon"/>
+                    <i class="p-icon pi pi-angle-double-left p-paginator-first-icon"></i>
                 </button>
                 <button type="button" class="p-paginator-prev @(_currentPage == 0 ? "p-disabled" : "")"
                         aria-label="Previous Page" disabled="@(_currentPage == 0)"
                         @onclick="() => GoToPage(_currentPage - 1)">
-                    <OpIcon Name="angle-left" CssClass="p-paginator-prev-icon"/>
+                    <i class="p-icon pi pi-angle-left p-paginator-prev-icon"></i>
                 </button>
                 <span class="p-paginator-pages">
                     @foreach (var page in PageLinks)
@@ -143,12 +142,12 @@
                 <button type="button" class="p-paginator-next @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
                         aria-label="Next Page" disabled="@(_currentPage >= PageCount - 1)"
                         @onclick="() => GoToPage(_currentPage + 1)">
-                    <OpIcon Name="angle-right" CssClass="p-paginator-next-icon"/>
+                    <i class="p-icon pi pi-angle-right p-paginator-next-icon"></i>
                 </button>
                 <button type="button" class="p-paginator-last @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
                         aria-label="Last Page" disabled="@(_currentPage >= PageCount - 1)"
                         @onclick="() => GoToPage(PageCount - 1)">
-                    <OpIcon Name="angle-double-right" CssClass="p-paginator-last-icon"/>
+                    <i class="p-icon pi pi-angle-double-right p-paginator-last-icon"></i>
                 </button>
             </div>
         </div>

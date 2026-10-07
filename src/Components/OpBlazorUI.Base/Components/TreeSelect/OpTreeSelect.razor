@@ -4,7 +4,6 @@
 @using OpBlazorUI.Base.Components.Overlay
 @using OpBlazorUI.Base.Components.Checkbox
 @using OpBlazorUI.Base.Components.Chip
-@using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
@@ -52,7 +51,7 @@
         }
         else
         {
-            <OpIcon Name="times" CssClass="p-treeselect-clear-icon" OnClick="Clear"/>
+            <i class="p-icon pi pi-times p-treeselect-clear-icon" @onclick="Clear"></i>
         }
     }
 
@@ -75,7 +74,7 @@
         }
         else
         {
-            <OpIcon Name="chevron-down" CssClass="p-treeselect-dropdown-icon"/>
+            <i class="p-icon pi pi-chevron-down p-treeselect-dropdown-icon"></i>
         }
     </div>
 
@@ -101,7 +100,7 @@
                                placeholder="Filter"
                                aria-label="Filter"
                                @oninput="OnFilterInput"/>
-                        <OpInputIcon><OpIcon Name="search"/></OpInputIcon>
+                        <OpInputIcon><i class="p-icon pi pi-search"></i></OpInputIcon>
                     </OpIconField>
                 </div>
             }

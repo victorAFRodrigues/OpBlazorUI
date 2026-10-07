@@ -23,7 +23,8 @@ Instruções para agentes de código (OpenCode e similares) neste repositório. 
   estático. O estado é sempre *scoped*, nunca `static`; o tema é aplicado por JS (`op-theme.js`).
 - **Temas**: `wwwroot/themes/{aura,lara,nora}.css` são **gerados** — não edite à mão. CSS extra de componente
   vai em `tools/theme-gen/component-extras.json`, e depois o tema é regenerado.
-- **Ícones**: prefira SVG (`OpIcon`) a glyphs de fonte (`pi pi-*`) em elementos pequenos e centralizados.
+- **Ícones**: use os glyphs da fonte nativa (`<i class="pi pi-*">`); o wrapper SVG `OpIcon` foi removido.
+  Não crie ícones SVG à mão — se faltar um glyph, prefira uma lib de referência (ex.: Tabler Icons).
 - **Showcase sem Node**: o Tailwind é um bundle estático versionado (`wwwroot/css/tailwind.css`). Antes de usar
   uma classe Tailwind nova, confirme que ela existe no bundle; se não existir, use uma classe já presente ou
   estilo inline. Para regenerar, siga o cabeçalho de `wwwroot/css/tailwind.input.css`.
