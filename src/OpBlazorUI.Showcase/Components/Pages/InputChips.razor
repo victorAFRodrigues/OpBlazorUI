@@ -1,130 +1,222 @@
 @page "/inputchips"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.InputChips
+@using System.ComponentModel.DataAnnotations
 
 <PageTitle>InputChips - OpBlazorUI</PageTitle>
 
 <DocComponent Title="InputChips"
-              Description="Entrada de múltiplos valores como chips. Componente ainda não portado para o Blazor e sem página de referência no PrimeNG v21 (é uma adição do Optimus UI): os textos e exemplos abaixo são ilustrativos e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O InputChips é um campo de entrada com múltiplos valores em formato de chips, com suporte a separadores, limite e validação.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>Uso controlado por <code>ngModel</code>; cada valor digitado é convertido em um chip.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                Digite um valor e pressione <code>enter</code> (ou <code>,</code>) para adicionar um chip. O valor é
+                uma <code>List&lt;string&gt;</code> ligada com <code>@@bind-Value</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2" style="max-width: 25rem;">
+                    <OpInputChips @bind-Value="_basic" Placeholder="Adicione um valor"/>
+                    <span class="text-sm">Valor: <b>@string.Join(", ", _basic ?? new List<string>())</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Separador" Id="separator">
-            <Description><p>A propriedade <code>separator</code> permite adicionar vários chips de uma vez, separando os valores por um caractere.</p></Description>
-            <Code><CodeBlock Code="@SeparatorCode" Language="html"/></Code>
+        <DocSection Label="Separadores" Id="separators">
+            <Description>
+                Além de <code>enter</code> e vírgula, é possível definir separadores extras com
+                <code>SeparatorKeys</code>.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 25rem;">
+                    <OpInputChips @bind-Value="_separators" Placeholder="Separe com ; ou espaço" SeparatorKeys="@(new[] { ";" })"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SeparatorsCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Adicionar ao Sair do Campo" Id="addonblur">
-            <Description><p>Com <code>addOnBlur</code>, o valor pendente é convertido em chip ao sair do campo.</p></Description>
-            <Code><CodeBlock Code="@AddOnBlurCode" Language="html"/></Code>
+        <DocSection Label="Limite" Id="max">
+            <Description>O número máximo de chips é definido com <code>Max</code>.</Description>
+            <ChildContent>
+                <div style="max-width: 25rem;">
+                    <OpInputChips @bind-Value="_max" Max="3" Placeholder="Máximo de 3"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MaxCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template" Id="template">
-            <Description><p>O conteúdo de cada chip pode ser customizado com um template <code>item</code>.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Float Label" Id="floatlabel">
-            <Description><p>Um rótulo flutuante aparece sobre o campo quando ele recebe foco. Veja a documentação de <a href="/floatlabel">FloatLabel</a>.</p></Description>
-            <Code><CodeBlock Code="@FloatLabelCode" Language="html"/></Code>
+        <DocSection Label="Remover ao apagar" Id="backspace">
+            <Description>
+                Com o campo vazio, <code>backspace</code> remove o último chip; <code>AddOnBlur</code> adiciona o
+                valor pendente ao sair do campo.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 25rem;">
+                    <OpInputChips @bind-Value="_addOnBlur" AddOnBlur="true" Placeholder="Digite e clique fora"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AddOnBlurCode"/></Code>
         </DocSection>
 
         <DocSection Label="Formulários" Id="forms">
-            <Description><p>No Blazor, a integração acontecerá via <code>EditForm</code> + <code>DataAnnotationsValidator</code>, herdando de <code>OpInputBase&lt;TValue&gt;</code>.</p></Description>
-            <Code><CodeBlock Code="@FormsCode" Language="html"/></Code>
+            <Description>
+                Herda de <code>OpInputBase&lt;TValue&gt;</code> e integra-se ao <code>EditForm</code> +
+                <code>DataAnnotationsValidator</code>.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="SubmitForm" class="flex flex-col gap-2" style="max-width: 25rem;">
+                    <DataAnnotationsValidator/>
+                    <OpInputChips @bind-Value="_form.Tags" Placeholder="Tags obrigatórias"/>
+                    <ValidationMessage For="() => _form.Tags"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <span class="text-sm">Enviado: <b>@string.Join(", ", _form.Tags ?? new List<string>())</b></span>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente usa roles de lista (<code>listbox</code>/<code>option</code>) para anunciar os chips e um campo de entrada para adicionar novos valores.</p>
+                <p>Os chips são exibidos em uma lista; o campo de entrada usa <code>aria-label</code> e o botão de remover tem rótulo acessível.</p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
                               new[] { "enter", "Adiciona o valor digitado como chip." },
-                              new[] { "backspace", "Remove o último chip quando o campo está vazio." },
-                              new[] { "tab", "Move o foco para o próximo elemento focável." }
+                              new[] { "backspace", "Com o campo vazio, remove o último chip." },
+                              new[] { ",", "Adiciona o valor digitado como chip." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value / ValueChanged", "List&lt;string&gt;?", "null", "Valor (usar com <code>@@bind-Value</code>)." },
+                              new[] { "Placeholder", "string?", "null", "Texto de placeholder do campo interno." },
+                              new[] { "Max", "int?", "null", "Número máximo de chips." },
+                              new[] { "AllowDuplicate", "bool", "false", "Permite chips repetidos." },
+                              new[] { "AddOnBlur", "bool", "false", "Adiciona o valor pendente ao sair do campo." },
+                              new[] { "AddOnTab", "bool", "false", "Adiciona o valor pendente ao pressionar tab." },
+                              new[] { "SeparatorKeys", "IReadOnlyCollection&lt;string&gt;?", "null", "Teclas extras que adicionam um chip." },
+                              new[] { "RemoveIcon / ChipIcon", "string", "pi pi-times", "Ícones de remoção e do chip." },
+                              new[] { "Disabled / Readonly / Invalid", "bool", "false", "Estados do campo." },
+                              new[] { "OnAdd / OnRemove", "EventCallback", "—", "Notificações ao adicionar/remover." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] { new[] { "ChipTemplate", "RenderFragment&lt;string&gt;?", "Conteúdo customizado de cada chip." } })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>, classe <code>p-inputchips</code>); a tabela será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="inputchips"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Não há página correspondente no PrimeNG v21 (adição do Optimus UI), então as seções acima são um esqueleto baseado em padrões próximos e serão revisadas contra a referência do Optimus UI quando disponível.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Componente sem referência direta no fork Optimus UI; a API foi adaptada para Blazor com <code>List&lt;string&gt;</code>.</li>
+                        <li>O <code>paste</code> é tratado via evento <code>input</code> (quebra por <code>,</code>/<code>;</code>); não há leitura direta do clipboard.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private List<string> _basic = new();
+    private List<string> _separators = new();
+    private List<string> _max = new();
+    private List<string> _addOnBlur = new();
+    private bool _submitted;
+    private FormModel _form = new();
+
+    private void SubmitForm() => _submitted = true;
+
+    private sealed class FormModel
+    {
+        [Required(ErrorMessage = "Informe ao menos uma tag.")]
+        [MinLength(1, ErrorMessage = "Informe ao menos uma tag.")]
+        public List<string>? Tags { get; set; } = new();
+    }
+
     private const string ImportCode = """
-        import { InputChipsModule } from 'primeng/inputchips';
+        @using OpBlazorUI.Base.Components.InputChips
+
+        <OpInputChips @bind-Value="_values" Placeholder="Adicione um valor" />
+
+        @code {
+            private List<string> _values = new();
+        }
         """;
 
     private const string BasicCode = """
-        <p-inputchips [(ngModel)]="value"></p-inputchips>
+        <OpInputChips @bind-Value="_values" Placeholder="Adicione um valor" />
+
+        <span>Valor: @string.Join(", ", _values)</span>
         """;
 
-    private const string SeparatorCode = """
-        <p-inputchips [(ngModel)]="value" separator=","></p-inputchips>
+    private const string SeparatorsCode = """
+        <OpInputChips @bind-Value="_values" SeparatorKeys="@(new[] { ";" })" />
+        """;
+
+    private const string MaxCode = """
+        <OpInputChips @bind-Value="_values" Max="3" />
         """;
 
     private const string AddOnBlurCode = """
-        <p-inputchips [(ngModel)]="value" [addOnBlur]="true"></p-inputchips>
-        """;
-
-    private const string TemplateCode = """
-        <p-inputchips [(ngModel)]="value">
-            <ng-template let-item pTemplate="item">
-                <div class="flex align-items-center gap-2">
-                    <span>{{ item }}</span>
-                </div>
-            </ng-template>
-        </p-inputchips>
-        """;
-
-    private const string FloatLabelCode = """
-        <p-floatlabel>
-            <p-inputchips id="chips" [(ngModel)]="value"></p-inputchips>
-            <label for="chips">Tags</label>
-        </p-floatlabel>
+        <OpInputChips @bind-Value="_values" AddOnBlur="true" />
         """;
 
     private const string FormsCode = """
-        <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
-            <p-inputchips formControlName="tags"></p-inputchips>
-            @if (isInvalid('tags')) {
-                <p-message severity="error" size="small" variant="simple">Tags are required.</p-message>
+        <EditForm Model="_form" OnValidSubmit="SubmitForm">
+            <DataAnnotationsValidator />
+            <OpInputChips @bind-Value="_form.Tags" Placeholder="Tags obrigatórias" />
+            <ValidationMessage For="() => _form.Tags" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private FormModel _form = new();
+
+            private sealed class FormModel
+            {
+                [Required(ErrorMessage = "Informe ao menos uma tag.")]
+                public List<string>? Tags { get; set; } = new();
             }
-            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-        </form>
+        }
         """;
 }

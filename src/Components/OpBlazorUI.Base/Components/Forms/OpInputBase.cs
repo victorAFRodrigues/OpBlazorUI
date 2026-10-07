@@ -3,10 +3,11 @@ using System.Globalization;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
 
 namespace OpBlazorUI.Base.Components.Forms;
 
-public abstract class OpInputBase<TValue> : InputBase<TValue>
+public abstract class OpInputBase<TValue> : InputBase<TValue>, IAsyncDisposable
 {
     [Parameter] public bool Invalid { get; set; }
 
@@ -14,7 +15,22 @@ public abstract class OpInputBase<TValue> : InputBase<TValue>
 
     [Parameter] public string? StyleClass { get; set; }
 
+    [Inject] protected IJSRuntime Js { get; set; } = default!;
+
+    private OpInterop? _interop;
     private bool _valueExpressionInjected;
+
+    /// <summary>Módulos JS da biblioteca, com cache por componente.</summary>
+    protected OpInterop Interop => _interop ??= new OpInterop(Js);
+
+    public virtual async ValueTask DisposeAsync()
+    {
+        if (_interop is not null)
+        {
+            await _interop.DisposeAsync();
+            _interop = null;
+        }
+    }
 
     protected bool IsInvalid => Invalid
         || CssClass.Contains("invalid", StringComparison.Ordinal)

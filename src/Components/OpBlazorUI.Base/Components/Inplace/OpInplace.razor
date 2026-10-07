@@ -1,0 +1,36 @@
+@namespace OpBlazorUI.Base.Components.Inplace
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" aria-live="polite" @attributes="AdditionalAttributes">
+    @if (!Active)
+    {
+        <div class="p-inplace-display"
+             role="button"
+             tabindex="0"
+             data-p-disabled="@(Disabled.ToString().ToLowerInvariant())"
+             @onclick="ActivateAsync"
+             @onkeydown="HandleDisplayKeyDown">
+            @DisplayTemplate
+        </div>
+    }
+    else
+    {
+        <div class="p-inplace-content">
+            @if (ContentTemplate is not null)
+            {
+                @ContentTemplate(new OpInplaceContext { Close = DeactivateAsync })
+            }
+
+            @if (Closable)
+            {
+                <button type="button"
+                        class="p-button p-component p-button-icon-only"
+                        aria-label="@CloseAriaLabel"
+                        @onclick="DeactivateAsync">
+                    <i class="@CloseIconClass" aria-hidden="true"></i>
+                </button>
+            }
+        </div>
+    }
+</div>

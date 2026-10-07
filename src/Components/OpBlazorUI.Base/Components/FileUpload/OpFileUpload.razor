@@ -1,0 +1,155 @@
+@namespace OpBlazorUI.Base.Components.FileUpload
+@using OpBlazorUI.Base.Components.Common
+@using Microsoft.AspNetCore.Components.Forms
+@inherits OpComponentBase
+
+@if (Mode == "basic")
+{
+    <div class="@RootClass" @attributes="AdditionalAttributes">
+        @Messages
+        <div class="p-fileupload-basic-content">
+            <label class="@ChooseClass">
+                <InputFile class="op-fileupload-input" OnChange="OnInputChangeAsync" multiple="@Multiple" accept="@Accept" disabled="@Disabled"/>
+                <i class="@ChooseIcon" aria-hidden="true"></i>
+                <span class="p-button-label">@ChooseLabel</span>
+            </label>
+            <span>@BasicChosenLabel</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="@RootClass" @attributes="AdditionalAttributes">
+        <div class="p-fileupload-header">
+            @if (HeaderTemplate is not null)
+            {
+                @HeaderTemplate
+            }
+            else
+            {
+                <label class="@ChooseClass">
+                    <InputFile class="op-fileupload-input" OnChange="OnInputChangeAsync" multiple="@Multiple" accept="@Accept" disabled="@(Disabled || ChooseDisabled)"/>
+                    <i class="@ChooseIcon" aria-hidden="true"></i>
+                    <span class="p-button-label">@ChooseLabel</span>
+                </label>
+
+                @if (!Auto && ShowUploadButton)
+                {
+                    <button type="button" class="p-button p-component p-button-secondary" disabled="@(!HasFiles || Disabled)" @onclick="UploadAsync">
+                        <i class="@UploadIcon" aria-hidden="true"></i>
+                        <span class="p-button-label">@UploadLabel</span>
+                    </button>
+                }
+
+                @if (!Auto && ShowCancelButton)
+                {
+                    <button type="button" class="p-button p-component p-button-secondary" disabled="@(!HasFiles || Disabled)" @onclick="Clear">
+                        <i class="@CancelIcon" aria-hidden="true"></i>
+                        <span class="p-button-label">@CancelLabel</span>
+                    </button>
+                }
+
+                @ToolbarTemplate
+            }
+        </div>
+
+        <div class="@ContentClass"
+             @ondragenter:preventDefault
+             @ondragover:preventDefault
+             @ondragleave:preventDefault
+             @ondrop:preventDefault
+             @ondragenter="OnDragEnter"
+             @ondragleave="OnDragLeave"
+             @ondrop="OnDropAsync">
+            <div class="op-fileupload-drop" aria-hidden="true">
+                <InputFile class="op-fileupload-input" OnChange="OnInputChangeAsync" multiple="@Multiple" accept="@Accept" disabled="@Disabled"/>
+            </div>
+
+            @if (ContentTemplate is not null)
+            {
+                @ContentTemplate
+            }
+            else
+            {
+                @if (HasFiles)
+                {
+                    <div class="p-progressbar op-fileupload-progress" role="progressbar" aria-valuenow="@_progress" aria-valuemin="0" aria-valuemax="100">
+                        <div class="p-progressbar-value" style="width: @(_progress)%"></div>
+                    </div>
+                }
+
+                @Messages
+
+                @if (HasFiles)
+                {
+                    <div class="p-fileupload-file-list">
+                        @foreach (var (file, index) in Files.Select((f, i) => (f, i)))
+                        {
+                            @FileItem(file, index, false)
+                        }
+                    </div>
+                }
+
+                @if (UploadedFiles.Count > 0)
+                {
+                    <div class="p-fileupload-file-list">
+                        @foreach (var (file, index) in UploadedFiles.Select((f, i) => (f, i)))
+                        {
+                            @FileItem(file, index, true)
+                        }
+                    </div>
+                }
+
+                @if (!HasFiles && UploadedFiles.Count == 0 && EmptyTemplate is not null)
+                {
+                    @EmptyTemplate
+                }
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private RenderFragment Messages => @<text>
+        @foreach (var message in _messages)
+        {
+            <div class="p-message p-message-@message.Severity" role="alert">
+                <div class="p-message-content">
+                    <span class="p-message-text">@message.Text</span>
+                </div>
+            </div>
+        }
+    </text>;
+
+    private RenderFragment FileItem(OpFileUploadFile file, int index, bool uploaded) => @<text>
+        <div class="p-fileupload-file">
+            @if (FileTemplate is not null)
+            {
+                @FileTemplate(file)
+            }
+            else
+            {
+                <div class="p-fileupload-file-info">
+                    <div class="p-fileupload-file-name">@file.Name</div>
+                    <span class="p-fileupload-file-size">@FormatSize(file.Size)</span>
+                </div>
+                @if (uploaded)
+                {
+                    <span class="p-badge p-badge-success">Enviado</span>
+                }
+                else
+                {
+                    <span class="p-badge p-badge-warn">Pendente</span>
+                }
+                <div class="p-fileupload-file-actions">
+                    <button type="button"
+                            class="p-button p-component p-button-text p-button-rounded p-button-danger p-button-icon-only"
+                            aria-label="Remover"
+                            @onclick="() => RemoveAt(uploaded, index)">
+                        <i class="pi pi-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+            }
+        </div>
+    </text>;
+}

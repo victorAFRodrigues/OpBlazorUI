@@ -1,155 +1,258 @@
 @page "/inplace"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Inplace
+@using OpBlazorUI.Base.Components.InputText
 
 <PageTitle>Inplace - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Inplace"
-              Description="Exibe conteúdo no lugar de outro, alternando entre os estados de visualização e edição. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular).">
+              Description="O Inplace permite exibir e editar ao mesmo tempo: clicar na exibição mostra o conteúdo real.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O componente exige os templates <code>display</code> e <code>content</code> para definir o conteúdo de cada estado.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                O Inplace requer os templates de exibição (<code>DisplayTemplate</code>) e conteúdo
+                (<code>ContentTemplate</code>).
+            </Description>
+            <ChildContent>
+                <OpInplace>
+                    <DisplayTemplate><span>Ver conteúdo</span></DisplayTemplate>
+                    <ContentTemplate>
+                        <p class="m-0" style="max-width: 30rem;">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua. Ut enim ad minim veniam.
+                        </p>
+                    </ContentTemplate>
+                </OpInplace>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Entrada" Id="input">
-            <Description><p>O <code>closeCallback</code> retorna ao modo de visualização quando chamado a partir de um evento.</p></Description>
-            <Code><CodeBlock Code="@InputCode" Language="html"/></Code>
+        <DocSection Label="Input" Id="input">
+            <Description>
+                O callback <code>closeCallback</code> (aqui <code>context.Close</code>) volta ao estado de exibição
+                quando chamado a partir de um evento.
+            </Description>
+            <ChildContent>
+                <OpInplace>
+                    <DisplayTemplate><span>Clique para editar</span></DisplayTemplate>
+                    <ContentTemplate>
+                        <span class="inline-flex gap-2 align-items-center">
+                            <OpInputText @bind-Value="_inplaceText"/>
+                            <button type="button" class="p-button p-component p-button-text p-button-danger p-button-icon-only" aria-label="Fechar" @onclick="context.Close">
+                                <i class="pi pi-times" aria-hidden="true"></i>
+                            </button>
+                        </span>
+                    </ContentTemplate>
+                </OpInplace>
+            </ChildContent>
+            <Code><CodeBlock Code="@InputCode"/></Code>
         </DocSection>
 
         <DocSection Label="Imagem" Id="image">
-            <Description><p>Qualquer conteúdo, como uma imagem, pode ser colocado dentro de um Inplace.</p></Description>
-            <Code><CodeBlock Code="@ImageCode" Language="html"/></Code>
+            <Description>Qualquer conteúdo, como uma imagem, pode ser colocado dentro de um Inplace.</Description>
+            <ChildContent>
+                <OpInplace>
+                    <DisplayTemplate>
+                        <span class="inline-flex items-center gap-2">
+                            <i class="pi pi-image" aria-hidden="true"></i>
+                            <span>Ver foto</span>
+                        </span>
+                    </DisplayTemplate>
+                    <ContentTemplate>
+                        <img src="https://primefaces.org/cdn/primeng/images/demo/galleria/galleria5.jpg" alt="Natureza" style="width: 20rem; border-radius: var(--p-content-border-radius);" />
+                    </ContentTemplate>
+                </OpInplace>
+            </ChildContent>
+            <Code><CodeBlock Code="@ImageCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Carregamento Preguiçoso" Id="lazy">
-            <Description><p>Usando o evento <code>onActivate</code>, os dados podem ser carregados sob demanda antes de exibi-los.</p></Description>
-            <Code><CodeBlock Code="@LazyCode" Language="html"/></Code>
+        <DocSection Label="Lazy" Id="lazy">
+            <Description>
+                Com o evento <code>OnActivate</code>, os dados podem ser carregados de forma tardia (lazy) antes de
+                exibi-los.
+            </Description>
+            <ChildContent>
+                <OpInplace OnActivate="LoadDataAsync">
+                    <DisplayTemplate><span>Ver dados</span></DisplayTemplate>
+                    <ContentTemplate>
+                        @if (_lazyProducts.Count == 0)
+                        {
+                            <span>Carregando…</span>
+                        }
+                        else
+                        {
+                            <ul style="margin: 0;">
+                                @foreach (var item in _lazyProducts)
+                                {
+                                    <li>@item</li>
+                                }
+                            </ul>
+                        }
+                    </ContentTemplate>
+                </OpInplace>
+            </ChildContent>
+            <Code><CodeBlock Code="@LazyCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente define <code>aria-live</code> como <code>polite</code> por padrão. O elemento de visualização usa role <code>button</code>; <code>displayProps</code> pode adicionar <code>aria-label</code>/<code>aria-labelledby</code>. Componentes fecháveis exibem um botão com <code>aria-label</code> padrão de fechar.</p>
+                <p>
+                    O contêiner raiz usa <code>aria-live="polite"</code>. O elemento de exibição tem
+                    <code>role="button"</code> e <code>tabindex="0"</code>; a ativação pode ser feita com clique ou
+                    com a tecla <code>enter</code>.
+                </p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
-                <ApiTable Caption="Modo de visualização"
-                          Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] { new[] { "enter", "Alterna para o conteúdo." } })"/>
-                <ApiTable Caption="Botão de fechar"
-                          Headers="@(new[] { "Tecla", "Função" })"
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "enter", "Volta para a visualização." },
-                              new[] { "space", "Volta para a visualização." }
+                              new[] { "tab", "Move o foco para o elemento de exibição." },
+                              new[] { "enter", "Ativa o modo de edição/content." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Active", "bool", "false", "Se o conteúdo está exibido (usar com <code>@@bind-Active</code>)." },
+                              new[] { "Disabled", "bool", "false", "Desabilita a interação." },
+                              new[] { "PreventClick", "bool", "false", "Impede a ativação por clique." },
+                              new[] { "Closable", "bool", "false", "Exibe um botão para voltar à exibição (obsoleto no upstream)." },
+                              new[] { "CloseIcon / CloseAriaLabel", "string?", "null", "Ícone e rótulo acessível do botão de fechar." },
+                              new[] { "ActiveChanged / OnActivate / OnDeactivate", "EventCallback", "—", "Notificações de estado." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "DisplayTemplate", "RenderFragment?", "Conteúdo do estado de exibição." },
+                              new[] { "ContentTemplate", "RenderFragment&lt;OpInplaceContext&gt;?", "Conteúdo do estado ativo; o contexto expõe <code>Close</code>." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="inplace"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Os templates do Angular usam <code>#display</code>/<code>#content</code> e <code>ng-content</code>; aqui são parâmetros <code>DisplayTemplate</code>/<code>ContentTemplate</code>.</li>
+                        <li>O parâmetro <code>closable</code> é obsoleto no upstream (substituído por <code>closeCallback</code>); mantido por compatibilidade.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private string? _inplaceText = "Valor editável";
+    private readonly List<string> _lazyProducts = new();
+
+    private async Task LoadDataAsync()
+    {
+        if (_lazyProducts.Count > 0)
+        {
+            return;
+        }
+
+        await Task.Delay(300);
+        _lazyProducts.AddRange(new[] { "F230FH0G3 — Bamboo Watch", "NVKLALG — Bluetooth Headphones", "244FGC — Gaming Mouse" });
+    }
+
     private const string ImportCode = """
-        import { InplaceModule } from 'primeng/inplace';
+        @using OpBlazorUI.Base.Components.Inplace
+
+        <OpInplace>
+            <DisplayTemplate><span>Ver conteúdo</span></DisplayTemplate>
+            <ContentTemplate>
+                <p>Conteúdo</p>
+            </ContentTemplate>
+        </OpInplace>
         """;
 
     private const string BasicCode = """
-        <p-inplace>
-            <ng-template #display>
-                <span>View Content</span>
-            </ng-template>
-            <ng-template #content>
-                <p class="m-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-            </ng-template>
-        </p-inplace>
+        <OpInplace>
+            <DisplayTemplate><span>Ver conteúdo</span></DisplayTemplate>
+            <ContentTemplate>
+                <p class="m-0">Lorem ipsum dolor sit amet...</p>
+            </ContentTemplate>
+        </OpInplace>
         """;
 
     private const string InputCode = """
-        <p-inplace>
-            <ng-template #display>
-                <span>Click to Edit</span>
-            </ng-template>
-            <ng-template #content let-closeCallback="closeCallback">
+        <OpInplace>
+            <DisplayTemplate><span>Clique para editar</span></DisplayTemplate>
+            <ContentTemplate>
                 <span class="inline-flex gap-2">
-                    <input type="text" pInputText [pAutoFocus]="true" />
-                    <button type="button" pButton (click)="closeCallback($event)" text severity="danger">
-                        <i class="pi pi-times" pButtonIcon></i>
+                    <OpInputText @bind-Value="_value" />
+                    <button type="button" class="p-button p-button-text p-button-danger p-button-icon-only"
+                            @onclick="context.Close">
+                        <i class="pi pi-times"></i>
                     </button>
                 </span>
-            </ng-template>
-        </p-inplace>
+            </ContentTemplate>
+        </OpInplace>
         """;
 
     private const string ImageCode = """
-        <p-inplace>
-            <ng-template #display>
+        <OpInplace>
+            <DisplayTemplate>
                 <span class="inline-flex items-center gap-2">
-                    <span class="pi pi-image" style="vertical-align: middle"></span>
-                    <span class="ml-2">View Photo</span>
+                    <i class="pi pi-image"></i>
+                    <span>Ver foto</span>
                 </span>
-            </ng-template>
-            <ng-template #content>
-                <img class="w-full sm:w-80 shadow-md" src="https://primefaces.org/cdn/primeng/images/demo/galleria/galleria5.jpg" alt="Nature" />
-            </ng-template>
-        </p-inplace>
+            </DisplayTemplate>
+            <ContentTemplate>
+                <img src="foto.jpg" alt="Natureza" style="width: 20rem;" />
+            </ContentTemplate>
+        </OpInplace>
         """;
 
     private const string LazyCode = """
-        <p-inplace (onActivate)="loadData()">
-            <ng-template #display>
-                <span>View Data</span>
-            </ng-template>
-            <ng-template #content>
-                <p-table [value]="products" responsiveLayout="scroll">
-                    <ng-template #header>
-                        <tr>
-                            <th>Code</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Quantity</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template #body let-product>
-                        <tr>
-                            <td>{{ product.code }}</td>
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.category }}</td>
-                            <td>{{ product.quantity }}</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </ng-template>
-        </p-inplace>
+        <OpInplace OnActivate="LoadDataAsync">
+            <DisplayTemplate><span>Ver dados</span></DisplayTemplate>
+            <ContentTemplate>
+                @if (_products.Count == 0)
+                {
+                    <span>Carregando…</span>
+                }
+                else
+                {
+                    <ul>
+                        @foreach (var item in _products) { <li>@item</li> }
+                    </ul>
+                }
+            </ContentTemplate>
+        </OpInplace>
         """;
 }

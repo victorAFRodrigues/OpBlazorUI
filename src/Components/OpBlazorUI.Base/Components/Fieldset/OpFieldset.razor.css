@@ -1,0 +1,16 @@
+.p-fieldset-content-container {
+    overflow: hidden;
+    transition: grid-template-rows 0.2s ease-out;
+}
+
+.p-fieldset-content-container.p-fieldset-collapsed {
+    grid-template-rows: 0fr;
+}
+
+.p-fieldset-content-container.p-fieldset-collapsed .p-fieldset-content-wrapper {
+    visibility: hidden;
+}
+
+.p-fieldset-toggle-icon {
+    flex-shrink: 0;
+}

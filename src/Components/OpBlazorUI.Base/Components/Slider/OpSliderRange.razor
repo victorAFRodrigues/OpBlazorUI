@@ -1,0 +1,31 @@
+@namespace OpBlazorUI.Base.Components.Slider
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<double[]>
+
+<span class="@RootClass" @ref="_root" @attributes="AdditionalAttributes">
+    <span class="p-slider-range" style="@RangeStyle"></span>
+    <span class="p-slider-handle"
+          data-op-slider-handle="0"
+          role="slider"
+          style="@HandleStyle0"
+          aria-valuemin="@Min"
+          aria-valuemax="@Max"
+          aria-valuenow="@Values[0]"
+          aria-orientation="@Orientation"
+          aria-label="@AriaLabel"
+          aria-labelledby="@AriaLabelledBy"
+          tabindex="@(Disabled ? null : TabIndex)"
+          @onkeydown="@(e => HandleKeyDown(e, 0))"></span>
+    <span class="p-slider-handle"
+          data-op-slider-handle="1"
+          role="slider"
+          style="@HandleStyle1"
+          aria-valuemin="@Min"
+          aria-valuemax="@Max"
+          aria-valuenow="@Values[1]"
+          aria-orientation="@Orientation"
+          aria-label="@AriaLabel"
+          aria-labelledby="@AriaLabelledBy"
+          tabindex="@(Disabled ? null : TabIndex)"
+          @onkeydown="@(e => HandleKeyDown(e, 1))"></span>
+</span>

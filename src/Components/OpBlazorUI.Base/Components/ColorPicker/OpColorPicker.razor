@@ -1,0 +1,36 @@
+@namespace OpBlazorUI.Base.Components.ColorPicker
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<string>
+
+<span class="@RootClass" @ref="_root" @attributes="AdditionalAttributes">
+    @if (!Inline)
+    {
+        <input class="p-colorpicker-preview"
+               type="text"
+               readonly
+               id="@InputId"
+               tabindex="@TabIndex"
+               disabled="@Disabled"
+               aria-label="@AriaLabel"
+               value="@CurrentValue"
+               style="background-color: @CurrentHex"
+               @onclick="TogglePanel"
+               @onkeydown="HandleInputKeyDown"/>
+    }
+
+    @if (Inline || _panelVisible)
+    {
+        <div class="@PanelClass" style="@PanelStyle">
+            <div class="p-colorpicker-content">
+                <div class="p-colorpicker-color-selector" style="background-color: @HueHex" @ref="_selector">
+                    <div class="p-colorpicker-color-background">
+                        <div class="p-colorpicker-color-handle" style="@ColorHandleStyle"></div>
+                    </div>
+                </div>
+                <div class="p-colorpicker-hue" @ref="_hue">
+                    <div class="p-colorpicker-hue-handle" style="@HueHandleStyle"></div>
+                </div>
+            </div>
+        </div>
+    }
+</span>

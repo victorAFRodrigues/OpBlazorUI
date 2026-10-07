@@ -1,0 +1,50 @@
+@namespace OpBlazorUI.Base.Components.InputChips
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<List<string>>
+
+<div class="@RootClass" @onclick="FocusInputAsync" @attributes="AdditionalAttributes">
+    <ul class="@InputListClass">
+        @foreach (var (chip, index) in Chips.Select((c, i) => (c, i)))
+        {
+            <li class="p-inputchips-chip-item">
+                @if (ChipTemplate is not null)
+                {
+                    <span class="p-chip p-component p-inputchips-chip">@ChipTemplate(chip)</span>
+                }
+                else
+                {
+                    <span class="p-chip p-component p-inputchips-chip">
+                        @if (!string.IsNullOrEmpty(ChipIcon))
+                        {
+                            <span class="p-chip-icon @ChipIcon" aria-hidden="true"></span>
+                        }
+                        <span class="p-chip-label">@chip</span>
+                        <span class="@RemoveIconClass"
+                              role="button"
+                              aria-label="Remover"
+                              tabindex="-1"
+                              @onclick="() => RemoveChipAsync(index)"
+                              @onclick:stopPropagation="true"></span>
+                    </span>
+                }
+            </li>
+        }
+
+        <li class="p-inputchips-input-item">
+            <input id="@Id"
+                   name="@Name"
+                   type="text"
+                   @ref="_input"
+                   value="@_inputValue"
+                   placeholder="@Placeholder"
+                   class="@InputClass"
+                   aria-label="@AriaLabel"
+                   disabled="@Disabled"
+                   readonly="@Readonly"
+                   @oninput="HandleInput"
+                   @onkeydown="HandleKeyDownAsync"
+                   @onfocus="HandleFocus"
+                   @onblur="HandleBlurAsync"/>
+        </li>
+    </ul>
+</div>

@@ -1,137 +1,238 @@
 @page "/fileupload"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.FileUpload
 
 <PageTitle>FileUpload - OpBlazorUI</PageTitle>
 
 <DocComponent Title="FileUpload"
-              Description="Upload de arquivos com modos básico e avançado. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular).">
+              Description="O FileUpload é um uploader avançado com suporte a drag-and-drop, múltiplos arquivos, progresso e validações.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O modo <code>basic</code> oferece uma interface mais simples como alternativa ao modo avançado padrão.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                O modo avançado exibe os botões de escolher/enviar/cancelar e a lista de arquivos, com suporte a
+                arrastar e soltar.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 40rem;">
+                    <OpFileUpload Multiple="true" OnUpload="OnUploaded"/>
+                </div>
+                @if (_uploadedCount > 0)
+                {
+                    <span class="text-sm">Arquivos enviados nesta sessão: <b>@_uploadedCount</b></span>
+                }
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Automático" Id="auto">
-            <Description><p>Com a propriedade <code>auto</code>, o arquivo é enviado imediatamente após a seleção.</p></Description>
-            <Code><CodeBlock Code="@AutoCode" Language="html"/></Code>
+        <DocSection Label="Básico (simples)" Id="simple">
+            <Description>Com <code>Mode="basic"</code>, apenas o botão de escolha e o rótulo são exibidos.</Description>
+            <ChildContent>
+                <div style="max-width: 40rem;">
+                    <OpFileUpload Mode="basic" Auto="true" Accept="image/*" OnSelect="OnSelected"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SimpleCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Avançado" Id="advanced">
-            <Description><p>O uploader avançado oferece suporte a arrastar-e-soltar, múltiplos arquivos, envio automático, acompanhamento de progresso e validações.</p></Description>
-            <Code><CodeBlock Code="@AdvancedCode" Language="html"/></Code>
+        <DocSection Label="Envio customizado" Id="custom">
+            <Description>
+                Com <code>CustomUpload="true"</code>, o envio é tratado pelo evento <code>UploadHandler</code>. Aqui
+                apenas registramos os arquivos recebidos.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2" style="max-width: 40rem;">
+                    <OpFileUpload Multiple="true" CustomUpload="true" UploadHandler="OnCustomUpload"/>
+                    @if (_lastBatch.Count > 0)
+                    {
+                        <span class="text-sm">Último lote: <b>@string.Join(", ", _lastBatch)</b></span>
+                    }
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Validação" Id="validation">
+            <Description>
+                Restrinja por tipo com <code>Accept</code>, por tamanho com <code>MaxFileSize</code> e por
+                quantidade com <code>FileLimit</code>.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 40rem;">
+                    <OpFileUpload Multiple="true" Accept=".pdf,.png,.jpg" MaxFileSize="1048576" FileLimit="3"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ValidationCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template" Id="template">
-            <Description><p>A interface do uploader é customizável pelos templates <code>file</code>, <code>content</code> e <code>toolbar</code>.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+            <Description>O item da lista pode ser customizado com <code>FileTemplate</code>.</Description>
+            <ChildContent>
+                <div style="max-width: 40rem;">
+                    <OpFileUpload Multiple="true">
+                        <FileTemplate>
+                            <div class="flex items-center gap-3" style="width: 100%;">
+                                <i class="pi pi-file" style="font-size: 1.5rem;"></i>
+                                <div class="flex flex-col">
+                                    <span style="font-weight: 600;">@context.Name</span>
+                                    <span class="text-sm">@context.ContentType</span>
+                                </div>
+                            </div>
+                        </FileTemplate>
+                    </OpFileUpload>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O FileUpload usa um elemento <code>input</code> nativo oculto com <code>type="file"</code> para leitores de tela.</p>
+                <p>
+                    O campo de arquivo tem <code>aria-label</code>; os botões possuem rótulos textuais ou acessíveis.
+                    A área de conteúdo aceita arquivos arrastados e soltos.
+                </p>
                 <h3>Suporte a teclado</h3>
-                <p>Os elementos interativos do uploader são botões; veja a seção de acessibilidade de <a href="/button#accessibility">Button</a>.</p>
             </Description>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco entre os botões e o campo de arquivo." },
+                              new[] { "enter / space", "Aciona o botão focado." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Mode", "string", "advanced", "<code>advanced</code> ou <code>basic</code>." },
+                              new[] { "Multiple", "bool", "false", "Permite selecionar vários arquivos." },
+                              new[] { "Accept", "string?", "null", "Tipos aceitos (MIME ou extensões separadas por vírgula)." },
+                              new[] { "MaxFileSize", "long?", "null", "Tamanho máximo em bytes." },
+                              new[] { "FileLimit", "int?", "null", "Número máximo de arquivos." },
+                              new[] { "Auto", "bool", "false", "Envia automaticamente após a seleção." },
+                              new[] { "CustomUpload", "bool", "false", "Usa <code>UploadHandler</code> em vez do envio interno." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente." },
+                              new[] { "ChooseLabel / UploadLabel / CancelLabel", "string", "Escolher/Enviar/Cancelar", "Rótulos dos botões." },
+                              new[] { "ChooseIcon / UploadIcon / CancelIcon", "string", "pi pi-plus/upload/times", "Ícones dos botões." },
+                              new[] { "ShowUploadButton / ShowCancelButton", "bool", "true", "Exibe os botões." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos e Templates" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnSelect", "EventCallback&lt;IReadOnlyList&lt;OpFileUploadFile&gt;&gt;", "Disparado ao selecionar arquivos." },
+                              new[] { "OnRemove / OnClear", "EventCallback", "Remoção de um arquivo / limpeza da fila." },
+                              new[] { "UploadHandler", "EventCallback&lt;IReadOnlyList&lt;OpFileUploadFile&gt;&gt;", "Envio customizado." },
+                              new[] { "OnUpload / OnProgress / OnError", "EventCallback", "Notificações de envio." },
+                              new[] { "HeaderTemplate / ContentTemplate / ToolbarTemplate / EmptyTemplate", "RenderFragment", "Customização das áreas." },
+                              new[] { "FileTemplate", "RenderFragment&lt;OpFileUploadFile&gt;", "Customização de cada item da lista." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="fileupload"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O envio HTTP automático (<code>Url</code> + <code>HttpClient</code>) não foi portado; use <code>CustomUpload</code> + <code>UploadHandler</code> para enviar de fato.</li>
+                        <li>A seleção usa o <code>InputFile</code> do Blazor; o arrastar-e-soltar é capturado por um <code>InputFile</code> transparente sobre a área de conteúdo.</li>
+                        <li>Miniatura de imagem e badge por arquivo do upstream ainda não são exibidos por padrão.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private int _uploadedCount;
+    private List<string> _lastBatch = new();
+
+    private void OnUploaded(IReadOnlyList<OpFileUploadFile> files)
+    {
+        _uploadedCount += files.Count;
+    }
+
+    private void OnSelected(IReadOnlyList<OpFileUploadFile> files)
+    {
+        _lastBatch = files.Select(f => f.Name).ToList();
+    }
+
+    private void OnCustomUpload(IReadOnlyList<OpFileUploadFile> files)
+    {
+        _lastBatch = files.Select(f => f.Name).ToList();
+    }
+
     private const string ImportCode = """
-        import { FileUploadModule } from 'primeng/fileupload';
+        @using OpBlazorUI.Base.Components.FileUpload
+
+        <OpFileUpload Multiple="true" />
         """;
 
     private const string BasicCode = """
-        <p-fileupload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
-            url="https://www.primefaces.org/cdn/api/upload.php" accept="image/*" maxFileSize="1000000"
-            (onUpload)="onUpload($event)" />
-        <p-button label="Upload" (onClick)="fu.upload()" severity="secondary" />
+        <OpFileUpload Multiple="true" OnUpload="OnUploaded" />
+
+        @code {
+            private void OnUploaded(IReadOnlyList<OpFileUploadFile> files) { /* ... */ }
+        }
         """;
 
-    private const string AutoCode = """
-        <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload"
-            url="https://www.primefaces.org/cdn/api/upload.php" accept="image/*" maxFileSize="1000000"
-            (onUpload)="onBasicUploadAuto($event)" [auto]="true" chooseLabel="Browse" />
+    private const string SimpleCode = """
+        <OpFileUpload Mode="basic" Auto="true" Accept="image/*" />
         """;
 
-    private const string AdvancedCode = """
-        <p-fileupload name="demo[]" url="https://www.primefaces.org/cdn/api/upload.php"
-            (onUpload)="onUpload($event)" [multiple]="true" accept="image/*" maxFileSize="1000000" mode="advanced">
-            <ng-template #empty>
-                <div>Drag and drop files to here to upload.</div>
-            </ng-template>
-        </p-fileupload>
+    private const string CustomCode = """
+        <OpFileUpload Multiple="true" CustomUpload="true" UploadHandler="OnCustomUpload" />
+
+        @code {
+            private void OnCustomUpload(IReadOnlyList<OpFileUploadFile> files) { /* enviar */ }
+        }
+        """;
+
+    private const string ValidationCode = """
+        <OpFileUpload Multiple="true" Accept=".pdf,.png,.jpg" MaxFileSize="1048576" FileLimit="3" />
         """;
 
     private const string TemplateCode = """
-        <p-fileupload name="myfile[]" url="https://www.primefaces.org/cdn/api/upload.php" [multiple]="true"
-            accept="image/*" maxFileSize="1000000" (onUpload)="onTemplatedUpload()" (onSelect)="onSelectedFiles($event)">
-            <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
-                <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
-                    <div class="flex gap-2">
-                        <p-button (onClick)="choose($event, chooseCallback)" icon="pi pi-images" [rounded]="true" [outlined]="true" />
-                        <p-button (onClick)="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" [rounded]="true" [outlined]="true" severity="success" [disabled]="!files || files.length === 0" />
-                        <p-button (onClick)="clearCallback()" icon="pi pi-times" [rounded]="true" [outlined]="true" severity="danger" [disabled]="!files || files.length === 0" />
-                    </div>
-                    <p-progressbar [value]="totalSizePercent" [showValue]="false" class="w-full md:w-20rem h-1 md:ml-auto">
-                        <span class="whitespace-nowrap">{{ totalSize }}B / 1Mb</span>
-                    </p-progressbar>
-                </div>
-            </ng-template>
-            <ng-template #content let-files let-uploadedFiles="uploadedFiles" let-removeFileCallback="removeFileCallback" let-removeUploadedFileCallback="removeUploadedFileCallback">
-                <div class="flex flex-col gap-8 pt-4">
-                    <div *ngIf="files?.length > 0">
-                        <h5>Pending</h5>
-                        <div class="flex flex-wrap gap-4">
-                            <div *ngFor="let file of files; let i = index" class="p-8 rounded-border flex flex-col border border-surface items-center gap-4">
-                                <img role="presentation" [alt]="file.name" [src]="file.objectURL" width="100" height="50" />
-                                <span class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{ file.name }}</span>
-                                <div>{{ formatSize(file.size) }}</div>
-                                <p-badge value="Pending" severity="warn" />
-                                <p-button icon="pi pi-times" (click)="onRemoveTemplatingFile($event, file, removeFileCallback, index)" [outlined]="true" [rounded]="true" severity="danger" />
-                            </div>
-                        </div>
+        <OpFileUpload Multiple="true">
+            <FileTemplate>
+                <div class="flex items-center gap-3">
+                    <i class="pi pi-file"></i>
+                    <div class="flex flex-col">
+                        <span>@context.Name</span>
+                        <span>@context.ContentType</span>
                     </div>
                 </div>
-            </ng-template>
-            <ng-template #file></ng-template>
-            <ng-template #empty>
-                <div class="flex items-center justify-center flex-col">
-                    <i class="pi pi-cloud-upload !border-2 !rounded-full !p-8 !text-4xl !text-muted-color"></i>
-                    <p class="mt-6 mb-0">Drag and drop files to here to upload.</p>
-                </div>
-            </ng-template>
-        </p-fileupload>
+            </FileTemplate>
+        </OpFileUpload>
         """;
 }
