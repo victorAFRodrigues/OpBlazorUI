@@ -1,75 +1,214 @@
 @page "/inlinemessage"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.InlineMessage
 
 <PageTitle>InlineMessage - OpBlazorUI</PageTitle>
 
 <DocComponent Title="InlineMessage"
-              Description="Mensagem exibida em linha, junto ao conteúdo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O InlineMessage exibe uma mensagem em linha, junto ao conteúdo, com severidade e ícone.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O InlineMessage é definido com a tag <code>p-inlinemessage</code> e exibe o conteúdo passado diretamente, podendo conter links e outros elementos em linha.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O InlineMessage é definido com o componente <code>&lt;OpInlineMessage&gt;</code> e exibe o
+                    conteúdo passado diretamente como filho (<code>ChildContent</code>), podendo conter links e outros
+                    elementos em linha. O texto também pode ser informado pela propriedade <code>Text</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <OpInlineMessage Severity="success">
+                        Pedido enviado. <a href="#">Ver</a>
+                    </OpInlineMessage>
+                    <OpInlineMessage Severity="info" Text="Pedido em processamento."/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Severidades" Id="severities">
-            <Description><p>As severidades disponíveis são <code>success</code>, <code>info</code>, <code>warn</code> e <code>error</code>, informadas pela propriedade <code>severity</code>.</p></Description>
-            <Code><CodeBlock Code="@SeveritiesCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    As severidades disponíveis são <code>success</code>, <code>info</code>, <code>warn</code>,
+                    <code>error</code>, <code>secondary</code> e <code>contrast</code>, informadas pela propriedade
+                    <code>Severity</code> (o padrão é <code>info</code>). Cada severidade aplica a classe
+                    <code>p-inlinemessage-{severity}</code>; as quatro severidades clássicas também têm um ícone padrão.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <OpInlineMessage Severity="success" Text="Mensagem de Sucesso"/>
+                    <OpInlineMessage Severity="info" Text="Mensagem de Informação"/>
+                    <OpInlineMessage Severity="warn" Text="Mensagem de Aviso"/>
+                    <OpInlineMessage Severity="error" Text="Mensagem de Erro"/>
+                    <OpInlineMessage Severity="secondary" Text="Mensagem Secundária"/>
+                    <OpInlineMessage Severity="contrast" Text="Mensagem de Contraste"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SeveritiesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ícone" Id="icon">
+            <Description>
+                <p>
+                    Por padrão, cada severidade exibe seu ícone. Use <code>Icon</code> para substituí-lo por qualquer
+                    classe de ícone (ex.: <code>pi pi-send</code>) ou <code>ShowIcon="false"</code> para ocultá-lo.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <OpInlineMessage Severity="info" Text="Mensagem com o ícone padrão da severidade"/>
+                    <OpInlineMessage Severity="info" Icon="pi pi-send" Text="Mensagem com ícone customizado"/>
+                    <OpInlineMessage Severity="info" Text="Mensagem sem ícone" ShowIcon="false"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Conteúdo" Id="content">
+            <Description>
+                <p>
+                    Para conteúdo rico (negrito, links, ícones e outros elementos em linha), use
+                    <code>ChildContent</code>. Quando o texto vem de <code>Text</code>, ele é escapado por padrão;
+                    defina <code>Escape="false"</code> apenas para renderizá-lo como HTML — evite com conteúdo de
+                    origem não confiável.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <OpInlineMessage Severity="warn">
+                        Seu plano expira em <b>3 dias</b>. <a href="#">Renove agora</a>
+                    </OpInlineMessage>
+                    <OpInlineMessage Severity="success" Escape="false" Text="@_richText"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ContentCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente renderiza o conteúdo com <code>role="alert"</code>, para que leitores de tela anunciem a mensagem assim que ela aparecer.</p>
+                <p>
+                    O componente renderiza o conteúdo com <code>role="alert"</code>, para que leitores de tela
+                    anunciem a mensagem assim que ela aparecer. Como qualquer atributo extra é repassado ao elemento
+                    raiz, <code>aria-label</code> e <code>aria-labelledby</code> podem ser usados para descrevê-la.
+                </p>
                 <h3>Suporte a teclado</h3>
                 <p>O componente não inclui elementos interativos.</p>
             </Description>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Severity", "string", "\"info\"", "Severidade: <code>info</code>, <code>success</code>, <code>warn</code>, <code>error</code>, <code>secondary</code> ou <code>contrast</code>." },
+                              new[] { "Text", "string?", "null", "Texto exibido (ignorado quando <code>ChildContent</code> é informado)." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone (ex.: <code>pi pi-send</code>); sem valor, usa o ícone padrão da severidade." },
+                              new[] { "ShowIcon", "bool", "true", "Exibe o ícone." },
+                              new[] { "Escape", "bool", "true", "Quando <code>false</code>, o <code>Text</code> é renderizado como HTML." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo da mensagem; tem precedência sobre <code>Text</code>." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="inlinemessage"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code> e os <code>AdditionalAttributes</code> (repassados ao elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O upstream documenta apenas <code>success</code>, <code>info</code>, <code>warn</code> e <code>error</code>; o port também aceita <code>secondary</code> e <code>contrast</code>.</li>
+                        <li><code>Severity</code> é usada como sufixo de classe após <code>ToLowerInvariant</code>; valores fora da lista geram uma classe desconhecida (sem estilo).</li>
+                        <li><code>Text</code> é escapado por padrão; conteúdo HTML exige <code>Escape="false"</code>, e o mais indicado para conteúdo rico é <code>ChildContent</code>.</li>
+                        <li><code>role="alert"</code> é fixo no elemento raiz, mas pode ser sobrescrito por um atributo adicional.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private static readonly string _richText = "Validação concluída. <a href=\"#\">Ver relatório</a>";
+
     private const string ImportCode = """
-        import { InlineMessageModule } from 'primeng/inlinemessage';
+        @using OpBlazorUI.Base.Components.InlineMessage
+
+        <OpInlineMessage Severity="success" Text="Pedido enviado." />
+        <OpInlineMessage Severity="info">Com <a href="#">link</a></OpInlineMessage>
         """;
 
     private const string BasicCode = """
-        <p-inlinemessage severity="success">Order submitted. <a href="#">View</a></p-inlinemessage>
+        <OpInlineMessage Severity="success">
+            Pedido enviado. <a href="#">Ver</a>
+        </OpInlineMessage>
+
+        <OpInlineMessage Severity="info" Text="Pedido em processamento." />
         """;
 
     private const string SeveritiesCode = """
-        <p-inlinemessage severity="success">Success Message</p-inlinemessage>
-        <p-inlinemessage severity="info">Info Message</p-inlinemessage>
-        <p-inlinemessage severity="warn">Warn Message</p-inlinemessage>
-        <p-inlinemessage severity="error">Error Message</p-inlinemessage>
+        <OpInlineMessage Severity="success" Text="Mensagem de Sucesso" />
+        <OpInlineMessage Severity="info" Text="Mensagem de Informação" />
+        <OpInlineMessage Severity="warn" Text="Mensagem de Aviso" />
+        <OpInlineMessage Severity="error" Text="Mensagem de Erro" />
+        <OpInlineMessage Severity="secondary" Text="Mensagem Secundária" />
+        <OpInlineMessage Severity="contrast" Text="Mensagem de Contraste" />
+        """;
+
+    private const string IconCode = """
+        <OpInlineMessage Severity="info" Text="Mensagem com o ícone padrão da severidade" />
+        <OpInlineMessage Severity="info" Icon="pi pi-send" Text="Mensagem com ícone customizado" />
+        <OpInlineMessage Severity="info" Text="Mensagem sem ícone" ShowIcon="false" />
+        """;
+
+    private const string ContentCode = """
+        <OpInlineMessage Severity="warn">
+            Seu plano expira em <b>3 dias</b>. <a href="#">Renove agora</a>
+        </OpInlineMessage>
+
+        <OpInlineMessage Severity="success" Escape="false"
+                         Text="Validação concluída. <a href='#'>Ver relatório</a>" />
+        """;
+
+    private const string AccessibilityCode = """
+        <OpInlineMessage Severity="warn" aria-label="Aviso de expiração do plano"
+                         Text="Seu plano expira em 3 dias." />
         """;
 }

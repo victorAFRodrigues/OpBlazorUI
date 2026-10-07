@@ -1,0 +1,26 @@
+@namespace OpBlazorUI.Base.Components.InlineMessage
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" role="alert" @attributes="AdditionalAttributes">
+    @if (ShowIcon && EffectiveIcon is { Length: > 0 })
+    {
+        <span class="p-inlinemessage-icon @EffectiveIcon" aria-hidden="true"></span>
+    }
+
+    @if (ChildContent is not null)
+    {
+        <span class="p-inlinemessage-text">@ChildContent</span>
+    }
+    else if (!string.IsNullOrEmpty(Text))
+    {
+        if (Escape)
+        {
+            <span class="p-inlinemessage-text">@Text</span>
+        }
+        else
+        {
+            <span class="p-inlinemessage-text">@((MarkupString)Text)</span>
+        }
+    }
+</div>

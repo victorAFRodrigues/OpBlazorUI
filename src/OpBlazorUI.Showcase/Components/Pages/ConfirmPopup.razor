@@ -1,116 +1,334 @@
 @page "/confirmpopup"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.ConfirmPopup
+@using OpBlazorUI.Base.Components.ConfirmDialog.Models
+@using OpBlazorUI.Base.Components.Button
 
 <PageTitle>ConfirmPopup - OpBlazorUI</PageTitle>
 
 <DocComponent Title="ConfirmPopup"
-              Description="Sobrescrita de confirmação exibida relativa ao seu alvo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O ConfirmPopup exibe uma confirmação ancorada ao elemento que a disparou, controlada por uma referência de componente.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O ConfirmPopup é definido com a tag <code>p-confirmPopup</code> e uma instância de <code>ConfirmationService</code> é necessária para exibi-lo, chamando o método <code>confirm</code>. Para um diálogo modal, veja <a href="/confirmdialog">ConfirmDialog</a>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O ConfirmPopup é definido com o componente <code>&lt;OpConfirmPopup&gt;</code> e controlado por
+                    uma referência (<code>@@ref</code>): como não há um gatilho interno, informe um <code>@@ref</code>
+                    em cada elemento e chame <code>ShowAsync(target)</code>. No Angular a exibição é feita pelo
+                    <code>ConfirmationService</code> (método <code>confirm</code>); no port não há serviço — cada
+                    confirmação é uma instância própria da página. Para um diálogo modal, veja
+                    <a href="/confirmdialog">ConfirmDialog</a>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-wrap justify-center gap-2">
+                    <span @ref="_saveTarget" class="inline-flex">
+                        <OpButton Label="Salvar" Outlined="true" OnClick="ShowSave"/>
+                    </span>
+                    <span @ref="_deleteTarget" class="inline-flex">
+                        <OpButton Label="Excluir" Severity="danger" Outlined="true" OnClick="ShowDelete"/>
+                    </span>
+                </div>
+                <OpConfirmPopup @ref="_basicPopup" Message="@_basicMessage"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template" Id="template">
-            <Description><p>A seção de conteúdo pode ser personalizada com o template <code>content</code>.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        <DocSection Label="Customização" Id="custom">
+            <Description>
+                <p>
+                    O ícone é definido por <code>Icon</code> (padrão <code>pi pi-exclamation-triangle</code>) e os
+                    rótulos por <code>AcceptLabel</code>/<code>RejectLabel</code> (padrões <code>Sim</code>/<code>Não</code>).
+                    <code>AcceptIcon</code> e <code>RejectIcon</code> adicionam ícones aos botões, e
+                    <code>AcceptButtonStyleClass</code>/<code>RejectButtonStyleClass</code> aplicam classes CSS a eles.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-wrap justify-center gap-2">
+                    <span @ref="_customTarget" class="inline-flex">
+                        <OpButton Label="Confirmar exclusão" Severity="danger" Outlined="true" OnClick="ShowCustom"/>
+                    </span>
+                </div>
+                <OpConfirmPopup @ref="_customPopup"
+                                Message="Esta ação não pode ser desfeita."
+                                Icon="pi pi-info-circle"
+                                AcceptLabel="Confirmar"
+                                RejectLabel="Voltar"
+                                AcceptIcon="pi pi-check"
+                                RejectIcon="pi pi-times"
+                                AcceptButtonStyleClass="p-button-danger"
+                                RejectButtonStyleClass="p-button-secondary p-button-text"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Headless" Id="headless">
-            <Description><p>O modo <i>Headless</i> permite personalizar toda a interface do usuário em vez dos elementos padrão.</p></Description>
-            <Code><CodeBlock Code="@HeadlessCode" Language="html"/></Code>
+        <DocSection Label="Eventos" Id="events">
+            <Description>
+                <p>
+                    <code>Accept</code> e <code>Reject</code> são disparados quando o usuário aceita ou rejeita.
+                    <code>OnHide</code> é disparado ao fechar e entrega um <code>ConfirmEvent</code> cujo
+                    <code>Accepted</code> indica o desfecho: <code>true</code> quando aceito e <code>false</code> ao
+                    rejeitar, fechar com <code>Escape</code> ou clicar fora (com <code>DismissableMask</code>).
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <span @ref="_eventsTarget" class="inline-flex">
+                        <OpButton Label="Confirmar ação" OnClick="ShowEvents"/>
+                    </span>
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <span>Aceites: <b>@_acceptCount</b></span>
+                        <span>Rejeições: <b>@_rejectCount</b></span>
+                        <span>Último OnHide: <b>@(_lastHide ?? "—")</b></span>
+                    </div>
+                </div>
+                <OpConfirmPopup @ref="_eventsPopup"
+                                Message="Aceite ou rejeite para ver os eventos."
+                                Accept="OnAccept"
+                                Reject="OnReject"
+                                OnHide="HandleHide"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@EventsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente ConfirmPopup usa o papel <code>alertdialog</code> e, como qualquer atributo é passado para o elemento raiz, você pode definir atributos como <code>aria-label</code> ou <code>aria-labelledby</code> para descrever o conteúdo do popup. Além disso, <code>aria-modal</code> é adicionado, pois o foco é mantido dentro do popup.</p>
-                <p>Recomenda-se usar um componente de gatilho acessível por teclado, como um botão; caso contrário, seria necessário adicionar <code>tabIndex</code>. O ConfirmPopup adiciona o estado <code>aria-expanded</code> e <code>aria-controls</code> ao gatilho, de modo que a relação entre o gatilho e o popup fica definida.</p>
+                <p>
+                    O painel é renderizado com o papel <code>dialog</code>, <code>aria-labelledby</code> apontando
+                    para a mensagem e <code>tabindex="-1"</code>. Como qualquer atributo extra é repassado ao
+                    elemento raiz, você pode definir <code>aria-label</code> ou <code>aria-labelledby</code> para
+                    descrever o conteúdo. Ao abrir, o foco vai para o botão indicado por <code>DefaultFocus</code>
+                    (por padrão, o de aceitar) e fica preso ao painel.
+                </p>
+                <p>
+                    Recomenda-se usar um gatilho acessível por teclado, como um botão. O componente não aplica
+                    <code>aria-expanded</code> nem <code>aria-controls</code> ao gatilho, então associe-os
+                    manualmente quando necessário.
+                </p>
                 <h3>Suporte a teclado do overlay</h3>
-                <p>Quando o popup é aberto, o primeiro elemento focalizável recebe o foco, o que pode ser personalizado adicionando <code>autofocus</code> a um elemento dentro do popup.</p>
             </Description>
             <Code>
-                <ApiTable Caption="Suporte a teclado do overlay"
-                          Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] { new[] { "tab", "Move o foco para o próximo elemento focalizável dentro do popup." }, new[] { "shift + tab", "Move o foco para o elemento focalizável anterior dentro do popup." }, new[] { "escape", "Fecha o popup e move o foco para o gatilho." } })"/>
-                <ApiTable Caption="Suporte a teclado dos botões"
-                          Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] { new[] { "enter", "Aciona a ação, fecha o popup e move o foco para o gatilho." }, new[] { "space", "Aciona a ação, fecha o popup e move o foco para o gatilho." } })"/>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco para o próximo elemento focalizável dentro do popup." },
+                              new[] { "shift + tab", "Move o foco para o elemento focalizável anterior dentro do popup." },
+                              new[] { "escape", "Fecha o popup (quando <code>CloseOnEscape</code> é <code>true</code>)." }
+                          })"/>
+                <div class="doc-section-description"><h3>Suporte a teclado dos botões</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "enter", "Aciona a ação, fecha o popup e devolve o foco ao gatilho." },
+                              new[] { "space", "Aciona a ação, fecha o popup e devolve o foco ao gatilho." }
+                          })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Message", "string?", "null", "Texto da mensagem exibida." },
+                              new[] { "Icon", "string", "\"pi pi-exclamation-triangle\"", "Classe do ícone; vazio oculta o ícone." },
+                              new[] { "AcceptLabel", "string", "\"Sim\"", "Rótulo do botão de aceitar." },
+                              new[] { "RejectLabel", "string", "\"Não\"", "Rótulo do botão de rejeitar." },
+                              new[] { "AcceptIcon", "string?", "null", "Classe do ícone do botão de aceitar." },
+                              new[] { "RejectIcon", "string?", "null", "Classe do ícone do botão de rejeitar." },
+                              new[] { "AcceptButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de aceitar." },
+                              new[] { "RejectButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de rejeitar." },
+                              new[] { "AcceptVisible", "bool", "true", "Exibe o botão de aceitar." },
+                              new[] { "RejectVisible", "bool", "true", "Exibe o botão de rejeitar." },
+                              new[] { "CloseOnEscape", "bool", "true", "Fecha o popup ao pressionar <code>Escape</code> (dispara <code>Reject</code>)." },
+                              new[] { "DismissableMask", "bool", "false", "Fecha o popup ao clicar fora dele." },
+                              new[] { "DefaultFocus", "string", "\"accept\"", "Foco inicial: <code>accept</code>, <code>reject</code> ou <code>none</code>." },
+                              new[] { "Target", "ElementReference?", "null", "Âncora usada quando <code>ShowAsync</code> é chamado sem alvo." },
+                              new[] { "Placement", "string", "\"bottom\"", "Lado preferido do painel em relação ao alvo." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Accept", "EventCallback", "Disparado ao acionar o botão de aceitar." },
+                              new[] { "Reject", "EventCallback", "Disparado ao acionar o botão de rejeitar (também em <code>Escape</code>)." },
+                              new[] { "OnHide", "EventCallback&lt;ConfirmEvent&gt;", "Disparado ao fechar; <code>ConfirmEvent.Accepted</code> indica o desfecho." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Métodos" Id="api-methods">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Parâmetros", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ShowAsync", "ElementReference? target", "Exibe o painel ancorado ao alvo informado (ou a <code>Target</code>)." },
+                              new[] { "HideAsync", "—", "Oculta o painel sem aceitar nem rejeitar; dispara <code>OnHide</code> com <code>Accepted = false</code>." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent>
+                <DocTokens Component="confirmpopup"/>
+                <div class="doc-section-description">
+                    <p>Os botões de aceitar/rejeitar usam o <code>OpButton</code>; a customização de cor pode ser feita
+                    pelas classes repassadas em <code>AcceptButtonStyleClass</code>/<code>RejectButtonStyleClass</code>.</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, <code>AcceptButtonStyleClass</code>/<code>RejectButtonStyleClass</code> e os
+                    <code>AdditionalAttributes</code> (repassados ao elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há serviço equivalente ao <code>ConfirmationService</code>/<code>confirm</code> do Angular: cada confirmação é uma instância controlada por <code>@@ref</code> e <code>ShowAsync</code>/<code>HideAsync</code>.</li>
+                        <li>Os templates <code>content</code> e <code>headless</code> do upstream não foram portados; <code>Message</code> é renderizado como texto puro (sem HTML interpretado).</li>
+                        <li>O painel usa <code>role="dialog"</code> (e não <code>alertdialog</code>) e não define <code>aria-modal</code>.</li>
+                        <li>Não há <code>aria-expanded</code>/<code>aria-controls</code> no gatilho; associe manualmente se precisar.</li>
+                        <li>Não há parâmetros de severidade para os botões; use as <code>*ButtonStyleClass</code> (ex.: <code>p-button-danger</code>).</li>
+                        <li>Não há animação de entrada/saída; o posicionamento é feito por JS (<code>OpOverlayAttach</code>) e, na prática, limita-se a <code>bottom</code>/<code>top</code>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private OpConfirmPopup? _basicPopup;
+    private OpConfirmPopup? _customPopup;
+    private OpConfirmPopup? _eventsPopup;
+
+    private ElementReference _saveTarget;
+    private ElementReference _deleteTarget;
+    private ElementReference _customTarget;
+    private ElementReference _eventsTarget;
+
+    private string _basicMessage = "";
+    private int _acceptCount;
+    private int _rejectCount;
+    private string? _lastHide;
+
+    private void ShowSave()
+    {
+        _basicMessage = "Deseja salvar as alterações?";
+        _ = _basicPopup!.ShowAsync(_saveTarget);
+    }
+
+    private void ShowDelete()
+    {
+        _basicMessage = "Deseja excluir este registro?";
+        _ = _basicPopup!.ShowAsync(_deleteTarget);
+    }
+
+    private void ShowCustom() => _ = _customPopup!.ShowAsync(_customTarget);
+
+    private void ShowEvents() => _ = _eventsPopup!.ShowAsync(_eventsTarget);
+
+    private void OnAccept() => _acceptCount++;
+
+    private void OnReject() => _rejectCount++;
+
+    private void HandleHide(ConfirmEvent e) => _lastHide = e.Accepted ? "aceito" : "rejeitado";
+
     private const string ImportCode = """
-        import { ConfirmPopupModule } from 'primeng/confirmpopup';
+        @using OpBlazorUI.Base.Components.ConfirmPopup
+        @using OpBlazorUI.Base.Components.ConfirmDialog.Models
+        @using OpBlazorUI.Base.Components.Button
+
+        <OpConfirmPopup @ref="_popup" Message="Tem certeza?" />
         """;
 
     private const string BasicCode = """
-        <p-toast />
-        <p-confirmpopup />
-        <p-button (onClick)="confirm1($event)" label="Save" [outlined]="true" />
-        <p-button (onClick)="confirm2($event)" label="Delete" severity="danger" [outlined]="true" />
+        <OpConfirmPopup @ref="_popup" Message="@_message" />
+
+        <span @ref="_target" class="inline-flex">
+            <OpButton Label="Salvar" Outlined="true" OnClick="Show" />
+        </span>
+
+        @code {
+            private OpConfirmPopup? _popup;
+            private ElementReference _target;
+            private string _message = "";
+
+            private void Show()
+            {
+                _message = "Deseja salvar as alterações?";
+                _ = _popup!.ShowAsync(_target);
+            }
+        }
         """;
 
-    private const string TemplateCode = """
-        <p-toast />
-        <p-confirmpopup>
-            <ng-template #content let-message>
-                <div
-                    class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700 p-4 mb-4 pb-0"
-                >
-                    <i [class]="message.icon" class="!text-6xl text-primary-500"></i>
-                    <p>{{ message.message }}</p>
-                </div>
-            </ng-template>
-        </p-confirmpopup>
-        <p-button (click)="confirm($event)" label="Save" />
+    private const string CustomCode = """
+        <OpConfirmPopup @ref="_popup"
+                        Message="Esta ação não pode ser desfeita."
+                        Icon="pi pi-info-circle"
+                        AcceptLabel="Confirmar"
+                        RejectLabel="Voltar"
+                        AcceptIcon="pi pi-check"
+                        RejectIcon="pi pi-times"
+                        AcceptButtonStyleClass="p-button-danger"
+                        RejectButtonStyleClass="p-button-secondary p-button-text" />
         """;
 
-    private const string HeadlessCode = """
-        <p-toast />
-        <p-confirmpopup #cp>
-            <ng-template #headless let-message>
-                <div class="rounded p-4">
-                    <span>{{ message.message }}</span>
-                    <div class="flex items-center gap-2 mt-4">
-                        <p-button (onClick)="cp.onAccept()" label="Save" size="small" [autofocus]="true" />
-                        <p-button (onClick)="cp.onReject()" label="Cancel" [text]="true" size="small" severity="secondary" />
-                    </div>
-                </div>
-            </ng-template>
-        </p-confirmpopup>
-        <p-button (onClick)="confirm($event)" label="Save" />
+    private const string EventsCode = """
+        <OpConfirmPopup @ref="_popup"
+                        Message="Aceite ou rejeite para ver os eventos."
+                        Accept="OnAccept"
+                        Reject="OnReject"
+                        OnHide="HandleHide" />
+
+        <span>Último OnHide: <b>@(_lastHide ?? "—")</b></span>
+
+        @code {
+            private string? _lastHide;
+
+            private void OnAccept() { /* ... */ }
+            private void OnReject() { /* ... */ }
+
+            private void HandleHide(ConfirmEvent e) => _lastHide = e.Accepted ? "aceito" : "rejeitado";
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <span @ref="_target" class="inline-flex">
+            <OpButton Label="Excluir" Severity="danger" OnClick="Show" />
+        </span>
+        <OpConfirmPopup @ref="_popup" Message="Excluir o registro?" />
+
+        @code {
+            private OpConfirmPopup? _popup;
+            private ElementReference _target;
+
+            private void Show() => _ = _popup!.ShowAsync(_target);
+        }
         """;
 }

@@ -1,0 +1,133 @@
+@namespace OpBlazorUI.Base.Components.Tree
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.IconField
+@using OpBlazorUI.Base.Components.InputIcon
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (Loading && LoadingMode == "mask")
+    {
+        <div class="p-tree-loading p-tree-mask p-overlay-mask">
+            <i class="p-tree-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></i>
+        </div>
+    }
+
+    @if (ShowHeader && HeaderTemplate is not null)
+    {
+        @HeaderTemplate
+    }
+
+    @if (Filter)
+    {
+        <OpIconField IconPosition="left" StyleClass="p-tree-filter-container p-tree-filter">
+            <input type="text"
+                   class="p-inputtext p-tree-filter-input"
+                   role="searchbox"
+                   autocomplete="off"
+                   value="@_filterValue"
+                   placeholder="@FilterPlaceholder"
+                   aria-label="@FilterPlaceholder"
+                   @oninput="OnFilterInput"/>
+            <OpInputIcon>
+                <i class="p-icon pi pi-search" aria-hidden="true"></i>
+            </OpInputIcon>
+        </OpIconField>
+    }
+
+    <div class="@WrapperClass" style="@WrapperStyle">
+        @if (VisibleRoots.Count > 0)
+        {
+            <ul class="p-tree-root-children" role="tree" aria-label="@AriaLabel">
+                @foreach (var node in VisibleRoots)
+                {
+                    @RenderNode(node)
+                }
+            </ul>
+        }
+        else if (!Loading && (EmptyTemplate is not null || !string.IsNullOrEmpty(EmptyMessage)))
+        {
+            <div class="p-tree-empty-message">
+                @if (EmptyTemplate is not null)
+                {
+                    @EmptyTemplate
+                }
+                else
+                {
+                    @EmptyMessage
+                }
+            </div>
+        }
+    </div>
+
+    @if (FooterTemplate is not null)
+    {
+        @FooterTemplate
+    }
+</div>
+
+@code {
+    private RenderFragment RenderNode(OpTreeNode node) => __builder =>
+    {
+        var selected = IsSelected(node);
+        var partial = IsPartial(node);
+
+        <li class="@NodeClass(node)"
+            role="treeitem"
+            aria-label="@node.Label"
+            aria-selected="@(IsCheckbox ? null : (selected ? "true" : "false"))"
+            aria-checked="@(IsCheckbox ? (selected ? "true" : "false") : null)"
+            aria-expanded="@(node.Leaf ? null : (node.Expanded ? "true" : "false"))">
+            <div class="@NodeContentClass(selected)" @onclick="(e) => OnNodeClickAsync(node, e)">
+                <button type="button" class="p-tree-node-toggle-button" tabindex="-1"
+                        @onclick="() => ToggleExpandAsync(node)"
+                        @onclick:stopPropagation="true">
+                    @if (TogglerIconTemplate is not null)
+                    {
+                        @TogglerIconTemplate(node)
+                    }
+                    else if (node.Loading)
+                    {
+                        <i class="pi pi-spinner pi-spin p-tree-node-icon" aria-hidden="true"></i>
+                    }
+                    else
+                    {
+                        <i class="@ToggleIconClass(node.Expanded)" aria-hidden="true"></i>
+                    }
+                </button>
+
+                @if (IsCheckbox)
+                {
+                    <OpCheckbox Value="@selected" Indeterminate="@partial" Readonly="true"/>
+                }
+
+                @if (!string.IsNullOrEmpty(node.Icon))
+                {
+                    <i class="@(Class("p-tree-node-icon", node.Icon))" aria-hidden="true"></i>
+                }
+
+                <span class="p-tree-node-label">
+                    @if (ItemTemplate is not null)
+                    {
+                        @ItemTemplate(node)
+                    }
+                    else
+                    {
+                        @node.Label
+                    }
+                </span>
+            </div>
+
+            @if (node.Expanded && node.HasChildren)
+            {
+                <ul class="p-tree-node-children" role="group">
+                    @foreach (var child in node.Children!)
+                    {
+                        @RenderNode(child)
+                    }
+                </ul>
+            }
+        </li>
+    };
+}

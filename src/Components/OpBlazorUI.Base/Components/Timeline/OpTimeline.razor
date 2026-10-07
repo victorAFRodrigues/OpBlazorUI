@@ -1,0 +1,34 @@
+@namespace OpBlazorUI.Base.Components.Timeline
+@using OpBlazorUI.Base.Components.Common
+@typeparam TItem
+@inherits OpComponentBase
+
+<div class="@RootClass" data-p="@DataP" @attributes="AdditionalAttributes">
+    @for (var i = 0; i < Items.Count; i++)
+    {
+        var ev = Items[i];
+        var last = i == Items.Count - 1;
+        <div class="p-timeline-event" data-p="@DataP">
+            <div class="p-timeline-event-opposite" data-p="@DataP">
+                @(OppositeTemplate?.Invoke(ev))
+            </div>
+            <div class="p-timeline-event-separator" data-p="@DataP">
+                @if (MarkerTemplate is not null)
+                {
+                    @MarkerTemplate(ev)
+                }
+                else
+                {
+                    <div class="p-timeline-event-marker" data-p="@DataP"></div>
+                }
+                @if (!last)
+                {
+                    <div class="p-timeline-event-connector" data-p="@DataP"></div>
+                }
+            </div>
+            <div class="p-timeline-event-content" data-p="@DataP">
+                @(ContentTemplate?.Invoke(ev))
+            </div>
+        </div>
+    }
+</div>

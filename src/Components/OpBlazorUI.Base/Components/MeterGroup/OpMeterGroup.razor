@@ -1,0 +1,66 @@
+@namespace OpBlazorUI.Base.Components.MeterGroup
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" role="meter"
+     aria-valuemin="@Min" aria-valuemax="@Max" aria-valuenow="@TotalPercent"
+     data-p="@Orientation" @attributes="AdditionalAttributes">
+    @if (LabelPosition == "start")
+    {
+        @RenderLabels()
+    }
+
+    <div class="p-metergroup-meters" data-p="@Orientation">
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var meterItem = Items[i];
+            if (MeterTemplate is not null)
+            {
+                @MeterTemplate(new OpMeterContext(meterItem, i, Orientation, Percent(meterItem.Value)))
+            }
+            else if (meterItem.Value > 0)
+            {
+                <span class="p-metergroup-meter" data-p="@Orientation" style="@MeterStyle(meterItem)"></span>
+            }
+        }
+    </div>
+
+    @if (LabelPosition == "end")
+    {
+        @RenderLabels()
+    }
+</div>
+
+@code {
+    private RenderFragment RenderLabels() => __builder =>
+    {
+        if (LabelTemplate is not null)
+        {
+            @LabelTemplate(LabelContext())
+        }
+        else
+        {
+            <ol class="@LabelListClass" data-p="@LabelOrientation">
+                @foreach (var item in Items)
+                {
+                    <li class="p-metergroup-label">
+                        @if (IconTemplate is not null)
+                        {
+                            @IconTemplate(item)
+                        }
+                        else if (!string.IsNullOrEmpty(item.Icon))
+                        {
+                            <i class="p-metergroup-label-icon @item.Icon" style="@IconStyle(item)"></i>
+                        }
+                        else
+                        {
+                            <span class="p-metergroup-label-marker" style="@MarkerStyle(item)"></span>
+                        }
+                        <span class="p-metergroup-label-text">@($"{item.Label} ({PercentValue(item.Value)})")</span>
+                    </li>
+                }
+            </ol>
+        }
+    };
+}

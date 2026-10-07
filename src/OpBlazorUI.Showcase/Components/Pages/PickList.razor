@@ -1,37 +1,113 @@
 @page "/picklist"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.PickList
 
 <PageTitle>PickList - OpBlazorUI</PageTitle>
 
 <DocComponent Title="PickList"
-              Description="Usado para reordenar itens entre listas diferentes. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="Usado para mover itens entre duas listas (origem e destino) por meio dos botões de transferência.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O PickList é usado como uma entrada controlada pelas propriedades <code>source</code> e <code>target</code>. O conteúdo de um item da lista precisa ser definido com o template <code>item</code>, que recebe um objeto da lista como parâmetro. A funcionalidade de arrastar e soltar depende do pacote <code>@@angular/cdk</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>O PickList é usado como uma entrada controlada pelas propriedades <code>Source</code> e
+                <code>Target</code>, com <code>@@bind-Source</code> e <code>@@bind-Target</code> para receber as listas
+                após cada transferência. O conteúdo de um item da lista precisa ser definido com o template
+                <code>ItemTemplate</code>, que recebe um objeto da lista como parâmetro.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2">
+                    <OpPickList TItem="Product"
+                                @bind-Source="_source"
+                                @bind-Target="_target"
+                                OptionLabel="Name"
+                                SourceHeader="Disponíveis"
+                                TargetHeader="Selecionados"
+                                AriaLabel="Produtos"
+                                ScrollHeight="20rem">
+                        <ItemTemplate Context="p">
+                            <span>@p.Name</span>
+                        </ItemTemplate>
+                    </OpPickList>
+                    <span class="text-sm">Origem: <b>@_source.Count</b> — Destino: <b>@_target.Count</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Filtro" Id="filter">
-            <Description><p>O valor do filtro é verificado contra a propriedade de um objeto configurada com a propriedade <code>filterBy</code>.</p></Description>
-            <Code><CodeBlock Code="@FilterCode" Language="html"/></Code>
+            <Description>
+                <p>O valor do filtro é verificado contra a propriedade de um objeto configurada com a propriedade
+                <code>FilterBy</code>. Habilite com <code>Filter="true"</code>; use <code>FilterSource</code> e
+                <code>FilterTarget</code> para ligar o campo em apenas uma das listas.</p>
+            </Description>
+            <ChildContent>
+                <OpPickList TItem="Product"
+                            Source="_filterSource"
+                            Target="_filterTarget"
+                            OptionLabel="Name"
+                            Filter="true"
+                            FilterBy="Name"
+                            ScrollHeight="20rem">
+                    <ItemTemplate Context="p">
+                        <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+                            <img src="@ImageUrl(p.Image)" alt="@p.Name" style="width:3rem; border-radius:var(--p-content-border-radius);"/>
+                            <div style="display:flex; flex-direction:column;">
+                                <span class="font-medium text-sm">@p.Name</span>
+                                <span class="text-sm" style="color:var(--p-text-muted-color);">@p.Category</span>
+                            </div>
+                            <span class="font-bold" style="margin-left:auto;">$@p.Price</span>
+                        </div>
+                    </ItemTemplate>
+                </OpPickList>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilterCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template" Id="template">
-            <Description><p>Para conteúdo customizado, defina um template <code>item</code> que recebe a instância do item como parâmetro. Além disso, os templates <code>sourceheader</code> e <code>targetheader</code> são fornecidos para customização adicional.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+            <Description>
+                <p>Para conteúdo customizado, defina o template <code>ItemTemplate</code>, que recebe a instância do
+                item como parâmetro. Além disso, os parâmetros <code>SourceHeader</code> e <code>TargetHeader</code>
+                são fornecidos para customização adicional.</p>
+            </Description>
+            <ChildContent>
+                <OpPickList TItem="Product"
+                            Source="_templateSource"
+                            Target="_templateTarget"
+                            OptionLabel="Name"
+                            SourceHeader="Disponíveis"
+                            TargetHeader="Selecionados"
+                            ScrollHeight="20rem">
+                    <ItemTemplate Context="p">
+                        <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+                            <img src="@ImageUrl(p.Image)" alt="@p.Name" style="width:3rem; border-radius:var(--p-content-border-radius);"/>
+                            <div style="display:flex; flex-direction:column;">
+                                <span class="font-medium text-sm">@p.Name</span>
+                                <span class="text-sm" style="color:var(--p-text-muted-color);">@p.Category</span>
+                            </div>
+                            <span class="font-bold" style="margin-left:auto;">$@p.Price</span>
+                        </div>
+                    </ItemTemplate>
+                </OpPickList>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O valor para descrever a listbox de origem e a listbox de destino pode ser fornecido com as props <code>ariaLabelledBy</code> ou <code>ariaLabel</code>. Os elementos de lista têm o papel <code>listbox</code> com o atributo <code>aria-multiselectable</code>. Cada item da lista tem o papel <code>option</code> com <code>aria-selected</code> e <code>aria-disabled</code> como atributos.</p>
-                <p>Os botões de controle são elementos <code>button</code> com um <code>aria-label</code> que se refere, por padrão, às propriedades <code>aria.moveTop</code>, <code>aria.moveUp</code>, <code>aria.moveDown</code>, <code>aria.moveBottom</code>, <code>aria.moveTo</code>, <code>aria.moveAllTo</code>, <code>aria.moveFrom</code> e <code>aria.moveAllFrom</code> da API de <a href="/configuration/#locale">locale</a>; alternativamente, você pode usar <code>moveTopButtonProps</code>, <code>moveUpButtonProps</code>, <code>moveDownButtonProps</code>, <code>moveToButtonProps</code>, <code>moveAllToButtonProps</code>, <code>moveFromButtonProps</code> e <code>moveAllFromButtonProps</code> para customizar os botões, como sobrescrever os atributos <code>aria-label</code> padrão.</p>
+                <p>O valor para descrever as listboxes de origem e destino pode ser fornecido com
+                <code>AriaLabel</code>. Os elementos de lista têm o papel <code>listbox</code> com o atributo
+                <code>aria-multiselectable</code>. Cada item da lista tem o papel <code>option</code> com
+                <code>aria-selected</code> e <code>aria-disabled</code> como atributos.</p>
+                <p>Os botões de controle são elementos <code>button</code> com um <code>aria-label</code> que se refere
+                às ações de mover para a lista de destino, mover todos, mover para a lista de origem e mover todos de
+                volta.</p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
@@ -44,13 +120,7 @@
                               new[] { "enter", "Alterna o estado selecionado da opção em foco." },
                               new[] { "space", "Alterna o estado selecionado da opção em foco." },
                               new[] { "home", "Move o foco para a primeira opção." },
-                              new[] { "end", "Move o foco para a última opção." },
-                              new[] { "shift + down arrow", "Move o foco para a próxima opção e alterna o estado de seleção." },
-                              new[] { "shift + up arrow", "Move o foco para a opção anterior e alterna o estado de seleção." },
-                              new[] { "shift + space", "Seleciona os itens entre a opção selecionada mais recentemente e a opção em foco." },
-                              new[] { "control + shift + home", "Seleciona as opções em foco e todas as opções até a primeira." },
-                              new[] { "control + shift + end", "Seleciona as opções em foco e todas as opções até a última." },
-                              new[] { "control + a", "Seleciona todas as opções." }
+                              new[] { "end", "Move o foco para a última opção." }
                           })"/>
                 <ApiTable Caption="Botões"
                           Headers="@(new[] { "Tecla", "Função" })"
@@ -63,102 +133,177 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Source", "IReadOnlyList&lt;TItem&gt;", "[]", "Lista de origem; use <code>@@bind-Source</code>." },
+                              new[] { "Target", "IReadOnlyList&lt;TItem&gt;", "[]", "Lista de destino; use <code>@@bind-Target</code>." },
+                              new[] { "SelectedSource", "IReadOnlyList&lt;TItem&gt;?", "null", "Itens selecionados na origem; use <code>@@bind-SelectedSource</code>." },
+                              new[] { "SelectedTarget", "IReadOnlyList&lt;TItem&gt;?", "null", "Itens selecionados no destino; use <code>@@bind-SelectedTarget</code>." },
+                              new[] { "OptionLabel", "string?", "null", "Propriedade do item usada como rótulo e critério do filtro." },
+                              new[] { "Filter", "bool", "false", "Habilita o campo de busca nas listas." },
+                              new[] { "FilterSource", "bool", "true", "Habilita o campo de busca na lista de origem." },
+                              new[] { "FilterTarget", "bool", "true", "Habilita o campo de busca na lista de destino." },
+                              new[] { "FilterBy", "string?", "null", "Propriedade do item usada como critério do filtro." },
+                              new[] { "ShowSourceControls", "bool", "true", "Exibe os controles de reordenação da origem." },
+                              new[] { "ShowTargetControls", "bool", "true", "Exibe os controles de reordenação do destino." },
+                              new[] { "ScrollHeight", "string?", "14rem", "Altura máxima de cada lista, com rolagem." },
+                              new[] { "EmptyMessage", "string?", "No results found", "Mensagem exibida quando não há itens." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o componente." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo de acessibilidade das listboxes." },
+                              new[] { "SourceHeader", "string?", "null", "Texto do cabeçalho da lista de origem." },
+                              new[] { "TargetHeader", "string?", "null", "Texto do cabeçalho da lista de destino." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "SourceChanged", "EventCallback&lt;IReadOnlyList&lt;TItem&gt;&gt;", "Disparado quando a lista de origem muda." },
+                              new[] { "TargetChanged", "EventCallback&lt;IReadOnlyList&lt;TItem&gt;&gt;", "Disparado quando a lista de destino muda." },
+                              new[] { "SelectedSourceChanged", "EventCallback&lt;IReadOnlyList&lt;TItem&gt;&gt;", "Disparado quando a seleção da origem muda." },
+                              new[] { "SelectedTargetChanged", "EventCallback&lt;IReadOnlyList&lt;TItem&gt;&gt;", "Disparado quando a seleção do destino muda." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ItemTemplate", "RenderFragment&lt;TItem&gt;?", "Conteúdo customizado de cada item; o contexto é a instância do item." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="picklist"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code>, o <code>ItemTemplate</code> e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O arrastar e soltar (<code>dragdrop</code>) do upstream, que depende do <code>@@angular/cdk</code>, não foi portado. A transferência é feita pelos botões de controle.</li>
+                        <li>Não há as propriedades <code>dataKey</code>, <code>responsive</code> e <code>breakpoint</code> do upstream.</li>
+                        <li>Não há as props de customização dos botões (<code>moveTopButtonProps</code> e afins); os rótulos acessíveis são fixos em inglês.</li>
+                        <li>Os cabeçalhos (<code>SourceHeader</code>/<code>TargetHeader</code>) são entregues ao cabeçalho de cada listbox, e não como irmãos no flex do componente, para preservar o layout.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private IReadOnlyList<Product> _source = SourceProducts();
+    private IReadOnlyList<Product> _target = TargetProducts();
+
+    private static readonly IReadOnlyList<Product> _filterSource = SourceProducts();
+    private static readonly IReadOnlyList<Product> _filterTarget = TargetProducts();
+    private static readonly IReadOnlyList<Product> _templateSource = SourceProducts();
+    private static readonly IReadOnlyList<Product> _templateTarget = TargetProducts();
+
+    private sealed record Product(string Name, string Category, string Image, decimal Price, int Rating, string InventoryStatus);
+
+    private static IReadOnlyList<Product> SourceProducts() =>
+    [
+        new("Bamboo Watch", "Acessórios", "bamboo-watch.jpg", 65, 5, "INSTOCK"),
+        new("Black Watch", "Acessórios", "black-watch.jpg", 72, 4, "INSTOCK"),
+        new("Blue Band", "Fitness", "blue-band.jpg", 79, 3, "LOWSTOCK"),
+        new("Blue T-Shirt", "Vestuário", "blue-t-shirt.jpg", 29, 5, "INSTOCK"),
+        new("Bolt Shirt", "Vestuário", "bolt-shirt.jpg", 89, 4, "LOWSTOCK")
+    ];
+
+    private static IReadOnlyList<Product> TargetProducts() =>
+    [
+        new("Chakra Bracelet", "Acessórios", "chakra-bracelet.jpg", 45, 4, "OUTOFSTOCK"),
+        new("Gaming Set", "Eletrônicos", "gaming-set.jpg", 299, 5, "INSTOCK"),
+        new("Wristwatch", "Acessórios", "wristwatch.jpg", 120, 4, "LOWSTOCK")
+    ];
+
+    private static string ImageUrl(string image) => $"https://primefaces.org/cdn/primeng/images/demo/product/{image}";
+
     private const string ImportCode = """
-        import { PickListModule } from 'primeng/picklist';
+        @using OpBlazorUI.Base.Components.PickList
         """;
 
     private const string BasicCode = """
-        <p-picklist [source]="sourceProducts" [target]="targetProducts" [dragdrop]="true" [responsive]="true" breakpoint="1400px">
-            <ng-template let-item #item>
-                {{ item.name }}
-            </ng-template>
-        </p-picklist>
+        <OpPickList TItem="Product"
+                    @bind-Source="_source"
+                    @bind-Target="_target"
+                    OptionLabel="Name"
+                    SourceHeader="Disponíveis"
+                    TargetHeader="Selecionados"
+                    ScrollHeight="20rem">
+            <ItemTemplate Context="p">
+                <span>@p.Name</span>
+            </ItemTemplate>
+        </OpPickList>
+
+        @code {
+            private sealed record Product(string Name);
+            private IReadOnlyList<Product> _source = [ new("Bamboo Watch"), new("Black Watch") ];
+            private IReadOnlyList<Product> _target = [ new("Chakra Bracelet") ];
+        }
         """;
 
     private const string FilterCode = """
-        <p-picklist
-            [source]="sourceProducts"
-            [target]="targetProducts"
-            [dragdrop]="true"
-            [responsive]="true"
-            filterBy="name"
-            sourceFilterPlaceholder="Search by name"
-            targetFilterPlaceholder="Search by name"
-            breakpoint="1400px"
-            scrollHeight="20rem"
-        >
-            <ng-template let-option let-selected="selected" #option>
-                <div class="flex flex-wrap p-1 items-center gap-4 w-full">
-                    <img
-                        class="w-12 shrink-0 rounded"
-                        src="https://primefaces.org/cdn/primeng/images/demo/product/{{ option.image }}"
-                        [alt]="option.name"
-                    />
-                    <div class="flex-1 flex flex-col">
-                        <span class="font-medium text-sm">{{ option.name }}</span>
-                        <span
-                            [ngClass]="{
-                                'text-surface-500': !selected,
-                                'dark:text-surface-400': !selected,
-                                'text-inherit': selected,
-                            }"
-                            >{{ option.category }}</span
-                        >
+        <OpPickList TItem="Product"
+                    Source="_source"
+                    Target="_target"
+                    OptionLabel="Name"
+                    Filter="true"
+                    FilterBy="Name"
+                    ScrollHeight="20rem">
+            <ItemTemplate Context="p">
+                <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+                    <img src="@ImageUrl(p.Image)" alt="@p.Name" style="width:3rem;" />
+                    <div style="display:flex; flex-direction:column;">
+                        <span class="font-medium text-sm">@p.Name</span>
+                        <span class="text-sm">@p.Category</span>
                     </div>
-                    <span class="font-bold sm:ml-8">{{ '$' + option.price }}</span>
+                    <span class="font-bold" style="margin-left:auto;">$@p.Price</span>
                 </div>
-            </ng-template>
-        </p-picklist>
+            </ItemTemplate>
+        </OpPickList>
         """;
 
     private const string TemplateCode = """
-        <p-picklist [source]="sourceProducts" [target]="targetProducts" [dragdrop]="true" [responsive]="true" sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name" breakpoint="1400px" scrollHeight="20rem">
-            <ng-template let-option let-selected="selected" #item>
-                <div class="flex flex-wrap p-1 items-center gap-4 w-full">
-                    <img
-                        class="w-12 shrink-0 rounded"
-                        src="https://primefaces.org/cdn/primeng/images/demo/product/{{ option.image }}"
-                        [alt]="option.name"
-                    />
-                    <div class="flex-1 flex flex-col">
-                        <span class="font-medium text-sm">{{ option.name }}</span>
-                        <span
-                            [ngClass]="{
-                                'text-surface-500': !selected,
-                                'dark:text-surface-400': !selected,
-                                'text-inherit': selected,
-                            }"
-                            >{{ option.category }}</span
-                        >
+        <OpPickList TItem="Product"
+                    Source="_source"
+                    Target="_target"
+                    OptionLabel="Name"
+                    SourceHeader="Disponíveis"
+                    TargetHeader="Selecionados"
+                    ScrollHeight="20rem">
+            <ItemTemplate Context="p">
+                <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+                    <img src="@ImageUrl(p.Image)" alt="@p.Name" style="width:3rem;" />
+                    <div style="display:flex; flex-direction:column;">
+                        <span class="font-medium text-sm">@p.Name</span>
+                        <span class="text-sm">@p.Category</span>
                     </div>
-                    <span class="font-bold sm:ml-8">{{ '$' + option.price }}</span>
+                    <span class="font-bold" style="margin-left:auto;">$@p.Price</span>
                 </div>
-            </ng-template>
-        </p-picklist>
+            </ItemTemplate>
+        </OpPickList>
         """;
 }

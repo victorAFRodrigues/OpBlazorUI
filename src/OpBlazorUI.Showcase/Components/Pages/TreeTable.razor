@@ -1,197 +1,158 @@
 @page "/treetable"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.TreeTable
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Paginator
+@using OpBlazorUI.Base.Models
 
 <PageTitle>TreeTable - OpBlazorUI</PageTitle>
 
 <DocComponent Title="TreeTable"
-              Description="Tabela que exibe dados hierárquicos em formato tabular. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O TreeTable exibe dados hierárquicos em formato tabular, com colunas configuráveis, seleção, paginação e carregamento.">
 
     <Features>
         <DocSection Label="Importação" Id="import-demo">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Description>
+                <p>O componente usa os modelos <code>OpTreeNode</code> e <code>OpTreeTableColumn</code> e é consumido diretamente em Razor.</p>
+            </Description>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O TreeTable requer uma coleção de instâncias de <code>TreeNode</code> como <code>value</code>, com componentes como filhos para a representação.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Colunas Dinâmicas" Id="dynamiccolumns">
-            <Description><p>As colunas podem ser criadas programaticamente.</p></Description>
-            <Code><CodeBlock Code="@DynamicColumnsCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Controlado" Id="controlled">
-            <Description><p>O estado de expansão é controlado com a propriedade <code>expandedKeys</code>.</p></Description>
-            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template" Id="template">
-            <Description><p>Conteúdo personalizado nas seções <code>caption</code>, <code>header</code>, <code>body</code> e <code>summary</code> é suportado via templates.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Tamanho" Id="size">
-            <Description><p>Além do treetable comum, há alternativas com tamanhos diferentes. Adicione a classe <code>p-treetable-sm</code> para reduzir o tamanho do treetable ou <code>p-treetable-lg</code> para ampliá-lo.</p></Description>
-            <Code><CodeBlock Code="@SizeCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Linhas de Grade" Id="gridlines">
-            <Description><p>Habilitar <code>showGridlines</code> exibe as linhas de grade.</p></Description>
-            <Code><CodeBlock Code="@GridlinesCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Carregamento - Máscara" Id="loading-mask">
-            <Description><p>A propriedade <code>loading</code> exibe uma camada de máscara para indicar estado de ocupado. Use o paginador para exibir a máscara.</p></Description>
-            <Code><CodeBlock Code="@LoadingMaskCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Carregamento - Skeleton" Id="loading-skeleton">
-            <Description><p>O componente Skeleton pode ser usado como placeholder durante o processo de carregamento.</p></Description>
-            <Code><CodeBlock Code="@LoadingSkeletonCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Paginação - Básico" Id="paginatorbasic">
-            <Description><p>A paginação é habilitada adicionando a propriedade <code>paginator</code> e definindo <code>rows</code> por página.</p></Description>
-            <Code><CodeBlock Code="@PaginatorBasicCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Paginação - Template" Id="paginatortemplate">
-            <Description><p>A UI do paginador é personalizada usando as propriedades <code>paginatorleft</code> e <code>paginatorright</code>. Cada elemento também pode ser personalizado ainda mais com sua própria UI para substituir a padrão; consulte o componente <a href="/paginator">Paginator</a> para mais informações sobre as opções avançadas de personalização.</p></Description>
-            <Code><CodeBlock Code="@PaginatorTemplateCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Ordenação - Coluna Única" Id="sortsinglecolumn">
-            <Description><p>A ordenação em uma coluna é habilitada adicionando a propriedade <code>ttSortableColumn</code>.</p></Description>
-            <Code><CodeBlock Code="@SortSingleColumnCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Ordenação - Múltiplas Colunas" Id="sortmultiplecolumns">
-            <Description><p>Múltiplas colunas podem ser ordenadas definindo <code>sortMode</code> como <code>multiple</code>. Esse modo exige que a metaKey (ex.: <code>⌘</code>) seja pressionada ao clicar em um cabeçalho.</p></Description>
-            <Code><CodeBlock Code="@SortMultipleColumnsCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Filtro" Id="filter">
-            <Description><p>O <code>filterMode</code> especifica a estratégia de filtragem: no modo <code>lenient</code>, quando a consulta corresponde a um nó, os filhos do nó não são pesquisados adiante, pois todos os descendentes do nó são incluídos. Por outro lado, no modo <code>strict</code>, quando a consulta corresponde a um nó, a filtragem continua em todos os descendentes. Um campo geral chamado <code>filterGlobal</code> também é fornecido para pesquisar todas as colunas que suportam filtragem.</p></Description>
-            <Code><CodeBlock Code="@FilterCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O TreeTable requer uma coleção de instâncias de <code>OpTreeNode</code> como <code>Nodes</code>,
+                    com colunas em <code>Columns</code>. A coluna marcada como <code>Expandable</code> recebe o botão
+                    de expandir/recolher (por padrão, a primeira).
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_basicNodes" Columns="_columns" EmptyMessage="Nenhum registro encontrado"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Seleção - Única" Id="selectionsingle">
             <Description>
-                <p>A seleção de um único nó é configurada definindo <code>selectionMode</code> como <code>single</code>, junto da propriedade <code>selection</code> para gerenciar o vínculo do valor selecionado.</p>
-                <p>Por padrão, é necessário pressionar a metaKey (ex.: <code>⌘</code>) para desmarcar um nó; isso pode ser configurado desabilitando a propriedade <code>metaKeySelection</code>. Em dispositivos com toque esta opção não tem efeito e o comportamento é o mesmo de defini-la como false.</p>
+                <p>
+                    A seleção de um único nó é configurada definindo <code>SelectionMode</code> como
+                    <code>single</code>, junto da propriedade <code>Selection</code> para gerenciar o vínculo do valor
+                    selecionado.
+                </p>
             </Description>
-            <Code><CodeBlock Code="@SelectionSingleCode" Language="html"/></Code>
+            <ChildContent>
+                <OpTreeTable Nodes="_singleNodes" Columns="_columns" SelectionMode="single"
+                             @bind-Selection="_singleSelection" EmptyMessage="Nenhum registro encontrado"/>
+                <p class="mt-2">Selecionado: <b>@SelectedLabel(_singleSelection)</b></p>
+            </ChildContent>
+            <Code><CodeBlock Code="@SelectionSingleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Seleção - Múltipla" Id="selectionmultiple">
-            <Description><p>Mais de um nó pode ser selecionado definindo <code>selectionMode</code> como <code>multiple</code>. Por padrão, no modo de seleção múltipla, é necessário pressionar a metaKey (ex.: <code>⌘</code>) para adicionar às seleções existentes; isso pode ser configurado desabilitando a propriedade <code>metaKeySelection</code>. Note que em dispositivos com toque, o TreeTable sempre ignora a metaKey.</p></Description>
-            <Code><CodeBlock Code="@SelectionMultipleCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Mais de um nó pode ser selecionado definindo <code>SelectionMode</code> como
+                    <code>multiple</code>. No modo de seleção múltipla, o vínculo de valor é um par chave-valor, onde a
+                    chave é a <code>Key</code> do nó e o valor é um booleano que indica a seleção.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_multipleNodes" Columns="_columns" SelectionMode="multiple"
+                             @bind-Selection="_multiSelection" EmptyMessage="Nenhum registro encontrado"/>
+                <p class="mt-2">Selecionados: <b>@CountSelection(_multiSelection)</b></p>
+            </ChildContent>
+            <Code><CodeBlock Code="@SelectionMultipleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Seleção - Checkbox" Id="checkbox">
             <Description>
-                <p>A seleção de múltiplos nós via checkboxes é habilitada configurando <code>selectionMode</code> como <code>checkbox</code>.</p>
-                <p>No modo de seleção por checkbox, o vínculo de valor deve ser um par chave-valor, onde a chave (ou o <code>dataKey</code>) é a chave do nó e o valor é um objeto com as propriedades <code>checked</code> e <code>partialChecked</code> para representar o estado de marcação de um nó.</p>
+                <p>
+                    A seleção de múltiplos nós via checkboxes é habilitada configurando <code>SelectionMode</code>
+                    como <code>checkbox</code>. Uma coluna de seleção é adicionada automaticamente, com propagação
+                    para os descendentes e recálculo dos ancestrais.
+                </p>
             </Description>
-            <Code><CodeBlock Code="@SelectionCheckboxCode" Language="html"/></Code>
+            <ChildContent>
+                <OpTreeTable Nodes="_checkboxNodes" Columns="_columns" SelectionMode="checkbox"
+                             @bind-Selection="_checkboxSelection" EmptyMessage="Nenhum registro encontrado"/>
+                <p class="mt-2">Selecionados: <b>@CountSelection(_checkboxSelection)</b></p>
+            </ChildContent>
+            <Code><CodeBlock Code="@SelectionCheckboxCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Seleção - Eventos" Id="events">
-            <Description><p>O TreeTable fornece os eventos <code>onNodeSelect</code> e <code>onNodeUnselect</code> para escutar eventos de seleção.</p></Description>
-            <Code><CodeBlock Code="@SelectionEventsCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Agrupamento de Colunas" Id="columngroup">
-            <Description><p>Grupos de colunas são definidos no template <code>header</code> usando <code>rowspan</code> e <code>colspan</code>.</p></Description>
-            <Code><CodeBlock Code="@ColumnGroupCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Carregamento Lazy" Id="lazyload">
+        <DocSection Label="Paginação" Id="paginatorbasic">
             <Description>
-                <p>O modo lazy é útil para lidar com grandes conjuntos de dados; em vez de carregar todos os dados, pequenos blocos de dados são carregados invocando callbacks correspondentes sempre que ocorre <code>paging</code>, <code>sorting</code> e <code>filtering</code>. O exemplo abaixo simula o carregamento lazy de dados de uma fonte remota usando uma lista em memória e timeouts para imitar a conexão de rede.</p>
-                <p>Habilitar a propriedade <code>lazy</code> e atribuir o número lógico de linhas a <code>totalRecords</code> por meio de uma consulta de projeção são os elementos-chave da implementação, de modo que o paginador exibe a UI supondo que existam registros do tamanho de totalRecords, embora na realidade eles não estejam presentes na página; apenas os registros exibidos na página atual existem.</p>
-                <p>Além disso, apenas os elementos raiz devem ser carregados; os filhos podem ser carregados sob demanda usando o callback <code>onNodeExpand</code>.</p>
+                <p>
+                    A paginação é habilitada adicionando a propriedade <code>Paginator</code> e definindo
+                    <code>Rows</code> por página. A posição é controlada por <code>PaginatorPosition</code>
+                    (<code>top</code>, <code>bottom</code> ou <code>both</code>).
+                </p>
             </Description>
-            <Code><CodeBlock Code="@LazyLoadCode" Language="html"/></Code>
+            <ChildContent>
+                <OpTreeTable Nodes="_pageNodes" Columns="_columns" Paginator="true" Rows="5"
+                             RowsPerPageOptions="_rowsPerPage" @bind-First="_first" OnPageChange="OnPage"
+                             EmptyMessage="Nenhum registro encontrado"/>
+                <p class="mt-2">Página atual: <b>@_pageLabel</b></p>
+            </ChildContent>
+            <Code><CodeBlock Code="@PaginatorCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Scroll - Vertical" Id="vertical">
-            <Description><p>Adicionar a propriedade <code>scrollable</code> junto de um <code>scrollHeight</code> para a área de dados habilita a rolagem vertical com cabeçalhos fixos.</p></Description>
-            <Code><CodeBlock Code="@ScrollVerticalCode" Language="html"/></Code>
+        <DocSection Label="Carregamento" Id="loading-mask">
+            <Description>
+                <p>
+                    A propriedade <code>Loading</code> exibe uma camada de máscara para indicar estado ocupado. O
+                    conteúdo pode ser customizado por <code>LoadingTemplate</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <OpButton Label="Alternar carregamento" Icon="pi pi-refresh" OnClick="ToggleLoading"/>
+                </div>
+                <OpTreeTable Nodes="_basicNodes" Columns="_columns" Loading="_loading" EmptyMessage="Nenhum registro encontrado"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoadingCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Scroll - Flexível" Id="flexible">
-            <Description><p>O recurso de scroll flexível torna a seção da área de rolagem dinâmica em vez de um valor fixo, para que ela possa crescer ou encolher em relação ao tamanho do contêiner pai da tabela. Clique no botão abaixo para exibir um Dialog maximizável onde a área de dados se ajusta conforme as mudanças de tamanho.</p></Description>
-            <Code><CodeBlock Code="@ScrollFlexibleCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Scroll - Horizontal" Id="horizontal">
-            <Description><p>A rolagem horizontal é habilitada quando a largura total das colunas excede a largura da tabela.</p></Description>
-            <Code><CodeBlock Code="@ScrollHorizontalCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Scroll - Colunas Fixas" Id="frozencolumns">
-            <Description><p>Uma coluna pode ser fixada durante a rolagem horizontal habilitando a propriedade <code>frozenColumns</code>.</p></Description>
-            <Code><CodeBlock Code="@FrozenColumnsCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Redimensionamento de Colunas - Fit" Id="fitmode">
-            <Description><p>As colunas podem ser redimensionadas com arrastar e soltar quando <code>resizableColumns</code> está habilitado. O modo de redimensionamento padrão é <code>fit</code>, que não altera a largura total da tabela.</p></Description>
-            <Code><CodeBlock Code="@ResizeFitCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Redimensionamento de Colunas - Expand" Id="expandmode">
-            <Description><p>Definir <code>columnResizeMode</code> como <code>expand</code> também altera a largura da tabela.</p></Description>
-            <Code><CodeBlock Code="@ResizeExpandCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Redimensionamento de Colunas - Scroll" Id="scrollable">
-            <Description><p>Para utilizar os modos de redimensionamento de colunas com um TreeTable rolável, um template <code>colgroup</code> deve ser definido. O valor padrão de <code>scrollHeight</code> é "flex"; ele também pode ser definido como um valor de string.</p></Description>
-            <Code><CodeBlock Code="@ResizeScrollableCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Reordenar" Id="reorder">
-            <Description><p>A ordem das colunas pode ser alterada usando arrastar e soltar quando <code>reorderableColumns</code> está presente.</p></Description>
-            <Code><CodeBlock Code="@ReorderCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Alternar Colunas" Id="columntoggle">
-            <Description><p>A visibilidade das colunas com base em uma condição pode ser implementada com colunas dinâmicas; neste exemplo, um MultiSelect é usado para gerenciar as colunas visíveis.</p></Description>
-            <Code><CodeBlock Code="@ColumnToggleCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Estilo Condicional" Id="conditionalstyle">
-            <Description><p>Linhas e células específicas podem ser estilizadas com base em condições. O <code>ngClass</code> recebe os dados da linha como parâmetro para retornar uma classe de estilo para a linha, enquanto as células são personalizadas usando o template <code>body</code>.</p></Description>
-            <Code><CodeBlock Code="@ConditionalStyleCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Menu de Contexto" Id="contextmenu">
-            <Description><p>O TreeTable tem integração exclusiva com o componente <code>contextmenu</code>. Para anexar um menu a uma tabela, adicione a diretiva <code>ttContextMenuRow</code> às linhas que podem ser selecionadas com o menu de contexto, defina uma variável de template local para o menu e vincule-a à propriedade <code>contextMenu</code> da tabela. Isso permite exibir o menu sempre que uma linha for clicada com o botão direito. Uma propriedade separada <code>contextMenuSelection</code> é usada para obter a linha clicada com o botão direito. Para colunas dinâmicas, definir a propriedade <code>ttContextMenuRowDisabled</code> como true desabilita o menu de contexto para aquela linha específica.</p></Description>
-            <Code><CodeBlock Code="@ContextMenuCode" Language="html"/></Code>
+        <DocSection Label="Vazio" Id="empty">
+            <Description>
+                <p>
+                    Quando não há nós, é exibido <code>EmptyMessage</code> ou o conteúdo de
+                    <code>EmptyTemplate</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_emptyNodes" Columns="_columns" EmptyMessage="Nenhum registro encontrado"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@EmptyCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O papel padrão da tabela é <code>table</code>. Os elementos de cabeçalho, corpo e rodapé usam <code>rowgroup</code>, as linhas usam o papel <code>row</code>, as células de cabeçalho têm <code>columnheader</code> e as células de corpo usam o papel <code>cell</code>. Cabeçalhos ordenáveis utilizam o atributo <code>aria-sort</code> definido como "ascending" ou "descending".</p>
-                <p>Os elementos de linha gerenciam <code>aria-expanded</code> para estado e o atributo <code>aria-level</code> para definir a hierarquia através da diretiva <code>ttRow</code>. As linhas e células da tabela devem ser especificadas pelos usuários usando os atributos <code>aria-posinset</code>, <code>aria-setsize</code>, <code>aria-label</code> e <code>aria-describedby</code>, pois são determinados por meio de templates.</p>
-                <p>Quando a seleção está habilitada, a diretiva <code>ttSelectableRow</code> define <code>aria-selected</code> como true em uma linha. No modo checkbox, o componente de checkbox interno usa o papel <code>checkbox</code> com o atributo de estado <code>aria-checked</code>.</p>
-                <p>Células editáveis usam templates personalizados, então você precisa gerenciar os papéis e atributos aria manualmente, se necessário.</p>
-                <p>O Paginator é um componente autônomo usado dentro do TreeTable; consulte <a href="/paginator">paginator</a> para mais informações sobre os recursos de acessibilidade.</p>
-                <h3>Suporte a teclado</h3>
+                <p>
+                    O papel padrão da tabela é <code>treegrid</code>. Os elementos de cabeçalho, corpo e rodapé usam
+                    <code>rowgroup</code>, as linhas usam o papel <code>row</code>, as células de cabeçalho têm
+                    <code>columnheader</code> e as células de corpo usam o papel <code>cell</code>.
+                </p>
+                <p>
+                    Os elementos de linha gerenciam <code>aria-expanded</code> e o atributo <code>aria-level</code>
+                    para definir a hierarquia.
+                </p>
+                <p>
+                    Quando a seleção está habilitada, as linhas expõem <code>aria-selected</code>. No modo checkbox, o
+                    checkbox interno usa o papel <code>checkbox</code> com o atributo de estado
+                    <code>aria-checked</code>.
+                </p>
+                <p>
+                    O Paginator é um componente autônomo usado dentro do TreeTable; consulte a documentação do
+                    Paginator para os recursos de acessibilidade.
+                </p>
             </Description>
             <Code>
-                <ApiTable Caption="Suporte a teclado dos cabeçalhos ordenáveis"
-                          Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] {
-                              new[] { "tab", "Percorre os cabeçalhos." },
-                              new[] { "enter", "Ordena a coluna." },
-                              new[] { "space", "Ordena a coluna." }
-                          })"/>
-                <ApiTable Caption="Suporte a teclado"
-                          Headers="@(new[] { "Tecla", "Função" })"
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
                               new[] { "tab", "Move o foco para o primeiro nó selecionado quando o foco entra no componente; se não houver nenhum, o primeiro elemento recebe o foco. Se o foco já estiver dentro do componente, move o foco para o próximo elemento focalizável na sequência de tabulação da página." },
                               new[] { "shift + tab", "Move o foco para o último nó selecionado quando o foco entra no componente; se não houver nenhum, o primeiro elemento recebe o foco. Se o foco já estiver dentro do componente, move o foco para o elemento focalizável anterior na sequência de tabulação da página." },
@@ -207,1011 +168,297 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Nodes", "IReadOnlyList&lt;OpTreeNode&gt;?", "null", "Coleção de nós raiz." },
+                              new[] { "Columns", "IReadOnlyList&lt;OpTreeTableColumn&gt;", "[]", "Definição das colunas." },
+                              new[] { "SelectionMode", "string?", "null", "Modo de seleção: <code>single</code>, <code>multiple</code> ou <code>checkbox</code>." },
+                              new[] { "Selection", "object?", "null", "Em <code>single</code>, um <code>OpTreeNode</code>; em <code>multiple</code>/<code>checkbox</code>, um <code>IReadOnlyDictionary&lt;string, bool&gt;</code> chaveado por <code>Key</code>." },
+                              new[] { "SelectionChanged", "EventCallback&lt;object?&gt;", "—", "Notifica a mudança de seleção (usar com <code>@@bind-Selection</code>)." },
+                              new[] { "Loading", "bool", "false", "Exibe a máscara de carregamento." },
+                              new[] { "EmptyMessage", "string?", "No records found", "Mensagem exibida quando não há nós." },
+                              new[] { "Paginator", "bool", "false", "Habilita a paginação." },
+                              new[] { "Rows", "int", "10", "Número de linhas por página." },
+                              new[] { "First", "int", "0", "Índice da primeira linha da página (usar com <code>@@bind-First</code>)." },
+                              new[] { "FirstChanged", "EventCallback&lt;int&gt;", "—", "Notifica a mudança de página." },
+                              new[] { "TotalRecords", "int", "0", "Total lógico de registros no modo lazy; 0 usa a contagem real." },
+                              new[] { "Lazy", "bool", "false", "Indica carregamento sob demanda (flag; não há callback de dados)." },
+                              new[] { "RowHover", "bool", "true", "Destaca a linha sob o cursor." },
+                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
+                              new[] { "PaginatorPosition", "string", "bottom", "Posição do paginador: <code>top</code>, <code>bottom</code> ou <code>both</code>." },
+                              new[] { "PageLinks", "int", "5", "Quantidade de links de página exibidos." },
+                              new[] { "AlwaysShowPaginator", "bool", "true", "Exibe o paginador mesmo com uma única página." },
+                              new[] { "RowsPerPageOptions", "IReadOnlyList&lt;int&gt;?", "null", "Opções do seletor de linhas por página." },
+                              new[] { "StyleClass / AdditionalAttributes", "—", "—", "Classes e atributos extras repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "HeaderTemplate", "RenderFragment?", "Cabeçalho da tabela." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Rodapé da tabela." },
+                              new[] { "EmptyTemplate", "RenderFragment?", "Conteúdo exibido no lugar de <code>EmptyMessage</code>." },
+                              new[] { "LoadingTemplate", "RenderFragment?", "Conteúdo exibido na máscara de carregamento." },
+                              new[] { "CaptionTemplate", "RenderFragment?", "Legenda/cabeçalho acima da tabela." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Coluna (OpTreeTableColumn)" Id="api-column">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Field", "string", "\"\"", "Campo lido do nó (ou de <code>Node.Data</code>)." },
+                              new[] { "Header", "string", "\"\"", "Texto do cabeçalho." },
+                              new[] { "Width", "string?", "null", "Largura da coluna (ex.: <code>8rem</code>)." },
+                              new[] { "Sortable", "bool", "false", "Marca a coluna como ordenável (exibe o ícone; sem ordenação implementada)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais da célula." },
+                              new[] { "BodyTemplate", "RenderFragment&lt;OpTreeTableCellContext&gt;?", "null", "Conteúdo customizado da célula; recebe <code>Node</code>, <code>Level</code> e <code>Field</code>." },
+                              new[] { "Expandable", "bool", "false", "Coluna que recebe o botão de expandir/recolher." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnNodeExpand", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao expandir um nó." },
+                              new[] { "OnNodeCollapse", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao recolher um nó." },
+                              new[] { "OnNodeSelect", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao selecionar um nó." },
+                              new[] { "OnNodeUnselect", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao desmarcar um nó." },
+                              new[] { "OnPageChange", "EventCallback&lt;OpPaginatorState&gt;", "Disparado quando a página ou o número de linhas muda." },
+                              new[] { "SelectionChanged", "EventCallback&lt;object?&gt;", "Disparado quando a seleção muda." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="treetable"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li><b>Redimensionamento de colunas</b> (<code>resizableColumns</code>, fit/expand) não foi portado.</li>
+                        <li><b>Reordenar colunas</b> (<code>reorderableColumns</code>) não foi portado.</li>
+                        <li><b>Colunas fixas</b> (<code>frozenColumns</code>) não foi portado.</li>
+                        <li><b>Filtro</b> por coluna e global não foi portado.</li>
+                        <li><b>Ordenação</b> não foi implementada: <code>Sortable</code> existe na coluna e exibe o ícone, mas não há ordenação nem <code>OnSort</code>; as teclas de cabeçalhos ordenáveis do Angular não se aplicam.</li>
+                        <li><b>Edição</b> de células não foi portada.</li>
+                        <li><b>Virtual Scroll</b> não foi portado.</li>
+                        <li><b>Agrupamento de colunas</b> (<code>rowspan</code>/<code>colspan</code> e <code>colgroup</code>) não foi portado.</li>
+                        <li><b>Alternar colunas</b> (column toggle) não foi portado; é possível trocar <code>Columns</code> via código.</li>
+                        <li><b>Menu de contexto</b> não foi portado.</li>
+                        <li><b>Carregamento lazy</b>: a flag <code>Lazy</code> existe, mas não há callback de dados (<code>OnLazyLoad</code>) nem projeção de <code>TotalRecords</code>.</li>
+                        <li><b>Estilo condicional</b> por linha não é automático; aplique-o no <code>BodyTemplate</code>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private List<OpTreeNode> _basicNodes = new();
+    private List<OpTreeNode> _singleNodes = new();
+    private List<OpTreeNode> _multipleNodes = new();
+    private List<OpTreeNode> _checkboxNodes = new();
+    private List<OpTreeNode> _pageNodes = new();
+    private List<OpTreeNode> _emptyNodes = new();
+
+    private List<OpTreeTableColumn> _columns = new();
+    private readonly IReadOnlyList<int> _rowsPerPage = new[] { 5, 10, 25 };
+
+    private object? _singleSelection;
+    private object? _multiSelection;
+    private object? _checkboxSelection;
+    private bool _loading;
+    private int _first;
+    private string _pageLabel = "1";
+
+    protected override void OnInitialized()
+    {
+        _basicNodes = FileTree();
+        _singleNodes = FileTree();
+        _multipleNodes = FileTree();
+        _checkboxNodes = FileTree();
+        _pageNodes = FileTree();
+        _emptyNodes = new();
+
+        _columns = new List<OpTreeTableColumn>
+        {
+            new OpTreeTableColumn { Field = "label", Header = "Nome", Expandable = true },
+            new OpTreeTableColumn { Field = "size", Header = "Tamanho", Width = "8rem" },
+            new OpTreeTableColumn
+            {
+                Field = "type",
+                Header = "Tipo",
+                Width = "8rem",
+                BodyTemplate = ctx => @<span class="font-semibold">@TypeText(ctx.Node)</span>
+            }
+        };
+    }
+
+    private void ToggleLoading() => _loading = !_loading;
+
+    private void OnPage(OpPaginatorState state)
+    {
+        _first = state.First;
+        _pageLabel = state.Page.ToString();
+    }
+
+    private static string SelectedLabel(object? selection) => selection is OpTreeNode node ? node.Label : "nenhum";
+
+    private static int CountSelection(object? selection) =>
+        selection is IReadOnlyDictionary<string, bool> map ? map.Count(entry => entry.Value) : 0;
+
+    private static string TypeText(OpTreeNode node) => node.Data is FileRecord record ? record.Type : string.Empty;
+
+    private static List<OpTreeNode> FileTree() => new()
+    {
+        new OpTreeNode
+        {
+            Key = "0", Label = "Documentos", Expanded = true, Data = new FileRecord("Documentos", "—", "Pasta"),
+            Children = new()
+            {
+                new OpTreeNode { Key = "0-0", Label = "Contratos.pdf", Leaf = true, Data = new FileRecord("Contratos.pdf", "2 MB", "PDF") },
+                new OpTreeNode { Key = "0-1", Label = "Relatório.docx", Leaf = true, Data = new FileRecord("Relatório.docx", "845 KB", "Word") },
+                new OpTreeNode { Key = "0-2", Label = "Planilha.xlsx", Leaf = true, Data = new FileRecord("Planilha.xlsx", "120 KB", "Excel") }
+            }
+        },
+        new OpTreeNode
+        {
+            Key = "1", Label = "Imagens", Expanded = true, Data = new FileRecord("Imagens", "—", "Pasta"),
+            Children = new()
+            {
+                new OpTreeNode { Key = "1-0", Label = "logo.png", Leaf = true, Data = new FileRecord("logo.png", "48 KB", "PNG") },
+                new OpTreeNode { Key = "1-1", Label = "banner.jpg", Leaf = true, Data = new FileRecord("banner.jpg", "512 KB", "JPG") },
+                new OpTreeNode { Key = "1-2", Label = "icone.svg", Leaf = true, Data = new FileRecord("icone.svg", "12 KB", "SVG") }
+            }
+        },
+        new OpTreeNode { Key = "2", Label = "README.md", Leaf = true, Data = new FileRecord("README.md", "4 KB", "Markdown") }
+    };
+
+    private sealed record FileRecord(string Name, string Size, string Type);
+
     private const string ImportCode = """
-        import { TreeTableModule } from 'primeng/treetable';
+        @using OpBlazorUI.Base.Components.TreeTable
+        @using OpBlazorUI.Base.Models
+
+        <OpTreeTable Nodes="_nodes" Columns="_columns" />
+
+        @code {
+            private List<OpTreeTableColumn> _columns = new()
+            {
+                new() { Field = "label", Header = "Nome", Expandable = true },
+                new() { Field = "size", Header = "Tamanho" },
+                new() { Field = "type", Header = "Tipo" }
+            };
+        }
         """;
 
     private const string BasicCode = """
-        <p-treetable [value]="files" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #header>
-                <tr>
-                    <th>Name</th>
-                    <th>Size</th>
-                    <th>Type</th>
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode">
-                    <td>
-                        <div class="flex items-center gap-2">
-                            <p-treetable-toggler [rowNode]="rowNode" />
-                            <span>{{ rowData.name }}</span>
-                        </div>
-                    </td>
-                    <td>{{ rowData.size }}</td>
-                    <td>{{ rowData.type }}</td>
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
+        <OpTreeTable Nodes="_nodes" Columns="_columns" />
 
-    private const string DynamicColumnsCode = """
-        <p-treetable [value]="files" [columns]="cols" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
+        @code {
+            private List<OpTreeNode> _nodes = new()
+            {
+                new OpTreeNode
+                {
+                    Key = "0", Label = "Documentos", Expanded = true,
+                    Children = new()
+                    {
+                        new OpTreeNode { Key = "0-0", Label = "Contratos.pdf", Leaf = true }
                     }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
+                }
+            };
 
-    private const string ControlledCode = """
-        <p-button (click)="toggleApplications()" label="Toggle Applications" class="block mb-4" />
-        <p-treetable [value]="files" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header>
-                <tr>
-                    <th>Name</th>
-                    <th>Size</th>
-                    <th>Type</th>
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode">
-                    <td>
-                        <div class="flex items-center gap-2">
-                            <p-treetable-toggler [rowNode]="rowNode" />
-                            <span>{{ rowData.name }}</span>
-                        </div>
-                    </td>
-                    <td>{{ rowData.size }}</td>
-                    <td>{{ rowData.type }}</td>
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string TemplateCode = """
-        <p-treetable [value]="files" [columns]="cols" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #caption><div class="text-xl font-bold">File Viewer</div> </ng-template>
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; let last = $last; track col) {
-                        <th [class]="{ 'w-40': last }">
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; let last = $last; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode" />
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else if (last) {
-                                <div class="flex flex-wrap gap-2">
-                                    <p-button icon="pi pi-search" rounded="true" severity="secondary" />
-                                    <p-button icon="pi pi-pencil" rounded="true" severity="secondary" />
-                                </div>
-                            } @else {
-                                <span>{{ rowData[col.field] }}</span>
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #summary>
-                <div style="text-align:left">
-                    <p-button icon="pi pi-refresh" label="Reload" severity="warn" />
-                </div>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string SizeCode = """
-        <div class="flex justify-center mb-4">
-            <p-selectbutton [options]="sizes" [(ngModel)]="selectedSize" [multiple]="false" optionLabel="name" optionValue="class" />
-        </div>
-        <p-treetable [value]="files" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}" [class]="selectedSize">
-            <ng-template #header>
-                <tr>
-                    <th>Name</th>
-                    <th>Size</th>
-                    <th>Type</th>
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode">
-                    <td>
-                        <div class="flex items-center gap-2">
-                            <p-treetable-toggler [rowNode]="rowNode" />
-                            <span>{{ rowData.name }}</span>
-                        </div>
-                    </td>
-                    <td>{{ rowData.size }}</td>
-                    <td>{{ rowData.type }}</td>
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string GridlinesCode = """
-        <p-treetable [value]="files" [scrollable]="true" showGridlines [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header>
-                <tr>
-                    <th>Name</th>
-                    <th>Size</th>
-                    <th>Type</th>
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode">
-                    <td>
-                        <div class="flex items-center gap-2">
-                            <p-treetable-toggler [rowNode]="rowNode" />
-                            <span>{{ rowData.name }}</span>
-                        </div>
-                    </td>
-                    <td>{{ rowData.size }}</td>
-                    <td>{{ rowData.type }}</td>
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string LoadingMaskCode = """
-        <p-treetable [value]="files" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }" [loading]="true">
-            <ng-template #header>
-                <tr>
-                    <th>Name</th>
-                    <th>Size</th>
-                    <th>Type</th>
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode">
-                    <td>
-                        <div class="flex items-center gap-2">
-                            <p-treetable-toggler [rowNode]="rowNode" />
-                            <span>{{ rowData.name }}</span>
-                        </div>
-                    </td>
-                    <td>{{ rowData.size }}</td>
-                    <td>{{ rowData.type }}</td>
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string LoadingSkeletonCode = """
-        <p-treetable [value]="files()" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header>
-                <tr>
-                    <th>Name</th>
-                    <th>Size</th>
-                    <th>Type</th>
-                </tr>
-            </ng-template>
-            <ng-template #body>
-                <tr>
-                    <td><p-skeleton /></td>
-                    <td><p-skeleton /></td>
-                    <td><p-skeleton /></td>
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string PaginatorBasicCode = """
-        <p-treetable [value]="files" [columns]="cols" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 25]" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string PaginatorTemplateCode = """
-        <p-treetable [value]="files" [columns]="cols" [paginator]="true" [rows]="10" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #paginatorleft>
-                <p-button icon="pi pi-refresh" text />
-            </ng-template>
-            <ng-template #paginatorright>
-                <p-button icon="pi pi-download" text />
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string SortSingleColumnCode = """
-        <p-treetable [value]="files" [columns]="cols" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th [ttSortableColumn]="col.field">
-                            <div class="flex items-center gap-2">
-                                {{ col.header }}
-                                <p-treetable-sort-icon [field]="col.field" />
-                            </div>
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string SortMultipleColumnsCode = """
-        <p-treetable [value]="files" [columns]="cols" sortMode="multiple" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th [ttSortableColumn]="col.field">
-                            <div class="flex items-center gap-2">
-                                {{ col.header }}
-                                <p-treetable-sort-icon [field]="col.field" />
-                            </div>
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string FilterCode = """
-        <p-selectbutton [options]="filterModes" [(ngModel)]="filterMode" optionLabel="label" optionValue="value" />
-
-        <p-treetable #tt [value]="files" [columns]="cols" [filterMode]="filterMode" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #caption>
-                <div class="flex justify-end items-center">
-                    <p-iconfield>
-                        <p-inputicon class="pi pi-search" />
-                        <input type="text" pInputText placeholder="Global Search" (input)="tt.filterGlobal($event.target.value, 'contains')" />
-                    </p-iconfield>
-                </div>
-            </ng-template>
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            <input pInputText [placeholder]="'Filter by ' + col.field" type="text" (input)="tt.filter($event.target.value, col.field, col.filterMatchMode)" />
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode">
-                    @for (col of cols; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #emptymessage>
-                <tr>
-                    <td [attr.colspan]="cols?.length">No data found.</td>
-                </tr>
-            </ng-template>
-        </p-treetable>
+            private List<OpTreeTableColumn> _columns = new()
+            {
+                new() { Field = "label", Header = "Nome", Expandable = true },
+                new() { Field = "size", Header = "Tamanho" },
+                new() { Field = "type", Header = "Tipo" }
+            };
+        }
         """;
 
     private const string SelectionSingleCode = """
-        <p-treetable [value]="files" [columns]="cols" selectionMode="single" [(selection)]="selectedNode" dataKey="name" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
+        <OpTreeTable Nodes="_nodes" Columns="_columns" SelectionMode="single"
+                     @bind-Selection="_selection" />
+
+        @code {
+            private object? _selection;
+        }
         """;
 
     private const string SelectionMultipleCode = """
-        <p-toggleswitch [(ngModel)]="metaKeySelection" />
-        <p-treetable [value]="files" [columns]="cols" selectionMode="multiple" [(selection)]="selectedNodes" dataKey="name" [metaKeySelection]="metaKeySelection" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
+        <OpTreeTable Nodes="_nodes" Columns="_columns" SelectionMode="multiple"
+                     @bind-Selection="_selection" />
+
+        @code {
+            private object? _selection;
+        }
         """;
 
     private const string SelectionCheckboxCode = """
-        <p-treetable [value]="files" [columns]="cols" selectionMode="checkbox" [(selectionKeys)]="selectionKeys" dataKey="key" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode" />
-                                    <p-treetable-checkbox [value]="rowNode" />
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
+        <OpTreeTable Nodes="_nodes" Columns="_columns" SelectionMode="checkbox"
+                     @bind-Selection="_selection" />
+
+        @code {
+            private object? _selection;
+        }
         """;
 
-    private const string SelectionEventsCode = """
-        <p-treetable
-            [value]="files"
-            [columns]="cols"
-            selectionMode="single"
-            [(selection)]="selectedNode"
-            dataKey="name"
-            (onNodeSelect)="nodeSelect($event)"
-            (onNodeUnselect)="nodeUnselect($event)"
-            [scrollable]="true"
-            [tableStyle]="{ 'min-width': '50rem' }"
-        >
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
+    private const string PaginatorCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Paginator="true" Rows="5"
+                     RowsPerPageOptions="_rowsPerPage" @bind-First="_first"
+                     OnPageChange="OnPage" />
+
+        @code {
+            private int _first;
+            private IReadOnlyList<int> _rowsPerPage = new[] { 5, 10, 25 };
+
+            private void OnPage(OpPaginatorState state) => _first = state.First;
+        }
         """;
 
-    private const string ColumnGroupCode = """
-        <p-treetable [value]="sales" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #header>
-                <tr>
-                    <th rowspan="3">Brand</th>
-                    <th colspan="4">Sale Rate</th>
-                </tr>
-                <tr>
-                    <th colspan="2">Sales</th>
-                    <th colspan="2">Profits</th>
-                </tr>
-                <tr>
-                    <th>Last Year</th>
-                    <th>This Year</th>
-                    <th>Last Year</th>
-                    <th>This Year</th>
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData">
-                <tr>
-                    <td>
-                        <div class="flex items-center gap-2">
-                            <p-treetable-toggler [rowNode]="rowNode" />
-                            <span>{{ rowData.brand }}</span>
-                        </div>
-                    </td>
-                    <td>{{ rowData.lastYearSale }}</td>
-                    <td>{{ rowData.thisYearSale }}</td>
-                    <td>{{ rowData.lastYearProfit }}</td>
-                    <td>{{ rowData.thisYearProfit }}</td>
-                </tr>
-            </ng-template>
-            <ng-template #footer>
-                <tr>
-                    <td colspan="3">Totals</td>
-                    <td>$3,283,772</td>
-                    <td>$2,126,925</td>
-                </tr>
-            </ng-template>
-        </p-treetable>
+    private const string LoadingCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Loading="_loading" />
+
+        @code {
+            private bool _loading;
+        }
         """;
 
-    private const string LazyLoadCode = """
-        <p-treetable
-            [value]="files"
-            [columns]="cols"
-            [paginator]="true"
-            [rows]="10"
-            [lazy]="true"
-            (onLazyLoad)="loadNodes($event)"
-            [totalRecords]="1000"
-            [loading]="loading"
-            (onNodeExpand)="onNodeExpand($event)"
-            [scrollable]="true"
-            [tableStyle]="{ 'min-width': '50rem' }"
-        >
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
+    private const string EmptyCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" EmptyMessage="Nenhum registro encontrado" />
+
+        @code {
+            private List<OpTreeNode> _nodes = new();
+        }
         """;
 
-    private const string ScrollVerticalCode = """
-        <p-treetable [value]="files" [columns]="cols" [scrollable]="true" scrollHeight="200px" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string ScrollFlexibleCode = """
-        <p-button label="Show" icon="pi pi-external-link" (onClick)="dialogVisible = true" />
-        <p-dialog [(visible)]="dialogVisible" header="Flex Scroll" [style]="{ width: '75vw' }" maximizable modal [contentStyle]="{ height: '300px' }">
-            <ng-template #content>
-                <p-treetable [value]="files" [scrollable]="true" scrollHeight="flex" [tableStyle]="{ 'min-width': '50rem' }">
-                    <ng-template #header>
-                        <tr>
-                            <th>Name</th>
-                            <th>Size</th>
-                            <th>Type</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template #body let-rowNode let-rowData="rowData">
-                        <tr [ttRow]="rowNode">
-                            <td>
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode" />
-                                    <span>{{ rowData.name }}</span>
-                                </div>
-                            </td>
-                            <td>{{ rowData.size }}</td>
-                            <td>{{ rowData.type }}</td>
-                        </tr>
-                    </ng-template>
-                </p-treetable>
-            </ng-template>
-            <ng-template #footer>
-                <p-button label="Ok" icon="pi pi-check" (onClick)="dialogVisible = false" />
-            </ng-template>
-        </p-dialog>
-        """;
-
-    private const string ScrollHorizontalCode = """
-        <p-treetable [value]="files" [columns]="cols" [scrollable]="true" scrollHeight="250px" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #colgroup let-columns>
-                <colgroup>
-                    @for (col of columns; track col) {
-                        <col style="width:500px" />
-                    }
-                </colgroup>
-            </ng-template>
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string FrozenColumnsCode = """
-        <p-treetable [value]="files" [columns]="scrollableCols" [frozenColumns]="frozenCols" [scrollable]="true" scrollHeight="250px" frozenWidth="200px" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #colgroup let-columns>
-                <colgroup>
-                    @for (col of columns; track col) {
-                        <col style="width:250px" />
-                    }
-                </colgroup>
-            </ng-template>
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode" style="height: 57px">
-                    @for (col of columns; track col) {
-                        <td>
-                            {{ rowData[col.field] }}
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #frozenbody let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode" style="height: 57px">
-                    <td>
-                        <div class="flex items-center gap-2">
-                            <p-treetable-toggler [rowNode]="rowNode" />
-                            <span class="font-bold">{{ rowData.name }}</span>
-                        </div>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string ResizeFitCode = """
-        <p-treetable [value]="files" [columns]="cols" [resizableColumns]="true" [tableStyle]="{'min-width': '50rem'}" showGridlines>
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th ttResizableColumn>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string ResizeExpandCode = """
-        <p-treetable [value]="files" [columns]="cols" [resizableColumns]="true" columnResizeMode="expand" showGridlines>
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th ttResizableColumn>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string ResizeScrollableCode = """
-        <p-treetable [value]="files" [columns]="cols" [resizableColumns]="true" [scrollable]="true" scrollHeight="200px" showGridlines>
-            <ng-template #colgroup let-columns>
-                <colgroup>
-                    @for (col of columns; track col) {
-                        <col />
-                    }
-                </colgroup>
-            </ng-template>
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th ttResizableColumn>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string ReorderCode = """
-        <p-treetable [value]="files" [columns]="cols" [reorderableColumns]="true" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th ttReorderableColumn>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string ColumnToggleCode = """
-        <p-treetable [value]="files" [columns]="selectedColumns" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #caption>
-                <div style="text-align:left">
-                    <p-multiselect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header" selectedItemsLabel="{0} columns selected" [style]="{ width: '20em' }" placeholder="Choose Columns" display="chip" />
-                </div>
-            </ng-template>
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string ConditionalStyleCode = """
-        <p-treetable [value]="files" [columns]="cols" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode" [ngClass]="{ '!bg-surface-100 dark:!bg-surface-800': rowData.size.endsWith('kb') }">
-                    @for (col of columns; let first = $first; track col) {
-                        <td [class]="{ 'line-through': col.field === 'size' && rowData.size.endsWith('kb') }">
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-        """;
-
-    private const string ContextMenuCode = """
-        <p-toast [style]="{ marginTop: '80px' }" />
-
-        <p-treetable [value]="files" [columns]="cols" dataKey="name" [(contextMenuSelection)]="selectedNode" [contextMenu]="cm" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template #header let-columns>
-                <tr>
-                    @for (col of columns; track col) {
-                        <th>
-                            {{ col.header }}
-                        </th>
-                    }
-                </tr>
-            </ng-template>
-            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode" [ttContextMenuRow]="rowNode">
-                    @for (col of columns; let first = $first; track col) {
-                        <td>
-                            @if (first) {
-                                <div class="flex items-center gap-2">
-                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                    <span>{{ rowData[col.field] }}</span>
-                                </div>
-                            } @else {
-                                {{ rowData[col.field] }}
-                            }
-                        </td>
-                    }
-                </tr>
-            </ng-template>
-        </p-treetable>
-
-        <p-contextmenu #cm [model]="items" />
+    private const string AccessibilityCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" SelectionMode="single"
+                     @bind-Selection="_selection" />
         """;
 }

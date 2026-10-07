@@ -1,151 +1,388 @@
 @page "/metergroup"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.MeterGroup
+@using OpBlazorUI.Base.Models
 
 <PageTitle>MeterGroup - OpBlazorUI</PageTitle>
 
 <DocComponent Title="MeterGroup"
-              Description="Exibe medições escalares dentro de um intervalo conhecido. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O MeterGroup exibe medições escalares dentro de um intervalo conhecido.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O MeterGroup requer um <code>value</code> como dado a exibir, onde cada item da coleção deve ser do tipo <code>MeterItem</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O MeterGroup requer um <code>Items</code> como dado a exibir, onde cada item deve ser um
+                    <code>OpMeterItem</code>. A propriedade <code>Label</code> de cada item descreve o medidor.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpMeterGroup Items="_basic"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Múltiplos" Id="multiple">
-            <Description><p>Adicionar mais itens ao array exibe os medidores em grupo.</p></Description>
-            <Code><CodeBlock Code="@MultipleCode" Language="html"/></Code>
+            <Description>
+                <p>Adicionar mais itens à coleção exibe os medidores em grupo, empilhados lado a lado.</p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpMeterGroup Items="_multiple"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Ícone" Id="icon">
-            <Description><p>Ícones podem ser exibidos ao lado dos rótulos em vez do marcador padrão.</p></Description>
-            <Code><CodeBlock Code="@IconCode" Language="html"/></Code>
+            <Description>
+                <p>Ícones podem ser exibidos ao lado dos rótulos em vez do marcador padrão, definindo-se
+                <code>Icon</code> em cada item.</p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpMeterGroup Items="_icons"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconCode"/></Code>
         </DocSection>
 
         <DocSection Label="Rótulo" Id="label">
-            <Description><p>A posição dos rótulos em relação aos medidores é definida com a propriedade <code>labelPosition</code>. A orientação padrão dos rótulos é horizontal, e a alternativa vertical está disponível pela opção <code>labelOrientation</code>.</p></Description>
-            <Code><CodeBlock Code="@LabelCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A posição dos rótulos em relação aos medidores é definida com a propriedade
+                    <code>LabelPosition</code> (<code>start</code> ou <code>end</code>). A orientação padrão dos
+                    rótulos é horizontal, e a alternativa vertical está disponível em <code>LabelOrientation</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-6">
+                    <div class="card">
+                        <OpMeterGroup Items="_multiple" LabelPosition="start" LabelOrientation="vertical"/>
+                    </div>
+                    <div class="card">
+                        <OpMeterGroup Items="_multiple" LabelPosition="end" LabelOrientation="horizontal"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LabelCode"/></Code>
         </DocSection>
 
         <DocSection Label="Vertical" Id="vertical">
-            <Description><p>O layout do MeterGroup é configurado com a propriedade <code>orientation</code>, que aceita <code>horizontal</code> ou <code>vertical</code> como opções disponíveis.</p></Description>
-            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O layout do MeterGroup é configurado com a propriedade <code>Orientation</code>, que aceita
+                    <code>horizontal</code> ou <code>vertical</code>. No modo vertical, defina uma altura para o
+                    componente (por exemplo, via <code>style</code>).
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpMeterGroup Items="_multiple" Orientation="vertical"
+                                  LabelPosition="start" LabelOrientation="vertical"
+                                  style="height:20rem;width:20rem;"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VerticalCode"/></Code>
         </DocSection>
 
         <DocSection Label="Mín Máx" Id="minmax">
-            <Description><p>Os limites são configurados com os valores <code>min</code> e <code>max</code>, cujos padrões são 0 e 100 respectivamente.</p></Description>
-            <Code><CodeBlock Code="@MinMaxCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Os limites são configurados com os valores <code>Min</code> e <code>Max</code>, cujos padrões são
+                    <code>0</code> e <code>100</code>. Cada item é convertido em percentual dentro dessa faixa.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpMeterGroup Items="_minmax" Max="200" LabelPosition="start"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MinMaxCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template" Id="template">
-            <Description><p>O MeterGroup oferece suporte a templates para rótulos, itens de medidor e conteúdo ao redor dos medidores.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O MeterGroup oferece suporte a templates para os rótulos (<code>LabelTemplate</code>), para cada
+                    medidor (<code>MeterTemplate</code>) e para o ícone dentro do rótulo padrão
+                    (<code>IconTemplate</code>). Os templates <code>StartTemplate</code>/<code>EndTemplate</code>
+                    (conteúdo antes/depois dos medidores) são aceitos, mas ainda não são renderizados por esta versão
+                    — veja Problemas Conhecidos.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpMeterGroup Items="_disk" LabelPosition="start" style="width:100%;">
+                        <MeterTemplate Context="meter">
+                            <span class="p-metergroup-meter" data-p="@meter.Orientation"
+                                  style="width:@(meter.Percent)%;background-color:@meter.Item.Color;"></span>
+                        </MeterTemplate>
+                        <LabelTemplate Context="label">
+                            <div class="flex flex-wrap gap-4">
+                                @foreach (var item in label.Items)
+                                {
+                                    <div class="flex-1 border border-surface rounded p-3" style="min-width:10rem;">
+                                        <div class="flex justify-between items-center gap-2">
+                                            <div class="flex flex-col">
+                                                <span class="text-sm text-muted-color">@item.Label</span>
+                                                <span class="font-bold">@(item.Value)%</span>
+                                            </div>
+                                            <span class="inline-flex items-center justify-center rounded-full"
+                                                  style="width:2rem;height:2rem;background-color:@item.Color;color:#fff;">
+                                                <i class="@item.Icon"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </LabelTemplate>
+                    </OpMeterGroup>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente MeterGroup usa o papel <code>meter</code> além dos atributos <code>aria-valuemin</code>, <code>aria-valuemax</code> e <code>aria-valuenow</code>. O valor para descrever o componente pode ser definido com a propriedade <code>aria-labelledby</code>.</p>
+                <p>
+                    O componente MeterGroup usa o papel <code>meter</code> no elemento raiz, com os atributos
+                    <code>aria-valuemin</code>, <code>aria-valuemax</code> e <code>aria-valuenow</code> (este último
+                    com o percentual total). O texto que descreve o componente pode ser definido com
+                    <code>aria-labelledby</code> ou <code>aria-label</code>, informados como atributos adicionais.
+                </p>
                 <h3>Suporte a teclado</h3>
-                <p>O componente não inclui elementos interativos.</p>
+                <p>O componente não inclui elementos interativos e não recebe foco.</p>
             </Description>
+            <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "—", "Não se aplica: o componente não é interativo." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Items", "IReadOnlyList&lt;OpMeterItem&gt;", "[]", "Coleção de medidores a exibir." },
+                              new[] { "Min", "double", "0", "Valor mínimo da escala." },
+                              new[] { "Max", "double", "100", "Valor máximo da escala." },
+                              new[] { "Orientation", "string", "\"horizontal\"", "Layout: <code>horizontal</code> ou <code>vertical</code>." },
+                              new[] { "LabelPosition", "string", "\"end\"", "Posição dos rótulos: <code>start</code> ou <code>end</code>." },
+                              new[] { "LabelOrientation", "string", "\"horizontal\"", "Orientação dos rótulos: <code>horizontal</code> ou <code>vertical</code>." },
+                              new[] { "MeterTemplate", "RenderFragment&lt;OpMeterContext&gt;?", "null", "Template de cada medidor." },
+                              new[] { "IconTemplate", "RenderFragment&lt;OpMeterItem&gt;?", "null", "Template do ícone no rótulo padrão (substitui o marcador)." },
+                              new[] { "LabelTemplate", "RenderFragment&lt;OpMeterGroupLabelContext&gt;?", "null", "Template da área de rótulos; substitui a lista padrão." },
+                              new[] { "StartTemplate", "RenderFragment&lt;OpMeterGroupLabelContext&gt;?", "null", "Conteúdo antes dos medidores (aceito, ainda não renderizado)." },
+                              new[] { "EndTemplate", "RenderFragment&lt;OpMeterGroupLabelContext&gt;?", "null", "Conteúdo depois dos medidores (aceito, ainda não renderizado)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpMeterItem" Id="api-item">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Label", "string?", "null", "Rótulo do medidor." },
+                              new[] { "Value", "double", "0", "Valor do medidor, convertido em percentual." },
+                              new[] { "Color", "string?", "null", "Cor do medidor e do marcador (ex.: <code>#34d399</code>)." },
+                              new[] { "Icon", "string?", "null", "Classe do ícone exibido no rótulo (ex.: <code>pi pi-table</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Contextos" Id="api-contexts">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Contexto", "Propriedades" })"
+                          Rows="@(new[] {
+                              new[] { "OpMeterContext", "<code>Item</code> (<code>OpMeterItem</code>), <code>Index</code> (<code>int</code>), <code>Orientation</code> (<code>string</code>), <code>Percent</code> (<code>int</code>)." },
+                              new[] { "OpMeterGroupLabelContext", "<code>Items</code> (<code>IReadOnlyList&lt;OpMeterItem&gt;</code>), <code>TotalPercent</code> (<code>int</code>), <code>Percentages</code> (<code>IReadOnlyList&lt;int&gt;</code>)." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="metergroup"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code> (repassados ao
+                    elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li><code>StartTemplate</code> e <code>EndTemplate</code> existem na API, mas o componente não os renderiza: os medidores não são envolvidos por conteúdo antes/depois.</li>
+                        <li>O upstream usa duas cores por item (<code>color1</code>/<code>color2</code>) para um gradiente; <code>OpMeterItem</code> tem apenas <code>Color</code>.</li>
+                        <li>No modo padrão, itens com <code>Value</code> igual a <code>0</code> não são renderizados; com <code>MeterTemplate</code> todos os itens passam pelo template.</li>
+                        <li>Não há animação de transição ao alterar os valores.</li>
+                        <li>O <code>aria-valuenow</code> do papel <code>meter</code> é o percentual total, não o de cada medidor individual.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private static readonly OpMeterItem[] _basic =
+    [
+        new() { Label = "Uso do espaço", Value = 75, Color = "#4ade80" }
+    ];
+
+    private static readonly OpMeterItem[] _multiple =
+    [
+        new() { Label = "Apps", Value = 25, Color = "#34d399" },
+        new() { Label = "Mensagens", Value = 15, Color = "#fbbf24" },
+        new() { Label = "Mídia", Value = 20, Color = "#38bdf8" },
+        new() { Label = "Sistema", Value = 10, Color = "#a78bfa" }
+    ];
+
+    private static readonly OpMeterItem[] _icons =
+    [
+        new() { Label = "Apps", Value = 25, Color = "#34d399", Icon = "pi pi-table" },
+        new() { Label = "Mensagens", Value = 15, Color = "#fbbf24", Icon = "pi pi-inbox" },
+        new() { Label = "Mídia", Value = 20, Color = "#38bdf8", Icon = "pi pi-image" },
+        new() { Label = "Sistema", Value = 10, Color = "#a78bfa", Icon = "pi pi-cog" }
+    ];
+
+    private static readonly OpMeterItem[] _minmax =
+    [
+        new() { Label = "Usado", Value = 120, Color = "#ef4444" },
+        new() { Label = "Reservado", Value = 30, Color = "#f59e0b" },
+        new() { Label = "Livre", Value = 50, Color = "#22c55e" }
+    ];
+
+    private static readonly OpMeterItem[] _disk =
+    [
+        new() { Label = "Documentos", Value = 30, Color = "#34d399", Icon = "pi pi-file" },
+        new() { Label = "Mídia", Value = 45, Color = "#60a5fa", Icon = "pi pi-image" },
+        new() { Label = "Sistema", Value = 15, Color = "#f472b6", Icon = "pi pi-cog" }
+    ];
+
     private const string ImportCode = """
-        import { MeterGroupModule } from 'primeng/metergroup';
+        @using OpBlazorUI.Base.Components.MeterGroup
+        @using OpBlazorUI.Base.Models
+
+        <OpMeterGroup Items="_value" />
+
+        @code {
+            private readonly OpMeterItem[] _value =
+            [
+                new() { Label = "Apps", Value = 25, Color = "#34d399" }
+            ];
+        }
         """;
 
     private const string BasicCode = """
-        <p-metergroup [value]="value" />
+        <OpMeterGroup Items="_value" />
+
+        @code {
+            private readonly OpMeterItem[] _value =
+            [
+                new() { Label = "Uso do espaço", Value = 75, Color = "#4ade80" }
+            ];
+        }
         """;
 
     private const string MultipleCode = """
-        <p-metergroup [value]="value" />
+        <OpMeterGroup Items="_value" />
+
+        @code {
+            private readonly OpMeterItem[] _value =
+            [
+                new() { Label = "Apps", Value = 25, Color = "#34d399" },
+                new() { Label = "Mensagens", Value = 15, Color = "#fbbf24" },
+                new() { Label = "Mídia", Value = 20, Color = "#38bdf8" },
+                new() { Label = "Sistema", Value = 10, Color = "#a78bfa" }
+            ];
+        }
         """;
 
     private const string IconCode = """
-        <p-metergroup [value]="value" />
+        <OpMeterGroup Items="_value" />
+
+        @code {
+            private readonly OpMeterItem[] _value =
+            [
+                new() { Label = "Apps", Value = 25, Color = "#34d399", Icon = "pi pi-table" },
+                new() { Label = "Mensagens", Value = 15, Color = "#fbbf24", Icon = "pi pi-inbox" }
+            ];
+        }
         """;
 
     private const string LabelCode = """
-        <p-metergroup [value]="value" labelPosition="start" labelOrientation="vertical" />
+        <OpMeterGroup Items="_value" LabelPosition="start" LabelOrientation="vertical" />
+        <OpMeterGroup Items="_value" LabelPosition="end" LabelOrientation="horizontal" />
         """;
 
     private const string VerticalCode = """
-        <p-metergroup [value]="value" orientation="vertical" labelOrientation="vertical" [style]="{ height: '300px' }" />
+        <OpMeterGroup Items="_value" Orientation="vertical"
+                      LabelPosition="start" LabelOrientation="vertical"
+                      style="height:20rem;width:20rem;" />
         """;
 
     private const string MinMaxCode = """
-        <p-metergroup [value]="value" [max]="200" />
+        <OpMeterGroup Items="_value" Max="200" LabelPosition="start" />
         """;
 
     private const string TemplateCode = """
-        <p-metergroup [value]="value" labelPosition="start">
-            <ng-template #label>
+        <OpMeterGroup Items="_value" LabelPosition="start">
+            <MeterTemplate Context="meter">
+                <span class="p-metergroup-meter" data-p="@meter.Orientation"
+                      style="width:@(meter.Percent)%;background-color:@meter.Item.Color;"></span>
+            </MeterTemplate>
+            <LabelTemplate Context="label">
                 <div class="flex flex-wrap gap-4">
-                    <ng-container *ngFor="let meterItem of value; let index = index">
-                        <p-card class="flex-1" styleClass="border border-surface shadow-none">
-                            <div class="flex justify-between gap-8">
-                                <div class="flex flex-col gap-1">
-                                    <span class="text-surface-500 dark:text-surface-400 text-sm">{{ meterItem.label }}</span>
-                                    <span class="font-bold text-lg">{{ meterItem.value }}%</span>
+                    @foreach (var item in label.Items)
+                    {
+                        <div class="flex-1 border border-surface rounded p-3">
+                            <div class="flex justify-between items-center gap-2">
+                                <div class="flex flex-col">
+                                    <span class="text-sm text-muted-color">@item.Label</span>
+                                    <span class="font-bold">@(item.Value)%</span>
                                 </div>
-                                <span class="w-8 h-8 rounded-full inline-flex justify-center items-center text-center" [style]="{ 'background-color': meterItem.color1, color: '#ffffff' }">
-                                    <i [class]="meterItem.icon"></i>
-                                </span>
+                                <i class="@item.Icon"></i>
                             </div>
-                        </p-card>
-                    </ng-container>
+                        </div>
+                    }
                 </div>
-            </ng-template>
-            <ng-template #meter let-value let-class="class" let-width="size">
-                <span [class]="class" [style]="{ background: 'linear-gradient(to right, ' + value.color1 + ', ' + value.color2 + ')', width: width }"></span>
-            </ng-template>
-            <ng-template #start let-totalPercent="totalPercent">
-                <div class="flex justify-between mt-4 mb-2 relative">
-                    <span>Storage</span>
-                    <span [style]="{ width: totalPercent + '%' }" class="absolute text-right">{{ totalPercent }}%</span>
-                    <span class="font-medium">1TB</span>
-                </div>
-            </ng-template>
-            <ng-template #end>
-                <div class="flex justify-between mt-4">
-                    <p-button label="Manage Storage" [outlined]="true" size="small" />
-                    <p-button label="Update Plan" size="small" />
-                </div>
-            </ng-template>
-        </p-metergroup>
+            </LabelTemplate>
+        </OpMeterGroup>
+        """;
+
+    private const string AccessibilityCode = """
+        <span id="disco">Uso do disco</span>
+        <OpMeterGroup Items="_value" aria-labelledby="disco" />
+
+        <OpMeterGroup Items="_value" aria-label="Uso do disco" />
         """;
 }
