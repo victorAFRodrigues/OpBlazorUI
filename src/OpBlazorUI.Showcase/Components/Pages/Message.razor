@@ -4,7 +4,6 @@
 @using OpBlazorUI.Base.Components.Message
 @using OpBlazorUI.Base.Components.Button
 @using OpBlazorUI.Base.Components.InputText
-@using OpBlazorUI.Base.Components.Icon
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>Message - OpBlazorUI</PageTitle>
@@ -57,7 +56,7 @@
                     <OpMessage Severity="info" Icon="pi pi-send">Mensagem de Informação</OpMessage>
                     <OpMessage Severity="success">
                         <IconTemplate>
-                            <OpIcon Name="check" CssClass="p-message-icon"/>
+                            <i class="p-icon pi pi-check p-message-icon"></i>
                         </IconTemplate>
                         <ChildContent>Como posso ajudar?</ChildContent>
                     </OpMessage>
@@ -418,7 +417,7 @@
 
         <OpMessage Severity="success">
             <IconTemplate>
-                <OpIcon Name="check" CssClass="p-message-icon" />
+                <i class="p-icon pi pi-check p-message-icon" />
             </IconTemplate>
             Como posso ajudar?
         </OpMessage>

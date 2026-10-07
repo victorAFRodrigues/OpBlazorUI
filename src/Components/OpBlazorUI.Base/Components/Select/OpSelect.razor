@@ -1,6 +1,5 @@
 @namespace OpBlazorUI.Base.Components.Select
 @using OpBlazorUI.Base.Components.Overlay
-@using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
@@ -66,7 +65,7 @@
         }
         else
         {
-            <OpIcon Name="times" CssClass="p-select-clear-icon" OnClick="Clear"/>
+            <i class="p-icon pi pi-times p-select-clear-icon" @onclick="Clear"></i>
         }
     }
 
@@ -93,7 +92,7 @@
         }
         else
         {
-            <OpIcon Name="chevron-down" CssClass="p-select-dropdown-icon"/>
+            <i class="p-icon pi pi-chevron-down p-select-dropdown-icon"></i>
         }
     </div>
 
@@ -120,7 +119,7 @@
                                aria-owns="@($"{_id}_list")"
                                aria-label="Filter"
                                @oninput="OnFilterInput"/>
-                        <OpInputIcon><OpIcon Name="search"/></OpInputIcon>
+                        <OpInputIcon><i class="p-icon pi pi-search"></i></OpInputIcon>
                     </OpIconField>
                 </div>
             }
@@ -180,11 +179,11 @@
                                 {
                                     @if (IsSelected(child))
                                     {
-                                        <OpIcon Name="check" CssClass="p-select-option-check-icon"/>
+                                        <i class="p-icon pi pi-check p-select-option-check-icon"></i>
                                     }
                                     else
                                     {
-                                        <OpIcon Name="blank" CssClass="p-select-option-blank-icon"/>
+                                        <i class="p-icon pi p-select-option-blank-icon"></i>
                                     }
                                 }
                                 @if (ItemTemplate != null && child is TValue childTv)
@@ -245,11 +244,11 @@
             {
                 @if (IsSelected(option))
                 {
-                    <OpIcon Name="check" CssClass="p-select-option-check-icon"/>
+                    <i class="p-icon pi pi-check p-select-option-check-icon"></i>
                 }
                 else
                 {
-                    <OpIcon Name="blank" CssClass="p-select-option-blank-icon"/>
+                    <i class="p-icon pi p-select-option-blank-icon"></i>
                 }
             }
             @if (ItemTemplate != null && option is TValue optTv)

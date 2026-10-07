@@ -1,6 +1,5 @@
 @namespace OpBlazorUI.Base.Components.Listbox
 @using OpBlazorUI.Base.Components.Checkbox
-@using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.IconField
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
@@ -37,7 +36,7 @@
                                placeholder="Filter"
                                aria-label="Filter"
                                @oninput="OnFilterInput"/>
-                        <OpInputIcon><OpIcon Name="search"/></OpInputIcon>
+                        <OpInputIcon><i class="p-icon pi pi-search"></i></OpInputIcon>
                     </OpIconField>
                 </div>
             }
@@ -164,7 +163,7 @@
                     }
                     else
                     {
-                        <OpIcon Name="check" CssClass="p-listbox-option-check-icon"/>
+                        <i class="p-icon pi pi-check p-listbox-option-check-icon"></i>
                     }
                 }
                 else
@@ -175,7 +174,7 @@
                     }
                     else
                     {
-                        <OpIcon Name="blank" CssClass="p-listbox-option-blank-icon"/>
+                        <i class="p-icon pi p-listbox-option-blank-icon"></i>
                     }
                 }
             }

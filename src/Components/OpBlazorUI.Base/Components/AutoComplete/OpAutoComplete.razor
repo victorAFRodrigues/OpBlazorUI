@@ -1,6 +1,5 @@
 @namespace OpBlazorUI.Base.Components.AutoComplete
 @using OpBlazorUI.Base.Components.Overlay
-@using OpBlazorUI.Base.Components.Icon
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using OpBlazorUI.Base.Components.Forms
 @typeparam TValue
@@ -26,9 +25,8 @@
                         @if (!Disabled && !Readonly)
                         {
                             <span @onclick:stopPropagation="true">
-                                <OpIcon Name="times-circle"
-                                        CssClass="p-chip-remove-icon p-autocomplete-chip-icon"
-                                        OnClick="() => RemoveChipAsync(item)"/>
+                                <i class="p-icon pi pi-times-circle p-chip-remove-icon p-autocomplete-chip-icon"
+                                   @onclick="() => RemoveChipAsync(item)"></i>
                             </span>
                         }
                     </div>
@@ -92,7 +90,7 @@
         }
         else
         {
-            <OpIcon Name="times" CssClass="p-autocomplete-clear-icon" OnClick="Clear"/>
+            <i class="p-icon pi pi-times p-autocomplete-clear-icon" @onclick="Clear"></i>
         }
     }
 
@@ -118,7 +116,7 @@
             }
             else
             {
-                <OpIcon Name="chevron-down" CssClass="p-autocomplete-dropdown-icon"/>
+                <i class="p-icon pi pi-chevron-down p-autocomplete-dropdown-icon"></i>
             }
         </div>
     }

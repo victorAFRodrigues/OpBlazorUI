@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
-using OpBlazorUI.Base.Components.Icon;
 
 namespace OpBlazorUI.Base.Components.CascadeSelect;
 
@@ -709,10 +708,9 @@ public partial class OpCascadeSelect<TValue> : OpInputBase<TValue>
             }
             else
             {
-                builder.OpenComponent<OpIcon>(seq++);
-                builder.AddAttribute(seq++, "Name", "chevron-right");
-                builder.AddAttribute(seq++, "CssClass", "p-cascadeselect-group-icon");
-                builder.CloseComponent();
+                builder.OpenElement(seq++, "i");
+                builder.AddAttribute(seq++, "class", "p-icon pi pi-chevron-right p-cascadeselect-group-icon");
+                builder.CloseElement();
             }
 
             builder.CloseElement();

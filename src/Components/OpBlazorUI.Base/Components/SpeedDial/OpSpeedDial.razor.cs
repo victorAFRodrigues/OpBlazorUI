@@ -2,7 +2,6 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using OpBlazorUI.Base.Components.Icon;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.SpeedDial;
@@ -187,10 +186,9 @@ public partial class OpSpeedDial : ComponentBase, IAsyncDisposable
 
     private static readonly RenderFragment DefaultIcon = builder =>
     {
-        builder.OpenComponent<OpIcon>(0);
-        builder.AddAttribute(1, nameof(OpIcon.Name), "plus");
-        builder.AddAttribute(2, nameof(OpIcon.CssClass), "p-button-icon");
-        builder.CloseComponent();
+        builder.OpenElement(0, "i");
+        builder.AddAttribute(1, "class", "p-icon pi pi-plus p-button-icon");
+        builder.CloseElement();
     };
 
     private string MaskClass => OpCss.BuildClass("p-speeddial-mask p-overlay-mask", MaskStyleClass);

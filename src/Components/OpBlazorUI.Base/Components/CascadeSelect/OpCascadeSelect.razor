@@ -1,6 +1,5 @@
 @namespace OpBlazorUI.Base.Components.CascadeSelect
 @using OpBlazorUI.Base.Components.Overlay
-@using OpBlazorUI.Base.Components.Icon
 @using OpBlazorUI.Base.Components.Forms
 @typeparam TValue
 @inherits OpInputBase<TValue>
@@ -43,7 +42,7 @@
         }
         else
         {
-            <OpIcon Name="times" CssClass="p-cascadeselect-clear-icon" OnClick="Clear"/>
+            <i class="p-icon pi pi-times p-cascadeselect-clear-icon" @onclick="Clear"></i>
         }
     }
 
@@ -70,7 +69,7 @@
         }
         else
         {
-            <OpIcon Name="chevron-down"/>
+            <i class="p-icon pi pi-chevron-down"></i>
         }
     </div>
 

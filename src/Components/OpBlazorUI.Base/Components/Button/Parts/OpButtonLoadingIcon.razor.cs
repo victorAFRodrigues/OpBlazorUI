@@ -12,6 +12,6 @@ public partial class OpButtonLoadingIcon : ComponentBase
 
     // Spinner padrão: mesmas classes do ícone (como o spinnerIcon do upstream).
     private string SpinnerClass => HasLabel
-        ? $"p-icon p-icon-spin p-button-loading-icon p-button-icon p-button-icon-{IconPos}"
-        : "p-icon p-icon-spin p-button-loading-icon p-button-icon";
+        ? $"p-button-loading-icon p-button-icon p-button-icon-{IconPos}"
+        : "p-button-loading-icon p-button-icon";
 }
