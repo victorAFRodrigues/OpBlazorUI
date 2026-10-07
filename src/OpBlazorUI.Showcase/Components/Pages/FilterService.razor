@@ -1,0 +1,173 @@
+@page "/filterservice"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Services
+@inject OpFilterService Filters
+
+<PageTitle>FilterService - OpBlazorUI</PageTitle>
+
+<DocComponent Title="FilterService"
+              Description="O FilterService centraliza a filtragem de coleções por um ou mais campos e modos de comparação (match modes). É a base para a filtragem de Table, Tree, Listbox e demais coleções.">
+
+    <Features>
+        <DocSection Label="Importação" Id="import">
+            <Code><CodeBlock Code="@ImportCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                <p>Injete o <code>OpFilterService</code> e chame <code>Filter</code> passando a coleção, os
+                    campos e o modo. A comparação de texto ignora acentos e caixa; um item entra no resultado
+                    quando <em>qualquer</em> campo corresponde ao filtro.</p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col gap-4">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input class="p-inputtext" placeholder="Filtrar..." @bind="_query" @bind:event="oninput"/>
+                        <select class="p-inputtext" @bind="_mode">
+                            <option value="startsWith">startsWith</option>
+                            <option value="contains">contains</option>
+                            <option value="endsWith">endsWith</option>
+                            <option value="equals">equals</option>
+                        </select>
+                    </div>
+                    <table style="width:100%;border-collapse:collapse">
+                        <thead>
+                            <tr>
+                                <th style="@CellHeader">Nome</th>
+                                <th style="@CellHeader">Categoria</th>
+                                <th style="@CellHeader">Preço</th>
+                                <th style="@CellHeader">Estoque</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Filtered)
+                            {
+                                <tr>
+                                    <td style="@Cell">@product.Name</td>
+                                    <td style="@Cell">@product.Category</td>
+                                    <td style="@Cell">@product.Price.ToString("C")</td>
+                                    <td style="@Cell">@product.Stock</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <small class="text-muted-color">@Filtered.Count item(ns) para "<b>@_query</b>" no modo <code>@_mode</code>.</small>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Acessibilidade" Id="accessibility">
+            <Description>
+                <h3>Leitor de tela</h3>
+                <p>O serviço não renderiza nada; nenhum papel ou atributo é adicionado.</p>
+                <h3>Suporte a teclado</h3>
+                <p>O serviço não inclui elementos interativos.</p>
+            </Description>
+        </DocSection>
+    </Features>
+
+    <Api>
+        <DocSection Label="Métodos" Id="api-methods">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Assinatura", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "IReadOnlyList&lt;T&gt; Filter&lt;T&gt;(IEnumerable&lt;T&gt;? value, IReadOnlyList&lt;string&gt; fields, object? filterValue, OpFilterMatchMode matchMode, CultureInfo? culture = null)", "Filtra por um modo tipado." },
+                              new[] { "IReadOnlyList&lt;T&gt; Filter&lt;T&gt;(IEnumerable&lt;T&gt;? value, IReadOnlyList&lt;string&gt; fields, object? filterValue, string matchMode, CultureInfo? culture = null)", "Filtra por um modo nomeado (mesmos nomes do upstream)." },
+                              new[] { "void Register(string rule, Func&lt;object?, object?, CultureInfo, bool&gt; predicate)", "Adiciona/substitui um modo customizado." },
+                              new[] { "void Register(OpFilterMatchMode matchMode, Func&lt;object?, object?, CultureInfo, bool&gt; predicate)", "Idem, por enum." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Match modes" Id="api-modes">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Enum", "Nome (upstream)" })"
+                          Rows="@(new[] {
+                              new[] { "StartsWith", "startsWith" }, new[] { "Contains", "contains" },
+                              new[] { "NotContains", "notContains" }, new[] { "EndsWith", "endsWith" },
+                              new[] { "Equals", "equals" }, new[] { "NotEquals", "notEquals" },
+                              new[] { "In", "in" }, new[] { "Between", "between" },
+                              new[] { "Lt", "lt" }, new[] { "Lte", "lte" },
+                              new[] { "Gt", "gt" }, new[] { "Gte", "gte" },
+                              new[] { "Is", "is" }, new[] { "IsNot", "isNot" },
+                              new[] { "Before", "before" }, new[] { "After", "after" },
+                              new[] { "DateIs", "dateIs" }, new[] { "DateIsNot", "dateIsNot" },
+                              new[] { "DateBefore", "dateBefore" }, new[] { "DateAfter", "dateAfter" },
+                              new[] { "Custom", "custom" }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+    </Api>
+
+    <Theming>
+        <DocSection Label="Classes CSS" Id="style">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O serviço não aplica classes; a apresentação é responsabilidade do componente consumidor.</p>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </Theming>
+
+    <Passthrough>
+        <DocSection Label="Pass Through">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não se aplica a um serviço.</p>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </Passthrough>
+
+    <KnownIssues>
+        <DocSection Label="Problemas Conhecidos">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Ainda não há integração automática com Table/Tree/Listbox — os selects continuam com
+                            a filtragem <code>contains</code> interna. A adoção do serviço nesses componentes é
+                            um passo seguinte.</li>
+                    </ul>
+                </div>
+            </ChildContent>
+        </DocSection>
+    </KnownIssues>
+</DocComponent>
+
+@code {
+    private const string CellHeader =
+        "text-align:left;padding:.5rem;border-bottom:1px solid var(--p-content-border-color)";
+
+    private const string Cell =
+        "padding:.5rem;border-bottom:1px solid var(--p-content-border-color)";
+
+    private sealed record Product(string Name, string Category, decimal Price, int Stock);
+
+    private static readonly List<Product> Products =
+    [
+        new("Apple", "Fruta", 1.2m, 120),
+        new("Banana", "Fruta", 0.8m, 200),
+        new("Orange", "Fruta", 1.5m, 85),
+        new("Carrot", "Legume", 0.6m, 150),
+        new("Potato", "Legume", 0.4m, 300),
+        new("Tomato", "Legume", 1.1m, 64)
+    ];
+
+    private static readonly string[] Fields = ["Name", "Category"];
+
+    private string _query = "";
+    private string _mode = "startsWith";
+
+    private IReadOnlyList<Product> Filtered => Filters.Filter(Products, Fields, _query, _mode);
+
+    private const string ImportCode = """
+        @inject OpFilterService Filters
+        """;
+
+    private const string BasicCode = """
+        // fields: campos a comparar; mode: match mode (enum ou nome)
+        var result = Filters.Filter(products, new[] { "Name", "Category" }, query, "contains");
+        """;
+}

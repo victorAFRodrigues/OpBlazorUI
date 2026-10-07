@@ -174,7 +174,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Utilities",
-                    Items = [GroupItem("FilterService"), GroupItem("Overlay API", "/overlay")]
+                    Items = [GroupItem("FilterService", "/filterservice"), GroupItem("Overlay API", "/overlay")]
                 }
             ]
         },
