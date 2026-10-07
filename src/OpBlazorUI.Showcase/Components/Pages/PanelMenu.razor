@@ -1,146 +1,149 @@
 @page "/panelmenu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
 
 <PageTitle>PanelMenu - OpBlazorUI</PageTitle>
 
 <DocComponent Title="PanelMenu"
-              Description="Híbrido dos componentes Accordion e Tree. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O PanelMenu combina painéis expansíveis com itens de menu em uma navegação vertical.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O PanelMenu exige uma coleção de menuitems como <code>model</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>Os itens raiz com filhos viram painéis expansíveis.</Description>
+            <ChildContent>
+                <div style="max-width: 20rem;">
+                    <OpPanelMenu Model="_items"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Múltiplo" Id="multiple">
-            <Description><p>Apenas um único menuitem raiz pode ficar ativo por padrão; habilite a propriedade <code>multiple</code> para abrir mais de um item.</p></Description>
-            <Code><CodeBlock Code="@MultipleCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Controlado" Id="controlled">
-            <Description><p>Os itens de menu podem ser controlados programaticamente.</p></Description>
-            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template" Id="template">
-            <Description><p>O PanelMenu exige uma coleção de menuitems como <code>model</code>.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Comando" Id="command">
-            <Description><p>A propriedade <code>command</code> define o callback a executar quando um item é ativado por clique ou evento de tecla.</p></Description>
-            <Code><CodeBlock Code="@CommandCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Router" Id="router">
-            <Description><p>Os itens de menu suportam navegação via routerLink, roteamento programático usando comandos ou URLs externas.</p></Description>
-            <Code><CodeBlock Code="@RouterCode" Language="html"/></Code>
+        <DocSection Label="Um por vez" Id="single">
+            <Description>Com <code>Multiple="false"</code>, apenas um painel fica aberto.</Description>
+            <ChildContent>
+                <div style="max-width: 20rem;">
+                    <OpPanelMenu Model="_items" Multiple="false"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SingleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>Os elementos de cabeçalho do accordion têm o papel <code>button</code>, um <code>aria-label</code> definido pela propriedade <code>label</code> do model de menuitem e <code>aria-controls</code> para definir o id da seção de conteúdo, junto com <code>aria-expanded</code> para o estado de visibilidade.</p>
-                <p>O conteúdo de um painel do accordion usa o papel <code>region</code>, define um id que corresponde ao <code>aria-controls</code> do cabeçalho e <code>aria-labelledby</code> referindo-se ao id do cabeçalho.</p>
-                <p>Os elementos de árvore têm o papel <code>tree</code> e cada item de menu tem o papel <code>treeitem</code> com os atributos <code>aria-label</code>, <code>aria-selected</code> e <code>aria-expanded</code>. O elemento contêiner de um nó de árvore tem o papel <code>group</code>. Os atributos <code>aria-setsize</code>, <code>aria-posinset</code> e <code>aria-level</code> são calculados implicitamente e adicionados a cada treeitem.</p>
-                <h3>Suporte a teclado do cabeçalho</h3>
-                <h3>Suporte a teclado da árvore</h3>
+                <p>A lista raiz usa <code>role="tree"</code>; os cabeçalhos usam <code>role="button"</code> com <code>aria-expanded</code>.</p>
+                <h3>Suporte a teclado</h3>
+                <p>Os cabeçalhos e links são alcançáveis por <code>tab</code>.</p>
             </Description>
-            <Code>
-                <ApiTable Caption="Cabeçalho"
-                          Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] {
-                              new[] { "tab", "Adiciona o foco ao primeiro cabeçalho quando o foco entra no componente; se já houver um cabeçalho focado, move o foco para fora do componente conforme a sequência de tabulação da página." },
-                              new[] { "enter", "Alterna a visibilidade do conteúdo." },
-                              new[] { "space", "Alterna a visibilidade do conteúdo." },
-                              new[] { "down arrow", "Se o painel estiver recolhido, move o foco para o próximo cabeçalho; caso contrário, o primeiro treenode do painel recebe o foco." },
-                              new[] { "up arrow", "Se o painel anterior estiver recolhido, move o foco para o cabeçalho anterior; caso contrário, o último treenode do painel anterior recebe o foco." },
-                              new[] { "home", "Move o foco para o primeiro cabeçalho." },
-                              new[] { "end", "Move o foco para o último cabeçalho." }
-                          })"/>
-                <ApiTable Caption="Árvore"
-                          Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] {
-                              new[] { "tab", "Move o foco para o próximo elemento focável na ordem de tabulação da página." },
-                              new[] { "shift + tab", "Move o foco para o elemento focável anterior na ordem de tabulação da página." },
-                              new[] { "enter", "Ativa o treenode focado." },
-                              new[] { "space", "Ativa o treenode focado." },
-                              new[] { "down arrow", "Move o foco para o próximo treenode." },
-                              new[] { "up arrow", "Move o foco para o treenode anterior." },
-                              new[] { "right arrow", "Se o nó estiver fechado, abre o nó; caso contrário, move o foco para o primeiro nó filho." },
-                              new[] { "left arrow", "Se o nó estiver aberto, fecha o nó; caso contrário, move o foco para o nó pai." }
-                          })"/>
-            </Code>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens do menu." },
+                              new[] { "Multiple", "bool", "true", "Permite vários painéis abertos." },
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um item." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="panelmenu"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div></ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Suporta um nível de itens por painel (sem submenus aninhados).</li>
+                        <li>Sem animação de abertura; o painel é renderizado ao expandir.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private readonly List<OpMenuItem> _items = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Arquivo",
+            Icon = "pi pi-folder",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Novo", Icon = "pi pi-plus" },
+                new() { Label = "Abrir", Icon = "pi pi-folder-open" },
+                new() { Label = "Salvar", Icon = "pi pi-save" }
+            }
+        },
+        new OpMenuItem
+        {
+            Label = "Usuário",
+            Icon = "pi pi-user",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Perfil", Icon = "pi pi-id-card" },
+                new() { Label = "Sair", Icon = "pi pi-power-off" }
+            }
+        },
+        new OpMenuItem { Label = "Ajuda", Icon = "pi pi-question-circle" }
+    };
+
     private const string ImportCode = """
-        import { PanelMenuModule } from 'primeng/panelmenu';
+        @using OpBlazorUI.Base.Components.Menu
+        @using OpBlazorUI.Base.Models
+
+        <OpPanelMenu Model="_items" />
         """;
 
     private const string BasicCode = """
-        <p-panelmenu [model]="items" class="w-full md:w-20rem" />
+        <OpPanelMenu Model="_items" />
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Arquivo",
+                    Icon = "pi pi-folder",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Novo" },
+                        new() { Label = "Abrir" }
+                    }
+                },
+                new OpMenuItem { Label = "Ajuda" }
+            };
+        }
         """;
 
-    private const string MultipleCode = """
-        <p-panelmenu [model]="items" [style]="{'width':'300px'}" [multiple]="true" />
+    private const string SingleCode = """
+        <OpPanelMenu Model="_items" Multiple="false" />
         """;
 
-    private const string ControlledCode = """
-        <p-button label="Toggle All" [text]="true" (onClick)="toggleAll()" />
-        <p-panelmenu [model]="items" class="w-full md:w-80" />
-        """;
-
-    private const string TemplateCode = """
-        <p-panelmenu [model]="items" class="w-full md:w-80">
-            <ng-template #item let-item>
-                <a pRipple class="flex items-center px-4 py-2 cursor-pointer group">
-                    <i [class]="item.icon + ' text-primary group-hover:text-inherit'"></i>
-                    <span class="ms-2">{{ item.label }}</span>
-                    <p-badge *ngIf="item.badge" class="ms-auto" [value]="item.badge" />
-                    <span *ngIf="item.shortcut" class="ms-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
-                </a>
-            </ng-template>
-        </p-panelmenu>
-        """;
-
-    private const string CommandCode = """
-        <p-toast />
-        <p-panelmenu [model]="items" class="w-full md:w-80" />
-        """;
-
-    private const string RouterCode = """
-        <p-panelmenu [model]="items" class="w-full md:w-80" />
+    private const string AccessibilityCode = """
+        <OpPanelMenu Model="_items" />
         """;
 }

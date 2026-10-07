@@ -1,0 +1,71 @@
+@namespace OpBlazorUI.Base.Components.Breadcrumb
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<nav class="@RootClass" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
+    <ul class="p-breadcrumb-list">
+        @if (Home is not null)
+        {
+            <li class="p-breadcrumb-item">
+                @if (HomeTemplate is not null)
+                {
+                    @HomeTemplate(Home)
+                }
+                else
+                {
+                    <a class="p-breadcrumb-item-link" href="@Home.Url">
+                        @if (!string.IsNullOrEmpty(Home.Icon))
+                        {
+                            <span class="p-breadcrumb-item-icon @Home.Icon" aria-hidden="true"></span>
+                        }
+                        @if (!string.IsNullOrEmpty(Home.Label))
+                        {
+                            <span class="p-breadcrumb-item-label">@Home.Label</span>
+                        }
+                    </a>
+                }
+            </li>
+            <li class="p-breadcrumb-separator">
+                <i class="@SeparatorIconClass" aria-hidden="true"></i>
+            </li>
+        }
+
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            var item = Model[i];
+            var last = i == Model.Count - 1;
+
+            <li class="p-breadcrumb-item">
+                @if (ItemTemplate is not null)
+                {
+                    @ItemTemplate(item)
+                }
+                else if (last)
+                {
+                    <span class="p-breadcrumb-item-label" aria-current="page">@item.Label</span>
+                }
+                else
+                {
+                    <a class="p-breadcrumb-item-link" href="@item.Url">
+                        @if (!string.IsNullOrEmpty(item.Icon))
+                        {
+                            <span class="p-breadcrumb-item-icon @item.Icon" aria-hidden="true"></span>
+                        }
+                        @if (!string.IsNullOrEmpty(item.Label))
+                        {
+                            <span class="p-breadcrumb-item-label">@item.Label</span>
+                        }
+                    </a>
+                }
+            </li>
+
+            @if (!last)
+            {
+                <li class="p-breadcrumb-separator">
+                    <i class="@SeparatorIconClass" aria-hidden="true"></i>
+                </li>
+            }
+        }
+    </ul>
+</nav>

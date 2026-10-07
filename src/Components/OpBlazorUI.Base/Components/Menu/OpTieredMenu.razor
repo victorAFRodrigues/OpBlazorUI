@@ -1,0 +1,13 @@
+@namespace OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <OpMenuItems Items="Model"
+                 Prefix="tieredmenu"
+                 Root="true"
+                 IsOpen="IsOpen"
+                 OnToggle="ToggleAsync"
+                 OnItemClick="OnItemClick"/>
+</div>

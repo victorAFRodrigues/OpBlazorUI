@@ -1,88 +1,159 @@
 @page "/breadcrumb"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Breadcrumb
+@using OpBlazorUI.Base.Models
 
 <PageTitle>Breadcrumb - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Breadcrumb"
-              Description="Fornece informação contextual sobre a hierarquia da página. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Breadcrumb fornece navegação hierárquica baseada em uma lista de itens.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O Breadcrumb fornece informação contextual sobre a hierarquia da página.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>O <code>Model</code> define os itens; o último é sempre o item ativo.</Description>
+            <ChildContent>
+                <OpBreadcrumb Model="_items"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template" Id="template">
-            <Description><p>Conteúdo personalizado pode ser colocado dentro dos itens usando o template <code>item</code>. O divisor entre os itens tem seu próprio template <code>separator</code>.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        <DocSection Label="Com Home" Id="home">
+            <Description>O item <code>Home</code> é exibido antes dos demais, normalmente com um ícone.</Description>
+            <ChildContent>
+                <OpBreadcrumb Home="_home" Model="_items"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@HomeCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Roteamento" Id="router">
-            <Description><p>Os itens de menu suportam navegação via <code>routerLink</code>, roteamento programático usando comandos ou URLs externas.</p></Description>
-            <Code><CodeBlock Code="@RouterCode" Language="html"/></Code>
+        <DocSection Label="Ícones" Id="icons">
+            <Description>Cada item pode ter um ícone.</Description>
+            <ChildContent>
+                <OpBreadcrumb Home="_home"
+                              Model="@(new[] {
+                                  new OpMenuItem { Label = "Categoria", Icon = "pi pi-sitemap", Url = "#" },
+                                  new OpMenuItem { Label = "Documento", Icon = "pi pi-file", Url = "#" },
+                                  new OpMenuItem { Label = "Detalhe" }
+                              })"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O Breadcrumb usa o elemento <code>nav</code> e, como qualquer atributo é passado implicitamente à raiz, <code>aria-labelledby</code> ou <code>aria-label</code> podem ser usados para descrever o componente. Internamente é usada uma lista ordenada, onde os separadores dos itens têm <code>aria-hidden</code> para serem ignorados pelos leitores de tela. Se o último link representar a rota atual, <code>aria-current</code> é adicionado com o valor "page".</p>
+                <p>O componente usa o elemento <code>nav</code> com <code>aria-label</code>; o último item tem <code>aria-current="page"</code>.</p>
                 <h3>Suporte a teclado</h3>
-                <p>Nenhuma interação especial de teclado é necessária; todos os itens de menu são focáveis com base na sequência de tabulação da página.</p>
+                <p>Os links são focáveis com <code>tab</code>.</p>
             </Description>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens do breadcrumb (o último é o ativo)." },
+                              new[] { "Home", "OpMenuItem?", "null", "Item inicial, normalmente com ícone." },
+                              new[] { "SeparatorIcon", "string", "pi pi-chevron-right", "Ícone separador entre itens." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do <code>nav</code>." },
+                              new[] { "HomeTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Template do item Home." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Template de cada item." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="breadcrumb"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div></ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Usa o modelo <code>OpMenuItem</code>; o roteamento é feito por <code>Url</code> (links nativos), sem integração com o roteador do Blazor.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private readonly OpMenuItem _home = new() { Icon = "pi pi-home", Url = "/" };
+    private readonly List<OpMenuItem> _items = new()
+    {
+        new OpMenuItem { Label = "Componentes", Url = "#" },
+        new OpMenuItem { Label = "Formulário", Url = "#" },
+        new OpMenuItem { Label = "InputText" }
+    };
+
     private const string ImportCode = """
-        import { BreadcrumbModule } from 'primeng/breadcrumb';
+        @using OpBlazorUI.Base.Components.Breadcrumb
+        @using OpBlazorUI.Base.Models
+
+        <OpBreadcrumb Model="_items" />
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Componentes", Url = "#" },
+                new OpMenuItem { Label = "Formulário" }
+            };
+        }
         """;
 
     private const string BasicCode = """
-        <p-breadcrumb [model]="items" [home]="home" />
+        <OpBreadcrumb Model="_items" />
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Componentes", Url = "#" },
+                new OpMenuItem { Label = "Formulário", Url = "#" },
+                new OpMenuItem { Label = "InputText" }
+            };
+        }
         """;
 
-    private const string TemplateCode = """
-        <p-breadcrumb [model]="items" [home]="home">
-            <ng-template #item let-item>
-                <a class="cursor-pointer" [routerLink]="item.url">
-                    <i [class]="item.icon"></i>
-                </a>
-            </ng-template>
-            <ng-template #separator> / </ng-template>
-        </p-breadcrumb>
+    private const string HomeCode = """
+        <OpBreadcrumb Home="_home" Model="_items" />
+
+        @code {
+            private OpMenuItem _home = new() { Icon = "pi pi-home", Url = "/" };
+        }
         """;
 
-    private const string RouterCode = """
-        <p-breadcrumb [home]="home" [model]="items" />
+    private const string IconsCode = """
+        <OpBreadcrumb Home="_home" Model="_items" />
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Categoria", Icon = "pi pi-sitemap", Url = "#" },
+                new OpMenuItem { Label = "Documento", Icon = "pi pi-file", Url = "#" },
+                new OpMenuItem { Label = "Detalhe" }
+            };
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpBreadcrumb AriaLabel="Você está aqui" Model="_items" />
         """;
 }

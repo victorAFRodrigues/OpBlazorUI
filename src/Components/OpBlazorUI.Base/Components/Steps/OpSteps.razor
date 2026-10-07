@@ -1,0 +1,29 @@
+@namespace OpBlazorUI.Base.Components.Steps
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <ul class="p-steps-list" role="tablist">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            var item = Model[i];
+            var index = i;
+            var active = index == ActiveIndex;
+
+            <li class="p-steps-item @(active ? "p-steps-item-active" : null)"
+                role="tab"
+                aria-selected="@(active ? "true" : "false")">
+                <button type="button"
+                        class="p-steps-item-link"
+                        disabled="@item.Disabled"
+                        tabindex="@(active ? 0 : -1)"
+                        @onclick="() => SelectAsync(index)"
+                        @onkeydown="e => OnKeyDownAsync(e, index)">
+                    <span class="p-steps-item-number">@(index + 1)</span>
+                    <span class="p-steps-item-label">@item.Label</span>
+                </button>
+            </li>
+        }
+    </ul>
+</div>

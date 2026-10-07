@@ -1,127 +1,173 @@
 @page "/menubar"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
 
 <PageTitle>Menubar - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Menubar"
-              Description="Barra de menu horizontal. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Menubar é um menu horizontal com suporte a submenus aninhados.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O Menubar exige menuitems aninhados como model.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>Clique em um item com filhos para abrir o submenu.</Description>
+            <ChildContent>
+                <OpMenubar Model="_items"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template" Id="template">
-            <Description><p>Conteúdo customizado pode ser colocado dentro do menubar usando os templates <code>start</code> e <code>end</code>.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Comando" Id="command">
-            <Description><p>A propriedade <code>command</code> define o callback a executar quando um item é ativado por clique ou evento de tecla.</p></Description>
-            <Code><CodeBlock Code="@CommandCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Router" Id="router">
-            <Description><p>Os itens de menu suportam navegação via routerLink, roteamento programático usando comandos ou URLs externas.</p></Description>
-            <Code><CodeBlock Code="@RouterCode" Language="html"/></Code>
+        <DocSection Label="Com ícones" Id="icons">
+            <Description>Os itens aceitam <code>Icon</code>, <code>Url</code>, <code>Command</code> e <code>Separator</code>.</Description>
+            <ChildContent>
+                <OpMenubar Model="_icons"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@IconsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente Menubar usa o papel <code>menubar</code> e o valor para descrever o menu pode ser informado por <code>aria-labelledby</code> ou <code>aria-label</code>. Cada item da lista tem o papel <code>presentation</code>, enquanto os elementos âncora têm o papel <code>menuitem</code> com <code>aria-label</code> referindo-se ao rótulo do item e <code>aria-disabled</code> definido se o item estiver desabilitado. Um submenu dentro de um MenuBar usa o papel <code>menu</code> com <code>aria-labelledby</code> definido como o id do rótulo do menuitem raiz do submenu. Além disso, menuitems que abrem um submenu têm <code>aria-haspopup</code>, <code>aria-expanded</code> e <code>aria-controls</code> para definir a relação entre o item e o submenu.</p>
-                <p>Em viewports móveis, um ícone de menu aparece com o papel <code>button</code> junto com <code>aria-haspopup</code>, <code>aria-expanded</code> e <code>aria-controls</code> para gerenciar a relação entre o menubar em overlay e o botão. O valor para descrever o botão pode ser definido por <code>aria-label</code> ou <code>aria-labelledby</code> especificado em <code>buttonProps</code>; por padrão, a chave <code>navigation</code> da propriedade <code>aria</code> da API de <a href="/configuration/#locale">locale</a> é usada como <code>aria-label</code>.</p>
+                <p>A lista raiz usa <code>role="menubar"</code>; os itens usam <code>role="menuitem"</code> com <code>aria-expanded</code> e <code>aria-haspopup</code>.</p>
                 <h3>Suporte a teclado</h3>
+                <p>Os itens são alcançáveis por <code>tab</code>; <code>enter</code> abre o submenu ou aciona o item.</p>
             </Description>
-            <Code>
-                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] {
-                              new[] { "tab", "Adiciona o foco ao primeiro item quando o foco entra no menu. Se o foco já estiver dentro do menu, move o foco para o próximo item focável na sequência de tabulação da página." },
-                              new[] { "shift + tab", "Adiciona o foco ao último item quando o foco entra no menu. Se o foco já estiver dentro do menu, move o foco para o item focável anterior na sequência de tabulação da página." },
-                              new[] { "enter", "Se o menuitem tiver um submenu, alterna a visibilidade do submenu; caso contrário, ativa o menuitem e fecha todos os overlays abertos." },
-                              new[] { "space", "Se o menuitem tiver um submenu, alterna a visibilidade do submenu; caso contrário, ativa o menuitem e fecha todos os overlays abertos." },
-                              new[] { "escape", "Se o foco estiver dentro de um submenu popup, fecha o submenu e move o foco para o item raiz do submenu fechado." },
-                              new[] { "down arrow", "Se o foco estiver em um elemento raiz, abre um submenu e move o foco para o primeiro elemento do submenu; caso contrário, move o foco para o próximo menuitem dentro do submenu." },
-                              new[] { "up arrow", "Se o foco estiver em um elemento raiz, abre um submenu e move o foco para o último elemento do submenu; caso contrário, move o foco para o menuitem anterior dentro do submenu." },
-                              new[] { "right arrow", "Se o foco estiver em um elemento raiz, move o foco para o próximo menuitem; caso contrário, abre um submenu, se houver, e move o foco para o primeiro item." },
-                              new[] { "left arrow", "Se o foco estiver em um elemento raiz, move o foco para o menuitem anterior; caso contrário, fecha um submenu e move o foco para o item raiz do submenu fechado." },
-                              new[] { "home", "Move o foco para o primeiro menuitem dentro do submenu." },
-                              new[] { "end", "Move o foco para o último menuitem dentro do submenu." }
-                          })"/>
-            </Code>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens do menu (com <code>Items</code> para submenus)." },
+                              new[] { "StartTemplate", "RenderFragment?", "null", "Conteúdo à esquerda." },
+                              new[] { "EndTemplate", "RenderFragment?", "null", "Conteúdo à direita." },
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um item-folha." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="menubar"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div></ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O submenu abre por clique (não por hover como no upstream) e o fechamento ao clicar fora ainda não é automático.</li>
+                        <li>O modo responsivo/mobile (<code>p-menubar-button</code>) não foi implementado.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private readonly List<OpMenuItem> _items = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Arquivo",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Novo", Icon = "pi pi-plus" },
+                new() { Label = "Abrir", Icon = "pi pi-folder-open" },
+                new() { Separator = true },
+                new() { Label = "Sair", Icon = "pi pi-sign-out" }
+            }
+        },
+        new OpMenuItem
+        {
+            Label = "Editar",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Desfazer", Icon = "pi pi-undo" },
+                new() { Label = "Refazer", Icon = "pi pi-redo" }
+            }
+        },
+        new OpMenuItem { Label = "Ajuda", Icon = "pi pi-question-circle" }
+    };
+
+    private readonly List<OpMenuItem> _icons = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Usuário",
+            Icon = "pi pi-user",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Perfil", Icon = "pi pi-id-card" },
+                new() { Label = "Sair", Icon = "pi pi-power-off" }
+            }
+        },
+        new OpMenuItem { Label = "Buscar", Icon = "pi pi-search" },
+        new OpMenuItem { Label = "Configurações", Icon = "pi pi-cog" }
+    };
+
     private const string ImportCode = """
-        import { MenubarModule } from 'primeng/menubar';
+        @using OpBlazorUI.Base.Components.Menu
+        @using OpBlazorUI.Base.Models
+
+        <OpMenubar Model="_items" />
         """;
 
     private const string BasicCode = """
-        <p-menubar [model]="items" />
+        <OpMenubar Model="_items" />
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Arquivo",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Novo" },
+                        new() { Label = "Abrir" }
+                    }
+                },
+                new OpMenuItem { Label = "Ajuda" }
+            };
+        }
         """;
 
-    private const string TemplateCode = """
-        <p-menubar [model]="items">
-            <ng-template #start>
-                <svg width="33" height="35" viewBox="0 0 33 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="..." fill="var(--primary-color)" />
-                </svg>
-            </ng-template>
-            <ng-template #item let-item let-root="root">
-                <a pRipple class="flex items-center px-4 py-3 cursor-pointer gap-2">
-                    <span>{{ item.label }}</span>
-                    <p-badge *ngIf="item.badge" [ngClass]="{ 'ms-auto': !root }" [value]="item.badge" />
-                    <span *ngIf="item.shortcut" class="ms-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
-                    <i *ngIf="item.items" [ngClass]="['ms-auto pi', root ? 'pi-angle-down' : 'pi-angle-right']"></i>
-                </a>
-            </ng-template>
-            <ng-template #end>
-                <div class="flex items-center gap-2">
-                    <input type="text" pInputText placeholder="Search" class="w-36" />
-                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
-                </div>
-            </ng-template>
-        </p-menubar>
+    private const string IconsCode = """
+        <OpMenubar Model="_items" />
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Usuário",
+                    Icon = "pi pi-user",
+                    Items = new List<OpMenuItem> { new() { Label = "Perfil", Icon = "pi pi-id-card" } }
+                },
+                new OpMenuItem { Label = "Buscar", Icon = "pi pi-search" }
+            };
+        }
         """;
 
-    private const string CommandCode = """
-        <p-toast />
-        <p-menubar [model]="items" />
-        """;
-
-    private const string RouterCode = """
-        <p-menubar [model]="items" />
+    private const string AccessibilityCode = """
+        <OpMenubar Model="_items" />
         """;
 }

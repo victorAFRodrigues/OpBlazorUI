@@ -1,0 +1,32 @@
+@namespace OpBlazorUI.Base.Components.Tabs
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <ul class="p-tabmenu-tablist" role="tablist" aria-label="@AriaLabel">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            var item = Model[i];
+            var index = i;
+            var active = index == ActiveIndex && !item.Disabled;
+
+            <li class="p-tabmenu-item @(active ? "p-tabmenu-item-active" : null)" role="none">
+                <a class="p-tabmenu-item-link"
+                   role="tab"
+                   aria-selected="@(active ? "true" : "false")"
+                   aria-disabled="@(item.Disabled ? "true" : null)"
+                   href="@item.Url"
+                   tabindex="@(item.Disabled ? -1 : (active ? 0 : -1))"
+                   @onclick="e => SelectAsync(e, index)"
+                   @onclick:preventDefault="@(string.IsNullOrEmpty(item.Url))">
+                    @if (!string.IsNullOrEmpty(item.Icon))
+                    {
+                        <i class="@Class("p-tabmenu-item-icon", item.Icon)" aria-hidden="true"></i>
+                    }
+                    <span class="p-tabmenu-item-label">@item.Label</span>
+                </a>
+            </li>
+        }
+    </ul>
+</div>

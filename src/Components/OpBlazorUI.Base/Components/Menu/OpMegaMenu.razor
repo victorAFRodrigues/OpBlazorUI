@@ -1,0 +1,91 @@
+@namespace OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (StartTemplate is not null)
+    {
+        <div class="p-megamenu-start">@StartTemplate</div>
+    }
+
+    <ul class="p-megamenu-root-list" role="menubar">
+        @foreach (var item in Model)
+        {
+            if (!item.Visible || item.Separator)
+            {
+                continue;
+            }
+
+            var root = item;
+            var hasChildren = root.HasChildren && !root.Disabled;
+            var open = hasChildren && IsOpen(root);
+
+            <li class="p-megamenu-item @(open ? "p-megamenu-item-active" : null)">
+                <div class="p-megamenu-item-content">
+                    <a class="p-megamenu-item-link"
+                       href="@root.Url"
+                       role="menuitem"
+                       tabindex="0"
+                       aria-haspopup="@(hasChildren ? "true" : null)"
+                       aria-expanded="@(hasChildren ? (open ? "true" : "false") : null)"
+                       @onclick="() => OnSelectAsync(root, hasChildren)"
+                       @onclick:preventDefault="hasChildren">
+                        @if (!string.IsNullOrEmpty(root.Icon))
+                        {
+                            <span class="p-megamenu-item-icon @root.Icon" aria-hidden="true"></span>
+                        }
+                        <span class="p-megamenu-item-label">@root.Label</span>
+                        @if (hasChildren)
+                        {
+                            <span class="p-megamenu-submenu-icon pi pi-angle-down" aria-hidden="true"></span>
+                        }
+                    </a>
+                </div>
+
+                @if (hasChildren && open)
+                {
+                    <div class="p-megamenu-submenu p-megamenu-overlay" style="display: block; position: absolute; top: 100%; left: 0; z-index: 10;">
+                        <div class="p-megamenu-grid">
+                            @foreach (var column in root.Items!)
+                            {
+                                <div class="p-megamenu-col-3">
+                                    @if (!string.IsNullOrEmpty(column.Label))
+                                    {
+                                        <span class="p-megamenu-submenu-label">@column.Label</span>
+                                    }
+                                    <ul class="p-megamenu-submenu">
+                                        @foreach (var link in column.Items ?? new List<OpMenuItem>())
+                                        {
+                                            <li class="p-megamenu-item">
+                                                <div class="p-megamenu-item-content">
+                                                    <a class="p-megamenu-item-link"
+                                                       href="@link.Url"
+                                                       role="menuitem"
+                                                       tabindex="-1"
+                                                       @onclick="() => SelectItemAsync(link)"
+                                                       @onclick:preventDefault="@(link.Command is not null || string.IsNullOrEmpty(link.Url))">
+                                                        @if (!string.IsNullOrEmpty(link.Icon))
+                                                        {
+                                                            <span class="p-megamenu-item-icon @link.Icon" aria-hidden="true"></span>
+                                                        }
+                                                        <span class="p-megamenu-item-label">@link.Label</span>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </li>
+        }
+    </ul>
+
+    @if (EndTemplate is not null)
+    {
+        <div class="p-megamenu-end">@EndTemplate</div>
+    }
+</div>

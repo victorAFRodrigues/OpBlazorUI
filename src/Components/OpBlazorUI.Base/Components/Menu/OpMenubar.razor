@@ -1,0 +1,23 @@
+@namespace OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (StartTemplate is not null)
+    {
+        <div class="p-menubar-start">@StartTemplate</div>
+    }
+
+    <OpMenuItems Items="Model"
+                 Prefix="menubar"
+                 Root="true"
+                 IsOpen="IsOpen"
+                 OnToggle="ToggleAsync"
+                 OnItemClick="OnItemClick"/>
+
+    @if (EndTemplate is not null)
+    {
+        <div class="p-menubar-end">@EndTemplate</div>
+    }
+</div>
