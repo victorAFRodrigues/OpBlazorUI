@@ -27,5 +27,15 @@ public partial class OpMenubar : OpComponentBase
         return Task.CompletedTask;
     }
 
-    public void CloseAll() => _open.Clear();
+    public void CloseAll()
+    {
+        _open.Clear();
+        StateHasChanged();
+    }
+
+    private Task CloseAllAsync()
+    {
+        CloseAll();
+        return Task.CompletedTask;
+    }
 }

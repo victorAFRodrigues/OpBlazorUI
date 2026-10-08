@@ -18,8 +18,6 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private bool _panelClosing;
     private string? _panelAnimationClass;
     private bool _focus;
-    private bool _focusInside;
-    private DateTime _lastPanelPointerDown = DateTime.MinValue;
     private int _focusedOptionIndex = -1;
     private string _searchValue = "";
     private string? _inputValue;
@@ -314,36 +312,11 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnRootFocusIn(FocusEventArgs e)
-    {
-        _focusInside = true;
-    }
-
-    private void OnPanelMouseDown()
-    {
-        _lastPanelPointerDown = DateTime.UtcNow;
-        _focusInside = true;
-    }
-
-    private async Task OnRootFocusOut(FocusEventArgs e)
-    {
-        if (!_overlayVisible || _panelClosing) return;
-
-        _focusInside = false;
-
-        await Task.Delay(10);
-
-        var interactedWithPanel = (DateTime.UtcNow - _lastPanelPointerDown).TotalMilliseconds < 250;
-
-        if (!_focusInside && !interactedWithPanel)
-        {
-            await CloseAsync();
-        }
-    }
-
+    // Clique fora e Escape chegam pelo OpOverlayAttach (OnOutsideClick/OnEscape). Sair com
+    // Tab (do gatilho ou do filtro) fecha aqui, como no PrimeNG.
     private async Task OnRootKeydown(KeyboardEventArgs e)
     {
-        if (e.Key == "Escape" && _overlayVisible)
+        if (e.Key == "Tab" && _overlayVisible)
         {
             await CloseAsync();
         }

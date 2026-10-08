@@ -8,7 +8,7 @@
 @using OpBlazorUI.Base.Components.InputIcon
 @using OpBlazorUI.Base.Components.VirtualScroller
 
-<div class="@RootClass" @ref="_rootRef" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn" @onkeydown="OnRootKeydown"
+<div class="@RootClass" @ref="_rootRef" @onkeydown="OnRootKeydown"
      @attributes="AdditionalAttributes">
     <div class="p-treeselect-label-container"
          role="combobox"
@@ -81,9 +81,8 @@
     @if (_panelRendered)
     {
         <div class="@PanelClass"
-             @onmousedown="OnPanelMouseDown"
              @onanimationend="OnPanelAnimationEnd">
-            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2"/>
+            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2" OnOutsideClick="CloseAsync" OnEscape="CloseAsync"/>
             <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
 
             @HeaderTemplate

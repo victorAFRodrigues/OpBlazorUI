@@ -8,12 +8,8 @@
     <div class="@MaskClass"
          style="@MaskInlineStyle"
          @onclick="OnMaskClick"
-         @onkeydown="OnKeydown"
          @attributes="AdditionalAttributes">
-        @if (AutoZIndex)
-        {
-            <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex"/>
-        }
+        <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex" AutoZIndex="AutoZIndex" OnEscape="EscapeCallback"/>
         <div class="@RootClass"
              @ref="_root"
              style="@RootInlineStyle"

@@ -9,8 +9,8 @@
 @typeparam TValue
 @inherits OpInputBase<IReadOnlyList<TValue>>
 
-<div class="@RootClass" @ref="_rootRef" style="position: relative" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
-     @onkeydown="OnRootKeydown" @attributes="AdditionalAttributes">
+<div class="@RootClass" @ref="_rootRef" style="position: relative"
+     @attributes="AdditionalAttributes">
     <div class="p-hidden-accessible">
         <input role="combobox"
                id="@_id"
@@ -110,9 +110,8 @@
     @if (_panelRendered)
     {
         <div class="@PanelClass"
-             @onmousedown="OnPanelMouseDown"
              @onanimationend="OnPanelAnimationEnd">
-            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2"/>
+            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2" OnOutsideClick="CloseAsync" OnEscape="CloseAsync"/>
             <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
 
             @HeaderTemplate

@@ -7,7 +7,7 @@
 @if (_visible)
 {
     <div class="@RootClass" @ref="_panel" @attributes="AdditionalAttributes">
-        <OpOverlayAttach Anchor="_anchor" AnchorPrevious="@(_anchor is null)" Layer="menu" Gap="2"/>
+        <OpOverlayAttach Anchor="_anchor" AnchorPrevious="@(_anchor is null)" Layer="menu" Gap="2" OnOutsideClick="HideAsync" OnEscape="HideAsync"/>
         <OpMenuItems Items="Model"
                      Prefix="contextmenu"
                      Root="true"

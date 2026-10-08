@@ -4,8 +4,6 @@
 @using OpBlazorUI.Base.Models
 
 <div class="@RootClass" @ref="_rootRef"
-     @onfocusout="OnRootFocusOut"
-     @onfocusin="OnRootFocusIn"
      @onkeydown="OnRootKeydown"
      @attributes="AdditionalAttributes">
     <OpButton StyleClass="p-splitbutton-button"
@@ -39,10 +37,9 @@
     @if (_panelRendered)
     {
         <div class="@OverlayClass"
-             @onmousedown="OnPanelMouseDown"
              @onmouseleave="CloseSubmenus"
              @onanimationend="OnPanelAnimationEnd">
-            <OpOverlayAttach Anchor="_rootRef" Layer="menu" MatchWidth="true" Gap="4"/>
+            <OpOverlayAttach Anchor="_rootRef" Layer="menu" MatchWidth="true" Gap="4" OnOutsideClick="CloseAsync" OnEscape="CloseAsync"/>
             <ul class="p-tieredmenu-root-list" role="menu" id="@($"{_id}_menu")">
                 @foreach (var item in Items)
                 {

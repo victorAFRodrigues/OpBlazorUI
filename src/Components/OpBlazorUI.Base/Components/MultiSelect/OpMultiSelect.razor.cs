@@ -16,8 +16,6 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
     private bool _panelClosing;
     private string? _panelAnimationClass;
     private bool _focus;
-    private bool _focusInside;
-    private DateTime _lastPanelPointerDown = DateTime.MinValue;
     private string _filterValue = "";
     private int _focusedOptionIndex = -1;
 
@@ -384,45 +382,9 @@ private async Task CloseAsync()
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnRootFocusIn(FocusEventArgs e)
-    {
-        _focusInside = true;
-    }
-
-    /// <summary>
-    /// Marca a interação com o painel. As opções não são focáveis, então clicar nelas
-    /// dispara <c>focusout</c> no gatilho e fecharia o overlay antes de o usuário
-    /// terminar a seleção.
-    /// </summary>
-    private void OnPanelMouseDown()
-    {
-        _lastPanelPointerDown = DateTime.UtcNow;
-        _focusInside = true;
-    }
-
-    private async Task OnRootFocusOut(FocusEventArgs e)
-    {
-        if (!_overlayVisible || _panelClosing) return;
-
-        _focusInside = false;
-
-        await Task.Delay(10);
-
-        var interactedWithPanel = (DateTime.UtcNow - _lastPanelPointerDown).TotalMilliseconds < 250;
-
-        if (!_focusInside && !interactedWithPanel)
-        {
-            await CloseAsync();
-        }
-    }
-
-    private async Task OnRootKeydown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Escape" && _overlayVisible)
-        {
-            await CloseAsync();
-        }
-    }
+    // Clique fora e Escape chegam pelo OpOverlayAttach (OnOutsideClick/OnEscape). O Tab fecha só a
+    // partir do gatilho (OnInputKeydown): dentro do painel ele navega entre filtro, "selecionar
+    // todos" e opções.
 
     // ------------------------------------------------------------ options interaction
     private async Task OnOptionClick(object option)
