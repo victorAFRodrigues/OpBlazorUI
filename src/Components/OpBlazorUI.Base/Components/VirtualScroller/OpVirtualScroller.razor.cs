@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.VirtualScroller;
 
@@ -17,12 +18,9 @@ public sealed record OpVirtualScrollerContentContext<TItem>(
     int Last,
     Func<int, string, Task> ScrollToIndex);
 
-public partial class OpVirtualScroller<TItem> : ComponentBase, IAsyncDisposable
+public partial class OpVirtualScroller<TItem> : OpComponentBase
 {
-    private const string JsModule = "./_content/OpBlazorUI.Base/virtualscroller.interop.js";
-
     private ElementReference _root;
-    private Lazy<Task<IJSObjectReference>>? _module;
     private DotNetObjectReference<OpVirtualScroller<TItem>>? _selfRef;
     private bool _initialized;
     private bool _disposed;
@@ -70,11 +68,7 @@ public partial class OpVirtualScroller<TItem> : ComponentBase, IAsyncDisposable
 
     [Parameter] public bool AutoSize { get; set; }
 
-    [Parameter] public string? StyleClass { get; set; }
-
     [Parameter] public string? Style { get; set; }
-
-    [Parameter] public string? Id { get; set; }
 
     [Parameter] public int TabIndex { get; set; }
 
@@ -93,11 +87,6 @@ public partial class OpVirtualScroller<TItem> : ComponentBase, IAsyncDisposable
     [Parameter] public RenderFragment? LoaderTemplate { get; set; }
 
     [Parameter] public RenderFragment? LoaderIconTemplate { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
-    [Inject] private IJSRuntime Js { get; set; } = default!;
 
     // ------------------------------------------------------------ computed
     private int Count => Items?.Count ?? 0;
@@ -194,18 +183,14 @@ public partial class OpVirtualScroller<TItem> : ComponentBase, IAsyncDisposable
         if (firstRender && !_initialized && !_disposed)
         {
             _initialized = true;
-            var module = await GetModuleAsync();
-            if (module is not null)
+            _selfRef = DotNetObjectReference.Create(this);
+            try
             {
-                _selfRef = DotNetObjectReference.Create(this);
-                try
-                {
-                    await module.InvokeVoidAsync("init", _selfRef, _root);
-                }
-                catch
-                {
-                    // ignore
-                }
+                await Interop.InvokeVoidAsync(OpInterop.VirtualScrollerInterop, "init", _selfRef, _root);
+            }
+            catch
+            {
+                // ignore
             }
         }
     }
@@ -325,9 +310,6 @@ public partial class OpVirtualScroller<TItem> : ComponentBase, IAsyncDisposable
         if (index < 0) index = 0;
         if (index >= Count) index = Math.Max(0, Count - 1);
 
-        var module = await GetModuleAsync();
-        if (module is null) return;
-
         double top;
         double left;
 
@@ -350,7 +332,7 @@ public partial class OpVirtualScroller<TItem> : ComponentBase, IAsyncDisposable
 
         try
         {
-            await module.InvokeVoidAsync("scrollTo", _root, top, left, behavior);
+            await Interop.InvokeVoidAsync(OpInterop.VirtualScrollerInterop, "scrollTo", _root, top, left, behavior);
         }
         catch
         {
@@ -398,58 +380,24 @@ public partial class OpVirtualScroller<TItem> : ComponentBase, IAsyncDisposable
         };
     }
 
-    private async Task<IJSObjectReference?> GetModuleAsync()
-    {
-        if (_module is null)
-        {
-            _module = new Lazy<Task<IJSObjectReference>>(() =>
-                Js.InvokeAsync<IJSObjectReference>("import", JsModule).AsTask());
-        }
-
-        try
-        {
-            return await _module.Value;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (_disposed) return;
         _disposed = true;
 
         if (_initialized)
         {
-            var module = await GetModuleAsync();
-            if (module is not null)
-            {
-                try
-                {
-                    await module.InvokeVoidAsync("dispose", _root);
-                }
-                catch
-                {
-                    // ignore
-                }
-            }
-        }
-
-        _selfRef?.Dispose();
-
-        if (_module is { IsValueCreated: true })
-        {
             try
             {
-                var module = await _module.Value;
-                await module.DisposeAsync();
+                await Interop.InvokeVoidAsync(OpInterop.VirtualScrollerInterop, "dispose", _root);
             }
             catch
             {
                 // ignore
             }
         }
+
+        _selfRef?.Dispose();
+        await base.DisposeAsync();
     }
 }

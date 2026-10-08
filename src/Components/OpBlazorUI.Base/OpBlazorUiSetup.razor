@@ -1,8 +1,8 @@
 @namespace OpBlazorUI.Base
 @using Microsoft.JSInterop
 @using OpBlazorUI.Base.Services
-@implements IAsyncDisposable
-@inject IJSRuntime Js
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
 @inject OpThemeService Theme
 
 @*
@@ -18,9 +18,6 @@
 </HeadContent>
 
 @code {
-    private const string JsModule = "./_content/OpBlazorUI.Base/optimus.interop.js";
-
-    private IJSObjectReference? _module;
     private bool _restored;
     private bool _pendingApply;
 
@@ -41,8 +38,7 @@
         {
             if (firstRender)
             {
-                _module = await Js.InvokeAsync<IJSObjectReference>("import", JsModule);
-                var current = await _module.InvokeAsync<ThemeSnapshot>("readTheme");
+                var current = await Interop.InvokeAsync<ThemeSnapshot>(OpInterop.OptimusInterop, "readTheme");
                 var stored = Theme.Persist ? current.Stored : null;
                 // Antes do Restore: o Changed pode renderizar na hora (WebAssembly); o
                 // OnAfterRender seguinte aplica e salva.
@@ -56,7 +52,7 @@
                 return;
             }
 
-            if (!_pendingApply || !_restored || _module is null) return;
+            if (!_pendingApply || !_restored) return;
             _pendingApply = false;
 
             var state = new
@@ -67,25 +63,18 @@
                 darkMode = Theme.DarkMode,
                 rtl = Theme.Rtl
             };
-            await _module.InvokeVoidAsync("applyTheme", state);
-            if (Theme.Persist) await _module.InvokeVoidAsync("saveTheme", state);
+            await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "applyTheme", state);
+            if (Theme.Persist) await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "saveTheme", state);
         }
         catch (JSDisconnectedException)
         {
         }
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         Theme.Changed -= OnThemeChanged;
-        if (_module is null) return;
-        try
-        {
-            await _module.DisposeAsync();
-        }
-        catch (JSDisconnectedException)
-        {
-        }
+        await base.DisposeAsync();
     }
 
     private sealed record ThemeSnapshot(StoredTheme? Stored, bool DarkMode);

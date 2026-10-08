@@ -162,7 +162,7 @@ public static class AppMenu
                     Label = "Misc",
                     Items =
                     [
-                        GroupItem("AnimateOnScroll", "/animateonscroll"), GroupItem("AutoFocus"), GroupItem("Avatar", "/avatar"),
+                        GroupItem("AnimateOnScroll", "/animateonscroll"), GroupItem("AutoFocus", "/autofocus"), GroupItem("Avatar", "/avatar"),
                         GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI", "/blockui"), GroupItem("Chip", "/chip"),
                         GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid", "/fluid"),
                         GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace", "/inplace"), GroupItem("MeterGroup", "/metergroup"),
@@ -174,7 +174,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Utilities",
-                    Items = [GroupItem("FilterService"), GroupItem("Overlay API", "/overlay")]
+                    Items = [GroupItem("FilterService", "/filterservice"), GroupItem("Overlay API", "/overlay")]
                 }
             ]
         },

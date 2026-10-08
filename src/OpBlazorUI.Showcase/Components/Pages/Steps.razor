@@ -1,111 +1,146 @@
 @page "/steps"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Steps
+@using OpBlazorUI.Base.Models
 
 <PageTitle>Steps - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Steps"
-              Description="Steps, também conhecido como Stepper, é um indicador das etapas de um fluxo de trabalho. O layout do componente é otimizado para design responsivo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Steps indica o progresso de um fluxo por meio de uma sequência de etapas.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>Steps requer uma coleção de itens de menu como seu <code>model</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>Clique em uma etapa para ativá-la; use <code>@@bind-ActiveIndex</code>.</Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpSteps Model="_items" @bind-ActiveIndex="_active"/>
+                    <span class="text-sm">Etapa ativa: <b>@(_active + 1)</b> — @_items[_active].Label</span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Controlado" Id="controlled">
-            <Description><p>Steps pode ser controlado programaticamente usando a propriedade <code>activeIndex</code>.</p></Description>
-            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
+        <DocSection Label="Readonly" Id="readonly">
+            <Description>Com <code>Readonly</code>, as etapas exibem o progresso sem permitir interação.</Description>
+            <ChildContent>
+                <OpSteps Model="_items" ActiveIndex="1" Readonly="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReadonlyCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Interativo" Id="interactive">
-            <Description><p>Para adicionar interatividade ao componente, desabilite <code>readonly</code> e use um binding para <code>activeIndex</code> junto com <code>activeIndexChange</code> para controlar os Steps.</p></Description>
-            <Code><CodeBlock Code="@InteractiveCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Roteamento" Id="routing">
-            <Description><p>O exemplo abaixo usa rotas aninhadas com Steps.</p></Description>
-            <Code><CodeBlock Code="@RoutingCode" Language="html"/></Code>
+        <DocSection Label="Com itens desabilitados" Id="disabled">
+            <Description>Itens com <code>Disabled</code> não podem ser selecionados.</Description>
+            <ChildContent>
+                <OpSteps Model="_disabledItems" @bind-ActiveIndex="_disabledActive"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente Steps usa o elemento <code>nav</code> e, como qualquer atributo é repassado ao elemento raiz de forma implícita, <code>aria-labelledby</code> ou <code>aria-label</code> podem ser usados para descrever o componente. Internamente é usada uma lista ordenada, onde o item da etapa atual define <code>aria-current</code> como <code>step</code>.</p>
+                <p>Cada etapa usa <code>role="tab"</code> com <code>aria-selected</code>; o item ativo recebe <code>tabindex="0"</code>.</p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Adiciona foco à etapa ativa quando o foco entra no componente; se já houver um cabeçalho de aba focado, move o foco para fora do componente conforme a sequência de tabulação da página." },
-                              new[] { "enter", "Ativa a etapa focada se readonly não estiver habilitado." },
-                              new[] { "space", "Ativa a etapa focada se readonly não estiver habilitado." },
-                              new[] { "right arrow", "Move o foco para a próxima etapa se readonly não estiver habilitado." },
-                              new[] { "left arrow", "Move o foco para a etapa anterior se readonly não estiver habilitado." },
-                              new[] { "home", "Move o foco para a primeira etapa se readonly não estiver habilitado." },
-                              new[] { "end", "Move o foco para a última etapa se readonly não estiver habilitado." }
+                              new[] { "tab", "Move o foco para a etapa ativa." },
+                              new[] { "enter / space", "Ativa a etapa focada." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Etapas." },
+                              new[] { "ActiveIndex", "int", "0", "Índice da etapa ativa (usar <code>@@bind-ActiveIndex</code>)." },
+                              new[] { "Readonly", "bool", "false", "Impede a interação." },
+                              new[] { "OnSelect", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao selecionar uma etapa." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="steps"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div></ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent><div class="doc-section-description"><p>Usa <code>OpMenuItem</code> para as etapas (o upstream usa um item próprio). Sem animação de transição entre etapas.</p></div></ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private int _active;
+    private int _disabledActive;
+    private readonly List<OpMenuItem> _items = new()
+    {
+        new OpMenuItem { Label = "Pessoal" },
+        new OpMenuItem { Label = "Endereço" },
+        new OpMenuItem { Label = "Pagamento" }
+    };
+    private readonly List<OpMenuItem> _disabledItems = new()
+    {
+        new OpMenuItem { Label = "Pessoal" },
+        new OpMenuItem { Label = "Endereço", Disabled = true },
+        new OpMenuItem { Label = "Pagamento" }
+    };
+
     private const string ImportCode = """
-        import { StepsModule } from 'primeng/steps';
+        @using OpBlazorUI.Base.Components.Steps
+        @using OpBlazorUI.Base.Models
+
+        <OpSteps Model="_items" @bind-ActiveIndex="_active" />
         """;
 
     private const string BasicCode = """
-        <p-steps [model]="items" [readonly]="true" />
+        <OpSteps Model="_items" @bind-ActiveIndex="_active" />
+
+        @code {
+            private int _active;
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Pessoal" },
+                new OpMenuItem { Label = "Endereço" },
+                new OpMenuItem { Label = "Pagamento" }
+            };
+        }
         """;
 
-    private const string ControlledCode = """
-        <div class="flex mb-8 gap-2 justify-end">
-            <p-button (click)="active = 0" [rounded]="true" label="1" styleClass="w-8 h-8 p-0" [outlined]="active !== 0" />
-            <p-button (click)="active = 1" [rounded]="true" label="2" styleClass="w-8 h-8 p-0" [outlined]="active !== 1" />
-            <p-button (click)="active = 2" [rounded]="true" label="3" styleClass="w-8 h-8 p-0" [outlined]="active !== 2" />
-        </div>
-        <p-steps [activeIndex]="active" [model]="items" />
+    private const string ReadonlyCode = """
+        <OpSteps Model="_items" ActiveIndex="1" Readonly="true" />
         """;
 
-    private const string InteractiveCode = """
-        <p-toast />
-        <p-steps [model]="items" [readonly]="false" [activeIndex]="activeIndex" (activeIndexChange)="onActiveIndexChange($event)" />
-        """;
+    private const string DisabledCode = """
+        <OpSteps Model="_items" @bind-ActiveIndex="_active" />
 
-    private const string RoutingCode = """
-        <div class="card">
-            <p-toast />
-            <p-steps [model]="items" [readonly]="false" />
-        </div>
-        <router-outlet></router-outlet>
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Pessoal" },
+                new OpMenuItem { Label = "Endereço", Disabled = true },
+                new OpMenuItem { Label = "Pagamento" }
+            };
+        }
         """;
 }

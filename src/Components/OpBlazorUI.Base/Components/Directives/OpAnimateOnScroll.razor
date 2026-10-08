@@ -1,0 +1,8 @@
+@namespace OpBlazorUI.Base.Components.Directives
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+@* Wrapper observado pelo directives.interop.js (IntersectionObserver). *@
+<div class="@RootClass" @ref="_host" @attributes="AdditionalAttributes">
+    @ChildContent
+</div>

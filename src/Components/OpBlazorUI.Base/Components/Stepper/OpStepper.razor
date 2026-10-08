@@ -1,0 +1,47 @@
+@namespace OpBlazorUI.Base.Components.Stepper
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <ol class="p-steplist">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            var item = Model[i];
+            var index = i;
+            var active = index == ActiveIndex;
+
+            <li class="p-stepitem @(active ? "p-stepitem-active" : null)">
+                <button type="button"
+                        class="p-step @(active ? "p-step-active" : null)"
+                        disabled="@item.Disabled"
+                        aria-current="@(active ? "step" : null)"
+                        @onclick="() => SelectAsync(index)">
+                    <span class="p-step-header">
+                        <span class="p-step-number">@(index + 1)</span>
+                        <span class="p-step-title">@item.Label</span>
+                    </span>
+                </button>
+
+                @if (index < Model.Count - 1)
+                {
+                    <span class="p-stepper-separator" aria-hidden="true"></span>
+                }
+            </li>
+        }
+    </ol>
+
+    <div class="p-steppanels">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            if (i == ActiveIndex && Model[i].Content is not null)
+            {
+                <div class="p-steppanel p-steppanel-active">
+                    <div class="p-steppanel-content-wrapper">
+                        <div class="p-steppanel-content">@Model[i].Content</div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

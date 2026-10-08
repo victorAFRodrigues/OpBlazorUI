@@ -1,0 +1,56 @@
+@namespace OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
+
+<ul class="@ListClass" role="@(Root ? "menubar" : "menu")" style="@ListStyle">
+    @for (var i = 0; i < Items.Count; i++)
+    {
+        var item = Items[i];
+        var index = i;
+        var path = PathPrefix.Length == 0 ? index.ToString() : $"{PathPrefix}_{index}";
+        var hasChildren = item.HasChildren && !item.Disabled;
+        var open = hasChildren && IsOpen(path);
+
+        if (item.Separator)
+        {
+            <li class="@($"p-{Prefix}-separator")" role="separator"></li>
+        }
+        else if (item.Visible)
+        {
+            <li class="@ItemClass(item, hasChildren, open)">
+                <div class="@($"p-{Prefix}-item-content")">
+                    <a class="@($"p-{Prefix}-item-link")"
+                       href="@item.Url"
+                       role="menuitem"
+                       aria-haspopup="@(hasChildren ? "true" : null)"
+                       aria-expanded="@(hasChildren ? (open ? "true" : "false") : null)"
+                       aria-disabled="@(item.Disabled ? "true" : null)"
+                       tabindex="-1"
+                       @onclick="() => OnSelectAsync(item, hasChildren, path)"
+                       @onclick:preventDefault="hasChildren">
+                        @if (!string.IsNullOrEmpty(item.Icon))
+                        {
+                            <span class="@($"p-{Prefix}-item-icon {item.Icon}")" aria-hidden="true"></span>
+                        }
+                        <span class="@($"p-{Prefix}-item-label")">@item.Label</span>
+                        @if (hasChildren)
+                        {
+                            <span class="@SubmenuIconClass" aria-hidden="true"></span>
+                        }
+                    </a>
+                </div>
+
+                @if (hasChildren && open)
+                {
+                    <OpMenuItems Items="item.Items!"
+                                 Prefix="@Prefix"
+                                 Root="false"
+                                 Level="@(Level + 1)"
+                                 PathPrefix="@path"
+                                 IsOpen="@IsOpen"
+                                 OnToggle="@OnToggle"
+                                 OnItemClick="@OnItemClick"/>
+                }
+            </li>
+        }
+    }
+</ul>

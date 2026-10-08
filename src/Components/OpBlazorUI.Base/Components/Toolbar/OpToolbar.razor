@@ -1,0 +1,19 @@
+@namespace OpBlazorUI.Base.Components.Toolbar
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" role="toolbar" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
+    @if (StartTemplate is not null)
+    {
+        <div class="p-toolbar-start">@StartTemplate</div>
+    }
+    @if (CenterTemplate is not null)
+    {
+        <div class="p-toolbar-center">@CenterTemplate</div>
+    }
+    @if (EndTemplate is not null)
+    {
+        <div class="p-toolbar-end">@EndTemplate</div>
+    }
+    @ChildContent
+</div>

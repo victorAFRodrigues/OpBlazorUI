@@ -1,80 +1,143 @@
 @page "/ripple"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Directives
 
 <PageTitle>Ripple - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Ripple"
-              Description="Diretiva que adiciona um efeito de ondulação ao elemento hospedeiro. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Ripple adiciona um efeito de ondulação ao elemento hospedeiro no clique. No Blazor é um componente contêiner: o efeito é injetado pelo directives.interop.js.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Padrão" Id="default">
-            <Description><p>Conteúdo da demonstração padrão.</p></Description>
-            <Code><CodeBlock Code="@DefaultCode" Language="html"/></Code>
+        <DocSection Label="Básico" Id="basic">
+            <Description>
+                Envolva o conteúdo com <code>OpRipple</code>. O componente aplica as classes
+                <code>p-ripple</code> (no host) e <code>p-ink</code>/<code>p-ink-active</code> (no elemento
+                de ondulação) e registra o efeito no clique.
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <OpRipple StyleClass="ripple-box" Style="@RippleBoxStyle">Default</OpRipple>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Personalizado" Id="custom">
-            <Description><p>Conteúdo da demonstração de estilização.</p></Description>
-            <Code><CodeBlock Code="@CustomCode" Language="html"/></Code>
+            <Description>
+                A cor da ondulação vem da variável CSS <code>--p-ripple-background</code>, que pode ser
+                sobrescrita por elemento via <code>Style</code>.
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center gap-2">
+                    <OpRipple Style="@GreenStyle">Green</OpRipple>
+                    <OpRipple Style="@OrangeStyle">Orange</OpRipple>
+                    <OpRipple Style="@PurpleStyle">Purple</OpRipple>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O elemento de ondulação tem o atributo <code>aria-hidden</code> como verdadeiro, fazendo com que seja ignorado pelos leitores de tela.</p>
+                <p>O elemento de ondulação recebe <code>aria-hidden="true"</code> e é ignorado pelos leitores de tela.</p>
                 <h3>Suporte a teclado</h3>
-                <p>O componente não inclui nenhum elemento interativo.</p>
+                <p>O componente não inclui nenhum elemento interativo; o ripple é puramente visual.</p>
             </Description>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Center", "bool", "false", "Centraliza a ondulação no elemento em vez de usar a posição do ponteiro." },
+                              new[] { "Style", "string?", "null", "Estilos inline aplicados ao host." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais aplicadas ao host (somadas a <code>p-ripple</code>)." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do host." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao host (ex.: <code>@onclick</code>)." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                As classes <code>p-ink</code> e <code>p-ink-active</code> são criadas dinamicamente pelo JS.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-ripple", "Elemento hospedeiro (elemento raiz do componente)." },
+                              new[] { "p-ink", "Elemento de ondulação criado no clique." },
+                              new[] { "p-ink-active", "Elemento de ondulação durante a animação." }
+                          })"/>
+                <div class="doc-section-description">
+                    <p>Token de tema: <code>--p-ripple-background</code> (claro e escuro).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
         <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não será portado como tal; a customização é feita por
+                        <code>Style</code>, <code>StyleClass</code> e <code>AdditionalAttributes</code>.</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
         <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O upstream aplica o ripple por diretiva de atributo no próprio elemento; aqui
+                            <code>OpRipple</code> renderiza um <code>&lt;div&gt;</code> contêiner (desvio consciente).</li>
+                        <li>Não há integração automática de ripple nos demais componentes (ex.: Button); use
+                            <code>OpRipple</code> em volta ou aguarde a integração.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private const string RippleBoxStyle =
+        "display:flex;align-items:center;justify-content:center;padding:3rem;font-weight:700;" +
+        "background:var(--p-content-background);border:1px solid var(--p-content-border-color);" +
+        "border-radius:var(--p-content-border-radius);width:14rem;user-select:none;cursor:pointer";
+
+    private static string BoxStyle(string rgb) =>
+        "padding:2rem;border-radius:10px;width:110px;text-align:center;user-select:none;cursor:pointer;" +
+        $"border:1px solid rgba({rgb},0.3);--p-ripple-background:rgba({rgb},0.3)";
+
+    private static readonly string GreenStyle = BoxStyle("75,175,80");
+    private static readonly string OrangeStyle = BoxStyle("255,193,6");
+    private static readonly string PurpleStyle = BoxStyle("156,39,176");
+
     private const string ImportCode = """
-        import { RippleModule } from 'primeng/ripple';
+        @using OpBlazorUI.Base.Components.Directives
         """;
 
-    private const string DefaultCode = """
-        <div pRipple class="ripple-box">Default</div>
+    private const string BasicCode = """
+        <OpRipple StyleClass="ripple-box">Default</OpRipple>
         """;
 
     private const string CustomCode = """
-        <div pRipple class="box" style="border: 1px solid rgba(75, 175, 80, 0.3); --p-ripple-background: rgba(75, 175, 80, 0.3)">
-            Green
-        </div>
-        <div pRipple class="box" style="border: 1px solid rgba(255, 193, 6, 0.3); --p-ripple-background: rgba(255, 193, 6, 0.3)">
-            Orange
-        </div>
-        <div pRipple class="box" style="border: 1px solid rgba(156, 39, 176, 0.3); --p-ripple-background: rgba(156, 39, 176, 0.3)">
-            Purple
-        </div>
+        <OpRipple Style="--p-ripple-background: rgba(75, 175, 80, 0.3)">Green</OpRipple>
+        <OpRipple Style="--p-ripple-background: rgba(255, 193, 6, 0.3)">Orange</OpRipple>
+        <OpRipple Style="--p-ripple-background: rgba(156, 39, 176, 0.3)">Purple</OpRipple>
         """;
 }

@@ -35,8 +35,6 @@ public partial class OpDialog : OpModalBase
 
     [Parameter] public string? Style { get; set; }
 
-    [Parameter] public string? StyleClass { get; set; }
-
     [Parameter] public string? ContentStyle { get; set; }
 
     [Parameter] public string? ContentStyleClass { get; set; }
@@ -65,9 +63,6 @@ public partial class OpDialog : OpModalBase
     [Parameter] public RenderFragment? FooterTemplate { get; set; }
 
     [Parameter] public RenderFragment? CloseIconTemplate { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     protected override void OnInitialized()
     {

@@ -1,0 +1,35 @@
+@namespace OpBlazorUI.Base.Components.Accordion
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+@implements IDisposable
+
+<div class="@PanelClass">
+    <div id="@HeaderId"
+         class="p-accordionheader"
+         role="button"
+         tabindex="@(Disabled ? -1 : 0)"
+         aria-expanded="@(Active.ToString().ToLowerInvariant())"
+         aria-controls="@ContentId"
+         @onclick="ToggleAsync"
+         @onkeydown="OnKeyDownAsync">
+        <i class="@ToggleIconClass" aria-hidden="true"></i>
+        @if (HeaderTemplate is not null)
+        {
+            @HeaderTemplate
+        }
+        else
+        {
+            <span>@Header</span>
+        }
+    </div>
+
+    <div id="@ContentId"
+         class="p-accordioncontent"
+         role="region"
+         aria-labelledby="@HeaderId"
+         aria-hidden="@(!Active ? "true" : null)">
+        <div class="p-accordioncontent-wrapper">
+            <div class="p-accordioncontent-content">@ChildContent</div>
+        </div>
+    </div>
+</div>

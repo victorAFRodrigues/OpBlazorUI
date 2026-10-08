@@ -1,0 +1,22 @@
+.p-accordioncontent {
+    overflow: hidden;
+    transition: grid-template-rows 0.2s ease-out;
+}
+
+.p-accordioncontent {
+    display: grid;
+    grid-template-rows: 1fr;
+}
+
+.p-accordionpanel:not(.p-accordionpanel-active) .p-accordioncontent {
+    grid-template-rows: 0fr;
+    visibility: hidden;
+}
+
+.p-accordioncontent-wrapper {
+    min-height: 0;
+}
+
+.p-accordionheader {
+    cursor: pointer;
+}

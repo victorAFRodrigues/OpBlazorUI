@@ -17,6 +17,7 @@ public static class OpServiceCollectionExtensions
         services.AddScoped<OpThemeService>();
         services.AddScoped<OpMessageService>();
         services.AddScoped<OpConfirmationService>();
+        services.AddScoped<OpFilterService>();
         return services;
     }
 }

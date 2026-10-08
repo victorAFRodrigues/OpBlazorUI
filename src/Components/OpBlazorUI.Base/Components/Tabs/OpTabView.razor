@@ -1,0 +1,71 @@
+@namespace OpBlazorUI.Base.Components.Tabs
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+@implements IOpTabHost
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <CascadingValue TValue="IOpTabHost" Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+
+    <div class="p-tabview-tablist" role="tablist" aria-label="@AriaLabel">
+        @if (Scrollable)
+        {
+            <button type="button" class="p-tabview-prev-button" aria-label="Abas anteriores" @onclick="() => ScrollAsync(-1)">
+                <i class="pi pi-angle-left" aria-hidden="true"></i>
+            </button>
+        }
+
+        <div class="p-tabview-tablist-container" @ref="_viewport">
+            @for (var i = 0; i < Panels.Count; i++)
+            {
+                var panel = Panels[i];
+                var index = i;
+                var active = index == ActiveIndex;
+
+                <div class="p-tabview-tab-header @(active ? "p-tabview-tab-header-active" : null)"
+                     role="tab"
+                     id="@HeaderId(index)"
+                     aria-selected="@(active ? "true" : "false")"
+                     aria-controls="@ContentId(index)"
+                     tabindex="@(active ? 0 : -1)"
+                     @onclick="() => SelectAsync(index)"
+                     @onkeydown="e => OnTabKeyDownAsync(e, index)">
+                    <span class="p-tabview-tab-title">
+                        @if (panel.HeaderTemplate is not null)
+                        {
+                            @panel.HeaderTemplate
+                        }
+                        else
+                        {
+                            @if (!string.IsNullOrEmpty(panel.Icon))
+                            {
+                                <span class="pi @panel.Icon" aria-hidden="true"></span>
+                            }
+                            @panel.Header
+                        }
+                    </span>
+                </div>
+            }
+        </div>
+
+        @if (Scrollable)
+        {
+            <button type="button" class="p-tabview-next-button" aria-label="Próximas abas" @onclick="() => ScrollAsync(1)">
+                <i class="pi pi-angle-right" aria-hidden="true"></i>
+            </button>
+        }
+    </div>
+
+    <div class="p-tabview-panels">
+        @if (ActivePanel is not null)
+        {
+            <div class="p-tabpanel p-tabpanel-active"
+                 role="tabpanel"
+                 id="@ContentId(ActiveIndex)"
+                 aria-labelledby="@HeaderId(ActiveIndex)">
+                @ActivePanel.ChildContent
+            </div>
+        }
+    </div>
+</div>

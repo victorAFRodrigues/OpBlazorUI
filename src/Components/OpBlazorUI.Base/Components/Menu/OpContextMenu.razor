@@ -1,0 +1,18 @@
+@namespace OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@using OpBlazorUI.Base.Components.Overlay
+@inherits OpComponentBase
+
+@if (_visible)
+{
+    <div class="@RootClass" @ref="_panel" @attributes="AdditionalAttributes">
+        <OpOverlayAttach Anchor="_anchor" AnchorPrevious="@(_anchor is null)" Layer="menu" Gap="2"/>
+        <OpMenuItems Items="Model"
+                     Prefix="contextmenu"
+                     Root="true"
+                     IsOpen="IsOpen"
+                     OnToggle="ToggleAsync"
+                     OnItemClick="HandleItemClickAsync"/>
+    </div>
+}

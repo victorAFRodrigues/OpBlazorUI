@@ -1,187 +1,152 @@
 @page "/megamenu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
 
 <PageTitle>MegaMenu - OpBlazorUI</PageTitle>
 
 <DocComponent Title="MegaMenu"
-              Description="MegaMenu é um componente de navegação que exibe os submenus juntos. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O MegaMenu apresenta submenus em colunas, ideal para muitos itens agrupados.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O MegaMenu requer uma coleção de itens de menu como seu <code>model</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Vertical" Id="vertical">
-            <Description><p>O layout do MegaMenu é alterado com a propriedade <code>orientation</code>, que aceita <code>horizontal</code> e <code>vertical</code> como opções.</p></Description>
-            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template" Id="template">
-            <Description><p>Conteúdo customizado pode ser posicionado entre as tags <code>p-megamenu</code>. O MegaMenu deve estar na horizontal para conteúdo customizado.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Comando" Id="command">
-            <Description><p>A propriedade <code>command</code> de um item de menu define o callback executado quando o item é ativado por clique ou por evento de teclado.</p></Description>
-            <Code><CodeBlock Code="@CommandCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Roteamento" Id="router">
-            <Description><p>Os itens de menu suportam navegação via <code>routerLink</code>, roteamento programático usando <code>command</code> ou URLs externas.</p></Description>
-            <Code><CodeBlock Code="@RouterCode" Language="html"/></Code>
+            <Description>
+                Cada item raiz tem filhos que representam colunas; cada coluna tem um <code>Label</code> e a lista
+                <code>Items</code> de links.
+            </Description>
+            <ChildContent>
+                <OpMegaMenu Model="_items"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente MegaMenu usa o papel <code>menubar</code> junto com <code>aria-orientation</code>, e o valor para descrever o componente pode ser informado via <code>aria-labelledby</code> ou <code>aria-label</code>. Cada item de lista tem o papel <code>presentation</code>, enquanto os elementos âncora têm o papel <code>menuitem</code> com <code>aria-label</code> referindo-se ao rótulo do item e <code>aria-disabled</code> definido caso o item esteja desabilitado. Um submenu dentro do MegaMenu usa o papel <code>menu</code> com um <code>aria-labelledby</code> definido como o id do rótulo do item raiz do submenu. Além disso, itens raiz que abrem um submenu têm <code>aria-haspopup</code>, <code>aria-expanded</code> e <code>aria-controls</code> para definir a relação entre o item e o submenu.</p>
+                <p>A lista raiz usa <code>role="menubar"</code>; os itens usam <code>role="menuitem"</code> com <code>aria-expanded</code>.</p>
                 <h3>Suporte a teclado</h3>
+                <p>Os itens são alcançáveis por <code>tab</code>.</p>
             </Description>
-            <Code>
-                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] {
-                              new[] { "tab", "Adiciona foco ao primeiro item quando o foco entra no menu. Se o foco já estiver dentro do menu, move o foco para o próximo item focável na sequência de tabulação da página." },
-                              new[] { "shift + tab", "Adiciona foco ao último item quando o foco entra no menu. Se o foco já estiver dentro do menu, move o foco para o item focável anterior na sequência de tabulação da página." },
-                              new[] { "enter", "Se o item de menu tiver um submenu, alterna a visibilidade do submenu; caso contrário, ativa o item e fecha todos os overlays abertos." },
-                              new[] { "space", "Se o item de menu tiver um submenu, alterna a visibilidade do submenu; caso contrário, ativa o item e fecha todos os overlays abertos." },
-                              new[] { "escape", "Se o foco estiver dentro de um submenu popup, fecha o submenu e move o foco para o item raiz do submenu fechado." },
-                              new[] { "down arrow", "Se o foco estiver em um elemento raiz, abre um submenu e move o foco para o primeiro elemento do submenu; caso contrário, move o foco para o próximo item dentro do submenu." },
-                              new[] { "up arrow", "Se o foco estiver em um elemento raiz, abre um submenu e move o foco para o último elemento do submenu; caso contrário, move o foco para o item anterior dentro do submenu." },
-                              new[] { "right arrow", "Se o foco estiver em um elemento raiz, move o foco para o próximo item. Se o foco estiver dentro de um submenu, move o foco para o primeiro item do próximo grupo de menu." },
-                              new[] { "left arrow", "Se o foco estiver em um elemento raiz, move o foco para o item anterior. Se o foco estiver dentro de um submenu, move o foco para o primeiro item do grupo de menu anterior." },
-                              new[] { "home", "Move o foco para o primeiro item dentro do submenu." },
-                              new[] { "end", "Move o foco para o último item dentro do submenu." }
-                          })"/>
-            </Code>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens raiz; os filhos são colunas." },
+                              new[] { "StartTemplate", "RenderFragment?", "null", "Conteúdo à esquerda." },
+                              new[] { "EndTemplate", "RenderFragment?", "null", "Conteúdo à direita." },
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um link." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="megamenu"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div></ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>As colunas usam uma largura fixa (<code>p-megamenu-col-3</code>); não há colunas de largura variável por item.</li>
+                        <li>O submenu abre por clique; o fechamento ao clicar fora ainda não é automático.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private readonly List<OpMenuItem> _items = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Produtos",
+            Icon = "pi pi-box",
+            Items = new List<OpMenuItem>
+            {
+                new()
+                {
+                    Label = "Hardware",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Notebooks" },
+                        new() { Label = "Monitores" },
+                        new() { Label = "Periféricos" }
+                    }
+                },
+                new()
+                {
+                    Label = "Software",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Editor" },
+                        new() { Label = "Suíte" }
+                    }
+                },
+                new()
+                {
+                    Label = "Serviços",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Consultoria" },
+                        new() { Label = "Suporte" }
+                    }
+                }
+            }
+        },
+        new OpMenuItem { Label = "Empresa", Icon = "pi pi-building" },
+        new OpMenuItem { Label = "Contato", Icon = "pi pi-envelope" }
+    };
+
     private const string ImportCode = """
-        import { MegaMenuModule } from 'primeng/megamenu';
+        @using OpBlazorUI.Base.Components.Menu
+        @using OpBlazorUI.Base.Models
+
+        <OpMegaMenu Model="_items" />
         """;
 
     private const string BasicCode = """
-        <p-megamenu [model]="items" />
-        """;
+        <OpMegaMenu Model="_items" />
 
-    private const string VerticalCode = """
-        <p-megamenu [model]="items" orientation="vertical" />
-        """;
-
-    private const string TemplateCode = """
-        <p-megamenu [model]="items" [style]="{ 'border-radius': '3rem', display: 'flex' }" class="p-4 bg-surface-0 dark:bg-surface-900">
-            <ng-template #start>
-                <svg width="33" height="35" viewBox="0 0 33 35" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8">
-                    <path d="..." fill="var(--primary-color)" />
-                </svg>
-            </ng-template>
-            <ng-template #item let-item>
-                <a *ngIf="item.root" pRipple class="flex items-center cursor-pointer px-4 py-2 overflow-hidden relative font-semibold text-lg uppercase" style="border-radius: 2rem">
-                    <i [ngClass]="item.icon"></i>
-                    <span class="ml-2">{{ item.label }}</span>
-                </a>
-                <a *ngIf="!item.root && !item.image" class="flex items-center p-4 cursor-pointer mb-2 gap-2">
-                    <span class="inline-flex items-center justify-center rounded-full bg-primary text-primary-contrast w-12 h-12">
-                        <i [ngClass]="item.icon + ' text-lg'"></i>
-                    </span>
-                    <span class="inline-flex flex-col gap-1">
-                        <span class="font-medium text-lg text-surface-900 dark:text-surface-0">{{ item.label }}</span>
-                        <span class="whitespace-nowrap">{{ item.subtext }}</span>
-                    </span>
-                </a>
-                <div *ngIf="item.image" class="flex flex-col items-start gap-4">
-                    <img [src]="item.image" alt="megamenu-demo" class="w-full" />
-                    <span>{{ item.subtext }}</span>
-                    <p-button [label]="item.label" [outlined]="true"></p-button>
-                </div>
-            </ng-template>
-            <ng-template #end>
-                <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
-            </ng-template>
-        </p-megamenu>
-        """;
-
-    private const string CommandCode = """
-        {
-            label: 'Log out',
-            icon: 'pi pi-signout',
-            command: () => {
-                // Callback to run
-            }
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Produtos",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Hardware", Items = new List<OpMenuItem> { new() { Label = "Notebooks" } } },
+                        new() { Label = "Software", Items = new List<OpMenuItem> { new() { Label = "Editor" } } }
+                    }
+                },
+                new OpMenuItem { Label = "Contato" }
+            };
         }
         """;
 
-    private const string RouterCode = """
-        items = [
-            {
-                label: 'Router',
-                icon: 'pi pi-palette',
-                items: [
-                    [
-                        {
-                            label: 'RouterLink',
-                            items: [
-                                { label: 'Theming', routerLink: '/theming' },
-                                { label: 'UI Kit', routerLink: '/uikit' }
-                            ]
-                        }
-                    ]
-                ]
-            },
-            {
-                label: 'Programmatic',
-                icon: 'pi pi-link',
-                command: () => {
-                    this.router.navigate(['/installation']);
-                }
-            },
-            {
-                label: 'External',
-                icon: 'pi pi-home',
-                items: [
-                    [
-                        {
-                            label: 'External',
-                            items: [
-                                { label: 'Angular', url: 'https://angular.dev/' },
-                                { label: 'Vite.js', url: 'https://vitejs.dev/' }
-                            ]
-                        }
-                    ]
-                ]
-            }
-        ];
+    private const string AccessibilityCode = """
+        <OpMegaMenu Model="_items" />
         """;
 }

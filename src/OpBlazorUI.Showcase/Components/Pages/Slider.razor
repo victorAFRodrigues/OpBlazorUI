@@ -1,66 +1,100 @@
 @page "/slider"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Slider
+@using OpBlazorUI.Base.Components.InputText
+@using System.ComponentModel.DataAnnotations
 
 <PageTitle>Slider - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Slider"
-              Description="Entrada numérica por arraste. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular).">
+              Description="O Slider fornece uma entrada numérica por meio de uma alça arrastável, com suporte a intervalo, orientação vertical e campos de entrada.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O two-way binding é definido com a diretiva padrão <code>ngModel</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>O vínculo de duas vias é definido com <code>@@bind-Value</code>.</Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2" style="max-width: 20rem;">
+                    <OpSlider @bind-Value="_basic"/>
+                    <span class="text-sm">Valor: <b>@_basic</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Entrada" Id="input">
-            <Description><p>O Slider é conectado a um campo de entrada usando two-way binding.</p></Description>
-            <Code><CodeBlock Code="@InputCode" Language="html"/></Code>
+        <DocSection Label="Input" Id="input">
+            <Description>O Slider pode ser conectado a um campo de entrada usando o mesmo valor.</Description>
+            <ChildContent>
+                <div style="max-width: 20rem;">
+                    <input type="number" class="p-inputtext p-component" style="width: 100%; margin-bottom: 1rem;" @bind="_inputValue"/>
+                    <OpSlider @bind-Value="_inputValue"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InputCode"/></Code>
         </DocSection>
 
         <DocSection Label="Passo" Id="step">
-            <Description><p>O tamanho de cada movimento é definido pela propriedade <code>step</code>.</p></Description>
-            <Code><CodeBlock Code="@StepCode" Language="html"/></Code>
+            <Description>O tamanho de cada movimento é definido com <code>Step</code>.</Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2" style="max-width: 20rem;">
+                    <OpSlider @bind-Value="_step" Step="20"/>
+                    <span class="text-sm">Valor: <b>@_step</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StepCode"/></Code>
         </DocSection>
 
         <DocSection Label="Intervalo" Id="range">
-            <Description><p>Com <code>range</code>, o slider fornece dois manípulos para definir dois valores; nesse modo o valor é um array.</p></Description>
-            <Code><CodeBlock Code="@RangeCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Filtro" Id="filter">
-            <Description><p>Exemplo de filtro de imagem usando múltiplos sliders.</p></Description>
-            <Code><CodeBlock Code="@FilterCode" Language="html"/></Code>
+            <Description>
+                Com dois valores, use <code>OpSliderRange</code>: dois manípulos definem os limites.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2" style="max-width: 20rem;">
+                    <OpSliderRange @bind-Value="_range"/>
+                    <span class="text-sm">Valor: <b>@_range[0] – @_range[1]</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RangeCode"/></Code>
         </DocSection>
 
         <DocSection Label="Vertical" Id="vertical">
-            <Description><p>O layout padrão é <code>horizontal</code>; use a propriedade <code>orientation</code> para o modo <code>vertical</code>.</p></Description>
-            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
+            <Description>O layout padrão é horizontal; use <code>Orientation="vertical"</code> para o vertical.</Description>
+            <ChildContent>
+                <OpSlider @bind-Value="_vertical" Orientation="vertical" Style="height: 14rem;"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@VerticalCode"/></Code>
         </DocSection>
 
         <DocSection Label="Formulários" Id="forms">
-            <Description><p>No Blazor, a integração acontecerá via <code>EditForm</code> + <code>DataAnnotationsValidator</code>, herdando de <code>OpInputBase&lt;TValue&gt;</code>.</p></Description>
-            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template Driven" Id="templatedriven">
-            <Description><p>Uso com formulários template driven do Angular (<code>ngModel</code>).</p></Description>
-            <Code><CodeBlock Code="@TemplateDrivenCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Reactive Forms" Id="reactive">
-            <Description><p>Uso com formulários reativos do Angular (<code>formControlName</code>).</p></Description>
-            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
+            <Description>Integra-se ao <code>EditForm</code> herdando de <code>OpInputBase&lt;TValue&gt;</code>.</Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="SubmitForm" class="flex flex-col gap-2" style="max-width: 20rem;">
+                    <DataAnnotationsValidator/>
+                    <label for="slider-form">Nota (0–10)</label>
+                    <OpSlider AriaLabel="Nota" @bind-Value="_form.Score" Max="10"/>
+                    <ValidationMessage For="() => _form.Score"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <span class="text-sm">Enviado: <b>@_form.Score</b></span>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente usa o role <code>slider</code> no manípulo, além dos atributos <code>aria-orientation</code>, <code>aria-valuemin</code>, <code>aria-valuemax</code> e <code>aria-valuenow</code>. O valor descritivo pode ser definido por <code>ariaLabelledBy</code> e <code>ariaLabel</code>.</p>
+                <p>
+                    A alça usa <code>role="slider"</code> com <code>aria-orientation</code>, <code>aria-valuemin</code>,
+                    <code>aria-valuemax</code> e <code>aria-valuenow</code>. O valor é descrito por <code>AriaLabel</code>
+                    ou <code>AriaLabelledBy</code>.
+                </p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
@@ -79,82 +113,126 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value / ValueChanged", "double (ou double[] em OpSliderRange)", "0", "Valor (usar com <code>@@bind-Value</code>)." },
+                              new[] { "Min / Max", "double", "0 / 100", "Limites do intervalo." },
+                              new[] { "Step", "double?", "null", "Incremento do passo." },
+                              new[] { "Orientation", "string", "horizontal", "<code>horizontal</code> ou <code>vertical</code>." },
+                              new[] { "Animate", "bool", "false", "Anima o clique na barra (classe <code>p-slider-animate</code>)." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o slider." },
+                              new[] { "TabIndex / AriaLabel / AriaLabelledBy", "—", "—", "Acessibilidade e ordem de foco." },
+                              new[] { "OnChange / OnSlideEnd", "EventCallback", "—", "Notificações de mudança e fim do arraste." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="slider"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>No Blazor há dois componentes com tipagem distinta: <code>OpSlider</code> (<code>double</code>) e <code>OpSliderRange</code> (<code>double[]</code>).</li>
+                        <li>O arraste é feito por interop de ponteiro (<code>slider.interop.js</code>); o encaixe no passo (<code>Step</code>) é feito em grade a partir de <code>Min</code>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private double _basic = 50;
+    private double _inputValue = 50;
+    private double _step = 20;
+    private double[] _range = new[] { 20.0, 80.0 };
+    private double _vertical = 50;
+    private bool _submitted;
+    private FormModel _form = new() { Score = 5 };
+
+    private void SubmitForm() => _submitted = true;
+
+    private sealed class FormModel
+    {
+        [Range(1, 10, ErrorMessage = "Escolha uma nota de 1 a 10.")]
+        public double Score { get; set; }
+    }
+
     private const string ImportCode = """
-        import { SliderModule } from 'primeng/slider';
+        @using OpBlazorUI.Base.Components.Slider
+
+        <OpSlider @bind-Value="_value" />
+        <OpSliderRange @bind-Value="_range" />
+
+        @code {
+            private double _value = 50;
+            private double[] _range = new[] { 20.0, 80.0 };
+        }
         """;
 
     private const string BasicCode = """
-        <p-slider [(ngModel)]="value" class="w-56" />
+        <OpSlider @bind-Value="_value" />
+
+        <span>Valor: @_value</span>
         """;
 
     private const string InputCode = """
-        <input type="text" pInputText [(ngModel)]="value" class="w-full mb-4" />
-        <p-slider [(ngModel)]="value" class="w-full" />
+        <input type="number" class="p-inputtext p-component" @bind="_value" />
+        <OpSlider @bind-Value="_value" />
+
+        @code {
+            private double _value = 50;
+        }
         """;
 
     private const string StepCode = """
-        <p-slider [(ngModel)]="value" [step]="20" class="w-56" />
+        <OpSlider @bind-Value="_value" Step="20" />
         """;
 
     private const string RangeCode = """
-        <p-slider [(ngModel)]="rangeValues" [range]="true" class="w-56" />
-        """;
+        <OpSliderRange @bind-Value="_range" />
 
-    private const string FilterCode = """
-        <div class="flex flex-col items-center">
-            <img alt="user header" class="w-full md:w-80 rounded mb-6" src="https://primefaces.org/cdn/primevue/images/card-vue.jpg" [style]="filterStyle" />
-            <p-selectbutton [(ngModel)]="filter" [options]="filterOptions" optionLabel="label" optionValue="value" class="mb-4" />
-            <p-slider [(ngModel)]="filterValues[filter]" class="w-56" [min]="0" [max]="200" />
-        </div>
+        @code {
+            private double[] _range = new[] { 20.0, 80.0 };
+        }
         """;
 
     private const string VerticalCode = """
-        <p-slider [(ngModel)]="value" orientation="vertical" class="h-56" />
+        <OpSlider @bind-Value="_value" Orientation="vertical" style="height: 14rem;" />
         """;
 
-    private const string TemplateDrivenCode = """
-        <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex justify-center flex-col gap-4">
-            <p-slider #model="ngModel" [(ngModel)]="value" class="w-56" required name="slider"
-                [invalid]="model.invalid && (model.touched || exampleForm.submitted)" />
-            @if (model.invalid && (model.touched || exampleForm.submitted)) {
-                <p-message severity="error" size="small" variant="simple">Must be greater than 25.</p-message>
-            }
-            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-        </form>
-        """;
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="SubmitForm">
+            <DataAnnotationsValidator />
+            <OpSlider @bind-Value="_form.Score" Max="10" />
+            <ValidationMessage For="() => _form.Score" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
 
-    private const string ReactiveCode = """
-        <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
-            <p-slider formControlName="value" styleClass="w-56" />
-            @if (isInvalid('value')) {
-                <p-message severity="error" size="small" variant="simple">Must be greater than 25.</p-message>
+        @code {
+            private FormModel _form = new() { Score = 5 };
+
+            private sealed class FormModel
+            {
+                [Range(1, 10)] public double Score { get; set; }
             }
-            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-        </form>
+        }
         """;
 }

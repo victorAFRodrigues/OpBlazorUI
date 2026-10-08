@@ -1,42 +1,89 @@
 @page "/fieldset"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Fieldset
 
 <PageTitle>Fieldset - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Fieldset"
-              Description="Agrupa conteúdo em uma seção com legenda. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular).">
+              Description="O Fieldset é um agrupador de conteúdo com recurso de expandir/recolher.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>Um Fieldset simples é criado com a propriedade <code>legend</code> e o conteúdo como filhos.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                Um Fieldset simples é criado com a propriedade <code>Legend</code> e o conteúdo como filho.
+            </Description>
+            <ChildContent>
+                <OpFieldset Legend="Cabeçalho">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                </OpFieldset>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Expansível" Id="toggleable">
-            <Description><p>O conteúdo pode ser expandido e recolhido com a opção <code>toggleable</code>; o estado inicial é definido por <code>collapsed</code>.</p></Description>
-            <Code><CodeBlock Code="@ToggleableCode" Language="html"/></Code>
+        <DocSection Label="Alternável" Id="toggleable">
+            <Description>
+                O conteúdo pode ser expandido e recolhido com <code>Toggleable</code>. O estado inicial é
+                definido por <code>Collapsed</code> (com <code>@@bind-Collapsed</code> para duas vias).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2">
+                    <OpFieldset Legend="Cabeçalho" Toggleable="true" @bind-Collapsed="_toggled">
+                        <p class="m-0">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua.
+                        </p>
+                    </OpFieldset>
+                    <span class="text-sm">Estado: <b>@(_toggled ? "recolhido" : "expandido")</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ToggleableCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template" Id="template">
-            <Description><p>A seção de cabeçalho também pode ser definida com conteúdo customizado em vez de um valor primitivo.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+            <Description>O cabeçalho pode ser definido com conteúdo customizado via <code>HeaderTemplate</code>.</Description>
+            <ChildContent>
+                <OpFieldset>
+                    <HeaderTemplate>
+                        <div class="flex items-center gap-2 px-2">
+                            <img src="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" alt="Amy Elsner" style="width: 2rem; height: 2rem; border-radius: 50%;" />
+                            <span class="font-bold">Amy Elsner</span>
+                        </div>
+                    </HeaderTemplate>
+                    <ChildContent>
+                        <p class="m-0">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua.
+                        </p>
+                    </ChildContent>
+                </OpFieldset>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente usa o elemento semântico <code>fieldset</code>. Com <code>toggleable</code>, um elemento clicável com role <code>button</code> é incluído dentro do <code>legend</code>, com <code>aria-controls</code> e <code>aria-expanded</code>. O texto lido por padrão é o valor de <code>legend</code>.</p>
-                <h3>Suporte a teclado do botão de conteúdo</h3>
+                <p>
+                    Usa o elemento semântico <code>fieldset</code>. Quando <code>Toggleable</code> está ativo, um
+                    botão com <code>role="button"</code> é incluído no <code>legend</code>, com
+                    <code>aria-controls</code> apontando para o conteúdo e <code>aria-expanded</code> para o estado. O
+                    conteúdo usa <code>region</code> e <code>aria-labelledby</code> referenciando o cabeçalho.
+                </p>
+                <h3>Suporte a teclado (botão de alternância)</h3>
             </Description>
             <Code>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Move o foco para o próximo elemento focável da página." },
+                              new[] { "tab", "Move o foco para o próximo elemento focável." },
                               new[] { "shift + tab", "Move o foco para o elemento focável anterior." },
                               new[] { "enter", "Alterna a visibilidade do conteúdo." },
                               new[] { "space", "Alterna a visibilidade do conteúdo." }
@@ -46,62 +93,99 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Legend", "string?", "null", "Texto do cabeçalho." },
+                              new[] { "Toggleable", "bool", "false", "Permite expandir/recolher o conteúdo." },
+                              new[] { "Collapsed", "bool", "false", "Estado inicial recolhido (usar com <code>@@bind-Collapsed</code>)." },
+                              new[] { "CollapsedChanged", "EventCallback&lt;bool&gt;", "—", "Notifica mudanças do estado recolhido." },
+                              new[] { "OnToggle", "EventCallback&lt;bool&gt;", "—", "Disparado após a alternância." },
+                              new[] { "Style", "string?", "null", "Estilo inline do elemento raiz." },
+                              new[] { "Id / StyleClass", "string?", "null", "Identificação e classes adicionais." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo customizado do cabeçalho." },
+                              new[] { "ExpandIcon / CollapseIcon", "RenderFragment?", "Ícones customizados de expandir/recolher." },
+                              new[] { "ChildContent", "RenderFragment?", "Conteúdo do fieldset." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="fieldset"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O upstream usa o motion <code>p-collapsible</code>; no port a animação é uma transição CSS de <code>grid-template-rows</code> (0.2s), sem as classes <code>p-collapsible-*-active</code>.</li>
+                        <li>O foco interno não é removido da ordem de tabulação ao recolher por script; o conteúdo usa <code>aria-hidden</code> e <code>tabindex="-1"</code> no contêiner.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private bool _toggled;
+
     private const string ImportCode = """
-        import { FieldsetModule } from 'primeng/fieldset';
+        @using OpBlazorUI.Base.Components.Fieldset
+
+        <OpFieldset Legend="Cabeçalho">
+            <p>Conteúdo</p>
+        </OpFieldset>
         """;
 
     private const string BasicCode = """
-        <p-fieldset legend="Header">
-            <p class="m-0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
-            </p>
-        </p-fieldset>
+        <OpFieldset Legend="Cabeçalho">
+            <p class="m-0">Conteúdo do fieldset.</p>
+        </OpFieldset>
         """;
 
     private const string ToggleableCode = """
-        <p-fieldset legend="Header" [toggleable]="true">
-            <p style="margin:0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
-            </p>
-        </p-fieldset>
+        <OpFieldset Legend="Cabeçalho" Toggleable="true" @bind-Collapsed="_collapsed">
+            <p class="m-0">Conteúdo do fieldset.</p>
+        </OpFieldset>
+
+        @code {
+            private bool _collapsed;
+        }
         """;
 
     private const string TemplateCode = """
-        <p-fieldset>
-            <ng-template #header>
+        <OpFieldset>
+            <HeaderTemplate>
                 <div class="flex items-center gap-2 px-2">
-                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
+                    <img src="..." alt="Amy Elsner" style="width: 2rem; border-radius: 50%;" />
                     <span class="font-bold">Amy Elsner</span>
                 </div>
-            </ng-template>
-            <p class="m-0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
-            </p>
-        </p-fieldset>
+            </HeaderTemplate>
+            <ChildContent>
+                <p class="m-0">Conteúdo do fieldset.</p>
+            </ChildContent>
+        </OpFieldset>
         """;
 }

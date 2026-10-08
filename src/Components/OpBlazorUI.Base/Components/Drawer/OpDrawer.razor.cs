@@ -34,8 +34,6 @@ public partial class OpDrawer : OpModalBase
 
     [Parameter] public string? Style { get; set; }
 
-    [Parameter] public string? StyleClass { get; set; }
-
     [Parameter] public string? MaskStyle { get; set; }
 
     /// <summary>Aplica o z-index da camada modal (1100 + <see cref="BaseZIndex"/>), acima de topbars e overlays.</summary>
@@ -60,9 +58,6 @@ public partial class OpDrawer : OpModalBase
     [Parameter] public RenderFragment? FooterTemplate { get; set; }
 
     [Parameter] public RenderFragment? CloseIconTemplate { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     protected override void OnInitialized()
     {

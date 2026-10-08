@@ -1,81 +1,158 @@
 @page "/textarea"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Textarea
+@using OpBlazorUI.Base.Components.FloatLabel
+@using OpBlazorUI.Base.Components.IftaLabel
+@using System.ComponentModel.DataAnnotations
 
 <PageTitle>Textarea - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Textarea"
-              Description="Campo de texto multilinha. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Textarea adiciona estilo e redimensionamento automático ao elemento nativo textarea.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>Textarea é aplicado a um campo de entrada com a diretiva <code>pTextarea</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                O Textarea é um campo de texto multilinha. O vínculo de valor é feito com
+                <code>@@bind-Value</code>.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 30rem;">
+                    <OpTextarea @bind-Value="_basic" Rows="5" Cols="30" Fluid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Redimensionamento Automático" Id="autoresize">
-            <Description><p>Com <code>autoResize</code> habilitado, o campo cresce em vez de exibir barra de rolagem.</p></Description>
-            <Code><CodeBlock Code="@AutoResizeCode" Language="html"/></Code>
+            <Description>
+                Com <code>AutoResize="true"</code>, o campo cresce em vez de exibir barra de rolagem.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 30rem;">
+                    <OpTextarea @bind-Value="_autoResize" AutoResize="true" Rows="3" Cols="30" Fluid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AutoResizeCode"/></Code>
         </DocSection>
 
         <DocSection Label="Float Label" Id="floatlabel">
-            <Description><p>Um rótulo flutuante aparece sobre o campo quando ele recebe foco. Veja a documentação de <a href="/floatlabel">FloatLabel</a>.</p></Description>
-            <Code><CodeBlock Code="@FloatLabelCode" Language="html"/></Code>
+            <Description>
+                O rótulo flutuante aparece sobre o campo. Veja <code>FloatLabel</code> para os detalhes.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap items-end gap-4">
+                    <div style="width: 20rem;">
+                        <OpFloatLabel Variant="in">
+                            <OpTextarea Id="ta_over" @bind-Value="_floatValue" Rows="3" Fluid="true" Style="resize: none;"/>
+                            <label for="ta_over">Sobre o campo</label>
+                        </OpFloatLabel>
+                    </div>
+                    <div style="width: 20rem;">
+                        <OpFloatLabel Variant="on">
+                            <OpTextarea Id="ta_on" @bind-Value="_onValue" Rows="3" Fluid="true" Style="resize: none;"/>
+                            <label for="ta_on">Sobre a borda</label>
+                        </OpFloatLabel>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FloatLabelCode"/></Code>
         </DocSection>
 
         <DocSection Label="Ifta Label" Id="iftalabel">
-            <Description><p>O IftaLabel cria rótulos alinhados no topo, dentro do campo. Veja a documentação de <a href="/iftalabel">IftaLabel</a>.</p></Description>
-            <Code><CodeBlock Code="@IftaLabelCode" Language="html"/></Code>
+            <Description>O IftaLabel cria rótulos alinhados no topo, dentro do campo.</Description>
+            <ChildContent>
+                <div style="width: 20rem;">
+                    <OpIftaLabel>
+                        <OpTextarea Id="ta_ift" @bind-Value="_iftaValue" Rows="3" Fluid="true" Style="resize: none;"/>
+                        <label for="ta_ift">Descrição</label>
+                    </OpIftaLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IftaLabelCode"/></Code>
         </DocSection>
 
         <DocSection Label="Tamanhos" Id="sizes">
-            <Description><p>Textarea oferece os tamanhos <code>small</code> e <code>large</code> como alternativa ao padrão.</p></Description>
-            <Code><CodeBlock Code="@SizesCode" Language="html"/></Code>
+            <Description>O Textarea oferece os tamanhos <code>small</code> e <code>large</code>.</Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4" style="max-width: 30rem;">
+                    <OpTextarea Size="small" Placeholder="Small" Rows="3" Fluid="true"/>
+                    <OpTextarea Placeholder="Normal" Rows="3" Fluid="true"/>
+                    <OpTextarea Size="large" Placeholder="Large" Rows="3" Fluid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizesCode"/></Code>
         </DocSection>
 
         <DocSection Label="Largura Total" Id="fluid">
-            <Description><p>A propriedade <code>fluid</code> faz o componente ocupar toda a largura do contêiner.</p></Description>
-            <Code><CodeBlock Code="@FluidCode" Language="html"/></Code>
+            <Description>A propriedade <code>Fluid</code> faz o componente ocupar toda a largura do contêiner.</Description>
+            <ChildContent>
+                <div style="max-width: 30rem;">
+                    <OpTextarea @bind-Value="_fluidValue" Rows="5" Cols="30" Fluid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FluidCode"/></Code>
         </DocSection>
 
         <DocSection Label="Preenchido" Id="filled">
-            <Description><p>Defina <code>variant="filled"</code> para um destaque visual maior que o estilo <code>outlined</code> padrão.</p></Description>
-            <Code><CodeBlock Code="@FilledCode" Language="html"/></Code>
+            <Description>Defina <code>Variant="filled"</code> para um destaque visual maior.</Description>
+            <ChildContent>
+                <div style="max-width: 30rem;">
+                    <OpTextarea @bind-Value="_filledValue" Variant="filled" Rows="5" Cols="30" Fluid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledCode"/></Code>
         </DocSection>
 
         <DocSection Label="Desabilitado" Id="disabled">
-            <Description><p>Com <code>disabled</code>, o elemento não pode ser editado nem focado.</p></Description>
-            <Code><CodeBlock Code="@DisabledCode" Language="html"/></Code>
+            <Description>Com <code>Disabled</code>, o elemento não pode ser editado nem focado.</Description>
+            <ChildContent>
+                <div style="max-width: 30rem;">
+                    <OpTextarea Disabled="true" Rows="5" Cols="30" Fluid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
         </DocSection>
 
         <DocSection Label="Inválido" Id="invalid">
-            <Description><p>O estado inválido é aplicado com a propriedade <code>invalid</code> para indicar falha de validação; integra-se com os formulários Angular.</p></Description>
-            <Code><CodeBlock Code="@InvalidCode" Language="html"/></Code>
+            <Description>O estado inválido é aplicado com <code>Invalid="true"</code> ou pela validação de um <code>EditForm</code>.</Description>
+            <ChildContent>
+                <div style="max-width: 30rem;">
+                    <OpTextarea @bind-Value="_invalidValue" Invalid="@(string.IsNullOrEmpty(_invalidValue))" Rows="5" Cols="30" Placeholder="Endereço" Fluid="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
 
         <DocSection Label="Formulários" Id="forms">
-            <Description><p>No Blazor, a integração acontecerá via <code>EditForm</code> + <code>DataAnnotationsValidator</code>, herdando de <code>OpInputBase&lt;TValue&gt;</code>. Abaixo, o equivalente da referência Angular.</p></Description>
-            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template Driven" Id="templatedriven">
-            <Description><p>Uso com formulários template driven do Angular (<code>ngModel</code>).</p></Description>
-            <Code><CodeBlock Code="@TemplateDrivenCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Reactive Forms" Id="reactive">
-            <Description><p>Uso com formulários reativos do Angular (<code>formControlName</code>).</p></Description>
-            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
+            <Description>
+                Integra-se ao <code>EditForm</code> + <code>DataAnnotationsValidator</code> herdando de
+                <code>OpInputBase&lt;TValue&gt;</code>; o estado inválido é aplicado automaticamente.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="SubmitForm" class="flex flex-col gap-2" style="max-width: 30rem;">
+                    <DataAnnotationsValidator/>
+                    <OpTextarea @bind-Value="_form.Address" Rows="4" Fluid="true"/>
+                    <ValidationMessage For="() => _form.Address"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_submitted)
+                    {
+                        <span class="text-sm">Enviado: <b>@_form.Address</b></span>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente renderiza um elemento <code>textarea</code> nativo. O valor para descrever o componente pode ser informado via <code>label</code> + <code>id</code> ou pelos atributos <code>aria-labelledby</code>/<code>aria-label</code>.</p>
+                <p>Renderiza um elemento <code>textarea</code> nativo. O valor é descrito via <code>label</code> + <code>Id</code> ou por <code>AriaLabel</code>.</p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
@@ -86,107 +163,141 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value / ValueChanged", "string?", "null", "Valor do campo (usar com <code>@@bind-Value</code>)." },
+                              new[] { "AutoResize", "bool", "false", "Ajusta a altura ao conteúdo em vez de rolar." },
+                              new[] { "Variant", "string", "outlined", "Variant visual: <code>outlined</code> ou <code>filled</code>." },
+                              new[] { "Size", "string?", "null", "<code>small</code>, <code>large</code> ou padrão." },
+                              new[] { "Fluid", "bool", "false", "Ocupa toda a largura do contêiner." },
+                              new[] { "Readonly", "bool", "false", "Somente leitura." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o campo." },
+                              new[] { "Invalid", "bool", "false", "Aplica o estado inválido." },
+                              new[] { "Placeholder", "string?", "null", "Texto de placeholder." },
+                              new[] { "MaxLength", "int?", "null", "Comprimento máximo." },
+                              new[] { "Autocomplete", "string?", "null", "Atributo autocomplete nativo." },
+                              new[] { "Id / Name / AriaLabel", "string?", "null", "Atributos de identificação e acessibilidade." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="textarea"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>, repassados ao elemento <code>textarea</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>No v21 o Textarea é componente próprio (<code>p-textarea</code>) e não reusa o <code>p-inputtext</code>; aqui ele também é um componente separado.</li>
+                        <li><code>Rows</code>/<code>Cols</code> são atributos HTML livres repassados ao <code>textarea</code>, não parâmetros tipados.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private string? _basic;
+    private string? _autoResize;
+    private string? _floatValue;
+    private string? _onValue;
+    private string? _iftaValue;
+    private string? _fluidValue;
+    private string? _filledValue;
+    private string? _invalidValue;
+    private bool _submitted;
+    private FormModel _form = new();
+
+    private void SubmitForm() => _submitted = true;
+
+    private sealed class FormModel
+    {
+        [Required(ErrorMessage = "O endereço é obrigatório.")]
+        public string? Address { get; set; }
+    }
+
     private const string ImportCode = """
-        import { TextareaModule } from 'primeng/textarea';
+        @using OpBlazorUI.Base.Components.Textarea
+
+        <OpTextarea @bind-Value="_value" Rows="5" Cols="30" />
         """;
 
     private const string BasicCode = """
-        <textarea rows="5" cols="30" pTextarea [(ngModel)]="value"></textarea>
+        <OpTextarea @bind-Value="_value" Rows="5" Cols="30" />
         """;
 
     private const string AutoResizeCode = """
-        <textarea rows="5" cols="30" pTextarea [autoResize]="true"></textarea>
+        <OpTextarea @bind-Value="_value" AutoResize="true" Rows="3" Fluid="true" />
         """;
 
     private const string FloatLabelCode = """
-        <p-floatlabel>
-            <textarea pTextarea id="over_label" [(ngModel)]="value1" rows="5" cols="30" style="resize: none" class="h-full"></textarea>
-            <label for="over_label">Over Label</label>
-        </p-floatlabel>
-
-        <p-floatlabel variant="in">
-            <textarea pTextarea id="in_label" [(ngModel)]="value2" rows="5" cols="30" style="resize: none" class="h-full"></textarea>
-            <label for="in_label">In Label</label>
-        </p-floatlabel>
-
-        <p-floatlabel variant="on">
-            <textarea pTextarea id="on_label" [(ngModel)]="value3" rows="5" cols="30" style="resize: none" class="h-full"></textarea>
-            <label for="on_label">On Label</label>
-        </p-floatlabel>
+        <OpFloatLabel Variant="in">
+            <OpTextarea Id="ta" @bind-Value="_value" Rows="3" Fluid="true" />
+            <label for="ta">Sobre o campo</label>
+        </OpFloatLabel>
         """;
 
     private const string IftaLabelCode = """
-        <p-iftalabel>
-            <textarea pTextarea id="description" [(ngModel)]="value" rows="5" cols="30" style="resize: none"></textarea>
-            <label for="description">Description</label>
-        </p-iftalabel>
+        <OpIftaLabel>
+            <OpTextarea Id="descricao" @bind-Value="_value" Rows="3" Fluid="true" />
+            <label for="descricao">Descrição</label>
+        </OpIftaLabel>
         """;
 
     private const string SizesCode = """
-        <textarea pTextarea [(ngModel)]="value1" pSize="small" placeholder="Small" rows="3"></textarea>
-        <textarea pTextarea [(ngModel)]="value2" placeholder="Normal" rows="3"></textarea>
-        <textarea pTextarea [(ngModel)]="value3" pSize="large" placeholder="Large" rows="3"></textarea>
+        <OpTextarea Size="small" Placeholder="Small" Rows="3" />
+        <OpTextarea Placeholder="Normal" Rows="3" />
+        <OpTextarea Size="large" Placeholder="Large" Rows="3" />
         """;
 
     private const string FluidCode = """
-        <textarea rows="5" cols="30" pTextarea [(ngModel)]="value" fluid></textarea>
+        <OpTextarea @bind-Value="_value" Rows="5" Cols="30" Fluid="true" />
         """;
 
     private const string FilledCode = """
-        <textarea [(ngModel)]="value" [variant]="'filled'" rows="5" cols="30" pTextarea></textarea>
+        <OpTextarea @bind-Value="_value" Variant="filled" Rows="5" Cols="30" />
         """;
 
     private const string DisabledCode = """
-        <textarea rows="5" cols="30" pTextarea [disabled]="true"></textarea>
+        <OpTextarea Disabled="true" Rows="5" Cols="30" />
         """;
 
     private const string InvalidCode = """
-        <textarea rows="5" cols="30" pTextarea [(ngModel)]="value" [invalid]="!value" placeholder="Address"></textarea>
+        <OpTextarea @bind-Value="_value" Invalid="@(string.IsNullOrEmpty(_value))" Placeholder="Endereço" />
         """;
 
-    private const string TemplateDrivenCode = """
-        <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col gap-4">
-            <textarea name="address" #address="ngModel" rows="5" cols="30" [(ngModel)]="value" pTextarea
-                [invalid]="address.invalid && (address.touched || exampleForm.submitted)" required></textarea>
-            @if (address.invalid && (address.touched || exampleForm.submitted)) {
-                <p-message severity="error" size="small" variant="simple">Address is required.</p-message>
-            }
-            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-        </form>
-        """;
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="SubmitForm">
+            <DataAnnotationsValidator />
+            <OpTextarea @bind-Value="_form.Address" Rows="4" Fluid="true" />
+            <ValidationMessage For="() => _form.Address" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
 
-    private const string ReactiveCode = """
-        <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
-            <textarea rows="5" cols="30" pTextarea formControlName="address" [invalid]="isInvalid('address')"></textarea>
-            @if (isInvalid('address')) {
-                <p-message severity="error" size="small" variant="simple">Address is required.</p-message>
+        @code {
+            private FormModel _form = new();
+
+            private sealed class FormModel
+            {
+                [Required(ErrorMessage = "O endereço é obrigatório.")]
+                public string? Address { get; set; }
             }
-            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-        </form>
+        }
         """;
 }

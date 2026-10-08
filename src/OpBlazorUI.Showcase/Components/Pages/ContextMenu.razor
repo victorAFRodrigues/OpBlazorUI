@@ -1,170 +1,149 @@
 @page "/contextmenu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
 
 <PageTitle>ContextMenu - OpBlazorUI</PageTitle>
 
 <DocComponent Title="ContextMenu"
-              Description="Exibe um menu em overlay ao clicar com o botão direito sobre um alvo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O ContextMenu exibe um menu sobreposto, ancorado a um elemento de destino.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O ContextMenu pode ser anexado a um elemento específico cujo nome da variável de template local é definido pela propriedade <code>target</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Documento" Id="document">
-            <Description><p>Definir a propriedade <code>global</code> como <code>true</code> anexa o menu de contexto ao documento.</p></Description>
-            <Code><CodeBlock Code="@DocumentCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template" Id="template">
-            <Description><p>O ContextMenu oferece customização de itens com o template <code>item</code>, que recebe como parâmetro a instância de menuitem do model.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Comando" Id="command">
-            <Description><p>A função a ser invocada quando um item é clicado é definida pela propriedade <code>command</code>.</p></Description>
-            <Code><CodeBlock Code="@CommandCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Router" Id="router">
-            <Description><p>Os itens de menu suportam navegação via routerLink, roteamento programático usando comandos ou URLs externas.</p></Description>
-            <Code><CodeBlock Code="@RouterCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Tabela" Id="table">
-            <Description><p>O componente Table tem suporte integrado ao ContextMenu; veja a demonstração de <a href="/table">Table</a> para um exemplo.</p></Description>
+            <Description>
+                Use o <code>@@ref</code> do componente e chame <code>ShowAsync(target)</code> para exibir o menu
+                ancorado ao elemento informado.
+            </Description>
+            <ChildContent>
+                <div class="flex items-center gap-3">
+                    <button type="button" class="p-button p-component" @ref="_trigger" @onclick="ShowMenuAsync">
+                        Mostrar menu
+                    </button>
+                    <span class="text-sm">Clique para abrir o menu ancorado ao botão.</span>
+                </div>
+                <OpContextMenu @ref="_menu" Model="_items" OnItemClick="OnItem"/>
+                @if (!string.IsNullOrEmpty(_lastCommand))
+                {
+                    <span class="text-sm">Último comando: <b>@_lastCommand</b></span>
+                }
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente ContextMenu usa o papel <code>menubar</code> com <code>aria-orientation</code> definido como "vertical", e o valor para descrever o menu pode ser informado por <code>aria-labelledby</code> ou <code>aria-label</code>. Cada item da lista tem o papel <code>presentation</code>, enquanto os elementos âncora têm o papel <code>menuitem</code> com <code>aria-label</code> referindo-se ao rótulo do item e <code>aria-disabled</code> definido se o item estiver desabilitado. Um submenu dentro de um ContextMenu usa o papel <code>menu</code> com <code>aria-labelledby</code> definido como o id do rótulo do menuitem raiz do submenu. Além disso, menuitems que abrem um submenu têm <code>aria-haspopup</code>, <code>aria-expanded</code> e <code>aria-controls</code> para definir a relação entre o item e o submenu.</p>
+                <p>A lista usa <code>role="menu"</code> e os itens <code>role="menuitem"</code>.</p>
                 <h3>Suporte a teclado</h3>
+                <p>Os itens são alcançáveis por <code>tab</code>; <code>enter</code> aciona o item e fecha o menu.</p>
             </Description>
-            <Code>
-                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] {
-                              new[] { "tab", "Quando o foco está no menu, fecha o menu de contexto e move o foco para o próximo elemento focável na sequência da página." },
-                              new[] { "enter", "Se o menuitem tiver um submenu, alterna a visibilidade do submenu; caso contrário, ativa o menuitem e fecha todos os overlays abertos." },
-                              new[] { "space", "Se o menuitem tiver um submenu, alterna a visibilidade do submenu; caso contrário, ativa o menuitem e fecha todos os overlays abertos." },
-                              new[] { "escape", "Fecha o menu de contexto." },
-                              new[] { "down arrow", "Se o foco não estiver dentro do menu e o menu estiver aberto, coloca o foco no primeiro item. Se um item já estiver focado, move o foco para o próximo menuitem dentro do submenu." },
-                              new[] { "up arrow", "Se o foco não estiver dentro do menu e o menu estiver aberto, coloca o foco no último item. Se um item já estiver focado, move o foco para o próximo menuitem dentro do submenu." },
-                              new[] { "right arrow", "Abre um submenu, se houver, e move o foco para o primeiro item." },
-                              new[] { "left arrow", "Fecha um submenu e move o foco para o item raiz do submenu fechado." },
-                              new[] { "home", "Move o foco para o primeiro menuitem dentro do submenu." },
-                              new[] { "end", "Move o foco para o último menuitem dentro do submenu." }
-                          })"/>
-            </Code>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades e Métodos" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "Itens do menu." },
+                              new[] { "ShowAsync(anchor)", "Task", "Exibe o menu ancorado ao elemento (ou ao anterior)." },
+                              new[] { "HideAsync()", "Task", "Oculta o menu." },
+                              new[] { "ToggleAsync(anchor)", "Task", "Alterna exibição/ocultação." },
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "Disparado ao clicar em um item." },
+                              new[] { "OnShow / OnHide", "EventCallback", "Notificações de exibição/ocultação." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="contextmenu"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code> e os <code>AdditionalAttributes</code>.</p></div></ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O menu é ancorado a um elemento (via <code>ShowAsync(target)</code>), não à posição do cursor (<code>x, y</code>) como no upstream.</li>
+                        <li>O fechamento ao clicar fora (document) ainda não é automático.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private OpContextMenu? _menu;
+    private ElementReference _trigger;
+    private string? _lastCommand;
+
+    private readonly List<OpMenuItem> _items = new()
+    {
+        new OpMenuItem { Label = "Copiar", Icon = "pi pi-copy", Command = () => { } },
+        new OpMenuItem { Label = "Colar", Icon = "pi pi-clipboard" },
+        new OpMenuItem
+        {
+            Label = "Compartilhar",
+            Icon = "pi pi-share-alt",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "E-mail" },
+                new() { Label = "Link" }
+            }
+        },
+        new OpMenuItem { Separator = true },
+        new OpMenuItem { Label = "Excluir", Icon = "pi pi-trash" }
+    };
+
+    private Task ShowMenuAsync() => _menu?.ShowAsync(_trigger) ?? Task.CompletedTask;
+
+    private void OnItem(OpMenuItem item) => _lastCommand = item.Label;
+
     private const string ImportCode = """
-        import { ContextMenuModule } from 'primeng/contextmenu';
+        @using OpBlazorUI.Base.Components.Menu
+        @using OpBlazorUI.Base.Models
+
+        <button class="p-button" @ref="_trigger" @onclick="ShowMenuAsync">Mostrar menu</button>
+        <OpContextMenu @ref="_menu" Model="_items" />
+
+        @code {
+            private OpContextMenu? _menu;
+            private ElementReference _trigger;
+            private Task ShowMenuAsync() => _menu?.ShowAsync(_trigger) ?? Task.CompletedTask;
+        }
         """;
 
     private const string BasicCode = """
-        <img #img src="https://primefaces.org/cdn/primeng/images/demo/nature/nature2.jpg" alt="Logo" aria-haspopup="true" class="w-full md:w-[30rem] rounded shadow-lg" />
-        <p-contextmenu [target]="img" [model]="items" />
+        <OpContextMenu @ref="_menu" Model="_items" OnItemClick="OnItem" />
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Copiar", Icon = "pi pi-copy" },
+                new OpMenuItem { Label = "Colar", Icon = "pi pi-clipboard" },
+                new OpMenuItem { Separator = true },
+                new OpMenuItem { Label = "Excluir", Icon = "pi pi-trash" }
+            };
+        }
         """;
 
-    private const string DocumentCode = """
-        <p-contextmenu [model]="items" [global]="true" />
-        """;
-
-    private const string TemplateCode = """
-        <ul class="m-0 p-0 list-none border border-surface-200 dark:border-surface-700 rounded p-4 flex flex-col gap-2 w-full md:w-[30rem]">
-            <li
-                *ngFor="let product of data"
-                class="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded border border-transparent transition-all transition-duration-200"
-                [ngClass]="{ 'border-primary': selectedId === product.id }"
-                (contextmenu)="onContextMenu($event)"
-            >
-                <div class="flex flex-wrap p-2 items-center gap-4">
-                    <img class="w-16 shrink-0 rounded" src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" />
-                    <div class="flex-1 flex flex-col gap-1">
-                        <span class="font-bold">{{ product.name }}</span>
-                        <div class="flex items-center gap-2">
-                            <i class="pi pi-tag text-sm"></i>
-                            <span>{{ product.category }}</span>
-                        </div>
-                    </div>
-                    <span class="font-bold ml-8">&#36;{{ product.price }}</span>
-                </div>
-            </li>
-        </ul>
-
-        <p-contextmenu #cm [model]="items" (onHide)="onHide()">
-            <ng-template #item let-item>
-                <a pRipple class="flex items-center px-4 py-3 cursor-pointer">
-                    <span [class]="item.icon"></span>
-                    <span class="ms-2">{{ item.label }}</span>
-                    <p-badge *ngIf="item.badge" class="ms-auto" [value]="item.badge" />
-                    <span *ngIf="item.shortcut" class="ms-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
-                    <i *ngIf="item.items" class="pi pi-angle-right ms-auto rotate-90 lg:rotate-0"></i>
-                </a>
-            </ng-template>
-        </p-contextmenu>
-        """;
-
-    private const string CommandCode = """
-        <p-toast />
-        <ul class="m-0 list-none border border-surface rounded p-4 flex flex-col gap-2 w-full sm:w-96">
-            <li
-                *ngFor="let user of users"
-                class="p-2 hover:bg-emphasis rounded border border-transparent transition-all duration-200 flex items-center justify-content-between"
-                [ngClass]="{ 'border-primary': selectedId === user.id }"
-                (contextmenu)="onContextMenu($event, user)"
-            >
-                <div class="flex flex-1 items-center gap-2">
-                    <img class="w-8 h-8" [alt]="user.name" [src]="'https://primefaces.org/cdn/primeng/images/demo/avatar/' + user.image" />
-                    <span class="font-bold">{{ user.name }}</span>
-                </div>
-                <p-tag [value]="user.role" [severity]="getBadge(user)" />
-            </li>
-        </ul>
-
-        <p-contextmenu #cm [model]="items" (onHide)="onHide()" />
-        """;
-
-    private const string RouterCode = """
-        <span #span class="inline-flex items-center justify-center border-2 border-primary rounded w-16 h-16" aria-haspopup="true">
-            <svg width="31" height="33" viewBox="0 0 31 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="..." fill="var(--p-primary-color)" />
-            </svg>
-        </span>
-        <p-contextmenu [target]="span" [model]="items" />
+    private const string AccessibilityCode = """
+        <OpContextMenu @ref="_menu" Model="_items" />
         """;
 }
