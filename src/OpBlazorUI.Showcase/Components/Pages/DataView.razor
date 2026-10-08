@@ -1,481 +1,515 @@
 @page "/dataview"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.DataView
+@using OpBlazorUI.Base.Components.Paginator
+@using OpBlazorUI.Base.Components.Select
+@using OpBlazorUI.Base.Components.SelectButton
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Tag
+@using OpBlazorUI.Base.Components.Skeleton
 
 <PageTitle>DataView - OpBlazorUI</PageTitle>
 
 <DocComponent Title="DataView"
-              Description="Exibe os dados em layout de grade ou lista com recursos de paginação e ordenação. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="Exibe os dados em layout de grade ou lista com recursos de paginação. Na v21 o layout é sempre definido pelos templates ListTemplate e GridTemplate.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O DataView exige um valor exibido junto com um template <code>list</code> que recebe um objeto da coleção e retorna o conteúdo.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>O DataView exige uma coleção em <code>Items</code> e um template <code>ListTemplate</code> que
+                recebe o contexto com os itens da página atual. Diferente de versões anteriores, o conteúdo não é
+                mais gerado pelo componente: o layout lista precisa de um <code>ListTemplate</code>.</p>
+            </Description>
+            <ChildContent>
+                <OpDataView TItem="Product" Items="_products" Layout="list">
+                    <ListTemplate Context="ctx">@ListItems(ctx.Items)</ListTemplate>
+                </OpDataView>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Paginação" Id="pagination">
-            <Description><p>A paginação é habilitada com as propriedades <code>paginator</code> e <code>rows</code>. Consulte a documentação de <a href="/paginator">Paginator</a> para mais informações sobre como customizar o paginador.</p></Description>
-            <Code><CodeBlock Code="@PaginationCode" Language="html"/></Code>
+            <Description>
+                <p>A paginação é habilitada com as propriedades <code>Paginator</code> e <code>Rows</code>. Consulte a
+                documentação de <a href="/paginator">Paginator</a> para mais informações sobre como customizar o
+                paginador.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2">
+                    <OpDataView TItem="Product" Items="_products" Layout="list" Paginator="true" Rows="4" @bind-First="_first">
+                        <ListTemplate Context="ctx">@ListItems(ctx.Items)</ListTemplate>
+                    </OpDataView>
+                    <span class="text-sm">Primeiro registro: <b>@(_first + 1)</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PaginationCode"/></Code>
         </DocSection>
 
         <DocSection Label="Ordenação" Id="sorting">
-            <Description><p>A ordenação embutida é controlada pelos bindings das propriedades <code>sortField</code> e <code>sortOrder</code> a partir de uma UI customizada.</p></Description>
-            <Code><CodeBlock Code="@SortingCode" Language="html"/></Code>
+            <Description>
+                <p>A ordenação embutida do upstream (<code>sortField</code>/<code>sortOrder</code>) não é exposta pelo
+                componente Blazor. A ordenação pode ser feita pelo consumidor, reordenando <code>Items</code> a partir
+                de uma UI customizada — como o campo no <code>HeaderTemplate</code> deste exemplo.</p>
+            </Description>
+            <ChildContent>
+                <OpDataView TItem="Product" Items="_sortedProducts" Layout="list">
+                    <HeaderTemplate>
+                        <div class="flex justify-end">
+                            <OpSelect TValue="string" @bind-Value="_sortKey" Options="_sortOptions" OptionLabel="Label"
+                                      OptionValue="Value" OnChange="ApplySort" Placeholder="Ordenar por preço" StyleClass="w-56"/>
+                        </div>
+                    </HeaderTemplate>
+                    <ListTemplate Context="ctx">@ListItems(ctx.Items)</ListTemplate>
+                </OpDataView>
+            </ChildContent>
+            <Code><CodeBlock Code="@SortingCode"/></Code>
         </DocSection>
 
         <DocSection Label="Layout" Id="layout">
-            <Description><p>O DataView suporta os modos de exibição <code>list</code> e <code>grid</code> definidos pela propriedade <code>layout</code>. O modo <code>grid</code> não é embutido por questões de flexibilidade e exige uma biblioteca com recursos de CSS grid como o Tailwind.</p></Description>
-            <Code><CodeBlock Code="@LayoutCode" Language="html"/></Code>
+            <Description>
+                <p>O DataView suporta os modos de exibição <code>list</code> e <code>grid</code> definidos pela
+                propriedade <code>Layout</code>. Cada modo exige o seu template (<code>ListTemplate</code> ou
+                <code>GridTemplate</code>). Use o <code>HeaderTemplate</code> para alternar entre eles.</p>
+            </Description>
+            <ChildContent>
+                <OpDataView TItem="Product" Items="_products" Layout="@_layout">
+                    <HeaderTemplate>
+                        <div class="flex justify-end">
+                            <OpSelectButton TValue="string" @bind-Value="_layout" Options="_layoutOptions" AllowEmpty="false">
+                                <ItemTemplate Context="ctx">
+                                    <i class="pi @LayoutIcon(ctx.Option)" aria-hidden="true"></i>
+                                </ItemTemplate>
+                            </OpSelectButton>
+                        </div>
+                    </HeaderTemplate>
+                    <ListTemplate Context="ctx">@ListItems(ctx.Items)</ListTemplate>
+                    <GridTemplate Context="ctx">@GridItems(ctx.Items)</GridTemplate>
+                </OpDataView>
+            </ChildContent>
+            <Code><CodeBlock Code="@LayoutCode"/></Code>
         </DocSection>
 
         <DocSection Label="Carregando" Id="loading">
-            <Description><p>Enquanto os dados estão sendo carregados, o componente <a href="/skeleton">Skeleton</a> pode ser usado para indicar o estado de carregamento.</p></Description>
-            <Code><CodeBlock Code="@LoadingCode" Language="html"/></Code>
+            <Description>
+                <p>Enquanto os dados estão sendo carregados, use a propriedade <code>Loading</code> para exibir o
+                overlay e o <code>LoadingTemplate</code> para conteúdo customizado — por exemplo, componentes
+                <a href="/skeleton">Skeleton</a>.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <div class="flex justify-end">
+                        <OpButton Label="Recarregar" Icon="pi pi-refresh" OnClick="Reload" Loading="_reloading"/>
+                    </div>
+                    <OpDataView TItem="Product" Items="_products" Layout="list" Loading="_reloading">
+                        <LoadingTemplate>
+                            <div style="padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+                                <OpSkeleton Height="2rem"/>
+                                <OpSkeleton Width="60%" Height="2rem"/>
+                                <OpSkeleton Height="2rem"/>
+                            </div>
+                        </LoadingTemplate>
+                        <ListTemplate Context="ctx">@ListItems(ctx.Items)</ListTemplate>
+                    </OpDataView>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoadingCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Vazio" Id="empty">
+            <Description>
+                <p>Quando a coleção está vazia, o DataView exibe a mensagem definida em <code>EmptyMessage</code>. Use
+                o <code>EmptyTemplate</code> para conteúdo customizado.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <OpDataView TItem="Product" Items="_emptyProducts" Layout="list" EmptyMessage="Nenhum produto encontrado.">
+                        <ListTemplate Context="ctx">@ListItems(ctx.Items)</ListTemplate>
+                    </OpDataView>
+                    <OpDataView TItem="Product" Items="_emptyProducts" Layout="grid" EmptyMessage="Nenhum produto encontrado.">
+                        <GridTemplate Context="ctx">@GridItems(ctx.Items)</GridTemplate>
+                        <EmptyTemplate>
+                            <div style="padding:2rem; display:flex; flex-direction:column; align-items:center; gap:.5rem;">
+                                <i class="pi pi-inbox" style="font-size:2rem; color:var(--p-text-muted-color);" aria-hidden="true"></i>
+                                <span>Nenhum produto encontrado.</span>
+                            </div>
+                        </EmptyTemplate>
+                    </OpDataView>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@EmptyCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O elemento contêiner que envolve os botões de opção de layout tem o papel <code>group</code>, enquanto cada elemento de botão usa o papel <code>button</code> e o <code>aria-pressed</code> é atualizado conforme o estado de seleção. Os valores para descrever os botões são derivados das propriedades <code>aria.listView</code> e <code>aria.gridView</code> da API de <a href="/configuration/#locale">locale</a>, respectivamente.</p>
-                <p>Consulte a documentação de acessibilidade do <a href="/paginator">Paginator</a> para o paginador do componente.</p>
+                <p>O contêiner da lista não impõe papéis ARIA próprios; o conteúdo é definido pelos seus templates. Os
+                botões de layout, quando usados no <code>HeaderTemplate</code>, devem informar o estado com
+                <code>aria-pressed</code> e um rótulo com <code>AriaLabel</code>.</p>
+                <p>Consulte a documentação de acessibilidade do <a href="/paginator">Paginator</a> para o paginador do
+                componente.</p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Move o foco para os botões." },
-                              new[] { "space", "Alterna o estado marcado de um botão." }
+                              new[] { "tab", "Move o foco para os controles do cabeçalho e do paginador." },
+                              new[] { "enter / space", "Ativa o controle de layout em foco." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Items", "IReadOnlyList&lt;TItem&gt;", "[]", "Coleção de dados exibida pelo componente." },
+                              new[] { "Layout", "string", "list", "Layout: <code>list</code> ou <code>grid</code>." },
+                              new[] { "Paginator", "bool", "false", "Habilita o paginador." },
+                              new[] { "Rows", "int", "10", "Número de registros por página." },
+                              new[] { "First", "int", "0", "Índice do primeiro registro da página (usar <code>@@bind-First</code>)." },
+                              new[] { "TotalRecords", "int", "0", "Total de registros; quando <code>0</code>, usa a contagem de <code>Items</code>." },
+                              new[] { "Lazy", "bool", "false", "Modo lazy: o componente não fatia os dados (o consumidor fornece a página)." },
+                              new[] { "PageLinks", "int", "5", "Quantidade de links de página exibidos." },
+                              new[] { "AlwaysShowPaginator", "bool", "true", "Mantém o paginador visível mesmo com uma única página." },
+                              new[] { "RowsPerPageOptions", "IReadOnlyList&lt;int&gt;?", "null", "Opções de registros por página no dropdown do paginador." },
+                              new[] { "PaginatorPosition", "string", "bottom", "Posição do paginador: <code>top</code>, <code>bottom</code> ou <code>both</code>." },
+                              new[] { "PaginatorStyleClass", "string?", "null", "Classes adicionais no paginador." },
+                              new[] { "Loading", "bool", "false", "Exibe o overlay de carregamento." },
+                              new[] { "EmptyMessage", "string?", "No records found.", "Mensagem exibida quando não há registros." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "FirstChanged", "EventCallback&lt;int&gt;", "Notifica a mudança do primeiro registro (binding de <code>First</code>)." },
+                              new[] { "OnPageChange", "EventCallback&lt;OpPaginatorState&gt;", "Disparado quando a página muda; recebe <code>First</code>, <code>Rows</code>, <code>Page</code> e <code>PageCount</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ListTemplate", "RenderFragment&lt;OpDataViewListContext&lt;TItem&gt;&gt;?", "Conteúdo do modo <code>list</code>; o contexto expõe <code>.Items</code> (itens da página)." },
+                              new[] { "GridTemplate", "RenderFragment&lt;OpDataViewGridContext&lt;TItem&gt;&gt;?", "Conteúdo do modo <code>grid</code>; o contexto expõe <code>.Items</code> (itens da página)." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo exibido acima da lista/grade." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Conteúdo exibido abaixo da lista/grade." },
+                              new[] { "EmptyTemplate", "RenderFragment?", "Conteúdo exibido quando não há registros (substitui <code>EmptyMessage</code>)." },
+                              new[] { "LoadingTemplate", "RenderFragment?", "Conteúdo do overlay de carregamento (substitui o spinner padrão)." },
+                              new[] { "TemplateLeft", "RenderFragment?", "Conteúdo extra à esquerda no paginador." },
+                              new[] { "TemplateRight", "RenderFragment?", "Conteúdo extra à direita no paginador." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="dataview"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há ordenação nem filtragem embutidas do upstream (<code>sortField</code>, <code>sortOrder</code>, <code>filter</code>); a ordenação precisa ser feita pelo consumidor reordenando <code>Items</code>.</li>
+                        <li>Na v21 a lista/grade é sempre renderizada pelos templates <code>ListTemplate</code>/<code>GridTemplate</code>; o componente não gera markup de item sozinho.</li>
+                        <li><code>Rows</code> não possui evento <code>RowsChanged</code>: se o consumidor alterar o número de linhas por página, mantenha o valor em uma variável própria para não sobrescrever a seleção.</li>
+                        <li>Não há o <code>selectbutton</code> de alternância de layout embutido no cabeçalho; ele é montado no <code>HeaderTemplate</code>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private string _layout = "list";
+    private int _first;
+    private bool _reloading;
+    private string? _sortKey;
+
+    private readonly IReadOnlyList<Product> _products = BuildProducts();
+    private IReadOnlyList<Product> _sortedProducts = BuildProducts();
+    private static readonly IReadOnlyList<Product> _emptyProducts = Array.Empty<Product>();
+
+    private static readonly object[] _layoutOptions = ["list", "grid"];
+
+    private static readonly object[] _sortOptions =
+    [
+        new SortOption("Preço: menor para o maior", "price-asc"),
+        new SortOption("Preço: maior para o menor", "price-desc")
+    ];
+
+    private sealed record Product(string Name, string Category, string Image, decimal Price, int Rating, string InventoryStatus);
+
+    private sealed record SortOption(string Label, string Value);
+
+    private static IReadOnlyList<Product> BuildProducts() =>
+    [
+        new("Bamboo Watch", "Acessórios", "bamboo-watch.jpg", 65, 5, "INSTOCK"),
+        new("Black Watch", "Acessórios", "black-watch.jpg", 72, 4, "INSTOCK"),
+        new("Blue Band", "Fitness", "blue-band.jpg", 79, 3, "LOWSTOCK"),
+        new("Blue T-Shirt", "Vestuário", "blue-t-shirt.jpg", 29, 5, "INSTOCK"),
+        new("Bolt Shirt", "Vestuário", "bolt-shirt.jpg", 89, 4, "LOWSTOCK"),
+        new("Chakra Bracelet", "Acessórios", "chakra-bracelet.jpg", 45, 4, "OUTOFSTOCK"),
+        new("Gaming Set", "Eletrônicos", "gaming-set.jpg", 299, 5, "INSTOCK"),
+        new("Yellow T-Shirt", "Vestuário", "yellow-t-shirt.jpg", 27, 4, "INSTOCK"),
+        new("Ivory T-Shirt", "Vestuário", "ivory-t-shirt.jpg", 32, 5, "INSTOCK"),
+        new("Wristwatch", "Acessórios", "wristwatch.jpg", 120, 4, "LOWSTOCK"),
+        new("Smart Watch", "Eletrônicos", "smart-watch.jpg", 199, 5, "INSTOCK"),
+        new("Yoga Mat", "Fitness", "yoga-mat.jpg", 39, 4, "INSTOCK")
+    ];
+
+    private async Task Reload()
+    {
+        _reloading = true;
+        await Task.Delay(1500);
+        _reloading = false;
+    }
+
+    private void ApplySort(string? key)
+    {
+        _sortedProducts = key switch
+        {
+            "price-asc" => _products.OrderBy(p => p.Price).ToList(),
+            "price-desc" => _products.OrderByDescending(p => p.Price).ToList(),
+            _ => _products.ToList()
+        };
+    }
+
+    private static string ImageUrl(string image) => $"https://primefaces.org/cdn/primeng/images/demo/product/{image}";
+
+    private static bool IsOutOfStock(Product p) => p.InventoryStatus == "OUTOFSTOCK";
+
+    private static string LayoutIcon(string option) => option == "list" ? "pi-bars" : "pi-table";
+
+    private static string? SeverityFor(string status) => status switch
+    {
+        "INSTOCK" => "success",
+        "LOWSTOCK" => "warn",
+        "OUTOFSTOCK" => "danger",
+        _ => null
+    };
+
+    private static string ListItemStyle(int index) => index == 0
+        ? "display:flex; align-items:center; gap:1rem; padding:1.5rem;"
+        : "display:flex; align-items:center; gap:1rem; padding:1.5rem; border-top:1px solid var(--p-content-border-color);";
+
+    private RenderFragment ListItems(IReadOnlyList<Product> items) => __builder =>
+    {
+        for (var i = 0; i < items.Count; i++)
+        {
+            var p = items[i];
+            <div style="@ListItemStyle(i)">
+                <div style="position:relative; flex:0 0 8rem;">
+                    <img src="@ImageUrl(p.Image)" alt="@p.Name" style="width:100%; border-radius:var(--p-content-border-radius); display:block;"/>
+                    <span style="position:absolute; left:.25rem; top:.25rem;">
+                        <OpTag Value="@p.InventoryStatus" Severity="@SeverityFor(p.InventoryStatus)"/>
+                    </span>
+                </div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:.25rem;">
+                    <span class="text-sm" style="color:var(--p-text-muted-color);">@p.Category</span>
+                    <span style="font-size:1.125rem; font-weight:500; color:var(--p-text-color);">@p.Name</span>
+                    <span class="flex items-center gap-1 text-sm" style="color:var(--p-text-color);">
+                        <i class="pi pi-star-fill" style="color:#eab308;" aria-hidden="true"></i>@p.Rating
+                    </span>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:.75rem;">
+                    <span class="text-xl font-semibold" style="color:var(--p-text-color);">$@p.Price</span>
+                    <div class="flex gap-2">
+                        <OpButton Icon="pi pi-heart" Outlined="true" AriaLabel="Favoritar"/>
+                        <OpButton Icon="pi pi-shopping-cart" Label="Comprar" Disabled="@IsOutOfStock(p)"/>
+                    </div>
+                </div>
+            </div>
+        }
+    };
+
+    private RenderFragment GridItems(IReadOnlyList<Product> items) => __builder =>
+    {
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(16rem, 1fr)); gap:1rem;">
+            @foreach (var p in items)
+            {
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); background:var(--p-content-background); padding:1rem; display:flex; flex-direction:column; gap:1rem;">
+                    <div style="position:relative; background:var(--p-surface-50); border-radius:var(--p-content-border-radius); padding:1rem; display:flex; justify-content:center;">
+                        <img src="@ImageUrl(p.Image)" alt="@p.Name" style="max-width:100%; border-radius:var(--p-content-border-radius);"/>
+                        <span style="position:absolute; left:.25rem; top:.25rem;">
+                            <OpTag Value="@p.InventoryStatus" Severity="@SeverityFor(p.InventoryStatus)"/>
+                        </span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem;">
+                        <div>
+                            <span class="text-sm" style="color:var(--p-text-muted-color);">@p.Category</span>
+                            <div style="font-weight:500; color:var(--p-text-color);">@p.Name</div>
+                        </div>
+                        <span class="flex items-center gap-1 text-sm" style="color:var(--p-text-color);">
+                            <i class="pi pi-star-fill" style="color:#eab308;" aria-hidden="true"></i>@p.Rating
+                        </span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:.75rem;">
+                        <span class="text-2xl font-semibold" style="color:var(--p-text-color);">$@p.Price</span>
+                        <div class="flex gap-2">
+                            <OpButton Icon="pi pi-shopping-cart" Label="Comprar" Disabled="@IsOutOfStock(p)"/>
+                            <OpButton Icon="pi pi-heart" Outlined="true" AriaLabel="Favoritar"/>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    };
+
     private const string ImportCode = """
-        import { DataViewModule } from 'primeng/dataview';
+        @using OpBlazorUI.Base.Components.DataView
         """;
 
     private const string BasicCode = """
-        <p-dataview #dv [value]="products()">
-            <ng-template #list let-items>
-                <div class="grid grid-cols-12 gap-4 grid-nogutter">
-                    <div class="col-span-12" *ngFor="let item of items; let first = first">
-                        <div
-                            class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
-                            [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }"
-                        >
-                            <div class="md:w-40 relative">
-                                <img
-                                    class="block xl:block mx-auto rounded-border w-full"
-                                    [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
-                                    [alt]="item.name"
-                                />
-                                <p-tag
-                                    [value]="item.inventoryStatus"
-                                    [severity]="getSeverity(item)"
-                                    class="absolute dark:!bg-surface-900"
-                                    [style.left.px]="4"
-                                    [style.top.px]="4"
-                                />
-                            </div>
-                            <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                    <div>
-                                        <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
-                                        <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
-                                    </div>
-                                    <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
-                                        <div
-                                            class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
-                                            style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                                        >
-                                            <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{
-                                                item.rating
-                                            }}</span>
-                                            <i class="pi pi-star-fill text-yellow-500"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col md:items-end gap-8">
-                                    <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{
-                                        '$' + item.price
-                                    }}</span>
-                                    <div class="flex flex-row-reverse md:flex-row gap-2">
-                                        <p-button icon="pi pi-heart" [outlined]="true" />
-                                        <p-button
-                                            icon="pi pi-shopping-cart"
-                                            class="flex-auto md:flex-initial whitespace-nowrap"
-                                            label="Buy Now"
-                                            [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+        <OpDataView TItem="Product" Items="_products" Layout="list">
+            <ListTemplate Context="ctx">
+                @foreach (var p in ctx.Items)
+                {
+                    <div class="flex items-center gap-4 p-3">
+                        <img src="@ImageUrl(p.Image)" alt="@p.Name" style="width:8rem;" />
+                        <div class="flex flex-col gap-1">
+                            <span class="text-sm">@p.Category</span>
+                            <span class="font-medium">@p.Name</span>
                         </div>
+                        <span class="text-xl font-semibold" style="margin-left:auto;">$@p.Price</span>
                     </div>
-                </div>
-            </ng-template>
-        </p-dataview>
+                }
+            </ListTemplate>
+        </OpDataView>
+
+        @code {
+            private sealed record Product(string Name, string Category, string Image, decimal Price);
+            private readonly IReadOnlyList<Product> _products = [ new("Bamboo Watch", "Acessórios", "bamboo-watch.jpg", 65) ];
+        }
         """;
 
     private const string PaginationCode = """
-        <p-dataview [value]="products()" [rows]="5" [paginator]="true">
-            <ng-template #list let-items>
-                <div class="grid grid-cols-12 gap-4 grid-nogutter">
-                    <div class="col-span-12" *ngFor="let item of items; let first = first">
-                        <div
-                            class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
-                            [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }"
-                        >
-                            <div class="md:w-40 relative">
-                                <img
-                                    class="block xl:block mx-auto rounded-border w-full"
-                                    [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
-                                    [alt]="item.name"
-                                />
-                                <p-tag
-                                    [value]="item.inventoryStatus"
-                                    [severity]="getSeverity(item)"
-                                    class="absolute dark:!bg-surface-900"
-                                    [style.left.px]="4"
-                                    [style.top.px]="4"
-                                />
-                            </div>
-                            <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                    <div>
-                                        <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
-                                        <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
-                                    </div>
-                                    <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
-                                        <div
-                                            class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
-                                            style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                                        >
-                                            <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{
-                                                item.rating
-                                            }}</span>
-                                            <i class="pi pi-star-fill text-yellow-500"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col md:items-end gap-8">
-                                    <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{
-                                        '$' + item.price
-                                    }}</span>
-                                    <div class="flex flex-row-reverse md:flex-row gap-2">
-                                        <p-button icon="pi pi-heart" [outlined]="true" />
-                                        <p-button
-                                            icon="pi pi-shopping-cart"
-                                            class="flex-auto md:flex-initial whitespace-nowrap"
-                                            label="Buy Now"
-                                            [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-        </p-dataview>
+        <OpDataView TItem="Product" Items="_products" Layout="list" Paginator="true" Rows="4" @bind-First="_first">
+            <ListTemplate Context="ctx">
+                @foreach (var p in ctx.Items)
+                {
+                    <div>@p.Name</div>
+                }
+            </ListTemplate>
+        </OpDataView>
+
+        @code {
+            private int _first;
+        }
         """;
 
     private const string SortingCode = """
-        <p-dataview [value]="products()" [sortField]="sortField" [sortOrder]="sortOrder">
-            <ng-template #header>
-                <div class="flex flex-col md:flex-row md:justify-between">
-                    <p-select
-                        [options]="sortOptions"
-                        [(ngModel)]="sortKey"
-                        placeholder="Sort By Price"
-                        (onChange)="onSortChange($event)"
-                        class="mb-2 md:mb-0"
-                    />
+        <OpDataView TItem="Product" Items="_sortedProducts" Layout="list">
+            <HeaderTemplate>
+                <div class="flex justify-end">
+                    <OpSelect TValue="string" @bind-Value="_sortKey" Options="_sortOptions" OptionLabel="Label"
+                              OptionValue="Value" OnChange="ApplySort" Placeholder="Ordenar por preço" StyleClass="w-56" />
                 </div>
-            </ng-template>
-            <ng-template #list let-items>
-                <div class="grid grid-cols-12 gap-4 grid-nogutter">
-                    <div class="col-span-12" *ngFor="let item of items; let first = first">
-                        <div
-                            class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
-                            [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }"
-                        >
-                            <div class="md:w-40 relative">
-                                <img
-                                    class="block xl:block mx-auto rounded-border w-full"
-                                    [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
-                                    [alt]="item.name"
-                                />
-                                <p-tag
-                                    [value]="item.inventoryStatus"
-                                    [severity]="getSeverity(item)"
-                                    class="dark:!bg-surface-900 absolute"
-                                    [style.left.px]="4"
-                                    [style.top.px]="4"
-                                />
-                            </div>
-                            <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                    <div>
-                                        <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
-                                        <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
-                                    </div>
-                                    <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
-                                        <div
-                                            class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
-                                            style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                                        >
-                                            <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{
-                                                item.rating
-                                            }}</span>
-                                            <i class="pi pi-star-fill text-yellow-500"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col md:items-end gap-8">
-                                    <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{
-                                        '$' + item.price
-                                    }}</span>
-                                    <div class="flex flex-row-reverse md:flex-row gap-2">
-                                        <p-button icon="pi pi-heart" [outlined]="true" />
-                                        <p-button
-                                            icon="pi pi-shopping-cart"
-                                            class="flex-auto md:flex-initial whitespace-nowrap"
-                                            label="Buy Now"
-                                            [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-        </p-dataview>
+            </HeaderTemplate>
+            <ListTemplate Context="ctx">
+                @foreach (var p in ctx.Items)
+                {
+                    <div>@p.Name - $@p.Price</div>
+                }
+            </ListTemplate>
+        </OpDataView>
+
+        @code {
+            private string? _sortKey;
+
+            private void ApplySort(string? key)
+            {
+                _sortedProducts = key switch
+                {
+                    "price-asc" => _products.OrderBy(p => p.Price).ToList(),
+                    "price-desc" => _products.OrderByDescending(p => p.Price).ToList(),
+                    _ => _products.ToList()
+                };
+            }
+        }
         """;
 
     private const string LayoutCode = """
-        <p-dataview #dv [value]="products()" [layout]="layout">
-            <ng-template #header>
+        <OpDataView TItem="Product" Items="_products" Layout="@_layout">
+            <HeaderTemplate>
                 <div class="flex justify-end">
-                    <p-selectbutton [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
-                        <ng-template #item let-item>
-                            <i class="pi " [ngClass]="{ 'pi-bars': item === 'list', 'pi-table': item === 'grid' }"></i>
-                        </ng-template>
-                    </p-selectbutton>
+                    <OpSelectButton TValue="string" @bind-Value="_layout" Options="_layoutOptions" AllowEmpty="false">
+                        <ItemTemplate Context="ctx">
+                            <i class="pi @(ctx.Option == "list" ? "pi-bars" : "pi-table")"></i>
+                        </ItemTemplate>
+                    </OpSelectButton>
                 </div>
-            </ng-template>
-            <ng-template #list let-items>
-                <div *ngFor="let item of items; let first = first">
-                    <div
-                        class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
-                        [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }"
-                    >
-                        <div class="md:w-40 relative">
-                            <img
-                                class="block xl:block mx-auto rounded w-full"
-                                [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
-                                [alt]="item.name"
-                            />
-                            <p-tag
-                                [value]="item.inventoryStatus"
-                                [severity]="getSeverity(item)"
-                                class="absolute dark:!bg-surface-900"
-                                [style.left.px]="4"
-                                [style.top.px]="4"
-                            />
-                        </div>
-                        <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                            <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                <div>
-                                    <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.category }}</span>
-                                    <div class="text-lg font-medium mt-2">{{ item.name }}</div>
-                                </div>
-                                <div class="bg-surface-100 p-1" style="border-radius: 30px">
-                                    <div
-                                        class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
-                                        style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                                    >
-                                        <span class="text-surface-900 font-medium text-sm">{{ item.rating }}</span>
-                                        <i class="pi pi-star-fill text-yellow-500"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col md:items-end gap-8">
-                                <span class="text-xl font-semibold">{{ item.price | currency: 'USD' }}</span>
-                                <div class="flex flex-row-reverse md:flex-row gap-2">
-                                    <button pButton icon="pi pi-heart" [outlined]="true"></button>
-                                    <button
-                                        pButton
-                                        icon="pi pi-shopping-cart"
-                                        label="Buy Now"
-                                        [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
-                                        class="flex-auto md:flex-initial whitespace-nowrap"
-                                    ></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template #grid let-items>
-                <div class="grid grid-cols-12 gap-4">
-                    <div *ngFor="let product of items" class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-6 p-2">
-                        <div
-                            class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col"
-                        >
-                            <div class="bg-surface-50 flex justify-center rounded p-4">
-                                <div class="relative mx-auto">
-                                    <img
-                                        class="rounded w-full"
-                                        [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image"
-                                        [alt]="product.name"
-                                        style="max-width: 300px"
-                                    />
-                                    <p-tag
-                                        [value]="product.inventoryStatus"
-                                        [severity]="getSeverity(product)"
-                                        class="absolute dark:!bg-surface-900"
-                                        [style.left.px]="4"
-                                        [style.top.px]="4"
-                                    />
-                                </div>
-                            </div>
-                            <div class="pt-6">
-                                <div class="flex flex-row justify-between products-start gap-2">
-                                    <div>
-                                        <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{
-                                            product.category
-                                        }}</span>
-                                        <div class="text-lg font-medium mt-1">{{ product.name }}</div>
-                                    </div>
-                                    <div class="bg-surface-100 p-1" style="border-radius: 30px; height:100%">
-                                        <div
-                                            class="bg-surface-0 flex products-center gap-2 justify-center py-1 px-2"
-                                            style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                                        >
-                                            <span class="text-surface-900 font-medium text-sm">{{ product.rating }}</span>
-                                            <i class="pi pi-star-fill text-yellow-500"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col gap-6 mt-6">
-                                    <span class="text-2xl font-semibold">{{ product.price | currency: 'USD' }}</span>
-                                    <div class="flex gap-2">
-                                        <button
-                                            pButton
-                                            icon="pi pi-shopping-cart"
-                                            label="Buy Now"
-                                            [disabled]="product.inventoryStatus === 'OUTOFSTOCK'"
-                                            class="flex-auto whitespace-nowrap"
-                                        ></button>
-                                        <button pButton icon="pi pi-heart" outlined></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-        </p-dataview>
+            </HeaderTemplate>
+            <ListTemplate Context="ctx">...</ListTemplate>
+            <GridTemplate Context="ctx">...</GridTemplate>
+        </OpDataView>
+
+        @code {
+            private string _layout = "list";
+            private static readonly object[] _layoutOptions = ["list", "grid"];
+        }
         """;
 
     private const string LoadingCode = """
-        <p-dataview #dv [value]="products()" [layout]="layout">
-            <ng-template #header>
-                <div class="flex justify-end">
-                    <p-selectbutton [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
-                        <ng-template #item let-option>
-                            <i [class]="option === 'list' ? 'pi pi-bars' : 'pi pi-table'"></i>
-                        </ng-template>
-                    </p-selectbutton>
+        <OpDataView TItem="Product" Items="_products" Layout="list" Loading="_reloading">
+            <LoadingTemplate>
+                <div style="padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+                    <OpSkeleton Height="2rem" />
+                    <OpSkeleton Width="60%" Height="2rem" />
                 </div>
-            </ng-template>
-            <ng-template #list let-items>
-                <div class="flex flex-col">
-                    <div *ngFor="let i of counterArray(6); let first = first">
-                        <div
-                            class="flex flex-col xl:flex-row xl:items-start p-6 gap-6"
-                            [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }"
-                        >
-                            <p-skeleton class="!w-9/12 sm:!w-64 xl:!w-40 !h-24 mx-auto" />
-                            <div
-                                class="flex flex-col sm:flex-row justify-between items-center xl:items-start flex-1 gap-6"
-                            >
-                                <div class="flex flex-col items-center sm:items-start gap-4">
-                                    <p-skeleton width="8rem" height="2rem" />
-                                    <p-skeleton width="6rem" height="1rem" />
+            </LoadingTemplate>
+            <ListTemplate Context="ctx">...</ListTemplate>
+        </OpDataView>
 
-                                    <div class="flex items-center gap-4">
-                                        <p-skeleton width="6rem" height="1rem" />
-                                        <p-skeleton width="3rem" height="1rem" />
-                                    </div>
-                                </div>
-                                <div class="flex sm:flex-col items-center sm:items-end gap-4 sm:gap-2">
-                                    <p-skeleton width="4rem" height="2rem" />
-                                    <p-skeleton size="3rem" shape="circle" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template #grid let-items>
-                <div class="grid grid-cols-12 gap-4">
-                    <div
-                        *ngFor="let i of counterArray(6); let first = first"
-                        class="col-span-12 sm:col-span-6 xl:col-span-4 p-2"
-                    >
-                        <div
-                            class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded"
-                        >
-                            <div class="flex flex-wrap items-center justify-between gap-2">
-                                <p-skeleton width="6rem" height="2rem" />
-                                <p-skeleton width="3rem" height="1rem" />
-                            </div>
-                            <div class="flex flex-col items-center gap-4 py-8">
-                                <p-skeleton height="10rem" class="w-3/4" class="w-3/4" />
-                                <p-skeleton width="8rem" height="2rem" />
-                                <p-skeleton width="6rem" height="1rem" />
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <p-skeleton width="4rem" height="2rem" />
-                                <p-skeleton width="6rem" height="1rem" shape="circle" size="3rem" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-        </p-dataview>
+        @code {
+            private bool _reloading;
+
+            private async Task Reload()
+            {
+                _reloading = true;
+                await Task.Delay(1500);
+                _reloading = false;
+            }
+        }
+        """;
+
+    private const string EmptyCode = """
+        <OpDataView TItem="Product" Items="_emptyProducts" Layout="list" EmptyMessage="Nenhum produto encontrado.">
+            <ListTemplate Context="ctx">...</ListTemplate>
+        </OpDataView>
+
+        <OpDataView TItem="Product" Items="_emptyProducts" Layout="grid" EmptyMessage="Nenhum produto encontrado.">
+            <GridTemplate Context="ctx">...</GridTemplate>
+            <EmptyTemplate>
+                <div style="padding:2rem; text-align:center;">Nenhum produto encontrado.</div>
+            </EmptyTemplate>
+        </OpDataView>
         """;
 }

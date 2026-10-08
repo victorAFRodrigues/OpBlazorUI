@@ -1,0 +1,6 @@
+/* Ponte de variável: o OpOverlayAttach posiciona a seta escrevendo --p-popover-arrow-left
+   (Arrow="popover"), enquanto o tema do confirmpopup lê --p-confirmpopup-arrow-left.
+   Mapear uma na outra faz a seta acompanhar o alvo sem alterar o overlay.interop.js. */
+.p-confirmpopup {
+    --p-confirmpopup-arrow-left: var(--p-popover-arrow-left, 0px);
+}

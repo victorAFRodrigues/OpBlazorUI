@@ -1,0 +1,142 @@
+@namespace OpBlazorUI.Base.Components.PickList
+@using OpBlazorUI.Base.Components.Common
+@using OpBlazorUI.Base.Components.Listbox
+@typeparam TItem
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (ShowSourceControls)
+    {
+        <div class="p-picklist-controls">
+            <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                    disabled="@SourceMoveDisabled" @onclick="() => MoveItemUp(true)" aria-label="Move Up">
+                <i class="pi pi-angle-up"></i>
+            </button>
+            <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                    disabled="@SourceMoveDisabled" @onclick="() => MoveItemTop(true)" aria-label="Move Top">
+                <i class="pi pi-angle-double-up"></i>
+            </button>
+            <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                    disabled="@SourceMoveDisabled" @onclick="() => MoveItemDown(true)" aria-label="Move Down">
+                <i class="pi pi-angle-down"></i>
+            </button>
+            <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                    disabled="@SourceMoveDisabled" @onclick="() => MoveItemBottom(true)" aria-label="Move Bottom">
+                <i class="pi pi-angle-double-down"></i>
+            </button>
+        </div>
+    }
+
+    <div class="p-picklist-list-container">
+        <OpListbox TValue="TItem"
+                   Options="@(_source.Cast<object>().ToList())"
+                   Multiple="true"
+                   SelectedValues="@_selectedSource"
+                   SelectedValuesChanged="@OnSourceSelectionChanged"
+                   OptionLabel="@OptionLabel"
+                   Filter="@SourceFilterEnabled"
+                   FilterBy="@FilterBy"
+                   ScrollHeight="@ScrollHeight"
+                   ItemTemplate="@ItemTemplate"
+                   HeaderTemplate="@SourceHeaderContent"
+                   EmptyMessage="@EmptyMessage"
+                   Disabled="@Disabled"
+                   AriaLabel="@AriaLabel"
+                   InputId="@_sourceId" />
+    </div>
+
+    <div class="p-picklist-controls">
+        <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                disabled="@MoveRightDisabled" @onclick="MoveRight" aria-label="Move to Target">
+            <i class="pi pi-angle-right"></i>
+        </button>
+        <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                disabled="@MoveAllRightDisabled" @onclick="MoveAllRight" aria-label="Move All to Target">
+            <i class="pi pi-angle-double-right"></i>
+        </button>
+        <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                disabled="@MoveAllLeftDisabled" @onclick="MoveAllLeft" aria-label="Move All to Source">
+            <i class="pi pi-angle-double-left"></i>
+        </button>
+        <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                disabled="@MoveLeftDisabled" @onclick="MoveLeft" aria-label="Move to Source">
+            <i class="pi pi-angle-left"></i>
+        </button>
+    </div>
+
+    <div class="p-picklist-list-container">
+        <OpListbox TValue="TItem"
+                   Options="@(_target.Cast<object>().ToList())"
+                   Multiple="true"
+                   SelectedValues="@_selectedTarget"
+                   SelectedValuesChanged="@OnTargetSelectionChanged"
+                   OptionLabel="@OptionLabel"
+                   Filter="@TargetFilterEnabled"
+                   FilterBy="@FilterBy"
+                   ScrollHeight="@ScrollHeight"
+                   ItemTemplate="@ItemTemplate"
+                   HeaderTemplate="@TargetHeaderContent"
+                   EmptyMessage="@EmptyMessage"
+                   Disabled="@Disabled"
+                   AriaLabel="@AriaLabel"
+                   InputId="@_targetId" />
+    </div>
+
+    @if (ShowTargetControls)
+    {
+        <div class="p-picklist-controls">
+            <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                    disabled="@TargetMoveDisabled" @onclick="() => MoveItemUp(false)" aria-label="Move Up">
+                <i class="pi pi-angle-up"></i>
+            </button>
+            <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                    disabled="@TargetMoveDisabled" @onclick="() => MoveItemTop(false)" aria-label="Move Top">
+                <i class="pi pi-angle-double-up"></i>
+            </button>
+            <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                    disabled="@TargetMoveDisabled" @onclick="() => MoveItemDown(false)" aria-label="Move Down">
+                <i class="pi pi-angle-down"></i>
+            </button>
+            <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                    disabled="@TargetMoveDisabled" @onclick="() => MoveItemBottom(false)" aria-label="Move Bottom">
+                <i class="pi pi-angle-double-down"></i>
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    // Headers entregues ao header de cada Listbox para preservar o layout do upstream
+    // (o .p-picklist também é um flex-row e irmãos extras quebrariam a disposição).
+    private RenderFragment? SourceHeaderContent
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(SourceHeader))
+            {
+                return null;
+            }
+
+            return __builder =>
+            {
+                <div>@SourceHeader</div>
+            };
+        }
+    }
+
+    private RenderFragment? TargetHeaderContent
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(TargetHeader))
+            {
+                return null;
+            }
+
+            return __builder =>
+            {
+                <div>@TargetHeader</div>
+            };
+        }
+    }
+}

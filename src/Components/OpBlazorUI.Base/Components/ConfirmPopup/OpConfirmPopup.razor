@@ -1,0 +1,51 @@
+@namespace OpBlazorUI.Base.Components.ConfirmPopup
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.Common
+@using OpBlazorUI.Base.Components.ConfirmDialog.Models
+@using OpBlazorUI.Base.Components.Overlay
+@inherits OpComponentBase
+
+@if (_visible)
+{
+    @* Mesmo layout do ConfirmDialog (icon + message + footer), porém ancorado a um alvo.
+       O OpOverlayAttach precisa ser o primeiro filho: ele lê o próprio pai como painel. *@
+    <div class="@RootClass"
+         @ref="_root"
+         role="dialog"
+         aria-labelledby="@_messageId"
+         tabindex="-1"
+         @onkeydown="OnKeydown"
+         @attributes="AdditionalAttributes">
+
+        <OpOverlayAttach Anchor="_anchor" Placement="@Placement" KeepMargin="true" Arrow="popover" />
+
+        <div class="p-confirmpopup-content">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <i class="@IconClass" aria-hidden="true"></i>
+            }
+            <span class="p-confirmpopup-message" id="@_messageId">@Message</span>
+        </div>
+
+        <div class="p-confirmpopup-footer">
+            @if (RejectVisible)
+            {
+                <OpButton Label="@RejectLabel"
+                          data-pc-focus="reject"
+                          Icon="@RejectIcon"
+                          StyleClass="@RejectButtonClass"
+                          AriaLabel="@RejectLabel"
+                          @onclick="OnRejectClick" />
+            }
+            @if (AcceptVisible)
+            {
+                <OpButton Label="@AcceptLabel"
+                          data-pc-focus="accept"
+                          Icon="@AcceptIcon"
+                          StyleClass="@AcceptButtonClass"
+                          AriaLabel="@AcceptLabel"
+                          @onclick="OnAcceptClick" />
+            }
+        </div>
+    </div>
+}

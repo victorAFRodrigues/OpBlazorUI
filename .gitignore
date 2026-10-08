@@ -486,3 +486,8 @@ $RECYCLE.BIN/
 
 # Documentos internos de planejamento (não fazem parte do projeto)
 /docs/
+
+# Referências upstream baixadas (regeneráveis por tools/doc-upstream/fetch.sh)
+/tools/doc-upstream/out/
+/tools/doc-upstream/optimus/
+/tools/doc-upstream/src/

@@ -1,0 +1,62 @@
+@namespace OpBlazorUI.Base.Components.OrderList
+@using OpBlazorUI.Base.Components.Common
+@using OpBlazorUI.Base.Components.Listbox
+@typeparam TItem
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <div class="p-orderlist-controls">
+        <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                disabled="@MoveDisabled" @onclick="MoveUp" aria-label="Move Up">
+            <i class="pi pi-angle-up"></i>
+        </button>
+        <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                disabled="@MoveDisabled" @onclick="MoveTop" aria-label="Move Top">
+            <i class="pi pi-angle-double-up"></i>
+        </button>
+        <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                disabled="@MoveDisabled" @onclick="MoveDown" aria-label="Move Down">
+            <i class="pi pi-angle-down"></i>
+        </button>
+        <button type="button" class="p-button p-component p-button-icon-only p-button-secondary"
+                disabled="@MoveDisabled" @onclick="MoveBottom" aria-label="Move Bottom">
+            <i class="pi pi-angle-double-down"></i>
+        </button>
+    </div>
+
+    <OpListbox TValue="TItem"
+               Options="@(_items.Cast<object>().ToList())"
+               Multiple="true"
+               SelectedValues="@_selection"
+               SelectedValuesChanged="@OnSelectionChanged"
+               OptionLabel="@OptionLabel"
+               Filter="@Filter"
+               FilterBy="@FilterBy"
+               ScrollHeight="@ScrollHeight"
+               ItemTemplate="@ItemTemplate"
+               HeaderTemplate="@HeaderContent"
+               EmptyMessage="@EmptyMessage"
+               Disabled="@Disabled"
+               AriaLabel="@AriaLabel"
+               InputId="@_listId" />
+</div>
+
+@code {
+    // O header é entregue ao header do Listbox (não como irmão no flex do .p-orderlist)
+    // para preservar o layout de paridade com o upstream. A classe pedida é mantida.
+    private RenderFragment? HeaderContent
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Header))
+            {
+                return null;
+            }
+
+            return __builder =>
+            {
+                <div class="p-orderlist-header">@Header</div>
+            };
+        }
+    }
+}

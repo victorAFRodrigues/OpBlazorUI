@@ -1,0 +1,84 @@
+@namespace OpBlazorUI.Base.Components.DataView
+@using OpBlazorUI.Base.Components.Common
+@using OpBlazorUI.Base.Components.Paginator
+@typeparam TItem
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (Loading)
+    {
+        <div class="p-dataview-loading">
+            <div class="p-dataview-loading-overlay">
+                @if (LoadingTemplate is not null)
+                {
+                    @LoadingTemplate
+                }
+                else
+                {
+                    <i class="p-dataview-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></i>
+                }
+            </div>
+        </div>
+    }
+
+    @if (HeaderTemplate is not null)
+    {
+        <div class="p-dataview-header">@HeaderTemplate</div>
+    }
+
+    @if (Paginator && (PaginatorPosition == "top" || PaginatorPosition == "both"))
+    {
+        @RenderPaginator("top")
+    }
+
+    <div class="p-dataview-content">
+        @if (Layout == "list")
+        {
+            @(ListTemplate?.Invoke(new OpDataViewListContext<TItem>(PageItems)))
+        }
+        else
+        {
+            @(GridTemplate?.Invoke(new OpDataViewGridContext<TItem>(PageItems)))
+        }
+
+        @if (PageItems.Count == 0 && !Loading)
+        {
+            <div class="p-dataview-empty-message">
+                @if (EmptyTemplate is not null)
+                {
+                    @EmptyTemplate
+                }
+                else
+                {
+                    @EmptyMessage
+                }
+            </div>
+        }
+    </div>
+
+    @if (Paginator && (PaginatorPosition == "bottom" || PaginatorPosition == "both"))
+    {
+        @RenderPaginator("bottom")
+    }
+
+    @if (FooterTemplate is not null)
+    {
+        <div class="p-dataview-footer">@FooterTemplate</div>
+    }
+</div>
+
+@code {
+    private RenderFragment RenderPaginator(string position) => __builder =>
+    {
+        <OpPaginator First="@First"
+                     Rows="@Rows"
+                     TotalRecords="@EffectiveTotal"
+                     PageLinkSize="@PageLinks"
+                     AlwaysShow="@AlwaysShowPaginator"
+                     RowsPerPageOptions="@RowsPerPageOptions"
+                     StyleClass="@Class($"p-dataview-paginator-{position}", PaginatorStyleClass)"
+                     OnPageChange="OnPageChangeHandler"
+                     TemplateLeft="@TemplateLeft"
+                     TemplateRight="@TemplateRight" />
+    };
+}

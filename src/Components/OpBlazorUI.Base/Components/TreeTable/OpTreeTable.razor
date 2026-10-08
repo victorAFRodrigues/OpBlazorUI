@@ -1,0 +1,155 @@
+@namespace OpBlazorUI.Base.Components.TreeTable
+@using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.Common
+@using OpBlazorUI.Base.Components.Paginator
+@using OpBlazorUI.Base.Models
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (Loading)
+    {
+        <div class="p-treetable-loading p-treetable-mask p-overlay-mask">
+            @if (LoadingTemplate is not null)
+            {
+                @LoadingTemplate
+            }
+            else
+            {
+                <i class="p-treetable-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></i>
+            }
+        </div>
+    }
+
+    @if (CaptionTemplate is not null)
+    {
+        <div class="p-treetable-header">@CaptionTemplate</div>
+    }
+
+    @if (Paginator && (PaginatorPosition == "top" || PaginatorPosition == "both"))
+    {
+        @RenderPaginator("top")
+    }
+
+    <div class="p-treetable-table-container" style="overflow: auto;">
+        <table class="p-treetable-table" role="treegrid">
+            <thead class="p-treetable-thead">
+                @if (HeaderTemplate is not null)
+                {
+                    <tr>
+                        <th class="p-treetable-header-cell" colspan="@ColumnSpan">@HeaderTemplate</th>
+                    </tr>
+                }
+                <tr>
+                    @if (ShowSelectionColumn)
+                    {
+                        <th class="p-treetable-header-cell p-treetable-selection-column" style="width: 3rem">
+                            <OpCheckbox Value="@AllSelected"
+                                        Indeterminate="@(AllPartial && !AllSelected)"
+                                        ValueChanged="(_) => ToggleAllNodes()"
+                                        TabIndex="-1"/>
+                        </th>
+                    }
+                    @foreach (var column in Columns)
+                    {
+                        <th class="@ThClass(column)"
+                            style="@(string.IsNullOrEmpty(column.Width) ? null : $"width:{column.Width}")">
+                            <div class="p-treetable-column-header-content">
+                                <span class="p-treetable-column-title">@column.Header</span>
+                                @if (column.Sortable)
+                                {
+                                    <i class="p-icon pi pi-sort-alt p-treetable-sort-icon"></i>
+                                }
+                            </div>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody class="p-treetable-tbody">
+                @if (VisibleNodes.Count == 0)
+                {
+                    <tr>
+                        <td class="p-treetable-empty-message" colspan="@ColumnSpan">
+                            @if (EmptyTemplate is not null)
+                            {
+                                @EmptyTemplate
+                            }
+                            else
+                            {
+                                @EmptyMessage
+                            }
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var flat in VisibleNodes)
+                    {
+                        <tr class="@TrClass(flat.Node)" @onclick="() => OnRowClicked(flat.Node)">
+                            @if (ShowSelectionColumn)
+                            {
+                                <td class="p-treetable-body-cell p-treetable-selection-column"
+                                    @onclick:stopPropagation="true">
+                                    <OpCheckbox Value="@IsSelected(flat.Node)"
+                                                Indeterminate="@IsPartial(flat.Node)"
+                                                ValueChanged="(_) => ToggleCheckboxAsync(flat.Node)"
+                                                TabIndex="-1"/>
+                                </td>
+                            }
+                            @foreach (var column in Columns)
+                            {
+                                <td class="p-treetable-body-cell @column.StyleClass">
+                                    <div class="p-treetable-body-cell-content" style="@CellStyle(CellContext(flat, column), column)">
+                                        @if (IsExpandableColumn(column))
+                                        {
+                                            <button type="button"
+                                                    class="p-treetable-node-toggle-button"
+                                                    style="@(flat.Node.Leaf ? "visibility: hidden" : null)"
+                                                    aria-label="@(flat.Node.Leaf ? null : (flat.Node.Expanded ? "Collapse" : "Expand"))"
+                                                    aria-expanded="@(flat.Node.Leaf ? null : (flat.Node.Expanded ? "true" : "false"))"
+                                                    tabindex="-1"
+                                                    @onclick="() => ToggleExpand(flat.Node)"
+                                                    @onclick:stopPropagation="true">
+                                                <i class="p-treetable-node-toggle-icon pi @(flat.Node.Expanded ? "pi-chevron-down" : "pi-chevron-right")"></i>
+                                            </button>
+                                        }
+                                        @if (column.BodyTemplate is not null)
+                                        {
+                                            @column.BodyTemplate(CellContext(flat, column))
+                                        }
+                                        else
+                                        {
+                                            @GetFieldValue(flat.Node, column.Field)
+                                        }
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+            @if (FooterTemplate is not null)
+            {
+                <tfoot class="p-treetable-tfoot">@FooterTemplate</tfoot>
+            }
+        </table>
+    </div>
+
+    @if (Paginator && (PaginatorPosition == "bottom" || PaginatorPosition == "both"))
+    {
+        @RenderPaginator("bottom")
+    }
+</div>
+
+@code {
+    private RenderFragment RenderPaginator(string position) => __builder =>
+    {
+        <OpPaginator First="@First"
+                     Rows="@Rows"
+                     TotalRecords="@EffectiveTotal"
+                     PageLinkSize="@PageLinks"
+                     AlwaysShow="@AlwaysShowPaginator"
+                     RowsPerPageOptions="@RowsPerPageOptions"
+                     StyleClass="@Class($"p-treetable-paginator-{position}")"
+                     OnPageChange="OnPageChangeHandler"/>
+    };
+}

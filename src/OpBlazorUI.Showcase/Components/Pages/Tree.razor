@@ -1,97 +1,206 @@
 @page "/tree"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Tree
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.InputSwitch
+@using OpBlazorUI.Base.Models
 
 <PageTitle>Tree - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Tree"
-              Description="Árvore que exibe dados hierárquicos. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Tree exibe dados hierárquicos em nós expansíveis, com seleção, filtro, carregamento sob demanda e templates.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Description>
+                <p>O componente usa os modelos <code>OpTreeNode</code> e é consumido diretamente em Razor.</p>
+            </Description>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O componente Tree requer um array de objetos <code>TreeNode</code> como seu <code>value</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>O Tree requer uma coleção de instâncias de <code>OpTreeNode</code> como <code>Nodes</code>.</p>
+            </Description>
+            <ChildContent>
+                <OpTree Nodes="_basicNodes" ShowHeader="false"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Controlado" Id="controlled">
-            <Description><p>Tree requer uma coleção de instâncias de <code>TreeNode</code> como <code>value</code>.</p></Description>
-            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O estado de expansão fica em cada nó pela propriedade <code>Expanded</code>. Para expandir ou
+                    recolher todos via código, altere essa propriedade e force uma nova renderização.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <OpButton Label="Expandir todos" Icon="pi pi-plus" OnClick="ExpandAll"/>
+                    <OpButton Label="Recolher todos" Icon="pi pi-minus" Severity="secondary" OnClick="CollapseAll"/>
+                </div>
+                <OpTree Nodes="_controlledNodes" ShowHeader="false"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ControlledCode"/></Code>
         </DocSection>
 
         <DocSection Label="Seleção - Única" Id="single">
-            <Description><p>A seleção de um único nó é configurada definindo <code>selectionMode</code> como <code>single</code>, junto da propriedade <code>selection</code> para gerenciar o vínculo do valor selecionado.</p></Description>
-            <Code><CodeBlock Code="@SingleCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A seleção de um único nó é configurada definindo <code>SelectionMode</code> como
+                    <code>single</code>, junto da propriedade <code>Selection</code> para gerenciar o vínculo do
+                    valor selecionado (um <code>OpTreeNode</code>).
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTree Nodes="_singleNodes" SelectionMode="single" @bind-Selection="_singleSelection" ShowHeader="false"/>
+                <p class="mt-2">Selecionado: <b>@LabelText(_singleSelection)</b></p>
+            </ChildContent>
+            <Code><CodeBlock Code="@SingleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Seleção - Múltipla" Id="multiple">
             <Description>
-                <p>Mais de um nó pode ser selecionado definindo <code>selectionMode</code> como <code>multiple</code>. Por padrão, no modo de seleção múltipla, é necessário pressionar a metaKey (ex.: <code>⌘</code>) para adicionar às seleções existentes; isso pode ser configurado desabilitando a propriedade <code>metaKeySelection</code>. Note que em dispositivos com toque, o Tree sempre ignora a metaKey.</p>
-                <p>No modo de seleção múltipla, o vínculo de valor deve ser um par chave-valor, onde a chave é a chave do nó e o valor é um booleano que indica a seleção.</p>
+                <p>
+                    Mais de um nó pode ser selecionado definindo <code>SelectionMode</code> como
+                    <code>multiple</code>. Por padrão, é necessário pressionar a metaKey (ex.: <code>⌘</code>) para
+                    adicionar às seleções existentes; isso pode ser configurado desabilitando a propriedade
+                    <code>MetaKeySelection</code>. Note que em dispositivos com toque, o Tree sempre ignora a metaKey.
+                </p>
+                <p>
+                    No modo de seleção múltipla, o vínculo de valor é um par chave-valor, onde a chave é a
+                    <code>Key</code> do nó e o valor é um booleano que indica a seleção.
+                </p>
             </Description>
-            <Code><CodeBlock Code="@MultipleCode" Language="html"/></Code>
+            <ChildContent>
+                <div class="flex items-center gap-2 mb-4">
+                    <OpInputSwitch @bind-Value="_metaKey"/>
+                    <span>MetaKey</span>
+                </div>
+                <OpTree Nodes="_multipleNodes" SelectionMode="multiple" MetaKeySelection="_metaKey"
+                        @bind-Selection="_multiSelection" ShowHeader="false"/>
+                <p class="mt-2">Selecionados: <b>@CountSelection(_multiSelection)</b></p>
+            </ChildContent>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Seleção - Checkbox" Id="checkbox">
-            <Description><p>A seleção de múltiplos nós via checkboxes é habilitada configurando <code>selectionMode</code> como <code>checkbox</code>.</p></Description>
-            <Code><CodeBlock Code="@CheckboxCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A seleção de múltiplos nós via checkboxes é habilitada configurando <code>SelectionMode</code>
+                    como <code>checkbox</code>. A marcação se propaga para os descendentes e recalcula os ancestrais.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTree Nodes="_checkboxNodes" SelectionMode="checkbox" @bind-Selection="_checkboxSelection" ShowHeader="false"/>
+                <p class="mt-2">Selecionados: <b>@CountSelection(_checkboxSelection)</b></p>
+            </ChildContent>
+            <Code><CodeBlock Code="@CheckboxCode"/></Code>
         </DocSection>
 
         <DocSection Label="Eventos" Id="event">
-            <Description><p>Um evento é fornecido para cada tipo de interação do usuário, como expandir, recolher e selecionar.</p></Description>
-            <Code><CodeBlock Code="@EventCode" Language="html"/></Code>
+            <Description>
+                <p>Um evento é fornecido para cada tipo de interação do usuário, como expandir, recolher e selecionar.</p>
+            </Description>
+            <ChildContent>
+                <OpTree Nodes="_eventNodes" SelectionMode="single" @bind-Selection="_eventSelection"
+                        OnNodeExpand="OnExpand" OnNodeCollapse="OnCollapse"
+                        OnNodeSelect="OnSelect" OnNodeUnselect="OnUnselect" ShowHeader="false"/>
+                <ul class="mt-2" style="min-height:5rem">
+                    @foreach (var entry in _eventLog)
+                    {
+                        <li>@entry</li>
+                    }
+                </ul>
+            </ChildContent>
+            <Code><CodeBlock Code="@EventCode"/></Code>
         </DocSection>
 
         <DocSection Label="Lazy" Id="lazy">
-            <Description><p>O carregamento lazy é útil ao lidar com grandes conjuntos de dados; neste exemplo, os nós são carregados dinamicamente sob demanda usando a propriedade <code>loading</code> e o método <code>onNodeExpand</code>.</p></Description>
-            <Code><CodeBlock Code="@LazyCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O carregamento lazy é útil ao lidar com grandes conjuntos de dados; neste exemplo, os nós são
+                    carregados dinamicamente sob demanda usando <code>Loading</code> e o evento
+                    <code>OnNodeExpand</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTree Nodes="_lazyNodes" Loading="_lazyLoading" LoadingMode="icon" OnNodeExpand="LoadLazy" ShowHeader="false"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@LazyCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template" Id="template">
-            <Description><p>O conteúdo personalizado do nó, no lugar do rótulo, é definido com a propriedade <code>pTemplate</code>.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O conteúdo personalizado do nó, no lugar do rótulo, é definido com <code>ItemTemplate</code>,
+                    que recebe o próprio <code>OpTreeNode</code> como contexto.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTree Nodes="_templateNodes" @bind-Selection="_templateSelection" ShowHeader="false">
+                    <ItemTemplate Context="node">
+                        @if (node.Data is string url)
+                        {
+                            <a href="@url" target="_blank" rel="noopener noreferrer" class="text-primary-500">@node.Label</a>
+                        }
+                        else
+                        {
+                            <b>@node.Label</b>
+                        }
+                    </ItemTemplate>
+                </OpTree>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Filtro" Id="filter">
-            <Description><p>A filtragem é habilitada adicionando a propriedade <code>filter</code>; por padrão, a propriedade label de um nó é usada para comparar com o valor no campo de texto. Para personalizar qual(is) campo(s) devem ser usados na busca, defina a propriedade <code>filterBy</code>. Além disso, <code>filterMode</code> especifica a estratégia de filtragem. No modo <code>lenient</code>, quando a consulta corresponde a um nó, os filhos do nó não são pesquisados adiante, pois todos os descendentes do nó são incluídos. Por outro lado, no modo <code>strict</code>, quando a consulta corresponde a um nó, a filtragem continua em todos os descendentes.</p></Description>
-            <Code><CodeBlock Code="@FilterCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Virtual Scroll - Preload" Id="preload">
-            <Description><p>VirtualScroller é uma abordagem de desempenho para lidar com grandes volumes de dados de forma eficiente. Definir a propriedade <code>virtualScroll</code> como true e fornecer um <code>virtualScrollItemSize</code> em pixels é o suficiente para habilitar essa funcionalidade.</p></Description>
-            <Code><CodeBlock Code="@PreloadCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Virtual Scroll - Lazy" Id="lazyvirtualscroll">
-            <Description><p>VirtualScroller é uma abordagem de desempenho para lidar com grandes volumes de dados de forma eficiente. Definir a propriedade <code>virtualScroll</code> como true e fornecer um <code>virtualScrollItemSize</code> em pixels é o suficiente para habilitar essa funcionalidade.</p></Description>
-            <Code><CodeBlock Code="@LazyVirtualScrollCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Arrastar e Soltar - Único" Id="dragdrop-single">
-            <Description><p>Os nós podem ser reordenados dentro da mesma árvore e também transferidos entre outras árvores usando arrastar e soltar.</p></Description>
-            <Code><CodeBlock Code="@DragDropSingleCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Arrastar e Soltar - Múltiplo" Id="dragdrop-multiple">
-            <Description><p>Os nós também podem ser transferidos entre várias árvores. As propriedades <code>draggableScope</code> e <code>droppableScope</code> definem chaves para restringir as ações entre as árvores. Neste exemplo, os nós só podem ser transferidos do início para o fim.</p></Description>
-            <Code><CodeBlock Code="@DragDropMultipleCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Menu de Contexto" Id="contextmenu">
-            <Description><p>O Tree tem integração exclusiva com o ContextMenu usando a propriedade <code>contextMenu</code>, junto de <code>contextMenuSelection</code> para gerenciar a seleção.</p></Description>
-            <Code><CodeBlock Code="@ContextMenuCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A filtragem é habilitada adicionando a propriedade <code>Filter</code>; por padrão, a propriedade
+                    <code>Label</code> de um nó é usada para comparar com o valor no campo de texto. Para personalizar
+                    qual(is) campo(s) devem ser usados na busca, defina <code>FilterBy</code>. Além disso,
+                    <code>FilterMode</code> especifica a estratégia de filtragem. No modo <code>lenient</code>, quando
+                    a consulta corresponde a um nó, os filhos do nó não são pesquisados adiante, pois todos os
+                    descendentes do nó são incluídos. Por outro lado, no modo <code>strict</code>, quando a consulta
+                    corresponde a um nó, a filtragem continua em todos os descendentes.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap gap-6">
+                    <div style="width:18rem">
+                        <OpTree Nodes="_filterLenientNodes" Filter="true" FilterMode="lenient"
+                                FilterPlaceholder="Filtro lenient" ShowHeader="false"/>
+                    </div>
+                    <div style="width:18rem">
+                        <OpTree Nodes="_filterStrictNodes" Filter="true" FilterMode="strict"
+                                FilterPlaceholder="Filtro strict" ShowHeader="false"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilterCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O valor para descrever o componente pode ser informado via <code>aria-labelledby</code> ou <code>aria-label</code>. O elemento de lista raiz tem o papel <code>tree</code>, enquanto cada item de lista tem o papel <code>treeitem</code>, junto dos atributos <code>aria-label</code>, <code>aria-selected</code> e <code>aria-expanded</code>. Na seleção por checkbox, <code>aria-checked</code> é usado em vez de <code>aria-selected</code>. O elemento contêiner de um nó da árvore tem o papel <code>group</code>. Os ícones de checkbox e toggle são ocultados dos leitores de tela, pois o elemento pai com papel <code>treeitem</code> e seus atributos são usados em seu lugar para leitores e suporte a teclado. Os atributos <code>aria-setsize</code>, <code>aria-posinset</code> e <code>aria-level</code> são calculados implicitamente e adicionados a cada treeitem.</p>
-                <h3>Suporte a teclado</h3>
+                <p>
+                    O valor para descrever o componente pode ser informado via <code>AriaLabel</code>. O elemento de
+                    lista raiz tem o papel <code>tree</code>, enquanto cada item de lista tem o papel
+                    <code>treeitem</code>, junto dos atributos <code>aria-label</code>, <code>aria-selected</code> e
+                    <code>aria-expanded</code>. Na seleção por checkbox, <code>aria-checked</code> é usado em vez de
+                    <code>aria-selected</code>. O elemento contêiner de um nó da árvore tem o papel
+                    <code>group</code>. Os ícones de checkbox e toggle são ocultados dos leitores de tela, pois o
+                    elemento pai com papel <code>treeitem</code> e seus atributos são usados em seu lugar para
+                    leitores e suporte a teclado. Os atributos <code>aria-setsize</code>, <code>aria-posinset</code> e
+                    <code>aria-level</code> são calculados implicitamente e adicionados a cada treeitem.
+                </p>
             </Description>
             <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
+                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
                               new[] { "tab", "Move o foco para o primeiro nó selecionado quando o foco entra no componente; se não houver nenhum, o primeiro elemento recebe o foco. Se o foco já estiver dentro do componente, move o foco para o próximo elemento focalizável na sequência de tabulação da página." },
@@ -108,122 +217,393 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Nodes", "IReadOnlyList&lt;OpTreeNode&gt;", "[]", "Coleção de nós raiz." },
+                              new[] { "SelectionMode", "string", "single", "Modo de seleção: <code>single</code>, <code>multiple</code> ou <code>checkbox</code>." },
+                              new[] { "Selection", "object?", "null", "Em <code>single</code>, um <code>OpTreeNode</code>; em <code>multiple</code>/<code>checkbox</code>, um <code>IReadOnlyDictionary&lt;string, bool&gt;</code> chaveado por <code>Key</code>." },
+                              new[] { "SelectionChanged", "EventCallback&lt;object?&gt;", "—", "Notifica a mudança de seleção (usar com <code>@@bind-Selection</code>)." },
+                              new[] { "MetaKeySelection", "bool", "true", "Exige ctrl/meta para somar/remover itens na seleção múltipla." },
+                              new[] { "Filter", "bool", "false", "Habilita o campo de filtro." },
+                              new[] { "FilterBy", "string", "label", "Campo(s) usados no filtro, separados por vírgula." },
+                              new[] { "FilterMode", "string", "lenient", "Estratégia: <code>lenient</code> ou <code>strict</code>." },
+                              new[] { "FilterPlaceholder", "string", "Filter", "Placeholder do campo de filtro." },
+                              new[] { "ScrollHeight", "string?", "400px", "Altura máxima da área de nós; <code>flex</code> para ocupar o contêiner." },
+                              new[] { "Loading", "bool", "false", "Exibe o indicador de carregamento." },
+                              new[] { "LoadingMode", "string", "mask", "Exibição do loading: <code>mask</code> ou <code>icon</code>." },
+                              new[] { "EmptyMessage", "string?", "null", "Mensagem exibida quando não há nós." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível do elemento <code>tree</code>." },
+                              new[] { "ShowHeader", "bool", "true", "Renderiza o cabeçalho (quando há <code>HeaderTemplate</code>)." },
+                              new[] { "StyleClass / AdditionalAttributes", "—", "—", "Classes e atributos extras repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "HeaderTemplate", "RenderFragment?", "Cabeçalho customizado." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Rodapé customizado." },
+                              new[] { "EmptyTemplate", "RenderFragment?", "Conteúdo exibido no lugar de <code>EmptyMessage</code>." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpTreeNode&gt;", "Conteúdo customizado de cada nó." },
+                              new[] { "TogglerIconTemplate", "RenderFragment&lt;OpTreeNode&gt;", "Ícone customizado do botão de expandir/recolher." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnNodeExpand", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao expandir um nó (inclusive no lazy)." },
+                              new[] { "OnNodeCollapse", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao recolher um nó." },
+                              new[] { "OnNodeSelect", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao selecionar um nó." },
+                              new[] { "OnNodeUnselect", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao desmarcar um nó." },
+                              new[] { "OnFilter", "EventCallback&lt;string&gt;", "Disparado a cada digitação no filtro." },
+                              new[] { "SelectionChanged", "EventCallback&lt;object?&gt;", "Disparado quando a seleção muda." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+        <DocSection Label="Classes CSS e Tokens" Id="theming">
+            <ChildContent><DocTokens Component="tree"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code>.</p></div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li><b>Virtual Scroll</b> (preload e lazy) não foi portado: não existem <code>VirtualScroll</code> nem <code>VirtualScrollItemSize</code>.</li>
+                        <li><b>Arrastar e soltar</b> não foi portado: não há <code>DraggableNodes</code>/<code>DroppableNodes</code> nem escopos.</li>
+                        <li><b>Menu de contexto</b> não foi portado: não há integração com <code>OpContextMenu</code> nem <code>ContextMenuSelection</code>.</li>
+                        <li>O <code>ItemTemplate</code> substitui o <code>pTemplate</code> do Angular — há um único template por árvore, em vez de templates nomeados por chave.</li>
+                        <li>No modo de seleção <code>multiple</code> a seleção é um dicionário por <code>Key</code>, e não uma lista de nós como no Angular.</li>
+                        <li>A filtragem reconstrói (clona) a árvore internamente, de modo que as referências dos nós exibidos diferem das de <code>Nodes</code>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private List<OpTreeNode> _basicNodes = new();
+    private List<OpTreeNode> _controlledNodes = new();
+    private List<OpTreeNode> _singleNodes = new();
+    private List<OpTreeNode> _multipleNodes = new();
+    private List<OpTreeNode> _checkboxNodes = new();
+    private List<OpTreeNode> _eventNodes = new();
+    private List<OpTreeNode> _lazyNodes = new();
+    private List<OpTreeNode> _templateNodes = new();
+    private List<OpTreeNode> _filterLenientNodes = new();
+    private List<OpTreeNode> _filterStrictNodes = new();
+
+    private object? _singleSelection;
+    private object? _multiSelection;
+    private object? _checkboxSelection;
+    private object? _eventSelection;
+    private object? _templateSelection;
+    private bool _metaKey = true;
+    private bool _lazyLoading;
+    private readonly List<string> _eventLog = new();
+
+    protected override void OnInitialized()
+    {
+        _basicNodes = FileTree();
+        _controlledNodes = FileTree();
+        _singleNodes = FileTree();
+        _multipleNodes = FileTree();
+        _checkboxNodes = FileTree();
+        _eventNodes = FileTree();
+        _lazyNodes = LazyTree();
+        _templateNodes = TemplateTree();
+        _filterLenientNodes = FilterTree();
+        _filterStrictNodes = FilterTree();
+        _multiSelection = new Dictionary<string, bool> { ["0"] = true };
+    }
+
+    private void ExpandAll()
+    {
+        foreach (var node in Flatten(_controlledNodes))
+        {
+            if (!node.Leaf)
+            {
+                node.Expanded = true;
+            }
+        }
+
+        _controlledNodes = _controlledNodes.ToList();
+    }
+
+    private void CollapseAll()
+    {
+        foreach (var node in Flatten(_controlledNodes))
+        {
+            node.Expanded = false;
+        }
+
+        _controlledNodes = _controlledNodes.ToList();
+    }
+
+    private static IEnumerable<OpTreeNode> Flatten(IEnumerable<OpTreeNode> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            yield return node;
+            if (node.Children is not null)
+            {
+                foreach (var child in Flatten(node.Children))
+                {
+                    yield return child;
+                }
+            }
+        }
+    }
+
+    private void OnExpand(OpTreeNode node) => Log($"expandiu: {node.Label}");
+    private void OnCollapse(OpTreeNode node) => Log($"recolheu: {node.Label}");
+    private void OnSelect(OpTreeNode node) => Log($"selecionou: {node.Label}");
+    private void OnUnselect(OpTreeNode node) => Log($"desmarcou: {node.Label}");
+
+    private void Log(string message)
+    {
+        _eventLog.Insert(0, message);
+        if (_eventLog.Count > 6)
+        {
+            _eventLog.RemoveAt(_eventLog.Count - 1);
+        }
+    }
+
+    private async Task LoadLazy(OpTreeNode node)
+    {
+        _lazyLoading = true;
+        await Task.Delay(700);
+        node.Children = new List<OpTreeNode>
+        {
+            new() { Key = $"{node.Key}-0", Label = "Recém-carregado 1", Leaf = true },
+            new() { Key = $"{node.Key}-1", Label = "Recém-carregado 2", Leaf = true }
+        };
+        node.Loading = false;
+        _lazyLoading = false;
+    }
+
+    private static string LabelText(object? selection) => selection is OpTreeNode node ? node.Label : "nenhum";
+
+    private static int CountSelection(object? selection) =>
+        selection is IReadOnlyDictionary<string, bool> map ? map.Count(entry => entry.Value) : 0;
+
+    private static List<OpTreeNode> FileTree() => new()
+    {
+        new OpTreeNode
+        {
+            Key = "0", Label = "Documentos", Icon = "pi pi-folder", Expanded = true,
+            Children = new()
+            {
+                new OpTreeNode { Key = "0-0", Label = "Contratos", Icon = "pi pi-folder", Leaf = true },
+                new OpTreeNode { Key = "0-1", Label = "Relatórios", Icon = "pi pi-folder", Leaf = true }
+            }
+        },
+        new OpTreeNode
+        {
+            Key = "1", Label = "Imagens", Icon = "pi pi-image", Expanded = true,
+            Children = new()
+            {
+                new OpTreeNode { Key = "1-0", Label = "logo.png", Icon = "pi pi-file", Leaf = true },
+                new OpTreeNode { Key = "1-1", Label = "banner.jpg", Icon = "pi pi-file", Leaf = true }
+            }
+        },
+        new OpTreeNode { Key = "2", Label = "README.md", Icon = "pi pi-file", Leaf = true }
+    };
+
+    private static List<OpTreeNode> LazyTree() => new()
+    {
+        new OpTreeNode { Key = "lz-0", Label = "Carregar Documentos", Icon = "pi pi-folder-open" },
+        new OpTreeNode { Key = "lz-1", Label = "Carregar Imagens", Icon = "pi pi-folder-open" }
+    };
+
+    private static List<OpTreeNode> TemplateTree() => new()
+    {
+        new OpTreeNode
+        {
+            Key = "t-0", Label = "Links", Expanded = true,
+            Children = new()
+            {
+                new OpTreeNode { Key = "t-1", Label = "PrimeNG", Data = "https://v21.primeng.org", Leaf = true },
+                new OpTreeNode { Key = "t-2", Label = "Optimus UI", Data = "https://optimus.openng.org", Leaf = true },
+                new OpTreeNode { Key = "t-3", Label = "OpBlazorUI (sem link)", Leaf = true }
+            }
+        }
+    };
+
+    private static List<OpTreeNode> FilterTree() => new()
+    {
+        new OpTreeNode
+        {
+            Key = "f-0", Label = "Documentos", Expanded = true,
+            Children = new()
+            {
+                new OpTreeNode
+                {
+                    Key = "f-0-0", Label = "Contratos", Expanded = true,
+                    Children = new()
+                    {
+                        new OpTreeNode { Key = "f-0-0-0", Label = "Fornecedores", Leaf = true }
+                    }
+                },
+                new OpTreeNode { Key = "f-0-1", Label = "Relatórios", Leaf = true }
+            }
+        },
+        new OpTreeNode { Key = "f-1", Label = "Imagens", Leaf = true }
+    };
+
     private const string ImportCode = """
-        import { TreeModule } from 'primeng/tree';
+        @using OpBlazorUI.Base.Components.Tree
+        @using OpBlazorUI.Base.Models
+
+        <OpTree Nodes="_nodes" />
+
+        @code {
+            private List<OpTreeNode> _nodes = new()
+            {
+                new() { Key = "0", Label = "Documentos", Leaf = true }
+            };
+        }
         """;
 
     private const string BasicCode = """
-        <p-tree [value]="files()" class="w-full md:w-[30rem]" />
+        <OpTree Nodes="_nodes" />
+
+        @code {
+            private List<OpTreeNode> _nodes = new()
+            {
+                new OpTreeNode
+                {
+                    Key = "0", Label = "Documentos", Expanded = true,
+                    Children = new()
+                    {
+                        new OpTreeNode { Key = "0-0", Label = "Contratos", Leaf = true }
+                    }
+                }
+            };
+        }
         """;
 
     private const string ControlledCode = """
-        <div class="flex flex-wrap gap-2 mb-6">
-            <p-button icon="pi pi-plus" label="Expand all" (click)="expandAll()" />
-            <p-button icon="pi pi-minus" label="Collapse all" (click)="collapseAll()" />
-        </div>
-        <p-tree [value]="files()" class="w-full md:w-[30rem]" />
+        <OpButton Label="Expandir todos" Icon="pi pi-plus" OnClick="ExpandAll" />
+        <OpButton Label="Recolher todos" Icon="pi pi-minus" OnClick="CollapseAll" />
+        <OpTree Nodes="_nodes" />
+
+        @code {
+            private void ExpandAll()
+            {
+                foreach (var node in Flatten(_nodes)) node.Expanded = true;
+                _nodes = _nodes.ToList();
+            }
+
+            private void CollapseAll()
+            {
+                foreach (var node in Flatten(_nodes)) node.Expanded = false;
+                _nodes = _nodes.ToList();
+            }
+        }
         """;
 
     private const string SingleCode = """
-        <p-tree [value]="files()" class="w-full md:w-[30rem]" selectionMode="single" [(selection)]="selectedFile" />
+        <OpTree Nodes="_nodes" SelectionMode="single" @bind-Selection="_selection" />
+
+        @code {
+            private object? _selection;
+        }
         """;
 
     private const string MultipleCode = """
-        <div class="flex items-center mb-6 gap-2">
-            <p-toggleswitch inputId="input-metakey" [(ngModel)]="metaKeySelection" />
-            <label for="input-metakey">MetaKey</label>
-        </div>
-        <p-tree [metaKeySelection]="metaKeySelection" [value]="files()" class="w-full md:w-[30rem]" selectionMode="multiple" [(selection)]="selectedFiles" />
+        <OpInputSwitch @bind-Value="_metaKey" />
+        <OpTree Nodes="_nodes" SelectionMode="multiple" MetaKeySelection="_metaKey"
+                @bind-Selection="_selection" />
+
+        @code {
+            private bool _metaKey = true;
+            private object? _selection;
+        }
         """;
 
     private const string CheckboxCode = """
-        <p-tree [value]="files()" selectionMode="checkbox" class="w-full md:w-[30rem]" [(selection)]="selectedFiles" />
+        <OpTree Nodes="_nodes" SelectionMode="checkbox" @bind-Selection="_selection" />
+
+        @code {
+            private object? _selection;
+        }
         """;
 
     private const string EventCode = """
-        <p-tree [value]="files()" class="w-full md:w-[30rem]" selectionMode="single" [(selection)]="selectedFile" (onNodeExpand)="nodeExpand($event)" (onNodeCollapse)="nodeCollapse($event)" (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)" />
+        <OpTree Nodes="_nodes" SelectionMode="single" @bind-Selection="_selection"
+                OnNodeExpand="OnExpand" OnNodeCollapse="OnCollapse"
+                OnNodeSelect="OnSelect" OnNodeUnselect="OnUnselect" />
+
+        @code {
+            private void OnExpand(OpTreeNode node) { /* ... */ }
+            private void OnCollapse(OpTreeNode node) { /* ... */ }
+            private void OnSelect(OpTreeNode node) { /* ... */ }
+            private void OnUnselect(OpTreeNode node) { /* ... */ }
+        }
         """;
 
     private const string LazyCode = """
-        <p-tree class="w-full md:w-[30rem]" [value]="nodes()" loadingMode="icon" (onNodeExpand)="onNodeExpand($event)" />
+        <OpTree Nodes="_nodes" Loading="_loading" LoadingMode="icon" OnNodeExpand="LoadLazy" />
+
+        @code {
+            private bool _loading;
+
+            private async Task LoadLazy(OpTreeNode node)
+            {
+                _loading = true;
+                await Task.Delay(700);
+                node.Children = new List<OpTreeNode>
+                {
+                    new() { Key = $"{node.Key}-0", Label = "Recém-carregado", Leaf = true }
+                };
+                node.Loading = false;
+                _loading = false;
+            }
+        }
         """;
 
     private const string TemplateCode = """
-        <p-tree [value]="nodes()" class="w-full md:w-[30rem]">
-            <ng-template let-node pTemplate="url">
-                <a [href]="node.data" target="_blank" rel="noopener noreferrer" class="text-surface-700 dark:text-surface-100 hover:text-primary">
-                    {{ node.label }}
-                </a>
-            </ng-template>
-            <ng-template let-node pTemplate="default">
-                <b>{{ node.label }}</b>
-            </ng-template>
-        </p-tree>
+        <OpTree Nodes="_nodes" @bind-Selection="_selection">
+            <ItemTemplate Context="node">
+                @if (node.Data is string url)
+                {
+                    <a href="@url" target="_blank" rel="noopener noreferrer">@node.Label</a>
+                }
+                else
+                {
+                    <b>@node.Label</b>
+                }
+            </ItemTemplate>
+        </OpTree>
         """;
 
     private const string FilterCode = """
-        <p-tree [value]="files()" [filter]="true" filterPlaceholder="Lenient Filter" />
-        <p-tree [value]="files2()" [filter]="true" filterMode="strict" filterPlaceholder="Strict Filter" />
+        <OpTree Nodes="_nodes" Filter="true" FilterMode="lenient" FilterPlaceholder="Filtro lenient" />
+        <OpTree Nodes="_nodes2" Filter="true" FilterMode="strict" FilterPlaceholder="Filtro strict" />
         """;
 
-    private const string PreloadCode = """
-        <p-tree [value]="nodes()" scrollHeight="250px" [virtualScroll]="true" [virtualScrollItemSize]="35" />
-        """;
-
-    private const string LazyVirtualScrollCode = """
-        <p-tree [value]="nodes()" scrollHeight="250px" [virtualScroll]="true" [lazy]="true" [virtualScrollItemSize]="35" (onNodeExpand)="nodeExpand($event)" [loading]="loading()" />
-        """;
-
-    private const string DragDropSingleCode = """
-        <p-tree [value]="files()" class="w-full md:w-[30rem]" [draggableNodes]="true" [droppableNodes]="true" draggableScope="self" droppableScope="self" />
-        """;
-
-    private const string DragDropMultipleCode = """
-        <p-tree [value]="value1()" class="flex-1 border border-surface rounded-lg" [draggableNodes]="true" [droppableNodes]="true" draggableScope="first" droppableScope="none">
-            <ng-template #empty> No Items Left </ng-template>
-        </p-tree>
-        <p-tree [value]="value2()" class="flex-1 border border-surface rounded-lg" [draggableNodes]="true" [droppableNodes]="true" draggableScope="second" droppableScope="first">
-            <ng-template #empty> Drag Nodes Here </ng-template>
-        </p-tree>
-        <p-tree [value]="value3()" class="flex-1 border border-surface rounded-lg" [draggableNodes]="true" [droppableNodes]="true" [droppableScope]="['first', 'second']">
-            <ng-template #empty> Drag Nodes Here </ng-template>
-        </p-tree>
-        """;
-
-    private const string ContextMenuCode = """
-        <p-tree
-            [value]="files()"
-            selectionMode="single"
-            [(selection)]="selectedNode"
-            [(contextMenuSelection)]="contextMenuNode"
-            [contextMenu]="cm"
-            contextMenuSelectionMode="separate"
-        />
-        <p-contextmenu #cm [model]="items" />
+    private const string AccessibilityCode = """
+        <OpTree Nodes="_nodes" AriaLabel="Estrutura de arquivos" />
         """;
 }

@@ -1,161 +1,337 @@
 @page "/timeline"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Timeline
+@using OpBlazorUI.Base.Components.Card
+@using OpBlazorUI.Base.Components.Button
 
 <PageTitle>Timeline - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Timeline"
-              Description="Linha do tempo que visualiza uma série de eventos encadeados. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Timeline visualiza uma série de eventos encadeados.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O Timeline recebe os eventos com a propriedade <code>value</code> como uma coleção de objetos arbitrários. Além disso, o template <code>content</code> é obrigatório para exibir a representação de um evento. O exemplo abaixo é uma amostra de array de eventos usada em toda a documentação.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O Timeline recebe os eventos pela propriedade <code>Items</code> como uma coleção de objetos
+                    arbitrários. O template <code>ContentTemplate</code> é o que exibe a representação de um evento;
+                    o tipo do item é inferido a partir de <code>Items</code>. A coleção abaixo é a amostra usada em
+                    toda a documentação.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpTimeline Items="_events">
+                        <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+                    </OpTimeline>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Alinhamento" Id="alignment">
-            <Description><p>A posição do conteúdo em relação à linha é definida com a propriedade <code>align</code>.</p></Description>
-            <Code><CodeBlock Code="@AlignmentCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A posição do conteúdo em relação à linha é definida com a propriedade <code>Align</code>:
+                    <code>left</code> (padrão), <code>right</code> e <code>alternate</code> no layout vertical.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <div style="width:20rem;">
+                        <OpTimeline Items="_events">
+                            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+                        </OpTimeline>
+                    </div>
+                    <div style="width:20rem;">
+                        <OpTimeline Items="_events" Align="right">
+                            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+                        </OpTimeline>
+                    </div>
+                    <div style="width:20rem;">
+                        <OpTimeline Items="_events" Align="alternate">
+                            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+                        </OpTimeline>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AlignmentCode"/></Code>
         </DocSection>
 
         <DocSection Label="Lado Oposto" Id="opposite">
-            <Description><p>Conteúdo adicional no outro lado da linha pode ser fornecido com a propriedade <code>opposite</code>.</p></Description>
-            <Code><CodeBlock Code="@OppositeCode" Language="html"/></Code>
+            <Description>
+                <p>Conteúdo adicional no outro lado da linha pode ser fornecido pelo template
+                <code>OppositeTemplate</code>.</p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpTimeline Items="_events">
+                        <OppositeTemplate Context="ev">
+                            <span class="text-sm text-muted-color">@ev.Date</span>
+                        </OppositeTemplate>
+                        <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+                    </OpTimeline>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@OppositeCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template" Id="template">
-            <Description><p>Implementação de exemplo com conteúdo personalizado e marcadores estilizados.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Implementação de exemplo com conteúdo personalizado (<code>ContentTemplate</code>) e marcadores
+                    estilizados (<code>MarkerTemplate</code>). O <code>MarkerTemplate</code> substitui o marcador
+                    padrão de cada evento.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpTimeline Items="_events" Align="alternate">
+                        <MarkerTemplate Context="ev">
+                            <span class="inline-flex items-center justify-center rounded-full"
+                                  style="width:2rem;height:2rem;background-color:@ev.Color;color:#fff;">
+                                <i class="@ev.Icon"></i>
+                            </span>
+                        </MarkerTemplate>
+                        <ContentTemplate Context="ev">
+                            <OpCard Header="@ev.Status" Subheader="@ev.Date">
+                                <p class="m-0">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed
+                                    consequuntur error repudiandae numquam deserunt.
+                                </p>
+                                <OpButton Label="Ler mais" Variant="text"/>
+                            </OpCard>
+                        </ContentTemplate>
+                    </OpTimeline>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Horizontal" Id="horizontal">
-            <Description><p>A orientação do Timeline é controlada com a propriedade <code>layout</code>; o padrão é <code>vertical</code>, tendo <code>horizontal</code> como alternativa.</p></Description>
-            <Code><CodeBlock Code="@HorizontalCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A orientação do Timeline é controlada com a propriedade <code>Layout</code>; o padrão é
+                    <code>vertical</code>, tendo <code>horizontal</code> como alternativa. No layout horizontal, o
+                    <code>Align</code> aceita <code>top</code> (padrão), <code>bottom</code> e
+                    <code>alternate</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-6">
+                    <div style="width:100%;">
+                        <OpTimeline Items="_events" Layout="horizontal" Align="top">
+                            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+                        </OpTimeline>
+                    </div>
+                    <div style="width:100%;">
+                        <OpTimeline Items="_events" Layout="horizontal" Align="bottom">
+                            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+                        </OpTimeline>
+                    </div>
+                    <div style="width:100%;">
+                        <OpTimeline Items="_events" Layout="horizontal" Align="alternate">
+                            <OppositeTemplate Context="ev"><span>&nbsp;</span></OppositeTemplate>
+                            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+                        </OpTimeline>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@HorizontalCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O Timeline usa um elemento de lista ordenada semântico para listar os eventos. Nenhum papel específico é imposto; você ainda pode usar qualquer papel e atributo aria, pois qualquer atributo válido é passado para o elemento de lista.</p>
+                <p>
+                    O componente renderiza um contêiner com os eventos como elementos <code>&lt;div&gt;</code> e não
+                    impõe nenhum papel. Como qualquer atributo extra é repassado ao elemento raiz, defina papéis e
+                    atributos ARIA (por exemplo, <code>role="list"</code> com <code>aria-label</code>) quando a lista
+                    precisar ser anunciada como agrupamento.
+                </p>
                 <h3>Suporte a teclado</h3>
                 <p>O componente não inclui nenhum elemento interativo.</p>
             </Description>
+            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Items", "IReadOnlyList&lt;TItem&gt;", "[]", "Coleção de eventos; define o tipo <code>TItem</code> por inferência." },
+                              new[] { "Layout", "string", "\"vertical\"", "Orientação: <code>vertical</code> ou <code>horizontal</code>." },
+                              new[] { "Align", "string", "\"left\"", "Alinhamento: <code>left</code>/<code>right</code>/<code>alternate</code> (vertical) ou <code>top</code>/<code>bottom</code>/<code>alternate</code> (horizontal)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Contexto", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ContentTemplate", "TItem", "Conteúdo do evento (obrigatório para exibir a representação do evento)." },
+                              new[] { "OppositeTemplate", "TItem", "Conteúdo do lado oposto da linha." },
+                              new[] { "MarkerTemplate", "TItem", "Substitui o marcador padrão do evento." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="timeline"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code> (repassados ao
+                    elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O componente usa elementos <code>&lt;div&gt;</code> para os eventos, sem papel de lista automático, diferente da descrição de acessibilidade do upstream.</li>
+                        <li><code>ContentTemplate</code> é opcional na API, mas sem ele a área de conteúdo fica vazia; trate-o como obrigatório.</li>
+                        <li>Não há animações de transição nem de entrada/saída.</li>
+                        <li><code>Align</code> não é validado: valores fora da lista geram uma classe desconhecida.</li>
+                        <li>Não há suporte a linhas de conexão customizadas além do conector padrão do tema.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private sealed record TimelineEvent(string Status, string Date, string Icon, string Color);
+
+    private static readonly TimelineEvent[] _events =
+    [
+        new("Pedido realizado", "15/10/2020 10:30", "pi pi-shopping-cart", "#9C27B0"),
+        new("Em processamento", "15/10/2020 14:00", "pi pi-cog", "#673AB7"),
+        new("Enviado", "15/10/2020 16:15", "pi pi-send", "#FF9800"),
+        new("Entregue", "16/10/2020 10:00", "pi pi-check", "#607D8B")
+    ];
+
     private const string ImportCode = """
-        import { TimelineModule } from 'primeng/timeline';
+        @using OpBlazorUI.Base.Components.Timeline
+
+        <OpTimeline Items="_events">
+            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+        </OpTimeline>
+
+        @code {
+            private sealed record TimelineEvent(string Status, string Date, string Icon, string Color);
+
+            private readonly TimelineEvent[] _events =
+            [
+                new("Pedido realizado", "15/10/2020 10:30", "pi pi-shopping-cart", "#9C27B0")
+            ];
+        }
         """;
 
     private const string BasicCode = """
-        <p-timeline [value]="events">
-            <ng-template #content let-event>
-                {{ event.status }}
-            </ng-template>
-        </p-timeline>
+        <OpTimeline Items="_events">
+            <ContentTemplate Context="ev">
+                @ev.Status
+            </ContentTemplate>
+        </OpTimeline>
+
+        @code {
+            private sealed record TimelineEvent(string Status, string Date, string Icon, string Color);
+
+            private readonly TimelineEvent[] _events =
+            [
+                new("Pedido realizado", "15/10/2020 10:30", "pi pi-shopping-cart", "#9C27B0"),
+                new("Em processamento", "15/10/2020 14:00", "pi pi-cog", "#673AB7"),
+                new("Enviado", "15/10/2020 16:15", "pi pi-send", "#FF9800"),
+                new("Entregue", "16/10/2020 10:00", "pi pi-check", "#607D8B")
+            ];
+        }
         """;
 
     private const string AlignmentCode = """
-        <p-timeline [value]="events" class="w-full md:w-80">
-            <ng-template #content let-event>
-                {{ event.status }}
-            </ng-template>
-        </p-timeline>
+        <OpTimeline Items="_events">
+            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+        </OpTimeline>
 
-        <p-timeline [value]="events" class="w-full md:w-80" align="right">
-            <ng-template #content let-event>
-                {{ event.status }}
-            </ng-template>
-        </p-timeline>
+        <OpTimeline Items="_events" Align="right">
+            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+        </OpTimeline>
 
-        <p-timeline [value]="events" class="w-full md:w-80" align="alternate">
-            <ng-template #content let-event>
-                {{ event.status }}
-            </ng-template>
-        </p-timeline>
+        <OpTimeline Items="_events" Align="alternate">
+            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+        </OpTimeline>
         """;
 
     private const string OppositeCode = """
-        <p-timeline [value]="events">
-            <ng-template #opposite let-event>
-                <small class="text-surface-500 dark:text-surface-400">{{ event.date }}</small>
-            </ng-template>
-            <ng-template #content let-event>
-                {{ event.status }}
-            </ng-template>
-        </p-timeline>
+        <OpTimeline Items="_events">
+            <OppositeTemplate Context="ev">
+                <span class="text-sm text-muted-color">@ev.Date</span>
+            </OppositeTemplate>
+            <ContentTemplate Context="ev">
+                @ev.Status
+            </ContentTemplate>
+        </OpTimeline>
         """;
 
     private const string TemplateCode = """
-        <p-timeline [value]="events" align="alternate" class="customized-timeline">
-            <ng-template #marker let-event>
-                <span class="flex w-8 h-8 items-center justify-center text-white rounded-full z-10 shadow-sm" [style]="{ 'background-color': event.color }">
-                    <i [class]="event.icon"></i>
+        <OpTimeline Items="_events" Align="alternate">
+            <MarkerTemplate Context="ev">
+                <span class="inline-flex items-center justify-center rounded-full"
+                      style="width:2rem;height:2rem;background-color:@ev.Color;color:#fff;">
+                    <i class="@ev.Icon"></i>
                 </span>
-            </ng-template>
-            <ng-template #content let-event>
-                <p-card [header]="event.status" [subheader]="event.date">
-                    <img *ngIf="event.image" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + event.image" [alt]="event.name" width="200" class="shadow" />
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate
-                        neque quas!
-                    </p>
-                    <p-button label="Read more" [text]="true" />
-                </p-card>
-            </ng-template>
-        </p-timeline>
+            </MarkerTemplate>
+            <ContentTemplate Context="ev">
+                <OpCard Header="@ev.Status" Subheader="@ev.Date">
+                    <p class="m-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                    <OpButton Label="Ler mais" Variant="text" />
+                </OpCard>
+            </ContentTemplate>
+        </OpTimeline>
         """;
 
     private const string HorizontalCode = """
-        <p-timeline [value]="events" layout="horizontal" align="top">
-            <ng-template #content let-event>
-                {{ event }}
-            </ng-template>
-        </p-timeline>
+        <OpTimeline Items="_events" Layout="horizontal" Align="top">
+            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+        </OpTimeline>
 
-        <p-timeline [value]="events" layout="horizontal" align="bottom">
-            <ng-template #content let-event>
-                {{ event }}
-            </ng-template>
-        </p-timeline>
+        <OpTimeline Items="_events" Layout="horizontal" Align="bottom">
+            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+        </OpTimeline>
 
-        <p-timeline [value]="events" layout="horizontal" align="alternate">
-            <ng-template #content let-event>
-                {{ event }}
-            </ng-template>
-            <ng-template #opposite let-event>
-                <span>&nbsp;</span>
-            </ng-template>
-        </p-timeline>
+        <OpTimeline Items="_events" Layout="horizontal" Align="alternate">
+            <OppositeTemplate Context="ev"><span>&nbsp;</span></OppositeTemplate>
+            <ContentTemplate Context="ev">@ev.Status</ContentTemplate>
+        </OpTimeline>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpTimeline Items="_events" role="list" aria-label="Histórico do pedido">
+            <ContentTemplate Context="ev">
+                <span>@ev.Status — @ev.Date</span>
+            </ContentTemplate>
+        </OpTimeline>
         """;
 }
