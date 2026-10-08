@@ -559,6 +559,38 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         return Enumerable.Range(start, 10).ToList();
     }
 
+    /// <summary>
+    /// As setas do cabeçalho navegam conforme a view atual: mês na grade de dias,
+    /// ano na grade de meses e década na grade de anos.
+    /// </summary>
+    private Task NavigatePrev() => _currentView switch
+    {
+        OpDatePickerView.Month => PrevYear(),
+        OpDatePickerView.Year => PrevDecade(),
+        _ => PrevMonth()
+    };
+
+    private Task NavigateNext() => _currentView switch
+    {
+        OpDatePickerView.Month => NextYear(),
+        OpDatePickerView.Year => NextDecade(),
+        _ => NextMonth()
+    };
+
+    private string PrevButtonAriaLabel => _currentView switch
+    {
+        OpDatePickerView.Month => "Previous Year",
+        OpDatePickerView.Year => "Previous Decade",
+        _ => "Previous Month"
+    };
+
+    private string NextButtonAriaLabel => _currentView switch
+    {
+        OpDatePickerView.Month => "Next Year",
+        OpDatePickerView.Year => "Next Decade",
+        _ => "Next Month"
+    };
+
     private async Task PrevMonth()
     {
         _viewDate = _viewDate.AddMonths(-1);
