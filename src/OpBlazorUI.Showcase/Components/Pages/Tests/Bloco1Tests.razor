@@ -1,0 +1,78 @@
+@page "/_tests/bloco1"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using System.Globalization
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Accordion
+@using OpBlazorUI.Base.Components.Dialog
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Components.Select
+@using OpBlazorUI.Base.Components.Slider
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco1Tests.cs). *@
+
+<PageTitle>Testes: bloco 1</PageTitle>
+
+<h1 id="t-title">Testes: bloco 1</h1>
+
+<section id="t-select">
+    <OpSelect TValue="object" @bind-Value="_city" Options="Cities" Placeholder="Cidade"/>
+</section>
+
+<section id="t-dialog">
+    <button type="button" id="t-open-dialog" @onclick="() => _dialogVisible = true">Abrir diálogo</button>
+    <OpDialog @bind-Visible="_dialogVisible" Header="Diálogo" Modal="true" Style="width:25rem">
+        <div id="t-dialog-select">
+            <OpSelect TValue="object" @bind-Value="_dialogCity" Options="Cities" Placeholder="Cidade no diálogo"/>
+        </div>
+    </OpDialog>
+</section>
+
+<section id="t-menu">
+    <button type="button" id="t-menu-toggle" @ref="_menuButton" @onclick="() => _menu.ToggleAsync(_menuButton)">Menu</button>
+    <OpMenu @ref="_menu" Popup="true" Items="MenuItems"/>
+</section>
+
+<section id="t-accordion">
+    <button type="button" id="t-toggle-first" @onclick="() => _showFirst = !_showFirst">Alternar primeiro painel</button>
+    <span id="t-active">@string.Join(",", _active)</span>
+    <OpAccordion @bind-ActiveIndexes="_active">
+        @if (_showFirst)
+        {
+            <OpAccordionPanel Header="Primeiro">Conteúdo 1</OpAccordionPanel>
+        }
+        <OpAccordionPanel Header="Segundo">Conteúdo 2</OpAccordionPanel>
+    </OpAccordion>
+</section>
+
+<section id="t-slider">
+    <OpSlider @bind-Value="_slider" Max="80"/>
+</section>
+
+@code {
+    private static readonly IReadOnlyList<object> Cities = ["Rio", "São Paulo", "Recife", "Curitiba"];
+
+    private static readonly IReadOnlyList<OpMenuItem> MenuItems =
+    [
+        new() { Label = "Novo" },
+        new() { Label = "Abrir" }
+    ];
+
+    private object? _city;
+    private object? _dialogCity;
+    private bool _dialogVisible;
+    private OpMenu _menu = default!;
+    private ElementReference _menuButton;
+    private bool _showFirst = true;
+    private IReadOnlyList<int> _active = [0];
+    private double _slider = 30;
+
+    protected override void OnInitialized()
+    {
+        // Cultura com vírgula decimal (como pt-BR) sem depender dos dados de ICU do WASM.
+        var culture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+        culture.NumberFormat.NumberDecimalSeparator = ",";
+        culture.NumberFormat.NumberGroupSeparator = ".";
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+    }
+}
