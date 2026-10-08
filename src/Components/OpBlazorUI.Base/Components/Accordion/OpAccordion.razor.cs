@@ -27,7 +27,21 @@ public partial class OpAccordion : OpComponentBase
         _ = InvokeAsync(StateHasChanged);
     }
 
-    internal void Unregister(OpAccordionPanel panel) => _panels.Remove(panel);
+    internal void Unregister(OpAccordionPanel panel)
+    {
+        if (!_panels.Remove(panel))
+        {
+            return;
+        }
+
+        // Renumera para um painel registrado depois não colidir com o índice de um existente.
+        for (var i = 0; i < _panels.Count; i++)
+        {
+            _panels[i].Index = i;
+        }
+
+        _ = InvokeAsync(StateHasChanged);
+    }
 
     internal bool IsActive(int index) => ActiveIndexes.Contains(index);
 

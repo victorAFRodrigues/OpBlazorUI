@@ -1,4 +1,6 @@
 const editors = new Map();
+// Ids descartados enquanto o init ainda aguardava o Quill: o init é abortado ao retomar.
+const cancelled = new Set();
 
 function notify(dotNet, method, arg) {
     if (!dotNet) return;
@@ -31,6 +33,7 @@ function ensureQuill(timeoutMs) {
 
 export async function init(dotNet, id, contentEl, toolbarEl, config) {
     await ensureQuill(10000);
+    if (cancelled.delete(id) || !contentEl || !contentEl.isConnected) return false;
 
     const options = Object.assign({}, config || {}, {
         theme: 'snow',
@@ -58,6 +61,7 @@ export async function init(dotNet, id, contentEl, toolbarEl, config) {
     }
 
     editors.set(id, { quill, root, focusIn, focusOut });
+    return true;
 }
 
 export function getHtml(id) {
@@ -84,7 +88,10 @@ export function setReadOnly(id, value) {
 
 export function destroy(id) {
     const entry = editors.get(id);
-    if (!entry) return;
+    if (!entry) {
+        cancelled.add(id);
+        return;
+    }
     if (entry.root) {
         if (entry.focusIn) entry.root.removeEventListener('focusin', entry.focusIn);
         if (entry.focusOut) entry.root.removeEventListener('focusout', entry.focusOut);

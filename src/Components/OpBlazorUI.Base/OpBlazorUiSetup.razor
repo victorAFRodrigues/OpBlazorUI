@@ -38,7 +38,10 @@
         {
             if (firstRender)
             {
-                var current = await Interop.InvokeAsync<ThemeSnapshot>(OpInterop.OptimusInterop, "readTheme");
+                // null quando o módulo não carregou (ex.: 404 nos static assets): segue com o tema
+                // configurado no AddOpBlazorUI em vez de derrubar o circuito.
+                var current = await Interop.InvokeAsync<ThemeSnapshot?>(OpInterop.OptimusInterop, "readTheme");
+                if (current is null) return;
                 var stored = Theme.Persist ? current.Stored : null;
                 // Antes do Restore: o Changed pode renderizar na hora (WebAssembly); o
                 // OnAfterRender seguinte aplica e salva.
