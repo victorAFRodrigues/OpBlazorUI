@@ -1,0 +1,76 @@
+@page "/_tests/bloco2"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Components.FileUpload
+@using OpBlazorUI.Base.Components.InputOtp
+@using OpBlazorUI.Base.Components.Slider
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco2Tests.cs). *@
+
+<PageTitle>Testes: bloco 2</PageTitle>
+
+<h1 id="t-title">Testes: bloco 2</h1>
+
+<section id="t-file-limit">
+    <OpFileUpload Multiple="true" FileLimit="2"/>
+</section>
+
+<section id="t-file-accept">
+    <OpFileUpload Multiple="true" Accept="*/*"/>
+</section>
+
+<section id="t-file-single">
+    <OpFileUpload Accept="image/png"/>
+</section>
+
+<section id="t-otp">
+    <OpInputOtp Length="4" @bind-Value="_otp">
+        <Template Context="ctx">
+            <input type="text"
+                   class="p-inputotp-input p-inputtext"
+                   value="@ctx.Token"
+                   maxlength="1"
+                   aria-label="@($"Dígito {ctx.Index + 1}")"
+                   @oninput="ctx.OnInput"
+                   @onkeydown="ctx.OnKeyDown"/>
+        </Template>
+    </OpInputOtp>
+</section>
+
+<section id="t-range">
+    <OpSliderRange Min="10" Max="100" Value="_range"/>
+</section>
+
+<section id="t-table">
+    <OpDataTable Items="_rows" Columns="_cols" Paginator="true" Rows="10" Sortable="true"/>
+</section>
+
+@code {
+    private string _otp = "";
+
+    // Min=10 com Values=[0,5]: valores fora do intervalo (case do bloco 2).
+    private double[] _range = [0, 5];
+
+    private static readonly List<OpDataTableColumn> _cols = new()
+    {
+        new() { Field = "Id", Header = "Id" },
+        new() { Field = "Name", Header = "Nome" },
+        new() { Field = "Value", Header = "Valor" }
+    };
+
+    private static readonly List<Row> _rows = BuildRows();
+
+    private static List<Row> BuildRows()
+    {
+        var list = new List<Row>(5000);
+        for (var i = 0; i < 5000; i++)
+        {
+            list.Add(new Row(i + 1, $"Item {i + 1}", (i * 37) % 1000));
+        }
+
+        return list;
+    }
+
+    private sealed record Row(int Id, string Name, int Value);
+}

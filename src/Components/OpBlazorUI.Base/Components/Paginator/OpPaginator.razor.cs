@@ -109,6 +109,15 @@ public partial class OpPaginator : ComponentBase
 
     private async Task NavigateAsync(int first)
     {
+        if (Rows <= 0)
+        {
+            // Sem paginação: Rows=0 faria first/Rows lançar DivideByZeroException.
+            await OnPageChange.InvokeAsync(new OpPaginatorState(0, Rows, 0, 0));
+            return;
+        }
+
+        var maxFirst = Math.Max(0, (PageCount - 1) * Rows);
+        first = Math.Clamp(first, 0, maxFirst);
         await OnPageChange.InvokeAsync(new OpPaginatorState(first, Rows, first / Rows, PageCount));
     }
 
@@ -127,9 +136,9 @@ public partial class OpPaginator : ComponentBase
 
     private async Task OnJumpToPageKeydown(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter" && int.TryParse(_jumpToPageText, out var page) && page >= 1)
+        if (e.Key == "Enter" && PageCount > 0 && int.TryParse(_jumpToPageText, out var page) && page >= 1)
         {
-            var target = Math.Min(PageCount - 1, page - 1);
+            var target = Math.Clamp(page - 1, 0, PageCount - 1);
             await NavigateAsync(target * Rows);
         }
     }

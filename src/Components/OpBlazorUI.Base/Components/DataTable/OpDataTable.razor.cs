@@ -10,6 +10,11 @@ public partial class OpDataTable<TItem> : ComponentBase
     private int _sortOrder;
     private int _currentPage;
 
+    private List<TItem>? _sortedCache;
+    private List<TItem>? _pageCache;
+    private bool _computed;
+    private readonly Dictionary<string, PropertyInfo?> _propertyCache = new(StringComparer.OrdinalIgnoreCase);
+
     [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
     [Parameter] public IReadOnlyList<OpDataTableColumn> Columns { get; set; } = Array.Empty<OpDataTableColumn>();
     [Parameter] public bool Sortable { get; set; } = true;
@@ -48,29 +53,94 @@ public partial class OpDataTable<TItem> : ComponentBase
     {
         get
         {
-            var list = SourceItems.ToList();
-            if (_sortOrder == 0 || string.IsNullOrEmpty(_sortField)) return list;
-            list.Sort((a, b) =>
-            {
-                var va = GetFieldValue(a, _sortField);
-                var vb = GetFieldValue(b, _sortField);
-                var cmp = Comparer<object?>.Default.Compare(va, vb);
-                return _sortOrder == 1 ? cmp : -cmp;
-            });
-            return list;
+            EnsureComputed();
+            return _sortedCache!;
         }
     }
 
-    private int PageCount => Math.Max(1, (int)Math.Ceiling(SortedItems.Count / (double)Math.Max(1, Rows)));
+    private int PageCount => Rows > 0
+        ? Math.Max(1, (int)Math.Ceiling(SourceItems.Count / (double)Rows))
+        : 1;
 
     private List<TItem> PageItems
     {
         get
         {
-            if (!Paginator) return SortedItems;
-            var skip = _currentPage * Rows;
-            return SortedItems.Skip(skip).Take(Rows).ToList();
+            EnsureComputed();
+            return _pageCache!;
         }
+    }
+
+    // Os itens ordenados/paginados eram recalculados a cada acesso (várias vezes por render),
+    // com reflection por comparação. Agora são computados uma vez por mudança de
+    // Items/sort/página.
+    private void EnsureComputed()
+    {
+        if (_computed)
+        {
+            return;
+        }
+
+        var list = SourceItems.ToList();
+
+        if (_sortOrder != 0 && !string.IsNullOrEmpty(_sortField))
+        {
+            list.Sort((a, b) =>
+            {
+                var cmp = SafeCompare(GetFieldValue(a, _sortField), GetFieldValue(b, _sortField));
+                return _sortOrder == 1 ? cmp : -cmp;
+            });
+        }
+
+        _sortedCache = list;
+
+        if (Paginator && Rows > 0)
+        {
+            var skip = Math.Max(0, _currentPage) * Rows;
+            _pageCache = list.Skip(skip).Take(Rows).ToList();
+        }
+        else
+        {
+            // Rows <= 0: sem paginação (antes paginava com divisões inválidas).
+            _pageCache = list;
+        }
+
+        _computed = true;
+    }
+
+    protected override void OnParametersSet()
+    {
+        _computed = false;
+
+        // Ajusta a página quando Items/Rows mudam: evita "No results found" numa página que
+        // deixou de existir (ex.: resultado filtrado).
+        var pageCount = Rows > 0
+            ? Math.Max(1, (int)Math.Ceiling(SourceItems.Count / (double)Rows))
+            : 1;
+
+        if (_currentPage >= pageCount) _currentPage = pageCount - 1;
+        if (_currentPage < 0) _currentPage = 0;
+    }
+
+    private static int SafeCompare(object? a, object? b)
+    {
+        if (ReferenceEquals(a, b)) return 0;
+        if (a is null) return -1;
+        if (b is null) return 1;
+
+        try
+        {
+            if (a is IComparable ca && a.GetType() == b.GetType())
+            {
+                return ca.CompareTo(b);
+            }
+        }
+        catch
+        {
+            // comparação inválida: cai no ToString
+        }
+
+        return string.Compare(a.ToString(), b.ToString(), StringComparison.OrdinalIgnoreCase);
     }
 
     private List<TItem> Selected
@@ -158,6 +228,7 @@ public partial class OpDataTable<TItem> : ComponentBase
         }
 
         _currentPage = 0;
+        _computed = false;
         await OnSort.InvokeAsync((_sortField, _sortOrder));
     }
 
@@ -195,6 +266,7 @@ public partial class OpDataTable<TItem> : ComponentBase
     {
         if (page < 0 || page >= PageCount || page == _currentPage) return;
         _currentPage = page;
+        _computed = false;
         await OnPage.InvokeAsync(page);
     }
 
@@ -211,8 +283,13 @@ public partial class OpDataTable<TItem> : ComponentBase
     private object? GetFieldValue(TItem item, string field)
     {
         if (item is null) return null;
-        var property =
-            typeof(TItem).GetProperty(field, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+
+        if (!_propertyCache.TryGetValue(field, out var property))
+        {
+            property = typeof(TItem).GetProperty(field, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            _propertyCache[field] = property;
+        }
+
         return property?.GetValue(item);
     }
 

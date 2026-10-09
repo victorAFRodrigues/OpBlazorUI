@@ -1,11 +1,34 @@
 # Bloco 2 — Exceções e travamentos
 
-**Status:** proposta, aguardando aprovação.
+**Status:** implementado na branch `fix/bloco2-excecoes`; testes Playwright 6/6.
 
 **Objetivo:** nenhuma ação comum do usuário pode lançar exceção não tratada (no Server isso
 derruba o circuito) nem travar a tela. Branch sugerida: `fix/bloco2-excecoes`.
 
 Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
+
+## Resultado
+
+- **2.1 FileUpload:** `GetMultipleFiles(int.MaxValue)` + `FileLimit` no loop; conteúdo lido para
+  memória na seleção (decisão 1a) com `MaxTotalSize` configurável; `OpenReadStream(maxAllowedSize)`
+  em `OpFileUploadFile`; `IsAccepted` trata `*`, `*/*` e `tipo/*`; no modo single uma escolha
+  inválida não apaga a anterior; `UploadAsync` faz `try/catch` do `UploadHandler` e não marca como
+  enviado sem handler no modo `CustomUpload`.
+- **2.2 InputOtp:** foco só quando o `ElementReference` existe (`TryFocusAsync`), cobrindo o uso
+  com `Template`.
+- **2.3 SliderRange:** valores normalizados para `[Min, Max]` e ordenados antes de qualquer
+  `Math.Clamp`.
+- **2.4 DataTable:** itens ordenados/paginados calculados uma vez por render (`EnsureComputed`),
+  `PropertyInfo` em cache, comparador seguro (fallback `ToString`), página ajustada em
+  `OnParametersSet`, `Rows <= 0` = sem paginação. **Paginator:** `Rows=0` não divide por zero e o
+  jump-to-page não emite `First` negativo.
+- **2.5 Concorrência:** `OpToast.Dispose` cancela os timers; `OpMessageService` protegido por lock
+  com snapshot em `Messages`; `OpConfirmDialog.OnConfirmRequested` altera estado dentro do
+  `InvokeAsync`.
+- **2.6 Verificação:** página `/_tests/bloco2` e `tests/OpBlazorUI.Playwright/Bloco2Tests.cs`
+  (6 cenários, sem erro de console).
+
+## Tarefas originais (referência)
 
 ## 2.1 FileUpload (`Components/FileUpload/`)
 
