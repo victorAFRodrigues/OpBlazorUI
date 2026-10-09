@@ -8,6 +8,7 @@ namespace OpBlazorUI.Base.Components.Tabs;
 public partial class OpTabs : OpComponentBase, IOpTabHost
 {
     private readonly List<OpTabPanel> _panels = new();
+    private readonly string _uid = "optabs_" + Guid.NewGuid().ToString("N")[..8];
     private ElementReference _viewport;
 
     [Parameter] public int ActiveIndex { get; set; }
@@ -26,9 +27,9 @@ public partial class OpTabs : OpComponentBase, IOpTabHost
 
     private string ViewportClass => Class("p-tablist-content", Scrollable ? "p-tablist-viewport" : null);
 
-    private string HeaderId(int index) => $"{Id ?? "optabs"}_{index}_header";
+    private string HeaderId(int index) => $"{Id ?? _uid}_{index}_header";
 
-    private string ContentId(int index) => $"{Id ?? "optabs"}_{index}_content";
+    private string ContentId(int index) => $"{Id ?? _uid}_{index}_content";
 
     private string TabClass(OpTabPanel panel, bool active)
         => Class("p-tab", active ? "p-tab-active" : null, panel.Disabled ? "p-disabled" : null);
@@ -45,7 +46,46 @@ public partial class OpTabs : OpComponentBase, IOpTabHost
         _ = InvokeAsync(StateHasChanged);
     }
 
-    void IOpTabHost.Unregister(OpTabPanel panel) => _panels.Remove(panel);
+    void IOpTabHost.Unregister(OpTabPanel panel)
+    {
+        var removed = panel.Index;
+        if (!_panels.Remove(panel))
+        {
+            return;
+        }
+
+        Renumber();
+        AdjustActiveIndex(removed);
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void Renumber()
+    {
+        for (var i = 0; i < _panels.Count; i++)
+        {
+            _panels[i].Index = i;
+        }
+    }
+
+    private void AdjustActiveIndex(int removedIndex)
+    {
+        if (removedIndex < ActiveIndex)
+        {
+            ActiveIndex--;
+        }
+
+        if (ActiveIndex >= _panels.Count)
+        {
+            ActiveIndex = Math.Max(0, _panels.Count - 1);
+        }
+
+        if (ActiveIndex < 0)
+        {
+            ActiveIndex = 0;
+        }
+
+        _ = ActiveIndexChanged.InvokeAsync(ActiveIndex);
+    }
 
     private async Task SelectAsync(int index)
     {

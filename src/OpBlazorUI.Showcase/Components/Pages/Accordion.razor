@@ -94,7 +94,7 @@
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Multiple", "bool", "false", "Permite vários painéis abertos." },
-                              new[] { "ActiveIndexes", "IReadOnlyList&lt;int&gt;", "[]", "Índices abertos (usar <code>@@bind-ActiveIndexes</code>)." }
+                              new[] { "ActiveIndexes", "IReadOnlyList&lt;int&gt;?", "null", "Índices abertos (usar <code>@@bind-ActiveIndexes</code>); <code>null</code> equivale a nenhum." }
                           })"/>
             </ChildContent>
         </DocSection>

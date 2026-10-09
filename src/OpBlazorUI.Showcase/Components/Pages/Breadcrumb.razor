@@ -64,7 +64,8 @@
                               new[] { "SeparatorIcon", "string", "pi pi-chevron-right", "Ícone separador entre itens." },
                               new[] { "AriaLabel", "string?", "null", "Rótulo acessível do <code>nav</code>." },
                               new[] { "HomeTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Template do item Home." },
-                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Template de cada item." }
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Template de cada item." },
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar num item, após executar <code>Command</code>; itens <code>Disabled</code> não disparam." }
                           })"/>
             </ChildContent>
         </DocSection>
@@ -87,7 +88,7 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>Usa o modelo <code>OpMenuItem</code>; o roteamento é feito por <code>Url</code> (links nativos), sem integração com o roteador do Blazor.</li>
+                        <li>Usa o modelo <code>OpMenuItem</code>: <code>Command</code> é executado no clique (com <code>OnItemClick</code> após), <code>Url</code>/<code>Target</code> viram links nativos (sem o roteador do Blazor), <code>Disabled</code> desabilita o item e <code>Visible=false</code> o oculta.</li>
                     </ul>
                 </div>
             </ChildContent>

@@ -15,6 +15,7 @@ public partial class OpDataView<TItem> : OpComponentBase
     [Parameter] public int Rows { get; set; } = 10;
     [Parameter] public int First { get; set; }
     [Parameter] public EventCallback<int> FirstChanged { get; set; }
+    [Parameter] public EventCallback<int> RowsChanged { get; set; }
     [Parameter] public int TotalRecords { get; set; }
     [Parameter] public bool Lazy { get; set; }
     [Parameter] public int PageLinks { get; set; } = 5;
@@ -56,9 +57,15 @@ public partial class OpDataView<TItem> : OpComponentBase
 
     private async Task OnPageChangeHandler(OpPaginatorState state)
     {
+        var rowsChanged = state.Rows != Rows;
         First = state.First;
         Rows = state.Rows;
         await FirstChanged.InvokeAsync(First);
+        if (rowsChanged)
+        {
+            await RowsChanged.InvokeAsync(Rows);
+        }
+
         await OnPageChange.InvokeAsync(state);
     }
 }

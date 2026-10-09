@@ -8,13 +8,11 @@
         {
             <button id="@HeaderId"
                     type="button"
-                    role="button"
                     class="p-fieldset-toggle-button"
                     aria-controls="@ContentId"
                     aria-expanded="@((!Collapsed).ToString().ToLowerInvariant())"
                     aria-label="@Legend"
-                    @onclick="ToggleAsync"
-                    @onkeydown="HandleKeyDown">
+                    @onclick="ToggleAsync">
                 <i class="@ToggleIconClass" aria-hidden="true"></i>
                 <span class="p-fieldset-legend-label">@Legend</span>
                 @HeaderTemplate

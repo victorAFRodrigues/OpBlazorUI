@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.Fieldset;
@@ -43,15 +42,5 @@ public partial class OpFieldset : OpComponentBase
         Collapsed = !Collapsed;
         await CollapsedChanged.InvokeAsync(Collapsed);
         await OnToggle.InvokeAsync(Collapsed);
-    }
-
-    private Task HandleKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Code is "Enter" or "Space" or "NumpadEnter")
-        {
-            return ToggleAsync();
-        }
-
-        return Task.CompletedTask;
     }
 }

@@ -8,10 +8,12 @@ public partial class OpAccordion : OpComponentBase
     private readonly List<OpAccordionPanel> _panels = new();
 
     [Parameter] public bool Multiple { get; set; }
-    [Parameter] public IReadOnlyList<int> ActiveIndexes { get; set; } = Array.Empty<int>();
+    [Parameter] public IReadOnlyList<int>? ActiveIndexes { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     [Parameter] public EventCallback<IReadOnlyList<int>> ActiveIndexesChanged { get; set; }
+
+    private IReadOnlyList<int> ActiveIndexesList => ActiveIndexes ?? Array.Empty<int>();
 
     private string RootClass => Class("p-accordion p-component", StyleClass);
 
@@ -43,11 +45,11 @@ public partial class OpAccordion : OpComponentBase
         _ = InvokeAsync(StateHasChanged);
     }
 
-    internal bool IsActive(int index) => ActiveIndexes.Contains(index);
+    internal bool IsActive(int index) => ActiveIndexesList.Contains(index);
 
     internal async Task ToggleAsync(int index)
     {
-        var list = new List<int>(ActiveIndexes);
+        var list = new List<int>(ActiveIndexesList);
 
         if (!list.Remove(index))
         {
