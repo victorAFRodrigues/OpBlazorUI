@@ -7,8 +7,8 @@
         <div class="@MaskClass"
              style="@MaskStyle"
              @onclick="OnMaskClick"
-             @onkeydown="OnKeydown"
              @attributes="AdditionalAttributes">
+            <OpOverlayAttach Layer="modal" OnEscape="EscapeCallback"/>
             <div class="@RootClass" style="@Style" role="dialog" aria-modal="true">
                 <div class="@ContentClass" style="@ContentStyle" @onclick:stopPropagation="true">@ChildContent</div>
             </div>
@@ -19,8 +19,11 @@
         <div class="@RootClass"
              style="@Style"
              role="dialog"
-             @onkeydown="OnKeydown"
              @attributes="AdditionalAttributes">
+            <OpOverlayAttach Layer="overlay"
+                             AnchorSelector="@TargetSelector"
+                             OnOutsideClick="OutsideCallback"
+                             OnEscape="EscapeCallback"/>
             <div class="@ContentClass" style="@ContentStyle">@ChildContent</div>
         </div>
     }

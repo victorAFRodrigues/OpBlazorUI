@@ -8,10 +8,30 @@ namespace OpBlazorUI.Base.Components.Common;
 /// </summary>
 public abstract class OpModalBase : OpComponentBase
 {
-    protected Task FocusTrapInitAsync(ElementReference element, string? initialFocusSelector = null)
-        => Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusTrapInit", element, initialFocusSelector, true)
-            .AsTask();
+    /// <summary>Indica que o trap de foco está ativo (para restaurar o foco uma única vez).</summary>
+    protected bool IsFocusTrapActive { get; private set; }
 
-    protected Task FocusTrapDisposeAsync(ElementReference element)
-        => Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusTrapDispose", element).AsTask();
+    protected async Task InitFocusTrapAsync(ElementReference element, string? initialFocusSelector = null)
+    {
+        await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusTrapInit", element, initialFocusSelector, true);
+        IsFocusTrapActive = true;
+    }
+
+    /// <summary>
+    /// Restaura o foco ao gatilho e desfaz o trap. Precisa rodar com o elemento ainda no DOM
+    /// (ex.: em <c>OnParametersSetAsync</c>, antes de o pai remover o overlay).
+    /// </summary>
+    protected async Task RestoreFocusAsync(ElementReference element)
+    {
+        if (!IsFocusTrapActive) return;
+        IsFocusTrapActive = false;
+        try
+        {
+            await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusTrapDispose", element);
+        }
+        catch
+        {
+            // elemento já fora do DOM / circuito encerrado
+        }
+    }
 }

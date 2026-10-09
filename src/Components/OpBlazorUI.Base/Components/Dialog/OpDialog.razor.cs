@@ -69,6 +69,15 @@ public partial class OpDialog : OpModalBase
         _headerId = $"op-dialog-title-{Guid.NewGuid():N}";
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        // O pai pode fechar via binding: restaura o foco antes de o elemento sair do DOM.
+        if (!Visible)
+        {
+            await RestoreFocusAsync(_root);
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (Visible && !_lastRenderedVisible)
@@ -80,7 +89,7 @@ public partial class OpDialog : OpModalBase
             {
                 try
                 {
-                    await FocusTrapInitAsync(_root);
+                    await InitFocusTrapAsync(_root);
                 }
                 catch
                 {
@@ -98,17 +107,6 @@ public partial class OpDialog : OpModalBase
                 {
                     // ignore
                 }
-            }
-        }
-        else if (!Visible && _lastRenderedVisible && Modal)
-        {
-            try
-            {
-                await FocusTrapDisposeAsync(_root);
-            }
-            catch
-            {
-                // ignore
             }
         }
 
@@ -142,16 +140,9 @@ public partial class OpDialog : OpModalBase
         _maximized = false;
 
         // Restaura o foco antes de o diálogo sair do DOM (elemento ainda anexado para o JS).
-        if (Modal && Visible)
+        if (Modal)
         {
-            try
-            {
-                await FocusTrapDisposeAsync(_root);
-            }
-            catch
-            {
-                // ignore
-            }
+            await RestoreFocusAsync(_root);
         }
 
         Visible = false;
@@ -175,5 +166,11 @@ public partial class OpDialog : OpModalBase
     private void ToggleMaximize(MouseEventArgs _)
     {
         _maximized = !_maximized;
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        await RestoreFocusAsync(_root);
+        await base.DisposeAsync();
     }
 }
