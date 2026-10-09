@@ -1,0 +1,25 @@
+@namespace OpBlazorUI.Base.Components.Knob
+@using OpBlazorUI.Base.Components.Forms
+@inherits OpInputBase<double>
+
+<span class="@RootClass" @attributes="AdditionalAttributes">
+    <svg viewBox="0 0 100 100"
+         role="slider"
+         @ref="_svg"
+         style="@SvgStyle"
+         aria-valuemin="@Min"
+         aria-valuemax="@Max"
+         aria-valuenow="@CurrentValue"
+         aria-labelledby="@AriaLabelledBy"
+         aria-label="@AriaLabel"
+         required="@(Required ? "" : null)"
+         tabindex="@TabIndexValue"
+         @onkeydown="HandleKeyDownAsync">
+        <path class="p-knob-range" d="@RangePath" stroke-width="@StrokeWidth" stroke="@RangeColor"></path>
+        <path class="p-knob-value" d="@ValuePath" stroke-width="@StrokeWidth" stroke="@ValueColor"></path>
+        @if (ShowValue)
+        {
+            @TextMarkup
+        }
+    </svg>
+</span>

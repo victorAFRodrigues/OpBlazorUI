@@ -1,107 +1,217 @@
 @page "/image"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Image
 
 <PageTitle>Image - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Image"
-              Description="Exibe uma imagem com opções de pré-visualização e transformação. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="Exibe uma imagem com pré-visualização e transformações (rotação e zoom).">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>Image é usado como o elemento nativo <em>img</em> e suporta todas as propriedades que o elemento nativo possui. Para múltiplas imagens, veja <a href="/galleria">Galleria</a>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O Image é usado como o elemento nativo <code>&lt;img&gt;</code> e aceita as mesmas propriedades
+                    (<code>Src</code>, <code>SrcSet</code>, <code>Sizes</code>, <code>Alt</code>, <code>Width</code>,
+                    <code>Height</code> e <code>Loading</code>). Para múltiplas imagens, veja
+                    <a href="/galleria">Galleria</a>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpImage Src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg"
+                             Alt="Imagem" Width="250"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Pré-visualização" Id="preview">
-            <Description><p>O modo de pré-visualização exibe uma camada modal quando a imagem é clicada, oferecendo opções de transformação como girar e aplicar zoom.</p></Description>
-            <Code><CodeBlock Code="@PreviewCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O modo de pré-visualização exibe uma camada modal quando a imagem é clicada, oferecendo
+                    transformações como girar e aplicar zoom. Habilite-o com <code>Preview</code> e opcionalmente
+                    defina uma origem diferente para o preview com <code>PreviewImageSrc</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpImage Src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg"
+                             Alt="Imagem" Width="250" Preview="true"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PreviewCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template" Id="template">
-            <Description><p>Um ícone de olho é exibido por padrão quando a imagem é focalizada no modo de pré-visualização. Use o template <em>indicator</em> para conteúdo personalizado.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Um ícone de olho é exibido por padrão sobre a imagem no modo de pré-visualização. Use o template
+                    <code>IndicatorTemplate</code> para conteúdo personalizado e <code>ImageTemplate</code> para
+                    substituir a tag <code>&lt;img&gt;</code> padrão.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpImage Src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg"
+                             Alt="Imagem" Width="250" Preview="true" AriaZoomImage="Ampliar imagem">
+                        <IndicatorTemplate>
+                            <i class="pi pi-search-plus" aria-hidden="true"></i>
+                        </IndicatorTemplate>
+                        <ImageTemplate>
+                            <img src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg"
+                                 alt="Imagem" width="250"/>
+                        </ImageTemplate>
+                    </OpImage>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O botão de pré-visualização é um elemento <em>button</em> nativo com um <em>aria-label</em> que se refere à propriedade <em>aria.zoomImage</em> da API de <a href="/configuration/#locale">locale</a> por padrão.</p>
-                <p>Quando a pré-visualização está ativa, o role <em>dialog</em> com <em>aria-modal</em> é aplicado ao contêiner de sobreposição da imagem.</p>
-                <p>Os controles de botão usam <em>aria.rotateRight</em>, <em>aria.rotateLeft</em>, <em>aria.zoomIn</em>, <em>aria.zoomOut</em> e <em>aria.close</em> da API de <a href="/configuration/#locale">locale</a> como <em>aria-label</em>.</p>
+                <p>
+                    O botão de pré-visualização é um elemento <code>button</code> nativo; seu rótulo é definido por
+                    <code>AriaZoomImage</code> (padrão <em>"Visualizar imagem"</em>). Quando a pré-visualização está
+                    ativa, o contêiner de sobreposição recebe <code>role="dialog"</code> e <code>aria-modal="true"</code>.
+                    Os controles da barra (girar, zoom e fechar) são <code>button</code> com <code>aria-label</code>,
+                    e a imagem pode ser descrita com <code>aria-label</code> ou <code>aria-labelledby</code> nos
+                    atributos adicionais.
+                </p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Move o foco pela barra de botões." },
-                              new[] { "enter", "Ativa o botão." },
-                              new[] { "space", "Ativa o botão." },
-                              new[] { "esc", "Fecha a pré-visualização da imagem." }
+                              new[] { "tab", "Move o foco para o botão de pré-visualização e pelos controles da barra." },
+                              new[] { "enter / space", "Abre a pré-visualização ou ativa o controle focado." },
+                              new[] { "esc", "Fecha a pré-visualização (não implementado nesta versão; veja Problemas Conhecidos)." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Src", "string?", "null", "URL da imagem." },
+                              new[] { "SrcSet", "string?", "null", "Lista de candidatos para <code>srcset</code>." },
+                              new[] { "Sizes", "string?", "null", "Lista de tamanhos para <code>sizes</code>." },
+                              new[] { "Alt", "string?", "null", "Texto alternativo da imagem." },
+                              new[] { "Width", "string?", "null", "Largura da imagem (atributo <code>width</code>)." },
+                              new[] { "Height", "string?", "null", "Altura da imagem (atributo <code>height</code>)." },
+                              new[] { "Loading", "string?", "null", "Estratégia de carregamento: <code>lazy</code> ou <code>eager</code>." },
+                              new[] { "Preview", "bool", "false", "Habilita a pré-visualização em camada modal." },
+                              new[] { "PreviewImageSrc", "string?", "null", "URL usada na pré-visualização (padrão: <code>Src</code>)." },
+                              new[] { "PreviewImageSrcSet", "string?", "null", "Candidatos de <code>srcset</code> da imagem de pré-visualização." },
+                              new[] { "PreviewImageSizes", "string?", "null", "Tamanhos de <code>sizes</code> da imagem de pré-visualização." },
+                              new[] { "ImageClass", "string?", "null", "Classes da tag <code>&lt;img&gt;</code>." },
+                              new[] { "ImageStyle", "string?", "null", "Estilo inline da tag <code>&lt;img&gt;</code>." },
+                              new[] { "AriaZoomImage", "string", "\"Visualizar imagem\"", "Rótulo ARIA do botão de pré-visualização." },
+                              new[] { "IndicatorTemplate", "RenderFragment?", "null", "Conteúdo do indicador sobre a imagem (substitui o ícone de busca)." },
+                              new[] { "ImageTemplate", "RenderFragment?", "null", "Substitui a tag <code>&lt;img&gt;</code> padrão." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnShow", "EventCallback", "Disparado quando a pré-visualização é aberta." },
+                              new[] { "OnHide", "EventCallback", "Disparado quando a pré-visualização é fechada." },
+                              new[] { "OnImageError", "EventCallback", "Disparado quando a imagem falha ao carregar (<code>onerror</code>)." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="image"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code> (repassados ao
+                    elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>A pré-visualização é renderizada inline (dentro do próprio componente), não via <code>appendTo</code> do <code>body</code>: não há bloqueio de rolagem nem <em>focus-trap</em>.</li>
+                        <li>A tecla <code>esc</code> não é tratada: a pré-visualização fecha apenas pelo botão de fechar ou clicando no fundo.</li>
+                        <li>O zoom e a rotação não são animados e os limites são fixos: escala entre <code>0.5</code> e <code>1.5</code> e rotação em passos de 90°.</li>
+                        <li>Não há <code>previewCallback</code> nem o template <code>preview</code> do upstream.</li>
+                        <li>Os rótulos dos controles da barra estão fixos em pt-BR, sem integração com a API de <em>locale</em>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
     private const string ImportCode = """
-        import { ImageModule } from 'primeng/image';
+        @using OpBlazorUI.Base.Components.Image
+
+        <OpImage Src="/imagem.jpg" Alt="Descrição da imagem" Preview="true" />
         """;
 
     private const string BasicCode = """
         <div class="card flex justify-center">
-            <p-image src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" alt="Image" width="250" />
+            <OpImage Src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" Alt="Imagem" Width="250" />
         </div>
         """;
 
     private const string PreviewCode = """
         <div class="card flex justify-center">
-            <p-image src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" alt="Image" width="250" [preview]="true" />
+            <OpImage Src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" Alt="Imagem" Width="250" Preview="true" />
         </div>
         """;
 
     private const string TemplateCode = """
         <div class="card flex justify-center">
-            <p-image src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg" [preview]="true" alt="Image" width="250">
-                <ng-template #indicator>
-                    <i class="pi pi-search"></i>
-                </ng-template>
-                <ng-template #image>
-                    <img src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg" alt="image" width="250" />
-                </ng-template>
-                <ng-template #preview let-style="style" let-previewCallback="previewCallback">
-                    <img src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg" alt="image" [style]="style" (click)="previewCallback()" />
-                </ng-template>
-            </p-image>
+            <OpImage Src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg" Alt="Imagem" Width="250"
+                     Preview="true" AriaZoomImage="Ampliar imagem">
+                <IndicatorTemplate>
+                    <i class="pi pi-search-plus"></i>
+                </IndicatorTemplate>
+                <ImageTemplate>
+                    <img src="https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg" alt="Imagem" width="250" />
+                </ImageTemplate>
+            </OpImage>
         </div>
+        """;
+
+    private const string AccessibilityCode = """
+        <span id="foto">Foto aérea da ilha</span>
+        <OpImage Src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg"
+                 Alt="Foto aérea da ilha" Width="250" Preview="true" aria-labelledby="foto" />
+
+        <OpImage Src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg"
+                 Alt="Foto aérea da ilha" Width="250" Preview="true" aria-label="Ampliar foto" />
         """;
 }

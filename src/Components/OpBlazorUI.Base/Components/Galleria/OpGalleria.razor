@@ -1,0 +1,120 @@
+@namespace OpBlazorUI.Base.Components.Galleria
+@using System
+@using OpBlazorUI.Base.Components.Common
+@typeparam TItem
+@inherits OpComponentBase
+
+@if (FullScreen)
+{
+    <div class="@RootClass" style="@ContainerStyle" @attributes="AdditionalAttributes" hidden></div>
+}
+else
+{
+    <div class="@RootClass" style="@ContainerStyle" @attributes="AdditionalAttributes">
+        @Content
+    </div>
+}
+
+@if (FullScreen && _visible)
+{
+    <div class="p-galleria-mask p-overlay-mask" role="dialog" aria-modal="true" style="z-index:1100;" @onclick="CloseAsync">
+        <div class="@RootClass" @onclick:stopPropagation="true">
+            @Content
+            <button type="button" class="p-galleria-close-button p-galleria-nav-button" aria-label="Fechar" @onclick="CloseAsync">
+                <i class="p-galleria-close-icon pi pi-times" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    private RenderFragment Content => __builder =>
+    {
+        if (HeaderTemplate is not null)
+        {
+            <div class="p-galleria-header">@HeaderTemplate</div>
+        }
+
+        <div class="p-galleria-content">
+            <div class="p-galleria-items-container">
+                <div class="p-galleria-items">
+                    @if (ShowItemNavigators && Count > 1)
+                    {
+                        <button type="button" class="@PrevNavClass" aria-label="Anterior" @onclick="PrevAsync">
+                            <i class="p-galleria-prev-icon pi pi-chevron-left" aria-hidden="true"></i>
+                        </button>
+                    }
+                    <div class="p-galleria-item">
+                        @if (ItemTemplate is not null && Count > 0)
+                        {
+                            @ItemTemplate(Value[Current])
+                        }
+                    </div>
+                    @if (ShowItemNavigators && Count > 1)
+                    {
+                        <button type="button" class="@NextNavClass" aria-label="Próximo" @onclick="NextAsync">
+                            <i class="p-galleria-next-icon pi pi-chevron-right" aria-hidden="true"></i>
+                        </button>
+                    }
+                    @if (CaptionTemplate is not null && Count > 0)
+                    {
+                        <div class="p-galleria-caption">@CaptionTemplate(Value[Current])</div>
+                    }
+                </div>
+
+                @if (ShowIndicators && Count > 1)
+                {
+                    <ul class="p-galleria-indicator-list">
+                        @for (var i = 0; i < Count; i++)
+                        {
+                            var index = i;
+                            <li class="@IndicatorClass(index)" tabindex="0" @onclick="() => SetIndexAsync(index)">
+                                <button type="button" class="p-galleria-indicator-button" tabindex="-1">
+                                    @if (IndicatorTemplate is not null)
+                                    {
+                                        @IndicatorTemplate(index)
+                                    }
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+
+            @if (ShowThumbnails && Count > 0)
+            {
+                <div class="p-galleria-thumbnails">
+                    <div class="p-galleria-thumbnails-content">
+                        <button type="button" class="p-galleria-thumbnail-prev-button p-galleria-thumbnail-nav-button" aria-label="Miniaturas anteriores" @onclick="ThumbPrev">
+                            <i class="p-galleria-thumbnail-prev-icon pi pi-chevron-left" aria-hidden="true"></i>
+                        </button>
+                        <div class="p-galleria-thumbnails-viewport">
+                            <div class="p-galleria-thumbnail-items">
+                                @for (var i = _thumbStart; i < Math.Min(_thumbStart + Math.Max(1, NumVisible), Count); i++)
+                                {
+                                    var index = i;
+                                    <div class="@ThumbItemClass(index)" tabindex="0" @onclick="() => SetIndexAsync(index)">
+                                        <div class="p-galleria-thumbnail">
+                                            @if (ThumbnailTemplate is not null)
+                                            {
+                                                @ThumbnailTemplate(Value[index])
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <button type="button" class="p-galleria-thumbnail-next-button p-galleria-thumbnail-nav-button" aria-label="Próximas miniaturas" @onclick="ThumbNext">
+                            <i class="p-galleria-thumbnail-next-icon pi pi-chevron-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (FooterTemplate is not null)
+        {
+            <div class="p-galleria-footer">@FooterTemplate</div>
+        }
+    };
+}

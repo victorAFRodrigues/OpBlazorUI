@@ -18,6 +18,9 @@ public sealed class OpInterop : IAsyncDisposable
     public const string SliderInterop = "./_content/OpBlazorUI.Base/slider.interop.js";
     public const string ColorPickerInterop = "./_content/OpBlazorUI.Base/colorpicker.interop.js";
     public const string TabsInterop = "./_content/OpBlazorUI.Base/tabs.interop.js";
+    public const string KnobInterop = "./_content/OpBlazorUI.Base/knob.interop.js";
+    public const string SplitterInterop = "./_content/OpBlazorUI.Base/splitter.interop.js";
+    public const string ScrollPanelInterop = "./_content/OpBlazorUI.Base/scrollpanel.interop.js";
 
     private readonly IJSRuntime _js;
     private readonly Dictionary<string, Task<IJSObjectReference>> _modules = new(StringComparer.Ordinal);
