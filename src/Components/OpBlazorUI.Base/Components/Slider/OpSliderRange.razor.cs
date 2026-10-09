@@ -23,7 +23,22 @@ public partial class OpSliderRange : OpInputBase<double[]>
     [Parameter] public EventCallback<double[]> OnChange { get; set; }
     [Parameter] public EventCallback<double[]> OnSlideEnd { get; set; }
 
-    private double[] Values => Value is { Length: >= 2 } ? Value : new[] { Min, Max };
+    // Normaliza os valores para dentro de [Min, Max] e em ordem crescente: sem isso, um valor
+    // fora do intervalo (ex.: Min=10 com Value=[0,5]) fazia lower > upper e o Math.Clamp lançar.
+    private double[] Values
+    {
+        get
+        {
+            var v = Value is { Length: >= 2 } ? Value : new[] { Lo, Hi };
+            var a = Math.Clamp(Math.Min(v[0], v[1]), Lo, Hi);
+            var b = Math.Clamp(Math.Max(v[0], v[1]), Lo, Hi);
+            return new[] { a, b };
+        }
+    }
+
+    private double Lo => Math.Min(Min, Max);
+
+    private double Hi => Math.Max(Min, Max);
 
     private string RootClass => OpCss.BuildClass(
         "p-slider p-component",
@@ -78,10 +93,10 @@ public partial class OpSliderRange : OpInputBase<double[]>
     {
         index = index == 1 ? 1 : 0;
         var values = (double[])Values.Clone();
-        var lower = index == 0 ? Min : values[0];
-        var upper = index == 0 ? values[1] : Max;
+        var lower = index == 0 ? Lo : values[0];
+        var upper = index == 0 ? values[1] : Hi;
 
-        var raw = Min + (Max - Min) * percent;
+        var raw = Lo + (Hi - Lo) * percent;
         var value = Math.Clamp(SliderMath.Snap(raw, Min, Max, Step), lower, upper);
 
         if (values[index].Equals(value))
@@ -145,10 +160,10 @@ public partial class OpSliderRange : OpInputBase<double[]>
     private async Task SetValueAsync(int index, double value)
     {
         var values = (double[])Values.Clone();
-        var lower = index == 0 ? Min : values[0];
-        var upper = index == 0 ? values[1] : Max;
+        var lower = index == 0 ? Lo : values[0];
+        var upper = index == 0 ? values[1] : Hi;
 
-        var next = Math.Clamp(SliderMath.Snap(value, Min, Max, Step), lower, upper);
+        var next = Math.Clamp(SliderMath.Snap(value, Lo, Hi, Step), lower, upper);
         if (values[index].Equals(next))
         {
             return;

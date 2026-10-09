@@ -176,7 +176,12 @@ public partial class OpToast : ComponentBase, IDisposable
     {
         MessageService.MessagesChanged -= OnMessagesChanged;
         foreach (var cts in _ctsMap.Values)
+        {
+            // Cancela antes de descartar: sem isso os timers de AutoClose rodavam num
+            // componente já descartado.
+            cts.Cancel();
             cts.Dispose();
+        }
     }
 
     private sealed class OpToastMessageComparer : IEqualityComparer<OpToastMessage>

@@ -104,7 +104,26 @@ public partial class OpInputOtp : OpInputBase<string>
         _tokens[index] = ch;
         await UpdateValueAsync();
 
-        if (ch is not null && index < Length - 1) await _inputs[index + 1].FocusAsync();
+        if (ch is not null && index < Length - 1) await TryFocusAsync(index + 1);
+    }
+
+    // Com Template os inputs são renderizados pelo usuário e o ElementReference pode não ter
+    // sido capturado: sem a guarda, FocusAsync lançava InvalidOperationException.
+    private async Task TryFocusAsync(int index)
+    {
+        if (index < 0 || index >= _inputs.Length || _inputs[index].Context is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _inputs[index].FocusAsync();
+        }
+        catch (InvalidOperationException)
+        {
+            // elemento ainda não disponível
+        }
     }
 
     private async Task HandleKeyDown(int index, KeyboardEventArgs e)
@@ -122,7 +141,7 @@ public partial class OpInputOtp : OpInputBase<string>
                 {
                     _tokens[index - 1] = null;
                     await UpdateValueAsync();
-                    await _inputs[index - 1].FocusAsync();
+                    await TryFocusAsync(index - 1);
                 }
                 else if (_tokens[index] is not null)
                 {
@@ -132,10 +151,10 @@ public partial class OpInputOtp : OpInputBase<string>
 
                 break;
             case "ArrowLeft":
-                if (index > 0) await _inputs[index - 1].FocusAsync();
+                if (index > 0) await TryFocusAsync(index - 1);
                 break;
             case "ArrowRight":
-                if (index < Length - 1) await _inputs[index + 1].FocusAsync();
+                if (index < Length - 1) await TryFocusAsync(index + 1);
                 break;
         }
 
