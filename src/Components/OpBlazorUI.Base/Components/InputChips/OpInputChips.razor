@@ -3,6 +3,7 @@
 @inherits OpInputBase<List<string>>
 
 <div class="@RootClass" @onclick="FocusInputAsync" @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     <ul class="@InputListClass">
         @foreach (var (chip, index) in Chips.Select((c, i) => (c, i)))
         {

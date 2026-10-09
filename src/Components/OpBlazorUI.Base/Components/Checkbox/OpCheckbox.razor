@@ -6,7 +6,7 @@
     <input type="checkbox"
            class="@InputCss"
            id="@Id"
-           name="@Name"
+           name="@(Name ?? NameAttributeValue)"
            checked="@(CurrentValue == true)"
            tabindex="@TabIndex"
            required="@Required"
@@ -15,6 +15,8 @@
            aria-labelledby="@AriaLabelledBy"
            aria-label="@AriaLabel"
            @onchange="HandleChange"
+           @onclick:preventDefault="@Readonly"
+           @onkeydown:preventDefault="@(Readonly && Disabled == false)"
            @onfocus="OnFocus"
            @onblur="OnBlur"/>
 

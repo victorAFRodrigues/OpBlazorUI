@@ -105,7 +105,7 @@ public class Bloco3_1Tests
         var errors = new List<string>();
         var page = await NewPageAsync(errors);
 
-        await page.Locator("#t-autocomplete input").FillAsync("São");
+        await page.Locator("#t-autocomplete input[type=text]").FillAsync("São");
         await Option(page, "#t-autocomplete", "p-autocomplete-option", "São Paulo").ClickAsync();
 
         await Expect(page.Locator("#t-autocomplete-value")).ToHaveTextAsync("SP");

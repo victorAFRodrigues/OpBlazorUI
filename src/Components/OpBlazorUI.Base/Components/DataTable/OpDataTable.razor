@@ -48,7 +48,7 @@
                 @if (Selection)
                 {
                     <th class="p-datatable-header-cell p-datatable-selection-column" style="width: 3rem">
-                        <OpCheckbox Value="@AllPageSelected" ValueChanged="(v) => ToggleAllSelection()"
+                        <OpCheckbox IgnoreEditContext="true" Value="@AllPageSelected" ValueChanged="(v) => ToggleAllSelection()"
                                     TabIndex="-1"/>
                     </th>
                 }
@@ -102,7 +102,7 @@
                         @if (Selection)
                         {
                             <td @onclick:stopPropagation="true">
-                                <OpCheckbox Value="@IsSelected(item)" ValueChanged="(v) => ToggleRowSelection(item)"
+                                <OpCheckbox IgnoreEditContext="true" Value="@IsSelected(item)" ValueChanged="(v) => ToggleRowSelection(item)"
                                             TabIndex="-1"/>
                             </td>
                         }

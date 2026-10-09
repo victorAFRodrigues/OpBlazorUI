@@ -1,7 +1,7 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** em execução. **3.1 Seleção concluído** na branch `fix/bloco3-1-selecao` (empilhada no
-bloco 2); testes Playwright 6/6 e suíte 46/46.
+**Status:** em execução. **3.1 Seleção** (`fix/bloco3-1-selecao`) e **3.2 Formulários**
+(`fix/bloco3-2-formularios`) concluídos; testes Playwright 50/50.
 
 **Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
 `EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
@@ -35,18 +35,24 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.2 Formulários: EditContext e SSR
 
-- [ ] **Seleção múltipla (I):** `MultipleValue` (AutoComplete, SelectButton), `SelectedValues`
-  (Listbox), `Selection` (TreeSelect) e `RangeValue`/`MultipleValue` (DatePicker) notificam o
-  `EditContext` (`NotifyFieldChanged` com um `FieldIdentifier` próprio).
-- [ ] **SSR estático (H):** usar `NameAttributeValue` em todos os inputs; Select, MultiSelect,
-  AutoComplete, CascadeSelect, TreeSelect, Listbox, Rating, InputNumber e InputChips precisam de
-  um `<input type="hidden">` com o valor.
-- [ ] `OpInputBase`: o `ValueExpression` injetado por padrão faz componentes internos (checkbox
-  do MultiSelect, input do Password) notificarem um campo falso no `EditContext` do formulário.
-- [ ] `RadioButton`: herda de `ComponentBase`; integrar ao `EditContext` e renderizar `value`.
-- [ ] `Checkbox` com `Readonly`: o navegador alterna o `checked` nativo e o diff não corrige.
-- [ ] `Textarea`: renderizar `value="@CurrentValue"` em vez de conteúdo filho (limpar pelo pai
-  não limpa o campo depois de digitado).
+**Feito** (branch `fix/bloco3-2-formularios`; TreeSelect/DatePicker ficam nos blocos 3.5/3.4):
+
+- [x] **Seleção múltipla (I):** `Listbox` (`SelectedValues`), `AutoComplete` e `SelectButton`
+  (`MultipleValue`) notificam o `EditContext` via `*Expression` + `NotifyFieldChanged`. Verificado
+  com validação ao vivo (a mensagem some sem novo submit).
+- [x] **SSR estático (H):** `name="@NameAttributeValue"` nos inputs nativos (Checkbox, Textarea,
+  InputNumber) e `<input type="hidden">` com o valor em Select, MultiSelect, AutoComplete,
+  CascadeSelect, Listbox, Rating e InputChips.
+- [x] `OpInputBase`: o fallback de `ValueExpression` agora é atribuído à propriedade antes do base
+  (não reconstrói o `ParameterView`, que descartava o `EditContext` cascateado). Novo parâmetro
+  `IgnoreEditContext` remove o `EditContext` das instâncias internas (checkbox de
+  MultiSelect/Listbox/Tree/TreeTable/DataTable), que notificavam um campo falso.
+- [x] `RadioButton`: passa a integrar com o `EditContext` (notifica o `ModelValue`) e renderiza
+  `value="@Value"`.
+- [x] `Checkbox` com `Readonly`: `preventDefault` no clique/espaço impede o toggle nativo.
+- [x] `Textarea`: renderiza `value="@CurrentValue"` (o pai consegue limpar após digitação).
+- [ ] Verificado com `/_tests/bloco3-2` + `Bloco3_2Tests` (4 cenários).
+
 
 ## 3.3 Entrada de texto e números
 

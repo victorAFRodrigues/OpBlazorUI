@@ -43,7 +43,7 @@
                     @if (ShowSelectionColumn)
                     {
                         <th class="p-treetable-header-cell p-treetable-selection-column" style="width: 3rem">
-                            <OpCheckbox Value="@AllSelected"
+                            <OpCheckbox IgnoreEditContext="true" Value="@AllSelected"
                                         Indeterminate="@(AllPartial && !AllSelected)"
                                         ValueChanged="(_) => ToggleAllNodes()"
                                         TabIndex="-1"/>
@@ -89,7 +89,7 @@
                             {
                                 <td class="p-treetable-body-cell p-treetable-selection-column"
                                     @onclick:stopPropagation="true">
-                                    <OpCheckbox Value="@IsSelected(flat.Node)"
+                                    <OpCheckbox IgnoreEditContext="true" Value="@IsSelected(flat.Node)"
                                                 Indeterminate="@IsPartial(flat.Node)"
                                                 ValueChanged="(_) => ToggleCheckboxAsync(flat.Node)"
                                                 TabIndex="-1"/>

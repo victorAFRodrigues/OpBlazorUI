@@ -8,13 +8,14 @@
 @inherits OpInputBase<TValue>
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     @if (Filter || (Checkbox && ShowToggleAll) || HeaderTemplate != null || FilterTemplate != null)
     {
         <div class="p-listbox-header">
             @if (Checkbox && ShowToggleAll)
             {
                 <div class="p-listbox-header-checkbox">
-                    <OpCheckbox StyleClass="p-listbox-option-check-icon" Value="@AllSelected"
+                    <OpCheckbox IgnoreEditContext="true" StyleClass="p-listbox-option-check-icon" Value="@AllSelected"
                                 ValueChanged="@(c => OnToggleAll(c == true))"
                                 Disabled="@Disabled"
                                 Id="@($"{_id}_all")"/>
@@ -152,7 +153,7 @@
             @onmouseenter="() => OnOptionMouseEnter(index)">
             @if (Checkbox)
             {
-                <OpCheckbox StyleClass="p-listbox-option-check-icon" Value="@isSelected" Readonly="true" Disabled="@isDisabled" />
+                <OpCheckbox IgnoreEditContext="true" StyleClass="p-listbox-option-check-icon" Value="@isSelected" Readonly="true" Disabled="@isDisabled" />
             }
 
             @if (Checkmark)

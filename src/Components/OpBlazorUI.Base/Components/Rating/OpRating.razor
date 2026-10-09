@@ -3,6 +3,7 @@
 @inherits OpInputBase<int>
 
 <div class="@RootClass" role="radiogroup" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     @if (Cancel)
     {
         <div class="p-rating-option p-rating-cancel-item" @onclick="() => Rate(0)" @onfocus="OnFocus" @onblur="OnBlur">

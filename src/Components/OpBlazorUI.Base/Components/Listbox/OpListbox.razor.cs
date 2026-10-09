@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Components.Select;
@@ -20,6 +22,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
 
     [Parameter] public IReadOnlyList<TValue>? SelectedValues { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> SelectedValuesChanged { get; set; }
+    [Parameter] public Expression<Func<IReadOnlyList<TValue>?>>? SelectedValuesExpression { get; set; }
 
     [Parameter] public bool Multiple { get; set; }
     [Parameter] public bool Checkbox { get; set; }
@@ -69,6 +72,17 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     {
         _id = InputId ?? $"op-listbox-{Guid.NewGuid():N}";
     }
+
+    protected override void OnParametersSet()
+    {
+        // Notifica a validação do EditForm pelo campo ligado a @bind-SelectedValues.
+        if (SelectedValuesExpression is not null && EditContext is not null)
+        {
+            _selectedValuesField = FieldIdentifier.Create(SelectedValuesExpression);
+        }
+    }
+
+    private FieldIdentifier _selectedValuesField;
 
     // ------------------------------------------------------------ computed
     private string RootClass => OpCss.BuildClass(
@@ -287,6 +301,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
             await OnChange.InvokeAsync(value);
         }
 
+        EditContext?.NotifyFieldChanged(_selectedValuesField);
         StateHasChanged();
     }
 
@@ -306,6 +321,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
         await SelectedValuesChanged.InvokeAsync(list);
         await OnSelectionChange.InvokeAsync(list);
         await OnSelectAllChange.InvokeAsync(selected);
+        EditContext?.NotifyFieldChanged(_selectedValuesField);
         StateHasChanged();
     }
 

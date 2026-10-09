@@ -6,6 +6,7 @@
 
 <span class="@RootClass" @ref="_rootRef" @onkeydown="OnRootKeydown"
       @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     <span class="@LabelClass"
           id="@_id"
           role="combobox"

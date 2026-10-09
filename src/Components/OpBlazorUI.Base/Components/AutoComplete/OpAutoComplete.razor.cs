@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using OpBlazorUI.Base.Components.Forms;
@@ -23,6 +25,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private string? _inputValue;
     private TValue? _prevValue;
     private IReadOnlyList<object>? _prevSuggestions;
+    private FieldIdentifier _multipleValueField;
     private bool _autoFocused;
 
     private ElementReference _inputRef;
@@ -35,6 +38,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     [Parameter] public bool Multiple { get; set; }
     [Parameter] public IReadOnlyList<TValue>? MultipleValue { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> MultipleValueChanged { get; set; }
+    [Parameter] public Expression<Func<IReadOnlyList<TValue>?>>? MultipleValueExpression { get; set; }
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public bool Dropdown { get; set; }
     [Parameter] public string DropdownMode { get; set; } = "blank";
@@ -100,6 +104,12 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
 
     protected override void OnParametersSet()
     {
+        // Notifica a validação do EditForm pelo campo ligado a @bind-MultipleValue.
+        if (MultipleValueExpression is not null && EditContext is not null)
+        {
+            _multipleValueField = FieldIdentifier.Create(MultipleValueExpression);
+        }
+
         // Recalcula o rótulo quando o Value muda ou quando as Suggestions chegam depois
         // (ex.: carregadas de forma assíncrona) — o texto precisa acompanhar a nova lista.
         if (!Multiple && (!Equals(_prevValue, Value) || !ReferenceEquals(_prevSuggestions, Suggestions)))
@@ -613,6 +623,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         MultipleValue = list;
         await MultipleValueChanged.InvokeAsync(list);
         await OnChange.InvokeAsync(option);
+        EditContext?.NotifyFieldChanged(_multipleValueField);
         StateHasChanged();
     }
 
@@ -629,6 +640,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         MultipleValue = list;
         await MultipleValueChanged.InvokeAsync(list);
         await OnChange.InvokeAsync(option);
+        EditContext?.NotifyFieldChanged(_multipleValueField);
     }
 
     private async Task AddChipAsync(string text)
@@ -646,6 +658,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
                 await MultipleValueChanged.InvokeAsync(list);
                 await OnChange.InvokeAsync(tv);
                 await OnSelect.InvokeAsync(new OpAutoCompleteSelectEvent { Option = tv });
+                EditContext?.NotifyFieldChanged(_multipleValueField);
             }
         }
 
@@ -660,6 +673,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
             MultipleValue = Array.Empty<TValue>();
             _searchValue = "";
             await MultipleValueChanged.InvokeAsync(Array.Empty<TValue>());
+            EditContext?.NotifyFieldChanged(_multipleValueField);
         }
         else
         {

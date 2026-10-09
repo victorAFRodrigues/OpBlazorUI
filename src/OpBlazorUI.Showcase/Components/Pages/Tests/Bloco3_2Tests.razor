@@ -1,0 +1,94 @@
+@page "/_tests/bloco3-2"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.Listbox
+@using OpBlazorUI.Base.Components.RadioButton
+@using OpBlazorUI.Base.Components.Select
+@using OpBlazorUI.Base.Components.Textarea
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_2Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.2 formulários</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.2 formulários</h1>
+
+<section id="t-radio">
+    <EditForm Model="_form" OnValidSubmit="OnValid">
+        <DataAnnotationsValidator/>
+        <OpRadioButton TValue="string" Name="ing" Value="@("A")" @bind-ModelValue="_form.Ingredient" Id="r-a"/>
+        <OpRadioButton TValue="string" Name="ing" Value="@("B")" @bind-ModelValue="_form.Ingredient" Id="r-b"/>
+    </EditForm>
+    <span id="t-radio-value">@_form.Ingredient</span>
+</section>
+
+<section id="t-checkbox">
+    <OpCheckbox Readonly="true" @bind-Value="_readonlyChecked"/>
+    <span id="t-checkbox-value">@_readonlyChecked</span>
+</section>
+
+<section id="t-textarea">
+    <OpTextarea @bind-Value="_text"/>
+    <button id="t-textarea-clear" type="button" @onclick="ClearText">limpar</button>
+    <span id="t-textarea-value">@_text</span>
+</section>
+
+<section id="t-list-edit">
+    <EditForm Model="_form">
+        <DataAnnotationsValidator/>
+        <OpListbox TValue="string"
+                   Options="_cities"
+                   OptionLabel="Name"
+                   OptionValue="Code"
+                   Multiple="true"
+                   @bind-SelectedValues="_form.Cities"/>
+        <ValidationMessage For="() => _form.Cities"/>
+        <button id="t-list-submit" type="submit">enviar</button>
+    </EditForm>
+</section>
+
+<section id="t-select-edit">
+    <EditForm Model="_form">
+        <OpSelect TValue="string"
+                  Options="_cities"
+                  OptionLabel="Name"
+                  OptionValue="Code"
+                  @bind-Value="_form.City"/>
+    </EditForm>
+</section>
+
+@code {
+    private sealed record City(string Name, string Code);
+
+    private sealed class FormModel
+    {
+        public string? Ingredient { get; set; }
+        public string? City { get; set; }
+
+        [AtLeastOne(ErrorMessage = "Escolha ao menos uma")]
+        public IReadOnlyList<string> Cities { get; set; } = Array.Empty<string>();
+    }
+
+    private sealed class AtLeastOneAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object? value)
+            => value is System.Collections.IEnumerable items && items.Cast<object>().Any();
+    }
+
+    private static readonly List<City> _cities = new()
+    {
+        new City("São Paulo", "SP"),
+        new City("Rio de Janeiro", "RJ")
+    };
+
+    private readonly FormModel _form = new();
+    private bool? _readonlyChecked;
+    private string _text = "";
+
+    private void ClearText() => _text = "";
+
+    private void OnValid()
+    {
+    }
+}

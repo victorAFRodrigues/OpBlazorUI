@@ -99,7 +99,7 @@
 
                 @if (IsCheckbox)
                 {
-                    <OpCheckbox Value="@selected" Indeterminate="@partial" Readonly="true"/>
+                    <OpCheckbox IgnoreEditContext="true" Value="@selected" Indeterminate="@partial" Readonly="true"/>
                 }
 
                 @if (!string.IsNullOrEmpty(node.Icon))
