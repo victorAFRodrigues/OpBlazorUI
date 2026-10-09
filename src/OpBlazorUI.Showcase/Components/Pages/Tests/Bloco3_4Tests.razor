@@ -1,0 +1,55 @@
+@page "/_tests/bloco3-4"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DatePicker
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_4Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.4 datepicker</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.4 datepicker</h1>
+
+<section id="t-range-clear">
+    <OpDatePicker SelectionMode="OpDateSelectionMode.Range"
+                  Inline="true"
+                  ShowButtonBar="true"
+                  DateFormat="dd/mm/yyyy"
+                  @bind-RangeValue="_range"/>
+    <span id="t-range-value">@string.Join("|", (_range ?? []).Where(d => d.HasValue).Select(d => d!.Value.ToString("yyyy-MM-dd")))</span>
+</section>
+
+<section id="t-typing">
+    <OpDatePicker DateFormat="dd/mm/yyyy"
+                  InputId="t-typing-input"
+                  @bind-Value="_date"/>
+    <span id="t-typing-value">@(_date?.ToString("yyyy-MM-dd"))</span>
+</section>
+
+<section id="t-min">
+    <OpDatePicker Inline="true"
+                  DateFormat="dd/mm/yyyy"
+                  MinDate="_min"
+                  @bind-Value="_minValue"/>
+    <button id="t-min-toggle" type="button" @onclick="ToggleMin">alternar min</button>
+    <span id="t-min-before">@BeforeDate.ToString("yyyy-MM-dd")</span>
+</section>
+
+<section id="t-view">
+    <OpDatePicker View="OpDatePickerView.Month"
+                  DateFormat="dd/mm/yyyy"
+                  InputId="t-view-input"
+                  @bind-Value="_viewValue"/>
+</section>
+
+@code {
+    private IReadOnlyList<DateTime?>? _range;
+    private DateTime? _date;
+    private DateTime? _minValue;
+    private DateTime? _viewValue;
+
+    private DateTime? _min = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 15);
+    private DateTime BeforeDate => new(DateTime.Today.Year, DateTime.Today.Month, 10);
+
+    private void ToggleMin() => _min = _min is null
+        ? new DateTime(DateTime.Today.Year, DateTime.Today.Month, 15)
+        : null;
+}
