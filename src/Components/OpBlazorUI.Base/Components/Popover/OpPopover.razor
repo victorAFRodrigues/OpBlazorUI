@@ -14,9 +14,9 @@
          aria-label="@AriaLabel"
          aria-labelledby="@AriaLabelledBy"
          tabindex="@(FocusOnShow ? 0 : -1)"
-         @onkeydown="OnKeydown"
          @attributes="AdditionalAttributes">
-        <OpOverlayAttach Anchor="_target" Placement="@Position" Align="center" KeepMargin="true" Arrow="popover"/>
+        <OpOverlayAttach Anchor="_target" Placement="@Position" Align="center" KeepMargin="true" Arrow="popover"
+                         OnOutsideClick="Hide" OnEscape="Hide" Dismissable="Dismissable"/>
         <div class="@ContentClass" style="@ContentStyle">@ChildContent</div>
     </div>
 }

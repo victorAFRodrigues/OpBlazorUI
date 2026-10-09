@@ -167,13 +167,10 @@ public partial class OpDialog : OpModalBase
         }
     }
 
-    private async Task OnKeydown(KeyboardEventArgs e)
-    {
-        if (CloseOnEscape && e.Key == "Escape")
-        {
-            await CloseAsync();
-        }
-    }
+    // Escape chega pelo OpOverlayAttach só quando este é o overlay do topo (um Select aberto
+    // dentro do diálogo fecha antes), mesmo com o foco fora do diálogo.
+    private EventCallback EscapeCallback =>
+        CloseOnEscape ? EventCallback.Factory.Create(this, CloseAsync) : default;
 
     private void ToggleMaximize(MouseEventArgs _)
     {

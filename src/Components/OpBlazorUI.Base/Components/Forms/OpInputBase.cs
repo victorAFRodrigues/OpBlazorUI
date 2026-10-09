@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 
 namespace OpBlazorUI.Base.Components.Forms;
@@ -17,19 +18,29 @@ public abstract class OpInputBase<TValue> : InputBase<TValue>, IAsyncDisposable
 
     [Inject] protected IJSRuntime Js { get; set; } = default!;
 
+    [Inject] private ILoggerFactory LoggerFactory { get; set; } = default!;
+
     private OpInterop? _interop;
     private bool _valueExpressionInjected;
 
-    /// <summary>Módulos JS da biblioteca, com cache por componente.</summary>
-    protected OpInterop Interop => _interop ??= new OpInterop(Js);
+    /// <summary>
+    /// Módulos JS da biblioteca, com cache por componente. Depois do descarte continua
+    /// devolvendo a mesma instância (já descartada), cujas chamadas viram no-op.
+    /// </summary>
+    protected OpInterop Interop => _interop ??= new OpInterop(Js, LoggerFactory.CreateLogger(GetType()));
 
+    /// <remarks>
+    /// Com <see cref="IAsyncDisposable"/> o Blazor chama só este método, nunca o
+    /// <c>IDisposable.Dispose()</c> do <see cref="InputBase{TValue}"/>. Por isso ele é chamado
+    /// aqui: é o que desinscreve o componente do <c>OnValidationStateChanged</c> do
+    /// <see cref="EditContext"/> e executa o <c>Dispose(bool)</c>.
+    /// </remarks>
     public virtual async ValueTask DisposeAsync()
     {
-        if (_interop is not null)
-        {
-            await _interop.DisposeAsync();
-            _interop = null;
-        }
+        ((IDisposable)this).Dispose();
+
+        _interop ??= new OpInterop(Js);
+        await _interop.DisposeAsync();
     }
 
     protected bool IsInvalid => Invalid

@@ -47,4 +47,12 @@
         }
     </div>
     <div class="p-editor-content" @ref="_contentRef"></div>
+    @if (_loadFailed)
+    {
+        <div class="p-message p-message-error p-message-outlined p-message-sm" role="alert">
+            <div class="p-message-content">
+                <span class="p-message-text">Não foi possível carregar o editor (Quill).</span>
+            </div>
+        </div>
+    }
 </div>

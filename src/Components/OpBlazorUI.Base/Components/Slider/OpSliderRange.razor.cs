@@ -37,16 +37,16 @@ public partial class OpSliderRange : OpInputBase<double[]>
     private double P1 => SliderMath.ToPercent(Math.Max(Values[0], Values[1]), Min, Max);
 
     private string RangeStyle => Orientation == "vertical"
-        ? $"bottom: {P0:0.####}%; height: {P1 - P0:0.####}%"
-        : $"inset-inline-start: {P0:0.####}%; width: {P1 - P0:0.####}%";
+        ? $"bottom: {OpCss.Num(P0)}%; height: {OpCss.Num(P1 - P0)}%"
+        : $"inset-inline-start: {OpCss.Num(P0)}%; width: {OpCss.Num(P1 - P0)}%";
 
     private string HandleStyle0 => Orientation == "vertical"
-        ? $"bottom: {SliderMath.ToPercent(Values[0], Min, Max):0.####}%"
-        : $"inset-inline-start: {SliderMath.ToPercent(Values[0], Min, Max):0.####}%";
+        ? $"bottom: {OpCss.Num(SliderMath.ToPercent(Values[0], Min, Max))}%"
+        : $"inset-inline-start: {OpCss.Num(SliderMath.ToPercent(Values[0], Min, Max))}%";
 
     private string HandleStyle1 => Orientation == "vertical"
-        ? $"bottom: {SliderMath.ToPercent(Values[1], Min, Max):0.####}%"
-        : $"inset-inline-start: {SliderMath.ToPercent(Values[1], Min, Max):0.####}%";
+        ? $"bottom: {OpCss.Num(SliderMath.ToPercent(Values[1], Min, Max))}%"
+        : $"inset-inline-start: {OpCss.Num(SliderMath.ToPercent(Values[1], Min, Max))}%";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

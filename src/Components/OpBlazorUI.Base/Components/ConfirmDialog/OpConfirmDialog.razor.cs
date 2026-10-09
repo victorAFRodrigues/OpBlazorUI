@@ -246,13 +246,9 @@ public partial class OpConfirmDialog : OpModalBase
         }
     }
 
-    private void OnKeydown(KeyboardEventArgs e)
-    {
-        if (CloseOnEscape && e.Key == "Escape")
-        {
-            OnCloseClick();
-        }
-    }
+    // Escape chega pelo OpOverlayAttach só quando este é o overlay do topo.
+    private EventCallback EscapeCallback =>
+        CloseOnEscape ? EventCallback.Factory.Create(this, OnCloseClick) : default;
 
     public override async ValueTask DisposeAsync()
     {

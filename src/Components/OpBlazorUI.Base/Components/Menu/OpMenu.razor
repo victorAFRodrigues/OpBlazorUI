@@ -6,14 +6,11 @@
 {
     <div class="@RootClass"
          id="@_id"
-         @onfocusout="OnRootFocusOut"
-         @onfocusin="OnRootFocusIn"
-         @onmousedown="OnPanelMouseDown"
          @onkeydown="OnRootKeydown"
          @attributes="AdditionalAttributes">
         @if (Popup)
         {
-            <OpOverlayAttach Anchor="_target" AnchorPrevious="@(_target is null)" Layer="menu" Gap="2"/>
+            <OpOverlayAttach Anchor="_target" AnchorPrevious="@(_target is null)" Layer="menu" Gap="2" OnOutsideClick="HideAsync" OnEscape="HideAsync"/>
         }
         @if (StartTemplate != null)
         {

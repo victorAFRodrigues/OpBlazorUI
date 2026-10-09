@@ -7,11 +7,8 @@
 
 @if (_visible)
 {
-    <div class="@MaskClass" style="@MaskInlineStyle" @onclick="OnMaskClick" @onkeydown="OnKeydown">
-        @if (AutoZIndex)
-        {
-            <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex" />
-        }
+    <div class="@MaskClass" style="@MaskInlineStyle" @onclick="OnMaskClick">
+        <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex" AutoZIndex="AutoZIndex" OnEscape="EscapeCallback"/>
 
         <div class="@RootClass"
              @ref="_root"

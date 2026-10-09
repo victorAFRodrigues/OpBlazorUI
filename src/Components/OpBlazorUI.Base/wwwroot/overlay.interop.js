@@ -184,9 +184,11 @@ export function attach(el, anchor, opts = {}) {
 
     const state = { el, anchor, opts, raf: 0 };
     attached.set(el, state);
-    const z = setZIndex(el, opts.layer || 'overlay', opts.baseZIndex || 0);
-    // Máscara irmã (Drawer): logo abaixo do painel, como o enableModality do upstream.
-    if (opts.maskPrevious && el.previousElementSibling) el.previousElementSibling.style.zIndex = String(z - 1);
+    if (opts.autoZIndex !== false) {
+        const z = setZIndex(el, opts.layer || 'overlay', opts.baseZIndex || 0);
+        // Máscara irmã (Drawer): logo abaixo do painel, como o enableModality do upstream.
+        if (opts.maskPrevious && el.previousElementSibling) el.previousElementSibling.style.zIndex = String(z - 1);
+    }
 
     if (opts.positioned === false || !anchor) return;
 
@@ -232,12 +234,100 @@ export function detach(el) {
     if (state.ro) state.ro.disconnect();
 }
 
+// ---------------------------------------------------------------- dismiss (clique fora / Escape)
+//
+// Um único par de listeners (window, fase de captura) atende todos os overlays abertos, na
+// ordem em que foram abertos (o último é o do topo):
+//  - Escape vai só para o overlay do topo que aceita Escape e não propaga: um Escape num
+//    Select dentro de um Dialog fecha só o Select.
+//  - pointerdown fora do painel, da âncora e de qualquer overlay aberto acima dele fecha o
+//    overlay. Os painéis continuam dentro do DOM do componente (position: fixed), então um
+//    overlay aninhado é descendente do que o contém.
+// Substitui o fechamento por focusout, que falhava quando o foco nunca entrava no painel.
+
+const dismissStack = [];
+
+function dismissIndex(el) {
+    return dismissStack.findIndex(d => d.el === el);
+}
+
+function containsTarget(d, target) {
+    return d.el.contains(target) || (d.anchor && d.anchor.contains && d.anchor.contains(target));
+}
+
+function notifyDismiss(d, method) {
+    try {
+        d.dotNet.invokeMethodAsync(method).catch(() => { /* componente descartado */ });
+    } catch (_) {
+        // referência já descartada
+    }
+}
+
+function onDismissKeydown(e) {
+    if (e.key !== 'Escape' || e.defaultPrevented) return;
+    for (let i = dismissStack.length - 1; i >= 0; i--) {
+        const d = dismissStack[i];
+        if (!d.escape || !d.el.isConnected) continue;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        notifyDismiss(d, 'OnOverlayEscape');
+        return;
+    }
+}
+
+function onDismissPointerdown(e) {
+    const target = e.target;
+    if (!(target instanceof Node)) return;
+    const snapshot = dismissStack.slice();
+    for (let i = snapshot.length - 1; i >= 0; i--) {
+        const d = snapshot[i];
+        if (!d.outside || !d.el.isConnected) continue;
+        if (containsTarget(d, target)) continue;
+        // Clique dentro de um overlay aberto por cima deste (ex.: painel de um Select aberto
+        // a partir de um Popover) não fecha este.
+        let insideAbove = false;
+        for (let j = i + 1; j < snapshot.length; j++) {
+            if (snapshot[j].el.isConnected && containsTarget(snapshot[j], target)) {
+                insideAbove = true;
+                break;
+            }
+        }
+        if (!insideAbove) notifyDismiss(d, 'OnOverlayOutsideClick');
+    }
+}
+
+function ensureDismissListeners() {
+    if (ensureDismissListeners.done) return;
+    ensureDismissListeners.done = true;
+    window.addEventListener('keydown', onDismissKeydown, true);
+    window.addEventListener('pointerdown', onDismissPointerdown, true);
+}
+
+/**
+ * Registra `el` para fechar com clique fora e/ou Escape.
+ * opts: { outside: bool, escape: bool }
+ */
+export function registerDismiss(el, anchor, dotNet, opts = {}) {
+    if (!el || !dotNet) return;
+    unregisterDismiss(el);
+    dismissStack.push({ el, anchor: anchor || null, dotNet, outside: !!opts.outside, escape: !!opts.escape });
+    ensureDismissListeners();
+}
+
+export function unregisterDismiss(el) {
+    const i = dismissIndex(el);
+    if (i >= 0) dismissStack.splice(i, 1);
+}
+
 // Usado pelo OpOverlayAttach: o painel é o pai do marcador renderizado pelo componente.
-export function attachParent(marker, anchor, opts) {
+export function attachParent(marker, anchor, opts, dotNet) {
     const el = marker && marker.parentElement;
     if (!el) return;
     marker.__opOverlayEl = el;
     if (!anchor && opts && opts.anchorPrevious) anchor = el.previousElementSibling;
+    if (dotNet && opts && (opts.dismissOutside || opts.dismissEscape)) {
+        registerDismiss(el, anchor, dotNet, { outside: opts.dismissOutside, escape: opts.dismissEscape });
+    }
     if (!anchor && opts) opts.positioned = false;
     attach(el, anchor, opts);
 }
@@ -246,7 +336,27 @@ export function detachParent(marker) {
     const el = marker && marker.__opOverlayEl;
     if (!el) return;
     marker.__opOverlayEl = null;
+    unregisterDismiss(el);
     detach(el);
+}
+
+/** Atualiza as opções de dismiss de um overlay já anexado (ex.: Dismissable mudou). */
+export function updateDismissParent(marker, anchor, opts, dotNet) {
+    const el = marker && marker.__opOverlayEl;
+    if (!el) return;
+    if (!anchor && opts && opts.anchorPrevious) anchor = el.previousElementSibling;
+    const i = dismissIndex(el);
+    const outside = !!(opts && opts.dismissOutside);
+    const escape = !!(opts && opts.dismissEscape);
+    if (!dotNet || (!outside && !escape)) {
+        if (i >= 0) dismissStack.splice(i, 1);
+        return;
+    }
+    if (i >= 0) {
+        Object.assign(dismissStack[i], { anchor: anchor || null, dotNet, outside, escape });
+    } else {
+        registerDismiss(el, anchor, dotNet, { outside, escape });
+    }
 }
 
 export function updateParent(marker) {
