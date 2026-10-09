@@ -1,7 +1,6 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** em execução. **3.1** (`fix/bloco3-1-selecao`), **3.2** (`fix/bloco3-2-formularios`) e
-**3.3** (`fix/bloco3-3-entrada`) concluídos; testes Playwright 58/58.
+**Status:** em execução. **3.1** a **3.4** concluídos; testes Playwright 62/62.
 
 **Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
 `EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
@@ -79,14 +78,18 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.4 DatePicker
 
-- [ ] `Clear()` não chama `RangeValueChanged`/`MultipleValueChanged`.
-- [ ] Digitação: usar o `DateFormat` no parse (hoje `DateTime.TryParse` com a cultura atual) e não
-  aceitar entradas parciais; suportar Range e Multiple.
-- [ ] `OnParametersSet` chamar `RebuildMonths()` quando `MinDate`, `MaxDate`, `DisabledDates`,
-  `DisabledDays`, `NumberOfMonths` ou `FirstDayOfWeek` mudarem.
-- [ ] Navegar até a data quando `Value` muda por fora; sincronizar o horário.
-- [ ] `OpenAsync` volta `_currentView` para `View`.
-- [ ] `StartWeekFromFirstDayOfYear` declarado e não usado.
+**Feito** (branch `fix/bloco3-4-datepicker`):
+
+- [x] `Clear()` chama `RangeValueChanged`/`MultipleValueChanged` (antes só limpava o estado local).
+- [x] Digitação usa o `DateFormat` (`DateTime.TryParseExact` após converter os tokens do PrimeNG
+  para o formato .NET) e só aceita entrada completa; Range e Multiple também são interpretados.
+- [x] `OnParametersSet` reconstrói a grade quando `MinDate`, `MaxDate`, `DisabledDates`,
+  `DisabledDays`, `NumberOfMonths` ou `FirstDayOfWeek` mudam.
+- [x] Navega até a data quando o `Value` muda por fora e sincroniza o horário (`SyncTimeFrom`).
+- [x] `OpenAsync` volta `_currentView` para `View`.
+- [x] `StartWeekFromFirstDayOfYear` passa a ser usado no cálculo do número da semana.
+- [ ] Verificado com `/_tests/bloco3-4` + `Bloco3_4Tests` (4 cenários).
+
 
 ## 3.5 Árvores (Tree, TreeTable, TreeSelect)
 
