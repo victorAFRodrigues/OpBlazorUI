@@ -12,9 +12,17 @@
     private bool _disposed;
     private DotNetObjectReference<OpOverlayAttach>? _selfRef;
     private (bool Outside, bool Escape) _appliedDismiss;
+    private string? _appliedAnchorId;
+    private (double X, double Y)? _appliedCoordinate;
 
     /// <summary>Elemento de referência. Sem âncora, o painel só recebe o z-index da camada.</summary>
     [Parameter] public ElementReference? Anchor { get; set; }
+
+    /// <summary>
+    /// Âncora virtual por coordenadas (px do viewport). Usada quando não há elemento
+    /// (ex.: ContextMenu aberto nas coordenadas do mouse). Tem precedência sobre <see cref="Anchor"/>.
+    /// </summary>
+    [Parameter] public (double X, double Y)? Coordinate { get; set; }
 
     /// <summary>Sem <see cref="Anchor"/>, usa o elemento irmão anterior do painel como âncora.</summary>
     [Parameter] public bool AnchorPrevious { get; set; }
@@ -71,8 +79,9 @@
         layer = Layer,
         baseZIndex = BaseZIndex,
         autoZIndex = AutoZIndex,
-        positioned = Anchor is not null || AnchorPrevious,
+        positioned = Anchor is not null || AnchorPrevious || Coordinate is not null,
         anchorPrevious = AnchorPrevious,
+        coordinate = Coordinate is null ? (object?)null : new { x = Coordinate.Value.X, y = Coordinate.Value.Y },
         placement = Placement,
         align = Align,
         matchWidth = MatchWidth,
@@ -98,6 +107,8 @@
         {
             await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "attachParent", _marker, Anchor, Options, _selfRef);
             _appliedDismiss = dismiss;
+            _appliedAnchorId = Anchor?.Id;
+            _appliedCoordinate = Coordinate;
             if (!_disposed) _attached = true;
             return;
         }
@@ -106,6 +117,14 @@
         {
             _appliedDismiss = dismiss;
             await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "updateDismissParent", _marker, Anchor, Options, _selfRef);
+        }
+
+        // Reancora quando o alvo (elemento ou coordenadas) muda com o painel aberto.
+        if (_attached && (Anchor?.Id != _appliedAnchorId || Coordinate != _appliedCoordinate))
+        {
+            _appliedAnchorId = Anchor?.Id;
+            _appliedCoordinate = Coordinate;
+            await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "repositionParent", _marker, Anchor, Options);
         }
     }
 

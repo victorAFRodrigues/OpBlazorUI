@@ -7,12 +7,14 @@
 @if (_visible)
 {
     <div class="@RootClass" @ref="_panel" @attributes="AdditionalAttributes">
-        <OpOverlayAttach Anchor="_anchor" AnchorPrevious="@(_anchor is null)" Layer="menu" Gap="2" OnOutsideClick="HideAsync" OnEscape="HideAsync"/>
+        <OpOverlayAttach Anchor="_anchor" Coordinate="_coordinate"
+                         AnchorPrevious="@(_anchor is null && _coordinate is null)"
+                         Layer="menu" Gap="2" OnOutsideClick="HideAsync" OnEscape="HideAsync"/>
         <OpMenuItems Items="Model"
                      Prefix="contextmenu"
                      Root="true"
                      IsOpen="IsOpen"
-                     OnToggle="ToggleAsync"
+                     OnToggle="ToggleSubmenuAsync"
                      OnItemClick="HandleItemClickAsync"/>
     </div>
 }

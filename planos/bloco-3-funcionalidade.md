@@ -1,6 +1,6 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** em execução. **3.1** a **3.6** concluídos; testes Playwright 79/79.
+**Status:** em execução. **3.1** a **3.7** concluídos; testes Playwright 85/85.
 
 **Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
 `EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
@@ -125,14 +125,19 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.7 Menus
 
-- [ ] **Itens (L):** `Disabled` com `Url` não pode navegar; respeitar `Target`; `Command` como
-  `EventCallback` (ou chamar `StateHasChanged` do dono); `OpMenu` não executa `Command`.
-- [ ] Menubar/TieredMenu: abrir um item irmão fecha o anterior; clicar numa folha fecha os
-  submenus.
-- [ ] Submenu vertical (TieredMenu, ContextMenu) abre ao lado do item e inverte perto da borda.
-- [ ] `ContextMenu`: posicionar pelas coordenadas do mouse; `ShowAsync` com o menu aberto
-  reposiciona.
-- [ ] `PanelMenu`: mais de dois níveis.
+**Feito** (branch `fix/bloco3-7-menus`):
+
+- [x] **Itens (L):** `Disabled` com `Url` não navega (âncora sem `href`); `Target`/`rel` respeitados;
+  `Command` executado pelos menus (inclusive `OpMenu`) antes do `OnItemClick` (que re-renderiza o dono).
+  _Desvio consciente:_ mantido `Command` como `Action` + `OnItemClick` (EventCallback do dono) em vez de
+  converter para `EventCallback`, para não quebrar a API do `OpMenuItem` em ~20 pontos.
+- [x] Menubar/TieredMenu: abrir um irmão fecha o anterior (e descendentes); clicar numa folha fecha tudo.
+- [x] Submenu vertical abre ao lado do item e inverte para a esquerda perto da borda (novo
+  `menu.interop.js`; Menubar abre abaixo).
+- [x] `ContextMenu`: `ShowAsync(x, y)` posiciona pelas coordenadas do mouse e reposiciona se aberto
+  (`OpOverlayAttach` ganhou âncora virtual por coordenadas + `repositionParent`).
+- [x] `PanelMenu`: submenus aninhados (mais de dois níveis), com `Disabled`/`Visible`/`Target`.
+- [x] Verificado com `/_tests/bloco3-7` + `Bloco3_7Tests` (6 cenários).
 
 ## 3.8 Overlays
 
@@ -161,11 +166,11 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 - [ ] `OpFilterService`: modos de data só com `DateTime`; filtro `null` deve casar tudo (como o
   PrimeNG); número em texto parseado com a cultura atual; modo `Custom` não registrado esvazia.
 
-## Decisões em aberto
+## Decisões
 
-1. **Ordem dos filhos (Tabs/Accordion):** reordenar pela marcação exige descobrir a posição no
-   DOM (JS) ou usar `@key`/índice explícito. Recomendo um parâmetro opcional `Index`/`Value` e,
-   sem ele, a ordem de registro com renumeração (comportamento atual corrigido).
-2. **`Command` dos menus:** trocar `Action` por `EventCallback` quebra a API de `OpMenuItem`.
-   Compatibilidade é livre neste projeto; recomendo trocar.
-3. **`Leaf` como `bool?`:** também muda a API de `OpTreeNode`/`TreeNode`. Recomendo.
+1. **Ordem dos filhos (Tabs/Accordion):** resolvido em 3.6 — ordem de registro com renumeração (sem
+   parâmetro `Index`), `Unregister` re-renderiza e ajusta o `ActiveIndex`.
+2. **`Command` dos menus:** em 3.7 foi mantido `Action`, executado pelo componente, com `OnItemClick`
+   (EventCallback do dono) disparado em seguida para re-renderizar. Evita quebrar `OpMenuItem` em ~20
+   pontos; a alternativa (converter para `EventCallback`) ficou descartada por ora.
+3. **`Leaf` como `bool?`:** resolvido em 3.5 (`IsLeaf => Leaf ?? !HasChildren`).

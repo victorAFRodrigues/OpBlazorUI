@@ -66,9 +66,19 @@ function clamp(v, min, max) {
 
 function position(state) {
     const { el, anchor, opts } = state;
-    if (!el.isConnected || !anchor.isConnected) return;
+    if (!el.isConnected) return;
 
-    const a = anchor.getBoundingClientRect();
+    let a;
+    if (opts.coordinate) {
+        // Âncora virtual (ex.: ContextMenu nas coordenadas do mouse).
+        const x = opts.coordinate.x;
+        const y = opts.coordinate.y;
+        a = { left: x, top: y, right: x, bottom: y, width: 0, height: 0 };
+    } else {
+        if (!anchor || !anchor.isConnected) return;
+        a = anchor.getBoundingClientRect();
+    }
+
     const vw = document.documentElement.clientWidth;
     const vh = document.documentElement.clientHeight;
 
@@ -190,7 +200,7 @@ export function attach(el, anchor, opts = {}) {
         if (opts.maskPrevious && el.previousElementSibling) el.previousElementSibling.style.zIndex = String(z - 1);
     }
 
-    if (opts.positioned === false || !anchor) return;
+    if (opts.positioned === false || (!anchor && !opts.coordinate)) return;
 
     el.style.position = 'fixed';
     el.style.margin = opts.keepMargin ? '' : '0';
@@ -210,7 +220,7 @@ export function attach(el, anchor, opts = {}) {
     if (typeof ResizeObserver !== 'undefined') {
         state.ro = new ResizeObserver(schedule);
         state.ro.observe(el);
-        state.ro.observe(anchor);
+        if (anchor) state.ro.observe(anchor);
     }
 
     position(state);
@@ -218,7 +228,23 @@ export function attach(el, anchor, opts = {}) {
 
 export function update(el) {
     const state = attached.get(el);
-    if (state && state.opts.positioned !== false && state.anchor) position(state);
+    if (state && state.opts.positioned !== false && (state.anchor || state.opts.coordinate)) position(state);
+}
+
+/** Troca a âncora/coordenadas de um painel já anexado e reposiciona (ContextMenu/Overlays). */
+export function repositionParent(marker, anchor, opts) {
+    const el = marker && marker.__opOverlayEl;
+    if (!el) return;
+    if (!anchor && opts && opts.anchorPrevious) anchor = el.previousElementSibling;
+    const state = attached.get(el);
+    if (!state) return;
+    state.anchor = anchor || null;
+    state.opts = opts;
+    if (opts && (opts.coordinate || anchor)) {
+        el.style.position = 'fixed';
+        state.containingBlock = fixedContainingBlock(el);
+    }
+    if (state.opts.positioned !== false && (anchor || state.opts.coordinate)) position(state);
 }
 
 export function detach(el) {
@@ -328,7 +354,7 @@ export function attachParent(marker, anchor, opts, dotNet) {
     if (dotNet && opts && (opts.dismissOutside || opts.dismissEscape)) {
         registerDismiss(el, anchor, dotNet, { outside: opts.dismissOutside, escape: opts.dismissEscape });
     }
-    if (!anchor && opts) opts.positioned = false;
+    if (!anchor && opts && !opts.coordinate) opts.positioned = false;
     attach(el, anchor, opts);
 }
 

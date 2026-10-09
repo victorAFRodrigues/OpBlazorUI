@@ -35,6 +35,22 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Coordenadas do mouse" Id="cursor">
+            <Description>
+                Chame <code>ShowAsync(x, y)</code> com <code>MouseEventArgs.ClientX/ClientY</code> para abrir o
+                menu na posição do cursor. Chamar de novo com o menu aberto reposiciona-o.
+            </Description>
+            <ChildContent>
+                <div class="flex items-center gap-3">
+                    <div style="width:16rem;height:6rem;border:1px dashed var(--p-content-border-color);display:flex;align-items:center;justify-content:center;"
+                         @oncontextmenu="OnContextMenu" @oncontextmenu:preventDefault="true">
+                        clique com o botão direito
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CursorCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
@@ -53,6 +69,7 @@
                           Rows="@(new[] {
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "Itens do menu." },
                               new[] { "ShowAsync(anchor)", "Task", "Exibe o menu ancorado ao elemento (ou ao anterior)." },
+                              new[] { "ShowAsync(x, y)", "Task", "Exibe o menu nas coordenadas do viewport (reposiciona se aberto)." },
                               new[] { "HideAsync()", "Task", "Oculta o menu." },
                               new[] { "ToggleAsync(anchor)", "Task", "Alterna exibição/ocultação." },
                               new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "Disparado ao clicar em um item." },
@@ -79,8 +96,7 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>O menu é ancorado a um elemento (via <code>ShowAsync(target)</code>), não à posição do cursor (<code>x, y</code>) como no upstream.</li>
-                        <li>O fechamento ao clicar fora (document) ainda não é automático.</li>
+                        <li>O menu pode ser ancorado a um elemento (<code>ShowAsync(target)</code>) ou posicionado pelas coordenadas do cursor (<code>ShowAsync(x, y)</code>).</li>
                     </ul>
                 </div>
             </ChildContent>
@@ -113,7 +129,23 @@
 
     private Task ShowMenuAsync() => _menu?.ShowAsync(_trigger) ?? Task.CompletedTask;
 
+    private void OnContextMenu(MouseEventArgs e) => _ = _menu?.ShowAsync(e.ClientX, e.ClientY);
+
     private void OnItem(OpMenuItem item) => _lastCommand = item.Label;
+
+    private const string CursorCode = """
+        <div @@oncontextmenu="OnContextMenu" @@oncontextmenu:preventDefault="true">
+            Clique com o botão direito
+        </div>
+        <OpContextMenu @ref="_menu" Model="_items" />
+
+        @code {
+            private OpContextMenu? _menu;
+
+            private void OnContextMenu(MouseEventArgs e) =>
+                _ = _menu?.ShowAsync(e.ClientX, e.ClientY);
+        }
+        """;
 
     private const string ImportCode = """
         @using OpBlazorUI.Base.Components.Menu
