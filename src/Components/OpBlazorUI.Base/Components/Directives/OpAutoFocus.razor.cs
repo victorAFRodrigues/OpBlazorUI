@@ -17,18 +17,27 @@ public partial class OpAutoFocus : OpComponentBase
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    private bool _inited;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && Enabled)
+        if (Enabled && !_inited)
         {
+            _inited = true;
             await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "autoFocusInit", _host);
+        }
+        else if (!Enabled && _inited)
+        {
+            _inited = false;
+            await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "autoFocusDispose", _host);
         }
     }
 
     public override async ValueTask DisposeAsync()
     {
-        if (Enabled)
+        if (_inited)
         {
+            _inited = false;
             try
             {
                 await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "autoFocusDispose", _host);

@@ -1,6 +1,6 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** em execução. **3.1** a **3.8** concluídos; testes Playwright 96/96.
+**Status:** concluído. **3.1** a **3.9** concluídos; testes Playwright/unitários 110 verdes.
 
 **Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
 `EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
@@ -161,15 +161,22 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.9 ColorPicker, Slider, diretivas e FilterService
 
-- [ ] `ColorPicker`: o `init` do JS roda a cada render e zera o arraste; listeners no `document`
-  nunca removidos; conversão HSB perde precisão (`#336699` → `#346799`); `Disabled` inline ainda
-  interativo; hex de 8 dígitos e inválido.
-- [ ] `Slider`: callbacks do JS sem `StateHasChanged` (slider não controlado não move); arredondar
-  quando não há `Step`; dois handles em `Max` travam; setas rolam a página.
-- [ ] Diretivas (StyleClass, Ripple, AnimateOnScroll, AutoFocus): o dispose roda com o elemento
-  fora do DOM e não remove listeners; parâmetros alterados após montar não têm efeito.
-- [ ] `OpFilterService`: modos de data só com `DateTime`; filtro `null` deve casar tudo (como o
-  PrimeNG); número em texto parseado com a cultura atual; modo `Custom` não registrado esvazia.
+**Feito** (branch `fix/bloco3-9-misc`):
+
+- [x] `ColorPicker`: o interop só inicializa uma vez ao abrir (antes rodava a cada render e zerava o
+  arraste); os listeners do `document` são removidos ao fechar/descartar; o cálculo HSB passa a usar
+  frações (`#336699` faz round-trip fiel) e o parse aceita hex de 8 dígitos (`#RRGGBBAA`, ignora o
+  alfa) e rejeita inválidos (cai no `DefaultColor`); `Disabled` inline recebe `p-disabled` e não interage.
+- [x] `Slider`: callbacks do JS chamam `StateHasChanged` e renderizam `CurrentValue` (slider não
+  controlado move); sem `Step` arredonda para inteiro; as setas/PageUp/Home/End não rolam a página;
+  `OpSliderRange` destrava com os dois handles iguais em Max/Min.
+- [x] Diretivas (`StyleClass`/`Ripple`/`AnimateOnScroll`/`AutoFocus`): reaplicam quando os parâmetros
+  mudam após montar; os handlers de `document`/`window` se auto-removem se o elemento sair do DOM.
+- [x] `OpFilterService`: modos de data aceitam `DateTime`, `DateOnly` e `DateTimeOffset`; filtro `null`
+  casa tudo; número em texto é parseado com a cultura informada; modo não registrado (ex.: `Custom` sem
+  `Register`) não esvazia o resultado.
+- [x] Verificado com `/_tests/bloco3-9` + `Bloco3_9Tests` (7 cenários) e `FilterServiceTests`
+  (7 testes unitários).
 
 ## Decisões
 
