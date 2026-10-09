@@ -7,7 +7,7 @@ public sealed class OpConfirmationService
     private ConfirmOptions? _currentOptions;
 
     public event Action? OnConfirmRequested;
-    public event Action? OnConfirmClosed;
+    public event Action<ConfirmOptions?>? OnConfirmClosed;
 
     public ConfirmOptions? CurrentOptions => _currentOptions;
     public bool HasActiveConfirmation => _currentOptions != null;
@@ -39,35 +39,56 @@ public sealed class OpConfirmationService
 
     public void Accept()
     {
-        _currentOptions?.Accept?.Invoke();
-        _currentOptions?.OnClose?.Invoke(true);
-        Close();
+        var options = _currentOptions;
+        if (options == null) return;
+
+        options.Accept?.Invoke();
+        options.OnClose?.Invoke(true);
+        Complete(options);
     }
 
     public void Reject()
     {
-        _currentOptions?.Reject?.Invoke();
-        _currentOptions?.OnClose?.Invoke(false);
-        Close();
+        var options = _currentOptions;
+        if (options == null) return;
+
+        options.Reject?.Invoke();
+        options.OnClose?.Invoke(false);
+        Complete(options);
     }
 
     public void Close(bool? result = null)
     {
+        var options = _currentOptions;
         if (result.HasValue)
         {
-            _currentOptions?.OnClose?.Invoke(result.Value);
+            options?.OnClose?.Invoke(result.Value);
         }
+
+        Complete(options);
+    }
+
+    // Não limpa a confirmação se o handler abriu uma nova (encadeada) dentro do Accept/Reject.
+    private void Complete(ConfirmOptions? options)
+    {
+        if (options is not null && !ReferenceEquals(_currentOptions, options))
+        {
+            return;
+        }
+
         _currentOptions = null;
-        OnConfirmClosed?.Invoke();
+        OnConfirmClosed?.Invoke(options);
     }
 
-    internal void Subscribe(Action callback)
+    internal void Subscribe(Action onRequested, Action<ConfirmOptions?> onClosed)
     {
-        OnConfirmRequested += callback;
+        OnConfirmRequested += onRequested;
+        OnConfirmClosed += onClosed;
     }
 
-    internal void Unsubscribe(Action callback)
+    internal void Unsubscribe(Action onRequested, Action<ConfirmOptions?> onClosed)
     {
-        OnConfirmRequested -= callback;
+        OnConfirmRequested -= onRequested;
+        OnConfirmClosed -= onClosed;
     }
 }

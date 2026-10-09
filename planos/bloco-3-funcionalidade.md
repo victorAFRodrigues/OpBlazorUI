@@ -1,6 +1,6 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** em execução. **3.1** a **3.7** concluídos; testes Playwright 85/85.
+**Status:** em execução. **3.1** a **3.8** concluídos; testes Playwright 96/96.
 
 **Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
 `EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
@@ -141,18 +141,23 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.8 Overlays
 
-- [ ] `OpOverlayAttach`: reanexar quando `Anchor` muda com o painel aberto (resolve ContextMenu,
-  ConfirmPopup e Popover com outro alvo).
-- [ ] `Dialog`/`Drawer`: restaurar o foco quando o pai fecha pelo binding e no `DisposeAsync`
-  (hoje o `focusTrapDispose` roda com o elemento já fora do DOM).
-- [ ] `ConfirmDialog`: usar as opções resolvidas do `Confirm(...)` no render (`DismissableMask`,
-  `Position` etc. são ignorados); não perder uma confirmação encadeada dentro do `Accept`;
-  `OpConfirmationService.Close()` fecha o diálogo; `DisposeAsync` limpa a confirmação ativa.
-- [ ] `VirtualScroller`: orientação horizontal não recalcula a janela (usa `_scrollTop`); lazy com
-  dados iniciais vazios nunca carrega; `Disabled` renderiza só ~2 itens.
-- [ ] `Editor`: normalizar `"<p><br></p>"` para `null`.
-- [ ] `OpOverlay`: `Target`/`AppendTo` não usados; modo não modal não fecha com clique fora
-  (migrar para `OpOverlayAttach`).
+**Feito** (branch `fix/bloco3-8-overlays`):
+
+- [x] `OpOverlayAttach`: reancora quando a âncora muda com o painel aberto (`repositionParent`) — cobre
+  ContextMenu, ConfirmPopup e Popover com outro alvo; nova âncora por coordenadas e por seletor CSS.
+- [x] `Dialog`/`Drawer`: restauram o foco no `OnParametersSetAsync` (quando o pai fecha pelo binding,
+  antes de o elemento sair do DOM) e no `DisposeAsync`; removido o `focusTrapDispose` pós-render.
+- [x] `ConfirmDialog`: usa as opções resolvidas do `Confirm(...)` no render (`Position`,
+  `DismissableMask`, `CloseOnEscape`, `Modal`, `FocusTrap`, `DefaultFocus`, `MaskStyleClass`);
+  aceita uma confirmação encadeada no `Accept` (não a descarta); `OpConfirmationService.Close()` fecha o
+  diálogo (assinatura em `OnConfirmClosed`); `DisposeAsync` limpa a confirmação ativa.
+- [x] `VirtualScroller`: orientação horizontal usa `_scrollLeft`; lazy com dados iniciais vazios dispara o
+  primeiro lote; `Disabled` renderiza todos os itens.
+- [x] `Editor`: normaliza markup vazio (`<p><br></p>`, `<br>`, `&nbsp;`) para `null`.
+- [x] `OpOverlay`: modo não modal fecha com clique fora (migrado para `OpOverlayAttach`) e Escape;
+  `Target` (seletor CSS) ancora e inverte. `AppendTo` continua sem portal real (o painel usa
+  `position: fixed`, que escapa visualmente) — desvio documentado.
+- [x] Verificado com `/_tests/bloco3-8` + `Bloco3_8Tests` (11 cenários).
 
 ## 3.9 ColorPicker, Slider, diretivas e FilterService
 

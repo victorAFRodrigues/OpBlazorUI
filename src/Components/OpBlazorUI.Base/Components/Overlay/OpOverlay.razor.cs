@@ -54,17 +54,18 @@ public partial class OpOverlay : ComponentBase
 
     private string? MaskStyle => null;
 
+    private string? TargetSelector =>
+        string.IsNullOrWhiteSpace(Target) || Target == "self" ? null : Target;
+
+    private EventCallback OutsideCallback =>
+        Dismissable ? EventCallback.Factory.Create(this, HideAsync) : default;
+
+    private EventCallback EscapeCallback =>
+        HideOnEscape ? EventCallback.Factory.Create(this, HideAsync) : default;
+
     private async Task OnMaskClick(MouseEventArgs e)
     {
         if (Dismissable)
-        {
-            await HideAsync();
-        }
-    }
-
-    private async Task OnKeydown(KeyboardEventArgs e)
-    {
-        if (HideOnEscape && e.Key == "Escape")
         {
             await HideAsync();
         }

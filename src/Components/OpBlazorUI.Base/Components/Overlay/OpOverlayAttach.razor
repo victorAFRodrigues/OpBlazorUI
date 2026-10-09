@@ -13,10 +13,14 @@
     private DotNetObjectReference<OpOverlayAttach>? _selfRef;
     private (bool Outside, bool Escape) _appliedDismiss;
     private string? _appliedAnchorId;
+    private string? _appliedAnchorSelector;
     private (double X, double Y)? _appliedCoordinate;
 
     /// <summary>Elemento de referência. Sem âncora, o painel só recebe o z-index da camada.</summary>
     [Parameter] public ElementReference? Anchor { get; set; }
+
+    /// <summary>Seletor CSS da âncora, resolvido no cliente (ex.: <c>#alvo</c>). Usado sem <see cref="Anchor"/>.</summary>
+    [Parameter] public string? AnchorSelector { get; set; }
 
     /// <summary>
     /// Âncora virtual por coordenadas (px do viewport). Usada quando não há elemento
@@ -79,8 +83,9 @@
         layer = Layer,
         baseZIndex = BaseZIndex,
         autoZIndex = AutoZIndex,
-        positioned = Anchor is not null || AnchorPrevious || Coordinate is not null,
+        positioned = Anchor is not null || AnchorPrevious || Coordinate is not null || !string.IsNullOrEmpty(AnchorSelector),
         anchorPrevious = AnchorPrevious,
+        anchorSelector = AnchorSelector,
         coordinate = Coordinate is null ? (object?)null : new { x = Coordinate.Value.X, y = Coordinate.Value.Y },
         placement = Placement,
         align = Align,
@@ -108,6 +113,7 @@
             await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "attachParent", _marker, Anchor, Options, _selfRef);
             _appliedDismiss = dismiss;
             _appliedAnchorId = Anchor?.Id;
+            _appliedAnchorSelector = AnchorSelector;
             _appliedCoordinate = Coordinate;
             if (!_disposed) _attached = true;
             return;
@@ -119,10 +125,11 @@
             await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "updateDismissParent", _marker, Anchor, Options, _selfRef);
         }
 
-        // Reancora quando o alvo (elemento ou coordenadas) muda com o painel aberto.
-        if (_attached && (Anchor?.Id != _appliedAnchorId || Coordinate != _appliedCoordinate))
+        // Reancora quando o alvo (elemento, seletor ou coordenadas) muda com o painel aberto.
+        if (_attached && (Anchor?.Id != _appliedAnchorId || AnchorSelector != _appliedAnchorSelector || Coordinate != _appliedCoordinate))
         {
             _appliedAnchorId = Anchor?.Id;
+            _appliedAnchorSelector = AnchorSelector;
             _appliedCoordinate = Coordinate;
             await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "repositionParent", _marker, Anchor, Options);
         }

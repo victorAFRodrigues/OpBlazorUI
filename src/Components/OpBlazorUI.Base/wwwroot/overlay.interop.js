@@ -235,6 +235,7 @@ export function update(el) {
 export function repositionParent(marker, anchor, opts) {
     const el = marker && marker.__opOverlayEl;
     if (!el) return;
+    if (!anchor && opts && opts.anchorSelector) anchor = document.querySelector(opts.anchorSelector);
     if (!anchor && opts && opts.anchorPrevious) anchor = el.previousElementSibling;
     const state = attached.get(el);
     if (!state) return;
@@ -350,6 +351,7 @@ export function attachParent(marker, anchor, opts, dotNet) {
     const el = marker && marker.parentElement;
     if (!el) return;
     marker.__opOverlayEl = el;
+    if (!anchor && opts && opts.anchorSelector) anchor = document.querySelector(opts.anchorSelector);
     if (!anchor && opts && opts.anchorPrevious) anchor = el.previousElementSibling;
     if (dotNet && opts && (opts.dismissOutside || opts.dismissEscape)) {
         registerDismiss(el, anchor, dotNet, { outside: opts.dismissOutside, escape: opts.dismissEscape });

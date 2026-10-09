@@ -1,0 +1,150 @@
+@page "/_tests/bloco3-8"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.ConfirmDialog
+@using OpBlazorUI.Base.Components.ConfirmDialog.Models
+@using OpBlazorUI.Base.Components.Dialog
+@using OpBlazorUI.Base.Components.Drawer
+@using OpBlazorUI.Base.Components.Editor
+@using OpBlazorUI.Base.Components.Overlay
+@using OpBlazorUI.Base.Components.VirtualScroller
+@using OpBlazorUI.Base.Services
+@inject OpConfirmationService ConfirmationService
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_8Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.8 overlays</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.8 overlays</h1>
+
+<section id="t-dialog">
+    <button id="t-dialog-open" type="button" @onclick="() => _dialogVisible = true">abrir dialog</button>
+    <OpDialog Visible="_dialogVisible" VisibleChanged="v => _dialogVisible = v" Modal="true" Header="Dlg">
+        <ChildContent>
+            <button id="t-dialog-close-parent" type="button" @onclick="() => _dialogVisible = false">fechar pelo pai</button>
+        </ChildContent>
+    </OpDialog>
+</section>
+
+<section id="t-dialog-dispose">
+    <button id="t-dialog2-open" type="button" @onclick="OpenDisposableDialog">abrir dialog removível</button>
+    @if (_showDialog2)
+    {
+        <OpDialog Visible="_dialog2Visible" VisibleChanged="v => _dialog2Visible = v" Modal="true" Header="Dlg2">
+            <ChildContent>
+                <button id="t-dialog2-remove" type="button" @onclick="() => _showDialog2 = false">remover</button>
+            </ChildContent>
+        </OpDialog>
+    }
+</section>
+
+<section id="t-drawer">
+    <button id="t-drawer-open" type="button" @onclick="() => _drawerVisible = true">abrir drawer</button>
+    <OpDrawer Visible="_drawerVisible" VisibleChanged="v => _drawerVisible = v" Header="Drawer">
+        <ChildContent>
+            <button id="t-drawer-close-parent" type="button" @onclick="() => _drawerVisible = false">fechar pelo pai</button>
+        </ChildContent>
+    </OpDrawer>
+</section>
+
+<section id="t-confirm">
+    <button id="t-confirm-open" type="button" @onclick="OpenConfirm">confirmar</button>
+    <button id="t-confirm-svc-open" type="button" @onclick="OpenServiceClose">abrir (fechar por serviço)</button>
+    <button id="t-confirm-close-service" type="button" @onclick="() => ConfirmationService.Close()">fechar serviço</button>
+    <button id="t-confirm-chain" type="button" @onclick="OpenChain">encadear</button>
+    <span id="t-confirm-state">@_confirmState</span>
+    <OpConfirmDialog Key="main"/>
+    <OpConfirmDialog Key="svc"/>
+    <OpConfirmDialog Key="chain"/>
+</section>
+
+<section id="t-vs-disabled">
+    <OpVirtualScroller TItem="int" Items="_vsItems" Disabled="true" ItemSize="20">
+        <ItemTemplate Context="ctx"><span class="vs-item">@ctx.Item</span></ItemTemplate>
+    </OpVirtualScroller>
+</section>
+
+<section id="t-vs-lazy">
+    <OpVirtualScroller TItem="int" Items="_vsLazyItems" Lazy="true" Step="5" ItemSize="20" ScrollHeight="200px"
+                       OnLazyLoad="OnVsLazy">
+        <ItemTemplate Context="ctx"><span class="vs-item">@ctx.Item</span></ItemTemplate>
+    </OpVirtualScroller>
+    <span id="t-vs-lazy-count">@_vsLazyItems.Count</span>
+</section>
+
+<section id="t-vs-h">
+    <OpVirtualScroller TItem="int" Items="_vsItems" Id="t-vs-h-scroller" Orientation="horizontal" ItemSize="50"
+                       ScrollWidth="200px" OnScrollIndexChange="OnVsIndex">
+        <ItemTemplate Context="ctx"><span class="vs-item" data-index="@ctx.Index">@ctx.Item</span></ItemTemplate>
+    </OpVirtualScroller>
+    <span id="t-vs-h-first">@_vsFirst</span>
+</section>
+
+<section id="t-editor">
+    <OpEditor @bind-Value="_editorValue"/>
+    <span id="t-editor-value">@(_editorValue ?? "null")</span>
+</section>
+
+<section id="t-overlay">
+    <button id="t-overlay-toggle" type="button" @onclick="() => _overlayVisible = true">mostrar overlay</button>
+    <OpOverlay Visible="_overlayVisible" VisibleChanged="v => _overlayVisible = v" Mode="overlay" Dismissable="true">
+        <span id="t-overlay-content">conteudo overlay</span>
+    </OpOverlay>
+</section>
+
+@code {
+    private bool _dialogVisible;
+    private bool _dialog2Visible;
+    private bool _showDialog2;
+    private bool _drawerVisible;
+    private bool _overlayVisible;
+    private string _confirmState = "—";
+    private string? _editorValue;
+
+    private readonly List<int> _vsItems = Enumerable.Range(1, 20).ToList();
+    private List<int> _vsLazyItems = new();
+    private bool _vsLazyLoaded;
+    private int _vsFirst;
+
+    private void OpenDisposableDialog()
+    {
+        _dialog2Visible = true;
+        _showDialog2 = true;
+    }
+
+    private void OpenConfirm() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "main",
+        Message = "Deseja confirmar?",
+        Position = "top",
+        DismissableMask = true,
+        Accept = () => _confirmState = "aceito",
+        OnClose = ok => _confirmState = ok ? "fechou-ok" : "fechou-nao"
+    });
+
+    private void OpenServiceClose() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "svc",
+        Message = "Fechar pelo serviço",
+        Modal = false
+    });
+
+    private void OpenChain() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "chain",
+        Message = "Primeiro",
+        Accept = () => ConfirmationService.Confirm(new ConfirmOptions
+        {
+            Key = "chain",
+            Message = "Segundo"
+        })
+    });
+
+    private void OnVsLazy(OpVirtualScrollerLazyLoadEvent e)
+    {
+        if (_vsLazyLoaded) return;
+        _vsLazyLoaded = true;
+        _vsLazyItems = Enumerable.Range(1, 5).ToList();
+    }
+
+    private void OnVsIndex(OpVirtualScrollerIndexEvent e) => _vsFirst = e.First;
+}

@@ -68,7 +68,7 @@ public partial class OpConfirmDialog : OpModalBase
     {
         _headerId = $"op-confirmdialog-header-{Guid.NewGuid():N}";
         _messageId = $"op-confirmdialog-message-{Guid.NewGuid():N}";
-        ConfirmationService.Subscribe(OnConfirmRequested);
+        ConfirmationService.Subscribe(OnConfirmRequested, OnConfirmClosed);
     }
 
     private void OnConfirmRequested()
@@ -88,6 +88,24 @@ public partial class OpConfirmDialog : OpModalBase
             _resolved = ResolveOptions(options);
             _visible = true;
             StateHasChanged();
+        });
+    }
+
+    // Fechado pelo serviço (ex.: OpConfirmationService.Close()): oculta o diálogo desta Key.
+    private void OnConfirmClosed(ConfirmOptions? options)
+    {
+        if (options is not null && !string.Equals(options.Key, Key, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _ = InvokeAsync(() =>
+        {
+            if (_visible)
+            {
+                Close();
+                StateHasChanged();
+            }
         });
     }
 
@@ -138,13 +156,13 @@ public partial class OpConfirmDialog : OpModalBase
     {
         if (_visible && !_lastRenderedVisible)
         {
-            if (FocusTrap)
+            if (EffFocusTrap)
             {
                 try
                 {
                     // Trap + foco inicial no botão indicado por DefaultFocus (Accept/Reject/Close).
                     // "none" (ou valor desconhecido) não foca nada; o usuário entra pelo Tab.
-                    await FocusTrapInitAsync(_root, DefaultFocusSelector(CurrentOptions?.DefaultFocus ?? DefaultFocus));
+                    await InitFocusTrapAsync(_root, DefaultFocusSelector(CurrentOptions?.DefaultFocus ?? DefaultFocus));
                 }
                 catch
                 {
@@ -208,35 +226,30 @@ public partial class OpConfirmDialog : OpModalBase
 
     private void OnAcceptClick()
     {
+        // O fechamento local vem de OnConfirmClosed (o serviço pode encadear uma nova confirmação).
         ConfirmationService.Accept();
-        Close();
         _ = OnHide.InvokeAsync(new ConfirmEvent(true));
-        StateHasChanged();
     }
 
     private void OnRejectClick()
     {
         ConfirmationService.Reject();
-        Close();
         _ = OnHide.InvokeAsync(new ConfirmEvent(false));
-        StateHasChanged();
     }
 
     private void OnCloseClick()
     {
         ConfirmationService.Close(false);
-        Close();
         _ = OnHide.InvokeAsync(new ConfirmEvent(false));
-        StateHasChanged();
     }
 
     private void Close()
     {
         // Dispara a restauração do foco antes de o diálogo sair do DOM (o elemento precisa
         // ainda estar anexado para ser serializado ao JS).
-        if (FocusTrap && _visible)
+        if (EffFocusTrap && _visible)
         {
-            _ = FocusTrapDisposeAsync(_root);
+            _ = RestoreFocusAsync(_root);
         }
 
         _visible = false;
@@ -245,7 +258,7 @@ public partial class OpConfirmDialog : OpModalBase
 
     private void OnMaskClick()
     {
-        if (DismissableMask)
+        if (EffDismissableMask)
         {
             OnCloseClick();
         }
@@ -253,21 +266,37 @@ public partial class OpConfirmDialog : OpModalBase
 
     // Escape chega pelo OpOverlayAttach só quando este é o overlay do topo.
     private EventCallback EscapeCallback =>
-        CloseOnEscape ? EventCallback.Factory.Create(this, OnCloseClick) : default;
+        EffCloseOnEscape ? EventCallback.Factory.Create(this, OnCloseClick) : default;
 
     public override async ValueTask DisposeAsync()
     {
-        ConfirmationService.Unsubscribe(OnConfirmRequested);
+        ConfirmationService.Unsubscribe(OnConfirmRequested, OnConfirmClosed);
+
+        // Se este diálogo ainda detém a confirmação ativa, limpa-a para não deixar estado preso.
+        var options = ConfirmationService.CurrentOptions;
+        if (options is not null && string.Equals(options.Key, Key, StringComparison.Ordinal))
+        {
+            ConfirmationService.Close();
+        }
+
+        await RestoreFocusAsync(_root);
         await base.DisposeAsync();
     }
 
     private ConfirmOptions? CurrentOptions => _resolved;
 
+    private bool EffModal => CurrentOptions?.Modal ?? Modal;
+    private bool EffDismissableMask => CurrentOptions?.DismissableMask ?? DismissableMask;
+    private bool EffCloseOnEscape => CurrentOptions?.CloseOnEscape ?? CloseOnEscape;
+    private bool EffFocusTrap => CurrentOptions?.FocusTrap ?? FocusTrap;
+    private string EffPosition => CurrentOptions?.Position ?? Position;
+    private string? EffMaskStyleClass => CurrentOptions?.MaskStyleClass ?? MaskStyleClass;
+
     private string RootClass => OpCss.BuildClass(
         "p-confirmdialog p-component p-dialog",
         "p-dialog-enter-active",
         AppearanceClass,
-        Position != "center" ? $"p-dialog-{Position}" : null,
+        EffPosition != "center" ? $"p-dialog-{EffPosition}" : null,
         StyleClass);
 
     // "Badge" é extensão do OpBlazorUI: o CSS vive em optimus-base.css e usa tokens do tema.
@@ -278,11 +307,11 @@ public partial class OpConfirmDialog : OpModalBase
 
     private string MaskClass => OpCss.BuildClass(
         "p-dialog-mask p-confirmdialog-mask",
-        Modal ? "p-overlay-mask p-overlay-mask-enter-active" : null,
-        Position != "center" ? $"p-dialog-{Position}" : null,
-        MaskStyleClass);
+        EffModal ? "p-overlay-mask p-overlay-mask-enter-active" : null,
+        EffPosition != "center" ? $"p-dialog-{EffPosition}" : null,
+        EffMaskStyleClass);
 
-    private string MaskInlineStyle => $"pointer-events: {(Modal ? "auto" : "none")};";
+    private string MaskInlineStyle => $"pointer-events: {(EffModal ? "auto" : "none")};";
 
     private string RootInlineStyle => $"pointer-events: auto; {Style}".TrimEnd();
 

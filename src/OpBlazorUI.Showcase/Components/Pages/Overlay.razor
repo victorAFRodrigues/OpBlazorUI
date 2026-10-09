@@ -145,8 +145,8 @@
             <Description>
                 No upstream o <code>target</code> localiza o elemento usado para posicionar o overlay, aceitando
                 <code>@@prev</code>, <code>@@next</code>, <code>@@parent</code>, <code>@@grandparent</code> ou um
-                seletor CSS. No Blazor <code>Target</code> é uma <code>string</code> aceita, mas o componente não
-                a utiliza para posicionamento.
+                seletor CSS. No Blazor <code>Target</code> é um seletor CSS: o painel ancora no elemento e inverte
+                perto da borda.
             </Description>
             <ChildContent>
                 <div class="card flex flex-col items-center gap-4">
@@ -156,7 +156,7 @@
                     <OpButton Label="Mostrar" @onclick="ToggleTarget"/>
                     <OpOverlay @bind-Visible="_targetVisible" Mode="overlay" Target="#overlay-target"
                                ContentStyle="margin-top:1rem;padding:1.5rem;background:var(--p-content-background);border:1px solid var(--p-content-border-color);border-radius:var(--p-content-border-radius)">
-                        <span>Target não posiciona no port</span>
+                        <span>Ancorado ao elemento alvo</span>
                     </OpOverlay>
                 </div>
             </ChildContent>
@@ -318,8 +318,8 @@
                               new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
                               new[] { "ContentStyle", "string?", "null", "Estilos inline no conteúdo (<code>p-overlay-content</code>)." },
                               new[] { "ContentStyleClass", "string?", "null", "Classes adicionais no conteúdo." },
-                              new[] { "Target", "string?", "null", "Seletor do elemento de posicionamento; aceito, mas não aplicado no port." },
-                              new[] { "AppendTo", "string?", "self", "Local de anexação; aceito, mas o port não move o DOM." },
+                              new[] { "Target", "string?", "null", "Seletor CSS do elemento de ancoragem (usado no modo <code>overlay</code>)." },
+                              new[] { "AppendTo", "string?", "self", "Local de anexação; aceito, mas o port não move o DOM (o painel usa <code>position: fixed</code>)." },
                               new[] { "Dismissable", "bool", "false", "No modo modal, oculta ao clicar na máscara." },
                               new[] { "HideOnEscape", "bool", "true", "Oculta ao pressionar <code>Escape</code> quando o foco está dentro do overlay." },
                               new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
@@ -389,8 +389,8 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>Não há portal nem <code>appendTo</code> real: <code>AppendTo</code> é aceito, mas o DOM permanece no ponto de uso.</li>
-                        <li>O modo <code>overlay</code> não posiciona o painel automaticamente (sem auto-flip nem alinhamento); <code>Target</code> não é usado.</li>
+                        <li>Não há portal nem <code>appendTo</code> real: <code>AppendTo</code> é aceito, mas o DOM permanece no ponto de uso (o painel usa <code>position: fixed</code>, então escapa visualmente do contêiner).</li>
+                        <li>O modo <code>overlay</code> fecha com clique fora (<code>Dismissable</code>) e Escape; com <code>Target</code> (seletor CSS) o painel ancora no elemento e inverte perto da borda.</li>
                         <li>As opções globais do Angular (<code>OverlayOptions</code>), a opção <code>responsive</code> (breakpoint/media/direction) e <code>autofocus</code> de foco inicial não existem; cada instância recebe os parâmetros.</li>
                         <li><code>BaseZIndex</code>, <code>AutoZIndex</code>, <code>showTransitionOptions</code> e <code>hideTransitionOptions</code> não têm equivalente; as animações da máscara são fixas.</li>
                         <li>Não há focus trap nem gestão de foco: <code>Tab</code>/<code>Shift+Tab</code> não ficam confinados ao popup e <code>HideOnEscape</code> só funciona com o foco dentro do overlay.</li>
