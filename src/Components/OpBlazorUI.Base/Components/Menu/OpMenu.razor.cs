@@ -131,6 +131,8 @@ public partial class OpMenu : ComponentBase
     private async Task OnItemClicked(OpMenuItem item)
     {
         if (item.Disabled) return;
+
+        item.Command?.Invoke();
         await OnItemClick.InvokeAsync(item);
         if (Popup)
         {

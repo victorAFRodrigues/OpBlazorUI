@@ -9,6 +9,7 @@ public partial class OpContextMenu : OpComponentBase
     private readonly HashSet<string> _open = new(StringComparer.Ordinal);
     private ElementReference _panel;
     private ElementReference? _anchor;
+    private (double X, double Y)? _coordinate;
     private bool _visible;
 
     [Parameter] public IReadOnlyList<OpMenuItem> Model { get; set; } = Array.Empty<OpMenuItem>();
@@ -20,20 +21,30 @@ public partial class OpContextMenu : OpComponentBase
 
     private bool IsOpen(string path) => _open.Contains(path);
 
-    private Task ToggleAsync(string path)
+    private Task ToggleSubmenuAsync(string path)
     {
-        if (!_open.Remove(path))
-        {
-            _open.Add(path);
-        }
-
+        OpMenuPaths.Toggle(_open, path);
         return Task.CompletedTask;
     }
 
     /// <summary>Exibe o menu ancorado ao elemento informado (ou ao elemento anterior).</summary>
-    public async Task ShowAsync(ElementReference? anchor = null)
+    public Task ShowAsync(ElementReference? anchor = null)
     {
         _anchor = anchor;
+        _coordinate = null;
+        return OpenAsync();
+    }
+
+    /// <summary>Exibe o menu nas coordenadas do viewport (ex.: <c>MouseEventArgs.ClientX/ClientY</c>).</summary>
+    public Task ShowAsync(double x, double y)
+    {
+        _anchor = null;
+        _coordinate = (x, y);
+        return OpenAsync();
+    }
+
+    private async Task OpenAsync()
+    {
         _visible = true;
         _open.Clear();
         await OnShow.InvokeAsync();

@@ -5,84 +5,76 @@
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
     <ul class="p-panelmenu-root-list" role="tree">
-        @foreach (var item in Model)
+        @foreach (var item in Visible(Model))
         {
-            if (!item.Visible || item.Separator)
-            {
-                continue;
-            }
-
-            if (item.HasChildren && !item.Disabled)
-            {
-                var panel = item;
-                var open = IsOpen(panel);
-
-                <li class="p-panelmenu-panel">
-                    <div class="p-panelmenu-header @(open ? "p-panelmenu-header-active" : null)">
-                        <div class="p-panelmenu-header-content">
-                            <a class="p-panelmenu-header-link"
-                               role="button"
-                               aria-expanded="@(open ? "true" : "false")"
-                               tabindex="0"
-                               @onclick="() => ToggleAsync(panel)">
-                                @if (!string.IsNullOrEmpty(panel.Icon))
-                                {
-                                    <span class="p-panelmenu-header-icon @panel.Icon" aria-hidden="true"></span>
-                                }
-                                <span class="p-panelmenu-header-label">@panel.Label</span>
-                                <span class="p-panelmenu-submenu-icon pi @(open ? "pi-angle-up" : "pi-angle-down")" aria-hidden="true"></span>
-                            </a>
-                        </div>
-                    </div>
-
-                    @if (open)
-                    {
-                        <div class="p-panelmenu-content-container">
-                            <div class="p-panelmenu-content-wrapper">
-                                <ul class="p-panelmenu-submenu" role="menu">
-                                    @foreach (var child in panel.Items!)
-                                    {
-                                        <li class="p-panelmenu-item p-disabled-none">
-                                            <div class="p-panelmenu-item-content">
-                                                <a class="p-panelmenu-item-link"
-                                                   href="@child.Url"
-                                                   role="menuitem"
-                                                   tabindex="-1"
-                                                   @onclick="() => SelectItemAsync(child)"
-                                                   @onclick:preventDefault="@(child.Command is not null || string.IsNullOrEmpty(child.Url))">
-                                                    @if (!string.IsNullOrEmpty(child.Icon))
-                                                    {
-                                                        <span class="p-panelmenu-item-icon @child.Icon" aria-hidden="true"></span>
-                                                    }
-                                                    <span class="p-panelmenu-item-label">@child.Label</span>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    }
-                </li>
-            }
-            else
-            {
-                <li class="p-panelmenu-item">
-                    <div class="p-panelmenu-item-content">
-                        <a class="p-panelmenu-item-link"
-                           href="@item.Url"
-                           role="menuitem"
-                           @onclick="() => SelectItemAsync(item)"
-                           @onclick:preventDefault="@(item.Command is not null || string.IsNullOrEmpty(item.Url))">
-                            @if (!string.IsNullOrEmpty(item.Icon))
-                            {
-                                <span class="p-panelmenu-item-icon @item.Icon" aria-hidden="true"></span>
-                            }
-                            <span class="p-panelmenu-item-label">@item.Label</span>
-                        </a>
-                    </div>
-                </li>
-            }
+            @RenderPanelItem(item, 0)
         }
     </ul>
 </div>
+
+@code {
+    private static IEnumerable<OpMenuItem> Visible(IEnumerable<OpMenuItem> items)
+        => items.Where(i => i.Visible && !i.Separator);
+
+    private RenderFragment RenderPanelItem(OpMenuItem item, int level) => __builder =>
+    {
+        if (item.HasChildren && !item.Disabled)
+        {
+            var open = IsOpen(item);
+            <li class="p-panelmenu-panel">
+                <div class="p-panelmenu-header @(open ? "p-panelmenu-header-active" : null)">
+                    <div class="p-panelmenu-header-content">
+                        <a class="p-panelmenu-header-link"
+                           role="button"
+                           aria-expanded="@(open ? "true" : "false")"
+                           tabindex="0"
+                           @onclick="() => ToggleAsync(item)">
+                            @if (!string.IsNullOrEmpty(item.Icon))
+                            {
+                                <span class="p-panelmenu-header-icon @item.Icon" aria-hidden="true"></span>
+                            }
+                            <span class="p-panelmenu-header-label">@item.Label</span>
+                            <span class="p-panelmenu-submenu-icon pi @(open ? "pi-angle-up" : "pi-angle-down")" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                </div>
+
+                @if (open)
+                {
+                    <div class="p-panelmenu-content-container">
+                        <div class="p-panelmenu-content-wrapper">
+                            <ul class="p-panelmenu-submenu" role="menu">
+                                @foreach (var child in Visible(item.Items!))
+                                {
+                                    @RenderPanelItem(child, level + 1)
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </li>
+        }
+        else
+        {
+            <li class="p-panelmenu-item @(item.Disabled ? "p-disabled" : null)">
+                <div class="p-panelmenu-item-content">
+                    <a class="p-panelmenu-item-link"
+                       href="@(item.Disabled ? null : item.Url)"
+                       target="@item.Target"
+                       rel="@(item.Target == "_blank" ? "noopener noreferrer" : null)"
+                       role="menuitem"
+                       aria-disabled="@(item.Disabled ? "true" : null)"
+                       tabindex="-1"
+                       @onclick="() => SelectItemAsync(item)"
+                       @onclick:preventDefault="@(item.Disabled || item.Command is not null || string.IsNullOrEmpty(item.Url))">
+                        @if (!string.IsNullOrEmpty(item.Icon))
+                        {
+                            <span class="p-panelmenu-item-icon @item.Icon" aria-hidden="true"></span>
+                        }
+                        <span class="p-panelmenu-item-label">@item.Label</span>
+                    </a>
+                </div>
+            </li>
+        }
+    };
+}

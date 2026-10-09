@@ -1,7 +1,12 @@
 @namespace OpBlazorUI.Base.Components.Menu
 @using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
 
-<ul class="@ListClass" role="@(Root ? "menubar" : "menu")" style="@ListStyle">
+<ul class="@ListClass" role="@(Root ? "menubar" : "menu")" style="@ListStyle"
+    data-op-submenu="@(Root ? null : Level.ToString())"
+    data-op-orientation="@Orientation"
+    @ref="_listRef">
     @for (var i = 0; i < Items.Count; i++)
     {
         var item = Items[i];
@@ -19,14 +24,16 @@
             <li class="@ItemClass(item, hasChildren, open)">
                 <div class="@($"p-{Prefix}-item-content")">
                     <a class="@($"p-{Prefix}-item-link")"
-                       href="@item.Url"
+                       href="@(item.Disabled ? null : item.Url)"
+                       target="@item.Target"
+                       rel="@(item.Target == "_blank" ? "noopener noreferrer" : null)"
                        role="menuitem"
                        aria-haspopup="@(hasChildren ? "true" : null)"
                        aria-expanded="@(hasChildren ? (open ? "true" : "false") : null)"
                        aria-disabled="@(item.Disabled ? "true" : null)"
                        tabindex="-1"
                        @onclick="() => OnSelectAsync(item, hasChildren, path)"
-                       @onclick:preventDefault="hasChildren">
+                       @onclick:preventDefault="@(hasChildren || item.Disabled)">
                         @if (!string.IsNullOrEmpty(item.Icon))
                         {
                             <span class="@($"p-{Prefix}-item-icon {item.Icon}")" aria-hidden="true"></span>
@@ -45,6 +52,7 @@
                                  Prefix="@Prefix"
                                  Root="false"
                                  Level="@(Level + 1)"
+                                 Orientation="@Orientation"
                                  PathPrefix="@path"
                                  IsOpen="@IsOpen"
                                  OnToggle="@OnToggle"
