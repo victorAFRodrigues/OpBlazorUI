@@ -1,7 +1,7 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Components.Select;
 
 namespace OpBlazorUI.Base.Components.MultiSelect;
 
@@ -148,7 +148,7 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
         get
         {
             var selected = SelectedOptions;
-            if (MaxSelectedLabels is { } max && selected.Count >= max)
+            if (MaxSelectedLabels is { } max && selected.Count > max)
             {
                 return new List<TValue>();
             }
@@ -209,43 +209,30 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
     private bool ShowEmptyMessage => !HasVisibleOptions;
 
     // ------------------------------------------------------------ option helpers
-    private string GetOptionLabel(object option)
-    {
-        if (option is null) return string.Empty;
-        if (string.IsNullOrEmpty(OptionLabel)) return option.ToString() ?? string.Empty;
-        return GetPropertyValue(option, OptionLabel)?.ToString() ?? option.ToString() ?? string.Empty;
-    }
+    private string GetOptionLabel(object option) => OpSelectOption.GetLabel(option, OptionLabel);
 
-    private object? GetOptionValue(object option)
-    {
-        if (option is null) return null;
-        if (string.IsNullOrEmpty(OptionValue)) return option;
-        return GetPropertyValue(option, OptionValue);
-    }
+    private object? GetOptionValue(object option) => OpSelectOption.GetValue(option, OptionValue);
 
     private bool IsOptionDisabled(object option)
     {
         if (option is null || string.IsNullOrEmpty(OptionDisabled)) return false;
-        return GetPropertyValue(option, OptionDisabled) is bool b && b;
+        return OpSelectOption.GetProperty(option, OptionDisabled) is bool b && b;
     }
 
     private bool IsOptionGroup(object option)
     {
         if (option is null || !Group) return false;
-        return GetPropertyValue(option, OptionGroupChildren) is not null;
+        return OpSelectOption.GetProperty(option, OptionGroupChildren) is not null;
     }
 
-    private string GetOptionGroupLabelValue(object group)
-    {
-        if (group is null) return string.Empty;
-        return GetPropertyValue(group, OptionGroupLabel)?.ToString() ?? string.Empty;
-    }
+    private string GetOptionGroupLabelValue(object group) =>
+        group is null ? string.Empty : OpSelectOption.GetProperty(group, OptionGroupLabel)?.ToString() ?? string.Empty;
 
     private List<object> GetOptionGroupChildren(object group)
     {
         var list = new List<object>();
         if (group is null) return list;
-        var children = GetPropertyValue(group, OptionGroupChildren) as System.Collections.IEnumerable;
+        var children = OpSelectOption.GetProperty(group, OptionGroupChildren) as System.Collections.IEnumerable;
         if (children is null) return list;
         foreach (var child in children)
         {
@@ -255,23 +242,26 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
         return list;
     }
 
-    private static object? GetPropertyValue(object obj, string propertyPath)
-    {
-        var type = obj.GetType();
-        var property = type.GetProperty(propertyPath,
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-        return property?.GetValue(obj);
-    }
+    private bool IsSelected(object option) => OpSelectOption.Contains(SelectedOptions, option, OptionValue);
 
-    private bool IsSelected(object option)
+    // Opções navegáveis por teclado: no modo agrupado são os filhos achatados (com filtro).
+    private List<object> NavigableOptions
     {
-        var values = SelectedOptions;
-        foreach (var v in values)
+        get
         {
-            if (Equals(GetOptionValue(option), GetOptionValue((object)v!))) return true;
-        }
+            if (!Group) return VisibleOptions;
+            var list = new List<object>();
+            foreach (var group in AllOptions)
+            {
+                if (!IsOptionGroup(group)) continue;
+                foreach (var child in GetOptionGroupChildren(group))
+                {
+                    if (MatchesFilter(child)) list.Add(child);
+                }
+            }
 
-        return false;
+            return list;
+        }
     }
 
     private string OptionClass(object option)
@@ -389,15 +379,16 @@ private async Task CloseAsync()
     // ------------------------------------------------------------ options interaction
     private async Task OnOptionClick(object option)
     {
-        if (IsOptionDisabled(option) || option is not TValue tv) return;
-        await ToggleOptionAsync(tv);
+        if (IsOptionDisabled(option)) return;
+        if (OpSelectOption.GetValue(option, OptionValue) is null) return;
+        await ToggleOptionAsync(OpSelectOption.ToValue<TValue>(option, OptionValue)!);
         await _inputRef.FocusAsync();
     }
 
     private async Task ToggleOptionAsync(TValue option)
     {
         var list = SelectedOptions;
-        var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
+        var existingIndex = list.FindIndex(v => Equals(v, option));
         if (existingIndex >= 0)
         {
             list.RemoveAt(existingIndex);
@@ -416,7 +407,9 @@ private async Task CloseAsync()
     private List<TValue> ToggleableOptions => VisibleOptions
         .SelectMany(o => Group && IsOptionGroup(o) ? GetOptionGroupChildren(o).Where(MatchesFilter) : [o])
         .Where(o => !IsOptionDisabled(o))
-        .OfType<TValue>()
+        .Select(o => OpSelectOption.ToValue<TValue>(o, OptionValue))
+        .Where(v => v is not null)
+        .Select(v => v!)
         .ToList();
 
     private bool AllSelected
@@ -424,7 +417,7 @@ private async Task CloseAsync()
         get
         {
             var options = ToggleableOptions;
-            return options.Count > 0 && options.All(o => IsSelected(o!));
+            return options.Count > 0 && options.All(o => SelectedOptions.Any(v => Equals(v, o)));
         }
     }
 
@@ -433,7 +426,7 @@ private async Task CloseAsync()
         var list = SelectedOptions;
         var options = ToggleableOptions;
         if (AllSelected)
-            list.RemoveAll(v => options.Any(o => Equals(GetOptionValue((object)o!), GetOptionValue((object)v!))));
+            list.RemoveAll(v => options.Any(o => Equals(OpSelectOption.GetValue(o, OptionValue), v)));
         else
             list.AddRange(options.Where(o => !IsSelected(o!)));
 
@@ -445,7 +438,7 @@ private async Task CloseAsync()
     private async Task RemoveOptionAsync(TValue option)
     {
         var list = SelectedOptions;
-        var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
+        var existingIndex = list.FindIndex(v => Equals(v, option));
         if (existingIndex >= 0)
         {
             list.RemoveAt(existingIndex);
@@ -457,13 +450,14 @@ private async Task CloseAsync()
 
     private void OnOptionMouseEnter(int index)
     {
+        if (_focusedOptionIndex == index) return;
         _focusedOptionIndex = index;
         StateHasChanged();
     }
 
     private int FindFirstEnabledIndex()
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         for (var i = 0; i < visible.Count; i++)
         {
             if (!IsOptionDisabled(visible[i])) return i;
@@ -474,7 +468,7 @@ private async Task CloseAsync()
 
     private int FindLastEnabledIndex()
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         for (var i = visible.Count - 1; i >= 0; i--)
         {
             if (!IsOptionDisabled(visible[i])) return i;
@@ -485,7 +479,7 @@ private async Task CloseAsync()
 
     private int FindNextOptionIndex(int fromIndex, bool backward = false)
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         if (visible.Count == 0) return -1;
         var step = backward ? -1 : 1;
         var i = fromIndex;
@@ -571,7 +565,8 @@ private async Task CloseAsync()
 
     private void SearchOptions(string key)
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
+        if (visible.Count == 0) return;
         for (var i = 0; i < visible.Count; i++)
         {
             var idx = (_focusedOptionIndex + 1 + i) % visible.Count;
@@ -586,13 +581,13 @@ private async Task CloseAsync()
 
     private async Task ToggleFocusedOptionAsync()
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         if (_focusedOptionIndex >= 0 && _focusedOptionIndex < visible.Count)
         {
             var option = visible[_focusedOptionIndex];
-            if (!IsOptionDisabled(option) && option is TValue tv)
+            if (!IsOptionDisabled(option))
             {
-                await ToggleOptionAsync(tv);
+                await ToggleOptionAsync(OpSelectOption.ToValue<TValue>(option, OptionValue)!);
                 await _inputRef.FocusAsync();
                 return;
             }

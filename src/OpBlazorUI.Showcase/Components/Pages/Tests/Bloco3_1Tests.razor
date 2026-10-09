@@ -1,0 +1,114 @@
+@page "/_tests/bloco3-1"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.AutoComplete
+@using OpBlazorUI.Base.Components.Listbox
+@using OpBlazorUI.Base.Components.MultiSelect
+@using OpBlazorUI.Base.Components.Select
+@using OpBlazorUI.Base.Components.SelectButton
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_1Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.1 seleção</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.1 seleção</h1>
+
+<section id="t-select">
+    <OpSelect TValue="string"
+              Options="_cities"
+              OptionLabel="Name"
+              OptionValue="Code"
+              Placeholder="Cidade"
+              @bind-Value="_selectValue"/>
+    <span id="t-select-value">@_selectValue</span>
+</section>
+
+<section id="t-select-group">
+    <OpSelect TValue="string"
+              Options="_groups"
+              OptionLabel="Name"
+              OptionValue="Code"
+              Group="true"
+              OptionGroupLabel="Name"
+              OptionGroupChildren="Items"
+              Placeholder="Estado"
+              @bind-Value="_groupValue"/>
+    <span id="t-select-group-value">@_groupValue</span>
+</section>
+
+<section id="t-multiselect">
+    <OpMultiSelect TValue="string"
+                   Options="_cities"
+                   OptionLabel="Name"
+                   OptionValue="Code"
+                   Placeholder="Cidades"
+                   @bind-Value="_multiValue"/>
+    <span id="t-multiselect-value">@string.Join(",", _multiValue ?? [])</span>
+</section>
+
+<section id="t-listbox">
+    <OpListbox TValue="string"
+               Options="_cities"
+               OptionLabel="Name"
+               OptionValue="Code"
+               Multiple="true"
+               @bind-SelectedValues="_listValues"/>
+    <span id="t-listbox-value">@string.Join(",", _listValues ?? [])</span>
+</section>
+
+<section id="t-autocomplete">
+    <OpAutoComplete TValue="string"
+                    Suggestions="_suggestions"
+                    OptionLabel="Name"
+                    OptionValue="Code"
+                    CompleteMethod="OnComplete"
+                    @bind-Value="_acValue"/>
+    <span id="t-autocomplete-value">@_acValue</span>
+</section>
+
+<section id="t-selectbutton">
+    <OpSelectButton TValue="string"
+                    Options="_cities"
+                    OptionLabel="Name"
+                    OptionValue="Code"
+                    AllowEmpty="false"
+                    @bind-Value="_sbValue"/>
+    <span id="t-selectbutton-value">@_sbValue</span>
+</section>
+
+@code {
+    private sealed record City(string Name, string Code);
+    private sealed record CityGroup(string Name, List<City> Items);
+
+    private static readonly List<City> _cities = new()
+    {
+        new City("São Paulo", "SP"),
+        new City("Rio de Janeiro", "RJ"),
+        new City("Belo Horizonte", "MG"),
+        new City("Curitiba", "PR")
+    };
+
+    private static readonly List<object> _groups = new()
+    {
+        new CityGroup("Sudeste", new List<City> { new("São Paulo", "SP"), new("Rio de Janeiro", "RJ") }),
+        new CityGroup("Sul", new List<City> { new("Curitiba", "PR"), new("Porto Alegre", "RS") })
+    };
+
+    private string? _selectValue;
+    private string? _groupValue;
+    private IReadOnlyList<string>? _multiValue;
+    private IReadOnlyList<string>? _listValues;
+    private string? _acValue;
+    private string? _sbValue = "SP";
+
+    private IReadOnlyList<object>? _suggestions = _cities.Cast<object>().ToList();
+
+    private void OnComplete(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query ?? string.Empty;
+        _suggestions = _cities
+            .Where(c => c.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase))
+            .Cast<object>()
+            .ToList();
+    }
+}

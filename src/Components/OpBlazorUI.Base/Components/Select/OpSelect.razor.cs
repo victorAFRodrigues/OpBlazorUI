@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
@@ -115,6 +114,8 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private bool HasSelection => SelectedOption is not null;
 
+    private bool FilterActive => Filter || Editable;
+
     private IEnumerable<object> AllOptions => Options ?? Array.Empty<object>();
 
     private object? SelectedOption
@@ -128,19 +129,40 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
                 {
                     foreach (var child in GetOptionGroupChildren(opt))
                     {
-                        if (Equals(GetOptionValue(child), GetOptionValue((object)Value)))
+                        if (IsSelectedValue(child))
                         {
                             return child;
                         }
                     }
                 }
-                else if (Equals(GetOptionValue(opt), GetOptionValue((object)Value)))
+                else if (IsSelectedValue(opt))
                 {
                     return opt;
                 }
             }
 
             return null;
+        }
+    }
+
+    // Opções realmente navegáveis por teclado: no modo agrupado são os filhos achatados
+    // (com filtro), como no PrimeNG, e não os grupos.
+    private List<object> NavigableOptions
+    {
+        get
+        {
+            if (!Group) return VisibleOptions;
+            var list = new List<object>();
+            foreach (var group in AllOptions)
+            {
+                if (!IsOptionGroup(group)) continue;
+                foreach (var child in GetOptionGroupChildren(group))
+                {
+                    if (MatchesFilter(child)) list.Add(child);
+                }
+            }
+
+            return list;
         }
     }
 
@@ -184,12 +206,12 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private bool MatchesFilter(object option)
     {
-        if (!Filter || string.IsNullOrEmpty(_filterValue)) return true;
+        if (!FilterActive || string.IsNullOrEmpty(_filterValue)) return true;
         var label = GetOptionLabel(option);
         if (label.Contains(_filterValue, StringComparison.CurrentCultureIgnoreCase)) return true;
         if (!string.IsNullOrEmpty(FilterBy))
         {
-            var value = GetPropertyValue(option, FilterBy)?.ToString();
+            var value = OpSelectOption.GetProperty(option, FilterBy)?.ToString();
             if (value is not null && value.Contains(_filterValue, StringComparison.CurrentCultureIgnoreCase))
                 return true;
         }
@@ -214,43 +236,30 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
     private bool ShowEmptyMessage => !HasVisibleOptions;
 
     // ------------------------------------------------------------ option helpers
-    private string GetOptionLabel(object option)
-    {
-        if (option is null) return string.Empty;
-        if (string.IsNullOrEmpty(OptionLabel)) return option.ToString() ?? string.Empty;
-        return GetPropertyValue(option, OptionLabel)?.ToString() ?? option.ToString() ?? string.Empty;
-    }
+    private string GetOptionLabel(object option) => OpSelectOption.GetLabel(option, OptionLabel);
 
-    private object? GetOptionValue(object option)
-    {
-        if (option is null) return null;
-        if (string.IsNullOrEmpty(OptionValue)) return option;
-        return GetPropertyValue(option, OptionValue);
-    }
+    private object? GetOptionValue(object option) => OpSelectOption.GetValue(option, OptionValue);
 
     private bool IsOptionDisabled(object option)
     {
         if (option is null || string.IsNullOrEmpty(OptionDisabled)) return false;
-        return GetPropertyValue(option, OptionDisabled) is bool b && b;
+        return OpSelectOption.GetProperty(option, OptionDisabled) is bool b && b;
     }
 
     private bool IsOptionGroup(object option)
     {
         if (option is null || !Group) return false;
-        return GetPropertyValue(option, OptionGroupChildren) is not null;
+        return OpSelectOption.GetProperty(option, OptionGroupChildren) is not null;
     }
 
-    private string GetOptionGroupLabelValue(object group)
-    {
-        if (group is null) return string.Empty;
-        return GetPropertyValue(group, OptionGroupLabel)?.ToString() ?? string.Empty;
-    }
+    private string GetOptionGroupLabelValue(object group) =>
+        group is null ? string.Empty : OpSelectOption.GetProperty(group, OptionGroupLabel)?.ToString() ?? string.Empty;
 
     private List<object> GetOptionGroupChildren(object group)
     {
         var list = new List<object>();
         if (group is null) return list;
-        var children = GetPropertyValue(group, OptionGroupChildren) as System.Collections.IEnumerable;
+        var children = OpSelectOption.GetProperty(group, OptionGroupChildren) as System.Collections.IEnumerable;
         if (children is null) return list;
         foreach (var child in children)
         {
@@ -260,16 +269,10 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
         return list;
     }
 
-    private static object? GetPropertyValue(object obj, string propertyPath)
-    {
-        var type = obj.GetType();
-        var property = type.GetProperty(propertyPath,
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-        return property?.GetValue(obj);
-    }
+    // Compara o valor da opção com o Value primitivo (sem reaplicar OptionValue sobre ele).
+    private bool IsSelectedValue(object option) => OpSelectOption.Matches(option, Value, OptionValue);
 
-    private bool IsSelected(object option) =>
-        SelectedOption is not null && Equals(GetOptionValue(option), GetOptionValue(SelectedOption));
+    private bool IsSelected(object option) => IsSelectedValue(option);
 
     private string OptionClass(object option)
     {
@@ -325,7 +328,7 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
         _panelRendered = true;
         _panelClosing = false;
         _panelAnimationClass = "p-anchored-overlay-enter-active";
-        if (!Filter)
+        if (!FilterActive)
         {
             _filterValue = "";
         }
@@ -397,13 +400,11 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private async Task SelectOptionAsync(object option)
     {
-        if (option is TValue tv)
-        {
-            CurrentValue = tv;
-            await OnChange.InvokeAsync(tv);
-        }
+        var value = OpSelectOption.ToValue<TValue>(option, OptionValue);
+        CurrentValue = value;
+        await OnChange.InvokeAsync(value);
 
-        if (Filter)
+        if (FilterActive)
         {
             _filterValue = "";
         }
@@ -413,10 +414,10 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private int FindSelectedOptionIndex()
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         for (var i = 0; i < visible.Count; i++)
         {
-            if (!Group && IsSelected(visible[i])) return i;
+            if (IsSelected(visible[i])) return i;
         }
 
         return -1;
@@ -424,7 +425,7 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private int FindNextOptionIndex(int fromIndex, bool backward = false)
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         if (visible.Count == 0) return -1;
         var step = backward ? -1 : 1;
         var i = fromIndex;
@@ -510,7 +511,7 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private int FindFirstEnabledIndex()
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         for (var i = 0; i < visible.Count; i++)
         {
             if (!IsOptionDisabled(visible[i])) return i;
@@ -521,7 +522,7 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private int FindLastEnabledIndex()
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         for (var i = visible.Count - 1; i >= 0; i--)
         {
             if (!IsOptionDisabled(visible[i])) return i;
@@ -532,7 +533,8 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private void SearchOptions(string key)
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
+        if (visible.Count == 0) return;
         for (var i = 0; i < visible.Count; i++)
         {
             var idx = (_focusedOptionIndex + 1 + i) % visible.Count;
@@ -547,7 +549,7 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
 
     private async Task SelectFocusedOptionAsync()
     {
-        var visible = VisibleOptions;
+        var visible = NavigableOptions;
         if (_focusedOptionIndex >= 0 && _focusedOptionIndex < visible.Count)
         {
             var option = visible[_focusedOptionIndex];
@@ -565,6 +567,20 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
     {
         _filterValue = e.Value?.ToString() ?? string.Empty;
         _focusedOptionIndex = -1;
+        await OnFilter.InvokeAsync(_filterValue);
+    }
+
+    // Modo Editable: o próprio campo é o filtro. Digitar abre o painel e filtra; o valor
+    // selecionado substitui o texto ao fechar.
+    private async Task OnEditableInput(ChangeEventArgs e)
+    {
+        _filterValue = e.Value?.ToString() ?? string.Empty;
+        _focusedOptionIndex = -1;
+        if (!_overlayVisible)
+        {
+            await OpenAsync();
+        }
+
         await OnFilter.InvokeAsync(_filterValue);
     }
 

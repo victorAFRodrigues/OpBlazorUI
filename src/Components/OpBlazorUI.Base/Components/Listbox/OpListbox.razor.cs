@@ -1,7 +1,7 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Components.Select;
 
 namespace OpBlazorUI.Base.Components.Listbox;
 
@@ -10,6 +10,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     private string _id = "";
     private string _filterValue = "";
     private int _focusedOptionIndex = -1;
+    private int _renderIndex;
 
     // ---------------------------------------------------------------- params
     [Parameter] public IReadOnlyList<object>? Options { get; set; }
@@ -107,7 +108,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
             if (Value is null) return null;
             foreach (var opt in FlattenedAllOptions)
             {
-                if (Equals(GetOptionValue(opt), GetOptionValue((object)Value))) return opt;
+                if (OpSelectOption.Matches(opt, Value, OptionValue)) return opt;
             }
 
             return null;
@@ -171,7 +172,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
         if (label.Contains(_filterValue, StringComparison.CurrentCultureIgnoreCase)) return true;
         if (!string.IsNullOrEmpty(FilterBy))
         {
-            var value = GetPropertyValue(option, FilterBy)?.ToString();
+            var value = OpSelectOption.GetProperty(option, FilterBy)?.ToString();
             if (value is not null && value.Contains(_filterValue, StringComparison.CurrentCultureIgnoreCase))
                 return true;
         }
@@ -185,50 +186,43 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     {
         get
         {
-            var total = FlattenedAllOptions.Count;
-            if (total == 0) return false;
-            return SelectedOptions.Count >= total;
+            var options = ToggleableOptions;
+            return options.Count > 0 && options.All(o => SelectedOptions.Any(v => Equals(v, o)));
         }
     }
 
-    // ------------------------------------------------------------ option helpers
-    private string GetOptionLabel(object option)
-    {
-        if (option is null) return string.Empty;
-        if (string.IsNullOrEmpty(OptionLabel)) return option.ToString() ?? string.Empty;
-        return GetPropertyValue(option, OptionLabel)?.ToString() ?? option.ToString() ?? string.Empty;
-    }
+    private List<TValue> ToggleableOptions => VisibleOptions
+        .Where(o => !IsOptionDisabled(o))
+        .Select(o => OpSelectOption.ToValue<TValue>(o, OptionValue))
+        .Where(v => v is not null)
+        .Select(v => v!)
+        .ToList();
 
-    private object? GetOptionValue(object option)
-    {
-        if (option is null) return null;
-        if (string.IsNullOrEmpty(OptionValue)) return option;
-        return GetPropertyValue(option, OptionValue);
-    }
+    // ------------------------------------------------------------ option helpers
+    private string GetOptionLabel(object option) => OpSelectOption.GetLabel(option, OptionLabel);
+
+    private object? GetOptionValue(object option) => OpSelectOption.GetValue(option, OptionValue);
 
     private bool IsOptionDisabled(object option)
     {
         if (option is null || string.IsNullOrEmpty(OptionDisabled)) return false;
-        return GetPropertyValue(option, OptionDisabled) is bool b && b;
+        return OpSelectOption.GetProperty(option, OptionDisabled) is bool b && b;
     }
 
     private bool IsOptionGroup(object option)
     {
         if (option is null || !Group) return false;
-        return GetPropertyValue(option, OptionGroupChildren) is not null;
+        return OpSelectOption.GetProperty(option, OptionGroupChildren) is not null;
     }
 
-    private string GetOptionGroupLabelValue(object group)
-    {
-        if (group is null) return string.Empty;
-        return GetPropertyValue(group, OptionGroupLabel)?.ToString() ?? string.Empty;
-    }
+    private string GetOptionGroupLabelValue(object group) =>
+        group is null ? string.Empty : OpSelectOption.GetProperty(group, OptionGroupLabel)?.ToString() ?? string.Empty;
 
     private List<object> GetOptionGroupChildren(object group)
     {
         var list = new List<object>();
         if (group is null) return list;
-        var children = GetPropertyValue(group, OptionGroupChildren) as System.Collections.IEnumerable;
+        var children = OpSelectOption.GetProperty(group, OptionGroupChildren) as System.Collections.IEnumerable;
         if (children is null) return list;
         foreach (var child in children)
         {
@@ -238,28 +232,10 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
         return list;
     }
 
-    private static object? GetPropertyValue(object obj, string propertyPath)
-    {
-        var type = obj.GetType();
-        var property = type.GetProperty(propertyPath,
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-        return property?.GetValue(obj);
-    }
-
     private bool IsSelected(object option)
     {
-        if (IsMultiple)
-        {
-            foreach (var v in SelectedOptions)
-            {
-                if (Equals(GetOptionValue(option), GetOptionValue((object)v!))) return true;
-            }
-
-            return false;
-        }
-
-        return SelectedSingleOption is not null &&
-               Equals(GetOptionValue(option), GetOptionValue(SelectedSingleOption));
+        if (IsMultiple) return OpSelectOption.Contains(SelectedOptions, option, OptionValue);
+        return OpSelectOption.Matches(option, Value, OptionValue);
     }
 
     private string OptionClass(object option)
@@ -287,17 +263,18 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
 
     private async Task ToggleOptionAsync(object option)
     {
+        var value = OpSelectOption.ToValue<TValue>(option, OptionValue);
         if (IsMultiple)
         {
             var list = SelectedOptions;
-            var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue(option)));
+            var existingIndex = list.FindIndex(v => Equals(v, value));
             if (existingIndex >= 0)
             {
                 list.RemoveAt(existingIndex);
             }
-            else
+            else if (value is not null)
             {
-                if (option is TValue tv) list.Add(tv);
+                list.Add(value);
             }
 
             SelectedValues = list;
@@ -306,11 +283,8 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
         }
         else
         {
-            if (option is TValue tv)
-            {
-                CurrentValue = tv;
-                await OnChange.InvokeAsync(tv);
-            }
+            CurrentValue = value;
+            await OnChange.InvokeAsync(value);
         }
 
         StateHasChanged();
@@ -321,7 +295,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
         IReadOnlyList<TValue> list;
         if (selected)
         {
-            list = FlattenedAllOptions.OfType<TValue>().ToList();
+            list = ToggleableOptions;
         }
         else
         {
@@ -344,6 +318,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
 
     private void OnOptionMouseEnter(int index)
     {
+        if (_focusedOptionIndex == index) return;
         _focusedOptionIndex = index;
         StateHasChanged();
     }
