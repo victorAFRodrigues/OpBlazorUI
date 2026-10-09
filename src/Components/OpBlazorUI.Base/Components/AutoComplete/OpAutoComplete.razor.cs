@@ -1,8 +1,8 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Components.Select;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.AutoComplete;
@@ -22,6 +22,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private string _searchValue = "";
     private string? _inputValue;
     private TValue? _prevValue;
+    private IReadOnlyList<object>? _prevSuggestions;
     private bool _autoFocused;
 
     private ElementReference _inputRef;
@@ -99,10 +100,13 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
 
     protected override void OnParametersSet()
     {
-        if (!Multiple && !Equals(_prevValue, Value))
+        // Recalcula o rótulo quando o Value muda ou quando as Suggestions chegam depois
+        // (ex.: carregadas de forma assíncrona) — o texto precisa acompanhar a nova lista.
+        if (!Multiple && (!Equals(_prevValue, Value) || !ReferenceEquals(_prevSuggestions, Suggestions)))
         {
             _inputValue = GetLabelFromValue(Value);
             _prevValue = Value;
+            _prevSuggestions = Suggestions;
         }
     }
 
@@ -171,24 +175,14 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private bool ShowEmptyMessage => !AllSuggestions.Any() && !VirtualScroll;
 
     // ------------------------------------------------------------ option helpers
-    private string GetOptionLabel(object option)
-    {
-        if (option is null) return string.Empty;
-        if (string.IsNullOrEmpty(OptionLabel)) return option is string s ? s : option.ToString() ?? string.Empty;
-        return GetPropertyValue(option, OptionLabel)?.ToString() ?? option.ToString() ?? string.Empty;
-    }
+    private string GetOptionLabel(object option) => OpSelectOption.GetLabel(option, OptionLabel);
 
-    private object? GetOptionValue(object option)
-    {
-        if (option is null) return null;
-        if (string.IsNullOrEmpty(OptionValue)) return option;
-        return GetPropertyValue(option, OptionValue);
-    }
+    private object? GetOptionValue(object option) => OpSelectOption.GetValue(option, OptionValue);
 
     private bool IsOptionDisabled(object option)
     {
         if (option is null || string.IsNullOrEmpty(OptionDisabled)) return false;
-        return GetPropertyValue(option, OptionDisabled) is bool b && b;
+        return OpSelectOption.GetProperty(option, OptionDisabled) is bool b && b;
     }
 
     private string GetLabelFromValue(TValue? value)
@@ -196,7 +190,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         if (value is null) return string.Empty;
         foreach (var opt in AllSuggestions)
         {
-            if (Equals(GetOptionValue(opt), GetOptionValue((object)value!)))
+            if (OpSelectOption.Matches(opt, value, OptionValue))
             {
                 return GetOptionLabel(opt);
             }
@@ -208,20 +202,17 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private bool IsOptionGroup(object option)
     {
         if (option is null || !Group) return false;
-        return GetPropertyValue(option, OptionGroupChildren) is not null;
+        return OpSelectOption.GetProperty(option, OptionGroupChildren) is not null;
     }
 
-    private string GetOptionGroupLabelValue(object group)
-    {
-        if (group is null) return string.Empty;
-        return GetPropertyValue(group, OptionGroupLabel)?.ToString() ?? string.Empty;
-    }
+    private string GetOptionGroupLabelValue(object group) =>
+        group is null ? string.Empty : OpSelectOption.GetProperty(group, OptionGroupLabel)?.ToString() ?? string.Empty;
 
     private List<object> GetOptionGroupChildren(object group)
     {
         var list = new List<object>();
         if (group is null) return list;
-        var children = GetPropertyValue(group, OptionGroupChildren) as System.Collections.IEnumerable;
+        var children = OpSelectOption.GetProperty(group, OptionGroupChildren) as System.Collections.IEnumerable;
         if (children is null) return list;
         foreach (var child in children)
         {
@@ -231,27 +222,10 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         return list;
     }
 
-    private static object? GetPropertyValue(object obj, string propertyPath)
-    {
-        var type = obj.GetType();
-        var property = type.GetProperty(propertyPath,
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-        return property?.GetValue(obj);
-    }
-
     private bool IsSelected(object option)
     {
-        if (Multiple)
-        {
-            foreach (var v in SelectedOptions)
-            {
-                if (Equals(GetOptionValue(option), GetOptionValue((object)v!))) return true;
-            }
-
-            return false;
-        }
-
-        return Value is not null && Equals(GetOptionValue(option), GetOptionValue((object)Value));
+        if (Multiple) return OpSelectOption.Contains(SelectedOptions, option, OptionValue);
+        return OpSelectOption.Matches(option, Value, OptionValue);
     }
 
     private string OptionClass(object option)
@@ -328,13 +302,38 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         if (Disabled || Readonly) return;
         _inputValue = e.Value?.ToString() ?? string.Empty;
         _focusedOptionIndex = -1;
+
+        // Apagar o texto limpa o valor (como no PrimeNG), para não manter uma seleção
+        // "fantasma" que não corresponde ao que está escrito.
+        if (_inputValue.Length == 0 && Value is not null)
+        {
+            CurrentValue = default;
+            await OnChange.InvokeAsync(default);
+        }
+
         await SearchAsync(_inputValue);
     }
 
     private async Task OnMultipleInput(ChangeEventArgs e)
     {
         if (Disabled || Readonly) return;
-        _searchValue = e.Value?.ToString() ?? string.Empty;
+
+        var text = e.Value?.ToString() ?? string.Empty;
+
+        // Com Separator, cada token vira chip; evita que o separador fique preso no campo.
+        if (!string.IsNullOrEmpty(Separator) && text.Contains(Separator))
+        {
+            _searchValue = string.Empty;
+            _focusedOptionIndex = -1;
+            foreach (var part in text.Split(Separator, StringSplitOptions.RemoveEmptyEntries))
+            {
+                await AddChipAsync(part.Trim());
+            }
+
+            return;
+        }
+
+        _searchValue = text;
         _focusedOptionIndex = -1;
         await SearchAsync(_searchValue);
     }
@@ -362,10 +361,15 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         _focus = true;
         await OnFocus.InvokeAsync(e);
         var query = Multiple ? _searchValue : (_inputValue ?? string.Empty);
-        await CompleteMethod.InvokeAsync(new OpAutoCompleteCompleteEvent { Query = query });
-        if (!_overlayVisible && !Multiple)
+
+        // Só consulta as sugestões quando o texto atinge MinLength (como no PrimeNG).
+        if (query.Length >= MinLength)
         {
-            await OpenAsync();
+            await CompleteMethod.InvokeAsync(new OpAutoCompleteCompleteEvent { Query = query });
+            if (!_overlayVisible && !Multiple)
+            {
+                await OpenAsync();
+            }
         }
     }
 
@@ -383,7 +387,8 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         }
         else if (ForceSelection && !string.IsNullOrEmpty(_inputValue))
         {
-            var matches = AllSuggestions.Any(o => GetOptionLabel(o) == _inputValue);
+            var matches = AllSuggestions.Any(o =>
+                string.Equals(GetOptionLabel(o), _inputValue, StringComparison.CurrentCultureIgnoreCase));
             if (!matches)
             {
                 _inputValue = string.Empty;
@@ -571,26 +576,21 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private async Task OnOptionClick(object option)
     {
         if (IsOptionDisabled(option)) return;
+        if (OpSelectOption.GetValue(option, OptionValue) is null) return;
 
         if (Multiple)
         {
-            if (option is TValue tv)
-            {
-                await ToggleOptionAsync(tv);
-                _searchValue = "";
-                await _inputRef.FocusAsync();
-            }
+            await ToggleOptionAsync(OpSelectOption.ToValue<TValue>(option, OptionValue)!);
+            _searchValue = "";
+            await _inputRef.FocusAsync();
         }
         else
         {
-            if (option is TValue tv)
-            {
-                CurrentValue = tv;
-                _inputValue = GetOptionLabel(option);
-                await OnChange.InvokeAsync(tv);
-                await OnSelect.InvokeAsync(new OpAutoCompleteSelectEvent { Option = option });
-            }
-
+            var value = OpSelectOption.ToValue<TValue>(option, OptionValue);
+            CurrentValue = value;
+            _inputValue = GetOptionLabel(option);
+            await OnChange.InvokeAsync(value);
+            await OnSelect.InvokeAsync(new OpAutoCompleteSelectEvent { Option = option });
             await CloseAsync();
         }
     }
@@ -598,7 +598,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private async Task ToggleOptionAsync(TValue option)
     {
         var list = SelectedOptions;
-        var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
+        var existingIndex = list.FindIndex(v => Equals(v, option));
         if (existingIndex >= 0)
         {
             list.RemoveAt(existingIndex);
@@ -619,7 +619,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private async Task RemoveChipAsync(TValue option)
     {
         var list = SelectedOptions;
-        var existingIndex = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)option)));
+        var existingIndex = list.FindIndex(v => Equals(v, option));
         if (existingIndex >= 0)
         {
             list.RemoveAt(existingIndex);
@@ -639,8 +639,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         if (token is TValue tv)
         {
             var list = SelectedOptions;
-            var existing = list.FirstOrDefault(v => Equals(GetOptionValue((object)v!), GetOptionValue((object)tv)));
-            if (existing is null)
+            if (!list.Any(v => Equals(v, tv)))
             {
                 list.Add(tv);
                 MultipleValue = list;

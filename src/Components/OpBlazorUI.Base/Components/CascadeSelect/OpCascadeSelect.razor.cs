@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Components.Select;
 
 namespace OpBlazorUI.Base.Components.CascadeSelect;
 
@@ -141,31 +142,18 @@ public partial class OpCascadeSelect<TValue> : OpInputBase<TValue>
     }
 
     // ------------------------------------------------------------ option helpers
-    private string GetOptionLabel(object option)
-    {
-        if (option is null) return string.Empty;
-        if (string.IsNullOrEmpty(OptionLabel)) return option.ToString() ?? string.Empty;
-        return GetPropertyValue(option, OptionLabel)?.ToString() ?? option.ToString() ?? string.Empty;
-    }
+    private string GetOptionLabel(object option) => OpSelectOption.GetLabel(option, OptionLabel);
 
-    private object? GetOptionValue(object option)
-    {
-        if (option is null) return null;
-        if (string.IsNullOrEmpty(OptionValue)) return option;
-        return GetPropertyValue(option, OptionValue);
-    }
+    private object? GetOptionValue(object option) => OpSelectOption.GetValue(option, OptionValue);
 
     private bool IsOptionDisabled(object option)
     {
         if (option is null || string.IsNullOrEmpty(OptionDisabled)) return false;
-        return GetPropertyValue(option, OptionDisabled) is bool b && b;
+        return OpSelectOption.GetProperty(option, OptionDisabled) is bool b && b;
     }
 
-    private string GetOptionGroupLabelValue(object group)
-    {
-        if (group is null) return string.Empty;
-        return GetPropertyValue(group, OptionGroupLabel)?.ToString() ?? string.Empty;
-    }
+    private string GetOptionGroupLabelValue(object group) =>
+        group is null ? string.Empty : OpSelectOption.GetProperty(group, OptionGroupLabel)?.ToString() ?? string.Empty;
 
     private List<object> GetChildren(object node, int depth)
     {
@@ -204,7 +192,7 @@ public partial class OpCascadeSelect<TValue> : OpInputBase<TValue>
             var children = GetChildren(node, depth);
             if (children.Count == 0)
             {
-                if (Equals(GetOptionValue(node), GetOptionValue((object)Value!)))
+                if (OpSelectOption.Matches(node, Value, OptionValue))
                 {
                     return node;
                 }
@@ -247,8 +235,7 @@ public partial class OpCascadeSelect<TValue> : OpInputBase<TValue>
 
     private bool IsSelectedNode(object node, int depth)
         => !HasChildren(node, depth)
-           && SelectedOption is not null
-           && Equals(GetOptionValue(node), GetOptionValue(SelectedOption));
+           && OpSelectOption.Matches(node, Value, OptionValue);
 
     // ------------------------------------------------------------ overlay
     private async Task OnLabelClick(MouseEventArgs e)
@@ -388,11 +375,9 @@ public partial class OpCascadeSelect<TValue> : OpInputBase<TValue>
 
     private async Task SelectNodeAsync(object node)
     {
-        if (node is TValue tv)
-        {
-            CurrentValue = tv;
-            await OnChange.InvokeAsync(tv);
-        }
+        var value = OpSelectOption.ToValue<TValue>(node, OptionValue);
+        CurrentValue = value;
+        await OnChange.InvokeAsync(value);
 
         await CloseAsync();
     }
