@@ -3,11 +3,12 @@
 @inherits OpInputBase<string>
 
 <textarea id="@Id"
-          name="@Name"
+          name="@(Name ?? NameAttributeValue)"
           class="@RootClass"
           placeholder="@Placeholder"
           maxlength="@MaxLength"
           autocomplete="@Autocomplete"
+          value="@CurrentValue"
           aria-label="@AriaLabel"
           aria-invalid="@(IsInvalid ? "true" : null)"
           disabled="@Disabled"
@@ -17,4 +18,4 @@
           @onfocus="OnFocus"
           @onblur="HandleBlur"
           @ref="_element"
-          @attributes="AdditionalAttributes">@Value</textarea>
+          @attributes="AdditionalAttributes"></textarea>

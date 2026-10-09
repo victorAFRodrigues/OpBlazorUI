@@ -172,7 +172,7 @@
                  @onclick="() => OnNodeClick(node)">
                 @if (IsCheckbox)
                 {
-                    <OpCheckbox Value="@selected" Indeterminate="@partial" Readonly="true"/>
+                    <OpCheckbox IgnoreEditContext="true" Value="@selected" Indeterminate="@partial" Readonly="true"/>
                 }
 
                 <button type="button" class="p-tree-node-toggle-button" @onclick="() => ToggleExpand(node)"
@@ -223,7 +223,7 @@
                  @onclick="() => OnNodeClick(node)">
                 @if (IsCheckbox)
                 {
-                    <OpCheckbox Value="@selected" Indeterminate="@partial" Readonly="true"/>
+                    <OpCheckbox IgnoreEditContext="true" Value="@selected" Indeterminate="@partial" Readonly="true"/>
                 }
 
                 <button type="button" class="p-tree-node-toggle-button" @onclick="() => ToggleExpand(node)"

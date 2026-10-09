@@ -11,6 +11,7 @@
 
 <div class="@RootClass" @ref="_rootRef" style="position: relative"
      @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     <div class="p-hidden-accessible">
         <input role="combobox"
                id="@_id"
@@ -121,7 +122,7 @@
                 <div class="p-multiselect-header" @onclick:stopPropagation="true">
                     @if (ShowToggleAll)
                     {
-                        <OpCheckbox Value="@AllSelected" Variant="@Variant" Disabled="@Disabled"
+                        <OpCheckbox IgnoreEditContext="true" Value="@AllSelected" Variant="@Variant" Disabled="@Disabled"
                                     AriaLabel="Selecionar todos" OnChange="_ => ToggleAllAsync()"/>
                     }
                     @if (Filter)
@@ -197,7 +198,7 @@
                             <li class="@OptionClass(child)" role="option" aria-label="@GetOptionLabel(child)"
                                 aria-selected="@(isSel ? "true" : "false")"
                                 @onclick="() => OnOptionClick(child)">
-                                <OpCheckbox Value="@isSel" TabIndex="-1" Variant="@Variant"/>
+                                <OpCheckbox IgnoreEditContext="true" Value="@isSel" TabIndex="-1" Variant="@Variant"/>
                                 @if (ItemTemplate != null && child is TValue childTv)
                                 {
                                     @ItemTemplate(childTv)
@@ -251,7 +252,7 @@
             data-p-focused="@(_focusedOptionIndex == index ? "true" : null)"
             @onclick="() => OnOptionClick(option)"
             @onmouseenter="() => OnOptionMouseEnter(index)">
-            <OpCheckbox Value="@isSel" TabIndex="-1" Variant="@Variant"/>
+            <OpCheckbox IgnoreEditContext="true" Value="@isSel" TabIndex="-1" Variant="@Variant"/>
             @if (ItemTemplate != null && option is TValue optTv)
             {
                 @ItemTemplate(optTv)
