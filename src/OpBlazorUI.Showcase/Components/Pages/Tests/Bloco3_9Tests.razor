@@ -1,0 +1,53 @@
+@page "/_tests/bloco3-9"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.ColorPicker
+@using OpBlazorUI.Base.Components.Directives
+@using OpBlazorUI.Base.Components.Slider
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_9Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.9 diversos</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.9 diversos</h1>
+
+<section id="t-color">
+    <OpColorPicker @bind-Value="_color" InputId="t-color-input"/>
+    <span id="t-color-value">@_color</span>
+</section>
+
+<section id="t-color8">
+    <OpColorPicker Value="#336699ff" InputId="t-color8-input"/>
+</section>
+
+<section id="t-color-bad">
+    <OpColorPicker Value="xyz" InputId="t-color-bad-input"/>
+</section>
+
+<section id="t-color-disabled">
+    <OpColorPicker Value="#ff0000" Inline="true" Disabled="true"/>
+</section>
+
+<section id="t-slider">
+    <OpSlider Min="0" Max="100" AriaLabel="slider"/>
+</section>
+
+<section id="t-slider-range">
+    <OpSliderRange Min="0" Max="100" Value="_rangeValues" ValueChanged="v => _rangeValues = v"/>
+    <span id="t-range-values">@string.Join(",", _rangeValues)</span>
+</section>
+
+<section id="t-styleclass">
+    <OpStyleClass Target="#t-sc-target" ToggleClass="@_scClass">
+        <button id="t-sc-btn" type="button">alternar</button>
+    </OpStyleClass>
+    <div id="t-sc-target">alvo</div>
+    <button id="t-sc-change" type="button" @onclick="ChangeScClass">trocar classe</button>
+</section>
+
+@code {
+    private string _color = "#336699";
+    private double[] _rangeValues = new double[] { 100, 100 };
+    private string _scClass = "ativo";
+
+    private void ChangeScClass() => _scClass = "marcado";
+}

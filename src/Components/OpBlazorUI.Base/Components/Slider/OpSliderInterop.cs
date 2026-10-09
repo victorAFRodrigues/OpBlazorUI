@@ -46,11 +46,14 @@ internal static class SliderMath
             {
                 clamped = Math.Round(clamped, decimals);
             }
-
-            clamped = Math.Clamp(clamped, min, max);
+        }
+        else
+        {
+            // Sem Step, arredonda para inteiro (como o step padrão 1 do PrimeNG).
+            clamped = Math.Round(clamped, MidpointRounding.AwayFromZero);
         }
 
-        return clamped;
+        return Math.Clamp(clamped, min, max);
     }
 
     public static double FromPercent(double percent, double min, double max, double? step)
