@@ -93,30 +93,29 @@ public partial class OpTreeTable : OpComponentBase
 
     private bool IsExpandableColumn(OpTreeTableColumn column) => ReferenceEquals(column, ExpandableColumn);
 
-    private int EffectiveTotal => TotalRecords > 0 ? TotalRecords : FlattenedNodes.Count;
+    private int EffectiveTotal => TotalRecords > 0 ? TotalRecords : SourceNodes.Count;
 
     // Achata apenas os nós visíveis (ancestrais expandidos), com nível/depth.
+    private static void AppendFlat(OpTreeNode node, int level, List<OpTreeTableFlatNode> list)
+    {
+        list.Add(new OpTreeTableFlatNode(node, level));
+        if (node.Expanded && node.Children is { Count: > 0 })
+        {
+            foreach (var child in node.Children)
+            {
+                AppendFlat(child, level + 1, list);
+            }
+        }
+    }
+
     private List<OpTreeTableFlatNode> FlattenedNodes
     {
         get
         {
             var list = new List<OpTreeTableFlatNode>();
-
-            void Walk(OpTreeNode node, int level)
-            {
-                list.Add(new OpTreeTableFlatNode(node, level));
-                if (node.Expanded && node.Children is { Count: > 0 })
-                {
-                    foreach (var child in node.Children)
-                    {
-                        Walk(child, level + 1);
-                    }
-                }
-            }
-
             foreach (var root in SourceNodes)
             {
-                Walk(root, 0);
+                AppendFlat(root, 0, list);
             }
 
             return list;
@@ -127,13 +126,19 @@ public partial class OpTreeTable : OpComponentBase
     {
         get
         {
-            var flat = FlattenedNodes;
             if (!Paginator || Lazy)
             {
-                return flat;
+                return FlattenedNodes;
             }
 
-            return flat.Skip(Math.Max(0, First)).Take(Math.Max(1, Rows)).ToList();
+            // A paginação do PrimeNG ocorre sobre os nós raiz; os descendentes expandidos acompanham o raiz.
+            var list = new List<OpTreeTableFlatNode>();
+            foreach (var root in SourceNodes.Skip(Math.Max(0, First)).Take(Math.Max(1, Rows)))
+            {
+                AppendFlat(root, 0, list);
+            }
+
+            return list;
         }
     }
 
@@ -252,12 +257,12 @@ public partial class OpTreeTable : OpComponentBase
     {
         get
         {
-            var nodes = AllNodes();
+            var nodes = AllNodes().Where(n => n.Selectable).ToList();
             return nodes.Count > 0 && nodes.All(IsSelected);
         }
     }
 
-    private bool AllPartial => AllNodes().Any(IsPartial);
+    private bool AllPartial => AllNodes().Where(n => n.Selectable).Any(IsPartial);
 
     private static List<OpTreeNode> Descendants(OpTreeNode node)
     {
@@ -302,8 +307,9 @@ public partial class OpTreeTable : OpComponentBase
         {
             var ancestor = path[i];
             var children = ancestor.Children ?? new List<OpTreeNode>();
-            var allSelected = children.Count > 0
-                              && children.All(c => dict.TryGetValue(c.Key, out var v) && v);
+            var selectable = children.Where(c => c.Selectable).ToList();
+            var allSelected = selectable.Count > 0
+                              && selectable.All(c => dict.TryGetValue(c.Key, out var v) && v);
             if (allSelected)
             {
                 dict[ancestor.Key] = true;
@@ -341,7 +347,7 @@ public partial class OpTreeTable : OpComponentBase
     // ------------------------------------------------------------------ interaction
     private async Task ToggleExpand(OpTreeNode node)
     {
-        if (node.Leaf)
+        if (node.IsLeaf)
         {
             return;
         }
@@ -437,6 +443,11 @@ public partial class OpTreeTable : OpComponentBase
 
     private async Task ToggleCheckboxAsync(OpTreeNode node)
     {
+        if (!node.Selectable)
+        {
+            return;
+        }
+
         var dict = new Dictionary<string, bool>(CurrentSelectionMap());
         var newValue = !IsSelected(node);
 
@@ -451,6 +462,11 @@ public partial class OpTreeTable : OpComponentBase
 
         foreach (var descendant in Descendants(node))
         {
+            if (!descendant.Selectable)
+            {
+                continue;
+            }
+
             if (newValue)
             {
                 dict[descendant.Key] = true;

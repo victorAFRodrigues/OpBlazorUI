@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -69,21 +70,30 @@ public partial class OpTree : OpComponentBase
     // ------------------------------------------------------------ lifecycle
     protected override void OnParametersSet()
     {
+        // O filtro também precisa ser recalculado quando FilterBy/FilterMode mudam em runtime.
+        var signature = FilterSignature();
         if (!ReferenceEquals(_nodesRef, Nodes) ||
-            !string.Equals(_filterSignature, _filterValue, StringComparison.Ordinal))
+            !string.Equals(_filterSignature, signature, StringComparison.Ordinal))
         {
             _nodesRef = Nodes;
-            _filterSignature = _filterValue;
+            UpdateFilter();
+        }
+    }
 
-            if (!Filter || string.IsNullOrEmpty(_filterValue))
-            {
-                _filteredNodes = null;
-                _filterText = string.Empty;
-            }
-            else
-            {
-                ApplyFilter();
-            }
+    private string FilterSignature() => $"{_filterValue}\u001f{FilterBy}\u001f{FilterMode}";
+
+    private void UpdateFilter()
+    {
+        _filterSignature = FilterSignature();
+
+        if (!Filter || string.IsNullOrEmpty(_filterValue))
+        {
+            _filteredNodes = null;
+            _filterText = string.Empty;
+        }
+        else
+        {
+            ApplyFilter();
         }
     }
 
@@ -109,7 +119,7 @@ public partial class OpTree : OpComponentBase
         string.IsNullOrEmpty(ScrollHeight) || ScrollHeight == "flex" ? null : $"max-height:{ScrollHeight}";
 
     private string NodeClass(OpTreeNode node) =>
-        Class("p-tree-node", node.Leaf ? "p-tree-node-leaf" : null);
+        Class("p-tree-node", node.IsLeaf ? "p-tree-node-leaf" : null);
 
     private string NodeContentClass(bool selected) =>
         Class("p-tree-node-content", "p-tree-node-selectable", selected ? "p-tree-node-selected" : null);
@@ -172,7 +182,8 @@ public partial class OpTree : OpComponentBase
 
     private void PropagateUp(OpTreeNode node, Dictionary<string, bool> dict)
     {
-        foreach (var root in Nodes)
+        // Propaga sobre a árvore visível (no filtro, os clones têm apenas os filhos exibidos).
+        foreach (var root in VisibleRoots)
         {
             var path = new List<OpTreeNode>();
             if (!FindPath(root, node, path)) continue;
@@ -200,7 +211,7 @@ public partial class OpTree : OpComponentBase
     private static bool FindPath(OpTreeNode current, OpTreeNode target, List<OpTreeNode> path)
     {
         path.Add(current);
-        if (ReferenceEquals(current, target)) return true;
+        if (ReferenceEquals(current, target) || SameKey(current, target)) return true;
         if (current.Children is not null)
         {
             foreach (var child in current.Children)
@@ -213,10 +224,14 @@ public partial class OpTree : OpComponentBase
         return false;
     }
 
+    // A árvore filtrada usa clones; casar por Key permite propagar a seleção para os ancestrais reais.
+    private static bool SameKey(OpTreeNode a, OpTreeNode b) =>
+        !string.IsNullOrEmpty(b.Key) && a.Key == b.Key;
+
     // ------------------------------------------------------------ interaction
     private async Task ToggleExpandAsync(OpTreeNode node)
     {
-        if (node.Leaf) return;
+        if (node.IsLeaf) return;
 
         if (node.HasChildren)
         {
@@ -367,17 +382,7 @@ public partial class OpTree : OpComponentBase
     private async Task OnFilterInput(ChangeEventArgs e)
     {
         _filterValue = e.Value?.ToString() ?? string.Empty;
-        _filterSignature = _filterValue;
-
-        if (!Filter || string.IsNullOrEmpty(_filterValue))
-        {
-            _filteredNodes = null;
-            _filterText = string.Empty;
-        }
-        else
-        {
-            ApplyFilter();
-        }
+        UpdateFilter();
 
         await OnFilter.InvokeAsync(_filterValue);
         StateHasChanged();
@@ -479,7 +484,8 @@ public partial class OpTree : OpComponentBase
         foreach (var part in field.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
             if (current is null) return null;
-            var property = current.GetType().GetProperty(part);
+            var property = current.GetType().GetProperty(
+                part, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
             if (property is null) return null;
             current = property.GetValue(current);
         }

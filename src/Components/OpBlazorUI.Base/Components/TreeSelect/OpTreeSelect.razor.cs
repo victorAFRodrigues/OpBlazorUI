@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
@@ -16,6 +19,10 @@ public partial class OpTreeSelect : OpInputBase<string>
     private string? _panelAnimationClass;
     private bool _focus;
     private string _filterValue = "";
+    private string _filterText = "";
+    private string _filterSignature = "\u0000";
+    private IReadOnlyList<TreeNode>? _optionsRef;
+    private List<TreeNode>? _filteredNodes;
 
     // ---------------------------------------------------------------- params
     [Parameter] public IReadOnlyList<TreeNode>? Options { get; set; }
@@ -68,6 +75,49 @@ public partial class OpTreeSelect : OpInputBase<string>
     protected override void OnInitialized()
     {
         _id = InputId ?? $"op-treeselect-{Guid.NewGuid():N}";
+    }
+
+    protected override void OnParametersSet()
+    {
+        // O filtro precisa ser recalculado quando Options/FilterBy/FilterMode mudam em runtime.
+        var signature = FilterSignature();
+        if (!ReferenceEquals(_optionsRef, Options) ||
+            !string.Equals(_filterSignature, signature, StringComparison.Ordinal))
+        {
+            _optionsRef = Options;
+            UpdateFilter();
+        }
+    }
+
+    private string FilterSignature() => $"{_filterValue}\u001f{FilterBy}\u001f{FilterMode}";
+
+    private void UpdateFilter()
+    {
+        _filterSignature = FilterSignature();
+
+        if (!Filter || string.IsNullOrEmpty(_filterValue))
+        {
+            _filteredNodes = null;
+            _filterText = string.Empty;
+            return;
+        }
+
+        _filterText = RemoveAccents(_filterValue);
+        var result = new List<TreeNode>();
+        foreach (var node in AllOptions)
+        {
+            var copy = CloneNode(node);
+            var matched = FilterMode == "strict"
+                ? FindFilteredNodes(copy) || IsFilterMatched(copy)
+                : IsFilterMatched(copy) || FindFilteredNodes(copy);
+
+            if (matched)
+            {
+                result.Add(copy);
+            }
+        }
+
+        _filteredNodes = result;
     }
 
     // ------------------------------------------------------------ computed
@@ -212,24 +262,104 @@ public partial class OpTreeSelect : OpInputBase<string>
         return list;
     }
 
-    private bool MatchesFilter(TreeNode node)
+    private bool IsFilterMatched(TreeNode node)
     {
-        if (!Filter || string.IsNullOrEmpty(_filterValue)) return true;
-        return node.Label.Contains(_filterValue, StringComparison.CurrentCultureIgnoreCase);
+        var matched = MatchesFilter(node);
+        if (!matched || (FilterMode == "strict" && node.HasChildren))
+        {
+            matched = FindFilteredNodes(node) || matched;
+        }
+
+        return matched;
     }
 
-    private List<TreeNode> VisibleRoots
+    private bool FindFilteredNodes(TreeNode node)
     {
-        get
+        var matched = false;
+        if (node.Children is not null)
         {
-            if (Filter && !string.IsNullOrEmpty(_filterValue))
+            var kept = new List<TreeNode>();
+            foreach (var child in node.Children)
             {
-                return Flatten().Where(MatchesFilter).ToList();
+                var copyChild = CloneNode(child);
+                if (IsFilterMatched(copyChild))
+                {
+                    matched = true;
+                    kept.Add(copyChild);
+                }
             }
 
-            return AllOptions.ToList();
+            node.Children = kept;
         }
+
+        if (matched)
+        {
+            node.Expanded = true;
+            return true;
+        }
+
+        return false;
     }
+
+    private bool MatchesFilter(TreeNode node)
+    {
+        if (string.IsNullOrEmpty(_filterText)) return true;
+
+        foreach (var field in FilterBy.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var value = ResolveField(node, field);
+            if (value is not null &&
+                RemoveAccents(value).Contains(_filterText, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static TreeNode CloneNode(TreeNode node) => new()
+    {
+        Key = node.Key,
+        Label = node.Label,
+        Data = node.Data,
+        Children = node.Children,
+        Leaf = node.Leaf,
+        Loading = node.Loading,
+        Expanded = node.Expanded,
+    };
+
+    private static string? ResolveField(TreeNode node, string field)
+    {
+        object? current = node;
+        foreach (var part in field.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (current is null) return null;
+            var property = current.GetType().GetProperty(
+                part, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            if (property is null) return null;
+            current = property.GetValue(current);
+        }
+
+        return current?.ToString();
+    }
+
+    private static string RemoveAccents(string value)
+    {
+        var normalized = value.Normalize(NormalizationForm.FormD);
+        var builder = new StringBuilder(normalized.Length);
+        foreach (var ch in normalized)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
+            {
+                builder.Append(ch);
+            }
+        }
+
+        return builder.ToString().Normalize(NormalizationForm.FormC);
+    }
+
+    private List<TreeNode> VisibleRoots => _filteredNodes ?? AllOptions.ToList();
 
     private List<OpTreeFlatNode> VisibleFlatNodes
     {
@@ -349,7 +479,7 @@ public partial class OpTreeSelect : OpInputBase<string>
     // ------------------------------------------------------------ interaction
     private async Task ToggleExpand(TreeNode node)
     {
-        if (node.Leaf) return;
+        if (node.IsLeaf) return;
 
         if (node.HasChildren)
         {
@@ -437,7 +567,8 @@ public partial class OpTreeSelect : OpInputBase<string>
 
     private void PropagateUp(TreeNode node, Dictionary<string, bool> dict)
     {
-        foreach (var root in AllOptions)
+        // Propaga sobre a árvore visível (no filtro, os clones têm apenas os filhos exibidos).
+        foreach (var root in VisibleRoots)
         {
             var path = new List<TreeNode>();
             if (FindPath(root, node, path))
@@ -467,7 +598,7 @@ public partial class OpTreeSelect : OpInputBase<string>
     private bool FindPath(TreeNode current, TreeNode target, List<TreeNode> path)
     {
         path.Add(current);
-        if (ReferenceEquals(current, target)) return true;
+        if (ReferenceEquals(current, target) || SameKey(current, target)) return true;
         if (current.Children is not null)
         {
             foreach (var child in current.Children)
@@ -480,9 +611,17 @@ public partial class OpTreeSelect : OpInputBase<string>
         return false;
     }
 
+    // A árvore filtrada usa clones; casar por Key permite propagar a seleção para os ancestrais reais.
+    private static bool SameKey(TreeNode a, TreeNode b) =>
+        !string.IsNullOrEmpty(b.Key) && a.Key == b.Key;
+
     private async Task RemoveNodeAsync(TreeNode node)
     {
-        if (IsMultiple)
+        if (IsCheckbox)
+        {
+            await ToggleCheckboxAsync(node);
+        }
+        else if (IsMultiple)
         {
             await ToggleKeyAsync(node.Key, node);
         }
@@ -496,7 +635,9 @@ public partial class OpTreeSelect : OpInputBase<string>
     private async Task OnFilterInput(ChangeEventArgs e)
     {
         _filterValue = e.Value?.ToString() ?? string.Empty;
+        UpdateFilter();
         await OnFilter.InvokeAsync(_filterValue);
+        StateHasChanged();
     }
 
     private async Task Clear()

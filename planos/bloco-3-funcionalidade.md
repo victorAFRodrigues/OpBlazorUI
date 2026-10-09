@@ -1,6 +1,6 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** em execução. **3.1** a **3.4** concluídos; testes Playwright 62/62.
+**Status:** em execução. **3.1** a **3.5** concluídos; testes Playwright 70/70.
 
 **Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
 `EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
@@ -93,15 +93,19 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.5 Árvores (Tree, TreeTable, TreeSelect)
 
-- [ ] **`Leaf` (F):** derivar de `Children` quando não informado (tornar `bool?`); hoje todo nó
-  sem filhos vira lazy e o spinner gira para sempre.
-- [ ] `Tree`: `FilterBy="label"` não casa com a propriedade `Label` (comparação sensível a
-  maiúsculas) e a árvore fica vazia; com filtro, a propagação de checkbox não atualiza os
-  ancestrais (clones); o filtro só recalcula quando a referência de `Nodes` muda.
-- [ ] `TreeSelect`: `FilterBy`/`FilterMode` ignorados; o filtro perde a hierarquia; remover chip
-  no modo checkbox não propaga.
-- [ ] `TreeTable`: paginar pelos nós raiz; `AllSelected` conta nós não selecionáveis; checkbox
-  ignora `Selectable`; mostrar spinner em `Loading`.
+**Feito** (branch `fix/bloco3-5-arvores`):
+
+- [x] **`Leaf` (F):** `bool?`; quando `null` deriva de `Children` (`IsLeaf => Leaf ?? !HasChildren`).
+  Nó sem filhos deixa de virar lazy; lazy agora exige `Leaf="false"` explícito.
+- [x] `Tree`: `FilterBy` usa `BindingFlags.IgnoreCase` (casa `label`/`Label`) e o filtro é recalculado
+  quando `FilterBy`/`FilterMode` mudam em runtime; a propagação de checkbox casa os clones por `Key`
+  e percorre a árvore visível (o ancestral é marcado com os filhos filtrados).
+- [x] `TreeSelect`: filtro hierárquico de verdade com `FilterBy`/`FilterMode` (lenient/strict) e
+  propagação por `Key`; remover chip no modo checkbox agora propaga (descendentes + ancestrais).
+- [x] `TreeTable`: paginação sobre os nós raiz (descendentes expandidos acompanham a página);
+  `AllSelected`/`AllPartial` ignoram nós não selecionáveis; checkbox respeita `Selectable`;
+  máscara de `Loading` com spinner já renderizada.
+- [x] Verificado com `/_tests/bloco3-5` + `Bloco3_5Tests` (8 cenários).
 
 ## 3.6 Abas, Accordion e navegação
 

@@ -401,7 +401,7 @@
                               new[] { "Display", "string", "comma", "Formato de exibição das seleções: <code>comma</code> ou <code>chip</code>." },
                               new[] { "Placeholder", "string?", "null", "Texto exibido quando nada está selecionado." },
                               new[] { "Filter", "bool", "false", "Habilita o campo de filtro no topo do overlay." },
-                              new[] { "FilterBy", "string", "label", "Campo usado na filtragem. No port atual a busca compara apenas <code>Label</code>." },
+                              new[] { "FilterBy", "string", "label", "Campo(s) usados no filtro, separados por vírgula." },
                               new[] { "FilterMode", "string", "lenient", "Estratégia de filtro: <code>lenient</code> ou <code>strict</code>." },
                               new[] { "ShowClear", "bool", "false", "Exibe o ícone de limpar quando há seleção." },
                               new[] { "Required", "bool", "false", "Marca o campo como obrigatório (declarativo)." },
@@ -523,8 +523,6 @@
                 <div class="doc-section-description">
                     <ul>
                         <li>O componente não é genérico: o valor vinculado é sempre a <code>Key</code> (<code>string</code>); não há <code>TValue</code> como em outros seletores.</li>
-                        <li><code>FilterBy</code> é aceito, mas a filtragem compara apenas <code>Label</code>.</li>
-                        <li><code>FilterMode</code> não tem efeito: ao filtrar, a árvore é achatada e todos os nós correspondentes aparecem como raízes, sem preservar a hierarquia.</li>
                         <li><code>LoadingMode</code> é ignorado; o carregamento é sempre indicado pelo spinner no ícone do dropdown (não há máscara no overlay).</li>
                         <li><code>Required</code> não é refletido em <code>aria-required</code>; use a validação do <code>EditForm</code>.</li>
                         <li>A navegação por teclado no overlay (setas, <code>enter</code>/<code>space</code>) não está implementada; apenas <code>escape</code> fecha o overlay.</li>
@@ -588,9 +586,9 @@
     {
         _lazyNodes = new List<TreeNode>
         {
-            new() { Key = "0", Label = "Node 0" },
-            new() { Key = "1", Label = "Node 1" },
-            new() { Key = "2", Label = "Node 2" }
+            new() { Key = "0", Label = "Node 0", Leaf = false },
+            new() { Key = "1", Label = "Node 1", Leaf = false },
+            new() { Key = "2", Label = "Node 2", Leaf = false }
         };
 
         for (var i = 0; i < 300; i++)

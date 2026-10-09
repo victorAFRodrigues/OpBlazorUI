@@ -78,7 +78,7 @@
             aria-label="@node.Label"
             aria-selected="@(IsCheckbox ? null : (selected ? "true" : "false"))"
             aria-checked="@(IsCheckbox ? (selected ? "true" : "false") : null)"
-            aria-expanded="@(node.Leaf ? null : (node.Expanded ? "true" : "false"))">
+            aria-expanded="@(node.IsLeaf ? null : (node.Expanded ? "true" : "false"))">
             <div class="@NodeContentClass(selected)" @onclick="(e) => OnNodeClickAsync(node, e)">
                 <button type="button" class="p-tree-node-toggle-button" tabindex="-1"
                         @onclick="() => ToggleExpandAsync(node)"

@@ -103,9 +103,9 @@
                                         {
                                             <button type="button"
                                                     class="p-treetable-node-toggle-button"
-                                                    style="@(flat.Node.Leaf ? "visibility: hidden" : null)"
-                                                    aria-label="@(flat.Node.Leaf ? null : (flat.Node.Expanded ? "Collapse" : "Expand"))"
-                                                    aria-expanded="@(flat.Node.Leaf ? null : (flat.Node.Expanded ? "true" : "false"))"
+                                                    style="@(flat.Node.IsLeaf ? "visibility: hidden" : null)"
+                                                    aria-label="@(flat.Node.IsLeaf ? null : (flat.Node.Expanded ? "Collapse" : "Expand"))"
+                                                    aria-expanded="@(flat.Node.IsLeaf ? null : (flat.Node.Expanded ? "true" : "false"))"
                                                     tabindex="-1"
                                                     @onclick="() => ToggleExpand(flat.Node)"
                                                     @onclick:stopPropagation="true">
