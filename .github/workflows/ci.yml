@@ -34,3 +34,28 @@ jobs:
             --configuration Release \
             --no-restore \
             --output ./artifacts
+
+  test:
+    name: Test (Playwright)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore OpBlazorUI.slnx
+
+      - name: Build
+        run: dotnet build OpBlazorUI.slnx --configuration Debug --no-restore
+
+      - name: Instalar Chromium (Playwright)
+        run: pwsh tests/OpBlazorUI.Playwright/bin/Debug/net10.0/playwright.ps1 install --with-deps chromium
+
+      - name: Testes
+        run: dotnet test tests/OpBlazorUI.Playwright/OpBlazorUI.Playwright.csproj --configuration Debug --no-build

@@ -32,6 +32,11 @@ public class Bloco1Tests
         return page;
     }
 
+    // O registro para clique-fora/Escape acontece no primeiro render via JS. O z-index inline é
+    // aplicado no mesmo passo do registro (attachParent), então serve de sinal determinístico.
+    private static Task WaitOverlayRegisteredAsync(ILocator overlay)
+        => Expect(overlay).ToHaveAttributeAsync("style", new System.Text.RegularExpressions.Regex("z-index"));
+
     [Fact]
     public async Task Select_aberto_pela_seta_fecha_com_clique_fora()
     {
@@ -42,6 +47,7 @@ public class Bloco1Tests
         await page.Locator("#t-select .p-select-dropdown").ClickAsync();
         var panel = page.Locator(".p-select-overlay");
         await Expect(panel).ToBeVisibleAsync();
+        await WaitOverlayRegisteredAsync(panel);
 
         await page.Locator("#t-title").ClickAsync();
         await Expect(panel).ToHaveCountAsync(0);
@@ -59,10 +65,12 @@ public class Bloco1Tests
         await page.Locator("#t-open-dialog").ClickAsync();
         var dialog = page.Locator(".p-dialog");
         await Expect(dialog).ToBeVisibleAsync();
+        await WaitOverlayRegisteredAsync(page.Locator(".p-dialog-mask"));
 
         await page.Locator("#t-dialog-select .p-select-dropdown").ClickAsync();
         var panel = page.Locator(".p-select-overlay");
         await Expect(panel).ToBeVisibleAsync();
+        await WaitOverlayRegisteredAsync(panel);
 
         await page.Keyboard.PressAsync("Escape");
         await Expect(panel).ToHaveCountAsync(0);
@@ -86,17 +94,20 @@ public class Bloco1Tests
 
         await toggle.ClickAsync();
         await Expect(menu).ToBeVisibleAsync();
+        await WaitOverlayRegisteredAsync(menu);
         await page.Locator("#t-title").ClickAsync();
         await Expect(menu).ToHaveCountAsync(0);
 
         await toggle.ClickAsync();
         await Expect(menu).ToBeVisibleAsync();
+        await WaitOverlayRegisteredAsync(menu);
         await page.Keyboard.PressAsync("Escape");
         await Expect(menu).ToHaveCountAsync(0);
 
         // Clicar no próprio botão alterna (não é "clique fora").
         await toggle.ClickAsync();
         await Expect(menu).ToBeVisibleAsync();
+        await WaitOverlayRegisteredAsync(menu);
         await toggle.ClickAsync();
         await Expect(menu).ToHaveCountAsync(0);
 
