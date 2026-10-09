@@ -5,24 +5,24 @@
 
 <nav class="@RootClass" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
     <ul class="p-breadcrumb-list">
-        @if (Home is not null)
+        @if (Home is not null && Home.Visible)
         {
             <li class="p-breadcrumb-item">
                 @if (HomeTemplate is not null)
                 {
                     @HomeTemplate(Home)
                 }
+                else if (Home.Disabled)
+                {
+                    <span class="p-breadcrumb-item-link p-disabled" aria-disabled="true">
+                        @ItemContent(Home)
+                    </span>
+                }
                 else
                 {
-                    <a class="p-breadcrumb-item-link" href="@Home.Url">
-                        @if (!string.IsNullOrEmpty(Home.Icon))
-                        {
-                            <span class="p-breadcrumb-item-icon @Home.Icon" aria-hidden="true"></span>
-                        }
-                        @if (!string.IsNullOrEmpty(Home.Label))
-                        {
-                            <span class="p-breadcrumb-item-label">@Home.Label</span>
-                        }
+                    <a class="p-breadcrumb-item-link" href="@Home.Url" target="@Home.Target" rel="@TargetRel(Home)"
+                       @onclick="() => InvokeCommand(Home)" @onclick:preventDefault="@(Home.Command is not null)">
+                        @ItemContent(Home)
                     </a>
                 }
             </li>
@@ -31,10 +31,13 @@
             </li>
         }
 
-        @for (var i = 0; i < Model.Count; i++)
+        @{
+            var items = VisibleModel;
+        }
+        @for (var i = 0; i < items.Count; i++)
         {
-            var item = Model[i];
-            var last = i == Model.Count - 1;
+            var item = items[i];
+            var last = i == items.Count - 1;
 
             <li class="p-breadcrumb-item">
                 @if (ItemTemplate is not null)
@@ -45,17 +48,17 @@
                 {
                     <span class="p-breadcrumb-item-label" aria-current="page">@item.Label</span>
                 }
+                else if (item.Disabled)
+                {
+                    <span class="p-breadcrumb-item-link p-disabled" aria-disabled="true">
+                        @ItemContent(item)
+                    </span>
+                }
                 else
                 {
-                    <a class="p-breadcrumb-item-link" href="@item.Url">
-                        @if (!string.IsNullOrEmpty(item.Icon))
-                        {
-                            <span class="p-breadcrumb-item-icon @item.Icon" aria-hidden="true"></span>
-                        }
-                        @if (!string.IsNullOrEmpty(item.Label))
-                        {
-                            <span class="p-breadcrumb-item-label">@item.Label</span>
-                        }
+                    <a class="p-breadcrumb-item-link" href="@item.Url" target="@item.Target" rel="@TargetRel(item)"
+                       @onclick="() => InvokeCommand(item)" @onclick:preventDefault="@(item.Command is not null)">
+                        @ItemContent(item)
                     </a>
                 }
             </li>
@@ -69,3 +72,17 @@
         }
     </ul>
 </nav>
+
+@code {
+    private RenderFragment ItemContent(OpMenuItem item) => __builder =>
+    {
+        @if (!string.IsNullOrEmpty(item.Icon))
+        {
+            <span class="p-breadcrumb-item-icon @item.Icon" aria-hidden="true"></span>
+        }
+        @if (!string.IsNullOrEmpty(item.Label))
+        {
+            <span class="p-breadcrumb-item-label">@item.Label</span>
+        }
+    };
+}

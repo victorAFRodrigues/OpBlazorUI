@@ -1,6 +1,6 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** em execução. **3.1** a **3.5** concluídos; testes Playwright 70/70.
+**Status:** em execução. **3.1** a **3.6** concluídos; testes Playwright 79/79.
 
 **Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
 `EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
@@ -109,16 +109,19 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.6 Abas, Accordion e navegação
 
-- [ ] `Tabs`/`TabView`: `Unregister` não pede re-render (cabeçalho fantasma); ordem segue o
-  registro, não a marcação; `ActiveIndex` não é ajustado quando abas são removidas; ids fixos
-  (`optabs_0_header`) repetem com duas instâncias.
-- [ ] `Accordion`: ordem segue o registro; `ActiveIndexes=null` lança.
-- [ ] `Fieldset`: Enter alterna duas vezes (keydown + click nativo do botão).
-- [ ] `Steps`: Enter dispara `ActiveIndexChanged` duas vezes; `Command`/`Url` ignorados.
-- [ ] `Inplace`: `PreventClick` também bloqueia o fechamento.
-- [ ] `Breadcrumb`: `Command`, `Disabled`, `Visible` e `Target` ignorados.
-- [ ] `DataView`: `Rows` e `First` não são controláveis (sem `RowsChanged`/`FirstChanged`).
-- [ ] `MeterGroup`: `StartTemplate`/`EndTemplate` não renderizados.
+**Feito** (branch `fix/bloco3-6-navegacao`):
+
+- [x] `Tabs`/`TabView`: `Unregister` pede re-render, renumera os índices e ajusta o `ActiveIndex`
+  (sem cabeçalho fantasma); ids de header/content por instância (`Guid` quando não há `Id`).
+- [x] `Accordion`: `ActiveIndexes` é `IReadOnlyList<int>?` e `null` não lança.
+- [x] `Fieldset`: Enter/Space alternam uma vez (removido o `keydown` que duplicava o click nativo).
+- [x] `Steps`: Enter dispara `ActiveIndexChanged` uma vez; itens executam `Command` e navegam por `Url`.
+- [x] `Inplace`: `PreventClick` só bloqueia a ativação (não impede o fechamento).
+- [x] `Breadcrumb`: respeita `Visible`, `Disabled` (span com `p-disabled`), `Command` e `Target`;
+  novo `OnItemClick` para o dono reagir (o `Command` é `Action`).
+- [x] `DataView`: novo `RowsChanged` (controlável com `Rows`).
+- [x] `MeterGroup`: `StartTemplate`/`EndTemplate` renderizados conforme `LabelPosition`.
+- [x] Verificado com `/_tests/bloco3-6` + `Bloco3_6Tests` (9 cenários).
 
 ## 3.7 Menus
 

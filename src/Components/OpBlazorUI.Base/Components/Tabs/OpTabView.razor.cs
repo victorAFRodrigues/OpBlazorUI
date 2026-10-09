@@ -8,6 +8,7 @@ namespace OpBlazorUI.Base.Components.Tabs;
 public partial class OpTabView : OpComponentBase, IOpTabHost
 {
     private readonly List<OpTabPanel> _panels = new();
+    private readonly string _uid = "optabview_" + Guid.NewGuid().ToString("N")[..8];
     private ElementReference _viewport;
 
     [Parameter] public int ActiveIndex { get; set; }
@@ -27,9 +28,9 @@ public partial class OpTabView : OpComponentBase, IOpTabHost
         Scrollable ? "p-tabview-scrollable" : null,
         StyleClass);
 
-    private string HeaderId(int index) => $"{Id ?? "optabview"}_{index}_header";
+    private string HeaderId(int index) => $"{Id ?? _uid}_{index}_header";
 
-    private string ContentId(int index) => $"{Id ?? "optabview"}_{index}_content";
+    private string ContentId(int index) => $"{Id ?? _uid}_{index}_content";
 
     void IOpTabHost.Register(OpTabPanel panel)
     {
@@ -43,7 +44,37 @@ public partial class OpTabView : OpComponentBase, IOpTabHost
         _ = InvokeAsync(StateHasChanged);
     }
 
-    void IOpTabHost.Unregister(OpTabPanel panel) => _panels.Remove(panel);
+    void IOpTabHost.Unregister(OpTabPanel panel)
+    {
+        var removed = panel.Index;
+        if (!_panels.Remove(panel))
+        {
+            return;
+        }
+
+        for (var i = 0; i < _panels.Count; i++)
+        {
+            _panels[i].Index = i;
+        }
+
+        if (removed < ActiveIndex)
+        {
+            ActiveIndex--;
+        }
+
+        if (ActiveIndex >= _panels.Count)
+        {
+            ActiveIndex = Math.Max(0, _panels.Count - 1);
+        }
+
+        if (ActiveIndex < 0)
+        {
+            ActiveIndex = 0;
+        }
+
+        _ = ActiveIndexChanged.InvokeAsync(ActiveIndex);
+        _ = InvokeAsync(StateHasChanged);
+    }
 
     private async Task SelectAsync(int index)
     {

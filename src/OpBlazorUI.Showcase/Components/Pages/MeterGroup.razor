@@ -114,8 +114,8 @@
                     O MeterGroup oferece suporte a templates para os rótulos (<code>LabelTemplate</code>), para cada
                     medidor (<code>MeterTemplate</code>) e para o ícone dentro do rótulo padrão
                     (<code>IconTemplate</code>). Os templates <code>StartTemplate</code>/<code>EndTemplate</code>
-                    (conteúdo antes/depois dos medidores) são aceitos, mas ainda não são renderizados por esta versão
-                    — veja Problemas Conhecidos.
+                    (conteúdo antes/depois dos medidores) prevalecem sobre <code>LabelTemplate</code> conforme o
+                    <code>LabelPosition</code>.
                 </p>
             </Description>
             <ChildContent>
@@ -186,8 +186,8 @@
                               new[] { "MeterTemplate", "RenderFragment&lt;OpMeterContext&gt;?", "null", "Template de cada medidor." },
                               new[] { "IconTemplate", "RenderFragment&lt;OpMeterItem&gt;?", "null", "Template do ícone no rótulo padrão (substitui o marcador)." },
                               new[] { "LabelTemplate", "RenderFragment&lt;OpMeterGroupLabelContext&gt;?", "null", "Template da área de rótulos; substitui a lista padrão." },
-                              new[] { "StartTemplate", "RenderFragment&lt;OpMeterGroupLabelContext&gt;?", "null", "Conteúdo antes dos medidores (aceito, ainda não renderizado)." },
-                              new[] { "EndTemplate", "RenderFragment&lt;OpMeterGroupLabelContext&gt;?", "null", "Conteúdo depois dos medidores (aceito, ainda não renderizado)." },
+                              new[] { "StartTemplate", "RenderFragment&lt;OpMeterGroupLabelContext&gt;?", "null", "Conteúdo no início do grupo; prevalece sobre <code>LabelTemplate</code> quando <code>LabelPosition=start</code>." },
+                              new[] { "EndTemplate", "RenderFragment&lt;OpMeterGroupLabelContext&gt;?", "null", "Conteúdo no fim do grupo; prevalece sobre <code>LabelTemplate</code> quando <code>LabelPosition=end</code>." },
                               new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
                               new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
                           })"/>
@@ -240,7 +240,6 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li><code>StartTemplate</code> e <code>EndTemplate</code> existem na API, mas o componente não os renderiza: os medidores não são envolvidos por conteúdo antes/depois.</li>
                         <li>O upstream usa duas cores por item (<code>color1</code>/<code>color2</code>) para um gradiente; <code>OpMeterItem</code> tem apenas <code>Color</code>.</li>
                         <li>No modo padrão, itens com <code>Value</code> igual a <code>0</code> não são renderizados; com <code>MeterTemplate</code> todos os itens passam pelo template.</li>
                         <li>Não há animação de transição ao alterar os valores.</li>

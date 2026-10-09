@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Common;
 using OpBlazorUI.Base.Models;
 
@@ -7,6 +6,8 @@ namespace OpBlazorUI.Base.Components.Steps;
 
 public partial class OpSteps : OpComponentBase
 {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+
     [Parameter] public IReadOnlyList<OpMenuItem> Model { get; set; } = Array.Empty<OpMenuItem>();
     [Parameter] public int ActiveIndex { get; set; }
     [Parameter] public bool Readonly { get; set; }
@@ -23,18 +24,17 @@ public partial class OpSteps : OpComponentBase
             return;
         }
 
+        var item = Model[index];
         ActiveIndex = index;
-        await ActiveIndexChanged.InvokeAsync(index);
-        await OnSelect.InvokeAsync(Model[index]);
-    }
 
-    private async Task OnKeyDownAsync(KeyboardEventArgs e, int index)
-    {
-        if (e.Code is not ("Enter" or "Space" or "NumpadEnter"))
+        item.Command?.Invoke();
+        if (!string.IsNullOrEmpty(item.Url))
         {
-            return;
+            Nav.NavigateTo(item.Url);
         }
 
-        await SelectAsync(index);
+        await ActiveIndexChanged.InvokeAsync(index);
+        await OnSelect.InvokeAsync(item);
+        StateHasChanged();
     }
 }

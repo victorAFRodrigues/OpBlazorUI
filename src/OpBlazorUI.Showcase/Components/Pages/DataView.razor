@@ -195,6 +195,7 @@
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "FirstChanged", "EventCallback&lt;int&gt;", "Notifica a mudança do primeiro registro (binding de <code>First</code>)." },
+                              new[] { "RowsChanged", "EventCallback&lt;int&gt;", "Notifica a mudança de <code>Rows</code> (dropdown de registros por página)." },
                               new[] { "OnPageChange", "EventCallback&lt;OpPaginatorState&gt;", "Disparado quando a página muda; recebe <code>First</code>, <code>Rows</code>, <code>Page</code> e <code>PageCount</code>." }
                           })"/>
             </ChildContent>
@@ -238,7 +239,7 @@
                     <ul>
                         <li>Não há ordenação nem filtragem embutidas do upstream (<code>sortField</code>, <code>sortOrder</code>, <code>filter</code>); a ordenação precisa ser feita pelo consumidor reordenando <code>Items</code>.</li>
                         <li>Na v21 a lista/grade é sempre renderizada pelos templates <code>ListTemplate</code>/<code>GridTemplate</code>; o componente não gera markup de item sozinho.</li>
-                        <li><code>Rows</code> não possui evento <code>RowsChanged</code>: se o consumidor alterar o número de linhas por página, mantenha o valor em uma variável própria para não sobrescrever a seleção.</li>
+                        <li><code>Rows</code> e <code>First</code> são controláveis via <code>RowsChanged</code>/<code>FirstChanged</code> (ou <code>@@bind-Rows</code>/<code>@@bind-First</code>).</li>
                         <li>Não há o <code>selectbutton</code> de alternância de layout embutido no cabeçalho; ele é montado no <code>HeaderTemplate</code>.</li>
                     </ul>
                 </div>
