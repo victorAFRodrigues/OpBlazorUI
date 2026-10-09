@@ -1,7 +1,7 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** em execução. **3.1 Seleção** (`fix/bloco3-1-selecao`) e **3.2 Formulários**
-(`fix/bloco3-2-formularios`) concluídos; testes Playwright 50/50.
+**Status:** em execução. **3.1** (`fix/bloco3-1-selecao`), **3.2** (`fix/bloco3-2-formularios`) e
+**3.3** (`fix/bloco3-3-entrada`) concluídos; testes Playwright 58/58.
 
 **Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
 `EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
@@ -56,19 +56,26 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.3 Entrada de texto e números
 
-- [ ] `InputNumber`: com `Currency`, o parse usa o símbolo da cultura e nenhuma edição é aceita;
-  `MaxFractionDigits` não é aplicado ao valor; texto inválido não gera erro de validação;
-  reformatar a cada tecla joga o cursor para o fim.
-- [ ] `InputText` com `KeyFilter`/`Mask`: o caractere rejeitado continua no DOM quando o valor não
-  muda (forçar re-render ou filtrar no `keydown`/`beforeinput` via JS); presets `int`/`num` não
-  aceitam `-`; `OnChange` emite o valor sem máscara.
-- [ ] `InputOtp`: `IntegerOnly` deixa a letra visível; colar o código inteiro; `select()` no foco;
-  `UpdateValueAsync` remove buracos.
-- [ ] `InputChips`: Enter submete o formulário (falta `preventDefault`); vírgula cria o chip duas
-  vezes; `Readonly` não bloqueia remoção; `SeparatorKeys` ignorado (`,` e `;` fixos).
-- [ ] `ToggleButton` (e outros): `"&nbsp;"` é codificado pelo Razor e aparece como texto.
-- [ ] `Rating`: os radios ocultos não têm `@onchange` (teclado não muda a nota); `OnFocus`/
-  `OnBlur` num `div` não focável nunca disparam.
+**Feito** (branch `fix/bloco3-3-entrada`):
+
+- [x] `InputNumber`: o parse de `Currency` alinha o símbolo exibido (antes "R$ 10" não era aceito);
+  `MaxFractionDigits` arredonda o valor (não só a exibição); enquanto focado o input mostra o texto
+  digitado (sem reformatar a cada tecla, o cursor não pula para o fim).
+- [x] `InputText` com `KeyFilter`/`Mask`: o caractere rejeitado é forçado fora do DOM via JS
+  (`input.interop.js` → `setValue`); presets `int`/`num`/`money` aceitam `-`; `OnChange` emite o
+  valor mascarado.
+- [x] `InputChips`: `Readonly` bloqueia a remoção (ícone nem é renderizado); vírgula não duplica
+  (separação só no `oninput`); `SeparatorKeys` passa a ser respeitado (antes `,` e `;` fixos);
+  Enter não submete mais o formulário (`preventEnterSubmit` via JS).
+- [x] `ToggleButton` e demais: `"&nbsp;"` (literal codificado pelo Razor) trocado por `"\u00A0"`
+  em ToggleButton, Select, MultiSelect, CascadeSelect e TreeSelect.
+- [x] `Rating`: os radios ocultos ganham `@onchange` (teclado muda a nota); `OnFocus`/`OnBlur`
+  movidos para os inputs focáveis.
+- [ ] `InputOtp`: `IntegerOnly` limpa a letra no DOM (via JS); colar o código inteiro e `select()`
+  no foco ficam pendentes (precisam de JS de clipboard).
+- [ ] `InputNumber`: texto inválido ainda não gera mensagem de validação no `EditContext`.
+- [ ] Verificado com `/_tests/bloco3-3` + `Bloco3_3Tests` (8 cenários).
+
 
 ## 3.4 DatePicker
 

@@ -20,7 +20,7 @@
 
     <input type="text"
            class="@InputClassValue"
-           value="@FormatValue(CurrentValue)"
+           value="@(_focused ? _text : FormatValue(CurrentValue))"
            id="@Id"
            name="@NameAttributeValue"
            placeholder="@Placeholder"

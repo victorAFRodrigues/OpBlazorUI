@@ -37,6 +37,15 @@ public partial class OpInputChips : OpInputBase<List<string>>
 
     private IReadOnlyList<string> Chips => CurrentValue ?? Empty;
 
+    // Chaves separadoras: as informadas em SeparatorKeys; sem elas, a vírgula (padrão). Antes o
+    // componente fixava "," e ";" e ignorava o parâmetro.
+    private char[] SeparatorChars => (SeparatorKeys ?? DefaultSeparatorKeys)
+        .Where(k => k.Length == 1)
+        .Select(k => k[0])
+        .ToArray();
+
+    private static readonly string[] DefaultSeparatorKeys = [","];
+
     private string RootClass => OpCss.BuildClass(
         "p-inputchips p-component",
         _focused ? "p-focus" : null,
@@ -80,6 +89,8 @@ public partial class OpInputChips : OpInputBase<List<string>>
 
     private async Task RemoveChipAsync(int index)
     {
+        if (Readonly || Disabled) return;
+
         var list = CurrentValue;
         if (list is null || index < 0 || index >= list.Count)
         {
@@ -95,10 +106,11 @@ public partial class OpInputChips : OpInputBase<List<string>>
     private async Task HandleInput(ChangeEventArgs e)
     {
         var text = e.Value?.ToString() ?? string.Empty;
+        var separators = SeparatorChars;
 
-        if (text.IndexOf(',') >= 0 || text.IndexOf(';') >= 0)
+        if (separators.Length > 0 && text.IndexOfAny(separators) >= 0)
         {
-            var parts = text.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var parts = text.Split(separators, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             _inputValue = string.Empty;
 
             foreach (var part in parts)
@@ -121,6 +133,7 @@ public partial class OpInputChips : OpInputBase<List<string>>
                 {
                     await AddChipAsync(_inputValue);
                 }
+
                 break;
 
             case "Backspace":
@@ -128,6 +141,7 @@ public partial class OpInputChips : OpInputBase<List<string>>
                 {
                     await RemoveChipAsync(Chips.Count - 1);
                 }
+
                 break;
 
             case "Tab":
@@ -135,13 +149,7 @@ public partial class OpInputChips : OpInputBase<List<string>>
                 {
                     await AddChipAsync(_inputValue);
                 }
-                break;
 
-            default:
-                if (IsSeparator(e.Key))
-                {
-                    await AddChipAsync(_inputValue);
-                }
                 break;
         }
     }
@@ -181,6 +189,16 @@ public partial class OpInputChips : OpInputBase<List<string>>
         }
     }
 
-    private bool IsSeparator(string key)
-        => key == "," || (SeparatorKeys is not null && SeparatorKeys.Contains(key));
+    private bool _enterRegistered;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Enter no input de texto submete o formulário por padrão; o chip é adicionado pelo
+        // componente, então bloqueamos o submit no próprio elemento.
+        if (!_enterRegistered)
+        {
+            _enterRegistered = true;
+            await Interop.InvokeVoidAsync(OpInterop.InputInterop, "preventEnterSubmit", _input);
+        }
+    }
 }

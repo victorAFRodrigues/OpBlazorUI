@@ -7,7 +7,7 @@
        value="@Value"
        placeholder="@Placeholder"
        id="@Id"
-       name="@Name"
+       name="@(Name ?? NameAttributeValue)"
        aria-label="@AriaLabel"
        aria-invalid="@(IsInvalid ? "true" : null)"
        maxlength="@MaxLength"
@@ -19,4 +19,5 @@
         @onfocus="OnFocus"
         @onblur="HandleBlur"
         @onkeydown="OnKeyDown"
+        @ref="_input"
        @attributes="AdditionalAttributes"/>
