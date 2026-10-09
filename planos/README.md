@@ -7,7 +7,7 @@ tarefas, os arquivos envolvidos e as decisões em aberto.
 
 | Bloco | Tema | Status |
 |---|---|---|
-| [1](bloco-1-base-comum.md) | Base comum: descarte, interop JS, clique fora/Escape, cultura | Implementado em `fix/bloco1-base`, aguardando testes |
+| [1](bloco-1-base-comum.md) | Base comum: descarte, interop JS, clique fora/Escape, cultura | Implementado em `fix/bloco1-base`; testes Playwright 5/5 (falta verificação manual em Server) |
 | [2](bloco-2-excecoes-e-travamentos.md) | Exceções que derrubam o circuito e travamentos | Proposta |
 | [3](bloco-3-funcionalidade.md) | Funcionalidade quebrada por componente | Proposta |
 | [4](bloco-4-teclado-acessibilidade-e-recursos.md) | Teclado, ARIA e recursos que faltam (comparado ao PrimeNG) | Proposta |

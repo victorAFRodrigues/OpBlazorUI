@@ -44,11 +44,13 @@ ainda não foi testado em execução.
 - [x] Página `/_tests/bloco1` e `tests/OpBlazorUI.Playwright/Bloco1Tests.cs` (5 cenários).
 - [x] `global.json` com `rollForward: latestFeature` (antes nenhum `dotnet` funcionava no repo
   sem o SDK 10.0.301 exato).
-- [ ] Rodar `dotnet test tests/OpBlazorUI.Playwright --filter Bloco1Tests`. Na primeira
-  tentativa o fixture não subiu o Showcase dentro de 180 s; a causa não foi investigada.
-- [ ] Verificação manual no Showcase (WASM) e numa app Interactive Server.
-- [ ] Adicionar `dotnet test` ao `ci.yml` (aprovado para este bloco; adiado até os testes
-  passarem localmente pelo menos uma vez).
+- [x] Rodar `dotnet test tests/OpBlazorUI.Playwright --filter Bloco1Tests` (5/5). Suíte completa
+  34/34. Os testes ganharam uma espera determinística pelo `style` com `z-index` antes de
+  clicar/Escape: o registro do overlay acontece no primeiro render via JS, então havia uma
+  corrida entre a abertura e o primeiro evento.
+- [ ] Verificação manual no Showcase (WASM) e numa app Interactive Server (WASM coberto pelos
+  testes Playwright; Server ainda não).
+- [x] Adicionar `dotnet test` ao `ci.yml` (job `Test (Playwright)`, com instalação do Chromium).
 
 ## Pontos para conferir ao testar
 
