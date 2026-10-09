@@ -1,0 +1,62 @@
+@page "/_tests/bloco3-3"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.InputChips
+@using OpBlazorUI.Base.Components.InputNumber
+@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Components.Rating
+@using OpBlazorUI.Base.Components.ToggleButton
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_3Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.3 entrada</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.3 entrada</h1>
+
+<section id="t-toggle">
+    <OpToggleButton @bind-Value="_toggle"/>
+</section>
+
+<section id="t-rating">
+    <OpRating Name="rate" @bind-Value="_rating"/>
+    <span id="t-rating-value">@_rating</span>
+</section>
+
+<section id="t-keyfilter">
+    <OpInputText Id="t-ki" KeyFilter="int" @bind-Value="_keyFiltered"/>
+    <span id="t-ki-value">@_keyFiltered</span>
+</section>
+
+<section id="t-mask">
+    <OpInputText Id="t-mask" Mask="99/99" @bind-Value="_masked"/>
+    <span id="t-mask-value">@_masked</span>
+</section>
+
+<section id="t-chips">
+    <OpInputChips Id="t-chips-input" @bind-Value="_chips"/>
+    <span id="t-chips-value">@string.Join("|", _chips ?? [])</span>
+</section>
+
+<section id="t-chips-sep">
+    <OpInputChips Id="t-chips-sep-input" SeparatorKeys="@(new[] { ";" })" @bind-Value="_chipsSep"/>
+    <span id="t-chips-sep-value">@string.Join("|", _chipsSep ?? [])</span>
+</section>
+
+<section id="t-chips-ro">
+    <OpInputChips Id="t-chips-ro-input" Readonly="true" @bind-Value="_roChips"/>
+</section>
+
+<section id="t-money">
+    <OpInputNumber Id="t-money" Mode="currency" Currency="BRL" Locale="en-US" MaxFractionDigits="2" @bind-Value="_money"/>
+    <span id="t-money-value">@_money</span>
+</section>
+
+@code {
+    private bool _toggle;
+    private int _rating;
+    private string? _keyFiltered;
+    private string? _masked;
+    private List<string>? _chips = new();
+    private List<string>? _chipsSep = new();
+    private List<string>? _roChips = new() { "fixo" };
+    private decimal? _money;
+}

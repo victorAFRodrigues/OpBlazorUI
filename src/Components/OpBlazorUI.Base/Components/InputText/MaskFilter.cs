@@ -8,9 +8,9 @@ internal static class MaskFilter
 {
     private static readonly Dictionary<string, string> KeyFilterPresets = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["int"] = "[0-9]",
-        ["num"] = "[0-9.]",
-        ["money"] = "[0-9.,\\s]",
+        ["int"] = "[0-9-]",
+        ["num"] = "[0-9.\\-]",
+        ["money"] = "[0-9.,\\s-]",
         ["hex"] = "[0-9a-fA-F]",
         ["alpha"] = "[a-zA-Z]",
         ["alphanum"] = "[a-zA-Z0-9]"

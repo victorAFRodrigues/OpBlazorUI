@@ -34,7 +34,7 @@
                 @SelectedItemsTemplate(SelectedOptions)
                 @if (!HasSelection)
                 {
-                    @(Placeholder ?? "&nbsp;")
+                    @(Placeholder ?? "\u00A0")
                 }
             }
             else if (Display == "chip")
@@ -58,13 +58,13 @@
 
                     @if (!HasSelection)
                     {
-                        @(Placeholder ?? "&nbsp;")
+                        @(Placeholder ?? "\u00A0")
                     }
                 }
             }
             else
             {
-                @(HasSelection ? CommaLabel : Placeholder ?? "&nbsp;")
+                @(HasSelection ? CommaLabel : Placeholder ?? "\u00A0")
             }
         </div>
     </div>

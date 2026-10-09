@@ -6,7 +6,7 @@
     <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     @if (Cancel)
     {
-        <div class="p-rating-option p-rating-cancel-item" @onclick="() => Rate(0)" @onfocus="OnFocus" @onblur="OnBlur">
+        <div class="p-rating-option p-rating-cancel-item" @onclick="() => Rate(0)">
             @if (CancelIconTemplate != null)
             {
                 @CancelIconTemplate
@@ -22,7 +22,10 @@
                    checked="@(CurrentValue == 0)"
                    disabled="@Disabled"
                    readonly="@Readonly"
-                   tabindex="-1"/>
+                   tabindex="-1"
+                   @onchange="() => Rate(0)"
+                   @onfocus="OnFocus"
+                   @onblur="OnBlur"/>
         </div>
     }
 
@@ -30,7 +33,7 @@
     {
         var star = i;
         var active = star <= CurrentValue && CurrentValue > 0;
-        <div class="@OptionClass(star)" @onclick="() => Rate(star)" @onfocus="OnFocus" @onblur="OnBlur">
+        <div class="@OptionClass(star)" @onclick="() => Rate(star)">
             @if (active)
             {
                 @if (OnIconTemplate != null)
@@ -61,7 +64,10 @@
                    checked="@(CurrentValue == star)"
                    disabled="@Disabled"
                    readonly="@Readonly"
-                   tabindex="@(Disabled ? -1 : 0)"/>
+                   tabindex="@(Disabled ? -1 : 0)"
+                   @onchange="() => Rate(star)"
+                   @onfocus="OnFocus"
+                   @onblur="OnBlur"/>
         </div>
     }
 </div>

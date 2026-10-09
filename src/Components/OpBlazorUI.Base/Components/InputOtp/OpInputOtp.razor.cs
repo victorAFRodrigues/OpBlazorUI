@@ -98,6 +98,7 @@ public partial class OpInputOtp : OpInputBase<string>
         {
             _tokens[index] = null;
             await UpdateValueAsync();
+            await ForceInputValueAsync(index, "");
             return;
         }
 
@@ -124,6 +125,18 @@ public partial class OpInputOtp : OpInputBase<string>
         {
             // elemento ainda não disponível
         }
+    }
+
+    // Força o valor no DOM: ao rejeitar um caractere (IntegerOnly) o token não muda e o diff do
+    // Blazor não limparia a letra digitada.
+    private async Task ForceInputValueAsync(int index, string value)
+    {
+        if (index < 0 || index >= _inputs.Length || _inputs[index].Context is null)
+        {
+            return;
+        }
+
+        await Interop.InvokeVoidAsync(OpInterop.InputInterop, "setValue", _inputs[index], value);
     }
 
     private async Task HandleKeyDown(int index, KeyboardEventArgs e)

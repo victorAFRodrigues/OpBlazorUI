@@ -25,6 +25,7 @@ public sealed class OpInterop : IAsyncDisposable
     public const string SliderInterop = "./_content/OpBlazorUI.Base/slider.interop.js";
     public const string ColorPickerInterop = "./_content/OpBlazorUI.Base/colorpicker.interop.js";
     public const string TabsInterop = "./_content/OpBlazorUI.Base/tabs.interop.js";
+    public const string InputInterop = "./_content/OpBlazorUI.Base/input.interop.js";
 
     private readonly IJSRuntime _js;
     private readonly ILogger? _logger;

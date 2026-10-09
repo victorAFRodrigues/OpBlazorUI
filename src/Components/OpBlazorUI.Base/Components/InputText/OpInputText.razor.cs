@@ -6,6 +6,7 @@ namespace OpBlazorUI.Base.Components.InputText;
 
 public partial class OpInputText : OpInputBase<string>
 {
+    private ElementReference _input;
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
@@ -41,16 +42,24 @@ public partial class OpInputText : OpInputBase<string>
 
     private async Task HandleInput(ChangeEventArgs e)
     {
-        var text = e.Value?.ToString() ?? string.Empty;
-        text = MaskFilter.ApplyKeyFilter(text, KeyFilter);
+        var raw = e.Value?.ToString() ?? string.Empty;
+        var text = MaskFilter.ApplyKeyFilter(raw, KeyFilter);
         text = MaskFilter.ApplyMask(text, Mask, SlotChar);
         CurrentValue = text;
         await OnInput.InvokeAsync(text);
+
+        // O valor filtrado pode ser igual ao anterior (ex.: caractere rejeitado); sem forçar o
+        // DOM, o caractere digitado permaneceria visível.
+        if (!string.Equals(text, raw, StringComparison.Ordinal))
+        {
+            await Interop.InvokeVoidAsync(OpInterop.InputInterop, "setValue", _input, text);
+        }
     }
 
     private async Task HandleChange(ChangeEventArgs e)
     {
-        await OnChange.InvokeAsync(e.Value?.ToString());
+        // Emite o valor já mascarado/filtrado, não o texto cru do input.
+        await OnChange.InvokeAsync(CurrentValue);
     }
 
     private async Task HandleBlur(FocusEventArgs e)
