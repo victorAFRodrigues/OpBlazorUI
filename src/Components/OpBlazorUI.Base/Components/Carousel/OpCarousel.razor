@@ -1,0 +1,55 @@
+@namespace OpBlazorUI.Base.Components.Carousel
+@using System
+@using OpBlazorUI.Base.Components.Common
+@typeparam TItem
+@inherits OpComponentBase
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (HeaderTemplate is not null)
+    {
+        <div class="p-carousel-header">@HeaderTemplate</div>
+    }
+
+    <div class="p-carousel-content-container">
+        <div class="@ContentWrapperClass">
+            <button type="button" class="@PrevButtonClass" aria-label="Anterior" @onclick="PrevAsync">
+                <i class="p-carousel-prev-icon pi pi-chevron-left" aria-hidden="true"></i>
+            </button>
+            <div class="p-carousel-viewport" style="@ViewportStyle">
+                <div class="p-carousel-item-list" style="@ItemListStyle">
+                    @for (var i = 0; i < Count; i++)
+                    {
+                        var index = i;
+                        <div class="@ItemClass(index)" style="@ItemStyle">
+                            @if (ItemTemplate is not null)
+                            {
+                                @ItemTemplate(Value[index])
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+            <button type="button" class="@NextButtonClass" aria-label="Próximo" @onclick="NextAsync">
+                <i class="p-carousel-next-icon pi pi-chevron-right" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        @if (PageCount > 1)
+        {
+            <ul class="p-carousel-indicator-list">
+                @for (var p = 0; p < PageCount; p++)
+                {
+                    var page = p;
+                    <li class="@IndicatorClass(page)">
+                        <button type="button" class="p-carousel-indicator-button" aria-label="@($"Página {page + 1}")" @onclick="() => GoToAsync(page * Math.Max(1, NumScroll))"></button>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    @if (FooterTemplate is not null)
+    {
+        <div class="p-carousel-footer">@FooterTemplate</div>
+    }
+</div>

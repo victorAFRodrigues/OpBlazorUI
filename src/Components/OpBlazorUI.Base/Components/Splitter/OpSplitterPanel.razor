@@ -1,0 +1,29 @@
+@namespace OpBlazorUI.Base.Components.Splitter
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+@implements IDisposable
+
+@if (Splitter is not null)
+{
+    if (Index > 0)
+    {
+        <div class="p-splitter-gutter" data-op-splitter-gutter="@(Index - 1)" style="@Splitter.GutterStyle">
+            <div class="p-splitter-gutter-handle"
+                 role="separator"
+                 tabindex="0"
+                 aria-orientation="@Splitter.Orientation"
+                 aria-valuenow="@Splitter.AriaValueNow(Index - 1)"></div>
+        </div>
+    }
+
+    <div class="@PanelClass" data-op-splitter-panel="@Index" style="@Splitter.GetPanelStyle(Index)">
+        @if (Template is not null)
+        {
+            @Template
+        }
+        else
+        {
+            @ChildContent
+        }
+    </div>
+}

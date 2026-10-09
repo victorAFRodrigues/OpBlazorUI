@@ -1,141 +1,258 @@
 @page "/splitter"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Splitter
 
 <PageTitle>Splitter - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Splitter"
-              Description="Separa e redimensiona painéis. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Splitter separa e permite redimensionar painéis por meio de divisores arrastáveis.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Horizontal" Id="horizontal">
-            <Description><p>O Splitter exige dois componentes SplitterPanel como filhos, exibidos horizontalmente por padrão.</p></Description>
-            <Code><CodeBlock Code="@HorizontalCode" Language="html"/></Code>
+            <Description>
+                <p>O Splitter exige componentes <code>OpSplitterPanel</code> como filhos, exibidos horizontalmente por padrão. Defina uma altura no componente.</p>
+            </Description>
+            <ChildContent>
+                <OpSplitter style="height:20rem">
+                    <OpSplitterPanel>
+                        <div class="flex items-center justify-center" style="height:100%">Painel 1</div>
+                    </OpSplitterPanel>
+                    <OpSplitterPanel>
+                        <div class="flex items-center justify-center" style="height:100%">Painel 2</div>
+                    </OpSplitterPanel>
+                </OpSplitter>
+            </ChildContent>
+            <Code><CodeBlock Code="@HorizontalCode"/></Code>
         </DocSection>
 
         <DocSection Label="Tamanho" Id="size">
-            <Description><p>Quando nenhum <code>panelSizes</code> é definido, os painéis são divididos 50/50; use a propriedade <code>panelSizes</code> para definir larguras relativas, por exemplo, <code>[25, 75]</code>.</p></Description>
-            <Code><CodeBlock Code="@SizeCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Quando nenhum <code>PanelSizes</code> é definido, os painéis são divididos igualmente; use
+                    <code>PanelSizes</code> para definir tamanhos relativos em percentual, como <code>[25, 75]</code>.
+                    <code>MinSizes</code> limita o mínimo de cada painel durante o arrasto.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpSplitter style="height:20rem" PanelSizes="@(new double[] { 25, 75 })" MinSizes="@(new double[] { 10, 0 })">
+                    <OpSplitterPanel>
+                        <div class="flex items-center justify-center" style="height:100%">Painel 1</div>
+                    </OpSplitterPanel>
+                    <OpSplitterPanel>
+                        <div class="flex items-center justify-center" style="height:100%">Painel 2</div>
+                    </OpSplitterPanel>
+                </OpSplitter>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
         </DocSection>
 
         <DocSection Label="Vertical" Id="vertical">
-            <Description><p>Os painéis são exibidos empilhados ao definir <code>layout</code> como <code>vertical</code>.</p></Description>
-            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
+            <Description>
+                <p>Os painéis são empilhados quando <code>Layout</code> é definido como <code>vertical</code>.</p>
+            </Description>
+            <ChildContent>
+                <OpSplitter Layout="vertical" style="height:20rem">
+                    <OpSplitterPanel>
+                        <div class="flex items-center justify-center" style="height:100%">Painel 1</div>
+                    </OpSplitterPanel>
+                    <OpSplitterPanel>
+                        <div class="flex items-center justify-center" style="height:100%">Painel 2</div>
+                    </OpSplitterPanel>
+                </OpSplitter>
+            </ChildContent>
+            <Code><CodeBlock Code="@VerticalCode"/></Code>
         </DocSection>
 
         <DocSection Label="Aninhado" Id="nested">
-            <Description><p>Splitters podem ser combinados para criar layouts avançados.</p></Description>
-            <Code><CodeBlock Code="@NestedCode" Language="html"/></Code>
+            <Description>
+                <p>Splitters podem ser combinados para criar layouts mais avançados.</p>
+            </Description>
+            <ChildContent>
+                <OpSplitter style="height:20rem" PanelSizes="@(new double[] { 30, 70 })" MinSizes="@(new double[] { 10, 0 })">
+                    <OpSplitterPanel>
+                        <div class="flex items-center justify-center" style="height:100%">Painel 1</div>
+                    </OpSplitterPanel>
+                    <OpSplitterPanel>
+                        <OpSplitter Layout="vertical" style="height:100%" PanelSizes="@(new double[] { 50, 50 })">
+                            <OpSplitterPanel>
+                                <div class="flex items-center justify-center" style="height:100%">Painel 2</div>
+                            </OpSplitterPanel>
+                            <OpSplitterPanel>
+                                <OpSplitter style="height:100%" PanelSizes="@(new double[] { 50, 50 })">
+                                    <OpSplitterPanel>
+                                        <div class="flex items-center justify-center" style="height:100%">Painel 3</div>
+                                    </OpSplitterPanel>
+                                    <OpSplitterPanel>
+                                        <div class="flex items-center justify-center" style="height:100%">Painel 4</div>
+                                    </OpSplitterPanel>
+                                </OpSplitter>
+                            </OpSplitterPanel>
+                        </OpSplitter>
+                    </OpSplitterPanel>
+                </OpSplitter>
+            </ChildContent>
+            <Code><CodeBlock Code="@NestedCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>A barra do Splitter define <code>separator</code> como o role, com <code>aria-orientation</code> definido como horizontal ou vertical.</p>
+                <p>
+                    A alça do divisor usa o papel <code>separator</code> com <code>aria-orientation</code>
+                    (<code>horizontal</code> ou <code>vertical</code>) e <code>aria-valuenow</code> com o tamanho do
+                    painel anterior em percentual.
+                </p>
                 <h3>Suporte a teclado</h3>
+                <p>Com o divisor focado, as setas movem a alça sem depender do JavaScript de arrasto.</p>
             </Description>
             <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Move o foco pela barra do Splitter." },
-                              new[] { "seta para baixo", "Move um Splitter vertical para baixo." },
-                              new[] { "seta para cima", "Move um Splitter vertical para cima." },
-                              new[] { "seta para a esquerda", "Move um Splitter vertical para a esquerda." },
-                              new[] { "seta para a direita", "Move um Splitter vertical para a direita." }
+                              new[] { "tab", "Move o foco para a alça do divisor." },
+                              new[] { "seta para a esquerda", "Move o divisor para a esquerda (layout horizontal)." },
+                              new[] { "seta para a direita", "Move o divisor para a direita (layout horizontal)." },
+                              new[] { "seta para cima", "Move o divisor para cima (layout vertical)." },
+                              new[] { "seta para baixo", "Move o divisor para baixo (layout vertical)." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Layout", "string", "\"horizontal\"", "Orientação dos painéis: <code>horizontal</code> ou <code>vertical</code>." },
+                              new[] { "GutterSize", "double", "4", "Tamanho do divisor em pixels." },
+                              new[] { "Step", "double", "5", "Passo (em %) movido pelas setas do teclado." },
+                              new[] { "MinSizes", "IReadOnlyList&lt;double&gt;", "[]", "Tamanho mínimo de cada painel (%)." },
+                              new[] { "PanelSizes", "IReadOnlyList&lt;double&gt;", "[]", "Tamanhos iniciais de cada painel (%)." },
+                              new[] { "PanelStyle", "string?", "null", "Estilo inline aplicado a cada painel." },
+                              new[] { "PanelStyleClass", "string?", "null", "Classes adicionais aplicadas a cada painel." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Painéis do Splitter." },
+                              new[] { "OnResizeStart", "EventCallback&lt;double[]&gt;", "—", "Disparado no início do redimensionamento, com os tamanhos atuais." },
+                              new[] { "OnResizeEnd", "EventCallback&lt;double[]&gt;", "—", "Disparado ao final do redimensionamento, com os novos tamanhos." },
+                              new[] { "Id / StyleClass", "string?", "null", "Identificação e classes adicionais do elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpSplitterPanel" Id="api-panel">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do painel." },
+                              new[] { "Template", "RenderFragment?", "null", "Template do conteúdo do painel (tem prioridade sobre <code>ChildContent</code>)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no painel." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="splitter"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, <code>PanelStyle</code>/<code>PanelStyleClass</code> e os
+                    <code>AdditionalAttributes</code> (repassados ao elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O divisor é arrastado apenas por ponteiro (mouse/caneta); o comportamento em telas sensíveis ao toque não foi testado.</li>
+                        <li>O estado dos painéis não é persistido: o <code>stateKey</code> do upstream não foi portado.</li>
+                        <li><code>MinSizes</code> é aplicado pelo interop durante o arrasto, não no cálculo inicial dos tamanhos.</li>
+                        <li>Em SSR estático o interop não inicializa; o divisor só se torna arrastável após a hidratação (as setas do teclado continuam funcionando via JS).</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
     private const string ImportCode = """
-        import { SplitterModule } from 'primeng/splitter';
+        @using OpBlazorUI.Base.Components.Splitter
+
+        <OpSplitter style="height:20rem">
+            <OpSplitterPanel>Painel 1</OpSplitterPanel>
+            <OpSplitterPanel>Painel 2</OpSplitterPanel>
+        </OpSplitter>
         """;
 
     private const string HorizontalCode = """
-        <p-splitter [style]="{ height: '300px' }" class="mb-8">
-            <ng-template #panel>
-                <div class="flex items-center justify-center h-full">Panel 1</div>
-            </ng-template>
-            <ng-template #panel>
-                <div class="flex items-center justify-center h-full">Panel 2</div>
-            </ng-template>
-        </p-splitter>
+        <OpSplitter style="height:20rem">
+            <OpSplitterPanel>
+                <div class="flex items-center justify-center" style="height:100%">Painel 1</div>
+            </OpSplitterPanel>
+            <OpSplitterPanel>
+                <div class="flex items-center justify-center" style="height:100%">Painel 2</div>
+            </OpSplitterPanel>
+        </OpSplitter>
         """;
 
     private const string SizeCode = """
-        <p-splitter [panelSizes]="[25, 75]" [style]="{ height: '300px' }" class="mb-8">
-            <ng-template #panel>
-                <div class="flex items-center justify-center h-full">Panel 1</div>
-            </ng-template>
-            <ng-template #panel>
-                <div class="flex items-center justify-center h-full">Panel 2</div>
-            </ng-template>
-        </p-splitter>
+        <OpSplitter style="height:20rem"
+                    PanelSizes="@(new double[] { 25, 75 })"
+                    MinSizes="@(new double[] { 10, 0 })">
+            <OpSplitterPanel>Painel 1</OpSplitterPanel>
+            <OpSplitterPanel>Painel 2</OpSplitterPanel>
+        </OpSplitter>
         """;
 
     private const string VerticalCode = """
-        <p-splitter [style]="{ height: '300px' }" class="mb-8" layout="vertical">
-            <ng-template #panel>
-                <div class="flex items-center justify-center h-full">Panel 1</div>
-            </ng-template>
-            <ng-template #panel>
-                <div class="flex items-center justify-center h-full">Panel 2</div>
-            </ng-template>
-        </p-splitter>
+        <OpSplitter Layout="vertical" style="height:20rem">
+            <OpSplitterPanel>Painel 1</OpSplitterPanel>
+            <OpSplitterPanel>Painel 2</OpSplitterPanel>
+        </OpSplitter>
         """;
 
     private const string NestedCode = """
-        <p-splitter [style]="{ height: '300px' }" [panelSizes]="[20, 80]" [minSizes]="[10, 0]" class="mb-8">
-            <ng-template #panel>
-                <div class="col flex w-full items-center justify-center">Panel 1</div>
-            </ng-template>
-            <ng-template #panel>
-                <p-splitter layout="vertical" [panelSizes]="[50, 50]">
-                    <ng-template #panel>
-                        <div style="flex-grow: 1;" class="flex items-center justify-center">Panel 2</div>
-                    </ng-template>
-                    <ng-template #panel>
-                        <p-splitter [panelSizes]="[20, 80]">
-                            <ng-template #panel>
-                                <div class="col h-full flex items-center justify-center">Panel 3</div>
-                            </ng-template>
-                            <ng-template #panel>
-                                <div class="col h-full flex items-center justify-center">Panel 4</div>
-                            </ng-template>
-                        </p-splitter>
-                    </ng-template>
-                </p-splitter>
-            </ng-template>
-        </p-splitter>
+        <OpSplitter style="height:20rem"
+                    PanelSizes="@(new double[] { 30, 70 })"
+                    MinSizes="@(new double[] { 10, 0 })">
+            <OpSplitterPanel>Painel 1</OpSplitterPanel>
+            <OpSplitterPanel>
+                <OpSplitter Layout="vertical" style="height:100%"
+                            PanelSizes="@(new double[] { 50, 50 })">
+                    <OpSplitterPanel>Painel 2</OpSplitterPanel>
+                    <OpSplitterPanel>
+                        <OpSplitter style="height:100%"
+                                    PanelSizes="@(new double[] { 50, 50 })">
+                            <OpSplitterPanel>Painel 3</OpSplitterPanel>
+                            <OpSplitterPanel>Painel 4</OpSplitterPanel>
+                        </OpSplitter>
+                    </OpSplitterPanel>
+                </OpSplitter>
+            </OpSplitterPanel>
+        </OpSplitter>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpSplitter style="height:20rem">
+            <OpSplitterPanel>Painel 1</OpSplitterPanel>
+            <OpSplitterPanel>Painel 2</OpSplitterPanel>
+        </OpSplitter>
         """;
 }
