@@ -80,7 +80,9 @@
         <ul class="@ListClass" role="listbox" id="@($"{_id}_list")"
             aria-multiselectable="@(IsMultiple ? "true" : "false")"
             aria-label="@AriaLabel"
+            aria-activedescendant="@(_focusedOptionIndex >= 0 ? $"{_id}_{_focusedOptionIndex}" : null)"
             tabindex="@(Disabled ? -1 : TabIndex)"
+            @ref="_listRef"
             @onkeydown="OnListKeydown"
             @onclick="OnListClick">
             @if (Group)

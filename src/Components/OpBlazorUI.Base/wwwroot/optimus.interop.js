@@ -250,3 +250,16 @@ export function focusSelector(root, selector) {
         // não focável
     }
 }
+
+// Rola o elemento do seletor para dentro do container (opção focada em listas longas).
+export function scrollSelectorIntoView(root, selector) {
+    if (!root || !selector) return;
+    const el = root.querySelector(selector);
+    if (el && typeof el.scrollIntoView === 'function') {
+        try {
+            el.scrollIntoView({ block: 'nearest' });
+        } catch (_) {
+            // ignore
+        }
+    }
+}

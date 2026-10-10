@@ -39,8 +39,11 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
 - [x] **4.1d DatePicker** (branch `feat/bloco4-1d-datepicker`): setas na grade de dias (←→↑↓),
   Home/End (início/fim da semana), PageUp/PageDown (mês), com o foco movido para a célula; dia com
   tabstop roving e `@onfocus`. Células de mês/ano focáveis ficam para depois.
-- [ ] **4.1e Seleção** (Select, MultiSelect, Listbox, AutoComplete, CascadeSelect): `scrollIntoView`
-  da opção focada, Space abre/alterna, `aria-activedescendant`.
+- [x] **4.1e Seleção** (branch `feat/bloco4-1e-selecao`): `scrollIntoView` da opção focada no
+  Select e no Listbox; Space seleciona a opção focada no Select; `aria-activedescendant` no Listbox.
+  MultiSelect, AutoComplete e CascadeSelect ficam em 4.1e2.
+- [ ] **4.1e2 Seleção (MultiSelect, AutoComplete, CascadeSelect)**: Space/scrollIntoView e
+  `aria-activedescendant` onde faltam.
 - [ ] **4.1f Diversos**: DataTable (ordenação por teclado, `aria-sort`), SplitButton/SpeedDial,
   Tooltip (fechar com Escape — WCAG 1.4.13).
 - [ ] **4.1g ARIA avulso**: `aria-required`, `aria-checked="mixed"`, `role="spinbutton"`,

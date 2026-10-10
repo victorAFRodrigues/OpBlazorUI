@@ -78,6 +78,15 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
         _id = InputId ?? $"op-select-{Guid.NewGuid():N}";
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_overlayVisible && _focusedOptionIndex >= 0)
+        {
+            await Interop.InvokeVoidAsync(
+                OpInterop.OptimusInterop, "scrollSelectorIntoView", _rootRef, $"#{_id}_{_focusedOptionIndex}");
+        }
+    }
+
     // ------------------------------------------------------------ computed
     private string RootClass => OpCss.BuildClass(
         "p-select p-component p-inputwrapper",
@@ -472,6 +481,18 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
                 else
                 {
                     await OpenAsync();
+                }
+
+                break;
+            case " ":
+                // Space abre o painel e, aberto, seleciona a opção focada (como no PrimeNG).
+                if (!_overlayVisible)
+                {
+                    await OpenAsync();
+                }
+                else
+                {
+                    await SelectFocusedOptionAsync();
                 }
 
                 break;
