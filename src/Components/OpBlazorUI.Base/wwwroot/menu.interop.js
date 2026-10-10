@@ -194,3 +194,95 @@ export function initMenuKeyboard(root, orientation) {
     root.__opMenuKb = { onKey };
 }
 
+// ---------------------------------------------------------------- Megamenu/PanelMenu
+//
+// Foco roving sobre âncoras (cabeçalho/item) que não são alcançáveis por Tab. Setas movem,
+// Enter/Space disparam o click (o Blazor abre/seleciona), ←/→ expandem/recolhem.
+
+function focusAnchors(root, selector) {
+    return Array.from(root.querySelectorAll(selector));
+}
+
+export function initMenuFocusKeyboard(root, selector) {
+    if (!root || root.__opFocusKb) return;
+
+    const items = () => focusAnchors(root, selector);
+    const focusAt = (el) => {
+        if (!el) return;
+        items().forEach((a) => a.setAttribute('tabindex', a === el ? '0' : '-1'));
+        try {
+            el.focus();
+        } catch (_) {
+            // ignore
+        }
+    };
+    const ensure = () => {
+        const all = items();
+        if (all.length && !all.some((a) => a.getAttribute('tabindex') === '0')) {
+            all[0].setAttribute('tabindex', '0');
+        }
+    };
+    ensure();
+
+    const onKey = (e) => {
+        const current = document.activeElement;
+        if (!current || !current.matches(selector) || !root.contains(current)) return;
+
+        const all = items();
+        const idx = all.indexOf(current);
+        if (idx < 0) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                focusAt(all[Math.min(idx + 1, all.length - 1)]);
+                e.preventDefault();
+                break;
+            case 'ArrowUp':
+                focusAt(all[Math.max(idx - 1, 0)]);
+                e.preventDefault();
+                break;
+            case 'Home':
+                focusAt(all[0]);
+                e.preventDefault();
+                break;
+            case 'End':
+                focusAt(all[all.length - 1]);
+                e.preventDefault();
+                break;
+            case 'ArrowRight':
+                if (current.getAttribute('aria-haspopup') === 'true' && current.getAttribute('aria-expanded') === 'false') {
+                    current.click();
+                    // Foca o primeiro filho quando o submenu renderizar.
+                    const li = current.closest('li');
+                    let tries = 0;
+                    const attempt = () => {
+                        const all = li ? Array.from(li.querySelectorAll(selector)) : [];
+                        const child = all.find((a) => a !== current);
+                        if (child) {
+                            focusAt(child);
+                        } else if (tries++ < 30) {
+                            requestAnimationFrame(attempt);
+                        }
+                    };
+                    attempt();
+                    e.preventDefault();
+                }
+                break;
+            case 'ArrowLeft':
+                if (current.getAttribute('aria-haspopup') === 'true' && current.getAttribute('aria-expanded') === 'true') {
+                    current.click();
+                    e.preventDefault();
+                }
+                break;
+            case 'Enter':
+            case ' ':
+                current.click();
+                e.preventDefault();
+                break;
+        }
+    };
+
+    root.addEventListener('keydown', onKey);
+    root.__opFocusKb = { onKey, ensure };
+}
+

@@ -28,8 +28,10 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
 - [x] **4.1b Abas e accordion** (branch `feat/bloco4-1b-abas`): Tabs/TabView movem o foco junto
   com a aba (`ElementReference`), pulam desabilitados, Home/End, `aria-disabled`; Accordion com
   ↑↓/Home/End entre cabeçalhos, pulando desabilitados.
-- [ ] **4.1b2 Menus de referência e Steps** (Steps, TabMenu, MegaMenu, PanelMenu): setas entre
-  etapas/itens; MegaMenu/PanelMenu com raiz navegável e `aria-controls`.
+- [x] **4.1b2 Steps, TabMenu, MegaMenu e PanelMenu** (branch `feat/bloco4-1b2-menus`): Steps e
+  TabMenu movem o foco e selecionam por setas/Home/End (pulando desabilitados); PanelMenu e MegaMenu
+  ganham teclado (roving) com Enter/Space ativando e ←/→ expandindo/recolhendo, além de
+  `aria-haspopup`/`aria-controls` no PanelMenu e foco no primeiro filho ao expandir.
 - [x] **4.1c Árvores — Tree** (branch `feat/bloco4-1c-arvores`): navegação por teclado (↑↓, →/←
   expande/recolhe e move ao filho/pai, Home/End, Enter/Space seleciona) via `tree.interop.js` com
   roving tabindex. TreeTable e TreeSelect ficam em 4.1c2.

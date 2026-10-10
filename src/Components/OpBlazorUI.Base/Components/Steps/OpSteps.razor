@@ -17,8 +17,11 @@
                 <button type="button"
                         class="p-steps-item-link"
                         disabled="@item.Disabled"
+                        aria-disabled="@(item.Disabled ? "true" : null)"
                         tabindex="@(active ? 0 : -1)"
-                        @onclick="() => SelectAsync(index)">
+                        @ref="_refs[index]"
+                        @onclick="() => SelectAsync(index)"
+                        @onkeydown="e => OnKeyDownAsync(e, index)">
                     <span class="p-steps-item-number">@(index + 1)</span>
                     <span class="p-steps-item-label">@item.Label</span>
                 </button>
