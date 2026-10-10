@@ -7,6 +7,9 @@
     data-op-submenu="@(Root ? null : Level.ToString())"
     data-op-orientation="@Orientation"
     @ref="_listRef">
+    @{
+        var firstTabStopAssigned = false;
+    }
     @for (var i = 0; i < Items.Count; i++)
     {
         var item = Items[i];
@@ -21,6 +24,13 @@
         }
         else if (item.Visible)
         {
+            // Roving tabindex: o primeiro item navegável da lista raiz recebe o foco do Tab.
+            var isTabStop = Root && !firstTabStopAssigned && !item.Disabled;
+            if (isTabStop)
+            {
+                firstTabStopAssigned = true;
+            }
+
             <li class="@ItemClass(item, hasChildren, open)">
                 <div class="@($"p-{Prefix}-item-content")">
                     <a class="@($"p-{Prefix}-item-link")"
@@ -31,7 +41,7 @@
                        aria-haspopup="@(hasChildren ? "true" : null)"
                        aria-expanded="@(hasChildren ? (open ? "true" : "false") : null)"
                        aria-disabled="@(item.Disabled ? "true" : null)"
-                       tabindex="-1"
+                       tabindex="@(isTabStop ? 0 : -1)"
                        @onclick="() => OnSelectAsync(item, hasChildren, path)"
                        @onclick:preventDefault="@(hasChildren || item.Disabled)">
                         @if (!string.IsNullOrEmpty(item.Icon))

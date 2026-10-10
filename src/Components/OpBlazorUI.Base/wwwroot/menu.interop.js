@@ -65,3 +65,132 @@ export function positionSubmenus(root) {
         place(el, level, orientation);
     });
 }
+
+// ---------------------------------------------------------------- Teclado
+//
+// Navegação por teclado (roving tabindex) delegada no menu raiz. O foco real move-se entre os
+// itens; Enter/Space disparam o `click` do próprio item (o Blazor decide abrir o submenu ou
+// selecionar). Depois de abrir um submenu, o foco vai para o primeiro filho.
+
+function menuItems(ul) {
+    if (!ul) return [];
+    return Array.from(ul.children)
+        .filter((li) => li.tagName === 'LI')
+        .map((li) => li.querySelector(':scope > div > a[role="menuitem"]'))
+        .filter((a) => a && a.getAttribute('aria-disabled') !== 'true');
+}
+
+function focusItem(anchor) {
+    if (!anchor) return;
+    const ul = anchor.closest('ul');
+    menuItems(ul).forEach((a) => a.setAttribute('tabindex', a === anchor ? '0' : '-1'));
+    try {
+        anchor.focus();
+    } catch (_) {
+        // elemento não focável
+    }
+}
+
+function parentAnchor(anchor) {
+    const li = anchor.closest('li');
+    const ul = li && li.parentElement;
+    if (!ul || !ul.hasAttribute('data-op-submenu')) return null;
+    const parentLi = ul.parentElement;
+    return parentLi ? parentLi.querySelector(':scope > div > a[role="menuitem"]') : null;
+}
+
+function hasSubmenu(anchor) {
+    const li = anchor.closest('li');
+    return li ? li.querySelector(':scope > ul[data-op-submenu]') : null;
+}
+
+function focusFirstChild(anchor) {
+    let tries = 0;
+    const attempt = () => {
+        const items = menuItems(hasSubmenu(anchor));
+        if (items.length) {
+            focusItem(items[0]);
+            return;
+        }
+        if (tries++ < 30) requestAnimationFrame(attempt);
+    };
+    attempt();
+}
+
+export function initMenuKeyboard(root, orientation) {
+    if (!root || root.__opMenuKb) return;
+    const vertical = orientation !== 'horizontal';
+
+    const onKey = (e) => {
+        const current = document.activeElement;
+        if (!current || !current.matches('a[role="menuitem"]') || !root.contains(current)) return;
+
+        const ul = current.closest('ul');
+        const items = menuItems(ul);
+        const idx = items.indexOf(current);
+        if (idx < 0 || items.length === 0) return;
+
+        const open = current.getAttribute('aria-expanded') === 'true';
+
+        switch (e.key) {
+            case 'ArrowDown':
+                if (vertical) {
+                    focusItem(items[(idx + 1) % items.length]);
+                    e.preventDefault();
+                }
+                break;
+            case 'ArrowUp':
+                if (vertical) {
+                    focusItem(items[(idx - 1 + items.length) % items.length]);
+                    e.preventDefault();
+                }
+                break;
+            case 'ArrowRight':
+                if (!vertical) {
+                    focusItem(items[(idx + 1) % items.length]);
+                    e.preventDefault();
+                } else if (current.getAttribute('aria-haspopup') === 'true') {
+                    if (!open) current.click();
+                    focusFirstChild(current);
+                    e.preventDefault();
+                }
+                break;
+            case 'ArrowLeft':
+                if (!vertical) {
+                    focusItem(items[(idx - 1 + items.length) % items.length]);
+                    e.preventDefault();
+                } else {
+                    const parent = parentAnchor(current);
+                    if (parent) {
+                        // Fecha o submenu atual alternando o item pai (não seleciona o filho).
+                        parent.click();
+                        focusItem(parent);
+                        e.preventDefault();
+                    }
+                }
+                break;
+            case 'Home':
+                focusItem(items[0]);
+                e.preventDefault();
+                break;
+            case 'End':
+                focusItem(items[items.length - 1]);
+                e.preventDefault();
+                break;
+            case 'Enter':
+            case ' ':
+                if (current.getAttribute('aria-haspopup') === 'true' && !open) {
+                    current.click();
+                    focusFirstChild(current);
+                } else {
+                    current.click();
+                }
+                e.preventDefault();
+                break;
+        }
+    };
+
+    root.addEventListener('keydown', onKey);
+    root.__opMenuKb = { onKey };
+}
+

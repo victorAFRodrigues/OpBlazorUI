@@ -21,11 +21,13 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/Components/`.
 Padrão adotado: foco roving (`tabindex` por item, só o focado em `0`), `aria-activedescendant` quando
 o contêiner recebe o foco, `preventDefault` nas setas quando o componente as consome.
 
-- [ ] **4.1a Menus** (`Menu/OpMenuItems`, Menubar, TieredMenu, ContextMenu, OpMenu popup, MegaMenu,
-  PanelMenu, TabMenu): setas ↑↓/←→, Home/End, Enter/Space, Escape por nível; raiz navegável no
-  MegaMenu/PanelMenu; `aria-controls`/`aria-expanded`.
-- [ ] **4.1b Abas e navegação** (Tabs, TabView, Steps, TabMenu, Accordion): mover o foco junto com a
-  aba/etapa (`ElementReference`), pular desabilitados, `aria-disabled`.
+- [x] **4.1a Menus** (branch `feat/bloco4-1a-menus`): navegação por teclado (roving tabindex +
+  foco real) para a família `OpMenuItems` — Menubar, TieredMenu e ContextMenu: ←→ (horizontal),
+  ↑↓ (vertical), Home/End, Enter/Space (abre/seleciona), →/← (abre/fecha submenu), Escape fecha.
+  `OpMenu` (popup) já tinha teclado (Bloco 3). MegaMenu, PanelMenu e TabMenu passam para 4.1b.
+- [ ] **4.1b Abas e menus de referência** (Tabs, TabView, Steps, TabMenu, Accordion, MegaMenu,
+  PanelMenu): mover o foco junto com a aba/etapa (`ElementReference`), pular desabilitados,
+  `aria-disabled`; teclado no MegaMenu/PanelMenu (raiz navegável, `aria-controls`).
 - [ ] **4.1c Árvores** (Tree, TreeTable, TreeSelect): navegação completa por teclado.
 - [ ] **4.1d DatePicker**: setas na grade, PageUp/Down, células de mês/ano focáveis, Home/End.
 - [ ] **4.1e Seleção** (Select, MultiSelect, Listbox, AutoComplete, CascadeSelect): `scrollIntoView`
