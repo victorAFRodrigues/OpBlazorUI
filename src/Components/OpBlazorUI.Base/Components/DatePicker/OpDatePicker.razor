@@ -204,6 +204,8 @@
                                                             @key="@(date.Year * 10000 + date.Month * 100 + date.Day)">
                                                             <span class="@DayClass(date)" draggable="false"
                                                                   data-date="@date.Date.ToString("yyyy-MM-dd")"
+                                                                  tabindex="@(IsFocusedDay(date) ? 0 : -1)"
+                                                                  @onfocus="() => _focusedDate = date.Date"
                                                                   @onclick="e => OnDateSelect(e, date)"
                                                                   @onkeydown="e => OnDateCellKeydown(e, date)">
                                                                 @if (DateTemplate != null)

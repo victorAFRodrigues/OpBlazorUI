@@ -1,0 +1,18 @@
+@page "/_tests/bloco4-1d"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DatePicker
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1dTests.cs). *@
+
+<PageTitle>Testes: bloco 4.1d datepicker</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1d datepicker</h1>
+
+<section id="t-dp">
+    <OpDatePicker @bind-Value="_date" InputId="t-dp-input" DateFormat="dd/mm/yyyy"/>
+    <span id="t-dp-value">@(_date?.ToString("yyyy-MM-dd"))</span>
+</section>
+
+@code {
+    private DateTime? _date = new DateTime(2026, 1, 15);
+}

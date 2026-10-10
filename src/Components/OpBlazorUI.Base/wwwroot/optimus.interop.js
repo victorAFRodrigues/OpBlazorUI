@@ -238,3 +238,15 @@ export function speedDialItemDiff(root) {
     list.style.setProperty('--item-diff-x', `${Math.abs(button.offsetWidth - item.offsetWidth) / 2}px`);
     list.style.setProperty('--item-diff-y', `${Math.abs(button.offsetHeight - item.offsetHeight) / 2}px`);
 }
+
+// Foca o primeiro elemento que casa com o seletor dentro de `root` (usado pelo teclado do DatePicker).
+export function focusSelector(root, selector) {
+    if (!root || !selector) return;
+    const el = root.querySelector(selector);
+    if (!el) return;
+    try {
+        el.focus();
+    } catch (_) {
+        // não focável
+    }
+}
