@@ -28,7 +28,9 @@
                      id="@HeaderId(index)"
                      aria-selected="@(active ? "true" : "false")"
                      aria-controls="@ContentId(index)"
+                     aria-disabled="@(panel.Disabled ? "true" : null)"
                      tabindex="@(active ? 0 : -1)"
+                     @ref="_tabRefs[index]"
                      @onclick="() => SelectAsync(index)"
                      @onkeydown="e => OnTabKeyDownAsync(e, index)">
                     <span class="p-tabview-tab-title">

@@ -8,6 +8,7 @@ namespace OpBlazorUI.Base.Components.Tabs;
 public partial class OpTabView : OpComponentBase, IOpTabHost
 {
     private readonly List<OpTabPanel> _panels = new();
+    private readonly List<ElementReference> _tabRefs = new();
     private readonly string _uid = "optabview_" + Guid.NewGuid().ToString("N")[..8];
     private ElementReference _viewport;
 
@@ -41,6 +42,11 @@ public partial class OpTabView : OpComponentBase, IOpTabHost
 
         panel.Index = _panels.Count;
         _panels.Add(panel);
+        while (_tabRefs.Count < _panels.Count)
+        {
+            _tabRefs.Add(default);
+        }
+
         _ = InvokeAsync(StateHasChanged);
     }
 
@@ -99,13 +105,73 @@ public partial class OpTabView : OpComponentBase, IOpTabHost
                 break;
 
             case "ArrowRight":
-                await SelectAsync(Math.Min(index + 1, _panels.Count - 1));
+                await MoveFocusAsync(index, 1);
                 break;
 
             case "ArrowLeft":
-                await SelectAsync(Math.Max(index - 1, 0));
+                await MoveFocusAsync(index, -1);
+                break;
+
+            case "Home":
+                await MoveFocusToAsync(FindEnabled(0, 1));
+                break;
+
+            case "End":
+                await MoveFocusToAsync(FindEnabled(_panels.Count, -1));
                 break;
         }
+    }
+
+    private async Task MoveFocusAsync(int from, int step) => await MoveFocusToAsync(FindEnabled(from + step, step));
+
+    private async Task MoveFocusToAsync(int target)
+    {
+        if (target < 0)
+        {
+            return;
+        }
+
+        await SelectAsync(target);
+        await FocusTabAsync(target);
+    }
+
+    private async Task FocusTabAsync(int index)
+    {
+        if (index < 0 || index >= _tabRefs.Count)
+        {
+            return;
+        }
+
+        try
+        {
+            await _tabRefs[index].FocusAsync();
+        }
+        catch
+        {
+            // elemento já removido
+        }
+    }
+
+    private int FindEnabled(int from, int step)
+    {
+        var count = _panels.Count;
+        if (count == 0)
+        {
+            return -1;
+        }
+
+        var i = ((from % count) + count) % count;
+        for (var n = 0; n < count; n++)
+        {
+            if (!_panels[i].Disabled)
+            {
+                return i;
+            }
+
+            i = (i + step + count) % count;
+        }
+
+        return -1;
     }
 
     private async Task ScrollAsync(int direction)
