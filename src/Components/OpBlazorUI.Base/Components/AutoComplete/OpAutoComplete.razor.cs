@@ -21,6 +21,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private string? _panelAnimationClass;
     private bool _focus;
     private int _focusedOptionIndex = -1;
+    private int _searchSeq;
     private string _searchValue = "";
     private string? _inputValue;
     private TValue? _prevValue;
@@ -54,6 +55,12 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     [Parameter] public bool AddOnTab { get; set; }
     [Parameter] public string? Separator { get; set; }
     [Parameter] public int MinLength { get; set; } = 1;
+
+    /// <summary>Debounce (ms) entre a digitação e a consulta de sugestões. 0 consulta imediatamente.</summary>
+    [Parameter] public int Delay { get; set; } = 300;
+
+    /// <summary>Consulta as sugestões ao receber o foco (além da digitação).</summary>
+    [Parameter] public bool CompleteOnFocus { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
     [Parameter] public bool Fluid { get; set; }
@@ -368,6 +375,16 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
             await OpenAsync();
         }
 
+        var seq = ++_searchSeq;
+        if (Delay > 0)
+        {
+            await Task.Delay(Delay);
+            if (seq != _searchSeq)
+            {
+                return;
+            }
+        }
+
         await CompleteMethod.InvokeAsync(new OpAutoCompleteCompleteEvent { Query = query });
     }
 
@@ -378,8 +395,8 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         await OnFocus.InvokeAsync(e);
         var query = Multiple ? _searchValue : (_inputValue ?? string.Empty);
 
-        // Só consulta as sugestões quando o texto atinge MinLength (como no PrimeNG).
-        if (query.Length >= MinLength)
+        // Só consulta as sugestões ao focar quando CompleteOnFocus está ativo (comportamento do PrimeNG).
+        if (CompleteOnFocus && query.Length >= MinLength)
         {
             await CompleteMethod.InvokeAsync(new OpAutoCompleteCompleteEvent { Query = query });
             if (!_overlayVisible && !Multiple)

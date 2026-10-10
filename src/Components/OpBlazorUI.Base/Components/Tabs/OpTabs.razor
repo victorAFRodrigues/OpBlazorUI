@@ -48,6 +48,11 @@
                             }
                             <span>@panel.Header</span>
                         }
+                        @if (panel.Closable)
+                        {
+                            <span class="p-tab-close-icon pi pi-times" role="button" tabindex="-1"
+                                  aria-label="Fechar" @onclick="() => OnCloseAsync(panel)" @onclick:stopPropagation="true"></span>
+                        }
                     </button>
                 }
             </div>

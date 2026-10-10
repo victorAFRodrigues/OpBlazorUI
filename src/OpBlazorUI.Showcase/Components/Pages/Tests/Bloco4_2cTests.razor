@@ -1,0 +1,76 @@
+@page "/_tests/bloco4-2c"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.AutoComplete
+@using OpBlazorUI.Base.Components.MultiSelect
+@using OpBlazorUI.Base.Components.Stepper
+@using OpBlazorUI.Base.Components.Tabs
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_2cTests.cs). *@
+
+<PageTitle>Testes: bloco 4.2c</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.2c</h1>
+
+<section id="t-ms">
+    <OpMultiSelect TValue="string" InputId="ms" Options="_cities" OptionLabel="Name" OptionValue="Code"
+                   SelectionLimit="2" MaxSelectedLabels="1" SelectedItemsLabel="{0} escolhidos"
+                   @bind-Value="_ms"/>
+    <span id="t-ms-log">@(_ms?.Count ?? 0)</span>
+</section>
+
+<section id="t-ac">
+    <OpAutoComplete TValue="string" Suggestions="_suggestions" OptionLabel="Name" OptionValue="Code"
+                    CompleteMethod="OnComplete" Delay="200" @bind-Value="_ac" InputId="ac"/>
+    <span id="t-ac-log">@_suggestions.Count</span>
+</section>
+
+<section id="t-step">
+    <OpStepper Model="_steps" @bind-ActiveIndex="_stepActive" Linear="true"/>
+    <span id="t-step-log">@_stepActive</span>
+</section>
+
+<section id="t-tabs">
+    <OpTabs @bind-ActiveIndex="_tabActive">
+        @foreach (var tab in _tabs.ToList())
+        {
+            <OpTabPanel Header="@tab" Closable="true" OnClose="@((OpTabPanel p) => RemoveTab(tab))">
+                <span>Conteúdo @tab</span>
+            </OpTabPanel>
+        }
+    </OpTabs>
+    <span id="t-tabs-log">@string.Join(",", _tabs)</span>
+</section>
+
+@code {
+    private IReadOnlyList<string>? _ms;
+    private string? _ac;
+    private List<City> _suggestions = new();
+
+    private int _stepActive;
+    private int _tabActive;
+    private readonly List<string> _tabs = new() { "A", "B", "C" };
+
+    private sealed record City(string Name, string Code);
+
+    private readonly List<City> _cities = Enumerable.Range(1, 30)
+        .Select(i => new City($"Cidade {i:00}", $"C{i:00}"))
+        .ToList();
+
+    private readonly List<OpStepItem> _steps = new()
+    {
+        new OpStepItem { Label = "Um" },
+        new OpStepItem { Label = "Dois" },
+        new OpStepItem { Label = "Três" }
+    };
+
+    private void OnComplete(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query ?? string.Empty;
+        _suggestions = string.IsNullOrEmpty(query)
+            ? _cities
+            : _cities.Where(c => c.Name.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ToList();
+    }
+
+    private void RemoveTab(string tab) => _tabs.Remove(tab);
+}

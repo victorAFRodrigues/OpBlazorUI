@@ -74,11 +74,13 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
   `KeepInViewport` (JS `dialog.interop.js`, sem `Breakpoints`); Tooltip `TooltipEvent`/`AutoHide`/
   `Life`; Toast pausa no hover (retoma com o tempo restante; dedupe já existia); ContextMenu
   `Target`/`Global` (JS no `menu.interop.js`).
-- [ ] **4.2c Outros**: FileUpload (`Url`/`Method`/`CustomUpload`/progresso); TabPanel `Closable`;
-  Stepper `linear`; Paginator com estado interno e `@bind`; MultiSelect `SelectionLimit`/
-  `SelectedItemsLabel`; AutoComplete `Delay`/`CompleteOnFocus`; PickList/OrderList (duplo clique,
-  eventos, `Disabled`); VirtualScroller (`Delay`/`ResizeDelay`/`AutoSize`); Checkbox em grupo +
-  `TrueValue`/`FalseValue`.
+- [x] **4.2c Outros (parte 1)** (branch `feat/bloco4-2c-recursos`): MultiSelect `SelectionLimit`/
+  `SelectedItemsLabel`; AutoComplete `Delay` (debounce) e `CompleteOnFocus`; Stepper `Linear`;
+  TabPanel `Closable` + `OnClose`.
+- [ ] **4.2c Outros (parte 2)**: FileUpload (`Url`/`Method`/`CustomUpload`/progresso);
+  PickList/OrderList (duplo clique, eventos, `Disabled`); VirtualScroller (`Delay`/`ResizeDelay`/
+  `AutoSize`); Checkbox `TrueValue`/`FalseValue` (requer `OpCheckbox<TValue>`); Paginator com
+  estado interno e `@bind`.
 
 ## 4.3 DynamicDialog
 
