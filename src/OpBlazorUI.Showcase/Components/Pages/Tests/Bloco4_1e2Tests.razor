@@ -1,0 +1,43 @@
+@page "/_tests/bloco4-1e2"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.AutoComplete
+@using OpBlazorUI.Base.Components.MultiSelect
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1e2Tests.cs). *@
+
+<PageTitle>Testes: bloco 4.1e2 seleção</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1e2 seleção</h1>
+
+<section id="t-ms">
+    <OpMultiSelect TValue="string" InputId="ms" Options="_cities" OptionLabel="Name" OptionValue="Code"
+                   @bind-Value="_ms"/>
+    <span id="t-ms-value">@string.Join(",", _ms ?? Array.Empty<string>())</span>
+</section>
+
+<section id="t-ac">
+    <OpAutoComplete TValue="string" Suggestions="_suggestions" OptionLabel="Name" OptionValue="Code"
+                    CompleteMethod="OnComplete" @bind-Value="_ac" InputId="ac"/>
+    <span id="t-ac-value">@_ac</span>
+</section>
+
+@code {
+    private IReadOnlyList<string>? _ms;
+    private string? _ac;
+    private List<City> _suggestions = new();
+
+    private sealed record City(string Name, string Code);
+
+    private readonly List<City> _cities = Enumerable.Range(1, 30)
+        .Select(i => new City($"Cidade {i:00}", $"C{i:00}"))
+        .ToList();
+
+    private void OnComplete(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query ?? string.Empty;
+        _suggestions = string.IsNullOrEmpty(query)
+            ? _cities
+            : _cities.Where(c => c.Name.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ToList();
+    }
+}

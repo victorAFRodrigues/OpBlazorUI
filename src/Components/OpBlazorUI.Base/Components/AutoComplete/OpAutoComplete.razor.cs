@@ -127,6 +127,12 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
             _autoFocused = true;
             await _inputRef.FocusAsync();
         }
+
+        if (_overlayVisible && _focusedOptionIndex >= 0)
+        {
+            await Interop.InvokeVoidAsync(
+                OpInterop.OptimusInterop, "scrollSelectorIntoView", _rootRef, "[data-p-focused=\"true\"]");
+        }
     }
 
     // ------------------------------------------------------------ computed

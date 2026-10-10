@@ -8,6 +8,7 @@ namespace OpBlazorUI.Base.Components.MultiSelect;
 public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
 {
     private ElementReference _rootRef;
+    private ElementReference _listRef;
 
     private string _id = "";
 
@@ -81,6 +82,15 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
     protected override void OnInitialized()
     {
         _id = InputId ?? $"op-ms-{Guid.NewGuid():N}";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_overlayVisible && _focusedOptionIndex >= 0)
+        {
+            await Interop.InvokeVoidAsync(
+                OpInterop.OptimusInterop, "scrollSelectorIntoView", _listRef, ".p-multiselect-option.p-focus");
+        }
     }
 
     // ------------------------------------------------------------ computed
@@ -519,6 +529,18 @@ private async Task CloseAsync()
 
                 break;
             case "Enter":
+                if (_overlayVisible)
+                {
+                    await ToggleFocusedOptionAsync();
+                }
+                else
+                {
+                    await OpenAsync();
+                }
+
+                break;
+            case " ":
+                // Space alterna a opção focada (ou abre o painel, como no PrimeNG).
                 if (_overlayVisible)
                 {
                     await ToggleFocusedOptionAsync();

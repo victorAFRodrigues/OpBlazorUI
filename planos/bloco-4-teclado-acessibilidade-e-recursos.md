@@ -42,8 +42,10 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
 - [x] **4.1e Seleção** (branch `feat/bloco4-1e-selecao`): `scrollIntoView` da opção focada no
   Select e no Listbox; Space seleciona a opção focada no Select; `aria-activedescendant` no Listbox.
   MultiSelect, AutoComplete e CascadeSelect ficam em 4.1e2.
-- [ ] **4.1e2 Seleção (MultiSelect, AutoComplete, CascadeSelect)**: Space/scrollIntoView e
-  `aria-activedescendant` onde faltam.
+- [x] **4.1e2 Seleção — MultiSelect e AutoComplete** (branch `feat/bloco4-1e2-selecao`):
+  MultiSelect com Space alternando a opção focada e `scrollIntoView`; AutoComplete com
+  `scrollIntoView` da sugestão destacada. CascadeSelect (`aria-activedescendant`) fica em 4.1e3.
+- [ ] **4.1e3 CascadeSelect**: `aria-activedescendant` no painel de colunas.
 - [ ] **4.1f Diversos**: DataTable (ordenação por teclado, `aria-sort`), SplitButton/SpeedDial,
   Tooltip (fechar com Escape — WCAG 1.4.13).
 - [ ] **4.1g ARIA avulso**: `aria-required`, `aria-checked="mixed"`, `role="spinbutton"`,
