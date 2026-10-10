@@ -96,6 +96,7 @@
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Blocked", "bool", "false", "Controla o estado de bloqueio: enquanto <code>true</code>, a máscara cobre o conteúdo e a interação é impedida." },
+                              new[] { "FullScreen", "bool", "false", "Cobre a tela inteira (máscara fixa) e trava a rolagem do body enquanto bloqueado." },
                               new[] { "AutoZIndex", "bool", "true", "Soma a camada modal (1100) ao <code>BaseZIndex</code> no z-index da máscara." },
                               new[] { "BaseZIndex", "int", "0", "Valor base do z-index da máscara." },
                               new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },

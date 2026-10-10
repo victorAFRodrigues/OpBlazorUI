@@ -40,6 +40,8 @@ public partial class OpToast : ComponentBase, IDisposable
     [Inject] private OpMessageService MessageService { get; set; } = default!;
 
     private readonly Dictionary<OpToastMessage, CancellationTokenSource> _ctsMap = new();
+    private readonly Dictionary<OpToastMessage, int> _remainingMs = new();
+    private readonly Dictionary<OpToastMessage, DateTime> _startedAt = new();
     private readonly HashSet<OpToastMessage> _leaving = new();
     private IReadOnlyList<OpToastMessage> _previousMessages = Array.Empty<OpToastMessage>();
 
@@ -102,6 +104,7 @@ public partial class OpToast : ComponentBase, IDisposable
                 {
                     var cts = new CancellationTokenSource();
                     _ctsMap[msg] = cts;
+                    _startedAt[msg] = DateTime.UtcNow;
                     _ = AutoCloseAsync(msg, life, cts.Token);
                 }
             }
@@ -120,6 +123,38 @@ public partial class OpToast : ComponentBase, IDisposable
         catch (TaskCanceledException)
         {
         }
+    }
+
+    // Pausa o fechamento automático enquanto o cursor está sobre a mensagem (guarda o restante).
+    private void PauseTimer(OpToastMessage msg)
+    {
+        if (!_ctsMap.TryGetValue(msg, out var cts)) return;
+
+        cts.Cancel();
+        _ctsMap.Remove(msg);
+
+        var life = msg.Life ?? Life;
+        var elapsed = _startedAt.TryGetValue(msg, out var started)
+            ? (int)(DateTime.UtcNow - started).TotalMilliseconds
+            : 0;
+        _remainingMs[msg] = Math.Max(0, life - elapsed);
+        _startedAt.Remove(msg);
+    }
+
+    // Retoma o fechamento ao sair do hover, com o tempo que faltava.
+    private void ResumeTimer(OpToastMessage msg)
+    {
+        if (msg.Sticky || _leaving.Contains(msg)) return;
+        if (!_remainingMs.TryGetValue(msg, out var remaining)) return;
+
+        _remainingMs.Remove(msg);
+        var life = remaining > 0 ? remaining : msg.Life ?? Life;
+        if (life <= 0) return;
+
+        var cts = new CancellationTokenSource();
+        _ctsMap[msg] = cts;
+        _startedAt[msg] = DateTime.UtcNow;
+        _ = AutoCloseAsync(msg, life, cts.Token);
     }
 
     private string RootClass => OpCss.BuildClass(
@@ -149,6 +184,9 @@ public partial class OpToast : ComponentBase, IDisposable
             cts.Cancel();
             _ctsMap.Remove(msg);
         }
+
+        _remainingMs.Remove(msg);
+        _startedAt.Remove(msg);
 
         var visibleList = VisibleMessages.ToList();
         var index = visibleList.IndexOf(msg);

@@ -47,6 +47,9 @@ public partial class OpDrawer : OpModalBase
 
     [Parameter] public string AriaCloseLabel { get; set; } = "Close";
 
+    /// <summary>Trava a rolagem do body enquanto o drawer está aberto.</summary>
+    [Parameter] public bool BlockScroll { get; set; }
+
     [Parameter] public EventCallback OnShow { get; set; }
 
     [Parameter] public EventCallback OnHide { get; set; }
@@ -75,7 +78,9 @@ public partial class OpDrawer : OpModalBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Visible && !_lastRenderedVisible)
+        var wasVisible = _lastRenderedVisible;
+
+        if (Visible && !wasVisible)
         {
             await OnShow.InvokeAsync();
 
@@ -92,6 +97,11 @@ public partial class OpDrawer : OpModalBase
                 }
             }
 
+            if (BlockScroll)
+            {
+                await BlockScrollAsync();
+            }
+
             if (FocusOnShow)
             {
                 try
@@ -103,6 +113,10 @@ public partial class OpDrawer : OpModalBase
                     // ignore
                 }
             }
+        }
+        else if (!Visible && wasVisible)
+        {
+            await UnblockScrollAsync();
         }
 
         _lastRenderedVisible = Visible;
@@ -154,6 +168,7 @@ public partial class OpDrawer : OpModalBase
 
     public override async ValueTask DisposeAsync()
     {
+        await UnblockScrollAsync();
         await RestoreFocusAsync(_root);
         await base.DisposeAsync();
     }

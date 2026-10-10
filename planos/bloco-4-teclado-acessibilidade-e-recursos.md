@@ -69,9 +69,11 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
   (`OpDataTableColumn.Filter`/`FilterMatchMode`/`FilterPlaceholder`, input no cabeçalho) e global
   (`GlobalFilter`/`GlobalFilterFields` + `FilterGlobalAsync`) via `OpFilterService`; `OnFilter`; modo
   lazy (`Lazy`, `TotalRecords`, `OnLazyLoad`).
-- [ ] **4.2b Overlays**: `blockScroll` (Dialog, Drawer, ConfirmDialog, BlockUI tela cheia); Dialog
-  `Draggable`/`Resizable`/`Breakpoints`/`KeepInViewport`; Tooltip `AutoHide`/`Life`/`TooltipEvent`;
-  Toast (pausa no hover, dedupe); ContextMenu `Target`/`Global`.
+- [x] **4.2b Overlays** (branch `feat/bloco4-2b-overlays`): `blockScroll` (Dialog, Drawer,
+  ConfirmDialog via `OpModalBase`, e BlockUI `FullScreen`); Dialog `Draggable`/`Resizable`/
+  `KeepInViewport` (JS `dialog.interop.js`, sem `Breakpoints`); Tooltip `TooltipEvent`/`AutoHide`/
+  `Life`; Toast pausa no hover (retoma com o tempo restante; dedupe já existia); ContextMenu
+  `Target`/`Global` (JS no `menu.interop.js`).
 - [ ] **4.2c Outros**: FileUpload (`Url`/`Method`/`CustomUpload`/progresso); TabPanel `Closable`;
   Stepper `linear`; Paginator com estado interno e `@bind`; MultiSelect `SelectionLimit`/
   `SelectedItemsLabel`; AutoComplete `Delay`/`CompleteOnFocus`; PickList/OrderList (duplo clique,

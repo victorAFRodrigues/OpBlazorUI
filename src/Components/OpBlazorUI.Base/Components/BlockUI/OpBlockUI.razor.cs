@@ -1,14 +1,23 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace OpBlazorUI.Base.Components.BlockUI;
 
-public partial class OpBlockUI : ComponentBase
+public partial class OpBlockUI : ComponentBase, IAsyncDisposable
 {
     // Mesma camada "modal" usada pelo ZIndexUtils do PrimeNG/Optimus.
     private const int ModalZIndex = 1100;
 
+    private IJSObjectReference? _module;
+    private bool _scrollBlocked;
+
+    [Inject] private IJSRuntime Js { get; set; } = default!;
+
     [Parameter] public bool Blocked { get; set; }
+
+    /// <summary>Cobre a tela inteira (máscara fixa) e trava a rolagem do body enquanto bloqueado.</summary>
+    [Parameter] public bool FullScreen { get; set; }
 
     [Parameter] public bool AutoZIndex { get; set; } = true;
 
@@ -44,7 +53,67 @@ public partial class OpBlockUI : ComponentBase
         get
         {
             var zIndex = AutoZIndex ? BaseZIndex + ModalZIndex : BaseZIndex;
-            return zIndex > 0 ? $"z-index: {zIndex.ToString(CultureInfo.InvariantCulture)};" : null;
+            var parts = new List<string>();
+            if (FullScreen)
+            {
+                parts.Add("position: fixed");
+                parts.Add("inset: 0");
+            }
+
+            if (zIndex > 0)
+            {
+                parts.Add($"z-index: {zIndex.ToString(CultureInfo.InvariantCulture)}");
+            }
+
+            return parts.Count > 0 ? string.Join("; ", parts) + ";" : null;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var shouldBlock = FullScreen && Blocked;
+
+        if (shouldBlock && !_scrollBlocked)
+        {
+            _scrollBlocked = true;
+            _module ??= await Js.InvokeAsync<IJSObjectReference>("import", OpInterop.OptimusInterop);
+            await _module.InvokeVoidAsync("blockScroll");
+        }
+        else if (!shouldBlock && _scrollBlocked)
+        {
+            _scrollBlocked = false;
+            if (_module is not null)
+            {
+                await _module.InvokeVoidAsync("unblockScroll");
+            }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_scrollBlocked && _module is not null)
+        {
+            _scrollBlocked = false;
+            try
+            {
+                await _module.InvokeVoidAsync("unblockScroll");
+            }
+            catch
+            {
+                // circuito encerrado
+            }
+        }
+
+        if (_module is not null)
+        {
+            try
+            {
+                await _module.DisposeAsync();
+            }
+            catch
+            {
+                // ignore
+            }
         }
     }
 }

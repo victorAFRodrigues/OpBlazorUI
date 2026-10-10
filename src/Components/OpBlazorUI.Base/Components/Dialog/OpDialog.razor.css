@@ -1,3 +1,66 @@
 @namespace OpBlazorUI.Base.Components.Dialog
 
 /* estilos estruturais em optimus-base.css + tema (.p-dialog) */
+
+/* Alças de redimensionamento do diálogo (o tema define só a SE; aqui ficam as 8 direções). */
+.p-dialog .p-resizable-handle.p-resizable-n,
+.p-dialog .p-resizable-handle.p-resizable-s {
+    left: 0;
+    right: 0;
+    width: auto;
+    height: 6px;
+    cursor: ns-resize;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-n {
+    top: -3px;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-s {
+    bottom: -3px;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-e,
+.p-dialog .p-resizable-handle.p-resizable-w {
+    top: 0;
+    bottom: 0;
+    height: auto;
+    width: 6px;
+    cursor: ew-resize;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-e {
+    right: -3px;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-w {
+    left: -3px;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-se {
+    right: -3px;
+    bottom: -3px;
+    cursor: nwse-resize;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-sw {
+    left: -3px;
+    bottom: -3px;
+    cursor: nesw-resize;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-ne {
+    right: -3px;
+    top: -3px;
+    cursor: nesw-resize;
+}
+
+.p-dialog .p-resizable-handle.p-resizable-nw {
+    left: -3px;
+    top: -3px;
+    cursor: nwse-resize;
+}
+
+.p-dialog-resizable {
+    overflow: visible;
+}
