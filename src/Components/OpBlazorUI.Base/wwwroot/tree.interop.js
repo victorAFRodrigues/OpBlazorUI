@@ -120,3 +120,120 @@ export function refreshTreeTabstop(root) {
     const kb = root && root.__opTreeKb;
     if (kb) kb.ensureTabstop();
 }
+
+// ---------------------------------------------------------------- TreeTable
+//
+// As linhas do TreeTable são planas na tabela; usamos data-op-level para achar o pai.
+
+function tableRows(root) {
+    return Array.from(root.querySelectorAll('tr.p-treetable-row'));
+}
+
+function focusRow(root, tr) {
+    if (!tr) return;
+    tableRows(root).forEach((r) => r.setAttribute('tabindex', r === tr ? '0' : '-1'));
+    try {
+        tr.focus();
+    } catch (_) {
+        // ignore
+    }
+}
+
+function rowToggle(tr) {
+    return tr.querySelector('.p-treetable-node-toggle-button');
+}
+
+export function initTreeTableKeyboard(root) {
+    if (!root || root.__opTreeTbKb) return;
+
+    const ensureTabstop = () => {
+        const rows = tableRows(root);
+        if (rows.length && !rows.some((r) => r.getAttribute('tabindex') === '0')) {
+            rows[0].setAttribute('tabindex', '0');
+        }
+    };
+    ensureTabstop();
+
+    const onKey = (e) => {
+        const current = document.activeElement;
+        if (!current || !current.matches('tr.p-treetable-row') || !root.contains(current)) return;
+
+        const rows = tableRows(root);
+        const idx = rows.indexOf(current);
+        if (idx < 0) return;
+
+        const level = parseInt(current.getAttribute('data-op-level') || '0', 10);
+        const expanded = current.getAttribute('data-op-expanded') === 'true';
+        const leaf = current.getAttribute('data-op-leaf') === 'true';
+
+        switch (e.key) {
+            case 'ArrowDown':
+                focusRow(root, rows[Math.min(idx + 1, rows.length - 1)]);
+                e.preventDefault();
+                break;
+            case 'ArrowUp':
+                focusRow(root, rows[Math.max(idx - 1, 0)]);
+                e.preventDefault();
+                break;
+            case 'Home':
+                focusRow(root, rows[0]);
+                e.preventDefault();
+                break;
+            case 'End':
+                focusRow(root, rows[rows.length - 1]);
+                e.preventDefault();
+                break;
+            case 'ArrowRight':
+                if (leaf) break;
+                if (expanded) {
+                    const next = rows[idx + 1];
+                    if (next && parseInt(next.getAttribute('data-op-level') || '0', 10) > level) {
+                        focusRow(root, next);
+                    }
+                } else {
+                    const button = rowToggle(current);
+                    if (button) button.click();
+                    let tries = 0;
+                    const attempt = () => {
+                        const next = tableRows(root)[idx + 1];
+                        if (next && parseInt(next.getAttribute('data-op-level') || '0', 10) > level) {
+                            focusRow(root, next);
+                        } else if (tries++ < 30) {
+                            requestAnimationFrame(attempt);
+                        }
+                    };
+                    attempt();
+                }
+                e.preventDefault();
+                break;
+            case 'ArrowLeft':
+                if (!leaf && expanded) {
+                    const button = rowToggle(current);
+                    if (button) button.click();
+                } else {
+                    for (let i = idx - 1; i >= 0; i--) {
+                        if (parseInt(tableRows(root)[i].getAttribute('data-op-level') || '0', 10) < level) {
+                            focusRow(root, tableRows(root)[i]);
+                            break;
+                        }
+                    }
+                }
+                e.preventDefault();
+                break;
+            case 'Enter':
+            case ' ':
+                current.click();
+                e.preventDefault();
+                break;
+        }
+    };
+
+    root.addEventListener('keydown', onKey);
+    root.__opTreeTbKb = { onKey, ensureTabstop };
+}
+
+export function refreshTreeTableTabstop(root) {
+    const kb = root && root.__opTreeTbKb;
+    if (kb) kb.ensureTabstop();
+}
+

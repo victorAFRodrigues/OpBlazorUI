@@ -5,7 +5,7 @@
 @using OpBlazorUI.Base.Models
 @inherits OpComponentBase
 
-<div class="@RootClass" @attributes="AdditionalAttributes">
+<div class="@RootClass" @ref="_tableRoot" @attributes="AdditionalAttributes">
     @if (Loading)
     {
         <div class="p-treetable-loading p-treetable-mask p-overlay-mask">
@@ -84,7 +84,13 @@
                 {
                     @foreach (var flat in VisibleNodes)
                     {
-                        <tr class="@TrClass(flat.Node)" @onclick="() => OnRowClicked(flat.Node)">
+                        <tr class="@TrClass(flat.Node)"
+                            tabindex="-1"
+                            data-op-tree-table="true"
+                            data-op-level="@flat.Level"
+                            data-op-expanded="@(flat.Node.Expanded ? "true" : "false")"
+                            data-op-leaf="@(flat.Node.IsLeaf ? "true" : "false")"
+                            @onclick="() => OnRowClicked(flat.Node)">
                             @if (ShowSelectionColumn)
                             {
                                 <td class="p-treetable-body-cell p-treetable-selection-column"

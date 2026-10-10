@@ -33,7 +33,9 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
 - [x] **4.1c Árvores — Tree** (branch `feat/bloco4-1c-arvores`): navegação por teclado (↑↓, →/←
   expande/recolhe e move ao filho/pai, Home/End, Enter/Space seleciona) via `tree.interop.js` com
   roving tabindex. TreeTable e TreeSelect ficam em 4.1c2.
-- [ ] **4.1c2 Árvores — TreeTable e TreeSelect**: navegação por teclado equivalente.
+- [x] **4.1c2 Árvores — TreeTable e TreeSelect** (branch `feat/bloco4-1c2-arvores`): TreeSelect
+  reusa o teclado do Tree dentro do overlay; TreeTable ganhou `initTreeTableKeyboard` (↑↓, →/←,
+  Home/End, Enter/Space) usando `data-op-level` para pai/filho.
 - [ ] **4.1d DatePicker**: setas na grade, PageUp/Down, células de mês/ano focáveis, Home/End.
 - [ ] **4.1e Seleção** (Select, MultiSelect, Listbox, AutoComplete, CascadeSelect): `scrollIntoView`
   da opção focada, Space abre/alterna, `aria-activedescendant`.
