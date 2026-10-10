@@ -3,6 +3,7 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Base.Components.DataTable
 @using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.InputText
 @using OpBlazorUI.Base.Models
 @using System.ComponentModel.DataAnnotations
 
@@ -204,6 +205,49 @@
             <Code><CodeBlock Code="@SortCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Filtro por Coluna" Id="column-filter">
+            <Description>
+                Com <code>OpDataTableColumn.Filter = true</code> a coluna exibe um campo de filtro no cabeçalho.
+                A comparação usa <code>OpFilterService</code> (ignora acentos e caixa) no modo definido por
+                <code>FilterMatchMode</code> (padrão <code>Contains</code>). <code>FilterPlaceholder</code> define o
+                texto do campo e <code>OnFilter</code> entrega os filtros ativos.
+            </Description>
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="_filterCols"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ColumnFilterCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filtro Global" Id="global-filter">
+            <Description>
+                <code>GlobalFilter</code> filtra por todos os campos de <code>GlobalFilterFields</code> (ou por
+                todas as colunas). O componente não desenha o campo: informe um input e vincule-o. Também é
+                possível filtrar por código com <code>FilterGlobalAsync</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpInputText IgnoreEditContext="true" Value="@_globalFilter" ValueChanged="v => _globalFilter = v"
+                                 Placeholder="Filtrar produtos" aria-label="Filtro global"/>
+                    <OpDataTable Items="Products" Columns="Cols" GlobalFilter="@_globalFilter"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@GlobalFilterCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Carregamento Lazy" Id="lazy-load">
+            <Description>
+                Com <code>Lazy="true</code> a tabela não filtra, ordena nem pagina: ela exibe <code>Items</code>
+                como a página atual e dispara <code>OnLazyLoad</code> com o estado (<code>First</code>,
+                <code>Rows</code>, ordenação e filtros). Use <code>TotalRecords</code> para o paginador saber o
+                total. No exemplo, os dados são fatiados em memória para simular o servidor.
+            </Description>
+            <ChildContent>
+                <OpDataTable Items="_lazyPage" Columns="Cols" Lazy="true" Paginator="true"
+                             TotalRecords="_lazyTotal" OnLazyLoad="OnLazyLoad"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@LazyLoadCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Seleção - Múltipla" Id="multiple-selection">
             <Description>
                 <code>Selection</code> habilita a coluna de checkboxes e a seleção ao clicar na linha. A lista é
@@ -385,6 +429,11 @@
                               new[] { "PageLinkSize", "int", "5", "Quantidade de botões de página visíveis na janela do paginador." },
                               new[] { "StickyHeader", "bool", "false", "Mantém o cabeçalho fixo durante a rolagem vertical." },
                               new[] { "ScrollHeight", "string?", "null", "Altura máxima do contêiner de rolagem (ex.: <code>12rem</code>)." },
+                              new[] { "GlobalFilter", "string?", "null", "Filtro global aplicado a <code>GlobalFilterFields</code> (para <code>@bind-GlobalFilter</code>)." },
+                              new[] { "GlobalFilterChanged", "EventCallback&lt;string?&gt;", "-", "Callback de mudança do filtro global." },
+                              new[] { "GlobalFilterFields", "IReadOnlyList&lt;string&gt;?", "null", "Campos considerados pelo filtro global; sem valor, usa o <code>Field</code> de todas as colunas." },
+                              new[] { "Lazy", "bool", "false", "Modo lazy: sem filtro/sort/paginação client-side; dispara <code>OnLazyLoad</code>." },
+                              new[] { "TotalRecords", "int", "0", "Total de registros (modo lazy) usado pelo paginador." },
                               new[] { "EmptyMessage", "string?", "No results found", "Mensagem exibida quando não há dados." },
                               new[] { "Loading", "bool", "false", "Exibe o estado de carregamento." },
                               new[] { "LoadingMode", "string", "mask", "Modo: <code>mask</code> (máscara) ou <code>skeleton</code> (linhas esqueleto)." },
@@ -403,6 +452,8 @@
                           Rows="@(new[] {
                               new[] { "OnSort", "EventCallback&lt;(string Field, int Order)&gt;", "Dispara ao ordenar; <code>Order</code>: 1 asc, -1 desc, 0 sem ordenação." },
                               new[] { "OnPage", "EventCallback&lt;int&gt;", "Dispara ao mudar de página; o valor é a página (base 0)." },
+                              new[] { "OnFilter", "EventCallback&lt;IReadOnlyDictionary&lt;string, object?&gt;&gt;", "Dispara ao mudar os filtros de coluna, com os filtros ativos por campo." },
+                              new[] { "OnLazyLoad", "EventCallback&lt;OpDataTableLazyLoadEvent&gt;", "No modo lazy, entrega First/Rows/ordenação/filtros para a fonte de dados." },
                               new[] { "OnRowClick", "EventCallback&lt;TItem&gt;", "Dispara ao clicar em uma linha, com o item clicado." }
                           })"/>
             </ChildContent>
@@ -421,7 +472,11 @@
                               new[] { "HeaderStyleClass", "string?", "null", "Classes extras apenas no <code>th</code>." },
                               new[] { "BodyStyleClass", "string?", "null", "Classes extras apenas nos <code>td</code> do corpo." },
                               new[] { "Footer", "string?", "null", "Texto do rodapé desta coluna (renderiza um <code>tfoot</code>)." },
-                              new[] { "FooterStyleClass", "string?", "null", "Classes extras no <code>td</code> do rodapé." }
+                              new[] { "FooterStyleClass", "string?", "null", "Classes extras no <code>td</code> do rodapé." },
+                              new[] { "Filter", "bool", "false", "Exibe um campo de filtro no cabeçalho desta coluna." },
+                              new[] { "FilterMatchMode", "OpFilterMatchMode", "Contains", "Modo de comparação do filtro da coluna." },
+                              new[] { "FilterPlaceholder", "string?", "null", "Placeholder (e rótulo ARIA) do campo de filtro." },
+                              new[] { "FilterStyleClass", "string?", "null", "Classes extras no contêiner do filtro." }
                           })"/>
                 <ApiTable Caption="OpDataTableColumn&lt;TItem&gt; (herda as propriedades acima)"
                           Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
@@ -476,7 +531,9 @@
                             cabeçalho e rodapé por coluna estão disponíveis via <code>OpDataTableColumn&lt;TItem&gt;</code>.
                         </li>
                         <li>
-                            Sem filtro de qualquer tipo (por coluna, global ou avançado).
+                            O filtro é por coluna (input de texto + <code>OpFilterService</code>) e global
+                            (<code>GlobalFilter</code>); não há menu de filtro com operadores por tipo nem filtro
+                            de data/intervalo na UI.
                         </li>
                         <li>
                             A seleção é por checkbox (múltipla) ou por clique (<code>SelectionMode="single"</code>).
@@ -487,8 +544,9 @@
                             ordenação removível controlada por código.
                         </li>
                         <li>
-                            A paginação é client-side sobre a lista já carregada: <code>First</code> e
-                            <code>Rows</code> são controláveis, mas não há modo lazy nem total de registros externo.
+                            A paginação é client-side sobre a lista carregada; <code>First</code> e
+                            <code>Rows</code> são controláveis e há modo <code>Lazy</code> (com
+                            <code>TotalRecords</code>). Ainda não há API imperativa de página.
                         </li>
                         <li>
                             <code>StickyHeader</code> e <code>ScrollHeight</code> cobrem o cabeçalho fixo e a rolagem
@@ -535,6 +593,14 @@
     private int _ctrlFirst;
     private int _ctrlRows = 5;
     private readonly int[] _rowsOptions = new[] { 5, 10 };
+
+    private string? _globalFilter;
+
+    private const int _lazyTotal = 100;
+    private List<Product> _lazyPage = new();
+
+    private void OnLazyLoad(OpDataTableLazyLoadEvent e)
+        => _lazyPage = Products.Skip(e.First).Take(e.Rows).ToList();
 
     private SelectionModel _model = new();
     private bool _selectionSubmitted;
@@ -626,6 +692,14 @@
         }
     };
 
+    private readonly List<OpDataTableColumn> _filterCols = new()
+    {
+        new() { Field = "Name", Header = "Nome", Filter = true, FilterPlaceholder = "Filtrar nome" },
+        new() { Field = "Category", Header = "Categoria", Filter = true },
+        new() { Field = "Price", Header = "Preço" },
+        new() { Field = "Stock", Header = "Estoque" }
+    };
+
     private static readonly List<Product> Products = new()
     {
         new() { Name = "Alface", Category = "Hortaliça", Price = 2.5m, Stock = 120 },
@@ -642,10 +716,9 @@
 
     private static readonly string[][] NotPortedRows =
     [
-        ["Filtro (básico e avançado)", "Filter", "Sem Filter, FilterField, FilterMatchMode ou menu de filtro."],
+        ["Filtro avançado (menu)", "Filter (menu)", "Filtro por coluna e global existem (OpFilterService); sem menu de filtro com operadores por tipo."],
         ["Expansão de linha", "Row Expansion", "Sem RowExpansionTemplate nem controle de linhas expandidas."],
         ["Edição de célula/linha", "Edit", "Sem editores de célula/linha nem eventos de salvar/cancelar."],
-        ["Carregamento lazy", "Lazy Load", "Sem Lazy, TotalRecords nem OnLazyLoad."],
         ["Scroll flexível e horizontal", "Scroll", "StickyHeader + ScrollHeight cobrem o scroll vertical; sem Scrollable, colgroup de largura, scroll horizontal dedicado nem scroll virtual."],
         ["Linhas/colunas congeladas", "Frozen Rows/Columns", "Sem FrozenColumns, FrozenRows nem FrozenWidth."],
         ["Scroll virtual", "Virtual Scroll", "Sem VirtualScroll nem VirtualScrollItemSize."],
@@ -676,6 +749,7 @@
         ["p-datatable-tbody", "Elemento tbody."],
         ["p-datatable-tfoot", "Elemento tfoot (quando alguma coluna tem rodapé)."],
         ["p-datatable-header-cell", "Célula th."],
+        ["p-datatable-filter-row / p-datatable-filter-column", "Linha e células dos filtros de coluna."],
         ["p-datatable-sortable-column", "th com ordenação habilitada."],
         ["p-datatable-column-sorted", "th atualmente ordenada."],
         ["p-datatable-column-header-content", "Div interna do cabeçalho."],
@@ -850,6 +924,43 @@
 
     private const string StickyHeaderCode = """
         <OpDataTable Items="Products" Columns="Cols" StickyHeader="true" ScrollHeight="12rem" />
+        """;
+
+    private const string ColumnFilterCode = """
+        <OpDataTable Items="Products" Columns="_filterCols" />
+
+        @code {
+            private readonly List<OpDataTableColumn> _filterCols = new()
+            {
+                new() { Field = "Name", Header = "Nome", Filter = true, FilterPlaceholder = "Filtrar nome" },
+                new() { Field = "Category", Header = "Categoria", Filter = true },
+                new() { Field = "Price", Header = "Preço" },
+                new() { Field = "Stock", Header = "Estoque" }
+            };
+        }
+        """;
+
+    private const string GlobalFilterCode = """
+        <OpInputText IgnoreEditContext="true" Value="@_globalFilter" ValueChanged="v => _globalFilter = v"
+                     Placeholder="Filtrar produtos" aria-label="Filtro global" />
+        <OpDataTable Items="Products" Columns="Cols" GlobalFilter="@_globalFilter" />
+
+        @code {
+            private string? _globalFilter;
+        }
+        """;
+
+    private const string LazyLoadCode = """
+        <OpDataTable Items="_lazyPage" Columns="Cols" Lazy="true" Paginator="true"
+                     TotalRecords="_lazyTotal" OnLazyLoad="OnLazyLoad" />
+
+        @code {
+            private const int _lazyTotal = 100;
+            private List<Product> _lazyPage = new();
+
+            private void OnLazyLoad(OpDataTableLazyLoadEvent e)
+                => _lazyPage = Products.Skip(e.First).Take(e.Rows).ToList();
+        }
         """;
 
     private const string SortCode = """

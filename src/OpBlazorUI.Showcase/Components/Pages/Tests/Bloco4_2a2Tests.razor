@@ -1,0 +1,66 @@
+@page "/_tests/bloco4-2a2"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_2a2Tests.cs). *@
+
+<PageTitle>Testes: bloco 4.2a2</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.2a2</h1>
+
+<section id="t-colfilter">
+    <OpDataTable Items="_rows" Columns="_filterCols"/>
+</section>
+
+<section id="t-globalfilter">
+    <OpInputText IgnoreEditContext="true" Value="@_global" ValueChanged="v => _global = v" aria-label="Filtro global"/>
+    <OpDataTable Items="_rows" Columns="_plainCols" GlobalFilter="@_global"/>
+</section>
+
+<section id="t-lazy">
+    <OpDataTable Items="_lazyPage" Columns="_plainCols" Lazy="true" Paginator="true"
+                 TotalRecords="_lazyTotal" OnLazyLoad="OnLazyLoad"/>
+    <span id="t-lazy-log">first=@_lazyFirst rows=@_lazyRows</span>
+</section>
+
+@code {
+    private sealed record Row(string Name, int Age);
+
+    private readonly List<Row> _rows = new()
+    {
+        new Row("Ana", 30),
+        new Row("Bia", 25),
+        new Row("Carla", 40),
+        new Row("Amanda", 22)
+    };
+
+    private string? _global;
+
+    private readonly List<OpDataTableColumn> _plainCols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome" },
+        new OpDataTableColumn { Field = "Age", Header = "Idade" }
+    };
+
+    private readonly List<OpDataTableColumn> _filterCols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome", Filter = true, FilterPlaceholder = "Filtrar nome" },
+        new OpDataTableColumn { Field = "Age", Header = "Idade" }
+    };
+
+    private const int _lazyTotal = 100;
+    private readonly List<Row> _all = Enumerable.Range(1, 100)
+        .Select(i => new Row($"Item {i}", i)).ToList();
+    private List<Row> _lazyPage = new();
+    private int _lazyFirst;
+    private int _lazyRows;
+
+    private void OnLazyLoad(OpDataTableLazyLoadEvent e)
+    {
+        _lazyFirst = e.First;
+        _lazyRows = e.Rows;
+        _lazyPage = _all.Skip(e.First).Take(e.Rows).ToList();
+    }
+}
