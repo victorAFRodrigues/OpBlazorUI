@@ -53,6 +53,9 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
 {
     private ElementReference _rootRef;
 
+    private DateTime? _focusedDate;
+    private string? _pendingFocusDate;
+
     private string? _inputId;
     private bool _overlayVisible;
     private bool _panelRendered;
@@ -474,6 +477,14 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         if (d.OtherMonth) classes.Add("p-datepicker-other-month");
         if (d.Today) classes.Add("p-datepicker-today");
         return string.Join(' ', classes);
+    }
+
+    // O dia com o tabstop do grid (roving). Sem foco definido, o primeiro dia selecionado/today.
+    private bool IsFocusedDay(OpDateMeta d)
+    {
+        var focused = _focusedDate
+            ?? (CurrentValue.HasValue ? CurrentValue.Value.Date : _today.Date);
+        return focused.Date == d.Date.Date;
     }
 
     private async Task OnDateSelect(MouseEventArgs _, OpDateMeta meta)
@@ -908,11 +919,66 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         if (e.Key is "Enter" or " " or "Spacebar")
         {
             await OnDateSelect(new MouseEventArgs(), date);
+            return;
         }
-        else if (e.Key == "Escape")
+
+        if (e.Key == "Escape")
         {
             await CloseAsync();
+            return;
         }
+
+        if (date.OtherMonth && e.Key is "ArrowLeft" or "ArrowRight" or "ArrowUp" or "ArrowDown")
+        {
+            // Não navega a partir de dias fora do mês.
+            return;
+        }
+
+        var current = date.Date;
+        var weekOffset = ((int)current.DayOfWeek - (int)FirstDayOfWeek + 7) % 7;
+        var next = e.Key switch
+        {
+            "ArrowLeft" => current.AddDays(-1),
+            "ArrowRight" => current.AddDays(1),
+            "ArrowUp" => current.AddDays(-7),
+            "ArrowDown" => current.AddDays(7),
+            "Home" => current.AddDays(-weekOffset),
+            "End" => current.AddDays(-weekOffset + 6),
+            "PageUp" => current.AddMonths(-1),
+            "PageDown" => current.AddMonths(1),
+            _ => default
+        };
+
+        if (next == default)
+        {
+            return;
+        }
+
+        _focusedDate = next;
+        _pendingFocusDate = next.ToString("yyyy-MM-dd");
+
+        if (next.Month != _viewDate.Month || next.Year != _viewDate.Year)
+        {
+            _viewDate = new DateTime(next.Year, next.Month, 1);
+            await Navigated(monthChange: true);
+        }
+        else
+        {
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_pendingFocusDate is null)
+        {
+            return;
+        }
+
+        var date = _pendingFocusDate;
+        _pendingFocusDate = null;
+        await Interop.InvokeVoidAsync(
+            OpInterop.OptimusInterop, "focusSelector", _rootRef, $"[data-date=\"{date}\"]");
     }
 
     private IReadOnlyList<string> WeekDayNames()
