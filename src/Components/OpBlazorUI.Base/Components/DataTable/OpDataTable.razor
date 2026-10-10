@@ -54,7 +54,11 @@
                 }
                 @foreach (var col in Columns)
                 {
-                    <th class="@ThClass(col)" style="width:@col.Width" @onclick="() => ToggleSort(col)">
+                    <th class="@ThClass(col)" style="width:@col.Width"
+                        tabindex="@(col.Sortable && Sortable ? 0 : -1)"
+                        aria-sort="@SortAria(col)"
+                        @onclick="() => ToggleSort(col)"
+                        @onkeydown="e => OnHeaderKeydown(e, col)">
                         <div class="p-datatable-column-header-content">
                             <span class="p-datatable-column-title">@col.Header</span>
                             @if (col.Sortable && Sortable)

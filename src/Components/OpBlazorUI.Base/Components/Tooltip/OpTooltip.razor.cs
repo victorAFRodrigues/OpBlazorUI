@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace OpBlazorUI.Base.Components.Tooltip;
 
@@ -55,6 +56,18 @@ public partial class OpTooltip : ComponentBase
         if (_hovering || seq != _leaveSequence) return;
         _visible = false;
         StateHasChanged();
+    }
+
+    // WCAG 1.4.13: Escape fecha o tooltip sem mover o foco/hover.
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (_visible && e.Key == "Escape")
+        {
+            _visible = false;
+            _hovering = false;
+            _enterSequence++;
+            StateHasChanged();
+        }
     }
 
     private static string BuildClass(params string?[] classes)
