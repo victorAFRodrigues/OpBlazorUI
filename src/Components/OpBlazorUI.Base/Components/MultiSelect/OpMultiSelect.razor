@@ -175,7 +175,7 @@
 @code {
     private RenderFragment BuildList(IReadOnlyList<object> options) => __builder =>
     {
-        <ul class="p-multiselect-list" role="listbox" id="@($"{_id}_list")">
+        <ul class="p-multiselect-list" role="listbox" id="@($"{_id}_list")" @ref="_listRef">
             @if (Group)
             {
                 @foreach (var group in VisibleOptions)
