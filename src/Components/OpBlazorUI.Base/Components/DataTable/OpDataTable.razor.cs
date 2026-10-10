@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.DataTable;
@@ -207,6 +208,20 @@ public partial class OpDataTable<TItem> : ComponentBase
 
         return false;
     }
+
+    private string? SortAria(OpDataTableColumn col)
+    {
+        if (!Sortable || !col.Sortable) return null;
+        if (_sortField == col.Field && _sortOrder != 0)
+        {
+            return _sortOrder == 1 ? "ascending" : "descending";
+        }
+
+        return "none";
+    }
+
+    private Task OnHeaderKeydown(KeyboardEventArgs e, OpDataTableColumn col)
+        => e.Key is "Enter" or " " or "Spacebar" ? ToggleSort(col) : Task.CompletedTask;
 
     private async Task ToggleSort(OpDataTableColumn col)
     {

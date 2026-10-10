@@ -46,10 +46,13 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
   MultiSelect com Space alternando a opção focada e `scrollIntoView`; AutoComplete com
   `scrollIntoView` da sugestão destacada. CascadeSelect (`aria-activedescendant`) fica em 4.1e3.
 - [ ] **4.1e3 CascadeSelect**: `aria-activedescendant` no painel de colunas.
-- [ ] **4.1f Diversos**: DataTable (ordenação por teclado, `aria-sort`), SplitButton/SpeedDial,
-  Tooltip (fechar com Escape — WCAG 1.4.13).
-- [ ] **4.1g ARIA avulso**: `aria-required`, `aria-checked="mixed"`, `role="spinbutton"`,
-  `aria-live` no medidor do Password.
+- [x] **4.1f Diversos — DataTable e Tooltip** (branch `feat/bloco4-1f-1g-diversos`): DataTable
+  ordena por teclado (`tabindex` no cabeçalho, `aria-sort`, Enter/Space); Tooltip fecha com Escape
+  (WCAG 1.4.13). SplitButton e SpeedDial ficam em 4.1f2.
+- [ ] **4.1f2 SplitButton e SpeedDial**: navegação por setas.
+- [x] **4.1g ARIA avulso** (mesma branch): `aria-checked="mixed"` no Checkbox indeterminado;
+  `role="spinbutton"` + `aria-valuenow/min/max` no InputNumber; `aria-live` no medidor do Password.
+  (`aria-required` já coberto pelos componentes com `Required`.)
 
 ## 4.2 Recursos que faltam
 

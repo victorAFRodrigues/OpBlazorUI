@@ -1,0 +1,50 @@
+@page "/_tests/bloco4-1fg"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Checkbox
+@using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Components.InputNumber
+@using OpBlazorUI.Base.Components.Tooltip
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1fgTests.cs). *@
+
+<PageTitle>Testes: bloco 4.1f/g</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1f/g</h1>
+
+<section id="t-dt">
+    <OpDataTable Items="_rows" Columns="_cols" Sortable="true"/>
+</section>
+
+<section id="t-tt">
+    <OpTooltip Content="Dica" ShowDelay="0" HideDelay="0">
+        <button id="t-tt-target" type="button">alvo</button>
+    </OpTooltip>
+</section>
+
+<section id="t-cb">
+    <OpCheckbox Indeterminate="true" IgnoreEditContext="true"/>
+</section>
+
+<section id="t-in">
+    <OpInputNumber Min="0" Max="100" @bind-Value="_num"/>
+</section>
+
+@code {
+    private decimal? _num;
+
+    private sealed record Row(string Name, int Age);
+
+    private readonly List<Row> _rows = new()
+    {
+        new Row("Ana", 30),
+        new Row("Bia", 25),
+        new Row("Cecília", 40)
+    };
+
+    private readonly List<OpDataTableColumn> _cols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome" },
+        new OpDataTableColumn { Field = "Age", Header = "Idade" }
+    };
+}
