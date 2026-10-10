@@ -30,7 +30,10 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
   ↑↓/Home/End entre cabeçalhos, pulando desabilitados.
 - [ ] **4.1b2 Menus de referência e Steps** (Steps, TabMenu, MegaMenu, PanelMenu): setas entre
   etapas/itens; MegaMenu/PanelMenu com raiz navegável e `aria-controls`.
-- [ ] **4.1c Árvores** (Tree, TreeTable, TreeSelect): navegação completa por teclado.
+- [x] **4.1c Árvores — Tree** (branch `feat/bloco4-1c-arvores`): navegação por teclado (↑↓, →/←
+  expande/recolhe e move ao filho/pai, Home/End, Enter/Space seleciona) via `tree.interop.js` com
+  roving tabindex. TreeTable e TreeSelect ficam em 4.1c2.
+- [ ] **4.1c2 Árvores — TreeTable e TreeSelect**: navegação por teclado equivalente.
 - [ ] **4.1d DatePicker**: setas na grade, PageUp/Down, células de mês/ano focáveis, Home/End.
 - [ ] **4.1e Seleção** (Select, MultiSelect, Listbox, AutoComplete, CascadeSelect): `scrollIntoView`
   da opção focada, Space abre/alterna, `aria-activedescendant`.
