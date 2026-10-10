@@ -10,6 +10,7 @@ namespace OpBlazorUI.Base.Components.TreeSelect;
 public partial class OpTreeSelect : OpInputBase<string>
 {
     private ElementReference _rootRef;
+    private ElementReference _treeContainer;
 
     private string _id = "";
 
@@ -87,6 +88,18 @@ public partial class OpTreeSelect : OpInputBase<string>
             _optionsRef = Options;
             UpdateFilter();
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_panelRendered)
+        {
+            return;
+        }
+
+        // Teclado do overlay aberto (roving tabindex sobre os nós visíveis).
+        await Interop.InvokeVoidAsync(OpInterop.TreeInterop, "initTreeKeyboard", _treeContainer);
+        await Interop.InvokeVoidAsync(OpInterop.TreeInterop, "refreshTreeTabstop", _treeContainer);
     }
 
     private string FilterSignature() => $"{_filterValue}\u001f{FilterBy}\u001f{FilterMode}";

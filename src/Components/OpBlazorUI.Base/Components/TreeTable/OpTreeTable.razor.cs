@@ -8,6 +8,8 @@ namespace OpBlazorUI.Base.Components.TreeTable;
 
 public partial class OpTreeTable : OpComponentBase
 {
+    private ElementReference _tableRoot;
+
     // ------------------------------------------------------------------ params
     [Parameter] public IReadOnlyList<OpTreeNode>? Nodes { get; set; }
 
@@ -527,6 +529,13 @@ public partial class OpTreeTable : OpComponentBase
         Rows = state.Rows;
         await FirstChanged.InvokeAsync(First);
         await OnPageChange.InvokeAsync(state);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Teclado sobre as linhas visíveis (roving tabindex).
+        await Interop.InvokeVoidAsync(OpInterop.TreeInterop, "initTreeTableKeyboard", _tableRoot);
+        await Interop.InvokeVoidAsync(OpInterop.TreeInterop, "refreshTreeTableTabstop", _tableRoot);
     }
 }
 

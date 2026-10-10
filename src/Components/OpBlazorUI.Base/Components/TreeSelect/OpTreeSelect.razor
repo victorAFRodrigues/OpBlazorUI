@@ -125,7 +125,7 @@
             }
             else
             {
-                <div class="p-treeselect-tree-container" style="max-height:@(ScrollHeight ?? "400px")">
+                <div class="p-treeselect-tree-container" style="max-height:@(ScrollHeight ?? "400px")" @ref="_treeContainer">
                     <div class="p-tree" id="@($"{_id}_tree")">
                         @if (VisibleRoots.Count == 0)
                         {
@@ -165,6 +165,10 @@
         var partial = IsPartial(node);
 
         <li class="p-tree-node @(node.IsLeaf ? "p-tree-node-leaf" : "")" role="treeitem"
+            tabindex="-1"
+            data-op-tree-node="true"
+            data-op-expanded="@(node.Expanded ? "true" : "false")"
+            data-op-leaf="@(node.IsLeaf ? "true" : "false")"
             aria-label="@node.Label"
             aria-selected="@(selected ? "true" : "false")"
             aria-expanded="@(node.IsLeaf ? null : (node.Expanded ? "true" : "false"))">
@@ -215,6 +219,10 @@
         var indent = depth > 0 ? $"padding-inline-start:calc({depth} * var(--p-tree-indent));" : null;
 
         <li class="p-tree-node @(node.IsLeaf ? "p-tree-node-leaf" : "")" role="treeitem"
+            tabindex="-1"
+            data-op-tree-node="true"
+            data-op-expanded="@(node.Expanded ? "true" : "false")"
+            data-op-leaf="@(node.IsLeaf ? "true" : "false")"
             aria-label="@node.Label"
             aria-selected="@(selected ? "true" : "false")"
             aria-expanded="@(node.IsLeaf ? null : (node.Expanded ? "true" : "false"))">
