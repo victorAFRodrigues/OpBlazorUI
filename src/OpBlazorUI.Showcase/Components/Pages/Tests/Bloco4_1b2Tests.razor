@@ -1,0 +1,80 @@
+@page "/_tests/bloco4-1b2"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Components.Steps
+@using OpBlazorUI.Base.Components.Tabs
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1b2Tests.cs). *@
+
+<PageTitle>Testes: bloco 4.1b2</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1b2</h1>
+
+<section id="t-steps">
+    <OpSteps Model="_steps" ActiveIndex="_stepIdx" ActiveIndexChanged="i => _stepIdx = i"/>
+    <span id="t-steps-active">@_stepIdx</span>
+</section>
+
+<section id="t-tabmenu">
+    <OpTabMenu Model="_tabs" ActiveIndex="_tabIdx" ActiveIndexChanged="i => _tabIdx = i"/>
+</section>
+
+<section id="t-panelmenu">
+    <OpPanelMenu Model="_panels" OnItemClick="OnPanelItem"/>
+    <span id="t-panel-log">@_panelLog</span>
+</section>
+
+<section id="t-megamenu">
+    <OpMegaMenu Model="_mega" OnItemClick="OnMegaItem"/>
+    <span id="t-mega-log">@_megaLog</span>
+</section>
+
+@code {
+    private int _stepIdx;
+    private int _tabIdx;
+    private string _panelLog = "";
+    private string _megaLog = "";
+
+    private readonly List<OpMenuItem> _steps = new()
+    {
+        new OpMenuItem { Label = "Um" },
+        new OpMenuItem { Label = "Dois", Disabled = true },
+        new OpMenuItem { Label = "Tres" }
+    };
+
+    private readonly List<OpMenuItem> _tabs = new()
+    {
+        new OpMenuItem { Label = "Alfa" },
+        new OpMenuItem { Label = "Beta" },
+        new OpMenuItem { Label = "Gama" }
+    };
+
+    private readonly List<OpMenuItem> _panels = new()
+    {
+        new OpMenuItem
+        {
+            Label = "P1",
+            Items = new() { new OpMenuItem { Label = "Item1" } }
+        }
+    };
+
+    private readonly List<OpMenuItem> _mega = new()
+    {
+        new OpMenuItem
+        {
+            Label = "A",
+            Items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Coluna",
+                    Items = new() { new OpMenuItem { Label = "A1" } }
+                }
+            }
+        }
+    };
+
+    private void OnPanelItem(OpMenuItem item) => _panelLog = item.Label ?? "";
+    private void OnMegaItem(OpMenuItem item) => _megaLog = item.Label ?? "";
+}
