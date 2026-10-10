@@ -10,6 +10,7 @@ namespace OpBlazorUI.Base.Components.Listbox;
 public partial class OpListbox<TValue> : OpInputBase<TValue>
 {
     private string _id = "";
+    private ElementReference _listRef;
     private string _filterValue = "";
     private int _focusedOptionIndex = -1;
     private int _renderIndex;
@@ -83,6 +84,15 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     }
 
     private FieldIdentifier _selectedValuesField;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focusedOptionIndex >= 0)
+        {
+            await Interop.InvokeVoidAsync(
+                OpInterop.OptimusInterop, "scrollSelectorIntoView", _listRef, $"#{_id}_{_focusedOptionIndex}");
+        }
+    }
 
     // ------------------------------------------------------------ computed
     private string RootClass => OpCss.BuildClass(
