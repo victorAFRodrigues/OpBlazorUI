@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Models;
 
@@ -34,6 +35,18 @@ public class OpDataTableColumn
 
     /// <summary>Texto do rodapé desta coluna (renderiza um <c>tfoot</c> com todas as colunas).</summary>
     public string? Footer { get; set; }
+
+    /// <summary>Exibe um campo de filtro no cabeçalho desta coluna.</summary>
+    public bool Filter { get; set; }
+
+    /// <summary>Modo de comparação do filtro da coluna (padrão <see cref="OpFilterMatchMode.Contains"/>).</summary>
+    public OpFilterMatchMode FilterMatchMode { get; set; } = OpFilterMatchMode.Contains;
+
+    /// <summary>Placeholder (e rótulo ARIA) do campo de filtro da coluna.</summary>
+    public string? FilterPlaceholder { get; set; }
+
+    /// <summary>Classes extras no contêiner do filtro da coluna.</summary>
+    public string? FilterStyleClass { get; set; }
 }
 
 /// <summary>Coluna com templates tipados para <typeparamref name="TItem"/>.</summary>

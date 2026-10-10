@@ -1,10 +1,23 @@
+using System.Globalization;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Paginator;
 using OpBlazorUI.Base.Models;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.DataTable;
+
+/// <summary>Estado entregue ao <see cref="OpDataTable{TItem}.OnLazyLoad"/> no modo lazy.</summary>
+public sealed class OpDataTableLazyLoadEvent
+{
+    public int First { get; init; }
+    public int Rows { get; init; }
+    public string? SortField { get; init; }
+    public int SortOrder { get; init; }
+    public IReadOnlyDictionary<string, object?>? Filters { get; init; }
+    public string? GlobalFilter { get; init; }
+}
 
 public partial class OpDataTable<TItem> : ComponentBase
 {
@@ -16,10 +29,17 @@ public partial class OpDataTable<TItem> : ComponentBase
     private int _lastFirstParam = int.MinValue;
     private int _lastRowsParam = int.MinValue;
 
+    private string? _globalFilter;
+    private string? _lastGlobalFilterParam;
+    private readonly Dictionary<string, object?> _columnFilters = new(StringComparer.OrdinalIgnoreCase);
+
     private List<TItem>? _sortedCache;
     private List<TItem>? _pageCache;
+    private int _displayCount;
     private bool _computed;
     private readonly Dictionary<string, PropertyInfo?> _propertyCache = new(StringComparer.OrdinalIgnoreCase);
+
+    [Inject] private OpFilterService FilterService { get; set; } = default!;
 
     [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
     [Parameter] public IReadOnlyList<OpDataTableColumn> Columns { get; set; } = Array.Empty<OpDataTableColumn>();
@@ -58,6 +78,23 @@ public partial class OpDataTable<TItem> : ComponentBase
     [Parameter] public IReadOnlyList<int>? RowsPerPageOptions { get; set; }
     [Parameter] public int PageLinkSize { get; set; } = 5;
 
+    /// <summary>Filtro global aplicado a <see cref="GlobalFilterFields"/> (ou a todas as colunas).</summary>
+    [Parameter] public string? GlobalFilter { get; set; }
+    [Parameter] public EventCallback<string?> GlobalFilterChanged { get; set; }
+
+    /// <summary>Campos considerados pelo filtro global. Sem valor, usa o <c>Field</c> de todas as colunas.</summary>
+    [Parameter] public IReadOnlyList<string>? GlobalFilterFields { get; set; }
+
+    [Parameter] public EventCallback<IReadOnlyDictionary<string, object?>> OnFilter { get; set; }
+
+    /// <summary>Modo lazy: a tabela não filtra/ordena/pagina; quem consome faz isso e devolve a página em <c>Items</c>.</summary>
+    [Parameter] public bool Lazy { get; set; }
+
+    /// <summary>Total de registros (no modo lazy) usado pelo paginador.</summary>
+    [Parameter] public int TotalRecords { get; set; }
+
+    [Parameter] public EventCallback<OpDataTableLazyLoadEvent> OnLazyLoad { get; set; }
+
     [Parameter] public string? EmptyMessage { get; set; } = "No results found";
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string LoadingMode { get; set; } = "mask";
@@ -83,13 +120,23 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     private bool IsSingleSelection => Selection && string.Equals(SelectionMode, "single", StringComparison.OrdinalIgnoreCase);
     private bool ShowCheckboxColumn => Selection && !IsSingleSelection;
+    private bool HasFilters => !Lazy && Columns.Any(c => c.Filter && !string.IsNullOrEmpty(c.Field));
 
     private bool ShowSkeleton => Loading && string.Equals(LoadingMode, "skeleton", StringComparison.OrdinalIgnoreCase);
 
     private int SkeletonRowCount => SkeletonRows > 0 ? SkeletonRows : _rows;
 
+    private int DisplayCount
+    {
+        get
+        {
+            EnsureComputed();
+            return _displayCount;
+        }
+    }
+
     private int PageCount => Paginator && _rows > 0
-        ? Math.Max(1, (int)Math.Ceiling(SourceItems.Count / (double)_rows))
+        ? Math.Max(1, (int)Math.Ceiling(DisplayCount / (double)_rows))
         : 1;
 
     private List<TItem> PageItems
@@ -103,7 +150,7 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     // Os itens ordenados/paginados eram recalculados a cada acesso (várias vezes por render),
     // com reflection por comparação. Agora são computados uma vez por mudança de
-    // Items/sort/página.
+    // Items/filtro/sort/página.
     private void EnsureComputed()
     {
         if (_computed)
@@ -111,7 +158,17 @@ public partial class OpDataTable<TItem> : ComponentBase
             return;
         }
 
-        var list = SourceItems.ToList();
+        if (Lazy)
+        {
+            // Items já é a página corrente; não há filtro/sort/paginação client-side.
+            _sortedCache = SourceItems.ToList();
+            _pageCache = _sortedCache;
+            _displayCount = TotalRecords;
+            _computed = true;
+            return;
+        }
+
+        var list = ApplyFilters(SourceItems);
 
         if (_sortOrder != 0 && !string.IsNullOrEmpty(_sortField))
         {
@@ -123,6 +180,7 @@ public partial class OpDataTable<TItem> : ComponentBase
         }
 
         _sortedCache = list;
+        _displayCount = list.Count;
 
         if (Paginator && _rows > 0)
         {
@@ -131,12 +189,35 @@ public partial class OpDataTable<TItem> : ComponentBase
         }
         else
         {
-            // Rows <= 0: sem paginação (antes paginava com divisões inválidas).
             _pageCache = list;
         }
 
         _computed = true;
     }
+
+    private List<TItem> ApplyFilters(IReadOnlyList<TItem> source)
+    {
+        IEnumerable<TItem> query = source;
+
+        foreach (var col in Columns)
+        {
+            if (!col.Filter || string.IsNullOrEmpty(col.Field)) continue;
+            if (!_columnFilters.TryGetValue(col.Field, out var value) || IsEmptyFilter(value)) continue;
+            query = FilterService.Filter(query, new[] { col.Field }, value, col.FilterMatchMode, CultureInfo.CurrentCulture);
+        }
+
+        if (!string.IsNullOrEmpty(_globalFilter))
+        {
+            var fields = GlobalFilterFields
+                ?? Columns.Select(c => c.Field).Where(f => !string.IsNullOrEmpty(f)).ToList();
+            query = FilterService.Filter(query, fields, _globalFilter, OpFilterMatchMode.Contains, CultureInfo.CurrentCulture);
+        }
+
+        return query.ToList();
+    }
+
+    private static bool IsEmptyFilter(object? value)
+        => value is null || (value is string text && text.Trim().Length == 0);
 
     protected override void OnParametersSet()
     {
@@ -154,16 +235,31 @@ public partial class OpDataTable<TItem> : ComponentBase
             _rows = Rows;
         }
 
+        if (GlobalFilter != _lastGlobalFilterParam)
+        {
+            _lastGlobalFilterParam = GlobalFilter;
+            _globalFilter = GlobalFilter;
+        }
+
         if (_rows <= 0)
         {
             _rows = 1;
         }
 
-        // Ajusta a página quando Items/Rows mudam: evita "No results found" numa página que
-        // deixou de existir (ex.: resultado filtrado).
+        // Ajusta a página quando Items/Rows/filtro mudam: evita "No results found" numa página que
+        // deixou de existir.
         var maxFirst = Math.Max(0, (PageCount - 1) * _rows);
         if (_first > maxFirst) _first = maxFirst;
         if (_first < 0) _first = 0;
+        _computed = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && Lazy)
+        {
+            await RaiseLazyLoadAsync();
+        }
     }
 
     private static int SafeCompare(object? a, object? b)
@@ -269,6 +365,9 @@ public partial class OpDataTable<TItem> : ComponentBase
         return "none";
     }
 
+    private string? ColumnFilterValue(string field)
+        => _columnFilters.TryGetValue(field, out var value) ? value?.ToString() : null;
+
     private Task OnHeaderKeydown(KeyboardEventArgs e, OpDataTableColumn col)
         => e.Key is "Enter" or " " or "Spacebar" ? ToggleSort(col) : Task.CompletedTask;
 
@@ -294,6 +393,59 @@ public partial class OpDataTable<TItem> : ComponentBase
         _first = 0;
         _computed = false;
         await OnSort.InvokeAsync((_sortField, _sortOrder));
+        await RaiseLazyLoadAsync();
+    }
+
+    private async Task OnColumnFilterChanged(string field, string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            _columnFilters.Remove(field);
+        }
+        else
+        {
+            _columnFilters[field] = value;
+        }
+
+        _first = 0;
+        _computed = false;
+        await OnFilter.InvokeAsync(new Dictionary<string, object?>(_columnFilters, StringComparer.OrdinalIgnoreCase));
+        await RaiseLazyLoadAsync();
+    }
+
+    /// <summary>Filtro global imperativo (como o <c>filterGlobal</c> do upstream).</summary>
+    public async Task FilterGlobalAsync(string? value, OpFilterMatchMode matchMode = OpFilterMatchMode.Contains)
+    {
+        _globalFilter = value;
+        _lastGlobalFilterParam = value;
+        _first = 0;
+        _computed = false;
+
+        if (GlobalFilterChanged.HasDelegate)
+        {
+            await GlobalFilterChanged.InvokeAsync(value);
+        }
+
+        await RaiseLazyLoadAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task RaiseLazyLoadAsync()
+    {
+        if (!Lazy)
+        {
+            return;
+        }
+
+        await OnLazyLoad.InvokeAsync(new OpDataTableLazyLoadEvent
+        {
+            First = _first,
+            Rows = _rows,
+            SortField = string.IsNullOrEmpty(_sortField) ? null : _sortField,
+            SortOrder = _sortOrder,
+            Filters = new Dictionary<string, object?>(_columnFilters, StringComparer.OrdinalIgnoreCase),
+            GlobalFilter = _globalFilter
+        });
     }
 
     private async Task ToggleRowSelection(TItem item)
@@ -353,6 +505,7 @@ public partial class OpDataTable<TItem> : ComponentBase
         }
 
         await OnPage.InvokeAsync(state.Page);
+        await RaiseLazyLoadAsync();
     }
 
     private async Task OnRowClicked(TItem item)

@@ -2,6 +2,7 @@
 @using OpBlazorUI.Base.Components.Checkbox
 @using OpBlazorUI.Base.Components.Skeleton
 @using OpBlazorUI.Base.Components.Paginator
+@using OpBlazorUI.Base.Components.InputText
 @using OpBlazorUI.Base.Models
 @typeparam TItem
 
@@ -9,7 +10,7 @@
     @if (Paginator && (PaginatorPosition == "top" || PaginatorPosition == "both"))
     {
         <div class="p-datatable-paginator-top">
-            <OpPaginator First="_first" Rows="_rows" TotalRecords="SourceItems.Count"
+            <OpPaginator First="_first" Rows="_rows" TotalRecords="DisplayCount"
                          PageLinkSize="PageLinkSize" RowsPerPageOptions="RowsPerPageOptions"
                          OnPageChange="OnPaginatorChange"/>
         </div>
@@ -51,6 +52,28 @@
                     </th>
                 }
             </tr>
+            @if (HasFilters)
+            {
+                <tr class="p-datatable-filter-row">
+                    @if (ShowCheckboxColumn)
+                    {
+                        <th class="p-datatable-filter-column p-datatable-selection-column"></th>
+                    }
+                    @foreach (var col in Columns)
+                    {
+                        <th class="p-datatable-filter-column @col.FilterStyleClass">
+                            @if (col.Filter)
+                            {
+                                <OpInputText IgnoreEditContext="true"
+                                             Value="@ColumnFilterValue(col.Field)"
+                                             ValueChanged="v => OnColumnFilterChanged(col.Field, v)"
+                                             Placeholder="@col.FilterPlaceholder"
+                                             AriaLabel="@(col.FilterPlaceholder ?? $"Filtrar {col.Header}")"/>
+                            }
+                        </th>
+                    }
+                </tr>
+            }
             </thead>
             <tbody class="p-datatable-tbody">
             @if (ShowSkeleton)
@@ -141,7 +164,7 @@
     @if (Paginator && (PaginatorPosition == "bottom" || PaginatorPosition == "both"))
     {
         <div class="p-datatable-paginator-bottom">
-            <OpPaginator First="_first" Rows="_rows" TotalRecords="SourceItems.Count"
+            <OpPaginator First="_first" Rows="_rows" TotalRecords="DisplayCount"
                          PageLinkSize="PageLinkSize" RowsPerPageOptions="RowsPerPageOptions"
                          OnPageChange="OnPaginatorChange"/>
         </div>

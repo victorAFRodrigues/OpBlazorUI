@@ -65,8 +65,10 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
   `DataKey`; paginação controlada reusando `OpPaginator` (`@bind-First`/`@bind-Rows` +
   `RowsPerPageOptions`, estado interno quando não vinculado); `SelectionMode="single"` +
   `SelectionPageOnly` + `aria-selected` nas linhas; `StickyHeader` + `ScrollHeight`.
-- [ ] **4.2a2 DataTable (parte 2)**: filtro (global + por coluna) via `OpFilterService`; modo lazy
-  (`Lazy`, `TotalRecords`, `OnLazyLoad`).
+- [x] **4.2a2 DataTable (parte 2)** (branch `feat/bloco4-2a2-datatable-filter-lazy`): filtro por coluna
+  (`OpDataTableColumn.Filter`/`FilterMatchMode`/`FilterPlaceholder`, input no cabeçalho) e global
+  (`GlobalFilter`/`GlobalFilterFields` + `FilterGlobalAsync`) via `OpFilterService`; `OnFilter`; modo
+  lazy (`Lazy`, `TotalRecords`, `OnLazyLoad`).
 - [ ] **4.2b Overlays**: `blockScroll` (Dialog, Drawer, ConfirmDialog, BlockUI tela cheia); Dialog
   `Draggable`/`Resizable`/`Breakpoints`/`KeepInViewport`; Tooltip `AutoHide`/`Life`/`TooltipEvent`;
   Toast (pausa no hover, dedupe); ContextMenu `Target`/`Global`.
