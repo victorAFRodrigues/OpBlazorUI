@@ -1,0 +1,37 @@
+@page "/_tests/bloco4-1c"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Tree
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1cTests.cs). *@
+
+<PageTitle>Testes: bloco 4.1c árvores</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1c árvores</h1>
+
+<section id="t-tree">
+    <OpTree Nodes="_nodes" SelectionMode="single" @bind-Selection="_selection"
+            OnNodeSelect="OnSelect" ShowHeader="false"/>
+    <span id="t-tree-log">@_log</span>
+</section>
+
+@code {
+    private object? _selection;
+    private string _log = "";
+
+    private readonly List<OpTreeNode> _nodes = new()
+    {
+        new OpTreeNode
+        {
+            Key = "pai", Label = "Pai",
+            Children = new()
+            {
+                new OpTreeNode { Key = "f1", Label = "Filho1" },
+                new OpTreeNode { Key = "f2", Label = "Filho2" }
+            }
+        },
+        new OpTreeNode { Key = "r2", Label = "Raiz2" }
+    };
+
+    private void OnSelect(OpTreeNode node) => _log = node.Label;
+}

@@ -19,6 +19,7 @@ public partial class OpTree : OpComponentBase
     private string _filterSignature = string.Empty;
     private List<OpTreeNode>? _filteredNodes;
     private IReadOnlyList<OpTreeNode>? _nodesRef;
+    private ElementReference _treeRoot;
 
     // ---------------------------------------------------------------- params
     [Parameter] public IReadOnlyList<OpTreeNode> Nodes { get; set; } = Array.Empty<OpTreeNode>();
@@ -78,6 +79,13 @@ public partial class OpTree : OpComponentBase
             _nodesRef = Nodes;
             UpdateFilter();
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Navegação por teclado delegada no root (roving tabindex sobre os treeitems visíveis).
+        await Interop.InvokeVoidAsync(OpInterop.TreeInterop, "initTreeKeyboard", _treeRoot);
+        await Interop.InvokeVoidAsync(OpInterop.TreeInterop, "refreshTreeTabstop", _treeRoot);
     }
 
     private string FilterSignature() => $"{_filterValue}\u001f{FilterBy}\u001f{FilterMode}";
