@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Components.Paginator;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.DataTable;
@@ -9,7 +10,11 @@ public partial class OpDataTable<TItem> : ComponentBase
 {
     private string _sortField = "";
     private int _sortOrder;
-    private int _currentPage;
+
+    private int _first;
+    private int _rows = 5;
+    private int _lastFirstParam = int.MinValue;
+    private int _lastRowsParam = int.MinValue;
 
     private List<TItem>? _sortedCache;
     private List<TItem>? _pageCache;
@@ -18,22 +23,52 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
     [Parameter] public IReadOnlyList<OpDataTableColumn> Columns { get; set; } = Array.Empty<OpDataTableColumn>();
+
+    /// <summary>Nome da propriedade que identifica unicamente a linha (usado na seleção).</summary>
+    [Parameter] public string? DataKey { get; set; }
+
     [Parameter] public bool Sortable { get; set; } = true;
     [Parameter] public bool StripedRows { get; set; }
     [Parameter] public bool ShowGridlines { get; set; }
     [Parameter] public bool RowHover { get; set; } = true;
     [Parameter] public string? Size { get; set; }
+
+    /// <summary>Habilita seleção de linhas. <see cref="SelectionMode"/> define se é única ou múltipla.</summary>
     [Parameter] public bool Selection { get; set; }
+
+    /// <summary><c>multiple</c> (padrão, com checkboxes) ou <c>single</c> (uma linha por clique).</summary>
+    [Parameter] public string SelectionMode { get; set; } = "multiple";
+
+    /// <summary>Em modo múltiplo, limita o select-all às linhas da página atual.</summary>
+    [Parameter] public bool SelectionPageOnly { get; set; }
+
     [Parameter] public IReadOnlyList<TItem>? SelectedItems { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TItem>?> SelectedItemsChanged { get; set; }
+
     [Parameter] public bool Paginator { get; set; }
     [Parameter] public string PaginatorPosition { get; set; } = "bottom";
+
+    /// <summary>Deslocamento (base 0) do primeiro item da página. Use com <c>@bind-First</c>.</summary>
+    [Parameter] public int First { get; set; }
+    [Parameter] public EventCallback<int> FirstChanged { get; set; }
+
+    /// <summary>Itens por página. Use com <c>@bind-Rows</c>.</summary>
     [Parameter] public int Rows { get; set; } = 5;
+    [Parameter] public EventCallback<int> RowsChanged { get; set; }
+    [Parameter] public IReadOnlyList<int>? RowsPerPageOptions { get; set; }
+    [Parameter] public int PageLinkSize { get; set; } = 5;
+
     [Parameter] public string? EmptyMessage { get; set; } = "No results found";
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string LoadingMode { get; set; } = "mask";
     [Parameter] public int SkeletonRows { get; set; }
     [Parameter] public string? StyleClass { get; set; }
+
+    /// <summary>Altura máxima do contêiner de rolagem (ex.: <c>20rem</c>). Habilita cabeçalho fixo de fato.</summary>
+    [Parameter] public string? ScrollHeight { get; set; }
+
+    /// <summary>Mantém o cabeçalho fixo durante a rolagem vertical.</summary>
+    [Parameter] public bool StickyHeader { get; set; }
 
     [Parameter] public RenderFragment? LoadingIconTemplate { get; set; }
 
@@ -46,21 +81,15 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     private IReadOnlyList<TItem> SourceItems => Items ?? Array.Empty<TItem>();
 
+    private bool IsSingleSelection => Selection && string.Equals(SelectionMode, "single", StringComparison.OrdinalIgnoreCase);
+    private bool ShowCheckboxColumn => Selection && !IsSingleSelection;
+
     private bool ShowSkeleton => Loading && string.Equals(LoadingMode, "skeleton", StringComparison.OrdinalIgnoreCase);
 
-    private int SkeletonRowCount => SkeletonRows > 0 ? SkeletonRows : Rows;
+    private int SkeletonRowCount => SkeletonRows > 0 ? SkeletonRows : _rows;
 
-    private List<TItem> SortedItems
-    {
-        get
-        {
-            EnsureComputed();
-            return _sortedCache!;
-        }
-    }
-
-    private int PageCount => Rows > 0
-        ? Math.Max(1, (int)Math.Ceiling(SourceItems.Count / (double)Rows))
+    private int PageCount => Paginator && _rows > 0
+        ? Math.Max(1, (int)Math.Ceiling(SourceItems.Count / (double)_rows))
         : 1;
 
     private List<TItem> PageItems
@@ -95,10 +124,10 @@ public partial class OpDataTable<TItem> : ComponentBase
 
         _sortedCache = list;
 
-        if (Paginator && Rows > 0)
+        if (Paginator && _rows > 0)
         {
-            var skip = Math.Max(0, _currentPage) * Rows;
-            _pageCache = list.Skip(skip).Take(Rows).ToList();
+            var skip = Math.Max(0, _first);
+            _pageCache = list.Skip(skip).Take(_rows).ToList();
         }
         else
         {
@@ -113,14 +142,28 @@ public partial class OpDataTable<TItem> : ComponentBase
     {
         _computed = false;
 
+        if (First != _lastFirstParam)
+        {
+            _lastFirstParam = First;
+            _first = First;
+        }
+
+        if (Rows != _lastRowsParam)
+        {
+            _lastRowsParam = Rows;
+            _rows = Rows;
+        }
+
+        if (_rows <= 0)
+        {
+            _rows = 1;
+        }
+
         // Ajusta a página quando Items/Rows mudam: evita "No results found" numa página que
         // deixou de existir (ex.: resultado filtrado).
-        var pageCount = Rows > 0
-            ? Math.Max(1, (int)Math.Ceiling(SourceItems.Count / (double)Rows))
-            : 1;
-
-        if (_currentPage >= pageCount) _currentPage = pageCount - 1;
-        if (_currentPage < 0) _currentPage = 0;
+        var maxFirst = Math.Max(0, (PageCount - 1) * _rows);
+        if (_first > maxFirst) _first = maxFirst;
+        if (_first < 0) _first = 0;
     }
 
     private static int SafeCompare(object? a, object? b)
@@ -155,7 +198,7 @@ public partial class OpDataTable<TItem> : ComponentBase
         }
     }
 
-    private bool AllPageSelected => PageItems.Count > 0 && PageItems.All(IsSelected);
+    private bool AllPageSelected => ShowCheckboxColumn && PageItems.Count > 0 && PageItems.All(IsSelected);
 
     private string RootClass => BuildClass(
         "p-datatable p-component",
@@ -170,26 +213,20 @@ public partial class OpDataTable<TItem> : ComponentBase
         "p-datatable-header-cell",
         col.Sortable && Sortable ? "p-datatable-sortable-column" : null,
         _sortField == col.Field && _sortOrder != 0 ? "p-datatable-column-sorted" : null,
-        col.StyleClass);
+        col.StyleClass,
+        col.HeaderStyleClass);
 
     private string TrClass(TItem item) => BuildClass(
         Selection ? "p-datatable-selectable-row" : null,
         IsSelected(item) ? "p-datatable-row-selected" : null);
 
-    [Parameter] public int PageLinkSize { get; set; } = 5;
+    private string TableContainerStyle => ScrollHeight is null
+        ? "overflow: auto;"
+        : $"overflow: auto; max-height: {ScrollHeight};";
 
-    // Janela de páginas como o p-paginator do upstream (pageLinkSize).
-    private IEnumerable<int> PageLinks
-    {
-        get
-        {
-            if (PageCount <= 0) return [];
-            var start = Math.Max(0, _currentPage - PageLinkSize / 2);
-            var end = Math.Min(PageCount, start + PageLinkSize);
-            start = Math.Max(0, end - PageLinkSize);
-            return Enumerable.Range(start, end - start);
-        }
-    }
+    private string TheadStyle => StickyHeader ? "position: sticky; top: 0; z-index: 1;" : "position: sticky;";
+
+    private bool HasFooter => Columns.Any(c => c.Footer is not null || (c is OpDataTableColumn<TItem> t && t.FooterTemplate is not null));
 
     private string SortIconName(OpDataTableColumn col)
     {
@@ -201,6 +238,18 @@ public partial class OpDataTable<TItem> : ComponentBase
     {
         var sel = SelectedItems;
         if (sel is null) return false;
+
+        if (!string.IsNullOrEmpty(DataKey))
+        {
+            var key = GetFieldValue(item, DataKey);
+            foreach (var s in sel)
+            {
+                if (Equals(GetFieldValue(s, DataKey), key)) return true;
+            }
+
+            return false;
+        }
+
         foreach (var s in sel)
         {
             if (EqualityComparer<TItem>.Default.Equals(s, item)) return true;
@@ -242,13 +291,20 @@ public partial class OpDataTable<TItem> : ComponentBase
             _sortOrder = 0;
         }
 
-        _currentPage = 0;
+        _first = 0;
         _computed = false;
         await OnSort.InvokeAsync((_sortField, _sortOrder));
     }
 
     private async Task ToggleRowSelection(TItem item)
     {
+        if (IsSingleSelection)
+        {
+            var single = IsSelected(item) ? new List<TItem>() : new List<TItem> { item };
+            await SelectedItemsChanged.InvokeAsync(single);
+            return;
+        }
+
         var list = Selected;
         var idx = list.FindIndex(s => EqualityComparer<TItem>.Default.Equals(s, item));
         if (idx >= 0) list.RemoveAt(idx);
@@ -277,12 +333,26 @@ public partial class OpDataTable<TItem> : ComponentBase
         await SelectedItemsChanged.InvokeAsync(list);
     }
 
-    private async Task GoToPage(int page)
+    private async Task OnPaginatorChange(OpPaginatorState state)
     {
-        if (page < 0 || page >= PageCount || page == _currentPage) return;
-        _currentPage = page;
+        _first = state.First;
         _computed = false;
-        await OnPage.InvokeAsync(page);
+
+        if (state.Rows != _rows)
+        {
+            _rows = state.Rows;
+            if (RowsChanged.HasDelegate)
+            {
+                await RowsChanged.InvokeAsync(_rows);
+            }
+        }
+
+        if (FirstChanged.HasDelegate)
+        {
+            await FirstChanged.InvokeAsync(_first);
+        }
+
+        await OnPage.InvokeAsync(state.Page);
     }
 
     private async Task OnRowClicked(TItem item)

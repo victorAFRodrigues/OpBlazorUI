@@ -29,6 +29,20 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Templates de Coluna" Id="templates">
+            <Description>
+                Para formatar a célula (moeda, datas, badges, botões) use <code>OpDataTableColumn&lt;TItem&gt;</code>
+                com <code>BodyTemplate</code> (tipado). <code>HeaderTemplate</code> e <code>FooterTemplate</code>
+                substituem o título e o rodapé. Uma coluna com template não precisa de <code>Field</code> para
+                exibir conteúdo, mas mantenha-o se quiser ordená-la. Ao definir qualquer rodapé, o componente
+                renderiza um <code>&lt;tfoot&gt;</code> com todas as colunas.
+            </Description>
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="_tmplCols"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplatesCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Colunas Dinâmicas" Id="dynamic">
             <Description>
                 As colunas são apenas dados: monte a lista de <code>OpDataTableColumn</code> em tempo de execução
@@ -145,6 +159,34 @@
             <Code><CodeBlock Code="@PaginatorCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Paginação - Controlada" Id="paginator-control">
+            <Description>
+                A paginação é controlável: <code>@@bind-First</code> recebe o deslocamento (base 0) do primeiro
+                item e <code>@@bind-Rows</code> a quantidade por página. <code>RowsPerPageOptions</code> habilita o
+                seletor de itens por página. Todas as páginas, quando não vinculados, usam estado interno.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" Paginator="true"
+                                 RowsPerPageOptions="_rowsOptions" @bind-First="_ctrlFirst" @bind-Rows="_ctrlRows"/>
+                    <div class="text-sm">first: @_ctrlFirst · rows: @_ctrlRows</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PaginatorControlCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Cabeçalho Fixo" Id="sticky-header">
+            <Description>
+                <code>StickyHeader</code> fixa o cabeçalho durante a rolagem e <code>ScrollHeight</code> limita a
+                altura do contêiner de rolagem (qualquer unidade CSS). Sem <code>ScrollHeight</code> a tabela cresce
+                com o conteúdo e o cabeçalho só fica fixo se o contêiner já tiver altura.
+            </Description>
+            <ChildContent>
+                <OpDataTable Items="Products" Columns="Cols" StickyHeader="true" ScrollHeight="12rem"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@StickyHeaderCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Ordenação - Coluna Única" Id="single-column-sort">
             <Description>
                 A ordenação é embutida: clicar no cabeçalho percorre ascendente, descendente e sem ordenação,
@@ -176,6 +218,22 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@SelectionMultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Seleção - Única" Id="single-selection">
+            <Description>
+                Com <code>SelectionMode="single"</code> não há coluna de checkboxes: clicar na linha seleciona
+                apenas ela (clicar de novo desmarca). <code>DataKey</code> define a propriedade usada como
+                identidade da linha, importante quando a lista é reordenada ou paginada.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpDataTable Items="Products" Columns="Cols" Selection="true" SelectionMode="single" DataKey="Name"
+                                 @bind-SelectedItems="_singleSelected"/>
+                    <div class="text-sm">Selecionado: @(_singleSelected.Count == 0 ? "nenhum" : _singleSelected[0].Name)</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SelectionSingleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Eventos de Seleção" Id="selection-events">
@@ -263,8 +321,9 @@
                     O componente usa a marcação semântica nativa (<code>table</code>, <code>thead</code>,
                     <code>tbody</code>, <code>tr</code>, <code>th</code>, <code>td</code>), então os leitores de
                     tela inferem os papéis <code>rowgroup</code>, <code>row</code>, <code>columnheader</code> e
-                    <code>cell</code> automaticamente. Ainda faltam <code>aria-sort</code> nos cabeçalhos
-                    ordenáveis, <code>aria-selected</code> nas linhas e rótulo ARIA nas checkboxes de seleção.
+                    <code>cell</code> automaticamente. Os cabeçalhos ordenáveis são focáveis e expõem
+                    <code>aria-sort</code>; as linhas selecionáveis anunciam <code>aria-selected</code>. Ainda
+                    faltam rótulos ARIA nas checkboxes de seleção.
                 </p>
                 <p>
                     Papéis e rótulos podem ser reforçados pelos <code>AdditionalAttributes</code>: qualquer
@@ -313,10 +372,19 @@
                               new[] { "Selection", "bool", "false", "Habilita a coluna de checkboxes e o clique para selecionar linhas." },
                               new[] { "SelectedItems", "IReadOnlyList&lt;TItem&gt;?", "null", "Itens selecionados (para <code>@bind-SelectedItems</code>)." },
                               new[] { "SelectedItemsChanged", "EventCallback&lt;IReadOnlyList&lt;TItem&gt;?&gt;", "-", "Callback de seleção." },
+                              new[] { "DataKey", "string?", "null", "Propriedade usada como identidade da linha na seleção (útil com paginação/ordenação)." },
+                              new[] { "SelectionMode", "string", "multiple", "Modo de seleção: <code>multiple</code> (checkbox) ou <code>single</code> (uma linha por clique)." },
+                              new[] { "SelectionPageOnly", "bool", "false", "Em modo múltiplo, limita o select-all às linhas da página atual." },
                               new[] { "Paginator", "bool", "false", "Habilita a paginação." },
                               new[] { "PaginatorPosition", "string", "bottom", "Posição do paginador: <code>bottom</code>, <code>top</code> ou <code>both</code>." },
-                              new[] { "Rows", "int", "5", "Itens por página." },
+                              new[] { "First", "int", "0", "Deslocamento (base 0) do primeiro item da página (para <code>@bind-First</code>)." },
+                              new[] { "FirstChanged", "EventCallback&lt;int&gt;", "-", "Callback de mudança de página (deslocamento)." },
+                              new[] { "Rows", "int", "5", "Itens por página (para <code>@bind-Rows</code>)." },
+                              new[] { "RowsChanged", "EventCallback&lt;int&gt;", "-", "Callback de mudança de itens por página." },
+                              new[] { "RowsPerPageOptions", "IReadOnlyList&lt;int&gt;?", "null", "Opções do seletor de itens por página." },
                               new[] { "PageLinkSize", "int", "5", "Quantidade de botões de página visíveis na janela do paginador." },
+                              new[] { "StickyHeader", "bool", "false", "Mantém o cabeçalho fixo durante a rolagem vertical." },
+                              new[] { "ScrollHeight", "string?", "null", "Altura máxima do contêiner de rolagem (ex.: <code>12rem</code>)." },
                               new[] { "EmptyMessage", "string?", "No results found", "Mensagem exibida quando não há dados." },
                               new[] { "Loading", "bool", "false", "Exibe o estado de carregamento." },
                               new[] { "LoadingMode", "string", "mask", "Modo: <code>mask</code> (máscara) ou <code>skeleton</code> (linhas esqueleto)." },
@@ -349,7 +417,18 @@
                               new[] { "Header", "string", "vazio", "Título exibido no cabeçalho." },
                               new[] { "Sortable", "bool", "true", "Se a coluna pode ser ordenada (combinado com o <code>Sortable</code> global)." },
                               new[] { "Width", "string?", "null", "Largura aplicada como <code>style=\"width:...\"</code> no <code>th</code>." },
-                              new[] { "StyleClass", "string?", "null", "Classes extras no <code>th</code> da coluna." }
+                              new[] { "StyleClass", "string?", "null", "Classes extras no <code>th</code> e nos <code>td</code> da coluna." },
+                              new[] { "HeaderStyleClass", "string?", "null", "Classes extras apenas no <code>th</code>." },
+                              new[] { "BodyStyleClass", "string?", "null", "Classes extras apenas nos <code>td</code> do corpo." },
+                              new[] { "Footer", "string?", "null", "Texto do rodapé desta coluna (renderiza um <code>tfoot</code>)." },
+                              new[] { "FooterStyleClass", "string?", "null", "Classes extras no <code>td</code> do rodapé." }
+                          })"/>
+                <ApiTable Caption="OpDataTableColumn&lt;TItem&gt; (herda as propriedades acima)"
+                          Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "BodyTemplate", "RenderFragment&lt;TItem&gt;?", "null", "Template do conteúdo da célula (substitui a leitura por reflexão)." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "null", "Template do conteúdo do cabeçalho (substitui <code>Header</code>)." },
+                              new[] { "FooterTemplate", "RenderFragment?", "null", "Template do conteúdo do rodapé (substitui <code>Footer</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
@@ -393,36 +472,37 @@
                 <div class="doc-section-description">
                     <ul>
                         <li>
-                            Não há template de célula ou de linha: cada célula renderiza o <code>ToString()</code>
-                            do campo. Isso impede formatação por célula (moeda, datas, badges, botões de ação).
+                            Sem template de linha (expansão, agrupamento) nem edição. Templates de célula,
+                            cabeçalho e rodapé por coluna estão disponíveis via <code>OpDataTableColumn&lt;TItem&gt;</code>.
                         </li>
                         <li>
                             Sem filtro de qualquer tipo (por coluna, global ou avançado).
                         </li>
                         <li>
-                            A seleção é sempre múltipla, via checkbox. Não há modo único, por radio, por coluna nem
-                            a distinção de eventos de seleção da referência.
+                            A seleção é por checkbox (múltipla) ou por clique (<code>SelectionMode="single"</code>).
+                            Não há modo por radio nem coluna de seleção dedicada.
                         </li>
                         <li>
                             A ordenação é de coluna única. Não há multi-sort, ordenação inicial (presort) nem
                             ordenação removível controlada por código.
                         </li>
                         <li>
-                            A paginação é sempre sobre a lista já carregada (client-side). Não há seletor de itens
-                            por página, paginação programática/lazy nem total de registros externo.
+                            A paginação é client-side sobre a lista já carregada: <code>First</code> e
+                            <code>Rows</code> são controláveis, mas não há modo lazy nem total de registros externo.
                         </li>
                         <li>
-                            Sem scroll vertical, flexível, horizontal, colunas/linhas congeladas ou scroll virtual;
-                            tabelas muito largas rolam no contêiner e tabelas muito longas não têm altura fixa.
+                            <code>StickyHeader</code> e <code>ScrollHeight</code> cobrem o cabeçalho fixo e a rolagem
+                            vertical. Não há scroll flexível/horizontal dedicado, colunas/linhas congeladas nem
+                            scroll virtual.
                         </li>
                         <li>
                             Sem redimensionamento, reordenação, agrupamento ou ocultação de colunas, e sem
                             exportação ou menu de contexto.
                         </li>
                         <li>
-                            Acessibilidade parcial: a marcação é semântica, mas faltam <code>aria-sort</code>,
-                            <code>aria-selected</code>, rótulos ARIA nas checkboxes e navegação por teclado nas
-                            linhas. Os cabeçalhos ordenáveis não são focáveis.
+                            Acessibilidade parcial: a marcação é semântica e os cabeçalhos têm <code>aria-sort</code>,
+                            mas faltam <code>aria-selected</code> em todos os cenários, rótulos ARIA nas checkboxes e
+                            navegação por teclado nas linhas.
                         </li>
                         <li>
                             <code>EmptyMessage</code> tem padrão em inglês (<code>"No results found"</code>);
@@ -450,6 +530,11 @@
 
     private bool _maskLoading;
     private bool _skeletonLoading;
+
+    private IReadOnlyList<Product> _singleSelected = Array.Empty<Product>();
+    private int _ctrlFirst;
+    private int _ctrlRows = 5;
+    private readonly int[] _rowsOptions = new[] { 5, 10 };
 
     private SelectionModel _model = new();
     private bool _selectionSubmitted;
@@ -526,6 +611,21 @@
         new() { Field = "Stock", Header = "Estoque" }
     };
 
+    private static RenderFragment PriceCell(Product product) => @<span>@product.Price.ToString("C")</span>;
+
+    private readonly List<OpDataTableColumn<Product>> _tmplCols = new()
+    {
+        new() { Field = "Name", Header = "Nome" },
+        new() { Field = "Category", Header = "Categoria" },
+        new()
+        {
+            Field = "Price",
+            Header = "Preço",
+            BodyTemplate = PriceCell,
+            Footer = "Total"
+        }
+    };
+
     private static readonly List<Product> Products = new()
     {
         new() { Name = "Alface", Category = "Hortaliça", Price = 2.5m, Stock = 120 },
@@ -542,12 +642,11 @@
 
     private static readonly string[][] NotPortedRows =
     [
-        ["Template de célula/coluna", "Template", "OpDataTableColumn não tem RenderFragment; a célula renderiza apenas o ToString() do campo."],
         ["Filtro (básico e avançado)", "Filter", "Sem Filter, FilterField, FilterMatchMode ou menu de filtro."],
         ["Expansão de linha", "Row Expansion", "Sem RowExpansionTemplate nem controle de linhas expandidas."],
         ["Edição de célula/linha", "Edit", "Sem editores de célula/linha nem eventos de salvar/cancelar."],
         ["Carregamento lazy", "Lazy Load", "Sem Lazy, TotalRecords nem OnLazyLoad."],
-        ["Scroll vertical, flexível e horizontal", "Scroll", "Sem Scrollable, ScrollHeight nem colgroup de largura."],
+        ["Scroll flexível e horizontal", "Scroll", "StickyHeader + ScrollHeight cobrem o scroll vertical; sem Scrollable, colgroup de largura, scroll horizontal dedicado nem scroll virtual."],
         ["Linhas/colunas congeladas", "Frozen Rows/Columns", "Sem FrozenColumns, FrozenRows nem FrozenWidth."],
         ["Scroll virtual", "Virtual Scroll", "Sem VirtualScroll nem VirtualScrollItemSize."],
         ["Grupo de colunas", "Column Group", "Sem templates de header/footer com colspan/rowspan."],
@@ -558,9 +657,9 @@
         ["Exportação (CSV/Excel)", "Export", "Sem ExportFunction nem exportação embutida."],
         ["Menu de contexto", "Context Menu", "Sem ContextMenuRow nem integração com menu de contexto."],
         ["Estado persistente", "Stateful", "Sem StateKey/StateStorage."],
-        ["Paginação programática", "Paginator (Programmatic)", "Não há parâmetro de página (First/Page) controlável; apenas OnPage notifica."],
+        ["Paginação programática", "Paginator (Programmatic)", "First e Rows são controláveis via @bind; ainda não há API imperativa de página (First/Page por método)."],
         ["Multi-sort, presort e sort removível", "Sort", "Ordenação de coluna única; sem MultiSortMeta nem estado inicial de ordenação."],
-        ["Seleção única, por radio e por coluna", "Row Selection", "Selection só oferece seleção múltipla via checkbox."],
+        ["Seleção por radio e por coluna", "Row Selection", "Seleção múltipla (checkbox) e única (clique) existem; sem radio nem coluna de seleção dedicada."],
         ["Amostras (Customers/Products)", "Samples", "Páginas de exemplo da referência; não adicionam recurso à API."]
     ];
 
@@ -575,6 +674,7 @@
         ["p-datatable-table", "Elemento table."],
         ["p-datatable-thead", "Elemento thead."],
         ["p-datatable-tbody", "Elemento tbody."],
+        ["p-datatable-tfoot", "Elemento tfoot (quando alguma coluna tem rodapé)."],
         ["p-datatable-header-cell", "Célula th."],
         ["p-datatable-sortable-column", "th com ordenação habilitada."],
         ["p-datatable-column-sorted", "th atualmente ordenada."],
@@ -619,6 +719,28 @@
             };
 
             private static readonly List<Product> Products = new() { /* ... */ };
+        }
+        """;
+
+    private const string TemplatesCode = """
+        <OpDataTable Items="Products" Columns="_tmplCols" />
+
+        @code {
+            private static RenderFragment PriceCell(Product product)
+                => @<span>@product.Price.ToString("C")</span>;
+
+            private readonly List<OpDataTableColumn<Product>> _tmplCols = new()
+            {
+                new() { Field = "Name", Header = "Nome" },
+                new() { Field = "Category", Header = "Categoria" },
+                new()
+                {
+                    Field = "Price",
+                    Header = "Preço",
+                    BodyTemplate = PriceCell,
+                    Footer = "Total"
+                }
+            };
         }
         """;
 
@@ -713,6 +835,23 @@
         }
         """;
 
+    private const string PaginatorControlCode = """
+        <OpDataTable Items="Products" Columns="Cols" Paginator="true"
+                     RowsPerPageOptions="_rowsOptions"
+                     @bind-First="_ctrlFirst" @bind-Rows="_ctrlRows" />
+        <div>first: @_ctrlFirst · rows: @_ctrlRows</div>
+
+        @code {
+            private int _ctrlFirst;
+            private int _ctrlRows = 5;
+            private readonly int[] _rowsOptions = new[] { 5, 10 };
+        }
+        """;
+
+    private const string StickyHeaderCode = """
+        <OpDataTable Items="Products" Columns="Cols" StickyHeader="true" ScrollHeight="12rem" />
+        """;
+
     private const string SortCode = """
         <OpDataTable Items="Products" Columns="Cols" OnSort="OnSorted" />
         <div>Ordenação: @SortLabel</div>
@@ -744,6 +883,17 @@
 
             private void OnSelectedChanged(IReadOnlyList<Product>? items)
                 => _selected = items ?? Array.Empty<Product>();
+        }
+        """;
+
+    private const string SelectionSingleCode = """
+        <OpDataTable Items="Products" Columns="Cols" Selection="true"
+                     SelectionMode="single" DataKey="Name"
+                     @bind-SelectedItems="_singleSelected" />
+        <div>Selecionado: @(_singleSelected.Count == 0 ? "nenhum" : _singleSelected[0].Name)</div>
+
+        @code {
+            private IReadOnlyList<Product> _singleSelected = Array.Empty<Product>();
         }
         """;
 

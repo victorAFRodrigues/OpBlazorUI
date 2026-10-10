@@ -1,51 +1,26 @@
 @namespace OpBlazorUI.Base.Components.DataTable
 @using OpBlazorUI.Base.Components.Checkbox
 @using OpBlazorUI.Base.Components.Skeleton
+@using OpBlazorUI.Base.Components.Paginator
+@using OpBlazorUI.Base.Models
 @typeparam TItem
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
     @if (Paginator && (PaginatorPosition == "top" || PaginatorPosition == "both"))
     {
-        <div class="p-datatable-paginator-top p-paginator p-component">
-            <div class="p-paginator-content">
-                <button type="button" class="p-paginator-first @(_currentPage == 0 ? "p-disabled" : "")"
-                        aria-label="First Page" disabled="@(_currentPage == 0)" @onclick="() => GoToPage(0)">
-                    <i class="p-icon pi pi-angle-double-left p-paginator-first-icon"></i>
-                </button>
-                <button type="button" class="p-paginator-prev @(_currentPage == 0 ? "p-disabled" : "")"
-                        aria-label="Previous Page" disabled="@(_currentPage == 0)"
-                        @onclick="() => GoToPage(_currentPage - 1)">
-                    <i class="p-icon pi pi-angle-left p-paginator-prev-icon"></i>
-                </button>
-                <span class="p-paginator-pages">
-                    @foreach (var page in PageLinks)
-                    {
-                        <button type="button"
-                                class="p-paginator-page @(_currentPage == page ? "p-paginator-page-selected" : "")"
-                                aria-current="@(_currentPage == page ? "page" : null)" aria-label="@(page + 1)"
-                                @onclick="() => GoToPage(page)">@(page + 1)</button>
-                    }
-                </span>
-                <button type="button" class="p-paginator-next @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
-                        aria-label="Next Page" disabled="@(_currentPage >= PageCount - 1)"
-                        @onclick="() => GoToPage(_currentPage + 1)">
-                    <i class="p-icon pi pi-angle-right p-paginator-next-icon"></i>
-                </button>
-                <button type="button" class="p-paginator-last @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
-                        aria-label="Last Page" disabled="@(_currentPage >= PageCount - 1)"
-                        @onclick="() => GoToPage(PageCount - 1)">
-                    <i class="p-icon pi pi-angle-double-right p-paginator-last-icon"></i>
-                </button>
-            </div>
+        <div class="p-datatable-paginator-top">
+            <OpPaginator First="_first" Rows="_rows" TotalRecords="SourceItems.Count"
+                         PageLinkSize="PageLinkSize" RowsPerPageOptions="RowsPerPageOptions"
+                         OnPageChange="OnPaginatorChange"/>
         </div>
     }
 
     @* Estilos inline do upstream (inlineStyles): tabela larga rola no contêiner em vez de vazar. *@
-    <div class="p-datatable-table-container" style="overflow: auto;">
+    <div class="p-datatable-table-container" style="@TableContainerStyle">
         <table class="p-datatable-table">
-            <thead class="p-datatable-thead" style="position: sticky;">
+            <thead class="p-datatable-thead" style="@TheadStyle">
             <tr>
-                @if (Selection)
+                @if (ShowCheckboxColumn)
                 {
                     <th class="p-datatable-header-cell p-datatable-selection-column" style="width: 3rem">
                         <OpCheckbox IgnoreEditContext="true" Value="@AllPageSelected" ValueChanged="(v) => ToggleAllSelection()"
@@ -60,7 +35,14 @@
                         @onclick="() => ToggleSort(col)"
                         @onkeydown="e => OnHeaderKeydown(e, col)">
                         <div class="p-datatable-column-header-content">
-                            <span class="p-datatable-column-title">@col.Header</span>
+                            @if (col is OpDataTableColumn<TItem> headerCol && headerCol.HeaderTemplate is not null)
+                            {
+                                @headerCol.HeaderTemplate
+                            }
+                            else
+                            {
+                                <span class="p-datatable-column-title">@col.Header</span>
+                            }
                             @if (col.Sortable && Sortable)
                             {
                                 <i class="p-icon pi pi-@(SortIconName(col)) p-datatable-sort-icon"></i>
@@ -76,7 +58,7 @@
                 @for (var r = 0; r < SkeletonRowCount; r++)
                 {
                     <tr class="p-datatable-skeleton-row">
-                        @if (Selection)
+                        @if (ShowCheckboxColumn)
                         {
                             <td>
                                 <OpSkeleton Shape="circle" Width="1.5rem" Height="1.5rem"/>
@@ -95,15 +77,17 @@
             {
                 <tr>
                     <td class="p-datatable-empty-message"
-                        colspan="@(Columns.Count + (Selection ? 1 : 0))">@EmptyMessage</td>
+                        colspan="@(Columns.Count + (ShowCheckboxColumn ? 1 : 0))">@EmptyMessage</td>
                 </tr>
             }
             else
             {
                 @foreach (var item in PageItems)
                 {
-                    <tr class="@TrClass(item)" @onclick="() => OnRowClicked(item)">
-                        @if (Selection)
+                    <tr class="@TrClass(item)"
+                        aria-selected="@(Selection ? IsSelected(item).ToString().ToLowerInvariant() : null)"
+                        @onclick="() => OnRowClicked(item)">
+                        @if (ShowCheckboxColumn)
                         {
                             <td @onclick:stopPropagation="true">
                                 <OpCheckbox IgnoreEditContext="true" Value="@IsSelected(item)" ValueChanged="(v) => ToggleRowSelection(item)"
@@ -112,48 +96,54 @@
                         }
                         @foreach (var col in Columns)
                         {
-                            <td>@GetFieldValue(item, col.Field)</td>
+                            <td class="@col.BodyStyleClass">
+                                @if (col is OpDataTableColumn<TItem> bodyCol && bodyCol.BodyTemplate is not null)
+                                {
+                                    @bodyCol.BodyTemplate(item)
+                                }
+                                else
+                                {
+                                    @GetFieldValue(item, col.Field)
+                                }
+                            </td>
                         }
                     </tr>
                 }
             }
             </tbody>
+            @if (HasFooter)
+            {
+                <tfoot class="p-datatable-tfoot">
+                <tr>
+                    @if (ShowCheckboxColumn)
+                    {
+                        <td class="p-datatable-selection-column"></td>
+                    }
+                    @foreach (var col in Columns)
+                    {
+                        <td class="@col.FooterStyleClass">
+                            @if (col is OpDataTableColumn<TItem> footerCol && footerCol.FooterTemplate is not null)
+                            {
+                                @footerCol.FooterTemplate
+                            }
+                            else
+                            {
+                                @col.Footer
+                            }
+                        </td>
+                    }
+                </tr>
+                </tfoot>
+            }
         </table>
     </div>
 
     @if (Paginator && (PaginatorPosition == "bottom" || PaginatorPosition == "both"))
     {
-        <div class="p-datatable-paginator-bottom p-paginator p-component">
-            <div class="p-paginator-content">
-                <button type="button" class="p-paginator-first @(_currentPage == 0 ? "p-disabled" : "")"
-                        aria-label="First Page" disabled="@(_currentPage == 0)" @onclick="() => GoToPage(0)">
-                    <i class="p-icon pi pi-angle-double-left p-paginator-first-icon"></i>
-                </button>
-                <button type="button" class="p-paginator-prev @(_currentPage == 0 ? "p-disabled" : "")"
-                        aria-label="Previous Page" disabled="@(_currentPage == 0)"
-                        @onclick="() => GoToPage(_currentPage - 1)">
-                    <i class="p-icon pi pi-angle-left p-paginator-prev-icon"></i>
-                </button>
-                <span class="p-paginator-pages">
-                    @foreach (var page in PageLinks)
-                    {
-                        <button type="button"
-                                class="p-paginator-page @(_currentPage == page ? "p-paginator-page-selected" : "")"
-                                aria-current="@(_currentPage == page ? "page" : null)" aria-label="@(page + 1)"
-                                @onclick="() => GoToPage(page)">@(page + 1)</button>
-                    }
-                </span>
-                <button type="button" class="p-paginator-next @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
-                        aria-label="Next Page" disabled="@(_currentPage >= PageCount - 1)"
-                        @onclick="() => GoToPage(_currentPage + 1)">
-                    <i class="p-icon pi pi-angle-right p-paginator-next-icon"></i>
-                </button>
-                <button type="button" class="p-paginator-last @(_currentPage >= PageCount - 1 ? "p-disabled" : "")"
-                        aria-label="Last Page" disabled="@(_currentPage >= PageCount - 1)"
-                        @onclick="() => GoToPage(PageCount - 1)">
-                    <i class="p-icon pi pi-angle-double-right p-paginator-last-icon"></i>
-                </button>
-            </div>
+        <div class="p-datatable-paginator-bottom">
+            <OpPaginator First="_first" Rows="_rows" TotalRecords="SourceItems.Count"
+                         PageLinkSize="PageLinkSize" RowsPerPageOptions="RowsPerPageOptions"
+                         OnPageChange="OnPaginatorChange"/>
         </div>
     }
 
