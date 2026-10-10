@@ -20,7 +20,7 @@
              @onclick:stopPropagation="true">
             @if (ShowHeader)
             {
-                <div class="p-dialog-header">
+                <div class="p-dialog-header" @ref="_header">
                     @if (HeaderTemplate != null)
                     {
                         @HeaderTemplate
@@ -67,6 +67,18 @@
             @if (FooterTemplate != null)
             {
                 <div class="p-dialog-footer">@FooterTemplate</div>
+            }
+
+            @if (Resizable && !_maximized)
+            {
+                <div class="p-resizable-handle p-resizable-n" data-op-resize="n"></div>
+                <div class="p-resizable-handle p-resizable-e" data-op-resize="e"></div>
+                <div class="p-resizable-handle p-resizable-s" data-op-resize="s"></div>
+                <div class="p-resizable-handle p-resizable-w" data-op-resize="w"></div>
+                <div class="p-resizable-handle p-resizable-se" data-op-resize="se"></div>
+                <div class="p-resizable-handle p-resizable-sw" data-op-resize="sw"></div>
+                <div class="p-resizable-handle p-resizable-ne" data-op-resize="ne"></div>
+                <div class="p-resizable-handle p-resizable-nw" data-op-resize="nw"></div>
             }
         </div>
     </div>

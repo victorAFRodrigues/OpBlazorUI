@@ -11,18 +11,32 @@ public partial class OpTooltip : ComponentBase
     private bool _hovering;
     private int _enterSequence;
     private int _leaveSequence;
+    private int _lifeSequence;
 
     [Parameter] public string? Content { get; set; }
     [Parameter] public string Position { get; set; } = "right";
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public int ShowDelay { get; set; }
     [Parameter] public int HideDelay { get; set; }
+
+    /// <summary>Evento que exibe o tooltip: <c>hover</c>, <c>focus</c> ou <c>both</c>.</summary>
+    [Parameter] public string TooltipEvent { get; set; } = "hover";
+
+    /// <summary>Se falso, o tooltip só some ao sair do hover/foco (sem tempo máximo).</summary>
+    [Parameter] public bool AutoHide { get; set; } = true;
+
+    /// <summary>Tempo (ms) que o tooltip permanece visível antes de sumir sozinho. 0 desativa.</summary>
+    [Parameter] public int Life { get; set; }
+
     [Parameter] public string? StyleClass { get; set; }
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private bool HoverEnabled => TooltipEvent is "hover" or "both";
+    private bool FocusEnabled => TooltipEvent is "focus" or "both";
 
     protected override void OnInitialized()
     {
@@ -36,7 +50,15 @@ public partial class OpTooltip : ComponentBase
 
     private string WrapperStyle => "display: inline-block; position: relative;";
 
-    private async Task OnEnter()
+    private Task OnMouseEnter() => HoverEnabled ? ShowAsync() : Task.CompletedTask;
+
+    private Task OnMouseLeave() => HoverEnabled ? HideAsync() : Task.CompletedTask;
+
+    private Task OnFocusIn() => FocusEnabled ? ShowAsync() : Task.CompletedTask;
+
+    private Task OnFocusOut() => FocusEnabled ? HideAsync() : Task.CompletedTask;
+
+    private async Task ShowAsync()
     {
         if (Disabled || string.IsNullOrEmpty(Content)) return;
         _hovering = true;
@@ -45,11 +67,26 @@ public partial class OpTooltip : ComponentBase
         if (!_hovering || seq != _enterSequence) return;
         _visible = true;
         StateHasChanged();
+
+        if (AutoHide && Life > 0)
+        {
+            var life = ++_lifeSequence;
+            _ = HideAfterLifeAsync(life);
+        }
     }
 
-    private async Task OnLeave()
+    private async Task HideAfterLifeAsync(int life)
+    {
+        await Task.Delay(Life);
+        if (life != _lifeSequence || !_visible) return;
+        _visible = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task HideAsync()
     {
         _hovering = false;
+        _lifeSequence++;
         var seq = ++_leaveSequence;
         if (!_visible) return;
         if (HideDelay > 0) await Task.Delay(HideDelay);

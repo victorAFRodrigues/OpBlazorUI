@@ -68,6 +68,8 @@
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "Itens do menu." },
+                              new[] { "Target", "string?", "Seletor CSS cujos elementos abrem o menu no clique direito." },
+                              new[] { "Global", "bool", "Abre o menu no clique direito em qualquer ponto do documento." },
                               new[] { "ShowAsync(anchor)", "Task", "Exibe o menu ancorado ao elemento (ou ao anterior)." },
                               new[] { "ShowAsync(x, y)", "Task", "Exibe o menu nas coordenadas do viewport (reposiciona se aberto)." },
                               new[] { "HideAsync()", "Task", "Oculta o menu." },

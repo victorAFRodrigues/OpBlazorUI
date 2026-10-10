@@ -10,6 +10,7 @@ public partial class OpDialog : OpModalBase
     private bool _maximized;
     private bool _lastRenderedVisible;
     private ElementReference _root;
+    private ElementReference _header;
 
     [Parameter] public bool Visible { get; set; }
 
@@ -52,6 +53,18 @@ public partial class OpDialog : OpModalBase
 
     [Parameter] public string CloseAriaLabel { get; set; } = "Close";
 
+    /// <summary>Trava a rolagem do body enquanto o diálogo está aberto.</summary>
+    [Parameter] public bool BlockScroll { get; set; }
+
+    /// <summary>Permite arrastar o diálogo pelo cabeçalho.</summary>
+    [Parameter] public bool Draggable { get; set; } = true;
+
+    /// <summary>Permite redimensionar o diálogo pelas bordas/cantos.</summary>
+    [Parameter] public bool Resizable { get; set; }
+
+    /// <summary>Mantém o diálogo dentro da viewport ao arrastar/redimensionar.</summary>
+    [Parameter] public bool KeepInViewport { get; set; } = true;
+
     [Parameter] public EventCallback OnShow { get; set; }
 
     [Parameter] public EventCallback OnHide { get; set; }
@@ -80,7 +93,9 @@ public partial class OpDialog : OpModalBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Visible && !_lastRenderedVisible)
+        var wasVisible = _lastRenderedVisible;
+
+        if (Visible && !wasVisible)
         {
             await OnShow.InvokeAsync();
 
@@ -97,6 +112,21 @@ public partial class OpDialog : OpModalBase
                 }
             }
 
+            if (BlockScroll)
+            {
+                await BlockScrollAsync();
+            }
+
+            if (!_maximized && Draggable && ShowHeader)
+            {
+                await Interop.InvokeVoidAsync(OpInterop.DialogInterop, "initDraggable", _root, _header, KeepInViewport);
+            }
+
+            if (!_maximized && Resizable)
+            {
+                await Interop.InvokeVoidAsync(OpInterop.DialogInterop, "initResizable", _root, 150, 100, KeepInViewport);
+            }
+
             if (FocusOnShow)
             {
                 try
@@ -109,6 +139,10 @@ public partial class OpDialog : OpModalBase
                 }
             }
         }
+        else if (!Visible && wasVisible)
+        {
+            await UnblockScrollAsync();
+        }
 
         _lastRenderedVisible = Visible;
     }
@@ -117,6 +151,7 @@ public partial class OpDialog : OpModalBase
         "p-dialog p-component",
         "p-dialog-enter-active",
         _maximized ? "p-dialog-maximized" : null,
+        Resizable && !_maximized ? "p-dialog-resizable" : null,
         StyleClass);
 
     // inlineStyles do upstream: sem modal, a máscara deixa os cliques passarem para a página.
@@ -170,6 +205,7 @@ public partial class OpDialog : OpModalBase
 
     public override async ValueTask DisposeAsync()
     {
+        await UnblockScrollAsync();
         await RestoreFocusAsync(_root);
         await base.DisposeAsync();
     }

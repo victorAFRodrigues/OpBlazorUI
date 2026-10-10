@@ -279,3 +279,35 @@ export function focusNextWithin(root, selector, delta) {
         // ignore
     }
 }
+
+// Trava a rolagem do body enquanto há um overlay modal aberto (com contador para overlays
+// empilhados) compensando a largura da barra de rolagem para não deslocar o layout.
+let _opScrollLocks = 0;
+let _opSavedOverflow = '';
+let _opSavedPaddingRight = '';
+
+export function blockScroll() {
+    if (typeof document === 'undefined') return;
+    if (_opScrollLocks === 0) {
+        const body = document.body;
+        const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+        _opSavedOverflow = body.style.overflow;
+        _opSavedPaddingRight = body.style.paddingRight;
+        body.style.overflow = 'hidden';
+        if (scrollbar > 0) {
+            const current = parseFloat(getComputedStyle(body).paddingRight) || 0;
+            body.style.paddingRight = (current + scrollbar) + 'px';
+        }
+    }
+    _opScrollLocks++;
+}
+
+export function unblockScroll() {
+    if (typeof document === 'undefined') return;
+    if (_opScrollLocks > 0) _opScrollLocks--;
+    if (_opScrollLocks === 0) {
+        const body = document.body;
+        body.style.overflow = _opSavedOverflow;
+        body.style.paddingRight = _opSavedPaddingRight;
+    }
+}

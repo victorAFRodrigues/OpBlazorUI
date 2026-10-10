@@ -28,6 +28,7 @@ public sealed class OpInterop : IAsyncDisposable
     public const string InputInterop = "./_content/OpBlazorUI.Base/input.interop.js";
     public const string MenuInterop = "./_content/OpBlazorUI.Base/menu.interop.js";
     public const string TreeInterop = "./_content/OpBlazorUI.Base/tree.interop.js";
+    public const string DialogInterop = "./_content/OpBlazorUI.Base/dialog.interop.js";
 
     private readonly IJSRuntime _js;
     private readonly ILogger? _logger;

@@ -286,3 +286,30 @@ export function initMenuFocusKeyboard(root, selector) {
     root.__opFocusKb = { onKey, ensure };
 }
 
+
+// ContextMenu global/por seletor: escuta o contextmenu no documento e abre o menu nas
+// coordenadas do cursor. `selector` nulo = qualquer ponto (global). Chaveado pelo host.
+const _ctxMenus = new WeakMap();
+
+export function initContextMenu(root, selector, dotnetRef) {
+    if (!root) return;
+    disposeContextMenu(root);
+
+    const handler = (event) => {
+        const target = selector ? event.target.closest(selector) : document.body;
+        if (!target) return;
+        event.preventDefault();
+        dotnetRef.invokeMethodAsync('OnContextMenuAt', event.clientX, event.clientY);
+    };
+
+    document.addEventListener('contextmenu', handler, true);
+    _ctxMenus.set(root, handler);
+}
+
+export function disposeContextMenu(root) {
+    const handler = _ctxMenus.get(root);
+    if (handler) {
+        document.removeEventListener('contextmenu', handler, true);
+        _ctxMenus.delete(root);
+    }
+}

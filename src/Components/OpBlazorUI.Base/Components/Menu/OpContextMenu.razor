@@ -4,6 +4,8 @@
 @using OpBlazorUI.Base.Components.Overlay
 @inherits OpComponentBase
 
+<span class="op-contextmenu-host" @ref="_host" hidden></span>
+
 @if (_visible)
 {
     <div class="@RootClass" @ref="_panel" @attributes="AdditionalAttributes">

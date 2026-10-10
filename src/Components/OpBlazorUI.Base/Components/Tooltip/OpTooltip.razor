@@ -5,10 +5,10 @@
       @ref="_wrapperRef"
       style="@WrapperStyle"
       aria-describedby="@(_visible && !string.IsNullOrEmpty(Content) ? _id : null)"
-      @onmouseenter="OnEnter"
-      @onmouseleave="OnLeave"
-      @onfocusin="OnEnter"
-      @onfocusout="OnLeave"
+      @onmouseenter="OnMouseEnter"
+      @onmouseleave="OnMouseLeave"
+      @onfocusin="OnFocusIn"
+      @onfocusout="OnFocusOut"
       @onkeydown="OnKeyDown"
       @attributes="AdditionalAttributes">
     @ChildContent

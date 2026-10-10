@@ -28,6 +28,9 @@ public partial class OpConfirmDialog : OpModalBase
     [Parameter] public bool Closable { get; set; } = true;
     [Parameter] public bool CloseOnEscape { get; set; } = true;
     [Parameter] public bool DismissableMask { get; set; } = false;
+
+    /// <summary>Trava a rolagem do body enquanto o diálogo está aberto.</summary>
+    [Parameter] public bool BlockScroll { get; set; } = true;
     [Parameter] public string Position { get; set; } = "center";
     [Parameter] public string? Style { get; set; }
     [Parameter] public string? MaskStyleClass { get; set; }
@@ -129,6 +132,7 @@ public partial class OpConfirmDialog : OpModalBase
         Closable = options.Closable,
         CloseOnEscape = options.CloseOnEscape,
         DismissableMask = options.DismissableMask,
+        BlockScroll = options.BlockScroll,
         FocusTrap = options.FocusTrap,
         AutoZIndex = options.AutoZIndex,
         DefaultFocus = options.DefaultFocus ?? DefaultFocus,
@@ -154,7 +158,9 @@ public partial class OpConfirmDialog : OpModalBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_visible && !_lastRenderedVisible)
+        var wasVisible = _lastRenderedVisible;
+
+        if (_visible && !wasVisible)
         {
             if (EffFocusTrap)
             {
@@ -168,7 +174,17 @@ public partial class OpConfirmDialog : OpModalBase
                 {
                 }
             }
+
+            if (EffBlockScroll)
+            {
+                await BlockScrollAsync();
+            }
         }
+        else if (!_visible && wasVisible)
+        {
+            await UnblockScrollAsync();
+        }
+
         _lastRenderedVisible = _visible;
     }
 
@@ -202,6 +218,7 @@ public partial class OpConfirmDialog : OpModalBase
             Closable = Closable,
             CloseOnEscape = CloseOnEscape,
             DismissableMask = DismissableMask,
+            BlockScroll = BlockScroll,
             Position = Position,
             Style = Style,
             StyleClass = StyleClass,
@@ -279,6 +296,7 @@ public partial class OpConfirmDialog : OpModalBase
             ConfirmationService.Close();
         }
 
+        await UnblockScrollAsync();
         await RestoreFocusAsync(_root);
         await base.DisposeAsync();
     }
@@ -289,6 +307,7 @@ public partial class OpConfirmDialog : OpModalBase
     private bool EffDismissableMask => CurrentOptions?.DismissableMask ?? DismissableMask;
     private bool EffCloseOnEscape => CurrentOptions?.CloseOnEscape ?? CloseOnEscape;
     private bool EffFocusTrap => CurrentOptions?.FocusTrap ?? FocusTrap;
+    private bool EffBlockScroll => CurrentOptions?.BlockScroll ?? BlockScroll;
     private string EffPosition => CurrentOptions?.Position ?? Position;
     private string? EffMaskStyleClass => CurrentOptions?.MaskStyleClass ?? MaskStyleClass;
 

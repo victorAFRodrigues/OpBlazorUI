@@ -34,4 +34,37 @@ public abstract class OpModalBase : OpComponentBase
             // elemento já fora do DOM / circuito encerrado
         }
     }
+
+    /// <summary>Indica que a rolagem do body está travada por este overlay.</summary>
+    protected bool IsScrollBlocked { get; private set; }
+
+    /// <summary>Trava a rolagem do body (contador global para overlays empilhados).</summary>
+    protected async Task BlockScrollAsync()
+    {
+        if (IsScrollBlocked) return;
+        IsScrollBlocked = true;
+        try
+        {
+            await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "blockScroll");
+        }
+        catch
+        {
+            // circuito encerrado
+        }
+    }
+
+    /// <summary>Libera a rolagem do body previamente travada por este overlay.</summary>
+    protected async Task UnblockScrollAsync()
+    {
+        if (!IsScrollBlocked) return;
+        IsScrollBlocked = false;
+        try
+        {
+            await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "unblockScroll");
+        }
+        catch
+        {
+            // circuito encerrado
+        }
+    }
 }

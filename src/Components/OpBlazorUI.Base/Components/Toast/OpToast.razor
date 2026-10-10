@@ -23,7 +23,9 @@
              class="@GetMessageClass(msg)"
              role="alert"
              aria-live="assertive"
-             aria-atomic="true">
+             aria-atomic="true"
+             @onmouseenter="() => PauseTimer(msg)"
+             @onmouseleave="() => ResumeTimer(msg)">
             @if (MessageTemplate != null)
             {
                 @MessageTemplate(msg)
