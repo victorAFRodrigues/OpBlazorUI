@@ -263,3 +263,19 @@ export function scrollSelectorIntoView(root, selector) {
         }
     }
 }
+
+// Move o foco para o próximo/anterior elemento focável dentro de `root` (SpeedDial).
+export function focusNextWithin(root, selector, delta) {
+    if (!root || !selector) return;
+    const items = Array.from(root.querySelectorAll(selector)).filter((el) => !el.disabled);
+    if (!items.length) return;
+    const current = items.indexOf(document.activeElement);
+    const next = current < 0
+        ? (delta >= 0 ? 0 : items.length - 1)
+        : (current + delta + items.length) % items.length;
+    try {
+        items[next].focus();
+    } catch (_) {
+        // ignore
+    }
+}
