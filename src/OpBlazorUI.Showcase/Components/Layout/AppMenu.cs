@@ -102,7 +102,7 @@ public static class AppMenu
                     Label = "Data",
                     Items =
                     [
-                        GroupItem("DataView", "/dataview"), GroupItem("OrderList", "/orderlist"), GroupItem("OrganizationChart", "/organizationchart"),
+                        GroupItem("DataView", "/dataview"), GroupItem("OrderList", "/orderlist"),
                         GroupItem("Paginator", "/paginator"), GroupItem("PickList", "/picklist"), GroupItem("Table", "/table"),
                         GroupItem("Timeline", "/timeline"), GroupItem("Tree", "/tree"), GroupItem("TreeTable", "/treetable"), GroupItem("VirtualScroller", "/virtualscroller")
                     ]
@@ -137,7 +137,7 @@ public static class AppMenu
                     Label = "Menu",
                     Items =
                     [
-                        GroupItem("Breadcrumb", "/breadcrumb"), GroupItem("ContextMenu", "/contextmenu"), GroupItem("Dock", "/dock"),
+                        GroupItem("Breadcrumb", "/breadcrumb"), GroupItem("ContextMenu", "/contextmenu"),
                         GroupItem("Menu", "/menu"), GroupItem("Menubar", "/menubar"), GroupItem("MegaMenu", "/megamenu"),
                         GroupItem("PanelMenu", "/panelmenu"), GroupItem("TabMenu", "/tabmenu"), GroupItem("TieredMenu", "/tieredmenu")
                     ]
@@ -168,7 +168,7 @@ public static class AppMenu
                         GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace", "/inplace"), GroupItem("MeterGroup", "/metergroup"),
                         GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
                         GroupItem("Ripple", "/ripple"), GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass", "/styleclass"),
-                        GroupItem("Tag", "/tag"), GroupItem("Terminal", "/terminal")
+                        GroupItem("Tag", "/tag")
                     ]
                 },
                 new AppMenuGroup
