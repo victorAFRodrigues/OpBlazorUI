@@ -60,9 +60,13 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
 
 ## 4.2 Recursos que faltam
 
-- [ ] **4.2a DataTable**: templates de célula/cabeçalho/rodapé; `DataKey`; paginação controlada
-  reusando `OpPaginator`; filtro (coluna/global) via `OpFilterService`; modo lazy (`OnLazyLoad`,
-  `TotalRecords`); `SelectionMode="single"` e select-all (`SelectionPageOnly`); cabeçalho fixo.
+- [x] **4.2a1 DataTable (parte 1)** (branch `feat/bloco4-2a1-datatable`): `OpDataTableColumn<TItem>`
+  com `BodyTemplate`/`HeaderTemplate`/`FooterTemplate` (e `Footer` textual; `tfoot` automático);
+  `DataKey`; paginação controlada reusando `OpPaginator` (`@bind-First`/`@bind-Rows` +
+  `RowsPerPageOptions`, estado interno quando não vinculado); `SelectionMode="single"` +
+  `SelectionPageOnly` + `aria-selected` nas linhas; `StickyHeader` + `ScrollHeight`.
+- [ ] **4.2a2 DataTable (parte 2)**: filtro (global + por coluna) via `OpFilterService`; modo lazy
+  (`Lazy`, `TotalRecords`, `OnLazyLoad`).
 - [ ] **4.2b Overlays**: `blockScroll` (Dialog, Drawer, ConfirmDialog, BlockUI tela cheia); Dialog
   `Draggable`/`Resizable`/`Breakpoints`/`KeepInViewport`; Tooltip `AutoHide`/`Life`/`TooltipEvent`;
   Toast (pausa no hover, dedupe); ContextMenu `Target`/`Global`.
