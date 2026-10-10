@@ -30,6 +30,7 @@ public partial class OpMenuItems : OpComponentBase
         // Só a lista raiz escaneia: ela contém os submenus de todos os níveis.
         if (!Root) return;
         await Interop.InvokeVoidAsync(OpInterop.MenuInterop, "positionSubmenus", _listRef);
+        await Interop.InvokeVoidAsync(OpInterop.MenuInterop, "initMenuKeyboard", _listRef, Orientation);
     }
 
     private string? ListStyle
