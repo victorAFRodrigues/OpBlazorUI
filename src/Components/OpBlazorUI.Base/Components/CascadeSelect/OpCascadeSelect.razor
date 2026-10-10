@@ -14,6 +14,7 @@
           aria-haspopup="tree"
           aria-expanded="@(_overlayVisible ? "true" : "false")"
           aria-controls="@(_overlayVisible ? $"{_id}_tree" : null)"
+          aria-activedescendant="@(_overlayVisible && _focusedNode is not null ? $"{_id}_focused" : null)"
           aria-label="@AriaLabel"
           aria-labelledby="@AriaLabelledBy"
           aria-disabled="@(Disabled ? "true" : null)"

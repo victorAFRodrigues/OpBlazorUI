@@ -40,7 +40,7 @@
              @onmouseleave="CloseSubmenus"
              @onanimationend="OnPanelAnimationEnd">
             <OpOverlayAttach Anchor="_rootRef" Layer="menu" MatchWidth="true" Gap="4" OnOutsideClick="CloseAsync" OnEscape="CloseAsync"/>
-            <ul class="p-tieredmenu-root-list" role="menu" id="@($"{_id}_menu")">
+            <ul class="p-tieredmenu-root-list" role="menu" id="@($"{_id}_menu")" @ref="_menuRef">
                 @foreach (var item in Items)
                 {
                     @RenderItem(item)
