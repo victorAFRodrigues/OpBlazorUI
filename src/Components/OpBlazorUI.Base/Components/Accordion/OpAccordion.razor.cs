@@ -47,6 +47,46 @@ public partial class OpAccordion : OpComponentBase
 
     internal bool IsActive(int index) => ActiveIndexesList.Contains(index);
 
+    // Move o foco entre os cabeçalhos (ArrowUp/Down/Home/End), pulando painéis desabilitados.
+    internal void MoveFocus(int index, string key)
+    {
+        var count = _panels.Count;
+        if (count == 0)
+        {
+            return;
+        }
+
+        var target = key switch
+        {
+            "Home" => FindEnabled(0, 1),
+            "End" => FindEnabled(count - 1, -1),
+            "ArrowUp" => FindEnabled(index - 1, -1),
+            _ => FindEnabled(index + 1, 1)
+        };
+
+        if (target >= 0)
+        {
+            _ = _panels[target].FocusAsync();
+        }
+    }
+
+    private int FindEnabled(int from, int step)
+    {
+        var count = _panels.Count;
+        var i = ((from % count) + count) % count;
+        for (var n = 0; n < count; n++)
+        {
+            if (!_panels[i].Disabled)
+            {
+                return i;
+            }
+
+            i = (i + step + count) % count;
+        }
+
+        return -1;
+    }
+
     internal async Task ToggleAsync(int index)
     {
         var list = new List<int>(ActiveIndexesList);

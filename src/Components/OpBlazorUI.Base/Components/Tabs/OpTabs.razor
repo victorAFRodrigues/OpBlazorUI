@@ -30,8 +30,10 @@
                             id="@HeaderId(index)"
                             aria-selected="@(active ? "true" : "false")"
                             aria-controls="@ContentId(index)"
+                            aria-disabled="@(panel.Disabled ? "true" : null)"
                             tabindex="@(active ? 0 : -1)"
                             disabled="@panel.Disabled"
+                            @ref="_tabRefs[index]"
                             @onclick="() => SelectAsync(index)"
                             @onkeydown="e => OnTabKeyDownAsync(e, index)">
                         @if (panel.HeaderTemplate is not null)
