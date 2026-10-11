@@ -7,6 +7,9 @@ public sealed class AppMenuItem
     public string Label { get; init; } = "";
     public string Route { get; init; } = "/coming-soon";
     public bool ComingSoon { get; init; } = true;
+
+    /// <summary>Tem rota, mas o conteúdo ainda é o placeholder da referência (sem selo "Portado").</summary>
+    public bool Placeholder { get; init; }
     public string? Icon { get; init; }
 }
 
@@ -35,6 +38,15 @@ public static class AppMenu
         Label = label,
         Route = route ?? $"/coming-soon/{Slug(label)}",
         ComingSoon = route is null
+    };
+
+    // Páginas que existem com rota, mas ainda são o placeholder da referência Angular.
+    private static AppMenuItem PlaceholderItem(string label, string route) => new()
+    {
+        Label = label,
+        Route = route,
+        ComingSoon = false,
+        Placeholder = true
     };
 
     private static AppMenuItem GroupItem(string label, string? route = null) => Item(label, route);
@@ -83,7 +95,7 @@ public static class AppMenu
                         GroupItem("FloatLabel", "/floatlabel"), GroupItem("IconField", "/iconfield"),
                         GroupItem("IftaLabel", "/iftalabel"), GroupItem("InputChips", "/inputchips"), GroupItem("InputGroup", "/inputgroup"), GroupItem("InputMask", "/inputmask"),
                         GroupItem("InputNumber", "/inputnumber"), GroupItem("InputOtp", "/inputotp"),
-                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"), GroupItem("Knob", "/knob"),
+                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"), PlaceholderItem("Knob", "/knob"),
                         GroupItem("Listbox", "/listbox"), GroupItem("MultiSelect", "/multiselect"),
                         GroupItem("Password", "/password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating", "/rating"),
                         GroupItem("Select", "/select"), GroupItem("SelectButton", "/selectbutton"), GroupItem("Slider", "/slider"),
@@ -113,8 +125,8 @@ public static class AppMenu
                     Items =
                     [
                         GroupItem("Accordion", "/accordion"), GroupItem("Card", "/card"), GroupItem("Divider", "/divider"),
-                        GroupItem("Fieldset", "/fieldset"), GroupItem("Panel", "/panel"), GroupItem("ScrollPanel", "/scrollpanel"),
-                        GroupItem("Splitter", "/splitter"), GroupItem("Stepper", "/stepper"), GroupItem("Steps", "/steps"), GroupItem("Tabs", "/tabs"), GroupItem("TabView", "/tabview"), GroupItem("Toolbar", "/toolbar")
+                        GroupItem("Fieldset", "/fieldset"), PlaceholderItem("Panel", "/panel"), PlaceholderItem("ScrollPanel", "/scrollpanel"),
+                        PlaceholderItem("Splitter", "/splitter"), GroupItem("Stepper", "/stepper"), GroupItem("Steps", "/steps"), GroupItem("Tabs", "/tabs"), GroupItem("TabView", "/tabview"), GroupItem("Toolbar", "/toolbar")
                     ]
                 },
                 new AppMenuGroup
@@ -155,7 +167,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Media",
-                    Items = [GroupItem("Carousel", "/carousel"), GroupItem("Galleria", "/galleria"), GroupItem("Image", "/image"), GroupItem("ImageCompare", "/imagecompare")]
+                    Items = [PlaceholderItem("Carousel", "/carousel"), PlaceholderItem("Galleria", "/galleria"), PlaceholderItem("Image", "/image"), PlaceholderItem("ImageCompare", "/imagecompare")]
                 },
                 new AppMenuGroup
                 {
@@ -164,7 +176,7 @@ public static class AppMenu
                     [
                         GroupItem("AnimateOnScroll", "/animateonscroll"), GroupItem("AutoFocus", "/autofocus"), GroupItem("Avatar", "/avatar"),
                         GroupItem("Badge", "/badge"), GroupItem("Bind"), GroupItem("BlockUI", "/blockui"), GroupItem("Chip", "/chip"),
-                        GroupItem("ClassNames"), GroupItem("DragDrop"), GroupItem("Fluid", "/fluid"),
+                        GroupItem("ClassNames"), GroupItem("DragDrop"), PlaceholderItem("Fluid", "/fluid"),
                         GroupItem("FocusTrap", "/focustrap"), GroupItem("Inplace", "/inplace"), GroupItem("MeterGroup", "/metergroup"),
                         GroupItem("ProgressBar", "/progressbar"), GroupItem("ProgressSpinner", "/progressspinner"),
                         GroupItem("Ripple", "/ripple"), GroupItem("ScrollTop", "/scrolltop"), GroupItem("Skeleton", "/skeleton"), GroupItem("StyleClass", "/styleclass"),

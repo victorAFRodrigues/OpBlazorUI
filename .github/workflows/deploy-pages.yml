@@ -1,8 +1,11 @@
 name: Deploy Showcase to GitHub Pages
 
 on:
-  push:
-    branches: [ main ]
+  # Publica só depois que o CI do commit na main passa (evita publicar código quebrado).
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -20,10 +23,16 @@ concurrency:
 
 jobs:
   build-and-deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Configurar .NET SDK
         uses: actions/setup-dotnet@v4

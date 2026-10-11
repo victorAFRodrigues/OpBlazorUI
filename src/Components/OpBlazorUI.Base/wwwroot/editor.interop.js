@@ -12,23 +12,52 @@ function notify(dotNet, method, arg) {
     });
 }
 
-function ensureQuill(timeoutMs) {
+function loadScript(src) {
     return new Promise(function (resolve, reject) {
-        if (window.Quill) {
-            resolve();
+        const existing = document.querySelector('script[data-op-quill]');
+        if (existing) {
+            if (window.Quill) {
+                resolve();
+                return;
+            }
+            existing.addEventListener('load', function () { resolve(); });
+            existing.addEventListener('error', function () { reject(new Error('Falha ao carregar o Quill.')); });
             return;
         }
-        const started = Date.now();
-        const timer = setInterval(function () {
-            if (window.Quill) {
-                clearInterval(timer);
-                resolve();
-            } else if (Date.now() - started > timeoutMs) {
-                clearInterval(timer);
-                reject(new Error('Quill is not loaded. Add <script src="_content/OpBlazorUI.Base/quill.min.js"></script> to your page.'));
-            }
-        }, 50);
+
+        const script = document.createElement('script');
+        script.src = src;
+        script.setAttribute('data-op-quill', '');
+        script.onload = function () { resolve(); };
+        script.onerror = function () { reject(new Error('Falha ao carregar o Quill em ' + src + '.')); };
+        document.head.appendChild(script);
     });
+}
+
+// O script do Quill é grande (~200 KB) e foi removido do setup global: carrega sob demanda
+// na primeira inicialização de um Editor e fica em cache para os próximos.
+let quillLoadPromise = null;
+
+function ensureQuill() {
+    if (window.Quill) {
+        return Promise.resolve();
+    }
+
+    if (!quillLoadPromise) {
+        quillLoadPromise = loadScript('_content/OpBlazorUI.Base/quill.min.js')
+            .then(function () {
+                if (!window.Quill) {
+                    throw new Error('O Quill foi carregado, mas window.Quill não está disponível.');
+                }
+            })
+            .catch(function (error) {
+                // Permite nova tentativa numa próxima inicialização.
+                quillLoadPromise = null;
+                throw error;
+            });
+    }
+
+    return quillLoadPromise;
 }
 
 export async function init(dotNet, id, contentEl, toolbarEl, config) {
