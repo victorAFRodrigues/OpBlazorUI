@@ -88,10 +88,11 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
 
 ## 4.3 DynamicDialog
 
-- [ ] `OpDialogService` (scoped) + `OpDynamicDialogRef` + `OpDynamicDialogConfig` (`Header`, `Width`,
-  `Style`, `Modal`, `Closable`, `Data`); host único no layout renderizando `DynamicComponent` dentro
-  do `OpDialog`; `InputValues` via `ParameterView`; `OnClose(TResult)`.
-- [ ] Página `DynamicDialog.razor` reescrita com exemplos reais (padrão da `Button.razor`).
+- [x] `OpDialogService` (scoped) + `OpDynamicDialogRef` + `OpDynamicDialogConfig` (`Header`, `Width`,
+  `Style`, `Modal`, `Closable`, `Data`, `InputValues`); host único no layout (`OpDynamicDialogHost`)
+  renderizando `DynamicComponent` dentro do `OpDialog`; `InputValues` via `ParameterView`; config/ref
+  via `CascadingParameter`; `Close(result)` resolve `Result`.
+- [x] Página `DynamicDialog.razor` reescrita com exemplos reais (padrão da `Button.razor`).
 
 ## 4.4 Chart (`OpBlazorUI.Charts`)
 

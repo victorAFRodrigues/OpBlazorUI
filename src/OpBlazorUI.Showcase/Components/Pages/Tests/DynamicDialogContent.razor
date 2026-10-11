@@ -1,0 +1,19 @@
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DynamicDialog
+
+@* Conteúdo carregado dinamicamente pelo OpDialogService (usado em /_tests/bloco4-3). *@
+
+<div class="flex flex-col gap-2">
+    <p id="t-dyn-content">@InputMessage</p>
+    <button id="t-dyn-ok" type="button" class="p-button p-component" @onclick="CloseOk">
+        <span class="p-button-label">OK</span>
+    </button>
+</div>
+
+@code {
+    [CascadingParameter] private OpDynamicDialogRef? DialogRef { get; set; }
+
+    [Parameter] public string? InputMessage { get; set; }
+
+    private void CloseOk() => DialogRef?.Close("ok");
+}
