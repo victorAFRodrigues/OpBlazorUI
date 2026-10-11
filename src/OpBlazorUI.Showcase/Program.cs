@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OpBlazorUI.Base;
+using OpBlazorUI.Charts;
 using OpBlazorUI.Showcase;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -15,5 +16,7 @@ builder.Services.AddOpBlazorUI(theme =>
     theme.Surface = OpBlazorUI.Showcase.Components.Layout.OpConfig.DefaultSurface;
     theme.PersistTheme = true;
 });
+
+builder.Services.AddOpBlazorCharts();
 
 await builder.Build().RunAsync();

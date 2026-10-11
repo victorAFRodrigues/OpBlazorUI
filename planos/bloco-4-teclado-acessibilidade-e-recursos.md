@@ -1,6 +1,6 @@
 # Bloco 4 — Teclado, acessibilidade e recursos que faltam
 
-**Status:** em execução (sub-fases empilhadas; ordem: 4.1 → 4.2 → 4.3 → 4.4).
+**Status:** concluído (sub-fases empilhadas; ordem executada: 4.1 → 4.2 → 4.3 → 4.4).
 
 **Objetivo:** paridade de teclado/ARIA com o PrimeNG e os recursos mais usados que ainda faltam.
 Os testes Playwright deste bloco cobrem teclado (hoje sem nenhum teste) e os recursos novos.
@@ -99,12 +99,14 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
 Decisão: projeto separado, com dependência de `Blazor-ApexCharts` (MIT, `net10.0`), para não
 acoplar o `OpBlazorUI.Base` a uma lib de gráficos.
 
-- [ ] Novo RCL `src/Components/OpBlazorUI.Charts` (referencia `Blazor-ApexCharts` e
+- [x] Novo RCL `src/Components/OpBlazorUI.Charts` (referencia `Blazor-ApexCharts` 7.0.0 e
   `OpBlazorUI.Base`); adicionado ao `OpBlazorUI.slnx` e referenciado pelo Showcase.
-- [ ] `AddOpBlazorCharts()` → `AddApexCharts()` + bridge de tema (cores a partir dos tokens).
-- [ ] `OpChart` (wrapper fino) sobre `ApexChart`/`ApexPointSeries`, com placeholder em SSR estático.
-- [ ] Página `Chart.razor` reescrita com exemplos reais; documentar a divergência de API vs. o
-  Chart.js do PrimeNG e a limitação de SSR.
+- [x] `AddOpBlazorCharts()` → `AddApexCharts()`; bridge de tema via `op-charts.interop.js`
+  (`OpChart` lê cores/fonte dos tokens CSS quando `Options.Colors` está vazio).
+- [x] `OpChart<TItem>` (wrapper fino) sobre `ApexChart`/`ApexPointSeries`, com placeholder no
+  prerender estático.
+- [x] Página `Chart.razor` reescrita com exemplos reais; divergência de API vs. o Chart.js do
+  PrimeNG e limitação de SSR documentadas.
 - [ ] Packaging do pacote: fica no bloco 5 (junto com o release).
 
 ## Decisões (resolvidas)

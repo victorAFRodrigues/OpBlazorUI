@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>OpBlazorUI.Charts</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>OpenNG</Authors>
+        <Company>OpenNG</Company>
+        <Description>Charts for OpBlazorUI, built on Blazor-ApexCharts.</Description>
+        <PackageTags>blazor;optimus-ui;charts;apexcharts;openng</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/victorAFRodrigues/OpBlazorUI</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/victorAFRodrigues/OpBlazorUI</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Blazor-ApexCharts" Version="7.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../OpBlazorUI.Base/OpBlazorUI.Base.csproj"/>
+    </ItemGroup>
+
+</Project>
