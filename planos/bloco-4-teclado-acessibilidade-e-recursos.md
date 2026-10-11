@@ -77,10 +77,14 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
 - [x] **4.2c Outros (parte 1)** (branch `feat/bloco4-2c-recursos`): MultiSelect `SelectionLimit`/
   `SelectedItemsLabel`; AutoComplete `Delay` (debounce) e `CompleteOnFocus`; Stepper `Linear`;
   TabPanel `Closable` + `OnClose`.
-- [ ] **4.2c Outros (parte 2)**: FileUpload (`Url`/`Method`/`CustomUpload`/progresso);
-  PickList/OrderList (duplo clique, eventos, `Disabled`); VirtualScroller (`Delay`/`ResizeDelay`/
-  `AutoSize`); Checkbox `TrueValue`/`FalseValue` (requer `OpCheckbox<TValue>`); Paginator com
-  estado interno e `@bind`.
+- [x] **4.2c Outros (parte 2)** (mesma branch): `OpListbox.OnItemDoubleClick` + PickList movendo
+  item por duplo clique. `VirtualScroller` já expõe `Delay`/`ResizeDelay`/`AutoSize` e o FileUpload
+  já tem `CustomUpload`/`UploadHandler`/`OnProgress` (verificado).
+- [ ] **4.2c Outros (parte 3, opcional)**: FileUpload com envio real por `Url`/`Method` (HTTP) —
+  hoje `Url`/`Method` são aceitos mas o envio padrão só marca os arquivos; envio customizado via
+  `UploadHandler`. Checkbox `TrueValue`/`FalseValue` (exige `OpCheckbox<TValue>` genérico, ~54
+  usos). Paginator com estado interno/`@bind` (já usado controlado pelo DataTable; sem API
+  imperativa de página).
 
 ## 4.3 DynamicDialog
 

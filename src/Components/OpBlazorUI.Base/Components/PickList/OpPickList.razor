@@ -42,7 +42,8 @@
                    EmptyMessage="@EmptyMessage"
                    Disabled="@Disabled"
                    AriaLabel="@AriaLabel"
-                   InputId="@_sourceId" />
+                   InputId="@_sourceId"
+                   OnItemDoubleClick="MoveItemToTarget" />
     </div>
 
     <div class="p-picklist-controls">
@@ -79,7 +80,8 @@
                    EmptyMessage="@EmptyMessage"
                    Disabled="@Disabled"
                    AriaLabel="@AriaLabel"
-                   InputId="@_targetId" />
+                   InputId="@_targetId"
+                   OnItemDoubleClick="MoveItemToSource" />
     </div>
 
     @if (ShowTargetControls)

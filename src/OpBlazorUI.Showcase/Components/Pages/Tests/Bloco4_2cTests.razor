@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages.Tests
 @using OpBlazorUI.Base.Components.AutoComplete
 @using OpBlazorUI.Base.Components.MultiSelect
+@using OpBlazorUI.Base.Components.PickList
 @using OpBlazorUI.Base.Components.Stepper
 @using OpBlazorUI.Base.Components.Tabs
 @using OpBlazorUI.Base.Models
@@ -42,6 +43,12 @@
     <span id="t-tabs-log">@string.Join(",", _tabs)</span>
 </section>
 
+<section id="t-pick">
+    <OpPickList TItem="City" Source="@_source" Target="@_target" OptionLabel="Name"
+                SourceChanged="@(v => _source = v)" TargetChanged="@(v => _target = v)"/>
+    <span id="t-pick-log">@string.Join(",", _source.Select(c => c.Code))|@string.Join(",", _target.Select(c => c.Code))</span>
+</section>
+
 @code {
     private IReadOnlyList<string>? _ms;
     private string? _ac;
@@ -63,6 +70,15 @@
         new OpStepItem { Label = "Dois" },
         new OpStepItem { Label = "Três" }
     };
+
+    private IReadOnlyList<City> _source = new List<City>
+    {
+        new City("São Paulo", "SP"),
+        new City("Rio", "RJ"),
+        new City("Recife", "PE")
+    };
+
+    private IReadOnlyList<City> _target = new List<City>();
 
     private void OnComplete(OpAutoCompleteCompleteEvent e)
     {

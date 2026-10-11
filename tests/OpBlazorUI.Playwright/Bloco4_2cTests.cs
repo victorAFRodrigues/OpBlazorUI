@@ -96,4 +96,21 @@ public class Bloco4_2cTests
         Assert.True(errors.Count == 0, string.Join(" || ", errors));
         await page.CloseAsync();
     }
+
+    [Fact]
+    public async Task PickList_move_item_com_duplo_clique()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        await Expect(page.Locator("#t-pick-log")).ToHaveTextAsync("SP,RJ,PE|");
+
+        var sourceOption = page.Locator("#t-pick .p-listbox").First.Locator(".p-listbox-option").First;
+        await sourceOption.DblClickAsync();
+
+        await Expect(page.Locator("#t-pick-log")).ToHaveTextAsync("RJ,PE|SP");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
 }
