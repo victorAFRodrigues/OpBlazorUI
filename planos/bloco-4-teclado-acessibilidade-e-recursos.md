@@ -74,11 +74,17 @@ o contêiner recebe o foco, `preventDefault` nas setas quando o componente as co
   `KeepInViewport` (JS `dialog.interop.js`, sem `Breakpoints`); Tooltip `TooltipEvent`/`AutoHide`/
   `Life`; Toast pausa no hover (retoma com o tempo restante; dedupe já existia); ContextMenu
   `Target`/`Global` (JS no `menu.interop.js`).
-- [ ] **4.2c Outros**: FileUpload (`Url`/`Method`/`CustomUpload`/progresso); TabPanel `Closable`;
-  Stepper `linear`; Paginator com estado interno e `@bind`; MultiSelect `SelectionLimit`/
-  `SelectedItemsLabel`; AutoComplete `Delay`/`CompleteOnFocus`; PickList/OrderList (duplo clique,
-  eventos, `Disabled`); VirtualScroller (`Delay`/`ResizeDelay`/`AutoSize`); Checkbox em grupo +
-  `TrueValue`/`FalseValue`.
+- [x] **4.2c Outros (parte 1)** (branch `feat/bloco4-2c-recursos`): MultiSelect `SelectionLimit`/
+  `SelectedItemsLabel`; AutoComplete `Delay` (debounce) e `CompleteOnFocus`; Stepper `Linear`;
+  TabPanel `Closable` + `OnClose`.
+- [x] **4.2c Outros (parte 2)** (mesma branch): `OpListbox.OnItemDoubleClick` + PickList movendo
+  item por duplo clique. `VirtualScroller` já expõe `Delay`/`ResizeDelay`/`AutoSize` e o FileUpload
+  já tem `CustomUpload`/`UploadHandler`/`OnProgress` (verificado).
+- [ ] **4.2c Outros (parte 3, opcional)**: FileUpload com envio real por `Url`/`Method` (HTTP) —
+  hoje `Url`/`Method` são aceitos mas o envio padrão só marca os arquivos; envio customizado via
+  `UploadHandler`. Checkbox `TrueValue`/`FalseValue` (exige `OpCheckbox<TValue>` genérico, ~54
+  usos). Paginator com estado interno/`@bind` (já usado controlado pelo DataTable; sem API
+  imperativa de página).
 
 ## 4.3 DynamicDialog
 

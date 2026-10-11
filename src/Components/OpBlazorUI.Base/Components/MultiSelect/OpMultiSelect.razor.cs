@@ -30,6 +30,12 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string Display { get; set; } = "comma";
     [Parameter] public int? MaxSelectedLabels { get; set; }
+
+    /// <summary>Número máximo de itens que podem ser selecionados (null = sem limite).</summary>
+    [Parameter] public int? SelectionLimit { get; set; }
+
+    /// <summary>Texto exibido quando <see cref="MaxSelectedLabels"/> é excedido. Use <c>{0}</c> para o total.</summary>
+    [Parameter] public string? SelectedItemsLabel { get; set; }
     [Parameter] public bool Filter { get; set; }
     [Parameter] public bool ShowHeader { get; set; } = true;
     [Parameter] public bool ShowToggleAll { get; set; } = true;
@@ -146,7 +152,7 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
             if (selected.Count == 0) return string.Empty;
             if (MaxSelectedLabels is { } max && selected.Count > max)
             {
-                return $"{selected.Count} items selected";
+                return (SelectedItemsLabel ?? "{0} items selected").Replace("{0}", selected.Count.ToString());
             }
 
             return string.Join(", ", selected.Select(s => GetOptionLabel((object)s!)));
@@ -405,6 +411,11 @@ private async Task CloseAsync()
         }
         else
         {
+            if (SelectionLimit is { } limit && list.Count >= limit)
+            {
+                return;
+            }
+
             list.Add(option);
         }
 
@@ -438,7 +449,15 @@ private async Task CloseAsync()
         if (AllSelected)
             list.RemoveAll(v => options.Any(o => Equals(OpSelectOption.GetValue(o, OptionValue), v)));
         else
-            list.AddRange(options.Where(o => !IsSelected(o!)));
+        {
+            var toAdd = options.Where(o => !IsSelected(o!)).ToList();
+            if (SelectionLimit is { } limit)
+            {
+                toAdd = toAdd.Take(Math.Max(0, limit - list.Count)).ToList();
+            }
+
+            list.AddRange(toAdd);
+        }
 
         CurrentValue = list;
         await OnChange.InvokeAsync(list);

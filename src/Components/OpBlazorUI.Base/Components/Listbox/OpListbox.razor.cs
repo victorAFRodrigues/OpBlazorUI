@@ -56,6 +56,9 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnDblClick { get; set; }
+
+    /// <summary>Disparado no duplo clique de uma opção, entregando o valor da opção.</summary>
+    [Parameter] public EventCallback<TValue?> OnItemDoubleClick { get; set; }
     [Parameter] public EventCallback<bool> OnSelectAllChange { get; set; }
 
     // templates
@@ -283,6 +286,10 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     {
         if (IsOptionDisabled(option) || Disabled || Readonly) return;
         await OnDblClick.InvokeAsync(new MouseEventArgs());
+        if (OnItemDoubleClick.HasDelegate)
+        {
+            await OnItemDoubleClick.InvokeAsync(OpSelectOption.ToValue<TValue>(option, OptionValue));
+        }
     }
 
     private async Task ToggleOptionAsync(object option)

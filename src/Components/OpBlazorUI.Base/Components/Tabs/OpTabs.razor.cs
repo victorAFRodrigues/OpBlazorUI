@@ -105,6 +105,11 @@ public partial class OpTabs : OpComponentBase, IOpTabHost
         await OnChange.InvokeAsync(index);
     }
 
+    private async Task OnCloseAsync(OpTabPanel panel)
+    {
+        await panel.OnClose.InvokeAsync(panel);
+    }
+
     private async Task OnTabKeyDownAsync(KeyboardEventArgs e, int index)
     {
         switch (e.Code)
