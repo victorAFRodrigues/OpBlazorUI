@@ -1,0 +1,62 @@
+@namespace OpBlazorUI.Base.Components.Panel
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div id="@RootId" class="@RootClass" @attributes="AdditionalAttributes">
+    @if (ShowHeader)
+    {
+        <div id="@HeaderBarId" class="p-panel-header" @onclick="OnHeaderClickAsync">
+            @if (HeaderTemplate is not null)
+            {
+                @HeaderTemplate
+            }
+            else if (!string.IsNullOrEmpty(Header))
+            {
+                <span id="@HeaderId" class="p-panel-title">@Header</span>
+            }
+            <div class="p-panel-header-actions @IconsPositionClass">
+                @if (IconsTemplate is not null)
+                {
+                    @IconsTemplate
+                }
+                @if (Toggleable)
+                {
+                    <button type="button"
+                            class="@ToggleButtonClass"
+                            aria-label="@Header"
+                            aria-controls="@ContentId"
+                            aria-expanded="@ExpandedString"
+                            @onclick:stopPropagation="StopHeaderPropagation"
+                            @onclick="ToggleAsync">
+                        <i class="@ToggleIconClass" aria-hidden="true"></i>
+                    </button>
+                }
+            </div>
+        </div>
+    }
+
+    <div id="@ContentId"
+         class="@ContentContainerClass"
+         role="region"
+         aria-labelledby="@HeaderId"
+         aria-hidden="@(IsCollapsed ? "true" : null)"
+         style="@(IsCollapsed ? "display:none" : null)"
+         tabindex="@(IsCollapsed ? "-1" : null)">
+        <div class="p-panel-content-wrapper">
+            <div class="p-panel-content">
+                @if (ContentTemplate is not null)
+                {
+                    @ContentTemplate
+                }
+                else
+                {
+                    @ChildContent
+                }
+            </div>
+            @if (FooterTemplate is not null)
+            {
+                <div class="p-panel-footer">@FooterTemplate</div>
+            }
+        </div>
+    </div>
+</div>

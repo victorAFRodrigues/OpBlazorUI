@@ -1,188 +1,358 @@
 @page "/carousel"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Carousel
 
 <PageTitle>Carousel - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Carousel"
-              Description="Carousel é um controle deslizante de conteúdo com várias opções de customização. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="Carousel é um controle deslizante de conteúdo com opções de orientação, autoplay e navegação circular.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O Carousel exige uma coleção de itens como seu valor, junto com um template para renderizar cada item.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O Carousel exige uma coleção em <code>Value</code> e um <code>ItemTemplate</code> para renderizar
+                    cada item. O número de itens visíveis e o número de itens por rolagem são definidos por
+                    <code>NumVisible</code> e <code>NumScroll</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpCarousel TItem="Product" Value="_products" NumVisible="3" NumScroll="1">
+                        <ItemTemplate Context="product">
+                            <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); margin:.5rem; padding:1rem;">
+                                <div class="mb-4" style="background:var(--p-surface-50); border-radius:var(--p-content-border-radius); padding:1rem; display:flex; justify-content:center;">
+                                    <img src="@product.Image" alt="@product.Name" class="w-full" style="border-radius:var(--p-content-border-radius); display:block;"/>
+                                </div>
+                                <div class="mb-2 font-medium">@product.Name</div>
+                                <div class="flex justify-between items-center">
+                                    <div class="font-semibold text-xl">$@product.Price</div>
+                                    <span class="flex gap-2">
+                                        <i class="pi pi-heart text-muted-color" aria-hidden="true"></i>
+                                        <i class="pi pi-shopping-cart" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </OpCarousel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Circular" Id="circular">
-            <Description><p>Quando <code>autoplayInterval</code> é definido em milissegundos, os itens são rolados automaticamente. Além disso, para rolagem infinita, a propriedade <code>circular</code> precisa ser adicionada, sendo habilitada automaticamente no modo de reprodução automática.</p></Description>
-            <Code><CodeBlock Code="@CircularCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Quando <code>AutoPlayInterval</code> é definido em milissegundos, os itens rolam automaticamente.
+                    Para rolagem infinita, adicione <code>Circular="true"</code>. O autoplay só é ativado quando há mais
+                    itens do que itens visíveis.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpCarousel TItem="Product" Value="_products" NumVisible="3" NumScroll="1"
+                                Circular="true" AutoPlayInterval="3000">
+                        <ItemTemplate Context="product">
+                            <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); margin:.5rem; padding:1rem;">
+                                <div class="mb-4" style="background:var(--p-surface-50); border-radius:var(--p-content-border-radius); padding:1rem; display:flex; justify-content:center;">
+                                    <img src="@product.Image" alt="@product.Name" class="w-full" style="border-radius:var(--p-content-border-radius); display:block;"/>
+                                </div>
+                                <div class="mb-2 font-medium">@product.Name</div>
+                                <div class="flex justify-between items-center">
+                                    <div class="font-semibold text-xl">$@product.Price</div>
+                                    <span class="flex gap-2">
+                                        <i class="pi pi-heart text-muted-color" aria-hidden="true"></i>
+                                        <i class="pi pi-shopping-cart" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </OpCarousel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CircularCode"/></Code>
         </DocSection>
 
         <DocSection Label="Responsivo" Id="responsive">
-            <Description><p>O Carousel suporta configuração específica por tamanho de tela com a propriedade <code>responsiveOptions</code>, que recebe um array de objetos onde cada objeto define o <code>breakpoint</code> de largura máxima, <code>numVisible</code> para o número de itens por página e <code>numScroll</code> para o número de itens a rolar. Quando <code>responsiveOptions</code> é definido, as propriedades <code>numScroll</code> e <code>numVisible</code> do Carousel são usadas como padrão quando não há breakpoint aplicável.</p></Description>
-            <Code><CodeBlock Code="@ResponsiveCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A configuração por tamanho de tela é declarada com <code>ResponsiveOptions</code>, uma coleção de
+                    breakpoints com <code>NumVisible</code> e <code>NumScroll</code>. Nesta versão a propriedade é aceita
+                    mas ainda não aplicada — veja Problemas Conhecidos.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpCarousel TItem="Product" Value="_products" NumVisible="3" NumScroll="1"
+                                ResponsiveOptions="_responsiveOptions">
+                        <ItemTemplate Context="product">
+                            <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); margin:.5rem; padding:1rem;">
+                                <div class="mb-4" style="background:var(--p-surface-50); border-radius:var(--p-content-border-radius); padding:1rem; display:flex; justify-content:center;">
+                                    <img src="@product.Image" alt="@product.Name" class="w-full" style="border-radius:var(--p-content-border-radius); display:block;"/>
+                                </div>
+                                <div class="mb-2 font-medium">@product.Name</div>
+                                <div class="flex justify-between items-center">
+                                    <div class="font-semibold text-xl">$@product.Price</div>
+                                    <span class="flex gap-2">
+                                        <i class="pi pi-heart text-muted-color" aria-hidden="true"></i>
+                                        <i class="pi pi-shopping-cart" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </OpCarousel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ResponsiveCode"/></Code>
         </DocSection>
 
         <DocSection Label="Vertical" Id="vertical">
-            <Description><p>Para criar um Carousel vertical, <code>orientation</code> precisa ser definido como <code>vertical</code>, junto com um <code>verticalViewPortHeight</code>.</p></Description>
-            <Code><CodeBlock Code="@VerticalCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Para criar um Carousel vertical, defina <code>Orientation="vertical"</code> junto com uma altura em
+                    <code>VerticalViewPortHeight</code> (por exemplo, <code>330px</code>).
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card">
+                    <OpCarousel TItem="Product" Value="_products" NumVisible="1" NumScroll="1"
+                                Orientation="vertical" VerticalViewPortHeight="330px" ContentClass="flex items-center">
+                        <ItemTemplate Context="product">
+                            <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); margin:.5rem; padding:1rem; display:flex; gap:1rem; align-items:center;">
+                                <img src="@product.Image" alt="@product.Name" class="w-40" style="border-radius:var(--p-content-border-radius); display:block;"/>
+                                <div class="flex flex-col gap-2">
+                                    <div class="font-medium">@product.Name</div>
+                                    <div class="font-semibold text-xl">$@product.Price</div>
+                                    <span class="flex gap-2">
+                                        <i class="pi pi-heart text-muted-color" aria-hidden="true"></i>
+                                        <i class="pi pi-shopping-cart" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </OpCarousel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@VerticalCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O Carousel usa o papel <code>region</code> e, como qualquer atributo é repassado ao elemento contêiner principal, atributos como <code>aria-label</code> e <code>aria-roledescription</code> também podem ser usados. O contêiner de slides tem o atributo <code>aria-live</code> definido como "polite" se o carousel não estiver no modo de reprodução automática; caso contrário, o valor em reprodução automática é "off".</p>
-                <p>Um slide tem o papel <code>group</code> com um aria-label que se refere à propriedade <code>aria.slideNumber</code> da API de <a href="/configuration/#locale">locale</a>. Da mesma forma, <code>aria.slide</code> é usado como <code>aria-roledescription</code> do item. Slides inativos são ocultados dos leitores com <code>aria-hidden</code>.</p>
-                <p>Os navegadores Próximo e Anterior são elementos <code>button</code> com atributos <code>aria-label</code> que se referem, por padrão, às propriedades <code>aria.nextPageLabel</code> e <code>aria.firstPageLabel</code> da API de <a href="/configuration/#locale">locale</a>, respectivamente; ainda é possível usar seus próprios papéis e atributos ARIA, pois qualquer atributo válido é repassado aos elementos de botão implicitamente por meio de <code>nextButtonProps</code> e <code>prevButtonProps</code>.</p>
-                <p>Os elementos de navegação rápida são elementos <code>button</code> com um atributo <code>aria-label</code> referente a <code>aria.pageLabel</code> da API de <a href="/configuration/#locale">locale</a>. A página atual é marcada com <code>aria-current</code>.</p>
+                <p>
+                    O Carousel não define papéis ARIA ricos por padrão; o elemento raiz recebe os atributos extras
+                    repassados, permitindo <code>aria-label</code> e <code>aria-roledescription</code>. Os botões
+                    Anterior/Próximo são <code>button</code> nativos com <code>aria-label</code>, e os indicadores são
+                    botões com <code>aria-label="Página N"</code>.
+                </p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
-                <ApiTable Caption="Navegação Anterior/Próximo"
+                <CodeBlock Code="@AccessibilityCode"/>
+                <ApiTable Caption="Navegação"
                           Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Move o foco pelos elementos interativos do carrossel." },
-                              new[] { "enter", "Ativa a navegação." },
-                              new[] { "space", "Ativa a navegação." }
-                          })"/>
-                <ApiTable Caption="Navegação Rápida"
-                          Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] {
-                              new[] { "tab", "Move o foco pelo link do slide ativo." },
-                              new[] { "enter", "Ativa o link do slide focado." },
-                              new[] { "space", "Ativa o link do slide focado." },
-                              new[] { "right arrow", "Move o foco para o próximo link de slide." },
-                              new[] { "left arrow", "Move o foco para o link de slide anterior." },
-                              new[] { "home", "Move o foco para o primeiro link de slide." },
-                              new[] { "end", "Move o foco para o último link de slide." }
+                              new[] { "tab", "Move o foco pelos botões de navegação e indicadores." },
+                              new[] { "enter / space", "Ativa o botão focado (anterior, próximo ou página)." },
+                              new[] { "left / right arrow", "Navega entre as páginas (previsto no upstream; não implementado nesta versão)." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "IReadOnlyList&lt;TItem&gt;", "[]", "Coleção de itens exibida pelo carousel." },
+                              new[] { "NumVisible", "int", "1", "Quantidade de itens visíveis por página." },
+                              new[] { "NumScroll", "int", "1", "Quantidade de itens rolados por navegação." },
+                              new[] { "Page", "int", "0", "Índice do primeiro item da página; usar com <code>&#64;bind-Page</code>." },
+                              new[] { "Circular", "bool", "false", "Retorna à primeira página após a última (e vice-versa)." },
+                              new[] { "Orientation", "string", "\"horizontal\"", "Orientação: <code>horizontal</code> ou <code>vertical</code>." },
+                              new[] { "VerticalViewPortHeight", "string", "\"300px\"", "Altura da viewport no modo vertical." },
+                              new[] { "AutoPlayInterval", "int", "0", "Intervalo do autoplay em ms; <code>0</code> desliga." },
+                              new[] { "ResponsiveOptions", "object?", "null", "Breakpoints responsivos (aceito, ainda não aplicado)." },
+                              new[] { "ContentClass", "string?", "null", "Classes adicionais no contêiner de conteúdo." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "PageChanged", "EventCallback&lt;int&gt;", "Notifica a mudança de página (binding de <code>Page</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ItemTemplate", "RenderFragment&lt;TItem&gt;?", "Conteúdo de cada item." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo exibido acima do carousel." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Conteúdo exibido abaixo do carousel." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Registro do item (exemplo Product)" Id="api-item">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Name", "string", "Nome do produto." },
+                              new[] { "Image", "string", "URL da imagem do produto." },
+                              new[] { "Price", "string", "Preço exibido no item." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="carousel"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code> (repassados ao
+                    elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li><code>ResponsiveOptions</code> é aceito por compatibilidade, mas os breakpoints não são aplicados: <code>NumVisible</code> e <code>NumScroll</code> permanecem fixos.</li>
+                        <li>Não há suporte a <em>swipe</em>/arraste nem a toque; a navegação é feita apenas pelos botões e indicadores.</li>
+                        <li>O autoplay é um timer que reinicia a cada renderização (a cada atualização de parâmetros), podendo reiniciar a contagem.</li>
+                        <li>Os itens usam <code>flex-basis</code> fixo (sem virtualização) e o modo circular apenas reposiciona a página, sem laço contínuo.</li>
+                        <li>Os rótulos acessíveis (Anterior/Próximo/Página N) estão fixos em pt-BR, sem integração com a API de <em>locale</em>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    public sealed record Product(string Name, string Image, string Price);
+
+    private static readonly Product[] _products =
+    [
+        new("Bamboo Watch", "https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg", "65"),
+        new("Black Watch", "https://primefaces.org/cdn/primeng/images/demo/product/black-watch.jpg", "72"),
+        new("Blue Band", "https://primefaces.org/cdn/primeng/images/demo/product/blue-band.jpg", "79"),
+        new("Blue T-Shirt", "https://primefaces.org/cdn/primeng/images/demo/product/blue-t-shirt.jpg", "29"),
+        new("Bolt Shirt", "https://primefaces.org/cdn/primeng/images/demo/product/bolt-shirt.jpg", "89"),
+        new("Chakra Bracelet", "https://primefaces.org/cdn/primeng/images/demo/product/chakra-bracelet.jpg", "45"),
+        new("Gaming Set", "https://primefaces.org/cdn/primeng/images/demo/product/gaming-set.jpg", "299"),
+        new("Smart Watch", "https://primefaces.org/cdn/primeng/images/demo/product/smart-watch.jpg", "199")
+    ];
+
+    private static readonly object[] _responsiveOptions =
+    [
+        new { Breakpoint = "1024px", NumVisible = 3, NumScroll = 1 },
+        new { Breakpoint = "640px", NumVisible = 1, NumScroll = 1 }
+    ];
+
     private const string ImportCode = """
-        import { CarouselModule } from 'primeng/carousel';
+        @using OpBlazorUI.Base.Components.Carousel
         """;
 
     private const string BasicCode = """
-        <p-carousel [value]="products" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions">
-            <ng-template let-product #item>
-                <div class="border border-surface rounded-border m-2 p-4">
-                    <div class="mb-4">
-                        <div class="relative mx-auto">
-                            <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
-                            <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
-                        </div>
-                    </div>
-                    <div class="mb-4 font-medium">{{ product.name }}</div>
-                    <div class="flex justify-between items-center">
-                        <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
-                        <span>
-                            <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
-                            <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
-                        </span>
-                    </div>
+        <OpCarousel TItem="Product" Value="_products" NumVisible="3" NumScroll="1">
+            <ItemTemplate Context="product">
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); margin:.5rem; padding:1rem;">
+                    <img src="@product.Image" alt="@product.Name" class="w-full" style="display:block;" />
+                    <div class="mb-2 font-medium">@product.Name</div>
+                    <div class="font-semibold text-xl">$@product.Price</div>
                 </div>
-            </ng-template>
-        </p-carousel>
+            </ItemTemplate>
+        </OpCarousel>
+
+        @code {
+            public sealed record Product(string Name, string Image, string Price);
+
+            private readonly Product[] _products =
+            [
+                new("Bamboo Watch", "https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg", "65")
+            ];
+        }
         """;
 
     private const string CircularCode = """
-        <p-carousel [value]="products" [numVisible]="3" [numScroll]="1" [circular]="true" [responsiveOptions]="responsiveOptions" autoplayInterval="3000">
-            <ng-template let-product #item>
-                <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
-                    <div class="mb-4">
-                        <div class="relative mx-auto">
-                            <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
-                            <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
-                        </div>
-                    </div>
-                    <div class="mb-4 font-medium">{{ product.name }}</div>
-                    <div class="flex justify-between items-center">
-                        <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
-                        <span>
-                            <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
-                            <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
-                        </span>
-                    </div>
+        <OpCarousel TItem="Product" Value="_products" NumVisible="3" NumScroll="1"
+                    Circular="true" AutoPlayInterval="3000">
+            <ItemTemplate Context="product">
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); margin:.5rem; padding:1rem;">
+                    <img src="@product.Image" alt="@product.Name" class="w-full" style="display:block;" />
+                    <div class="mb-2 font-medium">@product.Name</div>
+                    <div class="font-semibold text-xl">$@product.Price</div>
                 </div>
-            </ng-template>
-        </p-carousel>
+            </ItemTemplate>
+        </OpCarousel>
         """;
 
     private const string ResponsiveCode = """
-        <p-carousel [value]="products" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions">
-            <ng-template let-product #item>
-                <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
-                    <div class="mb-4">
-                        <div class="relative mx-auto">
-                            <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
-                            <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
-                        </div>
-                    </div>
-                    <div class="mb-4 font-medium">{{ product.name }}</div>
-                    <div class="flex justify-between items-center">
-                        <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
-                        <span>
-                            <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
-                            <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
-                        </span>
-                    </div>
+        <OpCarousel TItem="Product" Value="_products" NumVisible="3" NumScroll="1" ResponsiveOptions="_responsiveOptions">
+            <ItemTemplate Context="product">
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); margin:.5rem; padding:1rem;">
+                    <img src="@product.Image" alt="@product.Name" class="w-full" style="display:block;" />
+                    <div class="mb-2 font-medium">@product.Name</div>
+                    <div class="font-semibold text-xl">$@product.Price</div>
                 </div>
-            </ng-template>
-        </p-carousel>
+            </ItemTemplate>
+        </OpCarousel>
+
+        @code {
+            private readonly object[] _responsiveOptions =
+            [
+                new { Breakpoint = "1024px", NumVisible = 3, NumScroll = 1 },
+                new { Breakpoint = "640px", NumVisible = 1, NumScroll = 1 }
+            ];
+        }
         """;
 
     private const string VerticalCode = """
-        <p-carousel [value]="products" [numVisible]="1" [numScroll]="1" orientation="vertical" verticalViewPortHeight="330px" contentClass="flex items-center">
-            <ng-template let-product #item>
-                <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
-                    <div class="mb-4">
-                        <div class="relative mx-auto">
-                            <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded" />
-                            <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" class="absolute dark:!bg-surface-900" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
-                        </div>
-                    </div>
-                    <div class="mb-4 font-medium">{{ product.name }}</div>
-                    <div class="flex justify-between items-center">
-                        <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
-                        <span>
-                            <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
-                            <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
-                        </span>
+        <OpCarousel TItem="Product" Value="_products" NumVisible="1" NumScroll="1"
+                    Orientation="vertical" VerticalViewPortHeight="330px" ContentClass="flex items-center">
+            <ItemTemplate Context="product">
+                <div style="border:1px solid var(--p-content-border-color); border-radius:var(--p-content-border-radius); margin:.5rem; padding:1rem; display:flex; gap:1rem; align-items:center;">
+                    <img src="@product.Image" alt="@product.Name" class="w-40" style="display:block;" />
+                    <div class="flex flex-col gap-2">
+                        <div class="font-medium">@product.Name</div>
+                        <div class="font-semibold text-xl">$@product.Price</div>
                     </div>
                 </div>
-            </ng-template>
-        </p-carousel>
+            </ItemTemplate>
+        </OpCarousel>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpCarousel TItem="Product" Value="_products" NumVisible="3" NumScroll="1" aria-label="Produtos em destaque">
+            <ItemTemplate Context="product">
+                <div>@product.Name</div>
+            </ItemTemplate>
+        </OpCarousel>
         """;
 }

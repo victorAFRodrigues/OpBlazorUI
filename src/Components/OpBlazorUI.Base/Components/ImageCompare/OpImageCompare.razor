@@ -1,0 +1,20 @@
+@namespace OpBlazorUI.Base.Components.ImageCompare
+@using System.Globalization
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass"
+     style="@RootStyle"
+     tabindex="@TabIndex"
+     aria-label="@AriaLabel"
+     aria-labelledby="@AriaLabelledBy"
+     @attributes="AdditionalAttributes">
+    @Left
+    @Right
+    <input type="range"
+           min="0"
+           max="100"
+           value="@Value.ToString(CultureInfo.InvariantCulture)"
+           class="p-imagecompare-slider"
+           @oninput="OnInput" />
+</div>

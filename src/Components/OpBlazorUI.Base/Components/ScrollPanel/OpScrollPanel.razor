@@ -1,0 +1,30 @@
+@namespace OpBlazorUI.Base.Components.ScrollPanel
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div id="@RootId" class="@RootClass" @ref="_root" style="@RootStyle" @attributes="AdditionalAttributes">
+    <div class="p-scrollpanel-content-container">
+        <div class="p-scrollpanel-content" data-op-scroll-content>
+            @if (ContentTemplate is not null)
+            {
+                @ContentTemplate
+            }
+            else
+            {
+                @ChildContent
+            }
+        </div>
+    </div>
+    <div class="p-scrollpanel-bar p-scrollpanel-bar-x p-scrollpanel-hidden"
+         role="scrollbar"
+         tabindex="0"
+         aria-orientation="horizontal"
+         aria-controls="@ContentId"
+         aria-valuenow="0"></div>
+    <div class="p-scrollpanel-bar p-scrollpanel-bar-y p-scrollpanel-hidden"
+         role="scrollbar"
+         tabindex="0"
+         aria-orientation="vertical"
+         aria-controls="@ContentId"
+         aria-valuenow="0"></div>
+</div>

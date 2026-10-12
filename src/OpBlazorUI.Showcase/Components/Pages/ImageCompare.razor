@@ -1,42 +1,85 @@
 @page "/imagecompare"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.ImageCompare
 
 <PageTitle>ImageCompare - OpBlazorUI</PageTitle>
 
 <DocComponent Title="ImageCompare"
-              Description="Compara duas imagens lado a lado com um controle deslizante. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="Compara duas imagens lado a lado com um controle deslizante (slider).">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>As imagens são definidas usando templates com <em>left</em> e <em>right</em>. Use as propriedades <em>style</em> ou <em>class</em> para definir o tamanho do contêiner.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    As imagens são definidas usando os templates <code>Left</code> e <code>Right</code>. A largura do
+                    contêiner é controlada por <code>StyleClass</code>/<code>Style</code>. Use <code>@@bind-Value</code>
+                    para acompanhar a posição do controle (padrão <code>50</code>).
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col gap-4 items-center">
+                    <OpImageCompare @bind-Value="_value" StyleClass="w-full" Style="max-width:40rem;">
+                        <Left>
+                            <img src="https://primefaces.org/cdn/primevue/images/compare/island1.jpg" alt="Antes"/>
+                        </Left>
+                        <Right>
+                            <img src="https://primefaces.org/cdn/primevue/images/compare/island2.jpg" alt="Depois"/>
+                        </Right>
+                    </OpImageCompare>
+                    <span class="text-sm text-muted-color">Posição: @_value%</span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Responsivo" Id="responsive">
-            <Description><p>Aplique estilos responsivos ao elemento contêiner para otimizar a exibição conforme o tamanho da tela.</p></Description>
-            <Code><CodeBlock Code="@ResponsiveCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Aplique estilos responsivos ao elemento contêiner para otimizar a exibição conforme o tamanho da
+                    tela. Por exemplo, <code>md:!w-80</code> limita a largura a <code>20rem</code> a partir do
+                    breakpoint <code>md</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col gap-4 items-center">
+                    <OpImageCompare @bind-Value="_value" StyleClass="md:!w-80">
+                        <Left>
+                            <img src="https://primefaces.org/cdn/primevue/images/compare/island1.jpg" alt="Antes"/>
+                        </Left>
+                        <Right>
+                            <img src="https://primefaces.org/cdn/primevue/images/compare/island2.jpg" alt="Depois"/>
+                        </Right>
+                    </OpImageCompare>
+                    <span class="text-sm text-muted-color">Posição: @_value%</span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ResponsiveCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente ImageCompare usa internamente um <em>slider</em> do tipo range nativo. O valor para descrever o componente pode ser definido com as props <em>aria-labelledby</em> e <em>aria-label</em>.</p>
+                <p>
+                    O componente usa internamente um <code>input type="range"</code> nativo. O elemento raiz recebe
+                    <code>aria-label</code> ou <code>aria-labelledby</code>, definidos diretamente pelas propriedades
+                    <code>AriaLabel</code> e <code>AriaLabelledBy</code>.
+                </p>
+                <h3>Suporte a teclado</h3>
             </Description>
             <Code>
-                <CodeBlock Code="@AccessibilityCode" Language="html"/>
-                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <CodeBlock Code="@AccessibilityCode"/>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
                               new[] { "tab", "Move o foco para o componente." },
                               new[] { "left arrow / up arrow", "Decrementa o valor." },
                               new[] { "right arrow / down arrow", "Incrementa o valor." },
-                              new[] { "home", "Define o valor mínimo." },
-                              new[] { "end", "Define o valor máximo." },
+                              new[] { "home", "Define o valor mínimo do controle." },
+                              new[] { "end", "Define o valor máximo do controle." },
                               new[] { "page up", "Incrementa o valor em 10 passos." },
                               new[] { "page down", "Decrementa o valor em 10 passos." }
                           })"/>
@@ -45,69 +88,126 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "double", "50", "Posição do controle; usar com <code>&#64;bind-Value</code>." },
+                              new[] { "Min", "double", "0", "Valor mínimo aceito no callback." },
+                              new[] { "Max", "double", "100", "Valor máximo aceito no callback." },
+                              new[] { "TabIndex", "int", "0", "Índice de tabulação do componente." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo ARIA do componente." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o componente." },
+                              new[] { "Style", "string?", "null", "Estilo inline adicional (somado à variável de posição)." },
+                              new[] { "Left", "RenderFragment?", "null", "Imagem exibida à esquerda (fundo)." },
+                              new[] { "Right", "RenderFragment?", "null", "Imagem exibida à direita (recortada pelo controle)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ValueChanged", "EventCallback&lt;double&gt;", "Notifica a mudança da posição (binding de <code>Value</code>)." },
+                              new[] { "OnChange", "EventCallback&lt;double&gt;", "Disparado a cada movimentação do controle deslizante." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="imagecompare"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code> (repassados ao
+                    elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O <code>input type="range"</code> interno usa sempre <code>min="0"</code> e <code>max="100"</code>; <code>Min</code> e <code>Max</code> apenas limitam o valor no callback, não o intervalo do controle.</li>
+                        <li>A separação visual entre as imagens depende da variável de tema <code>--p-imagecompare-scope-x</code>.</li>
+                        <li>Não há suporte a toque/arraste próprio (usa o comportamento nativo do <code>input range</code>) nem rótulo de posição.</li>
+                        <li>O componente não fornece imagem alguma: os dois lados precisam ser informados via <code>Left</code> e <code>Right</code>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private double _value = 50;
+
     private const string ImportCode = """
-        import { ImageCompareModule } from 'primeng/imagecompare';
+        @using OpBlazorUI.Base.Components.ImageCompare
+
+        <OpImageCompare @bind-Value="_value">
+            <Left><img src="/antes.jpg" alt="Antes" /></Left>
+            <Right><img src="/depois.jpg" alt="Depois" /></Right>
+        </OpImageCompare>
+
+        @code {
+            private double _value = 50;
+        }
         """;
 
     private const string BasicCode = """
-        <div class="card flex justify-center">
-            <p-imagecompare class="shadow-lg rounded-2xl">
-                <ng-template #left>
-                    <img src="https://primefaces.org/cdn/primevue/images/compare/island1.jpg" />
-                </ng-template>
-                <ng-template #right>
-                    <img src="https://primefaces.org/cdn/primevue/images/compare/island2.jpg" />
-                </ng-template>
-            </p-imagecompare>
+        <div class="card flex flex-col gap-4 items-center">
+            <OpImageCompare @bind-Value="_value" StyleClass="w-full" Style="max-width:40rem;">
+                <Left>
+                    <img src="https://primefaces.org/cdn/primevue/images/compare/island1.jpg" alt="Antes" />
+                </Left>
+                <Right>
+                    <img src="https://primefaces.org/cdn/primevue/images/compare/island2.jpg" alt="Depois" />
+                </Right>
+            </OpImageCompare>
+            <span class="text-sm text-muted-color">Posição: @_value%</span>
         </div>
+
+        @code {
+            private double _value = 50;
+        }
         """;
 
     private const string ResponsiveCode = """
-        <div class="card flex justify-center">
-            <p-imagecompare class="sm:!w-96 shadow-lg rounded-2xl">
-                <ng-template #left>
-                    <img src="https://primefaces.org/cdn/primevue/images/compare/island1.jpg" />
-                </ng-template>
-                <ng-template #right>
-                    <img src="https://primefaces.org/cdn/primevue/images/compare/island2.jpg" />
-                </ng-template>
-            </p-imagecompare>
+        <div class="card flex flex-col gap-4 items-center">
+            <OpImageCompare @bind-Value="_value" StyleClass="md:!w-80">
+                <Left>
+                    <img src="https://primefaces.org/cdn/primevue/images/compare/island1.jpg" alt="Antes" />
+                </Left>
+                <Right>
+                    <img src="https://primefaces.org/cdn/primevue/images/compare/island2.jpg" alt="Depois" />
+                </Right>
+            </OpImageCompare>
         </div>
+
+        @code {
+            private double _value = 50;
+        }
         """;
 
     private const string AccessibilityCode = """
-        <span id="image_label">Compare Images</span>
-        <p-imagecompare class="shadow-lg rounded-2xl" aria-labelledby="image-label">
-            ...
-        </p-imagecompare>
+        <span id="compare-label">Imagens de satélite</span>
+        <OpImageCompare Left="..." Right="..." AriaLabelledBy="compare-label" />
 
-        <p-imagecompare class="shadow-lg rounded-2xl" aria-label="Compare Images">
-            ...
-        </p-imagecompare>
+        <OpImageCompare Left="..." Right="..." AriaLabel="Comparar imagens" />
         """;
 }

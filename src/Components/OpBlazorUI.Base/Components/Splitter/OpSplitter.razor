@@ -1,0 +1,9 @@
+@namespace OpBlazorUI.Base.Components.Splitter
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass" @ref="_root" @attributes="AdditionalAttributes">
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</div>
