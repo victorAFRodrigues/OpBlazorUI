@@ -75,6 +75,7 @@
 
     private RenderFragment BuildList(IReadOnlyList<object> options) => __builder =>
     {
+        _renderIndex = 0;
         <ul class="@ListClass" role="listbox" id="@($"{_id}_list")"
             aria-multiselectable="@(IsMultiple ? "true" : "false")"
             aria-label="@AriaLabel"
@@ -107,9 +108,9 @@
             }
             else
             {
-                @foreach (var option in options)
+                @for (var flatIndex = 0; flatIndex < options.Count; flatIndex++)
                 {
-                    @RenderOption(option)
+                    @RenderOption(options[flatIndex], flatIndex)
                 }
             }
 
@@ -133,9 +134,10 @@
         </ul>
     };
 
-    private RenderFragment RenderOption(object option) => __builder =>
+    private RenderFragment RenderOption(object option) => RenderOption(option, _renderIndex++);
+
+    private RenderFragment RenderOption(object option, int index) => __builder =>
     {
-        var index = VisibleOptions.IndexOf(option);
         var isSelected = IsSelected(option);
         var isDisabled = IsOptionDisabled(option);
 

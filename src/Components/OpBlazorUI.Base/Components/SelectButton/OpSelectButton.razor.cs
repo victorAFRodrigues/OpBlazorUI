@@ -1,6 +1,6 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Components.Select;
 
 namespace OpBlazorUI.Base.Components.SelectButton;
 
@@ -29,32 +29,20 @@ public partial class OpSelectButton<TValue> : OpInputBase<TValue>
         Fluid ? "p-selectbutton-fluid" : null,
         StyleClass);
 
-    private string GetOptionLabel(object option)
-    {
-        if (option is null) return string.Empty;
-        if (string.IsNullOrEmpty(OptionLabel)) return option is string s ? s : option.ToString() ?? string.Empty;
-        return GetPropertyValue(option, OptionLabel)?.ToString() ?? option.ToString() ?? string.Empty;
-    }
+    private string GetOptionLabel(object option) => OpSelectOption.GetLabel(option, OptionLabel);
 
     private object? GetOptionValue(object option)
     {
         if (option is null) return null;
-        if (!string.IsNullOrEmpty(OptionValue)) return GetPropertyValue(option, OptionValue);
-        if (!string.IsNullOrEmpty(OptionLabel)) return GetPropertyValue(option, OptionLabel);
+        if (!string.IsNullOrEmpty(OptionValue)) return OpSelectOption.GetValue(option, OptionValue);
+        if (!string.IsNullOrEmpty(OptionLabel)) return OpSelectOption.GetValue(option, OptionLabel);
         return option;
     }
 
     private bool IsOptionDisabled(object option)
     {
         if (option is null || string.IsNullOrEmpty(OptionDisabled)) return false;
-        return GetPropertyValue(option, OptionDisabled) is bool b && b;
-    }
-
-    private static object? GetPropertyValue(object obj, string propertyPath)
-    {
-        var property = obj.GetType().GetProperty(propertyPath,
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-        return property?.GetValue(obj);
+        return OpSelectOption.GetProperty(option, OptionDisabled) is bool b && b;
     }
 
     private bool IsSelected(object option)
@@ -64,29 +52,32 @@ public partial class OpSelectButton<TValue> : OpInputBase<TValue>
             var values = MultipleValue ?? Array.Empty<TValue>();
             foreach (var v in values)
             {
-                if (Equals(GetOptionValue(option), GetOptionValue((object)v!))) return true;
+                if (Equals(GetOptionValue(option), v)) return true;
             }
 
             return false;
         }
 
-        return Value is not null && Equals(GetOptionValue(option), GetOptionValue((object)Value));
+        return Value is not null && Equals(GetOptionValue(option), Value);
     }
 
     private RenderFragment<bool>? GetContentTemplate(object option, int index)
     {
-        if (ItemTemplate is null || option is not TValue tv) return null;
-        return _ => builder => ItemTemplate((tv, index))(builder);
+        if (ItemTemplate is null) return null;
+        var value = OpSelectOption.ToValue<TValue>(option, !string.IsNullOrEmpty(OptionValue) ? OptionValue : OptionLabel);
+        return _ => builder => ItemTemplate((value!, index))(builder);
     }
 
     private async Task OnOptionSelect(object option)
     {
-        if (Disabled || IsOptionDisabled(option) || option is not TValue tv) return;
+        if (Disabled || IsOptionDisabled(option)) return;
+
+        var value = OpSelectOption.ToValue<TValue>(option, !string.IsNullOrEmpty(OptionValue) ? OptionValue : OptionLabel);
 
         if (Multiple)
         {
             var list = (MultipleValue ?? Array.Empty<TValue>()).ToList();
-            var idx = list.FindIndex(v => Equals(GetOptionValue((object)v!), GetOptionValue(option)));
+            var idx = list.FindIndex(v => Equals(v, value));
             if (idx >= 0)
             {
                 if (AllowEmpty || list.Count > 1)
@@ -100,12 +91,12 @@ public partial class OpSelectButton<TValue> : OpInputBase<TValue>
             }
             else
             {
-                list.Add(tv);
+                list.Add(value!);
             }
 
             MultipleValue = list;
             await MultipleValueChanged.InvokeAsync(list);
-            await OnChange.InvokeAsync(tv);
+            await OnChange.InvokeAsync(value);
         }
         else
         {
@@ -117,8 +108,8 @@ public partial class OpSelectButton<TValue> : OpInputBase<TValue>
             }
             else
             {
-                CurrentValue = tv;
-                await OnChange.InvokeAsync(tv);
+                CurrentValue = value;
+                await OnChange.InvokeAsync(value);
             }
         }
     }

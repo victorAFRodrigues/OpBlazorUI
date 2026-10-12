@@ -1,6 +1,10 @@
 # Bloco 3 — Funcionalidade
 
-**Status:** proposta, aguardando aprovação.
+**Status:** em execução. **3.1 Seleção concluído** na branch `fix/bloco3-1-selecao` (empilhada no
+bloco 2); testes Playwright 6/6 e suíte 46/46.
+
+**Decisões aprovadas:** ordem por registro renumerado (sem `Index` novo por ora); `Command` →
+`EventCallback`; `Leaf` → `bool?`. Aplicadas conforme os grupos forem implementados.
 
 **Objetivo:** corrigir comportamentos errados, sem adicionar recursos novos. É o bloco maior;
 sugiro dividir em sub-branches por grupo (3.1 a 3.9), cada uma com sua página `/_tests/bloco3-*`.
@@ -9,21 +13,25 @@ Caminhos relativos a `src/Components/OpBlazorUI.Base/`.
 
 ## 3.1 Seleção (Select, MultiSelect, Listbox, AutoComplete, SelectButton, CascadeSelect)
 
-- [ ] **`OptionValue` (G):** a seleção só aceita `option is TValue` e grava a opção inteira; a
-  exibição faz `GetOptionValue((object)Value)` sobre o valor primitivo. Centralizar num helper
-  comum: gravar `GetOptionValue(option)` e comparar `GetOptionValue(option)` com `Value`.
-- [ ] `Select`: modo `Editable` é só um esqueleto (input sem `value` nem `@oninput`).
-- [ ] Navegação com grupos (Select, MultiSelect, AutoComplete): o índice usa os grupos em vez das
-  opções achatadas; Enter seleciona o grupo ou nada.
-- [ ] Select e MultiSelect: o input do filtro não trata ArrowDown/Enter.
-- [ ] `AutoComplete`: apagar o texto não limpa o `Value`; rótulo não é recalculado quando
-  `Suggestions` chega depois; `ForceSelection` diferencia maiúsculas; `Separator` duplica o texto;
-  todo foco chama `CompleteMethod` ignorando `MinLength`.
-- [ ] `Listbox`: `AllSelected` compara só a contagem; "selecionar todos" inclui desabilitados e
-  itens escondidos pelo filtro.
-- [ ] `MultiSelect`: off-by-one entre os modos chip e vírgula no "N items selected".
-- [ ] Desempenho: `RenderOption` faz `VisibleOptions.IndexOf` por opção (O(n²)) e cada
-  `mouseenter` chama `StateHasChanged`.
+**Feito** (helper comum `OpSelectOption` + correções por componente):
+
+- [x] **`OptionValue` (G):** helper `Components/Select/OpSelectOption.cs`. A seleção grava o valor da
+  opção (`ToValue`, com `Convert.ChangeType` de fallback) e compara `GetValue(option)` com o `Value`
+  primitivo (nunca reaplica `OptionValue` sobre ele). Aplicado em Select, MultiSelect, Listbox,
+  AutoComplete, SelectButton e CascadeSelect.
+- [x] `Select`: modo `Editable` com `value`/`@oninput` (digitar abre e filtra; `FilterActive`).
+- [x] Navegação com grupos (Select, MultiSelect): `NavigableOptions` usa os filhos achatados.
+- [x] Select e MultiSelect: o input do filtro também trata ArrowDown/ArrowUp/Enter.
+- [x] `AutoComplete`: apagar o texto limpa o `Value`; rótulo recalculado quando `Suggestions` chega
+  depois (compara referência); `ForceSelection` sem diferenciar maiúsculas; `Separator` separado no
+  `OnMultipleInput` (sem prender/duplicar); foco só chama `CompleteMethod` respeitando `MinLength`.
+- [x] `Listbox`: `AllSelected`/toggle-all usam `ToggleableOptions` (habilitadas e visíveis) em vez da
+  contagem.
+- [x] `MultiSelect`: "N items selected" alinhado (`> MaxSelectedLabels` nos dois modos).
+- [x] Desempenho: índice passado no render (sem `IndexOf` por opção); `mouseenter` só chama
+  `StateHasChanged` quando o índice muda.
+- [ ] Verificado com `/_tests/bloco3-1` + `Bloco3_1Tests` (6 cenários).
+
 
 ## 3.2 Formulários: EditContext e SSR
 

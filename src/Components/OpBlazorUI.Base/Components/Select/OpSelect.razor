@@ -25,9 +25,9 @@
               @onblur="OnLabelBlur"
               @onclick="OnLabelClick"
               @onkeydown="OnLabelKeydown">
-            @if (SelectedItemTemplate != null && HasSelection && SelectedOption is TValue selTv)
+            @if (SelectedItemTemplate != null && Value is not null)
             {
-                @SelectedItemTemplate(selTv)
+                @SelectedItemTemplate(Value)
             }
             else if (HasSelection)
             {
@@ -51,6 +51,8 @@
                placeholder="@Placeholder"
                aria-label="@AriaLabel"
                disabled="@Disabled"
+               value="@(_overlayVisible && !string.IsNullOrEmpty(_filterValue) ? _filterValue : CurrentLabel)"
+               @oninput="OnEditableInput"
                @onfocus="OnLabelFocus"
                @onblur="OnLabelBlur"
                @onclick="OnLabelClick"
@@ -117,7 +119,8 @@
                                placeholder="Filter"
                                aria-owns="@($"{_id}_list")"
                                aria-label="Filter"
-                               @oninput="OnFilterInput"/>
+                               @oninput="OnFilterInput"
+                               @onkeydown="OnLabelKeydown"/>
                         <OpInputIcon><i class="p-icon pi pi-search"></i></OpInputIcon>
                     </OpIconField>
                 </div>
@@ -200,9 +203,9 @@
             }
             else
             {
-                @foreach (var option in options)
+                @for (var flatIndex = 0; flatIndex < options.Count; flatIndex++)
                 {
-                    @RenderOption(option)
+                    @RenderOption(options[flatIndex], flatIndex)
                 }
             }
 
@@ -226,10 +229,8 @@
         </ul>
     };
 
-    private RenderFragment RenderOption(object option) => __builder =>
+    private RenderFragment RenderOption(object option, int index) => __builder =>
     {
-        var index = VisibleOptions.IndexOf(option);
-
         <li class="@OptionClass(option) @(_focusedOptionIndex == index ? "p-focus" : "")"
             id="@($"{_id}_{index}")"
             role="option"

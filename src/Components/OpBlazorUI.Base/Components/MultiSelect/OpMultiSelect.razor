@@ -38,7 +38,7 @@
             }
             else if (Display == "chip")
             {
-                @if (MaxSelectedLabels is { } max && SelectedOptions.Count >= max)
+                @if (MaxSelectedLabels is { } max && SelectedOptions.Count > max)
                 {
                     @($"{SelectedOptions.Count} items selected")
                 }
@@ -135,7 +135,8 @@
                                    placeholder="Filter"
                                    aria-owns="@($"{_id}_list")"
                                    aria-label="Filter"
-                                   @oninput="OnFilterInput"/>
+                                   @oninput="OnFilterInput"
+                                   @onkeydown="OnInputKeydown"/>
                             <OpInputIcon>
                                 <i class="p-icon pi pi-search"></i>
                             </OpInputIcon>
@@ -212,9 +213,9 @@
             }
             else
             {
-                @foreach (var option in options)
+                @for (var flatIndex = 0; flatIndex < options.Count; flatIndex++)
                 {
-                    @RenderOption(option)
+                    @RenderOption(options[flatIndex], flatIndex)
                 }
             }
 
@@ -238,9 +239,8 @@
         </ul>
     };
 
-    private RenderFragment RenderOption(object option) => __builder =>
+    private RenderFragment RenderOption(object option, int index) => __builder =>
     {
-        var index = VisibleOptions.IndexOf(option);
         var isSel = IsSelected(option);
 
         <li class="@OptionClass(option) @(_focusedOptionIndex == index ? "p-focus" : "")"
