@@ -26,6 +26,9 @@ public partial class OpFileUpload : OpComponentBase
     [Parameter] public long? MaxFileSize { get; set; }
     [Parameter] public int? FileLimit { get; set; }
 
+    /// <summary>Limite total (bytes) do conteúdo mantido em memória. Nulo = sem limite.</summary>
+    [Parameter] public long? MaxTotalSize { get; set; }
+
     [Parameter] public string ChooseLabel { get; set; } = "Escolher";
     [Parameter] public string UploadLabel { get; set; } = "Enviar";
     [Parameter] public string CancelLabel { get; set; } = "Cancelar";
@@ -93,14 +96,13 @@ public partial class OpFileUpload : OpComponentBase
     {
         _messages.Clear();
 
-        if (!Multiple)
-        {
-            _files.Clear();
-        }
-
-        IReadOnlyList<IBrowserFile> incoming = Multiple
-            ? e.GetMultipleFiles(FileLimit ?? int.MaxValue)
+        // Sempre lê sem limite do Blazor e aplica o FileLimit no loop: GetMultipleFiles(limit)
+        // lança InvalidOperationException se o usuário escolher mais arquivos que o limite.
+        var incoming = Multiple
+            ? e.GetMultipleFiles(int.MaxValue)
             : new[] { e.File };
+
+        var accepted = new List<OpFileUploadFile>();
 
         foreach (var browserFile in incoming)
         {
@@ -111,18 +113,46 @@ public partial class OpFileUpload : OpComponentBase
                 continue;
             }
 
-            if (_files.Any(f => SameFile(f, candidate)))
-            {
-                continue;
-            }
-
-            if (FileLimit is int limit && _files.Count >= limit)
+            if (FileLimit is int limit && _files.Count + accepted.Count >= limit)
             {
                 _messages.Add(("error", $"Limite de {limit} arquivo(s) excedido."));
                 break;
             }
 
-            _files.Add(candidate);
+            if (Multiple && _files.Concat(accepted).Any(f => SameFile(f, candidate)))
+            {
+                continue;
+            }
+
+            byte[]? content;
+            try
+            {
+                content = await ReadContentAsync(browserFile);
+            }
+            catch (IOException)
+            {
+                _messages.Add(("error", $"Não foi possível ler {candidate.Name}: arquivo acima do limite de leitura."));
+                continue;
+            }
+
+            if (MaxTotalSize is long total && TotalSizeWith(accepted, content.Length) > total)
+            {
+                _messages.Add(("error", $"O tamanho total excede o limite de {FormatSize(total)}."));
+                break;
+            }
+
+            accepted.Add(new OpFileUploadFile(browserFile, content: content));
+        }
+
+        if (Multiple)
+        {
+            _files.AddRange(accepted);
+        }
+        else if (accepted.Count > 0)
+        {
+            // Só substitui o arquivo atual quando a nova escolha é válida.
+            _files.Clear();
+            _files.Add(accepted[0]);
         }
 
         await OnSelect.InvokeAsync(_files.ToList());
@@ -135,6 +165,21 @@ public partial class OpFileUpload : OpComponentBase
         StateHasChanged();
     }
 
+    private long TotalSizeWith(List<OpFileUploadFile> accepted, int length)
+        => _files.Sum(f => f.Size) + accepted.Sum(f => f.Size) + length;
+
+    private async Task<byte[]> ReadContentAsync(IBrowserFile browserFile)
+    {
+        var maxAllowed = MaxFileSize ?? DefaultReadLimit;
+
+        await using var stream = browserFile.OpenReadStream(maxAllowed);
+        using var buffer = new MemoryStream();
+        await stream.CopyToAsync(buffer);
+        return buffer.ToArray();
+    }
+
+    private const long DefaultReadLimit = 10L * 1024 * 1024;
+
     public async Task UploadAsync()
     {
         if (Disabled || !HasFiles)
@@ -144,14 +189,30 @@ public partial class OpFileUpload : OpComponentBase
 
         var pending = _files.ToList();
 
-        if (UploadHandler.HasDelegate)
+        if (CustomUpload)
         {
-            await UploadHandler.InvokeAsync(pending);
+            // Sem handler não há envio customizado: não marca como enviado.
+            if (!UploadHandler.HasDelegate)
+            {
+                return;
+            }
+
+            try
+            {
+                await UploadHandler.InvokeAsync(pending);
+            }
+            catch (Exception ex)
+            {
+                _messages.Add(("error", $"Falha ao enviar: {ex.Message}"));
+                await OnError.InvokeAsync(pending);
+                StateHasChanged();
+                return;
+            }
         }
 
         foreach (var file in pending)
         {
-            _uploadedFiles.Add(new OpFileUploadFile(file.File, isUploaded: true));
+            _uploadedFiles.Add(new OpFileUploadFile(file.File, isUploaded: true, content: file.Content));
         }
 
         _files.Clear();
@@ -224,9 +285,17 @@ public partial class OpFileUpload : OpComponentBase
                 continue;
             }
 
+            // "*" e "*/*" aceitam qualquer tipo; sem este tratamento "*/*" rejeitava tudo e "*"
+            // lançava ArgumentOutOfRangeException no slice abaixo.
+            if (type is "*" or "*/*")
+            {
+                return true;
+            }
+
             if (type.Contains('*'))
             {
-                var prefix = type[..type.IndexOf('/')];
+                var slash = type.IndexOf('/');
+                var prefix = slash >= 0 ? type[..slash] : type;
                 if (file.ContentType.StartsWith(prefix + "/", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;

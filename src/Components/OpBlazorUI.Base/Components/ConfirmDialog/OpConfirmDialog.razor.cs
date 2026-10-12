@@ -81,9 +81,14 @@ public partial class OpConfirmDialog : OpModalBase
             return;
         }
 
-        _resolved = ResolveOptions(options);
-        _visible = true;
-        _ = InvokeAsync(StateHasChanged);
+        // O serviço pode disparar de uma thread de fundo (Server): altera o estado dentro do
+        // InvokeAsync para rodar no contexto de sincronização do render.
+        _ = InvokeAsync(() =>
+        {
+            _resolved = ResolveOptions(options);
+            _visible = true;
+            StateHasChanged();
+        });
     }
 
     private ConfirmOptions ResolveOptions(ConfirmOptions options) => new()
