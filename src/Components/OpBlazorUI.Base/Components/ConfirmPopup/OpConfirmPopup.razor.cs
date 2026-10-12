@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using OpBlazorUI.Base.Components.Common;
 using OpBlazorUI.Base.Components.ConfirmDialog.Models;
 
@@ -15,10 +13,8 @@ public partial class OpConfirmPopup : OpComponentBase
 {
     private ElementReference _root;
     private ElementReference? _anchor;
-    private DotNetObjectReference<OpConfirmPopup>? _selfRef;
     private bool _visible;
     private bool _opening;
-    private bool _listening;
     private bool _focusTrapped;
     private bool _disposed;
     private string _messageId = "";
@@ -86,23 +82,16 @@ public partial class OpConfirmPopup : OpComponentBase
         await CloseAsync(false);
     }
 
-    private async Task OnKeydown(KeyboardEventArgs e)
-    {
-        if (CloseOnEscape && e.Key == "Escape")
-        {
-            // Mesmo comportamento do upstream: Escape dispara o reject.
-            await OnRejectClick();
-        }
-    }
+    // Clique fora (com DismissableMask) e Escape chegam pelo OpOverlayAttach. Como no upstream,
+    // Escape dispara o reject.
+    private EventCallback EscapeCallback =>
+        CloseOnEscape ? EventCallback.Factory.Create(this, OnRejectClick) : default;
 
-    [JSInvokable]
-    public Task OnOutsideClick() => CloseAsync(false);
+    private Task OnOutsideClickAsync() => CloseAsync(false);
 
     private async Task CloseAsync(bool? accepted)
     {
         if (!_visible) return;
-
-        await RemoveOutsideListenerAsync();
 
         // Solta o trap antes de o painel sair do DOM (o elemento precisa estar anexado).
         if (_focusTrapped)
@@ -130,11 +119,6 @@ public partial class OpConfirmPopup : OpComponentBase
         if (!_opening) return;
         _opening = false;
 
-        if (DismissableMask)
-        {
-            await AddOutsideListenerAsync();
-        }
-
         // O upstream usa pFocusTrap no popup: o trap também faz o foco inicial no botão
         // indicado por DefaultFocus ("none" ou valor desconhecido não foca nada).
         try
@@ -156,54 +140,10 @@ public partial class OpConfirmPopup : OpComponentBase
         _ => null
     };
 
-    private async Task AddOutsideListenerAsync()
-    {
-        if (_listening) return;
-        _listening = true;
-        _selfRef ??= DotNetObjectReference.Create(this);
-        try
-        {
-            await Interop.InvokeVoidAsync(
-                OpInterop.OptimusInterop, "addOutsideClickListener", _root, _anchor, _selfRef);
-        }
-        catch
-        {
-            _listening = false;
-        }
-    }
-
-    private async Task RemoveOutsideListenerAsync()
-    {
-        if (!_listening) return;
-        _listening = false;
-        try
-        {
-            await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "removeOutsideClickListener", _root);
-        }
-        catch
-        {
-            // ignore
-        }
-    }
-
     public override async ValueTask DisposeAsync()
     {
         if (_disposed) return;
         _disposed = true;
-
-        if (_listening)
-        {
-            try
-            {
-                await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "removeOutsideClickListener", _root);
-            }
-            catch
-            {
-                // ignore
-            }
-        }
-
-        _selfRef?.Dispose();
         await base.DisposeAsync();
     }
 }

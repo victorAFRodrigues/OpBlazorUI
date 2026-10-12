@@ -20,12 +20,8 @@
          aria-modal="@(Modal ? "true" : null)"
          aria-labelledby="@(_headerId)"
          tabindex="-1"
-         @onkeydown="OnKeydown"
          @attributes="AdditionalAttributes">
-        @if (AutoZIndex)
-        {
-            <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex" MaskPrevious="Modal"/>
-        }
+        <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex" MaskPrevious="Modal" AutoZIndex="AutoZIndex" OnEscape="EscapeCallback"/>
         @if (ShowHeader)
         {
             <div class="p-drawer-header">

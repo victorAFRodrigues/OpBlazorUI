@@ -29,4 +29,6 @@ dotnet test tests/OpBlazorUI.Playwright/OpBlazorUI.Playwright.csproj
 
 ## CI
 
-Nenhum workflow roda estes testes hoje (o `ci.yml` só faz restore/build/pack). Por ora, são locais.
+O workflow `ci.yml` tem o job `Test (Playwright)`: faz build em Debug, instala o Chromium
+(`playwright.ps1 install --with-deps chromium`) e roda `dotnet test`. Localmente, instale o
+navegador uma vez (ver Pré-requisitos) e rode `dotnet test`.

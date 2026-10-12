@@ -5,7 +5,7 @@
 @typeparam TValue
 @inherits OpInputBase<TValue>
 
-<span class="@RootClass" @ref="_rootRef" @onfocusout="OnRootFocusOut" @onfocusin="OnRootFocusIn"
+<span class="@RootClass" @ref="_rootRef"
       @onkeydown="OnRootKeydown" @attributes="AdditionalAttributes">
     @if (Multiple)
     {
@@ -124,9 +124,8 @@
     @if (_panelRendered)
     {
         <div class="@PanelClass"
-             @onmousedown="OnPanelMouseDown"
              @onanimationend="OnPanelAnimationEnd">
-            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2"/>
+            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2" OnOutsideClick="CloseAsync" OnEscape="CloseAsync"/>
             <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
 
             @HeaderTemplate

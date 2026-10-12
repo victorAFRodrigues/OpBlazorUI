@@ -4,7 +4,7 @@
 @inherits OpComponentBase
 
 <div class="@RootClass" role="meter"
-     aria-valuemin="@Min" aria-valuemax="@Max" aria-valuenow="@TotalPercent"
+     aria-valuemin="@OpCss.Num(Min)" aria-valuemax="@OpCss.Num(Max)" aria-valuenow="@TotalPercent"
      data-p="@Orientation" @attributes="AdditionalAttributes">
     @if (LabelPosition == "start")
     {

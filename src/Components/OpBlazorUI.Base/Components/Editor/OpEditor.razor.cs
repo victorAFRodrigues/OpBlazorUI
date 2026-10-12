@@ -11,6 +11,7 @@ public partial class OpEditor : OpComponentBase
     private ElementReference _toolbarRef;
     private DotNetObjectReference<OpEditor>? _selfRef;
     private bool _initialized;
+    private bool _loadFailed;
     private bool _appliedReadOnly;
     private string? _lastValue;
 
@@ -86,7 +87,20 @@ public partial class OpEditor : OpComponentBase
             config["formats"] = Formats;
         }
 
-        await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "init", _selfRef, _id, _contentRef, _toolbarRef, config);
+        // false: Quill ausente (erro já registrado no log pelo OpInterop) ou init abortado
+        // porque o componente foi descartado enquanto aguardava o Quill.
+        var ok = await Interop.InvokeAsync<bool>(OpInterop.EditorInterop, "init", _selfRef, _id, _contentRef, _toolbarRef, config);
+        if (!ok)
+        {
+            if (!Interop.IsDisposed)
+            {
+                _loadFailed = true;
+                StateHasChanged();
+            }
+
+            return;
+        }
+
         _initialized = true;
         _appliedReadOnly = Readonly || Disabled;
         _lastValue = Value;
@@ -127,16 +141,10 @@ public partial class OpEditor : OpComponentBase
     // ------------------------------------------------------------ dispose
     public override async ValueTask DisposeAsync()
     {
-        if (_initialized)
+        // Também sem init concluído: o destroy marca o id e um init pendente é abortado no JS.
+        if (_selfRef is not null)
         {
-            try
-            {
-                await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "destroy", _id);
-            }
-            catch
-            {
-                // ignore
-            }
+            await Interop.InvokeVoidAsync(OpInterop.EditorInterop, "destroy", _id);
         }
 
         _selfRef?.Dispose();

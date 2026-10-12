@@ -14,8 +14,6 @@ public partial class OpMenu : ComponentBase
     private bool _panelClosing;
     private string? _panelAnimationClass;
 
-    private bool _focusInside;
-    private DateTime _lastPanelPointerDown = DateTime.MinValue;
     private ElementReference _listRef;
     private ElementReference? _target;
 
@@ -119,42 +117,11 @@ public partial class OpMenu : ComponentBase
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnRootFocusIn(FocusEventArgs e)
-    {
-        _focusInside = true;
-    }
-
-    /// <summary>
-    /// Marca a interação com o painel. Itens sem <c>Url</c> não são focáveis, então
-    /// clicar neles dispara <c>focusout</c> e fecharia o popup antes de o item
-    /// receber o clique.
-    /// </summary>
-    private void OnPanelMouseDown()
-    {
-        _lastPanelPointerDown = DateTime.UtcNow;
-        _focusInside = true;
-    }
-
-    private async Task OnRootFocusOut(FocusEventArgs e)
-    {
-        if (!_overlayVisible || _panelClosing || !Popup) return;
-
-        _focusInside = false;
-
-        await Task.Delay(10);
-
-        var interactedWithPanel = (DateTime.UtcNow - _lastPanelPointerDown).TotalMilliseconds < 250;
-
-        if (!_focusInside && !interactedWithPanel)
-        {
-            await HideAsync();
-        }
-    }
-
+    // Clique fora e Escape (popup) chegam pelo OpOverlayAttach. Sair com Tab fecha aqui.
     private async Task OnRootKeydown(KeyboardEventArgs e)
     {
         if (!Popup) return;
-        if (e.Key == "Escape" && _overlayVisible)
+        if (e.Key == "Tab" && _overlayVisible)
         {
             await HideAsync();
         }

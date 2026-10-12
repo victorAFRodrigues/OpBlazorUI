@@ -14,10 +14,10 @@
          role="dialog"
          aria-labelledby="@_messageId"
          tabindex="-1"
-         @onkeydown="OnKeydown"
          @attributes="AdditionalAttributes">
 
-        <OpOverlayAttach Anchor="_anchor" Placement="@Placement" KeepMargin="true" Arrow="popover" />
+        <OpOverlayAttach Anchor="_anchor" Placement="@Placement" KeepMargin="true" Arrow="popover"
+                         OnOutsideClick="OnOutsideClickAsync" Dismissable="DismissableMask" OnEscape="EscapeCallback"/>
 
         <div class="p-confirmpopup-content">
             @if (!string.IsNullOrEmpty(Icon))

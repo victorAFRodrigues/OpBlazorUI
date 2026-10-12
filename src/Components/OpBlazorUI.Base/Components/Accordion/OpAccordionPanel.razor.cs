@@ -4,7 +4,7 @@ using OpBlazorUI.Base.Components.Common;
 
 namespace OpBlazorUI.Base.Components.Accordion;
 
-public partial class OpAccordionPanel : OpComponentBase, IDisposable
+public partial class OpAccordionPanel : OpComponentBase
 {
     private readonly string _uid = "opacc_" + Guid.NewGuid().ToString("N")[..8];
 
@@ -28,7 +28,11 @@ public partial class OpAccordionPanel : OpComponentBase, IDisposable
 
     protected override void OnInitialized() => Parent?.Register(this);
 
-    public void Dispose() => Parent?.Unregister(this);
+    public override ValueTask DisposeAsync()
+    {
+        Parent?.Unregister(this);
+        return base.DisposeAsync();
+    }
 
     private async Task ToggleAsync()
     {

@@ -2,8 +2,14 @@
 @using OpBlazorUI.Base.Models
 @using OpBlazorUI.Base.Components.Common
 @inherits OpComponentBase
+@using OpBlazorUI.Base.Components.Overlay
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
+    @* Com algum submenu aberto, o root entra na pilha de overlays: clique fora e Escape fecham. *@
+    @if (_open.Count > 0)
+    {
+        <OpOverlayAttach AutoZIndex="false" OnOutsideClick="CloseAllAsync" OnEscape="CloseAllAsync"/>
+    }
     @if (StartTemplate is not null)
     {
         <div class="p-megamenu-start">@StartTemplate</div>

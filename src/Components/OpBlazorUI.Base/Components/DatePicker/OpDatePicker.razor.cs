@@ -69,8 +69,6 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
     private bool _pm;
 
     private bool _focus;
-    private bool _focusInside;
-    private DateTime _lastPanelPointerDown = DateTime.MinValue;
 
     private string _inputText = "";
     private DateTime? _prevSingle;
@@ -736,43 +734,18 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnRootFocusIn(FocusEventArgs e)
+    // Clique fora e Escape chegam pelo OpOverlayAttach. O Tab fecha só a partir do input
+    // (OnInputKeydown): dentro do painel ele navega entre os botões de mês/ano e de horário.
+    private async Task OnOverlayOutsideClick()
     {
-        _focusInside = true;
-    }
-
-    /// <summary>
-    /// Marca a interação com o painel. Os dias do calendário não são focáveis, então
-    /// clicar neles dispara <c>focusout</c> no input e fecharia o overlay antes de o
-    /// usuário terminar a seleção (range e horário).
-    /// </summary>
-    private void OnPanelMouseDown()
-    {
-        _lastPanelPointerDown = DateTime.UtcNow;
-        _focusInside = true;
-    }
-
-    private async Task OnRootFocusOut(FocusEventArgs e)
-    {
-        if (!_overlayVisible || Inline || _panelClosing) return;
-
-        _focusInside = false;
-
-        await Task.Delay(10);
-
-        var interactedWithPanel = (DateTime.UtcNow - _lastPanelPointerDown).TotalMilliseconds < 250;
-
-        if (!_focusInside && !interactedWithPanel)
-        {
-            await OnClickOutside.InvokeAsync();
-            await CloseAsync();
-        }
+        if (!_overlayVisible || _panelClosing) return;
+        await OnClickOutside.InvokeAsync();
+        await CloseAsync();
     }
 
     private async Task OnInputFocusEvent(FocusEventArgs e)
     {
         _focus = true;
-        _focusInside = true;
 
         await OnFocus.InvokeAsync(e);
         await OnInputFocus();
@@ -816,14 +789,9 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
             case "ArrowDown":
                 await OpenAsync();
                 break;
-        }
-    }
-
-    private async Task OnRootKeydown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Escape" && _overlayVisible)
-        {
-            await CloseAsync();
+            case "Tab":
+                await CloseAsync();
+                break;
         }
     }
 

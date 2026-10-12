@@ -10,6 +10,8 @@
     private ElementReference _marker;
     private bool _attached;
     private bool _disposed;
+    private DotNetObjectReference<OpOverlayAttach>? _selfRef;
+    private (bool Outside, bool Escape) _appliedDismiss;
 
     /// <summary>Elemento de referência. Sem âncora, o painel só recebe o z-index da camada.</summary>
     [Parameter] public ElementReference? Anchor { get; set; }
@@ -21,6 +23,9 @@
     [Parameter] public string Layer { get; set; } = "overlay";
 
     [Parameter] public int BaseZIndex { get; set; }
+
+    /// <summary>Aplica o z-index da camada. Desligado, o overlay só registra clique fora/Escape.</summary>
+    [Parameter] public bool AutoZIndex { get; set; } = true;
 
     /// <summary>Lado preferido: <c>bottom</c>, <c>top</c>, <c>left</c> ou <c>right</c>. Inverte se não couber.</summary>
     [Parameter] public string Placement { get; set; } = "bottom";
@@ -43,33 +48,64 @@
     /// <summary>Dá ao irmão anterior do painel (a máscara) o z-index do painel menos 1.</summary>
     [Parameter] public bool MaskPrevious { get; set; }
 
+    /// <summary>
+    /// Disparado num <c>pointerdown</c> fora do painel, da âncora e de overlays abertos acima
+    /// deste. Só é registrado quando há handler e <see cref="Dismissable"/> é <c>true</c>.
+    /// </summary>
+    [Parameter] public EventCallback OnOutsideClick { get; set; }
+
+    /// <summary>
+    /// Disparado no Escape quando este é o overlay do topo que aceita Escape. A tecla não
+    /// propaga, então overlays abaixo (ex.: o Dialog que contém um Select) não a recebem.
+    /// </summary>
+    [Parameter] public EventCallback OnEscape { get; set; }
+
+    /// <summary>Liga/desliga o fechamento por clique fora sem remover o handler.</summary>
+    [Parameter] public bool Dismissable { get; set; } = true;
+
+    private bool DismissOutside => OnOutsideClick.HasDelegate && Dismissable;
+    private bool DismissEscape => OnEscape.HasDelegate;
+
+    private object Options => new
+    {
+        layer = Layer,
+        baseZIndex = BaseZIndex,
+        autoZIndex = AutoZIndex,
+        positioned = Anchor is not null || AnchorPrevious,
+        anchorPrevious = AnchorPrevious,
+        placement = Placement,
+        align = Align,
+        matchWidth = MatchWidth,
+        gap = Gap,
+        keepMargin = KeepMargin,
+        arrow = Arrow,
+        maskPrevious = MaskPrevious,
+        dismissOutside = DismissOutside,
+        dismissEscape = DismissEscape
+    };
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender || _disposed) return;
-        try
+        if (_disposed) return;
+
+        var dismiss = (DismissOutside, DismissEscape);
+        if (dismiss is not (false, false))
         {
-            await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "attachParent", _marker, Anchor, new
-            {
-                layer = Layer,
-                baseZIndex = BaseZIndex,
-                positioned = Anchor is not null || AnchorPrevious,
-                anchorPrevious = AnchorPrevious,
-                placement = Placement,
-                align = Align,
-                matchWidth = MatchWidth,
-                gap = Gap,
-                keepMargin = KeepMargin,
-                arrow = Arrow,
-                maskPrevious = MaskPrevious
-            });
-            if (_disposed) return;
-            _attached = true;
+            _selfRef ??= DotNetObjectReference.Create(this);
         }
-        catch (JSDisconnectedException)
+
+        if (firstRender)
         {
+            await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "attachParent", _marker, Anchor, Options, _selfRef);
+            _appliedDismiss = dismiss;
+            if (!_disposed) _attached = true;
+            return;
         }
-        catch (TaskCanceledException)
+
+        if (_attached && dismiss != _appliedDismiss)
         {
+            _appliedDismiss = dismiss;
+            await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "updateDismissParent", _marker, Anchor, Options, _selfRef);
         }
     }
 
@@ -77,33 +113,26 @@
     public async Task UpdateAsync()
     {
         if (!_attached) return;
-        try
-        {
-            await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "updateParent", _marker);
-        }
-        catch (JSDisconnectedException)
-        {
-        }
+        await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "updateParent", _marker);
     }
+
+    [JSInvokable]
+    public Task OnOverlayOutsideClick() => _disposed || !DismissOutside ? Task.CompletedTask : OnOutsideClick.InvokeAsync();
+
+    [JSInvokable]
+    public Task OnOverlayEscape() => _disposed || !DismissEscape ? Task.CompletedTask : OnEscape.InvokeAsync();
 
     public override async ValueTask DisposeAsync()
     {
         if (_disposed) return;
         _disposed = true;
-        try
+
+        if (_attached)
         {
-            if (_attached)
-            {
-                await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "detachParent", _marker);
-            }
-        }
-        catch (JSDisconnectedException)
-        {
-        }
-        catch (TaskCanceledException)
-        {
+            await Interop.InvokeVoidAsync(OpInterop.OverlayInterop, "detachParent", _marker);
         }
 
+        _selfRef?.Dispose();
         await base.DisposeAsync();
     }
 }

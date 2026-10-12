@@ -13,6 +13,19 @@ public partial class OpMegaMenu : OpComponentBase
     [Parameter] public RenderFragment? EndTemplate { get; set; }
     [Parameter] public EventCallback<OpMenuItem> OnItemClick { get; set; }
 
+    /// <summary>Fecha todos os submenus abertos.</summary>
+    public void CloseAll()
+    {
+        _open.Clear();
+        StateHasChanged();
+    }
+
+    private Task CloseAllAsync()
+    {
+        CloseAll();
+        return Task.CompletedTask;
+    }
+
     private string RootClass => Class("p-megamenu p-component", StyleClass);
 
     private bool IsOpen(OpMenuItem item) => _open.Contains(item);

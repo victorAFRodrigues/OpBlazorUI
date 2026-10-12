@@ -11,6 +11,19 @@ public partial class OpTieredMenu : OpComponentBase
     [Parameter] public IReadOnlyList<OpMenuItem> Model { get; set; } = Array.Empty<OpMenuItem>();
     [Parameter] public EventCallback<OpMenuItem> OnItemClick { get; set; }
 
+    /// <summary>Fecha todos os submenus abertos.</summary>
+    public void CloseAll()
+    {
+        _open.Clear();
+        StateHasChanged();
+    }
+
+    private Task CloseAllAsync()
+    {
+        CloseAll();
+        return Task.CompletedTask;
+    }
+
     private string RootClass => Class("p-tieredmenu p-component", StyleClass);
 
     private bool IsOpen(string path) => _open.Contains(path);

@@ -31,12 +31,12 @@ public partial class OpSlider : OpInputBase<double>
         StyleClass);
 
     private string RangeStyle => Orientation == "vertical"
-        ? $"height: {SliderMath.ToPercent(Value, Min, Max):0.####}%"
-        : $"width: {SliderMath.ToPercent(Value, Min, Max):0.####}%";
+        ? $"height: {OpCss.Num(SliderMath.ToPercent(Value, Min, Max))}%"
+        : $"width: {OpCss.Num(SliderMath.ToPercent(Value, Min, Max))}%";
 
     private string HandleStyle => Orientation == "vertical"
-        ? $"bottom: {SliderMath.ToPercent(Value, Min, Max):0.####}%"
-        : $"inset-inline-start: {SliderMath.ToPercent(Value, Min, Max):0.####}%";
+        ? $"bottom: {OpCss.Num(SliderMath.ToPercent(Value, Min, Max))}%"
+        : $"inset-inline-start: {OpCss.Num(SliderMath.ToPercent(Value, Min, Max))}%";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
