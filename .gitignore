@@ -491,3 +491,14 @@ $RECYCLE.BIN/
 /tools/doc-upstream/out/
 /tools/doc-upstream/optimus/
 /tools/doc-upstream/src/
+
+# graphify — só graph.json + GRAPH_REPORT.md são versionados; o resto é efêmero
+# (cache por versão, ponteiros absolutos de máquina, HTML grande). Regenere com /graphify.
+/graphify-out/cache/
+/graphify-out/.graphify_*
+/graphify-out/*.sig
+/graphify-out/graph.html
+/graphify-out/manifest.json
+/graphify-out/cost.json
+# backups datados criados pelo graphify (ex.: graphify-out/2026-10-12/)
+/graphify-out/20*/
