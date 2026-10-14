@@ -57,6 +57,9 @@ public sealed class OpTranslation
     public string FileChosenMessage { get; set; } = "{0} files chosen";
     public string NoFileChosenMessage { get; set; } = "No file chosen";
 
+    /// <summary>Mensagem de validação de um valor não conversível (com <c>{0}</c> = valor e <c>{1}</c> = tipo).</summary>
+    public string InvalidValue { get; set; } = "The value '{0}' is not valid for {1}.";
+
     /// <summary>Placeholder/rótulo do campo de filtro embutido nos seletores (extensão nossa).</summary>
     public string FilterPlaceholder { get; set; } = "Filter";
 
@@ -99,6 +102,11 @@ public sealed class OpTranslation
     public string Medium { get; set; } = "Medium";
     public string Strong { get; set; } = "Strong";
     public string PasswordPrompt { get; set; } = "Enter a password";
+
+    // Números (InputNumber): separadores e símbolo explícitos, no lugar de CultureInfo/ICU.
+    public string DecimalSeparator { get; set; } = ".";
+    public string ThousandSeparator { get; set; } = ",";
+    public string CurrencySymbol { get; set; } = "$";
 
     // Editor (toolbar própria; o miolo do texto fica a cargo do Quill).
     public OpEditorTranslation Editor { get; set; } = new();

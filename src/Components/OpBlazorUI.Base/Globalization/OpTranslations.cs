@@ -53,6 +53,7 @@ public static class OpTranslations
         EmptySearchMessage = "Nenhum resultado encontrado",
         FileChosenMessage = "{0} arquivos escolhidos",
         NoFileChosenMessage = "Nenhum arquivo escolhido",
+        InvalidValue = "O valor '{0}' não é válido para {1}.",
         FilterPlaceholder = "Filtrar",
         FilterColumn = "Filtrar {0}",
 
@@ -87,6 +88,10 @@ public static class OpTranslations
         Medium = "Média",
         Strong = "Forte",
         PasswordPrompt = "Digite uma senha",
+
+        DecimalSeparator = ",",
+        ThousandSeparator = ".",
+        CurrencySymbol = "R$",
 
         Editor = new OpEditorTranslation
         {
