@@ -1,11 +1,17 @@
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Common;
 using OpBlazorUI.Base.Components.Paginator;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.DataView;
 
 public partial class OpDataView<TItem> : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public IReadOnlyList<TItem> Items { get; set; } = Array.Empty<TItem>();
 
     /// <summary>Layout: <c>list</c> ou <c>grid</c>.</summary>
@@ -27,7 +33,7 @@ public partial class OpDataView<TItem> : OpComponentBase
     [Parameter] public RenderFragment? TemplateRight { get; set; }
 
     [Parameter] public bool Loading { get; set; }
-    [Parameter] public string? EmptyMessage { get; set; } = "No records found.";
+    [Parameter] public string? EmptyMessage { get; set; }
 
     [Parameter] public RenderFragment? HeaderTemplate { get; set; }
     [Parameter] public RenderFragment? FooterTemplate { get; set; }

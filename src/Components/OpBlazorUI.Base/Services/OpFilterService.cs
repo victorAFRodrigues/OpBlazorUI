@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
-using System.Text;
+using OpBlazorUI.Base.Globalization;
 
 namespace OpBlazorUI.Base.Services;
 
@@ -33,8 +33,10 @@ public enum OpFilterMatchMode
 
 /// <summary>
 /// Porte do <c>FilterService</c> do PrimeNG/Optimus UI v21: filtra coleções por um ou mais
-/// campos usando um <see cref="_filters">modo de comparação</see>. A comparação de texto ignora
-/// acentos e caixa. Modos customizados podem ser adicionados via <see cref="Register(string, Func{object?, object?, CultureInfo, bool})"/>.
+/// campos usando um <see cref="_filters">modo de comparação</see>. A comparação de texto é
+/// ordinal — ignora acentos e caixa sem depender de cultura/ICU. A cultura informada nos métodos
+/// só afeta a conversão de campos tipados e os modos customizados. Modos customizados podem ser
+/// adicionados via <see cref="Register(string, Func{object?, object?, CultureInfo, bool})"/>.
 /// </summary>
 public sealed class OpFilterService
 {
@@ -161,21 +163,21 @@ public sealed class OpFilterService
     {
         if (IsBlank(filter)) return true;
         if (value is null) return false;
-        return Normalize(value, culture).StartsWith(Normalize(filter, culture), StringComparison.Ordinal);
+        return Normalize(value).StartsWith(Normalize(filter), StringComparison.Ordinal);
     }
 
     private static bool StringContains(object? value, object? filter, CultureInfo culture)
     {
         if (IsBlank(filter)) return true;
         if (value is null) return false;
-        return Normalize(value, culture).Contains(Normalize(filter, culture), StringComparison.Ordinal);
+        return Normalize(value).Contains(Normalize(filter), StringComparison.Ordinal);
     }
 
     private static bool StringEnds(object? value, object? filter, CultureInfo culture)
     {
         if (IsBlank(filter)) return true;
         if (value is null) return false;
-        return Normalize(value, culture).EndsWith(Normalize(filter, culture), StringComparison.Ordinal);
+        return Normalize(value).EndsWith(Normalize(filter), StringComparison.Ordinal);
     }
 
     private static bool ValueEquals(object? value, object? filter, CultureInfo culture)
@@ -199,7 +201,7 @@ public sealed class OpFilterService
             }
         }
 
-        return string.Equals(Normalize(value, culture), Normalize(filter, culture), StringComparison.Ordinal);
+        return string.Equals(Normalize(value), Normalize(filter), StringComparison.Ordinal);
     }
 
     private static bool ValueIn(object? value, object? filter, CultureInfo culture)
@@ -255,7 +257,7 @@ public sealed class OpFilterService
             }
         }
 
-        return string.CompareOrdinal(Normalize(value, culture), Normalize(filter, culture));
+        return string.CompareOrdinal(Normalize(value), Normalize(filter));
     }
 
     private static int DateCompare(object? value, object? filter)
@@ -283,24 +285,8 @@ public sealed class OpFilterService
     private static bool IsBlank(object? filter)
         => filter is null || (filter is string text && text.Trim().Length == 0);
 
-    private static string Normalize(object? value, CultureInfo culture)
-        => RemoveAccents(value?.ToString() ?? string.Empty).ToLower(culture);
-
-    private static string RemoveAccents(string text)
-    {
-        var normalized = text.Normalize(NormalizationForm.FormD);
-        var builder = new StringBuilder(normalized.Length);
-
-        foreach (var character in normalized)
-        {
-            if (CharUnicodeInfo.GetUnicodeCategory(character) != UnicodeCategory.NonSpacingMark)
-            {
-                builder.Append(character);
-            }
-        }
-
-        return builder.ToString().Normalize(NormalizationForm.FormC);
-    }
+    private static string Normalize(object? value)
+        => OpText.Normalize(value?.ToString());
 
     private static object? ResolveFieldData(object? item, string field)
     {

@@ -54,6 +54,7 @@ public static class OpTranslations
         FileChosenMessage = "{0} arquivos escolhidos",
         NoFileChosenMessage = "Nenhum arquivo escolhido",
         FilterPlaceholder = "Filtrar",
+        FilterColumn = "Filtrar {0}",
 
         DayNames = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"],
         DayNamesShort = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"],

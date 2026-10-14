@@ -60,6 +60,9 @@ public sealed class OpTranslation
     /// <summary>Placeholder/rótulo do campo de filtro embutido nos seletores (extensão nossa).</summary>
     public string FilterPlaceholder { get; set; } = "Filter";
 
+    /// <summary>Nome acessível do filtro de uma coluna, com <c>{0}</c> = cabeçalho (extensão nossa).</summary>
+    public string FilterColumn { get; set; } = "Filter {0}";
+
     // Data / hora (DatePicker).
     public string[] DayNames { get; set; } =
         ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

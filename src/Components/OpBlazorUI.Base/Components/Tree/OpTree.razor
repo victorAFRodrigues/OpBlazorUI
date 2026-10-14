@@ -27,8 +27,8 @@
                    role="searchbox"
                    autocomplete="off"
                    value="@_filterValue"
-                   placeholder="@FilterPlaceholder"
-                   aria-label="@FilterPlaceholder"
+                   placeholder="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
+                   aria-label="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
                    @oninput="OnFilterInput"/>
             <OpInputIcon>
                 <i class="p-icon pi pi-search" aria-hidden="true"></i>

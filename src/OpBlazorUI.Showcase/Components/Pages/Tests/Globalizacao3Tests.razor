@@ -1,0 +1,73 @@
+@page "/_tests/globalizacao-3"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Components.DataView
+@using OpBlazorUI.Base.Components.Tree
+@using OpBlazorUI.Base.Components.TreeTable
+@using OpBlazorUI.Base.Globalization
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Services
+@inject OpTranslationService TranslationService
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Globalizacao3Tests.cs).
+   Fixa a tradução em pt-BR para verificar vazio, aria de filtro e o comparador ordinal nas tabelas/árvore. *@
+
+<PageTitle>Testes: globalização lote 3</PageTitle>
+
+<h1 id="t-title">Testes: globalização lote 3</h1>
+
+<section id="t-datatable">
+    <OpDataTable Items="_emptyRows" Columns="_cols"/>
+</section>
+
+<section id="t-dataview">
+    <OpDataView TItem="string" Items="_emptyStrings"/>
+</section>
+
+<section id="t-treetable">
+    <OpTreeTable Nodes="_nodes" Columns="_ttCols"/>
+</section>
+
+<section id="t-treetable-empty">
+    <OpTreeTable Nodes="_emptyNodes" Columns="_ttCols"/>
+</section>
+
+<section id="t-tree">
+    <OpTree Nodes="_treeNodes" Filter="true"/>
+</section>
+
+@code {
+    private sealed record Row(string Name);
+
+    private readonly List<Row> _emptyRows = new();
+    private readonly List<string> _emptyStrings = new();
+    private readonly List<OpTreeNode> _emptyNodes = new();
+
+    private readonly List<OpDataTableColumn> _cols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome", Filter = true }
+    };
+
+    private readonly List<OpTreeTableColumn> _ttCols = new()
+    {
+        new OpTreeTableColumn { Field = "Label", Header = "Nome" }
+    };
+
+    private readonly List<OpTreeNode> _nodes = new()
+    {
+        new OpTreeNode
+        {
+            Key = "p",
+            Label = "Pai",
+            Children = new() { new OpTreeNode { Key = "f", Label = "Filho" } }
+        }
+    };
+
+    private readonly List<OpTreeNode> _treeNodes = new()
+    {
+        new OpTreeNode { Key = "a", Label = "São Paulo" },
+        new OpTreeNode { Key = "b", Label = "Curitiba" }
+    };
+
+    protected override void OnInitialized() => TranslationService.SetTranslation(OpTranslations.PtBr);
+}
