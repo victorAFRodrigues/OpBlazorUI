@@ -1,250 +1,505 @@
 @page "/galleria"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Galleria
+@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Base.Components.SelectButton
 
 <PageTitle>Galleria - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Galleria"
-              Description="Galleria é um componente avançado de galeria de conteúdo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="Galleria é um componente avançado de galeria de imagens com miniaturas, indicadores, autoplay, legenda e modo tela cheia.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>A Galleria exige um <code>value</code> como uma coleção de imagens, um template <code>item</code> para a imagem em alta resolução e um template <code>thumbnail</code> para exibir como miniatura.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A Galleria exige um <code>Value</code> como coleção de itens, um <code>ItemTemplate</code> para a
+                    imagem em alta resolução e um <code>ThumbnailTemplate</code> para a miniatura. O número de
+                    miniaturas visíveis é definido por <code>NumVisible</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" NumVisible="5" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <ThumbnailTemplate Context="photo">
+                            <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ThumbnailTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Controlado" Id="controlled">
-            <Description><p>A Galleria pode ser controlada programaticamente usando a propriedade <code>activeIndex</code>.</p></Description>
-            <Code><CodeBlock Code="@ControlledCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A Galleria pode ser controlada programaticamente com <code>@@bind-ActiveIndex</code>. Os botões abaixo
+                    alteram o slide ativo; o índice atual é exibido ao lado.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4 items-center">
+                    <div class="flex gap-2 items-center">
+                        <OpButton Icon="pi pi-minus" AriaLabel="Anterior" OnClick="Prev"/>
+                        <OpButton Icon="pi pi-plus" AriaLabel="Próximo" Severity="secondary" OnClick="Next"/>
+                        <span class="text-sm text-muted-color">Slide @(_activeIndex + 1) de @_photos.Length</span>
+                    </div>
+                    <div class="card flex justify-center">
+                        <OpGalleria TItem="Photo" Value="_photos" @bind-ActiveIndex="_activeIndex"
+                                    Circular="true" NumVisible="5" ContainerStyle="max-width:640px;">
+                            <ItemTemplate Context="photo">
+                                <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                            </ItemTemplate>
+                            <ThumbnailTemplate Context="photo">
+                                <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                            </ThumbnailTemplate>
+                        </OpGalleria>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ControlledCode"/></Code>
         </DocSection>
 
         <DocSection Label="Miniaturas" Id="thumbnail">
-            <Description><p>A Galleria pode ser controlada programaticamente usando a propriedade <code>activeIndex</code>.</p></Description>
-            <Code><CodeBlock Code="@ThumbnailCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A posição das miniaturas é definida com <code>ThumbnailsPosition</code>
+                    (<code>bottom</code>, <code>top</code>, <code>left</code> ou <code>right</code>), e podem ser
+                    ocultadas com <code>ShowThumbnails="false"</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <div class="flex justify-center">
+                        <OpSelectButton TValue="string" @bind-Value="_thumbPosition"
+                                        Options="_positionOptions" AllowEmpty="false"/>
+                    </div>
+                    <div class="card flex justify-center">
+                        <OpGalleria TItem="Photo" Value="_photos" NumVisible="5"
+                                    ThumbnailsPosition="@_thumbPosition" ContainerStyle="max-width:640px;">
+                            <ItemTemplate Context="photo">
+                                <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                            </ItemTemplate>
+                            <ThumbnailTemplate Context="photo">
+                                <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                            </ThumbnailTemplate>
+                        </OpGalleria>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ThumbnailCode"/></Code>
         </DocSection>
 
         <DocSection Label="Responsivo" Id="responsive">
-            <Description><p>A responsividade da Galleria é definida com a propriedade <code>responsiveOptions</code>.</p></Description>
-            <Code><CodeBlock Code="@ResponsiveCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    A responsividade é declarada com <code>ResponsiveOptions</code>, uma coleção de breakpoints com
+                    <code>NumVisible</code>. Nesta versão a propriedade é aceita mas ainda não aplicada — veja
+                    Problemas Conhecidos.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" NumVisible="5" Circular="true"
+                                ResponsiveOptions="_responsiveOptions" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <ThumbnailTemplate Context="photo">
+                            <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ThumbnailTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ResponsiveCode"/></Code>
         </DocSection>
 
         <DocSection Label="Reprodução Automática" Id="autoplay">
-            <Description><p>Uma implementação de apresentação de slides é definida adicionando as propriedades <code>circular</code> e <code>autoPlay</code>.</p></Description>
-            <Code><CodeBlock Code="@AutoPlayCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Uma apresentação de slides é criada com <code>AutoPlay="true"</code> e <code>Circular="true"</code>.
+                    O intervalo entre as transições é definido em milissegundos por
+                    <code>TransitionInterval</code> (padrão <code>4000</code>).
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" NumVisible="5" Circular="true"
+                                AutoPlay="true" TransitionInterval="3000" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <ThumbnailTemplate Context="photo">
+                            <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ThumbnailTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AutoPlayCode"/></Code>
         </DocSection>
 
         <DocSection Label="Legenda" Id="caption">
-            <Description><p>A descrição de uma imagem é especificada com o template <code>caption</code>.</p></Description>
-            <Code><CodeBlock Code="@CaptionCode" Language="html"/></Code>
+            <Description>
+                <p>A descrição de uma imagem é especificada com o template <code>CaptionTemplate</code>.</p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" NumVisible="5" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <ThumbnailTemplate Context="photo">
+                            <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ThumbnailTemplate>
+                        <CaptionTemplate Context="photo">
+                            <div class="text-xl font-bold">@photo.Title</div>
+                            <p class="text-sm">@photo.Alt</p>
+                        </CaptionTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CaptionCode"/></Code>
         </DocSection>
 
         <DocSection Label="Avançado" Id="advanced">
-            <Description><p>A Galleria pode ser estendida ainda mais para implementar requisitos complexos.</p></Description>
-            <Code><CodeBlock Code="@AdvancedCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    Com <code>FullScreen="true"</code> a galeria é exibida dentro de uma camada modal controlada por
+                    <code>@@bind-Visible</code>. Use um botão para abrir a tela cheia; o botão de fechar do componente
+                    fecha a sobreposição.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col gap-4 items-center">
+                    <OpButton Label="Abrir em tela cheia" Icon="pi pi-external-link"
+                              OnClick="OpenFullscreen"/>
+                    <OpGalleria TItem="Photo" Value="_photos" FullScreen="true" @bind-Visible="_fullscreenVisible"
+                                Circular="true" NumVisible="5" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <ThumbnailTemplate Context="photo">
+                            <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ThumbnailTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AdvancedCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>A Galleria usa o papel <code>region</code> e, como qualquer atributo é repassado ao elemento contêiner principal, atributos como <code>aria-label</code> e <code>aria-roledescription</code> também podem ser usados. O contêiner de slides tem o atributo <code>aria-live</code> definido como "polite" se a galleria não estiver no modo de reprodução automática; caso contrário, o valor em reprodução automática é "off".</p>
-                <p>Um slide tem o papel <code>group</code> com um aria-label que se refere à propriedade <code>aria.slideNumber</code> da API de <a href="/configuration/#locale">locale</a>. Da mesma forma, <code>aria.slide</code> é usado como <code>aria-roledescription</code> do item. Slides inativos são ocultados dos leitores com <code>aria-hidden</code>.</p>
-                <p>Os navegadores Próximo e Anterior são elementos <code>button</code> com atributos <code>aria-label</code> que se referem, por padrão, às propriedades <code>aria.nextPageLabel</code> e <code>aria.firstPageLabel</code> da API de <a href="/configuration/#locale">locale</a>, respectivamente; ainda é possível usar seus próprios papéis e atributos ARIA, pois qualquer atributo válido é repassado aos elementos de botão implicitamente por meio de <code>nextButtonProps</code> e <code>prevButtonProps</code>.</p>
-                <p>Os elementos de navegação rápida e as miniaturas seguem o padrão de abas. Eles são colocados dentro de um elemento com o papel <code>tablist</code>, enquanto cada item tem o papel <code>tab</code> com os atributos <code>aria-selected</code> e <code>aria-controls</code>. O atributo <code>aria-label</code> de um item de navegação rápida refere-se a <code>aria.pageLabel</code> da API de <a href="/configuration/#locale">locale</a>. A página atual é marcada com <code>aria-current</code>.</p>
-                <p>No modo tela cheia, o elemento modal usa o papel <code>dialog</code> com <code>aria-modal</code> habilitado. O botão de fechar obtém o <code>aria-label</code> da propriedade <code>aria.close</code> da API de <a href="/configuration/#locale">locale</a>.</p>
+                <p>
+                    A Galleria não define papéis ARIA ricos por padrão; o elemento raiz recebe os atributos extras
+                    repassados (por exemplo, <code>aria-label</code> ou <code>aria-roledescription</code>). Os botões de
+                    navegação e de miniaturas são <code>button</code> nativos com <code>aria-label</code>. Indicadores e
+                    miniaturas usam <code>tabindex="0"</code> para serem alcançáveis por teclado.
+                </p>
+                <p>
+                    No modo tela cheia, a sobreposição usa <code>role="dialog"</code> com <code>aria-modal="true"</code>.
+                    Use os atributos adicionais para descrever a galeria.
+                </p>
                 <h3>Suporte a teclado</h3>
             </Description>
             <Code>
-                <ApiTable Caption="Navegação Anterior/Próximo"
+                <CodeBlock Code="@AccessibilityCode"/>
+                <ApiTable Caption="Navegação"
                           Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Move o foco pelos elementos interativos do carrossel." },
-                              new[] { "enter", "Ativa a navegação." },
-                              new[] { "space", "Ativa a navegação." }
-                          })"/>
-                <ApiTable Caption="Navegação Rápida"
-                          Headers="@(new[] { "Tecla", "Função" })"
-                          Rows="@(new[] {
-                              new[] { "tab", "Move o foco pelo link do slide ativo." },
-                              new[] { "enter", "Ativa o link do slide focado." },
-                              new[] { "space", "Ativa o link do slide focado." },
-                              new[] { "right arrow", "Move o foco para o próximo link de slide." },
-                              new[] { "left arrow", "Move o foco para o link de slide anterior." },
-                              new[] { "home", "Move o foco para o primeiro link de slide." },
-                              new[] { "end", "Move o foco para o último link de slide." }
+                              new[] { "tab", "Move o foco pelos botões de navegação, indicadores e miniaturas." },
+                              new[] { "enter / space", "Ativa o elemento focado (navegar, selecionar indicador ou miniatura)." },
+                              new[] { "left / right arrow", "Move o foco entre indicadores e miniaturas (previsto no upstream; não implementado nesta versão)." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "IReadOnlyList&lt;TItem&gt;", "[]", "Coleção de itens exibida pela galeria." },
+                              new[] { "ActiveIndex", "int", "0", "Índice do item ativo; usar com <code>&#64;bind-ActiveIndex</code>." },
+                              new[] { "Visible", "bool", "false", "Visibilidade no modo tela cheia (two-way)." },
+                              new[] { "FullScreen", "bool", "false", "Habilita o modo tela cheia em camada modal." },
+                              new[] { "NumVisible", "int", "3", "Quantidade de miniaturas visíveis na janela." },
+                              new[] { "Circular", "bool", "false", "Retorna ao primeiro item após o último (e vice-versa)." },
+                              new[] { "AutoPlay", "bool", "false", "Avança os slides automaticamente." },
+                              new[] { "TransitionInterval", "int", "4000", "Intervalo do autoplay, em milissegundos." },
+                              new[] { "ShowIndicators", "bool", "false", "Exibe a lista de indicadores." },
+                              new[] { "ShowIndicatorsOnItem", "bool", "false", "Sobrepõe os indicadores à imagem." },
+                              new[] { "IndicatorsPosition", "string", "\"bottom\"", "Posição dos indicadores: <code>bottom</code>, <code>top</code>, <code>left</code> ou <code>right</code>." },
+                              new[] { "ShowThumbnails", "bool", "true", "Exibe a faixa de miniaturas." },
+                              new[] { "ThumbnailsPosition", "string", "\"bottom\"", "Posição das miniaturas: <code>bottom</code>, <code>top</code>, <code>left</code> ou <code>right</code>." },
+                              new[] { "ShowItemNavigators", "bool", "false", "Exibe os botões de navegação sobre o item." },
+                              new[] { "ShowItemNavigatorsOnHover", "bool", "false", "Exibe os botões de navegação apenas ao passar o mouse." },
+                              new[] { "ResponsiveOptions", "object?", "null", "Breakpoints responsivos (aceito, ainda não aplicado)." },
+                              new[] { "ContainerStyle", "string?", "null", "Estilo inline do contêiner." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ActiveIndexChanged", "EventCallback&lt;int&gt;", "Notifica a mudança do item ativo (binding de <code>ActiveIndex</code>)." },
+                              new[] { "VisibleChanged", "EventCallback&lt;bool&gt;", "Notifica a abertura/fechamento da tela cheia (binding de <code>Visible</code>)." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ItemTemplate", "RenderFragment&lt;TItem&gt;?", "Conteúdo do slide ativo." },
+                              new[] { "ThumbnailTemplate", "RenderFragment&lt;TItem&gt;?", "Conteúdo de cada miniatura." },
+                              new[] { "CaptionTemplate", "RenderFragment&lt;TItem&gt;?", "Legenda sobreposta ao slide." },
+                              new[] { "IndicatorTemplate", "RenderFragment&lt;int&gt;?", "Conteúdo de cada indicador; o contexto é o índice." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Conteúdo exibido acima da galeria." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Conteúdo exibido abaixo da galeria." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Registro do item (exemplo Photo)" Id="api-item">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ItemImageSrc", "string", "URL da imagem em alta resolução." },
+                              new[] { "ThumbnailImageSrc", "string", "URL da imagem de miniatura." },
+                              new[] { "Alt", "string", "Texto alternativo da imagem." },
+                              new[] { "Title", "string", "Título exibido na legenda." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="galleria"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code> (repassados ao
+                    elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li><code>ResponsiveOptions</code> é aceito por compatibilidade, mas os breakpoints não são aplicados: <code>NumVisible</code> permanece fixo.</li>
+                        <li>As miniaturas são exibidas em uma janela de <code>NumVisible</code> itens, sem <em>swipe</em>/arraste e sem suporte a toque.</li>
+                        <li>O autoplay é um timer que reinicia a cada renderização (a cada atualização de parâmetros), podendo reiniciar a contagem.</li>
+                        <li>No modo tela cheia o overlay não possui <em>focus-trap</em> nem bloqueio de rolagem; a raiz fica oculta e o conteúdo só é renderizado quando <code>Visible</code> é <code>true</code>.</li>
+                        <li>Indicadores e miniaturas têm <code>tabindex="0"</code>, mas a navegação por setas do upstream não foi implementada (apenas clique e tabulação).</li>
+                        <li>Os rótulos acessíveis (Anterior/Próximo/Fechar) estão fixos em pt-BR, sem integração com a API de <em>locale</em>.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    public sealed record Photo(string ItemImageSrc, string ThumbnailImageSrc, string Alt, string Title);
+
+    private static readonly Photo[] _photos =
+    [
+        new("https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg", "https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg", "Descrição da imagem 10", "Título 10"),
+        new("https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg", "https://primefaces.org/cdn/primeng/images/galleria/galleria11.jpg", "Descrição da imagem 11", "Título 11"),
+        new("https://primefaces.org/cdn/primeng/images/galleria/galleria12.jpg", "https://primefaces.org/cdn/primeng/images/galleria/galleria12.jpg", "Descrição da imagem 12", "Título 12"),
+        new("https://primefaces.org/cdn/primeng/images/galleria/galleria3.jpg", "https://primefaces.org/cdn/primeng/images/galleria/galleria3.jpg", "Descrição da imagem 3", "Título 3"),
+        new("https://primefaces.org/cdn/primeng/images/galleria/galleria4.jpg", "https://primefaces.org/cdn/primeng/images/galleria/galleria4.jpg", "Descrição da imagem 4", "Título 4")
+    ];
+
+    private static readonly object[] _positionOptions = ["bottom", "top", "left", "right"];
+
+    private static readonly object[] _responsiveOptions =
+    [
+        new { Breakpoint = "1024px", NumVisible = 5 },
+        new { Breakpoint = "640px", NumVisible = 3 }
+    ];
+
+    private int _activeIndex;
+    private string _thumbPosition = "bottom";
+    private bool _fullscreenVisible;
+
+    private void Prev()
+    {
+        if (_activeIndex > 0)
+        {
+            _activeIndex--;
+        }
+    }
+
+    private void Next()
+    {
+        if (_activeIndex < _photos.Length - 1)
+        {
+            _activeIndex++;
+        }
+    }
+
+    private void OpenFullscreen() => _fullscreenVisible = true;
+
     private const string ImportCode = """
-        import { GalleriaModule } from 'primeng/galleria';
+        @using OpBlazorUI.Base.Components.Galleria
         """;
 
     private const string BasicCode = """
-        <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
-            <ng-template #item let-item>
-                <img [src]="item.itemImageSrc" style="width:100%" />
-            </ng-template>
-            <ng-template #thumbnail let-item>
-                <img [src]="item.thumbnailImageSrc" />
-            </ng-template>
-        </p-galleria>
+        <OpGalleria TItem="Photo" Value="_photos" NumVisible="5" ContainerStyle="max-width:640px;">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;" />
+            </ThumbnailTemplate>
+        </OpGalleria>
+
+        @code {
+            public sealed record Photo(string ItemImageSrc, string ThumbnailImageSrc, string Alt, string Title);
+
+            private readonly Photo[] _photos =
+            [
+                new("https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg", "https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg", "Descrição da imagem", "Título")
+            ];
+        }
         """;
 
     private const string ControlledCode = """
-        <div class="mb-4">
-            <p-button type="button" icon="pi pi-minus" (click)="prev()" />
-            <p-button type="button" icon="pi pi-plus" (click)="next()" severity="secondary" styleClass="ml-2" />
-        </div>
-        <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" [(activeIndex)]="activeIndex">
-            <ng-template #item let-item>
-                <img [src]="item.itemImageSrc" style="width: 100%;" />
-            </ng-template>
-            <ng-template #thumbnail let-item>
-                <img [src]="item.thumbnailImageSrc" />
-            </ng-template>
-        </p-galleria>
+        <OpButton Icon="pi pi-minus" AriaLabel="Anterior" OnClick="Prev" />
+        <OpButton Icon="pi pi-plus" AriaLabel="Próximo" Severity="secondary" OnClick="Next" />
+
+        <OpGalleria TItem="Photo" Value="_photos" @bind-ActiveIndex="_activeIndex" Circular="true" NumVisible="5">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" style="width:100%; display:block;" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" style="display:block;" />
+            </ThumbnailTemplate>
+        </OpGalleria>
+
+        @code {
+            private int _activeIndex;
+
+            private void Prev() { if (_activeIndex > 0) _activeIndex--; }
+            private void Next() { if (_activeIndex < _photos.Length - 1) _activeIndex++; }
+        }
         """;
 
     private const string ThumbnailCode = """
-        <div class="flex flex-wrap gap-4 mb-8">
-            <div *ngFor="let option of positionOptions" class="flex items-center">
-                <p-radiobutton [name]="option.label" [value]="option.value" [label]="option.label" [(ngModel)]="position" [inputId]="label" />
-                <label [for]="option.label" class="ml-2"> {{ option.label }} </label>
-            </div>
-        </div>
-        <p-galleria [(value)]="images" [thumbnailsPosition]="position" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5" >
-            <ng-template pTemplate="item" let-item>
-                <img [src]="item.itemImageSrc" style="width: 100%; display: block" />
-            </ng-template>
-            <ng-template pTemplate="thumbnail" let-item>
-                <div class="grid gap-4 justify-center">
-                    <img [src]="item.thumbnailImageSrc" style="width: 100%; display: block" />
-                </div>
-            </ng-template>
-        </p-galleria>
+        <OpSelectButton TValue="string" @bind-Value="_position" Options="_positionOptions" AllowEmpty="false" />
+
+        <OpGalleria TItem="Photo" Value="_photos" NumVisible="5" ThumbnailsPosition="@_position">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" style="width:100%; display:block;" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" style="display:block;" />
+            </ThumbnailTemplate>
+        </OpGalleria>
+
+        @code {
+            private string _position = "bottom";
+            private readonly object[] _positionOptions = ["bottom", "top", "left", "right"];
+        }
         """;
 
     private const string ResponsiveCode = """
-        <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="7" [circular]="true">
-            <ng-template #item let-item>
-                <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
-            </ng-template>
-            <ng-template #thumbnail let-item>
-                <img [src]="item.thumbnailImageSrc" style="width: 100%; display: block;" />
-            </ng-template>
-        </p-galleria>
+        <OpGalleria TItem="Photo" Value="_photos" NumVisible="5" Circular="true" ResponsiveOptions="_responsiveOptions">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" style="width:100%; display:block;" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" style="display:block;" />
+            </ThumbnailTemplate>
+        </OpGalleria>
+
+        @code {
+            private readonly object[] _responsiveOptions =
+            [
+                new { Breakpoint = "1024px", NumVisible = 5 },
+                new { Breakpoint = "640px", NumVisible = 3 }
+            ];
+        }
         """;
 
     private const string AutoPlayCode = """
-        <p-galleria [(value)]="images" [autoPlay]="true" [circular]="true" [responsiveOptions]="responsiveOptions" [numVisible]="5" [containerStyle]="{ 'max-width': '640px' }">
-            <ng-template #item let-item>
-                <img [src]="item.itemImageSrc" style="width: 100%; display: block" />
-            </ng-template>
-            <ng-template #thumbnail let-item>
-                <img [src]="item.thumbnailImageSrc" style="display: block" />
-            </ng-template>
-        </p-galleria>
+        <OpGalleria TItem="Photo" Value="_photos" NumVisible="5" Circular="true"
+                    AutoPlay="true" TransitionInterval="3000">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" style="width:100%; display:block;" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" style="display:block;" />
+            </ThumbnailTemplate>
+        </OpGalleria>
         """;
 
     private const string CaptionCode = """
-        <p-galleria [(value)]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
-            <ng-template #item let-item>
-                <img [src]="item.itemImageSrc" style="width: 100%; display: block;" />
-            </ng-template>
-            <ng-template #thumbnail let-item>
-                <img [src]="item.thumbnailImageSrc" style="display: block;" />
-            </ng-template>
-            <ng-template #caption let-item>
-                <div class="text-xl mb-2 font-bold">{{ item.title }}</div>
-                <p class="text-white">{{ item.alt }}</p>
-            </ng-template>
-        </p-galleria>
+        <OpGalleria TItem="Photo" Value="_photos" NumVisible="5">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" style="width:100%; display:block;" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" style="display:block;" />
+            </ThumbnailTemplate>
+            <CaptionTemplate Context="photo">
+                <div class="text-xl font-bold">@photo.Title</div>
+                <p class="text-sm">@photo.Alt</p>
+            </CaptionTemplate>
+        </OpGalleria>
         """;
 
     private const string AdvancedCode = """
-        <p-galleria
-            #galleria
-            [(value)]="images"
-            [(activeIndex)]="activeIndex"
-            [numVisible]="5"
-            [showThumbnails]="showThumbnails"
-            [showItemNavigators]="true"
-            [showItemNavigatorsOnHover]="true"
-            [circular]="true"
-            [autoPlay]="isAutoPlay"
-            [transitionInterval]="3000"
-            [containerStyle]="{ 'max-width': '640px' }"
-            [pt]="galleriaPT"
-        >
-            <ng-template #item let-item>
-                <img [src]="item.itemImageSrc" [ngStyle]="{ width: !fullscreen ? '100%' : '', display: !fullscreen ? 'block' : '' }" />
-            </ng-template>
-            <ng-template #thumbnail let-item>
-                <div class="grid gap-4 justify-center">
-                    <img [src]="item.thumbnailImageSrc" style="display: block" />
-                </div>
-            </ng-template>
-            <ng-template #footer let-item>
-                <div class="flex items-stretch gap-2 bg-surface-950 text-white h-10">
-                    <button
-                        type="button"
-                        pButton
-                        icon="pi pi-th-large"
-                        (click)="onThumbnailButtonClick()"
-                        class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3"
-                    ></button>
-                    <button
-                        type="button"
-                        pButton
-                        [icon]="slideButtonIcon()"
-                        (click)="toggleAutoSlide()"
-                        class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3"
-                    ></button>
-                    <span *ngIf="images" class="flex items-center gap-4 ml-3">
-                        <span class="text-sm">{{ activeIndex + 1 }}/{{ images.length }}</span>
-                        <span class="font-bold text-sm">{{ images[activeIndex].title }}</span>
-                        <span class="text-sm">{{ images[activeIndex].alt }}</span>
-                    </span>
-                    <button
-                        type="button"
-                        pButton
-                        [icon]="fullScreenIcon()"
-                        (click)="toggleFullScreen()"
-                        class="bg-transparent border-none rounded-none hover:bg-white/10 text-white inline-flex justify-center items-center cursor-pointer px-3 ml-auto"
-                    ></button>
-                </div>
-            </ng-template>
-        </p-galleria>
+        <OpButton Label="Abrir em tela cheia" Icon="pi pi-external-link" OnClick="OpenFullscreen" />
+
+        <OpGalleria TItem="Photo" Value="_photos" FullScreen="true" @bind-Visible="_fullscreen" Circular="true" NumVisible="5">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" style="width:100%; display:block;" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" style="display:block;" />
+            </ThumbnailTemplate>
+        </OpGalleria>
+
+        @code {
+            private bool _fullscreen;
+
+            private void OpenFullscreen() => _fullscreen = true;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <OpGalleria TItem="Photo" Value="_photos" aria-label="Galeria de fotos">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+        </OpGalleria>
         """;
 }

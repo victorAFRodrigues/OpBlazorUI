@@ -1,0 +1,61 @@
+@namespace OpBlazorUI.Base.Components.Image
+@using OpBlazorUI.Base.Components.Common
+@inherits OpComponentBase
+
+<span class="@RootClass" @attributes="AdditionalAttributes">
+    @if (ImageTemplate is not null)
+    {
+        @ImageTemplate
+    }
+    else
+    {
+        <img class="@ImageClass"
+             style="@ImageStyle"
+             src="@Src"
+             srcset="@SrcSet"
+             sizes="@Sizes"
+             alt="@Alt"
+             width="@Width"
+             height="@Height"
+             loading="@Loading"
+             @onerror="HandleImageError" />
+    }
+
+    @if (Preview)
+    {
+        <button type="button" class="p-image-preview-mask" aria-label="@AriaZoomImage" @onclick="OpenPreview">
+            @if (IndicatorTemplate is not null)
+            {
+                @IndicatorTemplate
+            }
+            else
+            {
+                <i class="pi pi-search p-image-preview-icon" aria-hidden="true"></i>
+            }
+        </button>
+    }
+
+    @if (_previewVisible)
+    {
+        <div class="p-image-mask p-overlay-mask" role="dialog" aria-modal="true" style="z-index:1100;" @onclick="ClosePreviewAsync">
+            <div class="p-image-toolbar" @onclick:stopPropagation="true">
+                <button type="button" class="p-image-action p-image-rotate-right-button" aria-label="Girar para a direita" @onclick="RotateRight">
+                    <i class="pi pi-refresh" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="p-image-action p-image-rotate-left-button" aria-label="Girar para a esquerda" @onclick="RotateLeft">
+                    <i class="pi pi-refresh" style="transform:scaleX(-1);" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="@ZoomOutButtonClass" aria-label="Reduzir" @onclick="ZoomOut">
+                    <i class="pi pi-search-minus" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="@ZoomInButtonClass" aria-label="Ampliar" @onclick="ZoomIn">
+                    <i class="pi pi-search-plus" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="p-image-action p-image-close-button" aria-label="Fechar" @onclick="ClosePreviewAsync">
+                    <i class="pi pi-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <img class="p-image-original" src="@PreviewSource" style="@PreviewImageStyle" @onclick:stopPropagation="true" />
+        </div>
+    }
+</span>

@@ -1,44 +1,112 @@
 @page "/panel"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Panel
 
 <PageTitle>Panel - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Panel"
-              Description="Contêiner com recurso opcional de alternância de conteúdo. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Panel é um contêiner com cabeçalho e recurso opcional de recolher o conteúdo.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>Um Panel simples é criado com a propriedade <code>header</code> junto ao conteúdo como filhos.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>Um Panel simples é criado com a propriedade <code>Header</code> e o conteúdo como filho.</p>
+            </Description>
+            <ChildContent>
+                <OpPanel Header="Cabeçalho">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                </OpPanel>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Expansível" Id="toggleable">
-            <Description><p>O conteúdo do painel pode ser expandido e recolhido com a opção <code>toggleable</code>; o estado inicial é definido por <code>collapsed</code>. Por padrão, o ícone de alternância é usado para alternar o conteúdo, enquanto definir <code>toggler="header"</code> permite clicar em qualquer lugar do cabeçalho para alternar.</p></Description>
-            <Code><CodeBlock Code="@ToggleableCode" Language="html"/></Code>
+        <DocSection Label="Colapsável" Id="toggleable">
+            <Description>
+                <p>
+                    O conteúdo é expandido e recolhido com <code>Toggleable</code>. O estado inicial é definido por
+                    <code>Collapsed</code> (usar <code>@@bind-Collapsed</code> para duas vias). Por padrão o botão do
+                    cabeçalho alterna o conteúdo; com <code>Toggler="header"</code> o clique em qualquer parte do
+                    cabeçalho alterna.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2">
+                    <OpPanel Header="Cabeçalho" Toggleable="true" @bind-Collapsed="_collapsed">
+                        <p class="m-0">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua.
+                        </p>
+                    </OpPanel>
+                    <span class="text-sm">Estado: <b>@(_collapsed ? "recolhido" : "expandido")</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ToggleableCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template" Id="template">
-            <Description><p>As seções de cabeçalho e rodapé podem ser personalizadas com os templates <code>header</code> e <code>footer</code>. Veja também <a href="/avatar">Avatar</a>, <a href="/button">Button</a> e <a href="/menu">Menu</a>.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    As áreas do cabeçalho, dos ícones e do rodapé podem ser customizadas com os templates
+                    <code>HeaderTemplate</code>, <code>IconsTemplate</code> e <code>FooterTemplate</code>. O conteúdo
+                    também pode ser substituído com <code>ContentTemplate</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpPanel Toggleable="true">
+                    <HeaderTemplate>
+                        <div class="flex items-center gap-2">
+                            <i class="pi pi-user"></i>
+                            <span class="font-bold">Amy Elsner</span>
+                        </div>
+                    </HeaderTemplate>
+                    <IconsTemplate>
+                        <i class="pi pi-cog"></i>
+                    </IconsTemplate>
+                    <ChildContent>
+                        <p class="m-0">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua.
+                        </p>
+                    </ChildContent>
+                    <FooterTemplate>
+                        <div class="flex items-center gap-2">
+                            <i class="pi pi-bookmark"></i>
+                            <span class="text-sm text-muted-color">Atualizado há 2 horas</span>
+                        </div>
+                    </FooterTemplate>
+                </OpPanel>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>Painéis alternáveis usam um botão de alternância de conteúdo no cabeçalho que possui <code>aria-controls</code> para definir o id da seção de conteúdo, além de <code>aria-expanded</code> para o estado de visibilidade. O valor lido pelo botão é, por padrão, o valor da propriedade <code>header</code> e pode ser personalizado definindo <code>aria-label</code> ou <code>aria-labelledby</code> via a propriedade <code>toggleButtonProps</code>.</p>
-                <p>O conteúdo usa <code>region</code>, define um id que corresponde ao <code>aria-controls</code> do botão de alternância e <code>aria-labelledby</code> referindo-se ao id do cabeçalho.</p>
-                <h3>Suporte a teclado do botão de conteúdo</h3>
+                <p>
+                    Painéis alternáveis usam um botão no cabeçalho com <code>aria-controls</code> apontando para o id do
+                    conteúdo e <code>aria-expanded</code> para o estado de visibilidade. O nome acessível do botão é o
+                    valor de <code>Header</code>. O conteúdo usa o papel <code>region</code> e
+                    <code>aria-labelledby</code> referenciando o id do cabeçalho; quando recolhido, recebe
+                    <code>aria-hidden="true"</code> e <code>tabindex="-1"</code>.
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>O foco é gerenciado pelo botão de alternância renderizado no cabeçalho.</p>
             </Description>
             <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Move o foco para o próximo elemento focável da sequência de tabulação da página." },
-                              new[] { "shift + tab", "Move o foco para o elemento focável anterior da sequência de tabulação da página." },
+                              new[] { "tab", "Move o foco para o próximo elemento focável." },
+                              new[] { "shift + tab", "Move o foco para o elemento focável anterior." },
                               new[] { "enter", "Alterna a visibilidade do conteúdo." },
                               new[] { "space", "Alterna a visibilidade do conteúdo." }
                           })"/>
@@ -47,78 +115,125 @@
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Header", "string?", "null", "Texto do cabeçalho; também é o nome acessível do botão de alternância." },
+                              new[] { "Toggleable", "bool", "false", "Permite expandir/recolher o conteúdo." },
+                              new[] { "Collapsed", "bool", "false", "Estado recolhido (usar com <code>@@bind-Collapsed</code>)." },
+                              new[] { "CollapsedChanged", "EventCallback&lt;bool&gt;", "—", "Notifica mudanças do estado recolhido." },
+                              new[] { "Toggler", "string", "\"icon\"", "Elemento que dispara o toggle: <code>icon</code> ou <code>header</code>." },
+                              new[] { "IconPos", "string", "\"end\"", "Posição dos ícones do cabeçalho: <code>start</code>, <code>end</code> ou <code>center</code>." },
+                              new[] { "ShowHeader", "bool", "true", "Renderiza a barra de cabeçalho." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "null", "Conteúdo customizado do cabeçalho." },
+                              new[] { "IconsTemplate", "RenderFragment?", "null", "Ícones customizados exibidos na barra de ações do cabeçalho." },
+                              new[] { "ContentTemplate", "RenderFragment?", "null", "Substitui o conteúdo padrão do painel." },
+                              new[] { "FooterTemplate", "RenderFragment?", "null", "Conteúdo do rodapé." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do painel." },
+                              new[] { "OnBeforeToggle", "EventCallback&lt;OpPanelToggleEventArgs&gt;", "—", "Disparado antes de alterar o estado recolhido." },
+                              new[] { "OnAfterToggle", "EventCallback&lt;OpPanelToggleEventArgs&gt;", "—", "Disparado após alterar o estado recolhido." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz; base para os ids internos de cabeçalho e conteúdo." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Tipo", "Propriedades" })"
+                          Rows="@(new[] {
+                              new[] { "OpPanelToggleEventArgs", "<code>Collapsed</code> (<code>bool</code>): o novo estado que será aplicado." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="panel"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code> (repassados ao
+                    elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>Não há animação ao expandir/recolher: o conteúdo é ocultado com <code>display:none</code>, sem o motion <code>p-collapsible</code> do upstream.</li>
+                        <li><code>aria-label</code>/<code>aria-labelledby</code> não são repassados ao botão de alternância: o nome acessível é sempre <code>Header</code>.</li>
+                        <li><code>Toggler="header"</code> usa clique no cabeçalho; o botão de alternância continua sendo renderizado e focável.</li>
+                        <li>O conteúdo do rodapé é renderizado apenas quando o painel está expandido, junto do conteúdo principal.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private bool _collapsed;
+
     private const string ImportCode = """
-        import { PanelModule } from 'primeng/panel';
+        @using OpBlazorUI.Base.Components.Panel
+
+        <OpPanel Header="Cabeçalho">
+            <p class="m-0">Conteúdo</p>
+        </OpPanel>
         """;
 
     private const string BasicCode = """
-        <p-panel header="Header">
-            <p class="m-0">
-                Lorem ipsum dolor sit amet...
-            </p>
-        </p-panel>
+        <OpPanel Header="Cabeçalho">
+            <p class="m-0">Lorem ipsum dolor sit amet...</p>
+        </OpPanel>
         """;
 
     private const string ToggleableCode = """
-        <p-panel header="Header" [toggleable]="true">
-            <p class="m-0">
-                Lorem ipsum dolor sit amet...
-            </p>
-        </p-panel>
+        <OpPanel Header="Cabeçalho" Toggleable="true" @bind-Collapsed="_collapsed">
+            <p class="m-0">Lorem ipsum dolor sit amet...</p>
+        </OpPanel>
+
+        @code {
+            private bool _collapsed;
+        }
         """;
 
     private const string TemplateCode = """
-        <p-panel [toggleable]="true">
-            <ng-template #header>
+        <OpPanel Toggleable="true">
+            <HeaderTemplate>
                 <div class="flex items-center gap-2">
-                    <p-avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
+                    <i class="pi pi-user"></i>
                     <span class="font-bold">Amy Elsner</span>
                 </div>
-            </ng-template>
-            <ng-template #footer>
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center gap-2">
-                        <p-button icon="pi pi-user" rounded text></p-button>
-                        <p-button icon="pi pi-bookmark" severity="secondary" rounded text></p-button>
-                    </div>
-                    <span class="text-surface-500 dark:text-surface-400">Updated 2 hours ago</span>
-                </div>
-            </ng-template>
-            <ng-template #icons>
-                <p-button icon="pi pi-cog" severity="secondary" rounded text (click)="menu.toggle($event)" />
-                <p-menu #menu id="config_menu" [model]="items" [popup]="true" />
-            </ng-template>
-            <p class="m-0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-                aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-        </p-panel>
+            </HeaderTemplate>
+            <IconsTemplate>
+                <i class="pi pi-cog"></i>
+            </IconsTemplate>
+            <ChildContent>
+                <p class="m-0">Lorem ipsum dolor sit amet...</p>
+            </ChildContent>
+            <FooterTemplate>
+                <span class="text-sm text-muted-color">Atualizado há 2 horas</span>
+            </FooterTemplate>
+        </OpPanel>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpPanel Header="Painel de detalhes" Toggleable="true">
+            <p class="m-0">Conteúdo</p>
+        </OpPanel>
         """;
 }

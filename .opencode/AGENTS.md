@@ -13,6 +13,16 @@ Instruções para agentes de código (OpenCode e similares) neste repositório. 
   - `tools/theme-gen` — gerador dos temas (Aura, Lara, Nora) a partir de `@openng/optimus-ui-themes`.
   - `tools/doc-upstream/fetch.sh` — baixa as seções da doc do PrimeNG de um componente.
 
+## Grafo de código (graphify)
+
+- Há um grafo de conhecimento do repositório em `graphify-out/` (`graph.json` + `GRAPH_REPORT.md`).
+- Antes de grepar a codebase para perguntas de arquitetura, fluxo ou "quem chama X", consulte o grafo:
+  - `graphify query "<pergunta>"` — BFS, subgrafo focado (bem mais barato que varrer arquivos).
+  - `graphify path "A" "B"` — caminho mais curto entre dois conceitos.
+  - `graphify explain "<nó>"` — um nó e seus vizinhos.
+- Leia `GRAPH_REPORT.md` só para contexto amplo de arquitetura.
+- O grafo é atualizado **manualmente, sob pedido**: `/graphify --update` (incremental) ou `/graphify .` (rebuild).
+
 ## Regras de trabalho
 
 - **Trabalho grande** (várias fases, muitos arquivos, docs de um lote): apresente um plano em fases, com as

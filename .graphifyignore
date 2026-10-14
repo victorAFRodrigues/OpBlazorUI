@@ -1,0 +1,5 @@
+# Arquivos ignorados pelo graphify (além do .gitignore). Sintaxe de gitignore.
+# Bibliotecas de terceiros minificadas: o AST fatia em centenas de nós sem valor.
+**/*.min.js
+# Icon font: só gera nós de glyph, ruído para um grafo de código.
+**/wwwroot/fonts/*.svg
