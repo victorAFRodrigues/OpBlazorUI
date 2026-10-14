@@ -51,7 +51,7 @@
                     aria-haspopup="dialog"
                     aria-expanded="@(_overlayVisible ? "true" : "false")"
                     aria-controls="@(_overlayVisible ? $"{_inputId}-panel" : null)"
-                    aria-label="@(IconAriaLabel ?? "Choose Date")"
+                    aria-label="@(IconAriaLabel ?? Tr.ChooseDate)"
                     disabled="@Disabled"
                     tabindex="0"
                     @onclick="OnButtonClick">
@@ -94,7 +94,7 @@
              id="@(Inline ? null : $"{_inputId}-panel")"
              role="@(Inline ? null : "dialog")"
              aria-modal="@(Inline ? null : "true")"
-             aria-label="@(Inline ? null : "Choose Date")"
+             aria-label="@(Inline ? null : Tr.ChooseDate)"
              @onmousedown:preventDefault="@(!Inline)"
              @onanimationend="OnPanelAnimationEnd">
             @if (!Inline)
@@ -131,12 +131,12 @@
                                     @if (_currentView == OpDatePickerView.Date)
                                     {
                                         <button type="button" class="p-datepicker-select-month"
-                                                aria-label="Choose Month"
+                                                aria-label="@Tr.ChooseMonth"
                                                 @onclick="SwitchToMonthView">@GetMonthName(month.Month)</button>
                                     }
                                     @if (_currentView != OpDatePickerView.Year)
                                     {
-                                        <button type="button" class="p-datepicker-select-year" aria-label="Choose Year"
+                                        <button type="button" class="p-datepicker-select-year" aria-label="@Tr.ChooseYear"
                                                 @onclick="SwitchToYearView">@GetYear(month)</button>
                                     }
                                     @if (_currentView == OpDatePickerView.Year)
@@ -177,7 +177,7 @@
                                         <tr>
                                             @if (ShowWeek)
                                             {
-                                                <th class="p-datepicker-weekheader p-disabled"><span>Wk</span></th>
+                                                <th class="p-datepicker-weekheader p-disabled"><span>@Tr.WeekHeader</span></th>
                                             }
                                             @foreach (var weekDay in WeekDayNames())
                                             {
@@ -271,7 +271,7 @@
                     <div class="p-datepicker-hour-picker">
                         <button type="button"
                                 class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-increment-button"
-                                aria-label="Next Hour" @onclick="IncrementHour">
+                                aria-label="@Tr.NextHour" @onclick="IncrementHour">
                             @if (IncrementIconTemplate != null)
                             {
                                 @IncrementIconTemplate
@@ -284,7 +284,7 @@
                         <span>@HourText</span>
                         <button type="button"
                                 class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-decrement-button"
-                                aria-label="Previous Hour" @onclick="DecrementHour">
+                                aria-label="@Tr.PrevHour" @onclick="DecrementHour">
                             @if (DecrementIconTemplate != null)
                             {
                                 @DecrementIconTemplate
@@ -299,7 +299,7 @@
                     <div class="p-datepicker-minute-picker">
                         <button type="button"
                                 class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-increment-button"
-                                aria-label="Next Minute" @onclick="IncrementMinute">
+                                aria-label="@Tr.NextMinute" @onclick="IncrementMinute">
                             @if (IncrementIconTemplate != null)
                             {
                                 @IncrementIconTemplate
@@ -312,7 +312,7 @@
                         <span>@MinuteText</span>
                         <button type="button"
                                 class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-decrement-button"
-                                aria-label="Previous Minute" @onclick="DecrementMinute">
+                                aria-label="@Tr.PrevMinute" @onclick="DecrementMinute">
                             @if (DecrementIconTemplate != null)
                             {
                                 @DecrementIconTemplate
@@ -329,7 +329,7 @@
                         <div class="p-datepicker-second-picker">
                             <button type="button"
                                     class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-increment-button"
-                                    aria-label="Next Second" @onclick="IncrementSecond">
+                                    aria-label="@Tr.NextSecond" @onclick="IncrementSecond">
                                 @if (IncrementIconTemplate != null)
                                 {
                                     @IncrementIconTemplate
@@ -342,7 +342,7 @@
                             <span>@SecondText</span>
                             <button type="button"
                                     class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-decrement-button"
-                                    aria-label="Previous Second" @onclick="DecrementSecond">
+                                    aria-label="@Tr.PrevSecond" @onclick="DecrementSecond">
                                 @if (DecrementIconTemplate != null)
                                 {
                                     @DecrementIconTemplate
@@ -360,7 +360,7 @@
                         <div class="p-datepicker-ampm-picker">
                             <button type="button"
                                     class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-increment-button"
-                                    aria-label="AM" @onclick="ToggleAmPm">
+                                    aria-label="@Tr.Am" @onclick="ToggleAmPm">
                                 @if (IncrementIconTemplate != null)
                                 {
                                     @IncrementIconTemplate
@@ -370,10 +370,10 @@
                                     <i class="p-icon pi pi-chevron-up"></i>
                                 }
                             </button>
-                            <span>@(_pm ? "PM" : "AM")</span>
+                            <span>@(_pm ? Tr.Pm : Tr.Am)</span>
                             <button type="button"
                                     class="p-button p-component p-button-icon-only p-button-text p-button-secondary p-button-rounded p-datepicker-decrement-button"
-                                    aria-label="PM" @onclick="ToggleAmPm">
+                                    aria-label="@Tr.Pm" @onclick="ToggleAmPm">
                                 @if (DecrementIconTemplate != null)
                                 {
                                     @DecrementIconTemplate
@@ -403,10 +403,10 @@
                     {
                         <button type="button"
                                 class="p-button p-component p-button-sm p-button-text p-button-secondary p-datepicker-today-button @TodayButtonStyleClass"
-                                @onclick="OnTodayButtonClick"><span class="p-button-label">@TodayLabel</span></button>
+                                @onclick="OnTodayButtonClick"><span class="p-button-label">@EffectiveTodayLabel</span></button>
                         <button type="button"
                                 class="p-button p-component p-button-sm p-button-text p-button-secondary p-datepicker-clear-button @ClearButtonStyleClass"
-                                @onclick="OnClearButtonClick"><span class="p-button-label">@ClearLabel</span></button>
+                                @onclick="OnClearButtonClick"><span class="p-button-label">@EffectiveClearLabel</span></button>
                     }
                 </div>
             }
