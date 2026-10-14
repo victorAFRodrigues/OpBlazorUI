@@ -360,21 +360,4 @@ public partial class OpConfirmDialog : OpModalBase
         "p-confirmdialog-reject-button",
         CurrentOptions?.RejectButtonStyleClass ?? RejectButtonStyleClass);
 
-    private string? GetSeverity(Dictionary<string, object>? props) =>
-        props?.TryGetValue("severity", out var v) == true ? v?.ToString() : null;
-
-    private bool GetOutlined(Dictionary<string, object>? props) =>
-        props?.TryGetValue("outlined", out var v) == true && v is bool b && b;
-
-    private bool GetText(Dictionary<string, object>? props) =>
-        props?.TryGetValue("text", out var v) == true && v is bool b && b;
-
-    private bool GetRaised(Dictionary<string, object>? props) =>
-        props?.TryGetValue("raised", out var v) == true && v is bool b && b;
-
-    private bool GetRounded(Dictionary<string, object>? props) =>
-        props?.TryGetValue("rounded", out var v) == true && v is bool b && b;
-
-    private string? GetVariant(Dictionary<string, object>? props) =>
-        props?.TryGetValue("variant", out var v) == true ? v?.ToString() : null;
 }

@@ -34,6 +34,12 @@
                           data-pc-focus="reject"
                           Icon="@RejectIcon"
                           StyleClass="@RejectButtonClass"
+                          Severity="@OpButtonProps.GetSeverity(RejectButtonProps)"
+                          Outlined="@OpButtonProps.GetOutlined(RejectButtonProps)"
+                          Text="@OpButtonProps.GetText(RejectButtonProps)"
+                          Raised="@OpButtonProps.GetRaised(RejectButtonProps)"
+                          Rounded="@OpButtonProps.GetRounded(RejectButtonProps)"
+                          Variant="@OpButtonProps.GetVariant(RejectButtonProps)"
                           AriaLabel="@EffectiveRejectLabel"
                           @onclick="OnRejectClick" />
             }
@@ -43,6 +49,12 @@
                           data-pc-focus="accept"
                           Icon="@AcceptIcon"
                           StyleClass="@AcceptButtonClass"
+                          Severity="@OpButtonProps.GetSeverity(AcceptButtonProps)"
+                          Outlined="@OpButtonProps.GetOutlined(AcceptButtonProps)"
+                          Text="@OpButtonProps.GetText(AcceptButtonProps)"
+                          Raised="@OpButtonProps.GetRaised(AcceptButtonProps)"
+                          Rounded="@OpButtonProps.GetRounded(AcceptButtonProps)"
+                          Variant="@OpButtonProps.GetVariant(AcceptButtonProps)"
                           AriaLabel="@EffectiveAcceptLabel"
                           @onclick="OnAcceptClick" />
             }

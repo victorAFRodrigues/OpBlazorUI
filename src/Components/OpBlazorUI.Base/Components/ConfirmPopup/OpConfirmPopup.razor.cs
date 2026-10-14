@@ -33,6 +33,8 @@ public partial class OpConfirmPopup : OpComponentBase
     [Parameter] public string? RejectIcon { get; set; }
     [Parameter] public string? AcceptButtonStyleClass { get; set; }
     [Parameter] public string? RejectButtonStyleClass { get; set; }
+    [Parameter] public Dictionary<string, object>? AcceptButtonProps { get; set; }
+    [Parameter] public Dictionary<string, object>? RejectButtonProps { get; set; }
     [Parameter] public bool AcceptVisible { get; set; } = true;
     [Parameter] public bool RejectVisible { get; set; } = true;
     [Parameter] public bool CloseOnEscape { get; set; } = true;
