@@ -11,7 +11,7 @@
     <div class="p-tablist">
         @if (Scrollable)
         {
-            <button type="button" class="p-tablist-nav-button p-tablist-prev-button" aria-label="Abas anteriores" @onclick="() => ScrollAsync(-1)">
+            <button type="button" class="p-tablist-nav-button p-tablist-prev-button" aria-label="@Tr.Aria.Previous" @onclick="() => ScrollAsync(-1)">
                 <i class="pi pi-angle-left" aria-hidden="true"></i>
             </button>
         }
@@ -51,7 +51,7 @@
                         @if (panel.Closable)
                         {
                             <span class="p-tab-close-icon pi pi-times" role="button" tabindex="-1"
-                                  aria-label="Fechar" @onclick="() => OnCloseAsync(panel)" @onclick:stopPropagation="true"></span>
+                                  aria-label="@Tr.Aria.Close" @onclick="() => OnCloseAsync(panel)" @onclick:stopPropagation="true"></span>
                         }
                     </button>
                 }
@@ -60,7 +60,7 @@
 
         @if (Scrollable)
         {
-            <button type="button" class="p-tablist-nav-button p-tablist-next-button" aria-label="Próximas abas" @onclick="() => ScrollAsync(1)">
+            <button type="button" class="p-tablist-nav-button p-tablist-next-button" aria-label="@Tr.Aria.Next" @onclick="() => ScrollAsync(1)">
                 <i class="pi pi-angle-right" aria-hidden="true"></i>
             </button>
         }

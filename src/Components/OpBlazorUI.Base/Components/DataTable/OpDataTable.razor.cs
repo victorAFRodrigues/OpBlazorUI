@@ -1,8 +1,8 @@
-using System.Globalization;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Paginator;
+using OpBlazorUI.Base.Globalization;
 using OpBlazorUI.Base.Models;
 using OpBlazorUI.Base.Services;
 
@@ -40,6 +40,9 @@ public partial class OpDataTable<TItem> : ComponentBase
     private readonly Dictionary<string, PropertyInfo?> _propertyCache = new(StringComparer.OrdinalIgnoreCase);
 
     [Inject] private OpFilterService FilterService { get; set; } = default!;
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
 
     [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
     [Parameter] public IReadOnlyList<OpDataTableColumn> Columns { get; set; } = Array.Empty<OpDataTableColumn>();
@@ -95,7 +98,7 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     [Parameter] public EventCallback<OpDataTableLazyLoadEvent> OnLazyLoad { get; set; }
 
-    [Parameter] public string? EmptyMessage { get; set; } = "No results found";
+    [Parameter] public string? EmptyMessage { get; set; }
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string LoadingMode { get; set; } = "mask";
     [Parameter] public int SkeletonRows { get; set; }
@@ -203,14 +206,14 @@ public partial class OpDataTable<TItem> : ComponentBase
         {
             if (!col.Filter || string.IsNullOrEmpty(col.Field)) continue;
             if (!_columnFilters.TryGetValue(col.Field, out var value) || IsEmptyFilter(value)) continue;
-            query = FilterService.Filter(query, new[] { col.Field }, value, col.FilterMatchMode, CultureInfo.CurrentCulture);
+            query = FilterService.Filter(query, new[] { col.Field }, value, col.FilterMatchMode);
         }
 
         if (!string.IsNullOrEmpty(_globalFilter))
         {
             var fields = GlobalFilterFields
                 ?? Columns.Select(c => c.Field).Where(f => !string.IsNullOrEmpty(f)).ToList();
-            query = FilterService.Filter(query, fields, _globalFilter, OpFilterMatchMode.Contains, CultureInfo.CurrentCulture);
+            query = FilterService.Filter(query, fields, _globalFilter, OpFilterMatchMode.Contains);
         }
 
         return query.ToList();

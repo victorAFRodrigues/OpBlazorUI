@@ -1,10 +1,16 @@
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.OrderList;
 
 public partial class OpOrderList<TItem> : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private List<TItem> _items = new();
     private List<TItem> _selection = new();
     private IReadOnlyList<TItem>? _lastItems;
@@ -22,7 +28,7 @@ public partial class OpOrderList<TItem> : OpComponentBase
     [Parameter] public bool Filter { get; set; }
     [Parameter] public string? FilterBy { get; set; }
     [Parameter] public string? ScrollHeight { get; set; } = "14rem";
-    [Parameter] public string? EmptyMessage { get; set; } = "No results found";
+    [Parameter] public string? EmptyMessage { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public RenderFragment<TItem>? ItemTemplate { get; set; }

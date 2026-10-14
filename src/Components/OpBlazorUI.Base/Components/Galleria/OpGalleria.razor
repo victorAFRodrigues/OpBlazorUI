@@ -20,7 +20,7 @@ else
     <div class="p-galleria-mask p-overlay-mask" role="dialog" aria-modal="true" style="z-index:1100;" @onclick="CloseAsync">
         <div class="@RootClass" @onclick:stopPropagation="true">
             @Content
-            <button type="button" class="p-galleria-close-button p-galleria-nav-button" aria-label="Fechar" @onclick="CloseAsync">
+            <button type="button" class="p-galleria-close-button p-galleria-nav-button" aria-label="@Tr.Aria.Close" @onclick="CloseAsync">
                 <i class="p-galleria-close-icon pi pi-times" aria-hidden="true"></i>
             </button>
         </div>
@@ -40,7 +40,7 @@ else
                 <div class="p-galleria-items">
                     @if (ShowItemNavigators && Count > 1)
                     {
-                        <button type="button" class="@PrevNavClass" aria-label="Anterior" @onclick="PrevAsync">
+                        <button type="button" class="@PrevNavClass" aria-label="@Tr.Aria.FirstPageLabel" @onclick="PrevAsync">
                             <i class="p-galleria-prev-icon pi pi-chevron-left" aria-hidden="true"></i>
                         </button>
                     }
@@ -52,7 +52,7 @@ else
                     </div>
                     @if (ShowItemNavigators && Count > 1)
                     {
-                        <button type="button" class="@NextNavClass" aria-label="Próximo" @onclick="NextAsync">
+                        <button type="button" class="@NextNavClass" aria-label="@Tr.Aria.NextPageLabel" @onclick="NextAsync">
                             <i class="p-galleria-next-icon pi pi-chevron-right" aria-hidden="true"></i>
                         </button>
                     }
@@ -85,7 +85,7 @@ else
             {
                 <div class="p-galleria-thumbnails">
                     <div class="p-galleria-thumbnails-content">
-                        <button type="button" class="p-galleria-thumbnail-prev-button p-galleria-thumbnail-nav-button" aria-label="Miniaturas anteriores" @onclick="ThumbPrev">
+                        <button type="button" class="p-galleria-thumbnail-prev-button p-galleria-thumbnail-nav-button" aria-label="@Tr.Aria.ThumbnailPrev" @onclick="ThumbPrev">
                             <i class="p-galleria-thumbnail-prev-icon pi pi-chevron-left" aria-hidden="true"></i>
                         </button>
                         <div class="p-galleria-thumbnails-viewport">
@@ -104,7 +104,7 @@ else
                                 }
                             </div>
                         </div>
-                        <button type="button" class="p-galleria-thumbnail-next-button p-galleria-thumbnail-nav-button" aria-label="Próximas miniaturas" @onclick="ThumbNext">
+                        <button type="button" class="p-galleria-thumbnail-next-button p-galleria-thumbnail-nav-button" aria-label="@Tr.Aria.ThumbnailNext" @onclick="ThumbNext">
                             <i class="p-galleria-thumbnail-next-icon pi pi-chevron-right" aria-hidden="true"></i>
                         </button>
                     </div>

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.ScrollTop;
 
@@ -13,6 +15,10 @@ public partial class OpScrollTop : OpComponentBase
     private bool _visible;
     private bool _disposed;
 
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public string Target { get; set; } = "window";
 
     [Parameter] public int Threshold { get; set; } = 400;
@@ -21,7 +27,7 @@ public partial class OpScrollTop : OpComponentBase
 
     [Parameter] public string Behavior { get; set; } = "smooth";
 
-    [Parameter] public string ButtonAriaLabel { get; set; } = "Scroll to top";
+    [Parameter] public string? ButtonAriaLabel { get; set; }
 
     [Parameter] public string? Style { get; set; }
 

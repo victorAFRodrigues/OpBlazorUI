@@ -1,4 +1,6 @@
 @namespace OpBlazorUI.Base.Components.Message
+@using OpBlazorUI.Base.Globalization
+@using OpBlazorUI.Base.Services
 
 <div class="@RootClass"
      role="alert"
@@ -30,7 +32,7 @@
             {
                 <button type="button"
                         class="p-message-close-button"
-                        aria-label="Close"
+                        aria-label="@Tr.Aria.Close"
                         @onclick="OnCloseClick">
                     @if (CloseIconTemplate != null)
                     {
@@ -47,6 +49,10 @@
 </div>
 
 @code {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public string Severity { get; set; } = "info";
     [Parameter] public string? Variant { get; set; }
     [Parameter] public string? Size { get; set; }

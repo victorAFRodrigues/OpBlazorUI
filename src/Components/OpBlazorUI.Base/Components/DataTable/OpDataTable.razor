@@ -68,7 +68,7 @@
                                              Value="@ColumnFilterValue(col.Field)"
                                              ValueChanged="v => OnColumnFilterChanged(col.Field, v)"
                                              Placeholder="@col.FilterPlaceholder"
-                                             AriaLabel="@(col.FilterPlaceholder ?? $"Filtrar {col.Header}")"/>
+                                             AriaLabel="@(col.FilterPlaceholder ?? (string.IsNullOrEmpty(col.Header) ? Tr.FilterPlaceholder : string.Format(Tr.FilterColumn, col.Header)))"/>
                             }
                         </th>
                     }
@@ -100,7 +100,7 @@
             {
                 <tr>
                     <td class="p-datatable-empty-message"
-                        colspan="@(Columns.Count + (ShowCheckboxColumn ? 1 : 0))">@EmptyMessage</td>
+                        colspan="@(Columns.Count + (ShowCheckboxColumn ? 1 : 0))">@(EmptyMessage ?? Tr.EmptyMessage)</td>
                 </tr>
             }
             else

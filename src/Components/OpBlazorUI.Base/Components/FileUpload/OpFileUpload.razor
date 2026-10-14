@@ -11,7 +11,7 @@
             <label class="@ChooseClass">
                 <InputFile class="op-fileupload-input" OnChange="OnInputChangeAsync" multiple="@Multiple" accept="@Accept" disabled="@Disabled"/>
                 <i class="@ChooseIcon" aria-hidden="true"></i>
-                <span class="p-button-label">@ChooseLabel</span>
+                <span class="p-button-label">@EffectiveChooseLabel</span>
             </label>
             <span>@BasicChosenLabel</span>
         </div>
@@ -30,14 +30,14 @@ else
                 <label class="@ChooseClass">
                     <InputFile class="op-fileupload-input" OnChange="OnInputChangeAsync" multiple="@Multiple" accept="@Accept" disabled="@(Disabled || ChooseDisabled)"/>
                     <i class="@ChooseIcon" aria-hidden="true"></i>
-                    <span class="p-button-label">@ChooseLabel</span>
+                    <span class="p-button-label">@EffectiveChooseLabel</span>
                 </label>
 
                 @if (!Auto && ShowUploadButton)
                 {
                     <button type="button" class="p-button p-component p-button-secondary" disabled="@(!HasFiles || Disabled)" @onclick="UploadAsync">
                         <i class="@UploadIcon" aria-hidden="true"></i>
-                        <span class="p-button-label">@UploadLabel</span>
+                        <span class="p-button-label">@EffectiveUploadLabel</span>
                     </button>
                 }
 
@@ -45,7 +45,7 @@ else
                 {
                     <button type="button" class="p-button p-component p-button-secondary" disabled="@(!HasFiles || Disabled)" @onclick="Clear">
                         <i class="@CancelIcon" aria-hidden="true"></i>
-                        <span class="p-button-label">@CancelLabel</span>
+                        <span class="p-button-label">@EffectiveCancelLabel</span>
                     </button>
                 }
 
@@ -135,16 +135,16 @@ else
                 </div>
                 @if (uploaded)
                 {
-                    <span class="p-badge p-badge-success">Enviado</span>
+                    <span class="p-badge p-badge-success">@Tr.Completed</span>
                 }
                 else
                 {
-                    <span class="p-badge p-badge-warn">Pendente</span>
+                    <span class="p-badge p-badge-warn">@Tr.Pending</span>
                 }
                 <div class="p-fileupload-file-actions">
                     <button type="button"
                             class="p-button p-component p-button-text p-button-rounded p-button-danger p-button-icon-only"
-                            aria-label="Remover"
+                            aria-label="@Tr.Aria.RemoveLabel"
                             @onclick="() => RemoveAt(uploaded, index)">
                         <i class="pi pi-times" aria-hidden="true"></i>
                     </button>

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Drawer;
 
@@ -9,6 +11,10 @@ public partial class OpDrawer : OpModalBase
     private string _headerId = "";
     private bool _lastRenderedVisible;
     private ElementReference _root;
+
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
 
     [Parameter] public bool Visible { get; set; }
 
@@ -45,7 +51,7 @@ public partial class OpDrawer : OpModalBase
 
     [Parameter] public string CloseIcon { get; set; } = "pi pi-times";
 
-    [Parameter] public string AriaCloseLabel { get; set; } = "Close";
+    [Parameter] public string? AriaCloseLabel { get; set; }
 
     /// <summary>Trava a rolagem do body enquanto o drawer está aberto.</summary>
     [Parameter] public bool BlockScroll { get; set; }

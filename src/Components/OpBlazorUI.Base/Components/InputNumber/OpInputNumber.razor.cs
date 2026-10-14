@@ -2,18 +2,23 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.InputNumber;
 
 public partial class OpInputNumber : OpInputBase<decimal?>
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public decimal? Min { get; set; }
     [Parameter] public decimal? Max { get; set; }
     [Parameter] public decimal Step { get; set; } = 1;
     [Parameter] public string Mode { get; set; } = "decimal";
     [Parameter] public string? Currency { get; set; }
     [Parameter] public string CurrencyDisplay { get; set; } = "symbol";
-    [Parameter] public string? Locale { get; set; }
     [Parameter] public bool UseGrouping { get; set; } = true;
     [Parameter] public int? MinFractionDigits { get; set; }
     [Parameter] public int? MaxFractionDigits { get; set; }
@@ -69,24 +74,22 @@ public partial class OpInputNumber : OpInputBase<decimal?>
         IsInvalid ? "p-invalid" : null,
         InputClass);
 
-    private CultureInfo GetCulture()
+    /// <summary>
+    /// Formato numérico montado a partir da tradução (<c>DecimalSeparator</c>/<c>ThousandSeparator</c>/
+    /// <c>CurrencySymbol</c>), sem <see cref="CultureInfo"/>: o resultado é o mesmo em Server,
+    /// WebAssembly, Auto e SSR, sem depender do ICU da plataforma.
+    /// </summary>
+    private NumberFormatInfo GetNumberFormat()
     {
-        if (!string.IsNullOrEmpty(Locale))
-        {
-            try { return CultureInfo.GetCultureInfo(Locale); }
-            catch (CultureNotFoundException) { }
-        }
-
-        return CultureInfo.CurrentCulture;
-    }
-
-    private NumberFormatInfo GetNumberFormat(CultureInfo culture)
-    {
-        var nfi = (NumberFormatInfo)culture.NumberFormat.Clone();
+        var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+        nfi.NumberDecimalSeparator = Tr.DecimalSeparator;
+        nfi.CurrencyDecimalSeparator = Tr.DecimalSeparator;
+        nfi.CurrencyNegativePattern = 1; // "-$n": negativo com sinal, em vez do padrão contábil "(...)".
+        nfi.NumberGroupSeparator = UseGrouping ? Tr.ThousandSeparator : string.Empty;
+        nfi.CurrencyGroupSeparator = UseGrouping ? Tr.ThousandSeparator : string.Empty;
+        nfi.CurrencySymbol = ResolveCurrencySymbol();
         if (!UseGrouping)
         {
-            nfi.NumberGroupSeparator = string.Empty;
-            nfi.CurrencyGroupSeparator = string.Empty;
             nfi.NumberGroupSizes = [0];
             nfi.CurrencyGroupSizes = [0];
         }
@@ -98,19 +101,12 @@ public partial class OpInputNumber : OpInputBase<decimal?>
     {
         if (value is null) return string.Empty;
         var v = value.Value;
-        var culture = GetCulture();
-        var nfi = GetNumberFormat(culture);
+        var nfi = GetNumberFormat();
 
         if (Mode == "currency")
         {
             if (MaxFractionDigits is int mx) nfi.CurrencyDecimalDigits = mx;
             else if (MinFractionDigits is int mn) nfi.CurrencyDecimalDigits = mn;
-            if (!string.IsNullOrEmpty(Currency))
-            {
-                nfi.CurrencySymbol = CurrencyDisplay == "code"
-                    ? Currency + " "
-                    : GetCurrencySymbol(Currency);
-            }
 
             return v.ToString("C", nfi);
         }
@@ -128,24 +124,22 @@ public partial class OpInputNumber : OpInputBase<decimal?>
     private static string GetCurrencySymbol(string currency) =>
         CurrencySymbols.TryGetValue(currency, out var symbol) ? symbol : currency;
 
+    // Sem Currency informado, o símbolo vem da tradução (antes vinha da cultura).
+    private string ResolveCurrencySymbol()
+        => string.IsNullOrEmpty(Currency)
+            ? Tr.CurrencySymbol
+            : CurrencyDisplay == "code" ? Currency + " " : GetCurrencySymbol(Currency);
+
     private bool TryParseNumber(string text, out decimal value)
     {
-        var culture = GetCulture();
-        var nfi = GetNumberFormat(culture);
+        var nfi = GetNumberFormat();
         var styles = NumberStyles.Number;
         if (Mode == "currency")
         {
             styles |= NumberStyles.AllowCurrencySymbol;
-            // O símbolo exibido (mapeado) pode diferir do símbolo da cultura atual; sem alinhar,
-            // digitar o valor exibido (ex.: "R$ 10") não era aceito.
-            if (!string.IsNullOrEmpty(Currency))
-            {
-                nfi.CurrencySymbol = CurrencyDisplay == "code" ? Currency + " " : GetCurrencySymbol(Currency);
-            }
         }
 
-        if (decimal.TryParse(text, styles, nfi, out value)) return true;
-        return false;
+        return decimal.TryParse(text, styles, nfi, out value);
     }
 
     // MaxFractionDigits limita o valor (ex.: 1.239 → 1.24 com 2 casas), não só a exibição.

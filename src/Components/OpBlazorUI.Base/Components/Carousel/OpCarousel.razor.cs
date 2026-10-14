@@ -1,12 +1,21 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Carousel;
 
 public partial class OpCarousel<TItem> : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private int _activeIndex;
+
+    /// <summary>Rótulo acessível de um indicador de página, substituindo o token <c>{page}</c> (como no upstream).</summary>
+    private string PageAriaLabel(int page) => Tr.Aria.PageLabel.Replace("{page}", (page + 1).ToString());
     private CancellationTokenSource? _autoplayCts;
 
     [Parameter] public IReadOnlyList<TItem> Value { get; set; } = Array.Empty<TItem>();

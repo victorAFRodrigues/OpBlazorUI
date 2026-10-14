@@ -81,7 +81,7 @@
         }
     }
 
-    <div class="p-multiselect-dropdown" role="button" aria-label="dropdown trigger" aria-haspopup="listbox"
+    <div class="p-multiselect-dropdown" role="button" aria-label="@Tr.Aria.DropdownTrigger" aria-haspopup="listbox"
          aria-expanded="@(_overlayVisible ? "true" : "false")" @onclick="OnDropdownClick">
         @if (Loading)
         {
@@ -123,7 +123,7 @@
                     @if (ShowToggleAll)
                     {
                         <OpCheckbox IgnoreEditContext="true" Value="@AllSelected" Variant="@Variant" Disabled="@Disabled"
-                                    AriaLabel="Selecionar todos" OnChange="_ => ToggleAllAsync()"/>
+                                    AriaLabel="@(AllSelected ? Tr.Aria.UnselectAll : Tr.Aria.SelectAll)" OnChange="_ => ToggleAllAsync()"/>
                     }
                     @if (Filter)
                     {
@@ -133,9 +133,9 @@
                                    role="searchbox"
                                    autocomplete="off"
                                    value="@_filterValue"
-                                   placeholder="Filter"
+                                   placeholder="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
                                    aria-owns="@($"{_id}_list")"
-                                   aria-label="Filter"
+                                   aria-label="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
                                    @oninput="OnFilterInput"
                                    @onkeydown="OnInputKeydown"/>
                             <OpInputIcon>
@@ -175,7 +175,7 @@
 @code {
     private RenderFragment BuildList(IReadOnlyList<object> options) => __builder =>
     {
-        <ul class="p-multiselect-list" role="listbox" id="@($"{_id}_list")" @ref="_listRef">
+        <ul class="p-multiselect-list" role="listbox" id="@($"{_id}_list")" @ref="_listRef" aria-label="@Tr.Aria.ListLabel">
             @if (Group)
             {
                 @foreach (var group in VisibleOptions)
@@ -233,7 +233,7 @@
                     }
                     else
                     {
-                        @(!string.IsNullOrEmpty(_filterValue) ? EmptyFilterMessage : EmptyMessage)
+                        @(!string.IsNullOrEmpty(_filterValue) ? (EmptyFilterMessage ?? Tr.EmptyFilterMessage) : (EmptyMessage ?? Tr.EmptyMessage))
                     }
                 </li>
             }

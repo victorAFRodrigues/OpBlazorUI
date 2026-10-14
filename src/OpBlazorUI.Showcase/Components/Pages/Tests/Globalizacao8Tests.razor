@@ -1,0 +1,29 @@
+@page "/_tests/globalizacao-8"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.InputNumber
+@using OpBlazorUI.Base.Globalization
+@using OpBlazorUI.Base.Services
+@inject OpTranslationService TranslationService
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Globalizacao8Tests.cs).
+   Fixa a tradução em pt-BR para verificar os separadores/símbolo do InputNumber sem CultureInfo. *@
+
+<PageTitle>Testes: globalização lote 8</PageTitle>
+
+<h1 id="t-title">Testes: globalização lote 8</h1>
+
+<section id="t-inputnumber">
+    <OpInputNumber Id="num" @bind-Value="_number"/>
+    <span id="t-number-value">@_number</span>
+</section>
+
+<section id="t-currency">
+    <OpInputNumber Id="cur" Mode="currency" @bind-Value="_amount"/>
+</section>
+
+@code {
+    private decimal? _number;
+    private decimal? _amount;
+
+    protected override void OnInitialized() => TranslationService.SetTranslation(OpTranslations.PtBr);
+}

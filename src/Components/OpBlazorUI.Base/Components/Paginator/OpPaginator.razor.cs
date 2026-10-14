@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Paginator;
 
@@ -7,7 +9,14 @@ public sealed record OpPaginatorState(int First, int Rows, int Page, int PageCou
 
 public partial class OpPaginator : ComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private string _jumpToPageText = "";
+
+    /// <summary>Rótulo acessível de um link de página, substituindo o token <c>{page}</c> (como no upstream).</summary>
+    private string PageAriaLabel(int page) => Tr.Aria.PageLabel.Replace("{page}", (page + 1).ToString());
 
     [Parameter] public int First { get; set; }
 

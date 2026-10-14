@@ -35,7 +35,7 @@
                         {
                             <button type="button"
                                     class="p-dialog-header-icon p-dialog-maximize-button"
-                                    aria-label="@(_maximized ? "Minimize" : "Maximize")"
+                                    aria-label="@(_maximized ? Tr.Aria.MinimizeLabel : Tr.Aria.MaximizeLabel)"
                                     @onclick="ToggleMaximize">
                                 <span class="@(_maximized ? "pi pi-window-minimize" : "pi pi-window-maximize")" aria-hidden="true"></span>
                             </button>
@@ -44,7 +44,7 @@
                         {
                             <button type="button"
                                     class="p-dialog-header-icon p-dialog-close-button"
-                                    aria-label="@CloseAriaLabel"
+                                    aria-label="@(CloseAriaLabel ?? Tr.Aria.Close)"
                                     @onclick="Close">
                                 @if (CloseIconTemplate != null)
                                 {

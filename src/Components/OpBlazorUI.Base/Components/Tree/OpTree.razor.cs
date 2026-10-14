@@ -1,10 +1,10 @@
-using System.Globalization;
 using System.Reflection;
-using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
 using OpBlazorUI.Base.Models;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Tree;
 
@@ -14,6 +14,10 @@ namespace OpBlazorUI.Base.Components.Tree;
 /// </summary>
 public partial class OpTree : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private string _filterValue = string.Empty;
     private string _filterText = string.Empty;
     private string _filterSignature = string.Empty;
@@ -44,7 +48,7 @@ public partial class OpTree : OpComponentBase
     /// <summary>Estratégia de filtro: <c>lenient</c> (inclui a subárvore do nó que casa) ou <c>strict</c>.</summary>
     [Parameter] public string FilterMode { get; set; } = "lenient";
 
-    [Parameter] public string FilterPlaceholder { get; set; } = "Filter";
+    [Parameter] public string? FilterPlaceholder { get; set; }
     [Parameter] public string? ScrollHeight { get; set; } = "400px";
     [Parameter] public bool Loading { get; set; }
 
@@ -398,7 +402,7 @@ public partial class OpTree : OpComponentBase
 
     private void ApplyFilter()
     {
-        _filterText = RemoveAccents(_filterValue);
+        _filterText = OpText.Normalize(_filterValue);
         var result = new List<OpTreeNode>();
 
         foreach (var node in Nodes)
@@ -464,7 +468,7 @@ public partial class OpTree : OpComponentBase
         {
             var value = ResolveField(node, field);
             if (value is not null &&
-                RemoveAccents(value).Contains(_filterText, StringComparison.CurrentCultureIgnoreCase))
+                OpText.Contains(value, _filterText))
             {
                 return true;
             }
@@ -499,20 +503,5 @@ public partial class OpTree : OpComponentBase
         }
 
         return current?.ToString();
-    }
-
-    private static string RemoveAccents(string value)
-    {
-        var normalized = value.Normalize(NormalizationForm.FormD);
-        var builder = new StringBuilder(normalized.Length);
-        foreach (var ch in normalized)
-        {
-            if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
-            {
-                builder.Append(ch);
-            }
-        }
-
-        return builder.ToString().Normalize(NormalizationForm.FormC);
     }
 }

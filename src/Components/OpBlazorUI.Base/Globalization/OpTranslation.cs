@@ -57,6 +57,15 @@ public sealed class OpTranslation
     public string FileChosenMessage { get; set; } = "{0} files chosen";
     public string NoFileChosenMessage { get; set; } = "No file chosen";
 
+    /// <summary>Mensagem de validação de um valor não conversível (com <c>{0}</c> = valor e <c>{1}</c> = tipo).</summary>
+    public string InvalidValue { get; set; } = "The value '{0}' is not valid for {1}.";
+
+    /// <summary>Placeholder/rótulo do campo de filtro embutido nos seletores (extensão nossa).</summary>
+    public string FilterPlaceholder { get; set; } = "Filter";
+
+    /// <summary>Nome acessível do filtro de uma coluna, com <c>{0}</c> = cabeçalho (extensão nossa).</summary>
+    public string FilterColumn { get; set; } = "Filter {0}";
+
     // Data / hora (DatePicker).
     public string[] DayNames { get; set; } =
         ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -93,6 +102,21 @@ public sealed class OpTranslation
     public string Medium { get; set; } = "Medium";
     public string Strong { get; set; } = "Strong";
     public string PasswordPrompt { get; set; } = "Enter a password";
+
+    // Números (InputNumber): separadores e símbolo explícitos, no lugar de CultureInfo/ICU.
+    public string DecimalSeparator { get; set; } = ".";
+    public string ThousandSeparator { get; set; } = ",";
+    public string CurrencySymbol { get; set; } = "$";
+
+    // Seletor de tema (extensão nossa: o PrimeNG não tem ThemeSwitcher).
+    public string LightMode { get; set; } = "Light mode";
+    public string DarkMode { get; set; } = "Dark mode";
+
+    /// <summary>Nome acessível de uma cor de tema, com <c>{0}</c> = nome do tema.</summary>
+    public string Theme { get; set; } = "Theme {0}";
+
+    // Editor (toolbar própria; o miolo do texto fica a cargo do Quill).
+    public OpEditorTranslation Editor { get; set; } = new();
 
     public OpAria Aria { get; set; } = new();
 }
@@ -151,10 +175,44 @@ public sealed class OpAria
     public string ZoomOut { get; set; } = "Zoom Out";
     public string RotateRight { get; set; } = "Rotate Right";
     public string RotateLeft { get; set; } = "Rotate Left";
+    public string ThumbnailPrev { get; set; } = "Previous thumbnails";
+    public string ThumbnailNext { get; set; } = "Next thumbnails";
     public string ListLabel { get; set; } = "Option List";
+    public string DropdownTrigger { get; set; } = "Show options";
     public string SelectColor { get; set; } = "Select a color";
     public string RemoveLabel { get; set; } = "Remove";
     public string BrowseFiles { get; set; } = "Browse Files";
     public string MaximizeLabel { get; set; } = "Maximize";
     public string MinimizeLabel { get; set; } = "Minimize";
+
+    /// <summary>Nome acessível de um campo de caractere, com <c>{0}</c> = posição (extensão nossa).</summary>
+    public string Character { get; set; } = "Character {0}";
+}
+
+/// <summary>
+/// Textos da toolbar do <see cref="OpBlazorUI.Base.Components.Editor"/> (rótulos de acessibilidade e
+/// do seletor de cabeçalho). O conteúdo em si é do Quill — aqui só entra o que nós renderizamos.
+/// </summary>
+public sealed class OpEditorTranslation
+{
+    public string Bold { get; set; } = "Bold";
+    public string Italic { get; set; } = "Italic";
+    public string Underline { get; set; } = "Underline";
+    public string TextColor { get; set; } = "Text color";
+    public string BackgroundColor { get; set; } = "Background color";
+    public string OrderedList { get; set; } = "Ordered list";
+    public string UnorderedList { get; set; } = "Unordered list";
+    public string Align { get; set; } = "Align";
+    public string InsertLink { get; set; } = "Insert link";
+    public string InsertImage { get; set; } = "Insert image";
+    public string CodeBlock { get; set; } = "Code block";
+    public string ClearFormatting { get; set; } = "Clear formatting";
+
+    // Opções do seletor de cabeçalho (<select class="ql-header">).
+    public string Heading1 { get; set; } = "Title";
+    public string Heading2 { get; set; } = "Subtitle";
+    public string Normal { get; set; } = "Normal";
+
+    /// <summary>Mensagem exibida quando o Quill não carrega.</summary>
+    public string LoadError { get; set; } = "Could not load the editor (Quill).";
 }

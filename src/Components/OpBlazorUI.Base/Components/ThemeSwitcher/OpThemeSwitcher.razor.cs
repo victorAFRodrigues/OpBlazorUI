@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using OpBlazorUI.Base.Globalization;
 using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.ThemeSwitcher;
@@ -11,6 +12,10 @@ public sealed record OpThemeOption(string Name, string Hex);
 /// </summary>
 public partial class OpThemeSwitcher : ComponentBase, IDisposable
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public string? StyleClass { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]

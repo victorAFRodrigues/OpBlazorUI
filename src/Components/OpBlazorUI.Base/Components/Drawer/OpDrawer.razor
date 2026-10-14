@@ -38,7 +38,7 @@
                 {
                     <button type="button"
                             class="p-drawer-header-icon p-drawer-close-button"
-                            aria-label="@AriaCloseLabel"
+                            aria-label="@(AriaCloseLabel ?? Tr.Aria.Close)"
                             @onclick="Close">
                         @if (CloseIconTemplate != null)
                         {

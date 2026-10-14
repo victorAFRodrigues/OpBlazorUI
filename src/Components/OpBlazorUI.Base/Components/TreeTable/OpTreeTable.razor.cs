@@ -2,12 +2,18 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Common;
 using OpBlazorUI.Base.Components.Paginator;
+using OpBlazorUI.Base.Globalization;
 using OpBlazorUI.Base.Models;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.TreeTable;
 
 public partial class OpTreeTable : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private ElementReference _tableRoot;
 
     // ------------------------------------------------------------------ params
@@ -28,7 +34,7 @@ public partial class OpTreeTable : OpComponentBase
 
     [Parameter] public bool Loading { get; set; }
 
-    [Parameter] public string? EmptyMessage { get; set; } = "No records found";
+    [Parameter] public string? EmptyMessage { get; set; }
 
     [Parameter] public bool Paginator { get; set; }
 

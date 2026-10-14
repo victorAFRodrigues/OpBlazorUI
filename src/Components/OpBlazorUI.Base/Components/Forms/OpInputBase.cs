@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Forms;
 
@@ -26,6 +28,10 @@ public abstract class OpInputBase<TValue> : InputBase<TValue>, IAsyncDisposable
     [Inject] protected IJSRuntime Js { get; set; } = default!;
 
     [Inject] private ILoggerFactory LoggerFactory { get; set; } = default!;
+
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation TrMessages => TranslationService.Translation;
 
     private OpInterop? _interop;
     private bool _valueExpressionInjected;
@@ -109,7 +115,7 @@ public abstract class OpInputBase<TValue> : InputBase<TValue>, IAsyncDisposable
         }
 
         result = default!;
-        validationErrorMessage = $"The value '{value}' is not valid for {typeof(TValue).Name}.";
+        validationErrorMessage = string.Format(TrMessages.InvalidValue, value, typeof(TValue).Name);
         return false;
     }
 }

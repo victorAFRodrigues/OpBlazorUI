@@ -46,7 +46,7 @@
 
     @if (ShowClear && CurrentValue is not null)
     {
-        <i class="p-inputnumber-clear-icon pi pi-times-circle" role="button" aria-label="Limpar" @onclick="Clear"></i>
+        <i class="p-inputnumber-clear-icon pi pi-times-circle" role="button" aria-label="@Tr.Clear" @onclick="Clear"></i>
     }
 
     @if (ShowButtons && ButtonLayout == "horizontal")

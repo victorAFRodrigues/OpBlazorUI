@@ -53,6 +53,9 @@ public static class OpTranslations
         EmptySearchMessage = "Nenhum resultado encontrado",
         FileChosenMessage = "{0} arquivos escolhidos",
         NoFileChosenMessage = "Nenhum arquivo escolhido",
+        InvalidValue = "O valor '{0}' não é válido para {1}.",
+        FilterPlaceholder = "Filtrar",
+        FilterColumn = "Filtrar {0}",
 
         DayNames = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"],
         DayNamesShort = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"],
@@ -85,6 +88,33 @@ public static class OpTranslations
         Medium = "Média",
         Strong = "Forte",
         PasswordPrompt = "Digite uma senha",
+
+        DecimalSeparator = ",",
+        ThousandSeparator = ".",
+        CurrencySymbol = "R$",
+        LightMode = "Modo claro",
+        DarkMode = "Modo escuro",
+        Theme = "Tema {0}",
+
+        Editor = new OpEditorTranslation
+        {
+            Bold = "Negrito",
+            Italic = "Itálico",
+            Underline = "Sublinhado",
+            TextColor = "Cor do texto",
+            BackgroundColor = "Cor de fundo",
+            OrderedList = "Lista ordenada",
+            UnorderedList = "Lista não ordenada",
+            Align = "Alinhamento",
+            InsertLink = "Inserir link",
+            InsertImage = "Inserir imagem",
+            CodeBlock = "Bloco de código",
+            ClearFormatting = "Limpar formatação",
+            Heading1 = "Título",
+            Heading2 = "Subtítulo",
+            Normal = "Normal",
+            LoadError = "Não foi possível carregar o editor (Quill)."
+        },
 
         Aria = new OpAria
         {
@@ -136,12 +166,16 @@ public static class OpTranslations
             ZoomOut = "Reduzir",
             RotateRight = "Girar para a direita",
             RotateLeft = "Girar para a esquerda",
+            ThumbnailPrev = "Miniaturas anteriores",
+            ThumbnailNext = "Próximas miniaturas",
             ListLabel = "Lista de opções",
+            DropdownTrigger = "Mostrar opções",
             SelectColor = "Selecionar uma cor",
             RemoveLabel = "Remover",
             BrowseFiles = "Escolher arquivos",
             MaximizeLabel = "Maximizar",
-            MinimizeLabel = "Minimizar"
+            MinimizeLabel = "Minimizar",
+            Character = "Caractere {0}"
         }
     };
 }

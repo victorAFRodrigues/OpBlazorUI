@@ -148,11 +148,11 @@ public class Bloco3_3Tests
         var page = await NewPageAsync(errors);
 
         var input = page.Locator("#t-money input");
-        await input.FillAsync("R$ 10.5");
+        await input.FillAsync("R$ 10,5");
         await page.Keyboard.PressAsync("Tab");
         await Expect(page.Locator("#t-money-value")).ToHaveTextAsync("10.5");
 
-        await input.FillAsync("1.239");
+        await input.FillAsync("1,239");
         await page.Keyboard.PressAsync("Tab");
         await Expect(page.Locator("#t-money-value")).ToHaveTextAsync("1.24");
 

@@ -109,7 +109,7 @@
 
     @if (Dropdown)
     {
-        <div class="p-autocomplete-dropdown" role="button" aria-label="dropdown trigger" aria-haspopup="listbox"
+        <div class="p-autocomplete-dropdown" role="button" aria-label="@Tr.Aria.DropdownTrigger" aria-haspopup="listbox"
              aria-expanded="@(_overlayVisible ? "true" : "false")" @onclick="OnDropdownClickHandler">
             @if (DropdownIconTemplate != null)
             {
@@ -134,7 +134,7 @@
             <div class="p-autocomplete-list-container" style="max-height:@(ScrollHeight ?? "auto")">
                 @if (VirtualScroll && ItemsProvider != null)
                 {
-                    <ul class="p-autocomplete-list" role="listbox" id="@($"{_id}_list")">
+                    <ul class="p-autocomplete-list" role="listbox" id="@($"{_id}_list")" aria-label="@Tr.Aria.ListLabel">
                         <Virtualize ItemsProvider="ItemsProvider"
                                     ItemSize="VirtualScrollItemSize"
                                     OverscanCount="VirtualScrollOverscan"
@@ -161,7 +161,7 @@
                 }
                 else
                 {
-                    <ul class="p-autocomplete-list" role="listbox" id="@($"{_id}_list")">
+                    <ul class="p-autocomplete-list" role="listbox" id="@($"{_id}_list")" aria-label="@Tr.Aria.ListLabel">
                         @{ _flatIndex = 0; }
                         @if (Group)
                         {
@@ -237,7 +237,7 @@
                                 }
                                 else
                                 {
-                                    @EmptyMessage
+                                    @(EmptyMessage ?? Tr.EmptyMessage)
                                 }
                             </li>
                         }

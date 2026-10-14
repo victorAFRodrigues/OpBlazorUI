@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using OpBlazorUI.Base.Globalization;
 using OpBlazorUI.Base.Models;
 using OpBlazorUI.Base.Services;
 
@@ -38,6 +39,9 @@ public partial class OpToast : ComponentBase, IDisposable
     [Parameter] public EventCallback<OpToastCloseEvent> OnClose { get; set; }
 
     [Inject] private OpMessageService MessageService { get; set; } = default!;
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
 
     private readonly Dictionary<OpToastMessage, CancellationTokenSource> _ctsMap = new();
     private readonly Dictionary<OpToastMessage, int> _remainingMs = new();

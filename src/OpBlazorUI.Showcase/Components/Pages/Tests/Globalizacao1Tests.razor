@@ -1,0 +1,70 @@
+@page "/_tests/globalizacao-1"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Chip
+@using OpBlazorUI.Base.Components.ConfirmDialog
+@using OpBlazorUI.Base.Components.ConfirmDialog.Models
+@using OpBlazorUI.Base.Components.Dialog
+@using OpBlazorUI.Base.Components.FileUpload
+@using OpBlazorUI.Base.Components.Inplace
+@using OpBlazorUI.Base.Components.InputChips
+@using OpBlazorUI.Base.Components.Message
+@using OpBlazorUI.Base.Globalization
+@using OpBlazorUI.Base.Services
+@inject OpConfirmationService ConfirmationService
+@inject OpTranslationService TranslationService
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Globalizacao1Tests.cs).
+   Fixa a tradução em pt-BR para verificar que os rótulos/aria vêm da tradução global. *@
+
+<PageTitle>Testes: globalização lote 1</PageTitle>
+
+<h1 id="t-title">Testes: globalização lote 1</h1>
+
+<section id="t-message">
+    <OpMessage Severity="info" Closable="true">texto</OpMessage>
+</section>
+
+<section id="t-chip">
+    <OpChip Label="tag" Removable="true"/>
+</section>
+
+<section id="t-inputchips">
+    <OpInputChips @bind-Value="_chips"/>
+</section>
+
+<section id="t-inplace">
+    <OpInplace Active="true" Closable="true">
+        <DisplayTemplate>clique</DisplayTemplate>
+        <ContentTemplate Context="ctx">conteúdo</ContentTemplate>
+    </OpInplace>
+</section>
+
+<section id="t-fileupload">
+    <OpFileUpload Mode="basic" Auto="false"/>
+</section>
+
+<section id="t-dialog">
+    <OpDialog Visible="true" Header="título" Maximizable="true" Closable="true">
+        <ChildContent>conteúdo</ChildContent>
+    </OpDialog>
+</section>
+
+<section id="t-confirm">
+    <button id="t-confirm-open" type="button" @onclick="OpenConfirm">confirmar</button>
+    <span id="t-confirm-state">@_state</span>
+    <OpConfirmDialog Key="main"/>
+</section>
+
+@code {
+    private List<string>? _chips = new() { "a", "b" };
+    private string _state = "—";
+
+    protected override void OnInitialized() => TranslationService.SetTranslation(OpTranslations.PtBr);
+
+    private void OpenConfirm() => ConfirmationService.Confirm(new ConfirmOptions
+    {
+        Key = "main",
+        Message = "Confirma?",
+        OnClose = ok => _state = ok ? "ok" : "nao"
+    });
+}

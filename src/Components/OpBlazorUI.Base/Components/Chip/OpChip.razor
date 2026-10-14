@@ -1,4 +1,6 @@
 @namespace OpBlazorUI.Base.Components.Chip
+@using OpBlazorUI.Base.Globalization
+@using OpBlazorUI.Base.Services
 
 <div class="@RootClass"
      style="@Style"
@@ -27,7 +29,7 @@
         {
             <span class="p-chip-remove-icon @RemoveIcon"
                   role="button"
-                  aria-label="Remove"
+                  aria-label="@Tr.Aria.RemoveLabel"
                   tabindex="@(Disabled ? -1 : 0)"
                   @onclick="OnRemoveClick"
                   @onclick:stopPropagation="true"
@@ -38,6 +40,10 @@
 </div>
 
 @code {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? Icon { get; set; }
     [Parameter] public string? Image { get; set; }

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Common;
 using OpBlazorUI.Base.Components.ConfirmDialog.Models;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.ConfirmPopup;
 
@@ -19,10 +21,14 @@ public partial class OpConfirmPopup : OpComponentBase
     private bool _disposed;
     private string _messageId = "";
 
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public string? Message { get; set; }
     [Parameter] public string Icon { get; set; } = "pi pi-exclamation-triangle";
-    [Parameter] public string AcceptLabel { get; set; } = "Sim";
-    [Parameter] public string RejectLabel { get; set; } = "Não";
+    [Parameter] public string? AcceptLabel { get; set; }
+    [Parameter] public string? RejectLabel { get; set; }
     [Parameter] public string? AcceptIcon { get; set; }
     [Parameter] public string? RejectIcon { get; set; }
     [Parameter] public string? AcceptButtonStyleClass { get; set; }
@@ -50,6 +56,10 @@ public partial class OpConfirmPopup : OpComponentBase
     }
 
     private string RootClass => Class("p-confirmpopup p-component", StyleClass);
+
+    // Rótulos efetivos: o parâmetro vence; senão, o padrão da tradução global.
+    private string EffectiveAcceptLabel => AcceptLabel ?? Tr.Accept;
+    private string EffectiveRejectLabel => RejectLabel ?? Tr.Reject;
 
     private string IconClass => Class("p-confirmpopup-icon", Icon);
 

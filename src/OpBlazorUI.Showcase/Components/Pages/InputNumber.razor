@@ -74,25 +74,28 @@
 
         <DocSection Label="Moeda">
             <Description>
-                A formatação de moeda é definida com <code>Mode="currency"</code> e <code>Currency</code>.
+                A formatação de moeda é definida com <code>Mode="currency"</code> e <code>Currency</code>
+                (código ISO 4217). O símbolo sai de <code>Currency</code> e os separadores vêm da tradução
+                global (<code>DecimalSeparator</code>/<code>ThousandSeparator</code>) — sem depender da
+                cultura/ICU da plataforma, então o resultado é o mesmo em Server, WebAssembly e SSR.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap gap-4">
                     <div class="flex-auto">
-                        <label class="block font-bold mb-2" for="inc1">Estados Unidos</label>
-                        <OpInputNumber Id="inc1" @bind-Value="_usd" Mode="currency" Currency="USD" Locale="en-US"/>
+                        <label class="block font-bold mb-2" for="inc1">Dólar (símbolo)</label>
+                        <OpInputNumber Id="inc1" @bind-Value="_usd" Mode="currency" Currency="USD"/>
                     </div>
                     <div class="flex-auto">
-                        <label class="block font-bold mb-2" for="inc2">Alemanha</label>
-                        <OpInputNumber Id="inc2" @bind-Value="_eur" Mode="currency" Currency="EUR" Locale="de-DE"/>
+                        <label class="block font-bold mb-2" for="inc2">Euro (símbolo)</label>
+                        <OpInputNumber Id="inc2" @bind-Value="_eur" Mode="currency" Currency="EUR"/>
                     </div>
                     <div class="flex-auto">
-                        <label class="block font-bold mb-2" for="inc3">Índia</label>
-                        <OpInputNumber Id="inc3" @bind-Value="_inr" Mode="currency" Currency="INR" CurrencyDisplay="code" Locale="en-IN"/>
+                        <label class="block font-bold mb-2" for="inc3">Rupia (código)</label>
+                        <OpInputNumber Id="inc3" @bind-Value="_inr" Mode="currency" Currency="INR" CurrencyDisplay="code"/>
                     </div>
                     <div class="flex-auto">
-                        <label class="block font-bold mb-2" for="inc4">Japão</label>
-                        <OpInputNumber Id="inc4" @bind-Value="_jpy" Mode="currency" Currency="JPY" Locale="ja-JP"/>
+                        <label class="block font-bold mb-2" for="inc4">Iene (símbolo)</label>
+                        <OpInputNumber Id="inc4" @bind-Value="_jpy" Mode="currency" Currency="JPY"/>
                     </div>
                 </div>
             </ChildContent>
@@ -184,7 +187,7 @@
                 Com <code>ShowClear</code>, um ícone de limpar é exibido para apagar o valor.
             </Description>
             <ChildContent>
-                <OpInputNumber ShowClear="true" Mode="currency" Currency="USD" Locale="en-US" @bind-Value="_clear" StyleClass="w-56"/>
+                <OpInputNumber ShowClear="true" Mode="currency" Currency="USD" @bind-Value="_clear" StyleClass="w-56"/>
             </ChildContent>
             <Code><CodeBlock Code="@ClearCode"/></Code>
         </DocSection>
@@ -196,15 +199,15 @@
             <ChildContent>
                 <div class="flex flex-wrap justify-center items-end gap-4">
                     <OpFloatLabel>
-                        <OpInputNumber Id="innf1" @bind-Value="_fl1" Mode="currency" Currency="USD" Locale="en-US"/>
+                        <OpInputNumber Id="innf1" @bind-Value="_fl1" Mode="currency" Currency="USD"/>
                         <label for="innf1">Rótulo Sobre</label>
                     </OpFloatLabel>
                     <OpFloatLabel Variant="in">
-                        <OpInputNumber Id="innf2" @bind-Value="_fl2" Mode="currency" Currency="USD" Locale="en-US"/>
+                        <OpInputNumber Id="innf2" @bind-Value="_fl2" Mode="currency" Currency="USD"/>
                         <label for="innf2">Rótulo Dentro</label>
                     </OpFloatLabel>
                     <OpFloatLabel Variant="on">
-                        <OpInputNumber Id="innf3" @bind-Value="_fl3" Mode="currency" Currency="USD" Locale="en-US"/>
+                        <OpInputNumber Id="innf3" @bind-Value="_fl3" Mode="currency" Currency="USD"/>
                         <label for="innf3">Rótulo Sobre a Borda</label>
                     </OpFloatLabel>
                 </div>
@@ -218,7 +221,7 @@
             </Description>
             <ChildContent>
                 <OpIftaLabel>
-                    <OpInputNumber Id="inni1" @bind-Value="_ifta" Mode="currency" Currency="USD" Locale="en-US"/>
+                    <OpInputNumber Id="inni1" @bind-Value="_ifta" Mode="currency" Currency="USD"/>
                     <label for="inni1">Preço</label>
                 </OpIftaLabel>
             </ChildContent>
@@ -258,7 +261,6 @@
                               new[] { "Mode", "string", "decimal", "<code>decimal</code> ou <code>currency</code>." },
                               new[] { "Currency", "string?", "null", "Código ISO 4217 (ex.: <code>USD</code>)." },
                               new[] { "CurrencyDisplay", "string", "symbol", "<code>symbol</code> ou <code>code</code>." },
-                              new[] { "Locale", "string?", "null", "Locale de formatação." },
                               new[] { "UseGrouping", "bool", "true", "Usa separador de milhar." },
                               new[] { "MinFractionDigits", "int?", "null", "Mínimo de casas decimais." },
                               new[] { "MaxFractionDigits", "int?", "null", "Máximo de casas decimais." },
@@ -363,14 +365,14 @@
         """;
 
     private const string ButtonCode = """
-        <OpInputNumber @bind-Value="_value" ShowButtons="true" Mode="currency" Currency="USD" />
-        <OpInputNumber @bind-Value="_value" ShowButtons="true" ButtonLayout="horizontal" Step="0.25" Mode="currency" Currency="EUR" />
+        <OpInputNumber @bind-Value="_value" ShowButtons="true" Mode="currency" Currency="USD"/>
+        <OpInputNumber @bind-Value="_value" ShowButtons="true" ButtonLayout="horizontal" Step="0.25" Mode="currency" Currency="EUR"/>
         """;
 
     private const string CurrencyCode = """
-        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="USD" Locale="en-US" />
-        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="EUR" Locale="de-DE" />
-        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="INR" CurrencyDisplay="code" Locale="en-IN" />
+        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="USD"/>
+        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="EUR"/>
+        <OpInputNumber @bind-Value="_value" Mode="currency" Currency="INR" CurrencyDisplay="code"/>
         """;
 
     private const string PrefixSuffixCode = """
@@ -402,19 +404,19 @@
         """;
 
     private const string ClearCode = """
-        <OpInputNumber ShowClear="true" Mode="currency" Currency="USD" Locale="en-US" @bind-Value="_value" />
+        <OpInputNumber ShowClear="true" Mode="currency" Currency="USD" @bind-Value="_value" />
         """;
 
     private const string FloatLabelCode = """
         <OpFloatLabel>
-            <OpInputNumber Id="innf1" @bind-Value="_value" Mode="currency" Currency="USD" Locale="en-US" />
+            <OpInputNumber Id="innf1" @bind-Value="_value" Mode="currency" Currency="USD"/>
             <label for="innf1">Rótulo Sobre</label>
         </OpFloatLabel>
         """;
 
     private const string IftaLabelCode = """
         <OpIftaLabel>
-            <OpInputNumber Id="inni1" @bind-Value="_value" Mode="currency" Currency="USD" Locale="en-US" />
+            <OpInputNumber Id="inni1" @bind-Value="_value" Mode="currency" Currency="USD"/>
             <label for="inni1">Preço</label>
         </OpIftaLabel>
         """;

@@ -1,10 +1,16 @@
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Galleria;
 
 public partial class OpGalleria<TItem> : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private int _activeIndex;
     private int _thumbStart;
     private bool _visible;

@@ -12,7 +12,7 @@
 
     <div class="p-carousel-content-container">
         <div class="@ContentWrapperClass">
-            <button type="button" class="@PrevButtonClass" aria-label="Anterior" @onclick="PrevAsync">
+            <button type="button" class="@PrevButtonClass" aria-label="@Tr.Aria.FirstPageLabel" @onclick="PrevAsync">
                 <i class="p-carousel-prev-icon pi pi-chevron-left" aria-hidden="true"></i>
             </button>
             <div class="p-carousel-viewport" style="@ViewportStyle">
@@ -29,7 +29,7 @@
                     }
                 </div>
             </div>
-            <button type="button" class="@NextButtonClass" aria-label="Próximo" @onclick="NextAsync">
+            <button type="button" class="@NextButtonClass" aria-label="@Tr.Aria.NextPageLabel" @onclick="NextAsync">
                 <i class="p-carousel-next-icon pi pi-chevron-right" aria-hidden="true"></i>
             </button>
         </div>
@@ -41,7 +41,7 @@
                 {
                     var page = p;
                     <li class="@IndicatorClass(page)">
-                        <button type="button" class="p-carousel-indicator-button" aria-label="@($"Página {page + 1}")" @onclick="() => GoToAsync(page * Math.Max(1, NumScroll))"></button>
+                        <button type="button" class="p-carousel-indicator-button" aria-label="@PageAriaLabel(page)" @onclick="() => GoToAsync(page * Math.Max(1, NumScroll))"></button>
                     </li>
                 }
             </ul>
