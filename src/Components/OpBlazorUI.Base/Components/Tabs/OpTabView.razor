@@ -11,7 +11,7 @@
     <div class="p-tabview-tablist" role="tablist" aria-label="@AriaLabel">
         @if (Scrollable)
         {
-            <button type="button" class="p-tabview-prev-button" aria-label="Abas anteriores" @onclick="() => ScrollAsync(-1)">
+            <button type="button" class="p-tabview-prev-button" aria-label="@Tr.Aria.Previous" @onclick="() => ScrollAsync(-1)">
                 <i class="pi pi-angle-left" aria-hidden="true"></i>
             </button>
         }
@@ -53,7 +53,7 @@
 
         @if (Scrollable)
         {
-            <button type="button" class="p-tabview-next-button" aria-label="Próximas abas" @onclick="() => ScrollAsync(1)">
+            <button type="button" class="p-tabview-next-button" aria-label="@Tr.Aria.Next" @onclick="() => ScrollAsync(1)">
                 <i class="pi pi-angle-right" aria-hidden="true"></i>
             </button>
         }

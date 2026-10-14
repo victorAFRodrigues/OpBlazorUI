@@ -2,11 +2,17 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Tabs;
 
 public partial class OpTabView : OpComponentBase, IOpTabHost
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private readonly List<OpTabPanel> _panels = new();
     private readonly List<ElementReference> _tabRefs = new();
     private readonly string _uid = "optabview_" + Guid.NewGuid().ToString("N")[..8];

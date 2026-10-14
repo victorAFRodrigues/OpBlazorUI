@@ -15,7 +15,7 @@
 
         @if (ShowFirstLastIcon)
         {
-            <button type="button" class="p-paginator-first@(IsFirstPageDisabled ? " p-disabled" : "")" disabled="@IsFirstPageDisabled" aria-label="First Page" @onclick="ChangeToFirstPage">
+            <button type="button" class="p-paginator-first@(IsFirstPageDisabled ? " p-disabled" : "")" disabled="@IsFirstPageDisabled" aria-label="@Tr.Aria.FirstPageLabel" @onclick="ChangeToFirstPage">
                 @if (FirstPageLinkIconTemplate != null)
                 {
                     <span class="p-paginator-first-icon">@FirstPageLinkIconTemplate</span>
@@ -27,7 +27,7 @@
             </button>
         }
 
-        <button type="button" class="p-paginator-prev@(IsFirstPageDisabled ? " p-disabled" : "")" disabled="@IsFirstPageDisabled" aria-label="Previous Page" @onclick="ChangeToPrevPage">
+        <button type="button" class="p-paginator-prev@(IsFirstPageDisabled ? " p-disabled" : "")" disabled="@IsFirstPageDisabled" aria-label="@Tr.Aria.PrevPageLabel" @onclick="ChangeToPrevPage">
             @if (PreviousPageLinkIconTemplate != null)
             {
                 <span class="p-paginator-prev-icon">@PreviousPageLinkIconTemplate</span>
@@ -45,7 +45,7 @@
                 {
                     <button type="button"
                             class="@PageClass(page)"
-                            aria-label="@(page + 1)"
+                            aria-label="@PageAriaLabel(page)"
                             aria-current="@(page == CurrentPage ? "page" : null)"
                             @onclick="() => ChangeToPage(page)">
                         @(page + 1)
@@ -54,7 +54,7 @@
             </span>
         }
 
-        <button type="button" class="p-paginator-next@(IsLastPageDisabled ? " p-disabled" : "")" disabled="@IsLastPageDisabled" aria-label="Next Page" @onclick="ChangeToNextPage">
+        <button type="button" class="p-paginator-next@(IsLastPageDisabled ? " p-disabled" : "")" disabled="@IsLastPageDisabled" aria-label="@Tr.Aria.NextPageLabel" @onclick="ChangeToNextPage">
             @if (NextPageLinkIconTemplate != null)
             {
                 <span class="p-paginator-next-icon">@NextPageLinkIconTemplate</span>
@@ -67,7 +67,7 @@
 
         @if (ShowFirstLastIcon)
         {
-            <button type="button" class="p-paginator-last@(IsLastPageDisabled ? " p-disabled" : "")" disabled="@IsLastPageDisabled" aria-label="Last Page" @onclick="ChangeToLastPage">
+            <button type="button" class="p-paginator-last@(IsLastPageDisabled ? " p-disabled" : "")" disabled="@IsLastPageDisabled" aria-label="@Tr.Aria.LastPageLabel" @onclick="ChangeToLastPage">
                 @if (LastPageLinkIconTemplate != null)
                 {
                     <span class="p-paginator-last-icon">@LastPageLinkIconTemplate</span>
@@ -85,7 +85,7 @@
                 <input type="text"
                        class="p-inputtext"
                        value="@_jumpToPageText"
-                       aria-label="Jump to page"
+                       aria-label="@Tr.Aria.JumpToPageInputLabel"
                        @oninput="OnJumpToPageInput"
                        @onkeydown="OnJumpToPageKeydown"/>
             </span>
@@ -95,7 +95,7 @@
         {
             <select class="p-paginator-rpp-dropdown p-inputtext"
                     value="@Rows"
-                    aria-label="Rows per page"
+                    aria-label="@Tr.Aria.RowsPerPageLabel"
                     @onchange="OnRowsPerPageChange">
                 @foreach (var option in RowsPerPageOptions)
                 {
