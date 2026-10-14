@@ -21,7 +21,8 @@ Instruções para agentes de código (OpenCode e similares) neste repositório. 
   - `graphify path "A" "B"` — caminho mais curto entre dois conceitos.
   - `graphify explain "<nó>"` — um nó e seus vizinhos.
 - Leia `GRAPH_REPORT.md` só para contexto amplo de arquitetura.
-- O grafo é atualizado **manualmente, sob pedido**: `/graphify --update` (incremental) ou `/graphify .` (rebuild).
+- Mantenha o grafo em dia **após mexer no código**: rode `graphify update .` (AST-only, sem custo de API) ao
+  fechar a alteração. Para um rebuild completo, `/graphify .`.
 
 ## Regras de trabalho
 
