@@ -8,7 +8,7 @@
               Rounded="true"
               StyleClass="@ButtonStyleClass"
               Style="@Style"
-              AriaLabel="@ButtonAriaLabel"
+              AriaLabel="@(ButtonAriaLabel ?? Tr.Aria.ScrollTop)"
               @onclick="OnClick">
         <IconTemplate>
             @if (IconTemplate != null)

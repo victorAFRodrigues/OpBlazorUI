@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Inplace;
 
@@ -12,6 +14,10 @@ public sealed class OpInplaceContext
 
 public partial class OpInplace : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public bool Active { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool PreventClick { get; set; }

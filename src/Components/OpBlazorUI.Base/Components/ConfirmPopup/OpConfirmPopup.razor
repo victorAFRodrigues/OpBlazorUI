@@ -30,20 +30,20 @@
         <div class="p-confirmpopup-footer">
             @if (RejectVisible)
             {
-                <OpButton Label="@RejectLabel"
+                <OpButton Label="@EffectiveRejectLabel"
                           data-pc-focus="reject"
                           Icon="@RejectIcon"
                           StyleClass="@RejectButtonClass"
-                          AriaLabel="@RejectLabel"
+                          AriaLabel="@EffectiveRejectLabel"
                           @onclick="OnRejectClick" />
             }
             @if (AcceptVisible)
             {
-                <OpButton Label="@AcceptLabel"
+                <OpButton Label="@EffectiveAcceptLabel"
                           data-pc-focus="accept"
                           Icon="@AcceptIcon"
                           StyleClass="@AcceptButtonClass"
-                          AriaLabel="@AcceptLabel"
+                          AriaLabel="@EffectiveAcceptLabel"
                           @onclick="OnAcceptClick" />
             }
         </div>

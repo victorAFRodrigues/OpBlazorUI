@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Dialog;
 
@@ -11,6 +13,10 @@ public partial class OpDialog : OpModalBase
     private bool _lastRenderedVisible;
     private ElementReference _root;
     private ElementReference _header;
+
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
 
     [Parameter] public bool Visible { get; set; }
 
@@ -51,7 +57,7 @@ public partial class OpDialog : OpModalBase
 
     [Parameter] public string CloseIcon { get; set; } = "pi pi-times";
 
-    [Parameter] public string CloseAriaLabel { get; set; } = "Close";
+    [Parameter] public string? CloseAriaLabel { get; set; }
 
     /// <summary>Trava a rolagem do body enquanto o diálogo está aberto.</summary>
     [Parameter] public bool BlockScroll { get; set; }

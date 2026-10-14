@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.FileUpload;
 
@@ -13,6 +15,10 @@ public partial class OpFileUpload : OpComponentBase
     private readonly List<(string Severity, string Text)> _messages = new();
     private int _progress;
     private bool _dropHighlight;
+
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
 
     [Parameter] public string Mode { get; set; } = "advanced";
     [Parameter] public string? Name { get; set; }
@@ -29,9 +35,9 @@ public partial class OpFileUpload : OpComponentBase
     /// <summary>Limite total (bytes) do conteúdo mantido em memória. Nulo = sem limite.</summary>
     [Parameter] public long? MaxTotalSize { get; set; }
 
-    [Parameter] public string ChooseLabel { get; set; } = "Escolher";
-    [Parameter] public string UploadLabel { get; set; } = "Enviar";
-    [Parameter] public string CancelLabel { get; set; } = "Cancelar";
+    [Parameter] public string? ChooseLabel { get; set; }
+    [Parameter] public string? UploadLabel { get; set; }
+    [Parameter] public string? CancelLabel { get; set; }
     [Parameter] public string ChooseIcon { get; set; } = "pi pi-plus";
     [Parameter] public string UploadIcon { get; set; } = "pi pi-upload";
     [Parameter] public string CancelIcon { get; set; } = "pi pi-times";
@@ -58,6 +64,11 @@ public partial class OpFileUpload : OpComponentBase
 
     private bool HasFiles => _files.Count > 0;
 
+    // Rótulos efetivos: o parâmetro vence; senão, o padrão da tradução global.
+    private string EffectiveChooseLabel => ChooseLabel ?? Tr.Choose;
+    private string EffectiveUploadLabel => UploadLabel ?? Tr.Upload;
+    private string EffectiveCancelLabel => CancelLabel ?? Tr.Cancel;
+
     private bool ChooseDisabled => FileLimit is int limit && _files.Count >= limit;
 
     private string RootClass => Class(
@@ -80,7 +91,7 @@ public partial class OpFileUpload : OpComponentBase
         {
             if (Auto)
             {
-                return ChooseLabel;
+                return EffectiveChooseLabel;
             }
 
             if (_files.Count == 1)
@@ -88,7 +99,9 @@ public partial class OpFileUpload : OpComponentBase
                 return _files[0].Name;
             }
 
-            return _files.Count > 1 ? $"{_files.Count} arquivos" : "Nenhum arquivo escolhido";
+            return _files.Count > 1
+                ? string.Format(Tr.FileChosenMessage, _files.Count)
+                : Tr.NoFileChosenMessage;
         }
     }
 
@@ -322,12 +335,12 @@ public partial class OpFileUpload : OpComponentBase
             && a.Size == b.Size
             && string.Equals(a.ContentType, b.ContentType, StringComparison.Ordinal);
 
-    private static string FormatSize(long bytes)
+    private string FormatSize(long bytes)
     {
-        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        var sizes = Tr.FileSizeTypes;
         if (bytes == 0)
         {
-            return "0 B";
+            return "0 " + sizes[0];
         }
 
         var index = Math.Min((int)Math.Floor(Math.Log(bytes) / Math.Log(1024)), sizes.Length - 1);

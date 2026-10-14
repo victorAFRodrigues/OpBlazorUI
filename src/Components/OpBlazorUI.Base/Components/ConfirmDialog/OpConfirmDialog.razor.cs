@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Common;
 using OpBlazorUI.Base.Components.ConfirmDialog.Models;
+using OpBlazorUI.Base.Globalization;
 using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.ConfirmDialog;
@@ -9,13 +10,16 @@ namespace OpBlazorUI.Base.Components.ConfirmDialog;
 public partial class OpConfirmDialog : OpModalBase
 {
     [Inject] private OpConfirmationService ConfirmationService { get; set; } = default!;
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
 
     [Parameter] public string? Key { get; set; }
     [Parameter] public string? Header { get; set; }
     [Parameter] public string? Message { get; set; }
     [Parameter] public string? Icon { get; set; }
-    [Parameter] public string AcceptLabel { get; set; } = "Sim";
-    [Parameter] public string RejectLabel { get; set; } = "Não";
+    [Parameter] public string? AcceptLabel { get; set; }
+    [Parameter] public string? RejectLabel { get; set; }
     [Parameter] public string? AcceptIcon { get; set; }
     [Parameter] public string? RejectIcon { get; set; }
     [Parameter] public string? AcceptButtonStyleClass { get; set; }
@@ -35,7 +39,7 @@ public partial class OpConfirmDialog : OpModalBase
     [Parameter] public string? Style { get; set; }
     [Parameter] public string? MaskStyleClass { get; set; }
     [Parameter] public string CloseIcon { get; set; } = "pi pi-times";
-    [Parameter] public string CloseAriaLabel { get; set; } = "Fechar";
+    [Parameter] public string? CloseAriaLabel { get; set; }
 
     // Vazio por padrão: sem aria-label, o nome acessível do botão é o próprio Label visível
     // (WCAG 2.5.3 - Label in Name). Defina apenas se o rótulo não for descritivo.
@@ -302,6 +306,11 @@ public partial class OpConfirmDialog : OpModalBase
     }
 
     private ConfirmOptions? CurrentOptions => _resolved;
+
+    // Textos efetivos: o que vier nas opções/parâmetro vence; senão, o padrão da tradução global.
+    private string EffectiveAcceptLabel => CurrentOptions?.AcceptLabel ?? AcceptLabel ?? Tr.Accept;
+    private string EffectiveRejectLabel => CurrentOptions?.RejectLabel ?? RejectLabel ?? Tr.Reject;
+    private string EffectiveCloseAriaLabel => CurrentOptions?.CloseAriaLabel ?? CloseAriaLabel ?? Tr.Aria.Close;
 
     private bool EffModal => CurrentOptions?.Modal ?? Modal;
     private bool EffDismissableMask => CurrentOptions?.DismissableMask ?? DismissableMask;

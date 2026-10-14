@@ -48,7 +48,7 @@
                             <button type="button"
                                     class="p-dialog-header-icon p-dialog-close-button"
                                     data-pc-focus="close"
-                                    aria-label="@(CurrentOptions?.CloseAriaLabel ?? CloseAriaLabel)"
+                                    aria-label="@EffectiveCloseAriaLabel"
                                     @onclick="OnCloseClick">
                                 <span class="@(CurrentOptions?.CloseIcon ?? CloseIcon)" aria-hidden="true"></span>
                             </button>
@@ -87,7 +87,7 @@
                     {
                         @if (CurrentOptions?.RejectVisible ?? RejectVisible)
                         {
-                            <OpButton Label="@(CurrentOptions?.RejectLabel ?? RejectLabel)"
+                            <OpButton Label="@EffectiveRejectLabel"
                                       data-pc-focus="reject"
                                       Icon="@(CurrentOptions?.RejectIcon ?? RejectIcon)"
                                       StyleClass="@RejectButtonClass"
@@ -102,7 +102,7 @@
                         }
                         @if (CurrentOptions?.AcceptVisible ?? AcceptVisible)
                         {
-                            <OpButton Label="@(CurrentOptions?.AcceptLabel ?? AcceptLabel)"
+                            <OpButton Label="@EffectiveAcceptLabel"
                                       data-pc-focus="accept"
                                       Icon="@(CurrentOptions?.AcceptIcon ?? AcceptIcon)"
                                       StyleClass="@AcceptButtonClass"
