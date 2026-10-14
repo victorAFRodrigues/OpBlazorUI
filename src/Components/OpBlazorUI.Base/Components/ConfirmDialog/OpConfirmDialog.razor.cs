@@ -328,10 +328,16 @@ public partial class OpConfirmDialog : OpModalBase
         StyleClass);
 
     // "Badge" é extensão do OpBlazorUI: o CSS vive em optimus-base.css e usa tokens do tema.
-    private string? AppearanceClass =>
-        string.IsNullOrWhiteSpace(CurrentOptions?.Appearance ?? Appearance)
-            ? null
-            : $"p-confirmdialog-{(CurrentOptions?.Appearance ?? Appearance).ToLowerInvariant()}";
+    private string? AppearanceClass
+    {
+        get
+        {
+            var appearance = CurrentOptions?.Appearance ?? Appearance;
+            return string.IsNullOrWhiteSpace(appearance)
+                ? null
+                : $"p-confirmdialog-{appearance.ToLowerInvariant()}";
+        }
+    }
 
     private string MaskClass => OpCss.BuildClass(
         "p-dialog-mask p-confirmdialog-mask",

@@ -43,7 +43,8 @@ public partial class OpMenu : ComponentBase
     private string RootClass => BuildClass(
         "p-menu p-component",
         Popup ? "p-menu-overlay" : null,
-        StyleClass);
+        StyleClass,
+        _panelAnimationClass);
 
     private IReadOnlyList<OpMenuItem> FlatItems => Items ?? Array.Empty<OpMenuItem>();
 

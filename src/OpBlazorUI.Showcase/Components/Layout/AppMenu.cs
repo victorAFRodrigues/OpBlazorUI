@@ -95,7 +95,7 @@ public static class AppMenu
                         GroupItem("FloatLabel", "/floatlabel"), GroupItem("IconField", "/iconfield"),
                         GroupItem("IftaLabel", "/iftalabel"), GroupItem("InputChips", "/inputchips"), GroupItem("InputGroup", "/inputgroup"), GroupItem("InputMask", "/inputmask"),
                         GroupItem("InputNumber", "/inputnumber"), GroupItem("InputOtp", "/inputotp"),
-                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"), PlaceholderItem("Knob", "/knob"),
+                        GroupItem("InputText", "/inputtext"), GroupItem("KeyFilter", "/keyfilter"), GroupItem("Knob", "/knob"),
                         GroupItem("Listbox", "/listbox"), GroupItem("MultiSelect", "/multiselect"),
                         GroupItem("Password", "/password"), GroupItem("RadioButton", "/radiobutton"), GroupItem("Rating", "/rating"),
                         GroupItem("Select", "/select"), GroupItem("SelectButton", "/selectbutton"), GroupItem("Slider", "/slider"),
@@ -125,8 +125,8 @@ public static class AppMenu
                     Items =
                     [
                         GroupItem("Accordion", "/accordion"), GroupItem("Card", "/card"), GroupItem("Divider", "/divider"),
-                        GroupItem("Fieldset", "/fieldset"), PlaceholderItem("Panel", "/panel"), PlaceholderItem("ScrollPanel", "/scrollpanel"),
-                        PlaceholderItem("Splitter", "/splitter"), GroupItem("Stepper", "/stepper"), GroupItem("Steps", "/steps"), GroupItem("Tabs", "/tabs"), GroupItem("TabView", "/tabview"), GroupItem("Toolbar", "/toolbar")
+                        GroupItem("Fieldset", "/fieldset"), GroupItem("Panel", "/panel"), GroupItem("ScrollPanel", "/scrollpanel"),
+                        GroupItem("Splitter", "/splitter"), GroupItem("Stepper", "/stepper"), GroupItem("Steps", "/steps"), GroupItem("Tabs", "/tabs"), GroupItem("TabView", "/tabview"), GroupItem("Toolbar", "/toolbar")
                     ]
                 },
                 new AppMenuGroup
@@ -167,7 +167,7 @@ public static class AppMenu
                 new AppMenuGroup
                 {
                     Label = "Media",
-                    Items = [PlaceholderItem("Carousel", "/carousel"), PlaceholderItem("Galleria", "/galleria"), PlaceholderItem("Image", "/image"), PlaceholderItem("ImageCompare", "/imagecompare")]
+                    Items = [GroupItem("Carousel", "/carousel"), GroupItem("Galleria", "/galleria"), GroupItem("Image", "/image"), GroupItem("ImageCompare", "/imagecompare")]
                 },
                 new AppMenuGroup
                 {
