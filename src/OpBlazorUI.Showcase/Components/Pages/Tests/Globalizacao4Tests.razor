@@ -1,0 +1,29 @@
+@page "/_tests/globalizacao-4"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.OrderList
+@using OpBlazorUI.Base.Components.PickList
+@using OpBlazorUI.Base.Globalization
+@using OpBlazorUI.Base.Services
+@inject OpTranslationService TranslationService
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Globalizacao4Tests.cs).
+   Fixa a tradução em pt-BR para verificar os aria dos controles de reordenação/transferência. *@
+
+<PageTitle>Testes: globalização lote 4</PageTitle>
+
+<h1 id="t-title">Testes: globalização lote 4</h1>
+
+<section id="t-orderlist">
+    <OpOrderList TItem="string" Items="_items"/>
+</section>
+
+<section id="t-picklist">
+    <OpPickList TItem="string" Source="_items" Target="_target"/>
+</section>
+
+@code {
+    private readonly List<string> _items = new() { "A", "B" };
+    private readonly List<string> _target = new() { "C" };
+
+    protected override void OnInitialized() => TranslationService.SetTranslation(OpTranslations.PtBr);
+}

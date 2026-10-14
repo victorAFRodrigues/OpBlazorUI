@@ -1,10 +1,16 @@
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.PickList;
 
 public partial class OpPickList<TItem> : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private List<TItem> _source = new();
     private List<TItem> _target = new();
     private List<TItem> _selectedSource = new();
@@ -36,7 +42,7 @@ public partial class OpPickList<TItem> : OpComponentBase
     [Parameter] public bool ShowSourceControls { get; set; } = true;
     [Parameter] public bool ShowTargetControls { get; set; } = true;
     [Parameter] public string? ScrollHeight { get; set; } = "14rem";
-    [Parameter] public string? EmptyMessage { get; set; } = "No results found";
+    [Parameter] public string? EmptyMessage { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public RenderFragment<TItem>? ItemTemplate { get; set; }
