@@ -1,198 +1,343 @@
 @page "/knob"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.Knob
 
 <PageTitle>Knob - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Knob"
-              Description="Entrada numérica por dial. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O Knob é um componente de entrada numérica em forma de dial, com vínculo bidirecional via bind-Value.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>Knob é um componente de entrada e é usado com a diretiva padrão <code>ngModel</code>.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>O Knob é um componente de entrada usado com <code>@@bind-Value</code>, herdando de
+                <code>OpInputBase&lt;double&gt;</code>.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_basic"/>
+                    <span class="text-sm">Valor: <b>@_basic</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Mín/Máx" Id="minmax">
-            <Description><p>Os limites são configurados com as propriedades <code>min</code> e <code>max</code>, cujos padrões são 0 e 100, respectivamente.</p></Description>
-            <Code><CodeBlock Code="@MinMaxCode" Language="html"/></Code>
+            <Description>
+                <p>Os limites são configurados com <code>Min</code> e <code>Max</code>, cujos padrões são <code>0</code>
+                e <code>100</code>.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_minMax" Min="-50" Max="50"/>
+                    <span class="text-sm">Valor: <b>@_minMax</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@MinMaxCode"/></Code>
         </DocSection>
 
         <DocSection Label="Passo" Id="step">
-            <Description><p>O tamanho de cada movimento é definido pela propriedade <code>step</code>.</p></Description>
-            <Code><CodeBlock Code="@StepCode" Language="html"/></Code>
+            <Description>
+                <p>O tamanho de cada movimento pelas setas e pelo arrasto é definido por <code>Step</code>.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_step" Step="10"/>
+                    <span class="text-sm">Valor: <b>@_step</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StepCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Template" Id="template">
-            <Description><p>O rótulo é um template de string que pode ser customizado com a propriedade <code>valueTemplate</code>, tendo 60 como placeholder.</p></Description>
-            <Code><CodeBlock Code="@TemplateCode" Language="html"/></Code>
+        <DocSection Label="Rótulo/Template" Id="template">
+            <Description>
+                <p>
+                    O rótulo exibido no centro é um template de string definido por <code>ValueTemplate</code>, usando
+                    <code>{value}</code> como marcador. Para ocultá-lo, defina <code>ShowValue="false"</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_template" ValueTemplate="{value}%"/>
+                    <span class="text-sm">Valor: <b>@_template</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Traço" Id="stroke">
-            <Description><p>A espessura da borda é especificada com a propriedade <code>strokeWidth</code> como um número em pixels.</p></Description>
-            <Code><CodeBlock Code="@StrokeCode" Language="html"/></Code>
+        <DocSection Label="Espessura" Id="stroke">
+            <Description>
+                <p>A espessura do traço é especificada com <code>StrokeWidth</code>, em pixels.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_stroke" StrokeWidth="5"/>
+                    <span class="text-sm">Valor: <b>@_stroke</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StrokeCode"/></Code>
         </DocSection>
 
         <DocSection Label="Tamanho" Id="size">
-            <Description><p>O diâmetro do knob é definido em pixels usando a propriedade <code>size</code>.</p></Description>
-            <Code><CodeBlock Code="@SizeCode" Language="html"/></Code>
+            <Description>
+                <p>O diâmetro do Knob é definido em pixels por <code>Size</code>.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_size" Size="200"/>
+                    <span class="text-sm">Valor: <b>@_size</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
         </DocSection>
 
         <DocSection Label="Cor" Id="color">
-            <Description><p>As cores são customizadas com as propriedades <code>textColor</code>, <code>rangeColor</code> e <code>valueColor</code>.</p></Description>
-            <Code><CodeBlock Code="@ColorCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Reativo" Id="reactive">
-            <Description><p>O Knob também pode ser controlado com controles customizados.</p></Description>
-            <Code><CodeBlock Code="@ReactiveCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    As cores são customizadas com <code>ValueColor</code> (parte preenchida), <code>RangeColor</code>
+                    (traço restante) e <code>TextColor</code> (rótulo). Os valores são aceitos como CSS (cor ou
+                    variável).
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_color" ValueColor="SlateGray" RangeColor="MediumTurquoise"/>
+                    <span class="text-sm">Valor: <b>@_color</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ColorCode"/></Code>
         </DocSection>
 
         <DocSection Label="Somente Leitura" Id="readonly">
-            <Description><p>Com <code>readonly</code> presente, o valor não pode ser editado.</p></Description>
-            <Code><CodeBlock Code="@ReadonlyCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Formulários" Id="forms">
-            <Description><p>No Blazor, a integração acontecerá via <code>EditForm</code> + <code>DataAnnotationsValidator</code>, herdando de <code>OpInputBase&lt;TValue&gt;</code>. Abaixo, o equivalente da referência Angular.</p></Description>
-            <Code><CodeBlock Code="@ReactiveFormsCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Template Driven" Id="templatedriven">
-            <Description><p>Uso com formulários template driven do Angular (<code>ngModel</code>).</p></Description>
-            <Code><CodeBlock Code="@TemplateDrivenCode" Language="html"/></Code>
-        </DocSection>
-
-        <DocSection Label="Reactive Forms" Id="reactiveforms">
-            <Description><p>O Knob também pode ser usado com formulários reativos. Neste caso, a propriedade <code>formControlName</code> é usada para vincular o componente a um controle de formulário.</p></Description>
-            <Code><CodeBlock Code="@ReactiveFormsCode" Language="html"/></Code>
+            <Description>
+                <p>Com <code>Readonly="true"</code> o valor não pode ser editado e o componente sai da ordem de tabulação.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_readonly" Readonly="true"/>
+                    <span class="text-sm">Valor: <b>@_readonly</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReadonlyCode"/></Code>
         </DocSection>
 
         <DocSection Label="Desabilitado" Id="disabled">
-            <Description><p>Com <code>disabled</code> presente, uma dica visual é aplicada para indicar que o Knob não pode ser interagido.</p></Description>
-            <Code><CodeBlock Code="@DisabledCode" Language="html"/></Code>
+            <Description>
+                <p>Com <code>Disabled="true"</code> uma dica visual é aplicada e o Knob não pode ser interagido.</p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-2">
+                    <OpKnob @bind-Value="_disabled" Disabled="true"/>
+                    <span class="text-sm">Valor: <b>@_disabled</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O componente Knob usa o role <code>slider</code> além dos atributos <code>aria-valuemin</code>, <code>aria-valuemax</code> e <code>aria-valuenow</code>. O valor para descrever o componente pode ser definido com as props <code>ariaLabelledBy</code> e <code>ariaLabel</code>.</p>
+                <p>
+                    O componente usa o papel <code>slider</code> com <code>aria-valuemin</code>,
+                    <code>aria-valuemax</code> e <code>aria-valuenow</code>. O texto que descreve o componente pode ser
+                    definido com <code>AriaLabel</code> ou <code>AriaLabelledBy</code>.
+                </p>
                 <h3>Suporte a teclado</h3>
+                <p>As setas e as teclas Home/End/PageUp/PageDown funcionam sem depender do interop de arrasto.</p>
             </Description>
             <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
                               new[] { "tab", "Move o foco para o slider." },
-                              new[] { "seta esquerda / seta baixo", "Decrementa o valor." },
                               new[] { "seta direita / seta cima", "Incrementa o valor." },
+                              new[] { "seta esquerda / seta baixo", "Decrementa o valor." },
                               new[] { "home", "Define o valor mínimo." },
                               new[] { "end", "Define o valor máximo." },
-                              new[] { "page up", "Incrementa o valor em 10 passos." },
-                              new[] { "page down", "Decrementa o valor em 10 passos." }
+                              new[] { "page up", "Incrementa o valor em 10." },
+                              new[] { "page down", "Decrementa o valor em 10." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Min", "double", "0", "Valor mínimo." },
+                              new[] { "Max", "double", "100", "Valor máximo." },
+                              new[] { "Step", "double", "1", "Incremento do arrasto e das setas." },
+                              new[] { "Size", "double", "100", "Diâmetro do Knob em pixels." },
+                              new[] { "StrokeWidth", "double", "14", "Espessura do traço em pixels." },
+                              new[] { "ShowValue", "bool", "true", "Exibe o rótulo central." },
+                              new[] { "Readonly", "bool", "false", "Impede a edição; também zera o <code>TabIndex</code>." },
+                              new[] { "Required", "bool", "false", "Marca o input como obrigatório." },
+                              new[] { "TabIndex", "int", "0", "Ordem de tabulação; forçado a <code>-1</code> quando somente leitura/desabilitado." },
+                              new[] { "Name", "string?", "null", "Nome aplicado ao elemento de texto do valor." },
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível." },
+                              new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o componente." },
+                              new[] { "ValueColor", "string", "var(--p-knob-value-background)", "Cor do traço preenchido." },
+                              new[] { "RangeColor", "string", "var(--p-knob-range-background)", "Cor do traço restante." },
+                              new[] { "TextColor", "string", "var(--p-knob-text-color)", "Cor do rótulo." },
+                              new[] { "ValueTemplate", "string", "\"{value}\"", "Template do rótulo; <code>{value}</code> é substituído pelo valor." },
+                              new[] { "OnChange", "EventCallback&lt;double&gt;", "—", "Disparado após o valor mudar." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Herança (OpInputBase&lt;double&gt;)" Id="api-inherited">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "double", "0", "Valor atual; combine com <code>@@bind-Value</code>." },
+                              new[] { "ValueChanged", "EventCallback&lt;double&gt;", "—", "Notifica mudanças do valor (gerado por <code>@@bind-Value</code>)." },
+                              new[] { "ValueExpression", "Expression&lt;Func&lt;double&gt;&gt;?", "null", "Expressão do vínculo, herdada de <code>InputBase&lt;double&gt;</code>." },
+                              new[] { "Disabled", "bool", "false", "Estado desabilitado." },
+                              new[] { "Invalid", "bool", "false", "Estado de erro; também ativado pela validação do <code>EditForm</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="knob"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>StyleClass</code>, as propriedades de cor e os <code>AdditionalAttributes</code>.</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>O arrasto por ponteiro depende do interop JS: sem JS (SSR estático) o dial não se move com o mouse, mas o teclado continua funcionando.</li>
+                        <li>As teclas de seta, Home/End e PageUp/PageDown usam incrementos fixos (1 e 10) e ignoram <code>Step</code>; apenas o arrasto aplica <code>Step</code>.</li>
+                        <li>O desenho usa um <code>viewBox</code> fixo de 100x100 e raio 40; <code>Size</code> apenas escala o SVG.</li>
+                        <li><code>ValueColor</code>/<code>RangeColor</code> esperam valores CSS, não severidades do tema.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
+    private double _basic = 60;
+    private double _minMax;
+    private double _step;
+    private double _template = 60;
+    private double _stroke = 60;
+    private double _size = 60;
+    private double _color = 60;
+    private double _readonly = 60;
+    private double _disabled = 60;
+
     private const string ImportCode = """
-        import { KnobModule } from 'primeng/knob';
+        @using OpBlazorUI.Base.Components.Knob
+
+        <OpKnob @bind-Value="_value" />
+
+        @code {
+            private double _value = 60;
+        }
         """;
 
     private const string BasicCode = """
-        <p-knob [(ngModel)]="value" />
+        <OpKnob @bind-Value="_value" />
+
+        @code {
+            private double _value = 60;
+        }
         """;
 
     private const string MinMaxCode = """
-        <p-knob [(ngModel)]="value" [min]="-50" [max]="50" />
+        <OpKnob @bind-Value="_value" Min="-50" Max="50" />
+
+        @code {
+            private double _value;
+        }
         """;
 
     private const string StepCode = """
-        <p-knob [(ngModel)]="value" [step]="10" />
+        <OpKnob @bind-Value="_value" Step="10" />
+
+        @code {
+            private double _value;
+        }
         """;
 
     private const string TemplateCode = """
-        <p-knob [(ngModel)]="value" valueTemplate="{value}%" />
+        <OpKnob @bind-Value="_value" ValueTemplate="{value}%" />
+
+        @code {
+            private double _value = 60;
+        }
         """;
 
     private const string StrokeCode = """
-        <p-knob [(ngModel)]="value" [strokeWidth]="5" />
+        <OpKnob @bind-Value="_value" StrokeWidth="5" />
+
+        @code {
+            private double _value = 60;
+        }
         """;
 
     private const string SizeCode = """
-        <p-knob [(ngModel)]="value" [size]="200" />
+        <OpKnob @bind-Value="_value" Size="200" />
+
+        @code {
+            private double _value = 60;
+        }
         """;
 
     private const string ColorCode = """
-        <p-knob [(ngModel)]="value" valueColor="SlateGray" rangeColor="MediumTurquoise" />
-        """;
+        <OpKnob @bind-Value="_value" ValueColor="SlateGray" RangeColor="MediumTurquoise" />
 
-    private const string ReactiveCode = """
-        <p-knob [(ngModel)]="value" size="150" readonly="true"/>
-        <div class="flex gap-2">
-            <p-button icon="pi pi-plus" (click)="value = value+1" [disabled]="value >= 100" />
-            <p-button icon="pi pi-minus" (click)="value = value-1" [disabled]="value <= 0" />
-        </div>
+        @code {
+            private double _value = 60;
+        }
         """;
 
     private const string ReadonlyCode = """
-        <p-knob [(ngModel)]="value" [readonly]="true" />
-        """;
+        <OpKnob @bind-Value="_value" Readonly="true" />
 
-    private const string TemplateDrivenCode = """
-        <form #exampleForm="ngForm" (ngSubmit)="onSubmit(exampleForm)" class="flex flex-col items-center gap-4">
-            <div class="flex flex-col items-center gap-1">
-                <p-knob #model="ngModel" [(ngModel)]="value" [invalid]="isInvalid(model)" name="knob" />
-                @if (isInvalid(model)) {
-                    <p-message severity="error" size="small" variant="simple">{{ getErrorMessage(model) }}</p-message>
-                }
-            </div>
-            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-        </form>
-        """;
-
-    private const string ReactiveFormsCode = """
-        <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-col items-center gap-4">
-            <div class="flex flex-col items-center gap-1">
-                <p-knob formControlName="value" [invalid]="isInvalid('value')" />
-                @if (isInvalid('value')) {
-                    <p-message severity="error" size="small" variant="simple">{{ getErrorMessage('value') }}</p-message>
-                }
-            </div>
-            <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
-        </form>
+        @code {
+            private double _value = 60;
+        }
         """;
 
     private const string DisabledCode = """
-        <p-knob [(ngModel)]="value" [disabled]="true" />
+        <OpKnob @bind-Value="_value" Disabled="true" />
+
+        @code {
+            private double _value = 60;
+        }
+        """;
+
+    private const string AccessibilityCode = """
+        <span id="volume">Volume</span>
+        <OpKnob @bind-Value="_value" AriaLabelledBy="volume" />
+
+        <OpKnob @bind-Value="_value" AriaLabel="Volume" />
         """;
 }

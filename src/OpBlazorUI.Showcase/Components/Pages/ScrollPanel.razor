@@ -1,109 +1,199 @@
 @page "/scrollpanel"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.ScrollPanel
 
 <PageTitle>ScrollPanel - OpBlazorUI</PageTitle>
 
 <DocComponent Title="ScrollPanel"
-              Description="Alternativa leve e multiplataforma à barra de rolagem nativa do navegador. Componente ainda não portado para o Blazor: os textos e exemplos abaixo são da documentação de referência (PrimeNG/Optimus UI v21 em Angular) e serão substituídos por exemplos reais quando o componente existir.">
+              Description="O ScrollPanel é uma alternativa leve e multiplataforma às barras de rolagem nativas do navegador.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
-            <Code><CodeBlock Code="@ImportCode" Language="typescript"/></Code>
+            <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description><p>O ScrollPanel é definido usando dimensões para a viewport rolável.</p></Description>
-            <Code><CodeBlock Code="@BasicCode" Language="html"/></Code>
+            <Description>
+                <p>O ScrollPanel é definido com uma dimensão para a viewport rolável, informada em <code>Style</code>.</p>
+            </Description>
+            <ChildContent>
+                <OpScrollPanel Style="width:100%;height:15rem">
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                    <p>
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+                        laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto
+                        beatae vitae dicta sunt explicabo.
+                    </p>
+                    <p class="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+                        voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
+                        cupiditate non provident.
+                    </p>
+                </OpScrollPanel>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
         <DocSection Label="Personalizado" Id="custom">
-            <Description><p>Os visuais da barra de rolagem podem ser estilizados para uma aparência unificada entre diferentes plataformas.</p></Description>
-            <Code><CodeBlock Code="@CustomCode" Language="html"/></Code>
+            <Description>
+                <p>
+                    O conteúdo pode ser fornecido pelo template <code>ContentTemplate</code>, permitindo misturar
+                    títulos, listas e outros elementos dentro da área rolável. A aparência das barras vem dos tokens de
+                    tema.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpScrollPanel Style="width:100%;height:15rem">
+                    <ContentTemplate>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="m-0">Itens</h3>
+                            <p class="m-0">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua.
+                            </p>
+                            <p class="m-0">
+                                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                                nulla pariatur.
+                            </p>
+                            <p class="m-0">
+                                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                                mollit anim id est laborum.
+                            </p>
+                            <p class="m-0">
+                                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+                                laudantium.
+                            </p>
+                        </div>
+                    </ContentTemplate>
+                </OpScrollPanel>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>As barras de rolagem do ScrollPanel têm o role <code>scrollbar</code> junto ao atributo <code>aria-controls</code>, que se refere ao id do contêiner de conteúdo rolável, e <code>aria-orientation</code> para indicar a orientação da rolagem.</p>
-                <h3>Suporte a teclado do cabeçalho</h3>
+                <p>
+                    As barras de rolagem têm o papel <code>scrollbar</code> com <code>aria-controls</code> apontando
+                    para o contêiner de conteúdo e <code>aria-orientation</code> indicando a orientação. As barras são
+                    focáveis (<code>tabindex="0"</code>).
+                </p>
+                <h3>Suporte a teclado</h3>
+                <p>Com uma barra focada, as setas rolam o conteúdo no passo definido por <code>Step</code>.</p>
             </Description>
             <Code>
+                <CodeBlock Code="@AccessibilityCode"/>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "seta para baixo", "Rola o conteúdo para baixo quando a rolagem vertical está disponível." },
-                              new[] { "seta para cima", "Rola o conteúdo para cima quando a rolagem vertical está disponível." },
-                              new[] { "seta para a esquerda", "Rola o conteúdo para a esquerda quando a rolagem horizontal está disponível." },
-                              new[] { "seta para a direita", "Rola o conteúdo para a direita quando a rolagem horizontal está disponível." }
+                              new[] { "tab", "Move o foco para a barra de rolagem." },
+                              new[] { "seta para baixo", "Rola o conteúdo para baixo quando há overflow vertical." },
+                              new[] { "seta para cima", "Rola o conteúdo para cima quando há overflow vertical." },
+                              new[] { "seta para a esquerda", "Rola o conteúdo para a esquerda quando há overflow horizontal." },
+                              new[] { "seta para a direita", "Rola o conteúdo para a direita quando há overflow horizontal." }
                           })"/>
             </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="API" Id="api">
-            <ChildContent><div class="doc-section-description"><p>A API ainda não está disponível: será documentada a partir do <code>.razor.cs</code> quando o componente for portado.</p></div></ChildContent>
+        <DocSection Label="Propriedades" Id="api-props">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Step", "double", "5", "Passo de rolagem pelas setas do teclado (px)." },
+                              new[] { "Style", "string?", "null", "Estilo inline do elemento raiz; informe largura/altura da viewport." },
+                              new[] { "ContentTemplate", "RenderFragment?", "null", "Substitui o conteúdo padrão da área rolável." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo da área rolável." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz; base para o id do conteúdo referenciado por <code>aria-controls</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos não mapeados, repassados ao elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Métodos" Id="api-methods">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Assinatura", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ScrollTopAsync(double scrollTop)", "Define a posição vertical da rolagem (px). Não faz nada antes da inicialização do interop." },
+                              new[] { "RefreshAsync()", "Recalcula o tamanho e a posição das barras após mudanças no conteúdo." }
+                          })"/>
+            </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
         <DocSection Label="Temas" Id="theming">
-            <ChildContent><div class="doc-section-description"><p>Os tokens de tema já existem no tema gerado (<code>@@openng/optimus-ui-themes</code>); a tabela de classes e tokens será adicionada junto com o componente.</p></div></ChildContent>
+            <ChildContent><DocTokens Component="scrollpanel"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
-            <ChildContent><div class="doc-section-description"><p>O pass-through (pt) do Angular não será portado como tal; a customização será feita por parâmetros e <code>StyleClass</code>.</p></div></ChildContent>
+        <DocSection Label="Pass Through" Id="pt">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <p>O pass-through (pt) do Angular não foi portado. Para customização de estilo, use
+                    <code>Style</code>, <code>StyleClass</code>, o <code>ContentTemplate</code> e os
+                    <code>AdditionalAttributes</code> (repassados ao elemento raiz).</p>
+                </div>
+            </ChildContent>
         </DocSection>
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
-            <ChildContent><div class="doc-section-description"><p>Componente ainda não portado para o Blazor. Os exemplos exibidos são da documentação de referência em Angular e serão substituídos por exemplos reais.</p></div></ChildContent>
+        <DocSection Label="Problemas Conhecidos" Id="issues">
+            <ChildContent>
+                <div class="doc-section-description">
+                    <ul>
+                        <li>As barras dependem do interop JS para posição e tamanho; em SSR estático (antes da hidratação) elas permanecem ocultas.</li>
+                        <li><code>ScrollTopAsync</code> e <code>RefreshAsync</code> não fazem nada antes da inicialização do interop.</li>
+                        <li>Não há opção para ocultar uma das barras: ambas são sempre renderizadas e ocultadas conforme o overflow.</li>
+                        <li>O componente não define altura própria: sem <code>Style</code> com dimensão, não há overflow nem rolagem.</li>
+                    </ul>
+                </div>
+            </ChildContent>
         </DocSection>
     </KnownIssues>
 </DocComponent>
 
 @code {
     private const string ImportCode = """
-        import { ScrollPanelModule } from 'primeng/scrollpanel';
+        @using OpBlazorUI.Base.Components.ScrollPanel
+
+        <OpScrollPanel Style="width:100%;height:15rem">
+            <p>Conteúdo rolável</p>
+        </OpScrollPanel>
         """;
 
     private const string BasicCode = """
-        <p-scrollpanel [style]="{ width: '100%', height: '150px' }">
-            <p>
-                Lorem ipsum dolor sit amet...
-            </p>
-            <p>
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium...
-            </p>
-            <p class="m-0">
-                At vero eos et accusamus et iusto odio dignissimos...
-            </p>
-        </p-scrollpanel>
+        <OpScrollPanel Style="width:100%;height:15rem">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium...</p>
+            <p class="m-0">At vero eos et accusamus et iusto odio dignissimos...</p>
+        </OpScrollPanel>
         """;
 
     private const string CustomCode = """
-        <p-scrollpanel [style]="{ width: '100%', height: '200px' }" >
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </p>
-            <p>
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium...
-            </p>
-            <p>
-                At vero eos et accusamus et iusto odio dignissimos...
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </p>
-            <p>
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium...
-            </p>
-            <p>
-                At vero eos et accusamus et iusto odio dignissimos...
-            </p>
-        </p-scrollpanel>
+        <OpScrollPanel Style="width:100%;height:15rem">
+            <ContentTemplate>
+                <div class="flex flex-col gap-2">
+                    <h3 class="m-0">Itens</h3>
+                    <p class="m-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                    <p class="m-0">Duis aute irure dolor in reprehenderit in voluptate...</p>
+                    <p class="m-0">Excepteur sint occaecat cupidatat non proident...</p>
+                </div>
+            </ContentTemplate>
+        </OpScrollPanel>
+        """;
+
+    private const string AccessibilityCode = """
+        <OpScrollPanel Style="width:100%;height:15rem">
+            <p>Conteúdo rolável</p>
+        </OpScrollPanel>
         """;
 }
