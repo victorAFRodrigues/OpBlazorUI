@@ -1,9 +1,9 @@
 @page "/confirmpopup"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.ConfirmPopup
-@using OpBlazorUI.Base.Components.ConfirmDialog.Models
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.ConfirmPopup
+@using OpBlazorUI.Components.ConfirmDialog.Models
+@using OpBlazorUI.Components.Button
 
 <PageTitle>ConfirmPopup - OpBlazorUI</PageTitle>
 
@@ -22,8 +22,10 @@
                     uma referência (<code>@@ref</code>): como não há um gatilho interno, informe um <code>@@ref</code>
                     em cada elemento e chame <code>ShowAsync(target)</code>. No Angular a exibição é feita pelo
                     <code>ConfirmationService</code> (método <code>confirm</code>); no port não há serviço — cada
-                    confirmação é uma instância própria da página. Para um diálogo modal, veja
-                    <a href="/confirmdialog">ConfirmDialog</a>.
+                    confirmação é uma instância própria da página. A variante dos botões vem de
+                    <code>AcceptButtonProps</code>/<code>RejectButtonProps</code>: no exemplo abaixo o rejeitar usa
+                    <code>severity</code> <code>secondary</code> com <code>outlined</code>, como no upstream. Para um
+                    diálogo modal, veja <a href="/confirmdialog">ConfirmDialog</a>.
                 </p>
             </Description>
             <ChildContent>
@@ -35,7 +37,7 @@
                         <OpButton Label="Excluir" Severity="danger" Outlined="true" OnClick="ShowDelete"/>
                     </span>
                 </div>
-                <OpConfirmPopup @ref="_basicPopup" Message="@_basicMessage"/>
+                <OpConfirmPopup @ref="_basicPopup" Message="@_basicMessage" RejectButtonProps="@_rejectProps"/>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
@@ -145,6 +147,8 @@
                               new[] { "RejectIcon", "string?", "null", "Classe do ícone do botão de rejeitar." },
                               new[] { "AcceptButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de aceitar." },
                               new[] { "RejectButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de rejeitar." },
+                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar (<code>severity</code>, <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>rounded</code>, <code>variant</code>)." },
+                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar." },
                               new[] { "AcceptVisible", "bool", "true", "Exibe o botão de aceitar." },
                               new[] { "RejectVisible", "bool", "true", "Exibe o botão de rejeitar." },
                               new[] { "CloseOnEscape", "bool", "true", "Fecha o popup ao pressionar <code>Escape</code> (dispara <code>Reject</code>)." },
@@ -213,7 +217,6 @@
                         <li>Os templates <code>content</code> e <code>headless</code> do upstream não foram portados; <code>Message</code> é renderizado como texto puro (sem HTML interpretado).</li>
                         <li>O painel usa <code>role="dialog"</code> (e não <code>alertdialog</code>) e não define <code>aria-modal</code>.</li>
                         <li>Não há <code>aria-expanded</code>/<code>aria-controls</code> no gatilho; associe manualmente se precisar.</li>
-                        <li>Não há parâmetros de severidade para os botões; use as <code>*ButtonStyleClass</code> (ex.: <code>p-button-danger</code>).</li>
                         <li>Não há animação de entrada/saída; o posicionamento é feito por JS (<code>OpOverlayAttach</code>) e, na prática, limita-se a <code>bottom</code>/<code>top</code>.</li>
                     </ul>
                 </div>
@@ -231,6 +234,9 @@
     private ElementReference _deleteTarget;
     private ElementReference _customTarget;
     private ElementReference _eventsTarget;
+
+    // Como no upstream, o rejeitar é secundário e outlined; o componente não impõe severidade.
+    private readonly Dictionary<string, object> _rejectProps = new() { ["severity"] = "secondary", ["outlined"] = true };
 
     private string _basicMessage = "";
     private int _acceptCount;
@@ -260,15 +266,15 @@
     private void HandleHide(ConfirmEvent e) => _lastHide = e.Accepted ? "aceito" : "rejeitado";
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.ConfirmPopup
-        @using OpBlazorUI.Base.Components.ConfirmDialog.Models
-        @using OpBlazorUI.Base.Components.Button
+        @using OpBlazorUI.Components.ConfirmPopup
+        @using OpBlazorUI.Components.ConfirmDialog.Models
+        @using OpBlazorUI.Components.Button
 
         <OpConfirmPopup @ref="_popup" Message="Tem certeza?" />
         """;
 
     private const string BasicCode = """
-        <OpConfirmPopup @ref="_popup" Message="@_message" />
+        <OpConfirmPopup @ref="_popup" Message="@_message" RejectButtonProps="@_rejectProps" />
 
         <span @ref="_target" class="inline-flex">
             <OpButton Label="Salvar" Outlined="true" OnClick="Show" />
@@ -278,6 +284,7 @@
             private OpConfirmPopup? _popup;
             private ElementReference _target;
             private string _message = "";
+            private readonly Dictionary<string, object> _rejectProps = new() { ["severity"] = "secondary", ["outlined"] = true };
 
             private void Show()
             {

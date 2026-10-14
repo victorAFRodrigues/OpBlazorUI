@@ -1,0 +1,210 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using OpBlazorUI.Components.Forms;
+using OpBlazorUI.Globalization;
+using OpBlazorUI.Services;
+
+namespace OpBlazorUI.Components.InputChips;
+
+public partial class OpInputChips : OpInputBase<List<string>>
+{
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
+    private static readonly List<string> Empty = new();
+
+    private ElementReference _input;
+    private string? _inputValue;
+    private bool _focused;
+
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? Name { get; set; }
+    [Parameter] public string? AriaLabel { get; set; }
+    [Parameter] public string? InputClass { get; set; }
+    [Parameter] public string Variant { get; set; } = "outlined";
+    [Parameter] public string RemoveIcon { get; set; } = "pi pi-times";
+    [Parameter] public string? ChipIcon { get; set; }
+    [Parameter] public int? Max { get; set; }
+    [Parameter] public bool AllowDuplicate { get; set; }
+    [Parameter] public bool AddOnBlur { get; set; }
+    [Parameter] public bool AddOnTab { get; set; }
+    [Parameter] public bool Readonly { get; set; }
+
+    [Parameter] public IReadOnlyCollection<string>? SeparatorKeys { get; set; }
+    [Parameter] public RenderFragment<string>? ChipTemplate { get; set; }
+
+    [Parameter] public EventCallback<string> OnAdd { get; set; }
+    [Parameter] public EventCallback<int> OnRemove { get; set; }
+    [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
+    [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
+
+    private IReadOnlyList<string> Chips => CurrentValue ?? Empty;
+
+    // Chaves separadoras: as informadas em SeparatorKeys; sem elas, a vírgula (padrão). Antes o
+    // componente fixava "," e ";" e ignorava o parâmetro.
+    private char[] SeparatorChars => (SeparatorKeys ?? DefaultSeparatorKeys)
+        .Where(k => k.Length == 1)
+        .Select(k => k[0])
+        .ToArray();
+
+    private static readonly string[] DefaultSeparatorKeys = [","];
+
+    private string RootClass => OpCss.BuildClass(
+        "p-inputchips p-component",
+        _focused ? "p-focus" : null,
+        Disabled ? "p-disabled" : null,
+        IsInvalid ? "p-invalid" : null,
+        StyleClass);
+
+    private string InputListClass => OpCss.BuildClass(
+        "p-inputchips-input",
+        Variant == "filled" ? "p-variant-filled" : null);
+
+    private string RemoveIconClass => OpCss.BuildClass("p-chip-remove-icon", RemoveIcon);
+
+    private async Task AddChipAsync(string? raw)
+    {
+        var value = raw?.Trim() ?? string.Empty;
+        if (value.Length == 0)
+        {
+            _inputValue = string.Empty;
+            return;
+        }
+
+        var list = CurrentValue ?? new List<string>();
+
+        if (!AllowDuplicate && list.Exists(c => string.Equals(c, value, StringComparison.Ordinal)))
+        {
+            _inputValue = string.Empty;
+            return;
+        }
+
+        if (Max is int max && list.Count >= max)
+        {
+            return;
+        }
+
+        var next = new List<string>(list) { value };
+        CurrentValue = next;
+        _inputValue = string.Empty;
+        await OnAdd.InvokeAsync(value);
+    }
+
+    private async Task RemoveChipAsync(int index)
+    {
+        if (Readonly || Disabled) return;
+
+        var list = CurrentValue;
+        if (list is null || index < 0 || index >= list.Count)
+        {
+            return;
+        }
+
+        var next = new List<string>(list);
+        next.RemoveAt(index);
+        CurrentValue = next;
+        await OnRemove.InvokeAsync(index);
+    }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        var text = e.Value?.ToString() ?? string.Empty;
+        var separators = SeparatorChars;
+
+        if (separators.Length > 0 && text.IndexOfAny(separators) >= 0)
+        {
+            var parts = text.Split(separators, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            _inputValue = string.Empty;
+
+            foreach (var part in parts)
+            {
+                await AddChipAsync(part);
+            }
+
+            return;
+        }
+
+        _inputValue = text;
+    }
+
+    private async Task HandleKeyDownAsync(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "Enter":
+                if (!string.IsNullOrWhiteSpace(_inputValue))
+                {
+                    await AddChipAsync(_inputValue);
+                }
+
+                break;
+
+            case "Backspace":
+                if (string.IsNullOrEmpty(_inputValue) && Chips.Count > 0)
+                {
+                    await RemoveChipAsync(Chips.Count - 1);
+                }
+
+                break;
+
+            case "Tab":
+                if (AddOnTab)
+                {
+                    await AddChipAsync(_inputValue);
+                }
+
+                break;
+        }
+    }
+
+    private async Task HandleBlurAsync(FocusEventArgs e)
+    {
+        _focused = false;
+
+        if (AddOnBlur && !string.IsNullOrWhiteSpace(_inputValue))
+        {
+            await AddChipAsync(_inputValue);
+        }
+
+        await OnBlur.InvokeAsync(e);
+    }
+
+    private async Task HandleFocus(FocusEventArgs e)
+    {
+        _focused = true;
+        await OnFocus.InvokeAsync(e);
+    }
+
+    private async Task FocusInputAsync()
+    {
+        if (Disabled || Readonly)
+        {
+            return;
+        }
+
+        try
+        {
+            await _input.FocusAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+            // SSR estático / circuito desconectado
+        }
+    }
+
+    private bool _enterRegistered;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Enter no input de texto submete o formulário por padrão; o chip é adicionado pelo
+        // componente, então bloqueamos o submit no próprio elemento.
+        if (!_enterRegistered)
+        {
+            _enterRegistered = true;
+            await Interop.InvokeVoidAsync(OpInterop.InputInterop, "preventEnterSubmit", _input);
+        }
+    }
+}

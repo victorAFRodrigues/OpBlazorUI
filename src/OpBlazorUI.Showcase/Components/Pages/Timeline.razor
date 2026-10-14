@@ -1,9 +1,9 @@
 @page "/timeline"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Timeline
-@using OpBlazorUI.Base.Components.Card
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.Timeline
+@using OpBlazorUI.Components.Card
+@using OpBlazorUI.Components.Button
 
 <PageTitle>Timeline - OpBlazorUI</PageTitle>
 
@@ -234,7 +234,7 @@
     ];
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Timeline
+        @using OpBlazorUI.Components.Timeline
 
         <OpTimeline Items="_events">
             <ContentTemplate Context="ev">@ev.Status</ContentTemplate>

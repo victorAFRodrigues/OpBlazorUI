@@ -67,7 +67,7 @@ jobs:
 
       - name: Pack
         run: |
-          dotnet pack src/Components/OpBlazorUI.Base/OpBlazorUI.Base.csproj \
+          dotnet pack src/Components/OpBlazorUI/OpBlazorUI.csproj \
             --configuration Release \
             -p:Version=${{ steps.version.outputs.version }} \
             --output ./artifacts

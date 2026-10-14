@@ -1,8 +1,8 @@
 @page "/tabmenu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Tabs
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.Tabs
+@using OpBlazorUI.Models
 
 <PageTitle>TabMenu - OpBlazorUI</PageTitle>
 
@@ -98,8 +98,8 @@
     };
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Tabs
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.Tabs
+        @using OpBlazorUI.Models
 
         <OpTabMenu Model="_items" @bind-ActiveIndex="_active" />
         """;

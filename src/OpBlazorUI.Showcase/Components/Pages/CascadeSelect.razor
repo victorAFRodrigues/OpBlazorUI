@@ -1,10 +1,10 @@
 @page "/cascadeselect"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.CascadeSelect
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.CascadeSelect
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
+@using OpBlazorUI.Components.Button
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>CascadeSelect - OpBlazorUI</PageTitle>
@@ -587,7 +587,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.CascadeSelect
+        @using OpBlazorUI.Components.CascadeSelect
 
         <OpCascadeSelect TValue="City" @bind-Value="_selectedCity" Options="Countries"
                          OptionLabel="Cname" OptionGroupLabel="Name"

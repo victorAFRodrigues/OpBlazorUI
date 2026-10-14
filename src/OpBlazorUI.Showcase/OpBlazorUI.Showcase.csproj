@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Components\OpBlazorUI.Base\OpBlazorUI.Base.csproj"/>
+        <ProjectReference Include="..\Components\OpBlazorUI\OpBlazorUI.csproj"/>
         <ProjectReference Include="..\Components\OpBlazorUI.Charts\OpBlazorUI.Charts.csproj"/>
     </ItemGroup>
 

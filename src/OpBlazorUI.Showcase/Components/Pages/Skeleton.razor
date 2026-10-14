@@ -1,9 +1,9 @@
 @page "/skeleton"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Skeleton
-@using OpBlazorUI.Base.Components.DataTable
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.Skeleton
+@using OpBlazorUI.Components.DataTable
+@using OpBlazorUI.Models
 
 <PageTitle>Skeleton - OpBlazorUI</PageTitle>
 
@@ -265,7 +265,7 @@
     };
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Skeleton
+        @using OpBlazorUI.Components.Skeleton
 
         <OpSkeleton />
         """;
@@ -364,8 +364,8 @@
         """;
 
     private const string DataTableCode = """
-        @using OpBlazorUI.Base.Components.DataTable
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.DataTable
+        @using OpBlazorUI.Models
 
         <OpDataTable Items="Products" Columns="Cols" Loading="true" LoadingMode="skeleton" SkeletonRows="5" />
 

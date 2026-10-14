@@ -1,9 +1,9 @@
 @page "/editor"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Editor
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.Message
+@using OpBlazorUI.Components.Editor
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Message
 @using System.ComponentModel.DataAnnotations
 @using System.Text.RegularExpressions
 
@@ -22,7 +22,7 @@
                 O Editor usa o <a href="https://quilljs.com/" target="_blank" rel="noopener noreferrer">Quill</a>
                 por baixo, então o componente depende dele em tempo de execução. No Angular o Quill é instalado via
                 npm; no Blazor os assets já são servidos pela biblioteca — <code>quill.min.js</code> em
-                <code>_content/OpBlazorUI.Base/quill.min.js</code> e o CSS do tema Snow dentro do tema — e o script é
+                <code>_content/OpBlazorUI/quill.min.js</code> e o CSS do tema Snow dentro do tema — e o script é
                 injetado no <code>&lt;head&gt;</code> pelo <code>OpBlazorUiSetup</code>. Basta envolver a página com o
                 setup; não é necessário instalar nada.
             </Description>
@@ -356,14 +356,14 @@
     private void OnTextChanges(string? html) => _textChanges++;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Editor
+        @using OpBlazorUI.Components.Editor
 
         <OpEditor @bind-Value="_text" Style="height:320px" />
         """;
 
     private const string QuillCode = """
         <!-- O OpBlazorUiSetup já injeta o Quill no <head> -->
-        <script src="_content/OpBlazorUI.Base/quill.min.js"></script>
+        <script src="_content/OpBlazorUI/quill.min.js"></script>
         """;
 
     private const string BasicCode = """

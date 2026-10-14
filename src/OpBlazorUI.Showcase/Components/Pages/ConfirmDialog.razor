@@ -1,12 +1,12 @@
 @page "/confirmdialog"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.ConfirmDialog
-@using OpBlazorUI.Base.Components.ConfirmDialog.Models
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.Toast
-@using OpBlazorUI.Base.Services
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.ConfirmDialog
+@using OpBlazorUI.Components.ConfirmDialog.Models
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Toast
+@using OpBlazorUI.Services
+@using OpBlazorUI.Models
 
 <PageTitle>ConfirmDialog - OpBlazorUI</PageTitle>
 
@@ -538,9 +538,9 @@
     private void ConfirmDeclarative() => _confirmDialog?.ShowDeclarative();
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.ConfirmDialog
-        @using OpBlazorUI.Base.Components.ConfirmDialog.Models
-        @using OpBlazorUI.Base.Services
+        @using OpBlazorUI.Components.ConfirmDialog
+        @using OpBlazorUI.Components.ConfirmDialog.Models
+        @using OpBlazorUI.Services
 
         // Program.cs — registra OpConfirmationService/OpMessageService e o tema
         builder.Services.AddOpBlazorUI(theme => theme.Preset = "lara");

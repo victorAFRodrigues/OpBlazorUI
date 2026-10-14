@@ -1,9 +1,9 @@
 @page "/textarea"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Textarea
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Components.Textarea
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>Textarea - OpBlazorUI</PageTitle>
@@ -233,7 +233,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Textarea
+        @using OpBlazorUI.Components.Textarea
 
         <OpTextarea @bind-Value="_value" Rows="5" Cols="30" />
         """;

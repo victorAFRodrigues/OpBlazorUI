@@ -1,9 +1,9 @@
 @page "/drawer"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Drawer
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.Avatar
+@using OpBlazorUI.Components.Drawer
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Avatar
 
 <PageTitle>Drawer - OpBlazorUI</PageTitle>
 
@@ -331,7 +331,7 @@
     private void ShowHeadless() => _headlessVisible = true;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Drawer
+        @using OpBlazorUI.Components.Drawer
 
         <OpDrawer @bind-Visible="_visible" Header="Drawer" />
         """;

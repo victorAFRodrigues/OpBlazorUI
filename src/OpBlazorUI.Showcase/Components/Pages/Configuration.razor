@@ -1,7 +1,7 @@
 @page "/configuration"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.ThemeSwitcher
+@using OpBlazorUI.Components.ThemeSwitcher
 
 <PageTitle>Configuration - OpBlazorUI</PageTitle>
 
@@ -41,7 +41,7 @@
         </ChildContent>
         <Code>
             <CodeBlock Language="razor"
-                       Code="@("@using OpBlazorUI.Base.Components.ThemeSwitcher\n\n<OpThemeSwitcher OnThemeChanged=\"OnThemeChanged\" />")"/>
+                       Code="@("@using OpBlazorUI.Components.ThemeSwitcher\n\n<OpThemeSwitcher OnThemeChanged=\"OnThemeChanged\" />")"/>
         </Code>
     </DocSection>
 
@@ -73,13 +73,13 @@
         </Description>
         <Code>
             <CodeBlock Language="html"
-                       Code="@("<script src=\"_content/OpBlazorUI.Base/op-theme.js\"\n        data-preset=\"aura\" data-primary=\"noir\" data-surface=\"\"></script>")"/>
+                       Code="@("<script src=\"_content/OpBlazorUI/op-theme.js\"\n        data-preset=\"aura\" data-primary=\"noir\" data-surface=\"\"></script>")"/>
         </Code>
     </DocSection>
 
     <DocSection Label="Interop JS">
         <Description>
-            <p>Funções exportadas por <code>_content/OpBlazorUI.Base/optimus.interop.js</code>. Para o tema, prefira o <code>OpThemeService</code>: estas funções só alteram o documento, sem atualizar o estado do serviço.</p>
+            <p>Funções exportadas por <code>_content/OpBlazorUI/optimus.interop.js</code>. Para o tema, prefira o <code>OpThemeService</code>: estas funções só alteram o documento, sem atualizar o estado do serviço.</p>
         </Description>
         <ChildContent>
             <ApiTable Caption="Interop"

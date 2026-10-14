@@ -1,8 +1,8 @@
 @page "/overlay"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Overlay
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.Overlay
+@using OpBlazorUI.Components.Button
 
 <PageTitle>Overlay - OpBlazorUI</PageTitle>
 
@@ -444,7 +444,7 @@
     private void HandleHide() => LogEvent("OnHide");
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Overlay
+        @using OpBlazorUI.Components.Overlay
 
         <OpOverlay @bind-Visible="_visible" Mode="overlay">
             <span>Conteúdo</span>

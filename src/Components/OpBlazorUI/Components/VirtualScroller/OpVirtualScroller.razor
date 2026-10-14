@@ -1,0 +1,44 @@
+@namespace OpBlazorUI.Components.VirtualScroller
+@using OpBlazorUI.Components.Common
+@inherits OpComponentBase
+@typeparam TItem
+
+@if (Disabled)
+{
+    @RenderContent()
+}
+else
+{
+    <div class="@RootClass"
+         id="@Id"
+         style="@RootStyle"
+         tabindex="@TabIndex"
+         @ref="_root"
+         @attributes="AdditionalAttributes">
+        <div class="p-virtualscroller-spacer" style="@SpacerStyle"></div>
+        <div class="p-virtualscroller-content" style="@ContentStyle">
+            @RenderContent()
+        </div>
+
+        @if (ShowLoader && Loading)
+        {
+            <div class="@(LoaderTemplate == null ? "p-virtualscroller-loader p-virtualscroller-loader-mask" : "p-virtualscroller-loader")">
+                @if (LoaderTemplate != null)
+                {
+                    @LoaderTemplate
+                }
+                else
+                {
+                    @if (LoaderIconTemplate != null)
+                    {
+                        <span class="p-virtualscroller-loading-icon">@LoaderIconTemplate</span>
+                    }
+                    else
+                    {
+                        <span class="p-virtualscroller-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+                    }
+                }
+            </div>
+        }
+    </div>
+}

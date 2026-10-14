@@ -1,8 +1,8 @@
 @page "/paginator"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Paginator
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.Paginator
+@using OpBlazorUI.Components.Button
 
 <PageTitle>Paginator - OpBlazorUI</PageTitle>
 
@@ -300,7 +300,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Paginator
+        @using OpBlazorUI.Components.Paginator
 
         <OpPaginator First="_first" Rows="10" TotalRecords="120" OnPageChange="OnPageChange" />
         """;

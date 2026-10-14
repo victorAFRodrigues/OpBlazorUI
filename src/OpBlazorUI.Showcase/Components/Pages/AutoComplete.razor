@@ -1,10 +1,10 @@
 @page "/autocomplete"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.AutoComplete
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.Message
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.AutoComplete
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Message
+@using OpBlazorUI.Models
 @using System.ComponentModel.DataAnnotations
 
 <DocComponent Title="AutoComplete"
@@ -486,7 +486,7 @@
     private void OnFormSubmit() => _formSubmitted = true;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.AutoComplete
+        @using OpBlazorUI.Components.AutoComplete
 
         <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions" CompleteMethod="Search" />
         """;

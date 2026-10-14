@@ -1,9 +1,9 @@
 @page "/select"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Select
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Components.Select
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>Select - OpBlazorUI</PageTitle>
@@ -695,7 +695,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Select
+        @using OpBlazorUI.Components.Select
         """;
 
     private const string BasicCode = """
@@ -872,7 +872,7 @@
         """;
 
     private const string FloatLabelCode = """
-        @using OpBlazorUI.Base.Components.FloatLabel
+        @using OpBlazorUI.Components.FloatLabel
 
         <OpFloatLabel StyleClass="w-56">
             <OpSelect TValue="City" @bind-Value="_value1" InputId="over_label" Options="Cities" OptionLabel="Name" StyleClass="w-full" />
@@ -891,7 +891,7 @@
         """;
 
     private const string IftaLabelCode = """
-        @using OpBlazorUI.Base.Components.IftaLabel
+        @using OpBlazorUI.Components.IftaLabel
 
         <OpIftaLabel StyleClass="w-56">
             <OpSelect TValue="City" @bind-Value="_city" InputId="dd-city" Options="Cities" OptionLabel="Name" StyleClass="w-full" />

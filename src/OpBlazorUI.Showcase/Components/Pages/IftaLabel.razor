@@ -1,8 +1,8 @@
 @page "/iftalabel"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.IftaLabel
-@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Components.IftaLabel
+@using OpBlazorUI.Components.InputText
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>IftaLabel - OpBlazorUI</PageTitle>
@@ -186,8 +186,8 @@
     private void OnSubmit() => _submitted = true;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.IftaLabel
-        @using OpBlazorUI.Base.Components.InputText
+        @using OpBlazorUI.Components.IftaLabel
+        @using OpBlazorUI.Components.InputText
 
         <OpIftaLabel>
             <OpInputText Id="username" @bind-Value="_value" Autocomplete="off" />

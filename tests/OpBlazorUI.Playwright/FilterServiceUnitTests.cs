@@ -1,5 +1,5 @@
 using System.Globalization;
-using OpBlazorUI.Base.Services;
+using OpBlazorUI.Services;
 using Xunit;
 
 namespace OpBlazorUI.Playwright;

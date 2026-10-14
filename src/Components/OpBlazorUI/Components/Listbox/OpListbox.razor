@@ -1,0 +1,197 @@
+@namespace OpBlazorUI.Components.Listbox
+@using OpBlazorUI.Components.Checkbox
+@using OpBlazorUI.Components.IconField
+@using OpBlazorUI.Components.InputIcon
+@using OpBlazorUI.Components.VirtualScroller
+@using OpBlazorUI.Components.Forms
+@typeparam TValue
+@inherits OpInputBase<TValue>
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
+    @if (Filter || (Checkbox && ShowToggleAll) || HeaderTemplate != null || FilterTemplate != null)
+    {
+        <div class="p-listbox-header">
+            @if (Checkbox && ShowToggleAll)
+            {
+                <div class="p-listbox-header-checkbox">
+                    <OpCheckbox IgnoreEditContext="true" StyleClass="p-listbox-option-check-icon" Value="@AllSelected"
+                                ValueChanged="@(c => OnToggleAll(c == true))"
+                                Disabled="@Disabled"
+                                Id="@($"{_id}_all")"/>
+                </div>
+            }
+            @if (FilterTemplate != null)
+            {
+                @FilterTemplate
+            }
+            else if (Filter)
+            {
+                <div class="p-listbox-filter-container">
+                    <OpIconField IconPosition="left">
+                        <input type="text"
+                               class="p-inputtext p-listbox-filter"
+                               role="searchbox"
+                               autocomplete="off"
+                               value="@_filterValue"
+                               placeholder="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
+                               aria-label="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
+                               @oninput="OnFilterInput"/>
+                        <OpInputIcon><i class="p-icon pi pi-search"></i></OpInputIcon>
+                    </OpIconField>
+                </div>
+            }
+
+            @HeaderTemplate
+        </div>
+    }
+
+    @if (VirtualScroll && !Group && VisibleOptions.Count > 0)
+    {
+        <OpVirtualScroller TItem="object"
+                           Items="VisibleOptions"
+                           ItemSize="VirtualScrollItemSize"
+                           ScrollHeight="ScrollHeight"
+                           StyleClass="p-listbox-list-container">
+            <ContentTemplate Context="ctx">
+                @BuildList(ctx.Items)
+            </ContentTemplate>
+        </OpVirtualScroller>
+    }
+    else
+    {
+        <div class="p-listbox-list-container" style="@ListContainerStyle">
+            @BuildList(VisibleOptions)
+        </div>
+    }
+
+    @FooterTemplate
+</div>
+
+@code {
+    private async Task OnListClick(MouseEventArgs e)
+    {
+        await OnClick.InvokeAsync(e);
+    }
+
+    private RenderFragment BuildList(IReadOnlyList<object> options) => __builder =>
+    {
+        _renderIndex = 0;
+        <ul class="@ListClass" role="listbox" id="@($"{_id}_list")"
+            aria-multiselectable="@(IsMultiple ? "true" : "false")"
+            aria-label="@AriaLabel"
+            aria-activedescendant="@(_focusedOptionIndex >= 0 ? $"{_id}_{_focusedOptionIndex}" : null)"
+            tabindex="@(Disabled ? -1 : TabIndex)"
+            @ref="_listRef"
+            @onkeydown="OnListKeydown"
+            @onclick="OnListClick">
+            @if (Group)
+            {
+                @foreach (var group in AllOptions)
+                {
+                    <li class="p-listbox-option-group" role="option">
+                        @if (GroupTemplate != null)
+                        {
+                            @GroupTemplate(group)
+                        }
+                        else
+                        {
+                            <span>@GetOptionGroupLabelValue(group)</span>
+                        }
+                    </li>
+
+                    @foreach (var child in GetOptionGroupChildren(group))
+                    {
+                        @if (MatchesFilter(child))
+                        {
+                            @RenderOption(child)
+                        }
+                    }
+                }
+            }
+            else
+            {
+                @for (var flatIndex = 0; flatIndex < options.Count; flatIndex++)
+                {
+                    @RenderOption(options[flatIndex], flatIndex)
+                }
+            }
+
+            @if (ShowEmptyMessage)
+            {
+                <li class="p-listbox-empty-message" role="option">
+                    @if (!string.IsNullOrEmpty(_filterValue) && EmptyFilterTemplate != null)
+                    {
+                        @EmptyFilterTemplate
+                    }
+                    else if (string.IsNullOrEmpty(_filterValue) && EmptyTemplate != null)
+                    {
+                        @EmptyTemplate
+                    }
+                    else
+                    {
+                        @(!string.IsNullOrEmpty(_filterValue) ? (EmptyFilterMessage ?? Tr.EmptyFilterMessage) : (EmptyMessage ?? Tr.EmptyMessage))
+                    }
+                </li>
+            }
+        </ul>
+    };
+
+    private RenderFragment RenderOption(object option) => RenderOption(option, _renderIndex++);
+
+    private RenderFragment RenderOption(object option, int index) => __builder =>
+    {
+        var isSelected = IsSelected(option);
+        var isDisabled = IsOptionDisabled(option);
+
+        <li class="@OptionClass(option) @(_focusedOptionIndex == index ? "p-focus" : "")"
+            id="@($"{_id}_{index}")"
+            role="option"
+            aria-label="@GetOptionLabel(option)"
+            aria-selected="@(isSelected ? "true" : "false")"
+            aria-disabled="@(isDisabled ? "true" : null)"
+            @onclick="() => OnOptionClick(option)"
+            @ondblclick="() => OnOptionDoubleClick(option)"
+            @onmouseenter="() => OnOptionMouseEnter(index)">
+            @if (Checkbox)
+            {
+                <OpCheckbox IgnoreEditContext="true" StyleClass="p-listbox-option-check-icon" Value="@isSelected" Readonly="true" Disabled="@isDisabled" />
+            }
+
+            @if (Checkmark)
+            {
+                @if (isSelected)
+                {
+                    @if (CheckIconTemplate != null)
+                    {
+                        @CheckIconTemplate(true)
+                    }
+                    else
+                    {
+                        <i class="p-icon pi pi-check p-listbox-option-check-icon"></i>
+                    }
+                }
+                else
+                {
+                    @if (CheckIconTemplate != null)
+                    {
+                        @CheckIconTemplate(false)
+                    }
+                    else
+                    {
+                        <i class="p-icon pi p-listbox-option-blank-icon"></i>
+                    }
+                }
+            }
+
+            @if (ItemTemplate != null && option is TValue optTv)
+            {
+                @ItemTemplate(optTv)
+            }
+            else
+            {
+                <span>@GetOptionLabel(option)</span>
+            }
+        </li>
+    };
+}

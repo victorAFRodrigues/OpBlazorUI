@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using OpBlazorUI.Base;
-using OpBlazorUI.Base.Globalization;
+using OpBlazorUI;
+using OpBlazorUI.Globalization;
 using OpBlazorUI.Charts;
 using OpBlazorUI.Showcase;
 

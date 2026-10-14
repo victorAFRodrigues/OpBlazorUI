@@ -1,10 +1,10 @@
 @page "/table"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.DataTable
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.InputText
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.DataTable
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.InputText
+@using OpBlazorUI.Models
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>Table - OpBlazorUI</PageTitle>
@@ -766,8 +766,8 @@
     ];
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.DataTable
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.DataTable
+        @using OpBlazorUI.Models
 
         <OpDataTable Items="Products" Columns="Cols" Paginator="true" Rows="5" />
         """;

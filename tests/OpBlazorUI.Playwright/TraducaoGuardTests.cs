@@ -19,7 +19,7 @@ public class TraducaoGuardTests
     [Fact]
     public void Componentes_nao_tem_aria_title_ou_placeholder_literais()
     {
-        var componentsDir = Path.Combine(FindRepositoryRoot(), "src", "Components", "OpBlazorUI.Base", "Components");
+        var componentsDir = Path.Combine(FindRepositoryRoot(), "src", "Components", "OpBlazorUI", "Components");
         Assert.True(Directory.Exists(componentsDir), $"Pasta de componentes não encontrada: {componentsDir}");
 
         var offenders = new List<string>();
@@ -93,7 +93,7 @@ public class TraducaoGuardTests
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         while (dir is not null)
         {
-            if (Directory.Exists(Path.Combine(dir.FullName, "src", "Components", "OpBlazorUI.Base", "Components")))
+            if (Directory.Exists(Path.Combine(dir.FullName, "src", "Components", "OpBlazorUI", "Components")))
             {
                 return dir.FullName;
             }

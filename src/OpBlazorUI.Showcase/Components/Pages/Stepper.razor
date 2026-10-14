@@ -1,8 +1,8 @@
 @page "/stepper"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Stepper
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.Stepper
+@using OpBlazorUI.Models
 
 <PageTitle>Stepper - OpBlazorUI</PageTitle>
 
@@ -97,8 +97,8 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Stepper
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.Stepper
+        @using OpBlazorUI.Models
 
         <OpStepper Model="_steps" @bind-ActiveIndex="_active" />
 

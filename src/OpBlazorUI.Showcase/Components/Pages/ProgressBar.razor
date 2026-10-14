@@ -1,8 +1,8 @@
 @page "/progressbar"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.ProgressBar
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.ProgressBar
+@using OpBlazorUI.Components.Button
 
 <PageTitle>ProgressBar - OpBlazorUI</PageTitle>
 
@@ -173,7 +173,7 @@
     private void Reset() => _value = 0;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.ProgressBar
+        @using OpBlazorUI.Components.ProgressBar
 
         <OpProgressBar Value="50" />
         """;

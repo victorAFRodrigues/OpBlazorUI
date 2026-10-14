@@ -1,7 +1,7 @@
 @page "/keyfilter"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Components.InputText
 
 <PageTitle>KeyFilter - OpBlazorUI</PageTitle>
 
@@ -207,7 +207,7 @@
     private string? _value;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InputText
+        @using OpBlazorUI.Components.InputText
 
         <OpInputText KeyFilter="int" Placeholder="Somente inteiros" />
         """;

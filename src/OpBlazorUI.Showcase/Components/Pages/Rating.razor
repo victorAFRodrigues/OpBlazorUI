@@ -1,8 +1,8 @@
 @page "/rating"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Rating
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.Rating
+@using OpBlazorUI.Components.Button
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Components.Web
 
@@ -323,7 +323,7 @@
     private void HandleBlur(FocusEventArgs args) => _focused = false;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Rating
+        @using OpBlazorUI.Components.Rating
 
         <OpRating @bind-Value="_value" />
         """;

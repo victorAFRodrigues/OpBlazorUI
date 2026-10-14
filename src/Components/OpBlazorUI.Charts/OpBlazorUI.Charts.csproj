@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../OpBlazorUI.Base/OpBlazorUI.Base.csproj"/>
+        <ProjectReference Include="../OpBlazorUI/OpBlazorUI.csproj"/>
     </ItemGroup>
 
 </Project>
