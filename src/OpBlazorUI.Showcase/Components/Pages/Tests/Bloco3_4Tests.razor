@@ -1,7 +1,9 @@
 @page "/_tests/bloco3-4"
 @namespace OpBlazorUI.Showcase.Components.Pages.Tests
-@using System.Globalization
+@using System.ComponentModel.DataAnnotations
 @using OpBlazorUI.Base.Components.DatePicker
+@using OpBlazorUI.Base.Globalization
+@using OpBlazorUI.Base.Services
 
 @* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_4Tests.cs). *@
 
@@ -47,24 +49,70 @@
                   @bind-Value="_formatDate"/>
 </section>
 
+<section id="t-tokens">
+    <OpDatePicker DateFormat="y" InputId="t-token-y2" @bind-Value="_tokenDate"/>
+    <OpDatePicker DateFormat="yyyy" InputId="t-token-y4" @bind-Value="_tokenDate"/>
+    <OpDatePicker DateFormat="o" InputId="t-token-o" @bind-Value="_doyDate"/>
+    <OpDatePicker DateFormat="oo" InputId="t-token-oo" @bind-Value="_doyDate"/>
+    <OpDatePicker DateFormat="@@" InputId="t-token-at" @bind-Value="_tokenDate"/>
+    <OpDatePicker DateFormat="''" InputId="t-token-quote" @bind-Value="_tokenDate"/>
+</section>
+
+<section id="t-time">
+    <OpDatePicker ShowTime="true"
+                  InputId="t-time-input"
+                  @bind-Value="_timeDate"/>
+</section>
+
+<section id="t-form">
+    <EditForm Model="_form" OnValidSubmit="OnValid">
+        <DataAnnotationsValidator/>
+        <OpDatePicker @bind-RangeValue="_form.Range"
+                      SelectionMode="OpDateSelectionMode.Range"
+                      Inline="true"
+                      InputId="t-form-range"/>
+        <div id="t-form-msg">
+            <ValidationMessage For="() => _form.Range"/>
+        </div>
+        <button id="t-form-submit" type="submit">enviar</button>
+    </EditForm>
+    <span id="t-form-submitted">@_submitted</span>
+</section>
+
 @code {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
     private IReadOnlyList<DateTime?>? _range;
     private DateTime? _date;
     private DateTime? _minValue;
     private DateTime? _viewValue;
     private DateTime? _formatDate = new DateTime(2026, 10, 26);
 
+    private DateTime? _tokenDate = new DateTime(2026, 10, 26);
+    private DateTime? _doyDate = new DateTime(2026, 1, 5);
+    private DateTime? _timeDate;
+
+    private readonly TestFormModel _form = new();
+    private bool _submitted;
+
     private DateTime? _min = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 15);
     private DateTime BeforeDate => new(DateTime.Today.Year, DateTime.Today.Month, 10);
 
     protected override void OnInitialized()
     {
-        // Cultura fixa para os nomes de mês não dependerem do ICU/locale do navegador (WASM).
-        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+        // Fixa a tradução em inglês para os nomes de mês não dependerem da tradução global nem do ICU.
+        TranslationService.SetTranslation(OpTranslations.EnUs);
     }
 
     private void ToggleMin() => _min = _min is null
         ? new DateTime(DateTime.Today.Year, DateTime.Today.Month, 15)
         : null;
+
+    private void OnValid() => _submitted = true;
+
+    private sealed class TestFormModel
+    {
+        [Required(ErrorMessage = "Informe o período.")]
+        public IReadOnlyList<DateTime?>? Range { get; set; }
+    }
 }

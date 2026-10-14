@@ -38,12 +38,14 @@
                 aceitos são:
                 <ul>
                     <li><code>d</code> / <code>dd</code> — dia do mês (sem/com zero à esquerda)</li>
-                    <li><code>m</code> / <code>mm</code> — mês do ano (sem/com zero à esquerda)</li>
-                    <li><code>M</code> / <code>MM</code> / <code>MMMM</code> — nome do mês (abreviado/completo)</li>
+                    <li><code>o</code> / <code>oo</code> — dia do ano (sem zero / com três dígitos)</li>
                     <li><code>D</code> / <code>DD</code> — nome do dia da semana (abreviado/completo)</li>
-                    <li><code>yy</code> — ano com 2 dígitos</li>
-                    <li><code>y</code> / <code>yyyy</code> — ano com 4 dígitos</li>
-                    <li><code>'...'</code> — texto literal</li>
+                    <li><code>m</code> / <code>mm</code> — mês do ano (sem/com zero à esquerda)</li>
+                    <li><code>M</code> / <code>MM</code> — nome do mês (abreviado/completo)</li>
+                    <li><code>y</code> / <code>yy</code> — ano (2/4 dígitos)</li>
+                    <li><code>&#64;</code> — timestamp Unix (ms desde 01/01/1970)</li>
+                    <li><code>!</code> — ticks do Windows (100ns desde 01/01/0001)</li>
+                    <li><code>'...'</code> — texto literal; <code>''</code> — uma aspa</li>
                 </ul>
             </Description>
             <ChildContent>
@@ -56,9 +58,11 @@
 
         <DocSection Label="Locale" Id="locale">
             <Description>
-                Não existe um parâmetro <code>Locale</code>: os nomes de mês, dia e a formatação padrão vêm de
-                <code>CultureInfo.CurrentCulture</code>. Defina a cultura no início da aplicação e combine com
-                <code>DateFormat</code> para compor o formato desejado.
+                Os nomes de mês/dia, o formato padrão e os rótulos vêm de uma <strong>tradução global</strong>
+                definida no setup do app, como no PrimeNG — <strong>não há locale por componente</strong>. A
+                biblioteca traz inglês (padrão) e português em <code>OpTranslations</code>, e o modelo aceita
+                qualquer idioma. Como são strings, funciona igual em Server, WebAssembly e SSR estático, sem
+                depender dos dados de cultura/ICU do navegador.
             </Description>
             <ChildContent>
                 <div class="flex justify-center">
@@ -394,11 +398,13 @@
 
         <DocSection Label="Formulários" Id="forms">
             <Description>
-                O DatePicker herda de <code>OpInputBase&lt;DateTime?&gt;</code> e, no modo Single, integra-se ao
+                O DatePicker herda de <code>OpInputBase&lt;DateTime?&gt;</code> e integra-se ao
                 <code>EditForm</code> com <code>DataAnnotationsValidator</code>; o estado inválido aparece
-                automaticamente com <code>ValidationMessage</code>. Isso substitui as abordagens <i>Template Driven</i>
-                e <i>Reactive Forms</i> do Angular. Nos modos Range e Multiple o vínculo é feito pelos valores próprios,
-                que não passam pelo <code>EditForm</code>.
+                automaticamente com <code>ValidationMessage</code>. No modo Single usa-se <code>@@bind-Value</code>;
+                em Range e Multiple, <code>@@bind-RangeValue</code> e <code>@@bind-MultipleValue</code> geram as
+                expressões <code>RangeValueExpression</code>/<code>MultipleValueExpression</code>, e o campo também
+                passa a participar da validação. Isso substitui as abordagens <i>Template Driven</i> e
+                <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
                 <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col gap-4 items-start" style="width: 100%; max-width: 16rem;">
@@ -406,6 +412,14 @@
                     <div class="flex flex-col gap-1" style="width: 100%;">
                         <OpDatePicker @bind-Value="_form.Date" Placeholder="Data" InputId="form-date" ShowIcon="true" IconDisplay="input"/>
                         <ValidationMessage For="() => _form.Date"/>
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 100%;">
+                        <OpDatePicker @bind-RangeValue="_form.Range" SelectionMode="OpDateSelectionMode.Range" Placeholder="Período" InputId="form-range" ReadonlyInput="true" ShowIcon="true" IconDisplay="input"/>
+                        <ValidationMessage For="() => _form.Range"/>
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 100%;">
+                        <OpDatePicker @bind-MultipleValue="_form.Multiple" SelectionMode="OpDateSelectionMode.Multiple" Placeholder="Datas" InputId="form-multiple" ReadonlyInput="true" ShowIcon="true" IconDisplay="input"/>
+                        <ValidationMessage For="() => _form.Multiple"/>
                     </div>
                     <button type="submit" class="p-button p-component p-button-secondary">Enviar</button>
                     @if (_submitted)
@@ -487,11 +501,13 @@
                               new[] { "Value", "DateTime?", "null", "Valor selecionado no modo Single." },
                               new[] { "RangeValue", "IReadOnlyList&lt;DateTime?&gt;?", "null", "Valores do modo Range (início e fim)." },
                               new[] { "MultipleValue", "IReadOnlyList&lt;DateTime?&gt;?", "null", "Valores do modo Multiple." },
+                              new[] { "RangeValueExpression", "Expression&lt;Func&lt;IReadOnlyList&lt;DateTime?&gt;?&gt;&gt;?", "null", "Gerada por <code>@@bind-RangeValue</code>; associa o campo ao <code>EditContext</code> (validação)." },
+                              new[] { "MultipleValueExpression", "Expression&lt;Func&lt;IReadOnlyList&lt;DateTime?&gt;?&gt;&gt;?", "null", "Gerada por <code>@@bind-MultipleValue</code>; associa o campo ao <code>EditContext</code> (validação)." },
                               new[] { "SelectionMode", "OpDateSelectionMode", "Single", "Modo de seleção: <code>Single</code>, <code>Multiple</code> ou <code>Range</code>." },
                               new[] { "View", "OpDatePickerView", "Date", "Visão inicial: <code>Date</code>, <code>Month</code> ou <code>Year</code>." },
-                              new[] { "DateFormat", "string", "mm/dd/yy", "Formato de exibição do valor." },
-                              new[] { "TodayLabel", "string?", "Today", "Rótulo do botão \"Hoje\" na barra de botões." },
-                              new[] { "ClearLabel", "string?", "Clear", "Rótulo do botão \"Limpar\" na barra de botões." },
+                              new[] { "DateFormat", "string?", "tradução", "Formato de exibição; sem valor, usa o <code>dateFormat</code> da tradução global." },
+                              new[] { "TodayLabel", "string?", "tradução", "Rótulo do botão \"Hoje\"; sem valor, usa o <code>today</code> da tradução." },
+                              new[] { "ClearLabel", "string?", "tradução", "Rótulo do botão \"Limpar\"; sem valor, usa o <code>clear</code> da tradução." },
                               new[] { "Inline", "bool", "false", "Exibe o painel sempre aberto, sem popup." },
                               new[] { "ShowIcon", "bool", "false", "Exibe o ícone de calendário." },
                               new[] { "IconDisplay", "string", "button", "Posição do ícone: <code>button</code> ou <code>input</code>." },
@@ -508,12 +524,12 @@
                               new[] { "InputId", "string?", "null", "Id do input; use junto do <code>for</code> do label." },
                               new[] { "AriaLabel", "string?", "null", "Rótulo acessível do input." },
                               new[] { "AriaLabelledBy", "string?", "null", "Id do elemento que rotula o input." },
-                              new[] { "IconAriaLabel", "string?", "Choose Date", "Rótulo acessível do botão do ícone." },
+                              new[] { "IconAriaLabel", "string?", "tradução", "Rótulo acessível do botão do ícone; sem valor, usa o <code>chooseDate</code> da tradução." },
                               new[] { "TabIndex", "int", "0", "Índice de tabulação do input." },
                               new[] { "ShowOnFocus", "bool", "true", "Abre o painel ao focar o input." },
                               new[] { "ShowWeek", "bool", "false", "Exibe o número da semana." },
                               new[] { "StartWeekFromFirstDayOfYear", "bool", "false", "Inicia a contagem de semanas no primeiro dia do ano." },
-                              new[] { "FirstDayOfWeek", "int", "0", "Primeiro dia da semana (0 = domingo)." },
+                              new[] { "FirstDayOfWeek", "int?", "tradução", "Primeiro dia da semana (0 = domingo); sem valor, usa o <code>firstDayOfWeek</code> da tradução." },
                               new[] { "NumberOfMonths", "int", "1", "Número de meses exibidos." },
                               new[] { "MinDate", "DateTime?", "null", "Data mínima selecionável." },
                               new[] { "MaxDate", "DateTime?", "null", "Data máxima selecionável." },
@@ -536,7 +552,7 @@
                               new[] { "RangeSeparator", "string", " - ", "Separador entre as pontas no modo Range." },
                               new[] { "PanelStyleClass", "string?", "null", "Classes adicionais no painel." },
                               new[] { "InputStyleClass", "string?", "null", "Classes adicionais no input." },
-                              new[] { "HideOnDateTimeSelect", "bool", "false", "Fecha o painel ao selecionar a data mesmo com o seletor de hora." },
+                              new[] { "HideOnDateTimeSelect", "bool", "true", "Fecha o painel ao selecionar a data quando o seletor de hora está ativo." },
                               new[] { "Disabled", "bool", "false", "Desabilita o componente." },
                               new[] { "Invalid", "bool", "false", "Estado inválido; também ativado pela validação do <code>EditForm</code>." },
                               new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
@@ -651,11 +667,8 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>Não existe parâmetro <code>Locale</code>: a localidade vem de <code>CultureInfo.CurrentCulture</code> (nomes de mês/dia e cultura de parsing), combinada com <code>DateFormat</code>.</li>
-                        <li>O <code>DateFormat</code> não é idêntico ao do PrimeNG: usa <code>yyyy</code> para ano de 4 dígitos (no upstream é <code>yy</code>) e não suporta os tokens <code>o</code>/<code>oo</code> (dia do ano), <code>@@</code> (timestamp Unix) nem <code>!</code> (ticks do Windows).</li>
-                        <li>Não há seletor de máscara de digitação: no modo Single o input tenta <code>DateTime.TryParse</code> na cultura atual, e o texto digitado só é aplicado quando o parse é bem-sucedido.</li>
-                        <li>Somente o modo Single integra-se ao <code>EditForm</code>/<code>ValidationMessage</code>; Range e Multiple usam seus próprios valores e não participam da validação de formulário.</li>
-                        <li>Com seletor de hora o painel permanece aberto após escolher a data até o foco sair ou <code>HideOnDateTimeSelect</code> ser habilitado.</li>
+                        <li>O <code>DateFormat</code> cobre os tokens do PrimeNG, com uma diferença consciente: sequências de 2+ caracteres de mês/dia (<code>MM</code>, <code>MMMM</code>, <code>DD</code>) são lidas de uma vez (nome completo) em vez de repetir o token, e <code>yyyy</code> equivale a <code>yy</code> (ano de 4 dígitos).</li>
+                        <li>Não há máscara de digitação — como no próprio PrimeNG. O texto é interpretado conforme o <code>DateFormat</code> e só é aplicado quando o parse é bem-sucedido.</li>
                         <li>O pass-through (pt) do Angular não foi portado.</li>
                     </ul>
                 </div>
@@ -720,6 +733,12 @@
     {
         [Required(ErrorMessage = "A data é obrigatória.")]
         public DateTime? Date { get; set; }
+
+        [Required(ErrorMessage = "Informe o período.")]
+        public IReadOnlyList<DateTime?>? Range { get; set; }
+
+        [Required(ErrorMessage = "Informe ao menos uma data.")]
+        public IReadOnlyList<DateTime?>? Multiple { get; set; }
     }
 
     private const string ImportCode = """
@@ -742,13 +761,16 @@
         """;
 
     private const string LocaleCode = """
-        // Program.cs — defina a cultura antes de renderizar o app
-        using System.Globalization;
+        // Program.cs — tradução global (uma vez, para todo o app):
+        builder.Services.AddOpBlazorUI(
+            theme => { /* ... */ },
+            OpTranslations.PtBr);
 
-        CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
-        CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("pt-BR");
-
+        // O componente lê daí os nomes de mês/dia, o DateFormat padrão e os rótulos:
         <OpDatePicker @bind-Value="_locale" DateFormat="dd 'de' MMMM 'de' yyyy" />
+
+        // Idioma próprio: derive de um preset ou crie um OpTranslation novo.
+        var es = new OpTranslation { Today = "Hoy", Clear = "Limpiar", /* ... */ };
         """;
 
     private const string IconCode = """
@@ -922,6 +944,13 @@
             <DataAnnotationsValidator />
             <OpDatePicker @bind-Value="_form.Date" Placeholder="Data" InputId="form-date" />
             <ValidationMessage For="() => _form.Date" />
+
+            <OpDatePicker @bind-RangeValue="_form.Range" SelectionMode="OpDateSelectionMode.Range" ReadonlyInput="true" />
+            <ValidationMessage For="() => _form.Range" />
+
+            <OpDatePicker @bind-MultipleValue="_form.Multiple" SelectionMode="OpDateSelectionMode.Multiple" ReadonlyInput="true" />
+            <ValidationMessage For="() => _form.Multiple" />
+
             <button type="submit" class="p-button p-component p-button-secondary">Enviar</button>
         </EditForm>
 
@@ -934,6 +963,12 @@
             {
                 [Required(ErrorMessage = "A data é obrigatória.")]
                 public DateTime? Date { get; set; }
+
+                [Required(ErrorMessage = "Informe o período.")]
+                public IReadOnlyList<DateTime?>? Range { get; set; }
+
+                [Required(ErrorMessage = "Informe ao menos uma data.")]
+                public IReadOnlyList<DateTime?>? Multiple { get; set; }
             }
         }
         """;

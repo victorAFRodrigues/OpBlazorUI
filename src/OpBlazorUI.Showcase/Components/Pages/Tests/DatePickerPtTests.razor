@@ -1,0 +1,33 @@
+@page "/_tests/datepicker-pt"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DatePicker
+@using OpBlazorUI.Base.Globalization
+@using OpBlazorUI.Base.Services
+
+@* Página fora do menu: verifica a tradução pt-BR global (tests/OpBlazorUI.Playwright/Bloco3_4Tests.cs). *@
+
+<PageTitle>Testes: datepicker pt-BR</PageTitle>
+
+<h1 id="t-title">Testes: datepicker pt-BR</h1>
+
+<section id="t-pt-format">
+    <OpDatePicker DateFormat="d 'de' MMMM 'de' yyyy"
+                  InputId="t-pt-format-input"
+                  @bind-Value="_date"/>
+</section>
+
+<section id="t-pt-labels">
+    <OpDatePicker ShowButtonBar="true"
+                  Inline="true"
+                  @bind-Value="_date2"/>
+</section>
+
+@code {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private DateTime? _date = new DateTime(2026, 10, 26);
+    private DateTime? _date2;
+
+    protected override void OnInitialized() =>
+        TranslationService.SetTranslation(OpTranslations.PtBr);
+}
