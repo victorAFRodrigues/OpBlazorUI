@@ -92,6 +92,9 @@ public static class OpTranslations
         DecimalSeparator = ",",
         ThousandSeparator = ".",
         CurrencySymbol = "R$",
+        LightMode = "Modo claro",
+        DarkMode = "Modo escuro",
+        Theme = "Tema {0}",
 
         Editor = new OpEditorTranslation
         {

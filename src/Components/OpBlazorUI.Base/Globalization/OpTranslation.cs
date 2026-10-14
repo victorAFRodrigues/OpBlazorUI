@@ -108,6 +108,13 @@ public sealed class OpTranslation
     public string ThousandSeparator { get; set; } = ",";
     public string CurrencySymbol { get; set; } = "$";
 
+    // Seletor de tema (extensão nossa: o PrimeNG não tem ThemeSwitcher).
+    public string LightMode { get; set; } = "Light mode";
+    public string DarkMode { get; set; } = "Dark mode";
+
+    /// <summary>Nome acessível de uma cor de tema, com <c>{0}</c> = nome do tema.</summary>
+    public string Theme { get; set; } = "Theme {0}";
+
     // Editor (toolbar própria; o miolo do texto fica a cargo do Quill).
     public OpEditorTranslation Editor { get; set; } = new();
 
