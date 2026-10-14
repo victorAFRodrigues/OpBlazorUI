@@ -107,4 +107,17 @@ public class Bloco3_4Tests
         Assert.True(errors.Count == 0, string.Join(" || ", errors));
         await page.CloseAsync();
     }
+
+    [Fact]
+    public async Task Formato_com_nome_de_mes_nao_duplica()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        // "MMMM" (mês completo) não pode virar "MM"+"MM" -> "OctoberOctober".
+        await Expect(page.Locator("#t-format-input")).ToHaveValueAsync("26 de October de 2026");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
 }

@@ -41,11 +41,11 @@ public class Bloco4_2bTests
         await Expect(page.Locator("#t-scroll .p-dialog")).ToBeVisibleAsync();
         await Expect(page.Locator("#t-scroll .p-dialog-header")).ToBeVisibleAsync();
 
-        Assert.Equal("hidden", await page.EvaluateAsync<string>("() => document.body.style.overflow"));
+        await page.WaitForFunctionAsync("() => document.body.style.overflow === 'hidden'");
 
         await page.Locator("#t-scroll .p-dialog-close-button").ClickAsync();
         await Expect(page.Locator("#t-scroll .p-dialog")).ToHaveCountAsync(0);
-        Assert.NotEqual("hidden", await page.EvaluateAsync<string>("() => document.body.style.overflow"));
+        await page.WaitForFunctionAsync("() => document.body.style.overflow !== 'hidden'");
 
         Assert.True(errors.Count == 0, string.Join(" || ", errors));
         await page.CloseAsync();
@@ -114,12 +114,12 @@ public class Bloco4_2bTests
 
         await page.Locator("#t-toggle-block").ClickAsync();
         await Expect(page.Locator("#t-blockui .p-blockui-mask")).ToBeVisibleAsync();
-        Assert.Equal("hidden", await page.EvaluateAsync<string>("() => document.body.style.overflow"));
+        await page.WaitForFunctionAsync("() => document.body.style.overflow === 'hidden'");
 
         // A máscara cobre o botão (pointer-events); alterna pelo teclado com o botão em foco.
         await page.Keyboard.PressAsync("Enter");
         await Expect(page.Locator("#t-blockui .p-blockui-mask")).ToHaveCountAsync(0);
-        Assert.NotEqual("hidden", await page.EvaluateAsync<string>("() => document.body.style.overflow"));
+        await page.WaitForFunctionAsync("() => document.body.style.overflow !== 'hidden'");
 
         Assert.True(errors.Count == 0, string.Join(" || ", errors));
         await page.CloseAsync();

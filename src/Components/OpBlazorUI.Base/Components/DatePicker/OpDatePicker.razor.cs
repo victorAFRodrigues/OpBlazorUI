@@ -1206,7 +1206,8 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
                     sb.Append(new string('M', run >= 2 ? 4 : 3));
                     break;
                 case 'y':
-                    sb.Append(new string('y', Math.Min(run, 4)));
+                    // Ano padrão é 4 dígitos; apenas "yy" usa 2 dígitos (consistente com FormatDate).
+                    sb.Append(run == 2 ? "yy" : "yyyy");
                     break;
                 case 'D':
                     sb.Append(new string('d', run >= 2 ? 4 : 3));
@@ -1227,7 +1228,7 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         var names = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat;
         var sb = new System.Text.StringBuilder();
 
-        for (var i = 0; i < format.Length; i++)
+        for (var i = 0; i < format.Length;)
         {
             var c = format[i];
 
@@ -1237,57 +1238,45 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
                 if (end < 0)
                 {
                     sb.Append(c);
+                    i++;
                     continue;
                 }
 
                 sb.Append(format, i + 1, end - i - 1);
-                i = end;
+                i = end + 1;
                 continue;
             }
 
+            // Consome a sequência repetida do token de uma vez (ex.: "dd", "MMMM", "yyyy"): a versão
+            // anterior avançava 2 caracteres por vez, então "MMMM" virava "MM" + "MM" e duplicava o mês.
+            var j = i;
+            while (j < format.Length && format[j] == c) j++;
+            var run = j - i;
+
             switch (c)
             {
-                case 'd' when i + 1 < format.Length && format[i + 1] == 'd':
-                    sb.Append(date.Day.ToString("00"));
-                    i++;
-                    break;
                 case 'd':
-                    sb.Append(date.Day);
-                    break;
-                case 'm' when i + 1 < format.Length && format[i + 1] == 'm':
-                    sb.Append(date.Month.ToString("00"));
-                    i++;
+                    sb.Append(run >= 2 ? date.Day.ToString("00") : date.Day.ToString());
                     break;
                 case 'm':
-                    sb.Append(date.Month);
-                    break;
-                case 'M' when i + 1 < format.Length && format[i + 1] == 'M':
-                    sb.Append(names.GetMonthName(date.Month));
-                    i++;
+                    sb.Append(run >= 2 ? date.Month.ToString("00") : date.Month.ToString());
                     break;
                 case 'M':
-                    sb.Append(names.GetAbbreviatedMonthName(date.Month));
+                    sb.Append(run >= 2 ? names.GetMonthName(date.Month) : names.GetAbbreviatedMonthName(date.Month));
                     break;
-                case 'y' when i + 1 < format.Length && format[i + 1] == 'y' && i + 2 < format.Length &&
-                              format[i + 2] == 'y' && i + 3 < format.Length && format[i + 3] == 'y':
-                    sb.Append(date.Year.ToString("0000"));
-                    i += 3;
-                    break;
-                case 'y' when i + 1 < format.Length && format[i + 1] == 'y':
-                    sb.Append((date.Year % 100).ToString("00"));
-                    i++;
-                    break;
-                case 'D' when i + 1 < format.Length && format[i + 1] == 'D':
-                    sb.Append(names.GetDayName(date.DayOfWeek));
-                    i++;
+                case 'y':
+                    // Ano padrão é 4 dígitos; apenas "yy" usa 2 dígitos.
+                    sb.Append(run == 2 ? (date.Year % 100).ToString("00") : date.Year.ToString("0000"));
                     break;
                 case 'D':
-                    sb.Append(names.GetAbbreviatedDayName(date.DayOfWeek));
+                    sb.Append(run >= 2 ? names.GetDayName(date.DayOfWeek) : names.GetAbbreviatedDayName(date.DayOfWeek));
                     break;
                 default:
-                    sb.Append(c);
+                    sb.Append(new string(c, run));
                     break;
             }
+
+            i = j;
         }
 
         return sb.ToString();
