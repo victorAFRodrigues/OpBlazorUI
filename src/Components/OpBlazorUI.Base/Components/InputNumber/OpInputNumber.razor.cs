@@ -103,7 +103,8 @@ public partial class OpInputNumber : OpInputBase<decimal?>
 
         if (Mode == "currency")
         {
-            if (MinFractionDigits is int mn) nfi.CurrencyDecimalDigits = mn;
+            if (MaxFractionDigits is int mx) nfi.CurrencyDecimalDigits = mx;
+            else if (MinFractionDigits is int mn) nfi.CurrencyDecimalDigits = mn;
             if (!string.IsNullOrEmpty(Currency))
             {
                 nfi.CurrencySymbol = CurrencyDisplay == "code"
@@ -132,11 +133,26 @@ public partial class OpInputNumber : OpInputBase<decimal?>
         var culture = GetCulture();
         var nfi = GetNumberFormat(culture);
         var styles = NumberStyles.Number;
-        if (Mode == "currency") styles |= NumberStyles.AllowCurrencySymbol;
+        if (Mode == "currency")
+        {
+            styles |= NumberStyles.AllowCurrencySymbol;
+            // O símbolo exibido (mapeado) pode diferir do símbolo da cultura atual; sem alinhar,
+            // digitar o valor exibido (ex.: "R$ 10") não era aceito.
+            if (!string.IsNullOrEmpty(Currency))
+            {
+                nfi.CurrencySymbol = CurrencyDisplay == "code" ? Currency + " " : GetCurrencySymbol(Currency);
+            }
+        }
 
         if (decimal.TryParse(text, styles, nfi, out value)) return true;
         return false;
     }
+
+    // MaxFractionDigits limita o valor (ex.: 1.239 → 1.24 com 2 casas), não só a exibição.
+    private decimal ApplyFractionDigits(decimal value)
+        => MaxFractionDigits is int digits && digits >= 0
+            ? Math.Round(value, digits, MidpointRounding.AwayFromZero)
+            : value;
 
     private decimal Clamp(decimal value)
     {
@@ -147,14 +163,19 @@ public partial class OpInputNumber : OpInputBase<decimal?>
 
     private async Task SetValueAsync(decimal? value, bool raiseInput)
     {
-        CurrentValue = value;
-        if (raiseInput) await OnInput.InvokeAsync(value);
+        CurrentValue = value is null ? null : ApplyFractionDigits(value.Value);
+        if (raiseInput) await OnInput.InvokeAsync(CurrentValue);
     }
+
+    // Enquanto focado, o input mostra o texto digitado (sem reformatar a cada tecla), evitando o
+    // cursor pular para o fim.
+    private string? _text;
 
     private async Task HandleInput(ChangeEventArgs e)
     {
         if (Readonly || Disabled) return;
         var text = e.Value?.ToString() ?? string.Empty;
+        _text = text;
 
         if (string.IsNullOrWhiteSpace(text))
         {
@@ -176,14 +197,17 @@ public partial class OpInputNumber : OpInputBase<decimal?>
         var text = e.Value?.ToString() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(text))
         {
+            _text = null;
+            CurrentValue = null;
             await OnChange.InvokeAsync(null);
             return;
         }
 
         if (TryParseNumber(text, out var parsed))
         {
-            var clamped = Clamp(parsed);
+            var clamped = Clamp(ApplyFractionDigits(parsed));
             CurrentValue = clamped;
+            _text = null;
             await OnChange.InvokeAsync(clamped);
         }
     }
@@ -193,12 +217,14 @@ public partial class OpInputNumber : OpInputBase<decimal?>
     private async Task HandleFocus(FocusEventArgs e)
     {
         _focused = true;
+        _text = FormatValue(CurrentValue);
         await OnFocus.InvokeAsync(e);
     }
 
     private async Task HandleBlur(FocusEventArgs e)
     {
         _focused = false;
+        _text = null;
         await OnBlur.InvokeAsync(e);
     }
 

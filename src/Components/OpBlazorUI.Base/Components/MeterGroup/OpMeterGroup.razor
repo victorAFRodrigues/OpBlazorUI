@@ -8,7 +8,7 @@
      data-p="@Orientation" @attributes="AdditionalAttributes">
     @if (LabelPosition == "start")
     {
-        @RenderLabels()
+        @RenderLabels("start")
     }
 
     <div class="p-metergroup-meters" data-p="@Orientation">
@@ -28,16 +28,20 @@
 
     @if (LabelPosition == "end")
     {
-        @RenderLabels()
+        @RenderLabels("end")
     }
 </div>
 
 @code {
-    private RenderFragment RenderLabels() => __builder =>
+    private RenderFragment RenderLabels(string position) => __builder =>
     {
-        if (LabelTemplate is not null)
+        var template = position == "start"
+            ? (StartTemplate ?? LabelTemplate)
+            : (EndTemplate ?? LabelTemplate);
+
+        if (template is not null)
         {
-            @LabelTemplate(LabelContext())
+            @template(LabelContext())
         }
         else
         {

@@ -9,6 +9,8 @@
          tabindex="@(Disabled ? -1 : 0)"
          aria-expanded="@(Active.ToString().ToLowerInvariant())"
          aria-controls="@ContentId"
+         aria-disabled="@(Disabled ? "true" : null)"
+         @ref="_headerRef"
          @onclick="ToggleAsync"
          @onkeydown="OnKeyDownAsync">
         <i class="@ToggleIconClass" aria-hidden="true"></i>

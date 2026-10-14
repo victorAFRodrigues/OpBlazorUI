@@ -1,0 +1,101 @@
+@page "/_tests/bloco3-7"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_7Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.7 menus</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.7 menus</h1>
+
+<section id="t-menu">
+    <OpMenu Items="_menuItems" OnItemClick="OnMenuClick"/>
+    <span id="t-menu-cmd">@_menuCmd</span>
+</section>
+
+<section id="t-tiered">
+    <div style="width:14rem;">
+        <OpTieredMenu Model="_tieredItems"/>
+    </div>
+</section>
+
+<section id="t-panelmenu">
+    <OpPanelMenu Model="_panelItems"/>
+</section>
+
+<section id="t-context">
+    <div id="t-context-target" style="width:220px;height:120px;border:1px solid #888;"
+         @oncontextmenu="OnContextMenu" @oncontextmenu:preventDefault="true">
+        clique direito
+    </div>
+    <OpContextMenu @ref="_ctx" Model="_ctxItems" OnItemClick="OnCtxClick"/>
+</section>
+
+<section id="t-flip">
+    <div style="position:absolute; left:380px; top:60px; width:200px;">
+        <OpTieredMenu Model="_flipItems"/>
+    </div>
+</section>
+
+@code {
+    private int _menuCmd;
+    private List<OpMenuItem> _menuItems = new();
+    private List<OpMenuItem> _tieredItems = new();
+    private List<OpMenuItem> _panelItems = new();
+    private List<OpMenuItem> _flipItems = new();
+    private List<OpMenuItem> _ctxItems = new();
+    private OpContextMenu? _ctx;
+
+    protected override void OnInitialized()
+    {
+        _menuItems = new()
+        {
+            new OpMenuItem { Label = "Exec", Command = () => _menuCmd++ },
+            new OpMenuItem { Label = "Link", Url = "https://example.com", Target = "_blank" },
+            new OpMenuItem { Label = "Off", Url = "https://example.com", Disabled = true }
+        };
+
+        _tieredItems = new()
+        {
+            new OpMenuItem { Label = "A", Items = new() { new() { Label = "A1" }, new() { Label = "A2" } } },
+            new OpMenuItem { Label = "B", Items = new() { new() { Label = "B1" } } }
+        };
+
+        _panelItems = new()
+        {
+            new OpMenuItem
+            {
+                Label = "P1",
+                Items = new()
+                {
+                    new OpMenuItem { Label = "P2", Items = new() { new() { Label = "Leaf3" } } }
+                }
+            }
+        };
+
+        _flipItems = new()
+        {
+            new OpMenuItem
+            {
+                Label = "Root",
+                Items = new()
+                {
+                    new OpMenuItem { Label = "Nivel2", Items = new() { new() { Label = "Nivel3" } } }
+                }
+            }
+        };
+
+        _ctxItems = new() { new OpMenuItem { Label = "Copiar" }, new OpMenuItem { Label = "Colar" } };
+    }
+
+    private void OnMenuClick(OpMenuItem item)
+    {
+    }
+
+    private void OnCtxClick(OpMenuItem item)
+    {
+    }
+
+    private void OnContextMenu(MouseEventArgs e) => _ = _ctx?.ShowAsync(e.ClientX, e.ClientY);
+}

@@ -123,6 +123,46 @@ public partial class OpPickList<TItem> : OpComponentBase
         await NotifyListChanged(source);
     }
 
+    private async Task MoveItemToTarget(TItem? item)
+    {
+        if (Disabled || item is null || IndexOf(_target, item) >= 0)
+        {
+            return;
+        }
+
+        var index = IndexOf(_source, item);
+        if (index < 0)
+        {
+            return;
+        }
+
+        _source.RemoveAt(index);
+        _target.Add(item);
+        _selectedSource.RemoveAll(v => Equals(v, item));
+        await NotifyListChanged(true);
+        await NotifyListChanged(false);
+    }
+
+    private async Task MoveItemToSource(TItem? item)
+    {
+        if (Disabled || item is null || IndexOf(_source, item) >= 0)
+        {
+            return;
+        }
+
+        var index = IndexOf(_target, item);
+        if (index < 0)
+        {
+            return;
+        }
+
+        _target.RemoveAt(index);
+        _source.Add(item);
+        _selectedTarget.RemoveAll(v => Equals(v, item));
+        await NotifyListChanged(true);
+        await NotifyListChanged(false);
+    }
+
     private async Task MoveRight()
     {
         if (_selectedSource.Count == 0)

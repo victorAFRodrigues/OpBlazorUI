@@ -35,6 +35,13 @@ jobs:
             --no-restore \
             --output ./artifacts
 
+      - name: Pack dos gráficos
+        run: |
+          dotnet pack src/Components/OpBlazorUI.Charts/OpBlazorUI.Charts.csproj \
+            --configuration Release \
+            --no-restore \
+            --output ./artifacts
+
   test:
     name: Test (Playwright)
     runs-on: ubuntu-latest
@@ -59,3 +66,31 @@ jobs:
 
       - name: Testes
         run: dotnet test tests/OpBlazorUI.Playwright/OpBlazorUI.Playwright.csproj --configuration Debug --no-build
+
+  themes:
+    name: Temas gerados em dia
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar o gerador de temas
+        working-directory: tools/theme-gen
+        run: npm ci
+
+      - name: Regenerar os temas
+        working-directory: tools/theme-gen
+        run: npm run build
+
+      - name: Falhar se houver diff (temas desatualizados)
+        run: |
+          if ! git diff --exit-code -- src/Components/OpBlazorUI.Base/wwwroot/themes; then
+            echo "::error::Os temas em wwwroot/themes estão desatualizados. Rode 'npm run build' em tools/theme-gen e commite o resultado."
+            exit 1
+          fi

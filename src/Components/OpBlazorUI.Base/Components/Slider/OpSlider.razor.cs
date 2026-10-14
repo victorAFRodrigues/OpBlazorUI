@@ -31,12 +31,12 @@ public partial class OpSlider : OpInputBase<double>
         StyleClass);
 
     private string RangeStyle => Orientation == "vertical"
-        ? $"height: {OpCss.Num(SliderMath.ToPercent(Value, Min, Max))}%"
-        : $"width: {OpCss.Num(SliderMath.ToPercent(Value, Min, Max))}%";
+        ? $"height: {OpCss.Num(SliderMath.ToPercent(CurrentValue, Min, Max))}%"
+        : $"width: {OpCss.Num(SliderMath.ToPercent(CurrentValue, Min, Max))}%";
 
     private string HandleStyle => Orientation == "vertical"
-        ? $"bottom: {OpCss.Num(SliderMath.ToPercent(Value, Min, Max))}%"
-        : $"inset-inline-start: {OpCss.Num(SliderMath.ToPercent(Value, Min, Max))}%";
+        ? $"bottom: {OpCss.Num(SliderMath.ToPercent(CurrentValue, Min, Max))}%"
+        : $"inset-inline-start: {OpCss.Num(SliderMath.ToPercent(CurrentValue, Min, Max))}%";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -60,19 +60,37 @@ public partial class OpSlider : OpInputBase<double>
 
     public override async ValueTask DisposeAsync()
     {
+        if (_initializedOrientation is not null)
+        {
+            await InvokeDisposeAsync();
+        }
+
         _sliderInterop?.Dispose();
         await base.DisposeAsync();
+    }
+
+    private async Task InvokeDisposeAsync()
+    {
+        try
+        {
+            await Interop.InvokeVoidAsync(OpInterop.SliderInterop, "dispose", _root);
+        }
+        catch (JSDisconnectedException)
+        {
+            // SSR estático / circuito desconectado
+        }
     }
 
     private async Task HandleSlideAsync(double percent, int index)
     {
         var value = SliderMath.FromPercent(percent, Min, Max, Step);
-        if (value.Equals(Value))
+        if (value.Equals(CurrentValue))
         {
             return;
         }
 
         CurrentValue = value;
+        StateHasChanged();
         await OnChange.InvokeAsync(value);
     }
 
@@ -121,18 +139,19 @@ public partial class OpSlider : OpInputBase<double>
     private Task AdjustAsync(int direction)
     {
         var delta = (Step ?? 1) * direction;
-        return SetValueAsync(Value + delta);
+        return SetValueAsync(CurrentValue + delta);
     }
 
     private async Task SetValueAsync(double value)
     {
         var next = SliderMath.Snap(value, Min, Max, Step);
-        if (next.Equals(Value))
+        if (next.Equals(CurrentValue))
         {
             return;
         }
 
         CurrentValue = next;
+        StateHasChanged();
         await OnChange.InvokeAsync(next);
     }
 }

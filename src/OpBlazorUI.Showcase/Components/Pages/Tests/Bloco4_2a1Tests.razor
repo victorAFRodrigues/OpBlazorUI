@@ -1,0 +1,73 @@
+@page "/_tests/bloco4-2a1"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DataTable
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_2a1Tests.cs). *@
+
+<PageTitle>Testes: bloco 4.2a1</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.2a1</h1>
+
+<section id="t-tmpl">
+    <OpDataTable Items="_rows" Columns="_tmplCols"/>
+</section>
+
+<section id="t-single">
+    <OpDataTable Items="_rows" Columns="_plainCols" Selection="true" SelectionMode="single" DataKey="Name"
+                 @bind-SelectedItems="_single"/>
+    <span id="t-single-log">@(_single.Count == 0 ? "nenhum" : _single[0].Name)</span>
+</section>
+
+<section id="t-ctrl">
+    <OpDataTable Items="_many" Columns="_plainCols" Paginator="true" RowsPerPageOptions="_rowsOptions"
+                 @bind-First="_first" @bind-Rows="_rowsPerPage"/>
+    <span id="t-ctrl-log">first=@_first rows=@_rowsPerPage</span>
+</section>
+
+<section id="t-sticky">
+    <OpDataTable Items="_many" Columns="_plainCols" StickyHeader="true" ScrollHeight="8rem"/>
+</section>
+
+@code {
+    private sealed record Row(string Name, decimal Price);
+
+    private IReadOnlyList<Row> _single = Array.Empty<Row>();
+    private int _first;
+    private int _rowsPerPage = 5;
+    private readonly int[] _rowsOptions = new[] { 5, 10 };
+
+    private readonly List<Row> _rows = new()
+    {
+        new Row("Alface", 2.5m),
+        new Row("Tomate", 4.9m),
+        new Row("Banana", 3.2m)
+    };
+
+    private readonly List<Row> _many = Enumerable.Range(1, 25)
+        .Select(i => new Row($"Item {i}", i)).ToList();
+
+    private readonly List<OpDataTableColumn> _plainCols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome" },
+        new OpDataTableColumn { Field = "Price", Header = "Preço" }
+    };
+
+    private static RenderFragment PriceCell(Row row) => @<span class="t-price">@row.Price.ToString("C")</span>;
+
+    private static RenderFragment PriceHeader => @<span class="t-hdr">Preço</span>;
+
+    private static RenderFragment PriceFooter => @<span class="t-ftr">Total</span>;
+
+    private readonly List<OpDataTableColumn<Row>> _tmplCols = new()
+    {
+        new OpDataTableColumn<Row> { Field = "Name", Header = "Nome" },
+        new OpDataTableColumn<Row>
+        {
+            Header = "Preço",
+            BodyTemplate = PriceCell,
+            HeaderTemplate = PriceHeader,
+            FooterTemplate = PriceFooter
+        }
+    };
+}

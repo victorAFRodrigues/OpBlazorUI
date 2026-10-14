@@ -3,6 +3,7 @@
 @inherits OpInputBase<List<string>>
 
 <div class="@RootClass" @onclick="FocusInputAsync" @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     <ul class="@InputListClass">
         @foreach (var (chip, index) in Chips.Select((c, i) => (c, i)))
         {
@@ -19,12 +20,15 @@
                             <span class="p-chip-icon @ChipIcon" aria-hidden="true"></span>
                         }
                         <span class="p-chip-label">@chip</span>
-                        <span class="@RemoveIconClass"
-                              role="button"
-                              aria-label="Remover"
-                              tabindex="-1"
-                              @onclick="() => RemoveChipAsync(index)"
-                              @onclick:stopPropagation="true"></span>
+                        @if (!Readonly && !Disabled)
+                        {
+                            <span class="@RemoveIconClass"
+                                  role="button"
+                                  aria-label="Remover"
+                                  tabindex="-1"
+                                  @onclick="() => RemoveChipAsync(index)"
+                                  @onclick:stopPropagation="true"></span>
+                        }
                     </span>
                 }
             </li>
@@ -32,7 +36,7 @@
 
         <li class="p-inputchips-input-item">
             <input id="@Id"
-                   name="@Name"
+                   name="@(Name ?? NameAttributeValue)"
                    type="text"
                    @ref="_input"
                    value="@_inputValue"

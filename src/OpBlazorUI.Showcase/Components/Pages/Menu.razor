@@ -101,9 +101,8 @@
         <DocSection Label="Comando" Id="command">
             <Description>
                 No Angular o comando de um item é registrado na propriedade <code>command</code>. Nesta versão,
-                <code>OpMenuItem.Command</code> é uma <code>Action</code> e o componente dispara
-                <code>OnItemClick</code>; cabe ao handler invocar <code>item.Command</code> ou executar a ação
-                diretamente.
+                <code>OpMenuItem.Command</code> é uma <code>Action</code> executada automaticamente ao clicar no
+                item; <code>OnItemClick</code> é disparado em seguida para o dono reagir (ex.: re-renderizar).
             </Description>
             <ChildContent>
                 <div class="flex flex-col items-start gap-2">
@@ -284,7 +283,7 @@
                 <div class="doc-section-description">
                     <ul>
                         <li>Não há equivalentes às diretivas <code>pMenuItem</code> e <code>routerLink</code> do Angular; a navegação é feita pela propriedade <code>Url</code> (âncora) e as ações por <code>Command</code>/<code>OnItemClick</code>.</li>
-                        <li><code>OpMenuItem.Command</code> não é invocado automaticamente: o componente dispara <code>OnItemClick</code>, e o handler deve executar a ação.</li>
+                        <li><code>OpMenuItem.Command</code> é executado automaticamente pelo componente; <code>OnItemClick</code> é disparado em seguida (itens <code>Disabled</code> não executam nem navegam).</li>
                         <li><code>OpMenuItem.Items</code> (subitens) não é renderizado; para agrupar itens use <code>Groups</code>.</li>
                         <li><code>OpMenuItem.Target</code> não é aplicado à âncora renderizada.</li>
                         <li>Não há template específico para o cabeçalho do grupo (equivalente ao <code>submenuheader</code> do Angular).</li>
@@ -352,7 +351,8 @@
 
     private void OnItemClick(OpMenuItem item) => _lastClick = item.Label ?? "—";
 
-    private void OnCommandItem(OpMenuItem item) => item.Command?.Invoke();
+    // O Command é executado pelo componente; o handler só existe para re-renderizar o dono.
+    private void OnCommandItem(OpMenuItem item) { }
 
     private void TogglePopup() => _ = _popupMenu!.ToggleAsync(_trigger);
 
@@ -438,7 +438,7 @@
                 new() { Label = "Pesquisar", Icon = "pi pi-search", Command = () => _result = "Pesquisar" }
             };
 
-            private void OnItemClick(OpMenuItem item) => item.Command?.Invoke();
+            private void OnItemClick(OpMenuItem item) { /* re-renderiza o dono */ }
         }
         """;
 

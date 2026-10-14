@@ -1,0 +1,36 @@
+@page "/_tests/bloco4-3"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.DynamicDialog
+@using OpBlazorUI.Base.Services
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_3Tests.cs). *@
+
+<PageTitle>Testes: bloco 4.3</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.3 (DynamicDialog)</h1>
+
+<section id="t-dyn">
+    <button id="t-open-dyn" type="button" class="p-button p-component" @onclick="Open">
+        <span class="p-button-label">Abrir dialog</span>
+    </button>
+    <span id="t-dyn-log">@_result</span>
+</section>
+
+@code {
+    [Inject] private OpDialogService DialogService { get; set; } = default!;
+
+    private string _result = "pendente";
+
+    private async Task Open()
+    {
+        var reference = DialogService.Open<DynamicDialogContent>(new OpDynamicDialogConfig
+        {
+            Header = "Dinâmico",
+            Width = "24rem",
+            InputValues = new Dictionary<string, object?> { ["InputMessage"] = "Olá dinâmico" }
+        });
+
+        var result = await reference.Result;
+        _result = result?.ToString() ?? "null";
+    }
+}

@@ -80,7 +80,10 @@
                     }
                     else
                     {
-                        <a class="p-menu-item-link" href="@item.Url" tabindex="-1">
+                        <a class="p-menu-item-link" href="@(item.Disabled ? null : item.Url)"
+                           target="@item.Target"
+                           rel="@(item.Target == "_blank" ? "noopener noreferrer" : null)"
+                           tabindex="-1">
                             @if (!string.IsNullOrEmpty(item.Icon))
                             {
                                 <span class="p-menu-item-icon @item.Icon"></span>

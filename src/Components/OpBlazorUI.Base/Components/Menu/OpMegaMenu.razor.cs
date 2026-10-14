@@ -6,6 +6,7 @@ namespace OpBlazorUI.Base.Components.Menu;
 
 public partial class OpMegaMenu : OpComponentBase
 {
+    private ElementReference _rootRef;
     private readonly HashSet<OpMenuItem> _open = new();
 
     [Parameter] public IReadOnlyList<OpMenuItem> Model { get; set; } = Array.Empty<OpMenuItem>();
@@ -55,5 +56,11 @@ public partial class OpMegaMenu : OpComponentBase
 
         item.Command?.Invoke();
         await OnItemClick.InvokeAsync(item);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await Interop.InvokeVoidAsync(
+            OpInterop.MenuInterop, "initMenuFocusKeyboard", _rootRef, "a.p-megamenu-item-link");
     }
 }

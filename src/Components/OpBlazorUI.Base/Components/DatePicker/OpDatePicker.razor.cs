@@ -53,6 +53,9 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
 {
     private ElementReference _rootRef;
 
+    private DateTime? _focusedDate;
+    private string? _pendingFocusDate;
+
     private string? _inputId;
     private bool _overlayVisible;
     private bool _panelRendered;
@@ -74,6 +77,14 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
     private DateTime? _prevSingle;
     private List<DateTime?>? _prevMultiple;
     private List<DateTime?>? _prevRange;
+
+    // Configuração usada para gerar a grade; se mudar, os meses são reconstruídos.
+    private DateTime? _gridMin;
+    private DateTime? _gridMax;
+    private IReadOnlyCollection<DateTime>? _gridDisabledDates;
+    private IReadOnlyCollection<int>? _gridDisabledDays;
+    private int _gridMonths;
+    private int _gridFirstDay;
 
     // ---------------------------------------------------------------- params
     [Parameter] public IReadOnlyList<DateTime?>? RangeValue { get; set; }
@@ -200,6 +211,14 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
             {
                 _prevSingle = Value;
                 _inputText = InputValue;
+
+                // Navega até a data quando o Value muda por fora (sem seleção no painel).
+                if (Value is { } v)
+                {
+                    _viewDate = new DateTime(v.Year, v.Month, 1);
+                    SyncTimeFrom(v);
+                    RebuildMonths();
+                }
             }
         }
         else if (SelectionMode == OpDateSelectionMode.Multiple)
@@ -217,6 +236,34 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
                 _prevRange = RangeValue?.ToList();
                 _inputText = InputValue;
             }
+        }
+
+        // Min/Max/desabilitados/nº de meses/primeiro dia afetam a grade: reconstrói quando mudam.
+        if (!Equals(_gridMin, MinDate) || !Equals(_gridMax, MaxDate)
+            || !ReferenceEquals(_gridDisabledDates, DisabledDates)
+            || !ReferenceEquals(_gridDisabledDays, DisabledDays)
+            || _gridMonths != NumberOfMonths || _gridFirstDay != FirstDayOfWeek)
+        {
+            _gridMin = MinDate;
+            _gridMax = MaxDate;
+            _gridDisabledDates = DisabledDates;
+            _gridDisabledDays = DisabledDays;
+            _gridMonths = NumberOfMonths;
+            _gridFirstDay = FirstDayOfWeek;
+            RebuildMonths();
+        }
+    }
+
+    private void SyncTimeFrom(DateTime value)
+    {
+        if (!ShowTime && !TimeOnly) return;
+        _currentHour = value.Hour;
+        _currentMinute = value.Minute;
+        _currentSecond = value.Second;
+        if (HourFormat == 12)
+        {
+            _pm = value.Hour >= 12;
+            _currentHour = value.Hour % 12 == 0 ? 12 : value.Hour % 12;
         }
     }
 
@@ -350,8 +397,17 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         return result;
     }
 
-    private static int WeekNumber(DateTime date)
+    private int WeekNumber(DateTime date)
     {
+        if (StartWeekFromFirstDayOfYear)
+        {
+            // Semanas contadas a partir do primeiro dia do ano (respeitando FirstDayOfWeek).
+            var first = new DateTime(date.Year, 1, 1);
+            var offset = ((int)first.DayOfWeek - FirstDayOfWeek + 7) % 7;
+            var weekStart = first.AddDays(-offset);
+            return ((date.Date - weekStart).Days / 7) + 1;
+        }
+
         return System.Globalization.ISOWeek.GetWeekOfYear(date);
     }
 
@@ -421,6 +477,14 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         if (d.OtherMonth) classes.Add("p-datepicker-other-month");
         if (d.Today) classes.Add("p-datepicker-today");
         return string.Join(' ', classes);
+    }
+
+    // O dia com o tabstop do grid (roving). Sem foco definido, o primeiro dia selecionado/today.
+    private bool IsFocusedDay(OpDateMeta d)
+    {
+        var focused = _focusedDate
+            ?? (CurrentValue.HasValue ? CurrentValue.Value.Date : _today.Date);
+        return focused.Date == d.Date.Date;
     }
 
     private async Task OnDateSelect(MouseEventArgs _, OpDateMeta meta)
@@ -695,6 +759,8 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         _panelRendered = true;
         _panelClosing = false;
         _panelAnimationClass = "p-anchored-overlay-enter-active";
+        // Reabrir sempre volta para a view configurada (Date/Month/Year).
+        _currentView = View;
         await OnShow.InvokeAsync();
         StateHasChanged();
     }
@@ -757,13 +823,66 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         _inputText = e.Value?.ToString() ?? string.Empty;
         await OnInput.InvokeAsync(_inputText);
 
-        if (SelectionMode == OpDateSelectionMode.Single && !ReadonlyInput)
+        if (ReadonlyInput) return;
+
+        // Só aceita entrada completa (o texto inteiro precisa casar com o DateFormat).
+        switch (SelectionMode)
         {
-            if (DateTime.TryParse(_inputText, out var parsed))
-            {
-                CurrentValue = parsed;
-            }
+            case OpDateSelectionMode.Single:
+                if (TryParseWithFormat(_inputText, out var parsed))
+                {
+                    CurrentValue = (ShowTime || TimeOnly) ? WithCurrentTime(parsed) : parsed;
+                }
+
+                break;
+
+            case OpDateSelectionMode.Multiple:
+                if (TryParseList(_inputText, MultipleSeparator, out var multiple))
+                {
+                    MultipleValue = multiple;
+                    await MultipleValueChanged.InvokeAsync(multiple);
+                }
+
+                break;
+
+            case OpDateSelectionMode.Range:
+                if (TryParseList(_inputText, RangeSeparator, out var range))
+                {
+                    RangeValue = range;
+                    await RangeValueChanged.InvokeAsync(range);
+                }
+
+                break;
         }
+    }
+
+    private bool TryParseList(string text, string separator, out List<DateTime?> result)
+    {
+        result = new List<DateTime?>();
+        if (string.IsNullOrWhiteSpace(text)) return false;
+
+        var parts = string.IsNullOrEmpty(separator)
+            ? new[] { text }
+            : text.Split(separator, StringSplitOptions.None);
+
+        foreach (var part in parts)
+        {
+            if (!TryParseWithFormat(part.Trim(), out var parsed)) return false;
+            result.Add((ShowTime || TimeOnly) ? WithCurrentTime(parsed) : parsed);
+        }
+
+        return result.Count > 0;
+    }
+
+    private bool TryParseWithFormat(string? text, out DateTime value)
+    {
+        value = default;
+        if (string.IsNullOrWhiteSpace(text)) return false;
+
+        var netFormat = ConvertFormat(DateFormat);
+        return DateTime.TryParseExact(text.Trim(), netFormat,
+            System.Globalization.CultureInfo.CurrentCulture,
+            System.Globalization.DateTimeStyles.None, out value);
     }
 
     private async Task OnInputBlur(FocusEventArgs e)
@@ -800,11 +919,66 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         if (e.Key is "Enter" or " " or "Spacebar")
         {
             await OnDateSelect(new MouseEventArgs(), date);
+            return;
         }
-        else if (e.Key == "Escape")
+
+        if (e.Key == "Escape")
         {
             await CloseAsync();
+            return;
         }
+
+        if (date.OtherMonth && e.Key is "ArrowLeft" or "ArrowRight" or "ArrowUp" or "ArrowDown")
+        {
+            // Não navega a partir de dias fora do mês.
+            return;
+        }
+
+        var current = date.Date;
+        var weekOffset = ((int)current.DayOfWeek - (int)FirstDayOfWeek + 7) % 7;
+        var next = e.Key switch
+        {
+            "ArrowLeft" => current.AddDays(-1),
+            "ArrowRight" => current.AddDays(1),
+            "ArrowUp" => current.AddDays(-7),
+            "ArrowDown" => current.AddDays(7),
+            "Home" => current.AddDays(-weekOffset),
+            "End" => current.AddDays(-weekOffset + 6),
+            "PageUp" => current.AddMonths(-1),
+            "PageDown" => current.AddMonths(1),
+            _ => default
+        };
+
+        if (next == default)
+        {
+            return;
+        }
+
+        _focusedDate = next;
+        _pendingFocusDate = next.ToString("yyyy-MM-dd");
+
+        if (next.Month != _viewDate.Month || next.Year != _viewDate.Year)
+        {
+            _viewDate = new DateTime(next.Year, next.Month, 1);
+            await Navigated(monthChange: true);
+        }
+        else
+        {
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_pendingFocusDate is null)
+        {
+            return;
+        }
+
+        var date = _pendingFocusDate;
+        _pendingFocusDate = null;
+        await Interop.InvokeVoidAsync(
+            OpInterop.OptimusInterop, "focusSelector", _rootRef, $"[data-date=\"{date}\"]");
     }
 
     private IReadOnlyList<string> WeekDayNames()
@@ -822,8 +996,18 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
     private async Task Clear(MouseEventArgs? _ = null)
     {
         CurrentValue = null;
-        RangeValue = null;
-        MultipleValue = null;
+
+        if (SelectionMode == OpDateSelectionMode.Range)
+        {
+            RangeValue = null;
+            await RangeValueChanged.InvokeAsync(null);
+        }
+        else if (SelectionMode == OpDateSelectionMode.Multiple)
+        {
+            MultipleValue = null;
+            await MultipleValueChanged.InvokeAsync(null);
+        }
+
         _inputText = "";
         await OnClear.InvokeAsync();
     }
@@ -982,12 +1166,13 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
 
     private string GetYear(OpMonth month) => month.Year.ToString();
 
-    private static string FormatDate(DateTime date, string format)
+    // Converte os tokens do PrimeNG (dd/mm/yyyy, M/MM nomes, D/DD dias) para o formato .NET,
+    // usado tanto na exibição quanto no parse (TryParseExact).
+    private static string ConvertFormat(string format)
     {
-        var names = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat;
         var sb = new System.Text.StringBuilder();
 
-        for (var i = 0; i < format.Length; i++)
+        for (var i = 0; i < format.Length;)
         {
             var c = format[i];
 
@@ -997,57 +1182,101 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
                 if (end < 0)
                 {
                     sb.Append(c);
+                    i++;
                     continue;
                 }
 
                 sb.Append(format, i + 1, end - i - 1);
-                i = end;
+                i = end + 1;
                 continue;
             }
 
+            var j = i;
+            while (j < format.Length && format[j] == c) j++;
+            var run = j - i;
             switch (c)
             {
-                case 'd' when i + 1 < format.Length && format[i + 1] == 'd':
-                    sb.Append(date.Day.ToString("00"));
-                    i++;
-                    break;
                 case 'd':
-                    sb.Append(date.Day);
-                    break;
-                case 'm' when i + 1 < format.Length && format[i + 1] == 'm':
-                    sb.Append(date.Month.ToString("00"));
-                    i++;
+                    sb.Append(new string('d', Math.Min(run, 4)));
                     break;
                 case 'm':
-                    sb.Append(date.Month);
-                    break;
-                case 'M' when i + 1 < format.Length && format[i + 1] == 'M':
-                    sb.Append(names.GetMonthName(date.Month));
-                    i++;
+                    sb.Append(new string('M', Math.Min(run, 2)));
                     break;
                 case 'M':
-                    sb.Append(names.GetAbbreviatedMonthName(date.Month));
+                    sb.Append(new string('M', run >= 2 ? 4 : 3));
                     break;
-                case 'y' when i + 1 < format.Length && format[i + 1] == 'y' && i + 2 < format.Length &&
-                              format[i + 2] == 'y' && i + 3 < format.Length && format[i + 3] == 'y':
-                    sb.Append(date.Year.ToString("0000"));
-                    i += 3;
-                    break;
-                case 'y' when i + 1 < format.Length && format[i + 1] == 'y':
-                    sb.Append((date.Year % 100).ToString("00"));
-                    i++;
-                    break;
-                case 'D' when i + 1 < format.Length && format[i + 1] == 'D':
-                    sb.Append(names.GetDayName(date.DayOfWeek));
-                    i++;
+                case 'y':
+                    // Ano padrão é 4 dígitos; apenas "yy" usa 2 dígitos (consistente com FormatDate).
+                    sb.Append(run == 2 ? "yy" : "yyyy");
                     break;
                 case 'D':
-                    sb.Append(names.GetAbbreviatedDayName(date.DayOfWeek));
+                    sb.Append(new string('d', run >= 2 ? 4 : 3));
                     break;
                 default:
-                    sb.Append(c);
+                    sb.Append(new string(c, run));
                     break;
             }
+
+            i = j;
+        }
+
+        return sb.ToString();
+    }
+
+    private static string FormatDate(DateTime date, string format)
+    {
+        var names = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat;
+        var sb = new System.Text.StringBuilder();
+
+        for (var i = 0; i < format.Length;)
+        {
+            var c = format[i];
+
+            if (c == '\'')
+            {
+                var end = format.IndexOf('\'', i + 1);
+                if (end < 0)
+                {
+                    sb.Append(c);
+                    i++;
+                    continue;
+                }
+
+                sb.Append(format, i + 1, end - i - 1);
+                i = end + 1;
+                continue;
+            }
+
+            // Consome a sequência repetida do token de uma vez (ex.: "dd", "MMMM", "yyyy"): a versão
+            // anterior avançava 2 caracteres por vez, então "MMMM" virava "MM" + "MM" e duplicava o mês.
+            var j = i;
+            while (j < format.Length && format[j] == c) j++;
+            var run = j - i;
+
+            switch (c)
+            {
+                case 'd':
+                    sb.Append(run >= 2 ? date.Day.ToString("00") : date.Day.ToString());
+                    break;
+                case 'm':
+                    sb.Append(run >= 2 ? date.Month.ToString("00") : date.Month.ToString());
+                    break;
+                case 'M':
+                    sb.Append(run >= 2 ? names.GetMonthName(date.Month) : names.GetAbbreviatedMonthName(date.Month));
+                    break;
+                case 'y':
+                    // Ano padrão é 4 dígitos; apenas "yy" usa 2 dígitos.
+                    sb.Append(run == 2 ? (date.Year % 100).ToString("00") : date.Year.ToString("0000"));
+                    break;
+                case 'D':
+                    sb.Append(run >= 2 ? names.GetDayName(date.DayOfWeek) : names.GetAbbreviatedDayName(date.DayOfWeek));
+                    break;
+                default:
+                    sb.Append(new string(c, run));
+                    break;
+            }
+
+            i = j;
         }
 
         return sb.ToString();

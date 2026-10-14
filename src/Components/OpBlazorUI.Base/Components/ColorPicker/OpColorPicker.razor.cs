@@ -12,10 +12,11 @@ public partial class OpColorPicker : OpInputBase<string>
     private ElementReference _hue;
     private OpColorPickerInterop? _colorInterop;
     private bool _panelVisible;
+    private bool _interopInitialized;
     private string? _lastParsed;
-    private int _h;
-    private int _s = 100;
-    private int _b = 100;
+    private double _h;
+    private double _s = 100;
+    private double _b = 100;
 
     [Parameter] public string Format { get; set; } = "hex";
     [Parameter] public bool Inline { get; set; }
@@ -28,7 +29,10 @@ public partial class OpColorPicker : OpInputBase<string>
     [Parameter] public EventCallback OnShow { get; set; }
     [Parameter] public EventCallback OnHide { get; set; }
 
-    private string RootClass => OpCss.BuildClass("p-colorpicker p-component", StyleClass);
+    private string RootClass => OpCss.BuildClass(
+        "p-colorpicker p-component",
+        Disabled ? "p-disabled" : null,
+        StyleClass);
 
     private string PanelClass => OpCss.BuildClass(
         "p-colorpicker-panel",
@@ -57,7 +61,21 @@ public partial class OpColorPicker : OpInputBase<string>
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!Inline && !_panelVisible)
+        var shouldInitialize = !Disabled && (Inline || _panelVisible);
+
+        if (!shouldInitialize)
+        {
+            // Painel fechado/desabilitado: remove os listeners do document uma única vez.
+            if (_interopInitialized)
+            {
+                _interopInitialized = false;
+                await InvokeDisposeAsync();
+            }
+
+            return;
+        }
+
+        if (_interopInitialized)
         {
             return;
         }
@@ -67,6 +85,19 @@ public partial class OpColorPicker : OpInputBase<string>
         try
         {
             await Interop.InvokeVoidAsync(OpInterop.ColorPickerInterop, "init", _colorInterop.Reference, _root, _selector, _hue, !Inline);
+            _interopInitialized = true;
+        }
+        catch (JSDisconnectedException)
+        {
+            // SSR estático / circuito desconectado
+        }
+    }
+
+    private async Task InvokeDisposeAsync()
+    {
+        try
+        {
+            await Interop.InvokeVoidAsync(OpInterop.ColorPickerInterop, "dispose", _root);
         }
         catch (JSDisconnectedException)
         {
@@ -76,6 +107,12 @@ public partial class OpColorPicker : OpInputBase<string>
 
     public override async ValueTask DisposeAsync()
     {
+        if (_interopInitialized)
+        {
+            _interopInitialized = false;
+            await InvokeDisposeAsync();
+        }
+
         _colorInterop?.Dispose();
         await base.DisposeAsync();
     }
@@ -134,14 +171,14 @@ public partial class OpColorPicker : OpInputBase<string>
 
     private async Task HandlePickColorAsync(double saturation, double brightness)
     {
-        _s = (int)Math.Round(Math.Clamp(saturation, 0, 100));
-        _b = (int)Math.Round(Math.Clamp(brightness, 0, 100));
+        _s = Math.Clamp(saturation, 0, 100);
+        _b = Math.Clamp(brightness, 0, 100);
         await CommitAsync();
     }
 
     private async Task HandlePickHueAsync(double hue)
     {
-        _h = (int)Math.Round(Math.Clamp(hue, 0, 360));
+        _h = Math.Clamp(hue, 0, 360);
         await CommitAsync();
     }
 

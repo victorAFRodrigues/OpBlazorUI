@@ -1,0 +1,61 @@
+@page "/_tests/bloco4-1c2"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.TreeSelect
+@using OpBlazorUI.Base.Components.TreeTable
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1c2Tests.cs). *@
+
+<PageTitle>Testes: bloco 4.1c2 árvores</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1c2 árvores</h1>
+
+<section id="t-ts">
+    <OpTreeSelect Options="_tsNodes" InputId="t-ts-input" Placeholder="Selecione" @bind-Value="_tsValue"/>
+    <span id="t-ts-value">@_tsValue</span>
+</section>
+
+<section id="t-tt">
+    <OpTreeTable Nodes="_ttNodes" Columns="_ttColumns" EmptyMessage="vazio" SelectionMode="single" OnNodeSelect="OnTtSelect"/>
+    <span id="t-tt-log">@_ttLog</span>
+</section>
+
+@code {
+    private string? _tsValue;
+    private string _ttLog = "";
+
+    private readonly List<TreeNode> _tsNodes = new()
+    {
+        new TreeNode
+        {
+            Key = "pai", Label = "Pai",
+            Children = new()
+            {
+                new TreeNode { Key = "f1", Label = "Filho1", Leaf = true },
+                new TreeNode { Key = "f2", Label = "Filho2", Leaf = true }
+            }
+        },
+        new TreeNode { Key = "r2", Label = "Raiz2", Leaf = true }
+    };
+
+    private readonly List<OpTreeNode> _ttNodes = new()
+    {
+        new OpTreeNode
+        {
+            Key = "pai", Label = "Pai",
+            Children = new()
+            {
+                new OpTreeNode { Key = "f1", Label = "Filho1", Leaf = true },
+                new OpTreeNode { Key = "f2", Label = "Filho2", Leaf = true }
+            }
+        },
+        new OpTreeNode { Key = "r2", Label = "Raiz2", Leaf = true }
+    };
+
+    private readonly List<OpTreeTableColumn> _ttColumns = new()
+    {
+        new OpTreeTableColumn { Field = "label", Header = "Nome", Expandable = true }
+    };
+
+    private void OnTtSelect(OpTreeNode node) => _ttLog = node.Label;
+}

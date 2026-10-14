@@ -18,7 +18,9 @@
                    aria-disabled="@(item.Disabled ? "true" : null)"
                    href="@item.Url"
                    tabindex="@(item.Disabled ? -1 : (active ? 0 : -1))"
+                   @ref="_refs[index]"
                    @onclick="e => SelectAsync(e, index)"
+                   @onkeydown="e => OnKeyDownAsync(e, index)"
                    @onclick:preventDefault="@(string.IsNullOrEmpty(item.Url))">
                     @if (!string.IsNullOrEmpty(item.Icon))
                     {

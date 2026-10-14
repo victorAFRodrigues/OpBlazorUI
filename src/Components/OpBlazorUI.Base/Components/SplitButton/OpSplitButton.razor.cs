@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using OpBlazorUI.Base.Models;
 
 namespace OpBlazorUI.Base.Components.SplitButton;
@@ -7,6 +8,14 @@ namespace OpBlazorUI.Base.Components.SplitButton;
 public partial class OpSplitButton : ComponentBase
 {
     private ElementReference _rootRef;
+    private ElementReference _menuRef;
+    private IJSObjectReference? _menuModule;
+    private IJSObjectReference? _optModule;
+    private bool _focusFirstItem;
+
+    private const string MenuItemSelector = "a.p-tieredmenu-item-link, div.p-tieredmenu-item-link";
+
+    [Inject] private IJSRuntime Js { get; set; } = default!;
 
     private string _id = "";
     private bool _overlayVisible;
@@ -140,6 +149,32 @@ public partial class OpSplitButton : ComponentBase
         if (e.Key == "Tab" && _overlayVisible)
         {
             await CloseAsync();
+            return;
+        }
+
+        // Abre o menu pelo teclado quando fechado.
+        if (!_overlayVisible && e.Key is "ArrowDown" or "Enter" or " " or "Spacebar")
+        {
+            _focusFirstItem = true;
+            await OpenAsync();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_overlayVisible)
+        {
+            return;
+        }
+
+        _menuModule ??= await Js.InvokeAsync<IJSObjectReference>("import", OpInterop.MenuInterop);
+        await _menuModule.InvokeVoidAsync("initMenuFocusKeyboard", _menuRef, MenuItemSelector);
+
+        if (_focusFirstItem)
+        {
+            _focusFirstItem = false;
+            _optModule ??= await Js.InvokeAsync<IJSObjectReference>("import", OpInterop.OptimusInterop);
+            await _optModule.InvokeVoidAsync("focusNextWithin", _menuRef, MenuItemSelector, 1);
         }
     }
 

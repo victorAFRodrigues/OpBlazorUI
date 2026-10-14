@@ -60,8 +60,8 @@ public sealed class OpFilterService
             ["isNot"] = (value, filter, culture) => !ValueEquals(value, filter, culture),
             ["before"] = (value, filter, culture) => Compare(value, filter, culture) < 0,
             ["after"] = (value, filter, culture) => Compare(value, filter, culture) > 0,
-            ["dateIs"] = (value, filter, culture) => DateOnly(value) == DateOnly(filter),
-            ["dateIsNot"] = (value, filter, culture) => DateOnly(value) != DateOnly(filter),
+            ["dateIs"] = (value, filter, culture) => AsDate(value) == AsDate(filter),
+            ["dateIsNot"] = (value, filter, culture) => AsDate(value) != AsDate(filter),
             ["dateBefore"] = (value, filter, culture) => DateCompare(value, filter) < 0,
             ["dateAfter"] = (value, filter, culture) => DateCompare(value, filter) > 0
         };
@@ -90,8 +90,17 @@ public sealed class OpFilterService
             return result;
         }
 
+        // Sem filtro (null) casa tudo, como no PrimeNG.
+        if (filterValue is null)
+        {
+            result.AddRange(value);
+            return result;
+        }
+
+        // Modo desconhecido/não registrado (ex.: Custom sem Register) não esvazia o resultado.
         if (!_filters.TryGetValue(matchMode, out var predicate))
         {
+            result.AddRange(value);
             return result;
         }
 
@@ -175,6 +184,21 @@ public sealed class OpFilterService
         if (value is null) return false;
         if (value is DateTime valueDate && filter is DateTime filterDate) return valueDate == filterDate;
         if (Equals(value, filter)) return true;
+
+        // Número/campo tipado com filtro em texto: parseia com a cultura informada.
+        if (filter is string text && value is not string)
+        {
+            try
+            {
+                var converted = Convert.ChangeType(text, value.GetType(), culture);
+                if (Equals(value, converted)) return true;
+            }
+            catch
+            {
+                // não conversível: cai para a comparação de texto
+            }
+        }
+
         return string.Equals(Normalize(value, culture), Normalize(filter, culture), StringComparison.Ordinal);
     }
 
@@ -236,16 +260,20 @@ public sealed class OpFilterService
 
     private static int DateCompare(object? value, object? filter)
     {
-        if (value is not DateTime valueDate || filter is not DateTime filterDate) return 0;
-        return valueDate.CompareTo(filterDate);
+        var v = AsDate(value);
+        var f = AsDate(filter);
+        if (v is null || f is null) return 0;
+        return v.Value.CompareTo(f.Value);
     }
 
-    private static DateTime? DateOnly(object? value)
-        => value switch
-        {
-            DateTime date => date.Date,
-            _ => null
-        };
+    // Aceita DateTime, DateOnly e DateTimeOffset nos modos de data.
+    private static DateTime? AsDate(object? value) => value switch
+    {
+        DateTime date => date.Date,
+        DateOnly date => date.ToDateTime(TimeOnly.MinValue),
+        DateTimeOffset date => date.Date,
+        _ => null
+    };
 
     private static List<object?>? ToList(object? filter)
         => filter is IEnumerable enumerable && filter is not string

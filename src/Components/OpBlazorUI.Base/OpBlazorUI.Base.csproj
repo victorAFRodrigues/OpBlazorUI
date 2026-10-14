@@ -8,7 +8,7 @@
 
     <PropertyGroup>
         <PackageId>OpBlazorUI.Base</PackageId>
-        <Version>1.0.0</Version>
+        <Version>0.0.0-dev</Version>
         <Authors>OpenNG</Authors>
         <Company>OpenNG</Company>
         <Description>Optimus UI components for Blazor.</Description>

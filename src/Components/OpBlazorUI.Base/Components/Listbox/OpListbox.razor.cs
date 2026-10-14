@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Components.Select;
@@ -8,6 +10,7 @@ namespace OpBlazorUI.Base.Components.Listbox;
 public partial class OpListbox<TValue> : OpInputBase<TValue>
 {
     private string _id = "";
+    private ElementReference _listRef;
     private string _filterValue = "";
     private int _focusedOptionIndex = -1;
     private int _renderIndex;
@@ -20,6 +23,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
 
     [Parameter] public IReadOnlyList<TValue>? SelectedValues { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> SelectedValuesChanged { get; set; }
+    [Parameter] public Expression<Func<IReadOnlyList<TValue>?>>? SelectedValuesExpression { get; set; }
 
     [Parameter] public bool Multiple { get; set; }
     [Parameter] public bool Checkbox { get; set; }
@@ -52,6 +56,9 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnDblClick { get; set; }
+
+    /// <summary>Disparado no duplo clique de uma opção, entregando o valor da opção.</summary>
+    [Parameter] public EventCallback<TValue?> OnItemDoubleClick { get; set; }
     [Parameter] public EventCallback<bool> OnSelectAllChange { get; set; }
 
     // templates
@@ -68,6 +75,26 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     protected override void OnInitialized()
     {
         _id = InputId ?? $"op-listbox-{Guid.NewGuid():N}";
+    }
+
+    protected override void OnParametersSet()
+    {
+        // Notifica a validação do EditForm pelo campo ligado a @bind-SelectedValues.
+        if (SelectedValuesExpression is not null && EditContext is not null)
+        {
+            _selectedValuesField = FieldIdentifier.Create(SelectedValuesExpression);
+        }
+    }
+
+    private FieldIdentifier _selectedValuesField;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focusedOptionIndex >= 0)
+        {
+            await Interop.InvokeVoidAsync(
+                OpInterop.OptimusInterop, "scrollSelectorIntoView", _listRef, $"#{_id}_{_focusedOptionIndex}");
+        }
     }
 
     // ------------------------------------------------------------ computed
@@ -259,6 +286,10 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     {
         if (IsOptionDisabled(option) || Disabled || Readonly) return;
         await OnDblClick.InvokeAsync(new MouseEventArgs());
+        if (OnItemDoubleClick.HasDelegate)
+        {
+            await OnItemDoubleClick.InvokeAsync(OpSelectOption.ToValue<TValue>(option, OptionValue));
+        }
     }
 
     private async Task ToggleOptionAsync(object option)
@@ -287,6 +318,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
             await OnChange.InvokeAsync(value);
         }
 
+        EditContext?.NotifyFieldChanged(_selectedValuesField);
         StateHasChanged();
     }
 
@@ -306,6 +338,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
         await SelectedValuesChanged.InvokeAsync(list);
         await OnSelectionChange.InvokeAsync(list);
         await OnSelectAllChange.InvokeAsync(selected);
+        EditContext?.NotifyFieldChanged(_selectedValuesField);
         StateHasChanged();
     }
 

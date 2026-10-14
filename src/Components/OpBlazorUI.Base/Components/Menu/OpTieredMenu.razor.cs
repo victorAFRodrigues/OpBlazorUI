@@ -30,11 +30,14 @@ public partial class OpTieredMenu : OpComponentBase
 
     private Task ToggleAsync(string path)
     {
-        if (!_open.Remove(path))
-        {
-            _open.Add(path);
-        }
-
+        OpMenuPaths.Toggle(_open, path);
         return Task.CompletedTask;
+    }
+
+    // Clicar numa folha fecha todos os submenus, como no PrimeNG.
+    private async Task OnLeafClickAsync(OpMenuItem item)
+    {
+        CloseAll();
+        await OnItemClick.InvokeAsync(item);
     }
 }

@@ -20,13 +20,23 @@ public partial class OpRipple : OpComponentBase
 
     private string RootClass => Class("p-ripple", StyleClass);
 
+    private bool? _appliedCenter;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (!firstRender && _appliedCenter == Center)
         {
-            await Interop.InvokeVoidAsync(
-                OpInterop.DirectivesInterop, "rippleInit", _host, new { center = Center });
+            return;
         }
+
+        if (_appliedCenter is not null)
+        {
+            await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "rippleDispose", _host);
+        }
+
+        await Interop.InvokeVoidAsync(
+            OpInterop.DirectivesInterop, "rippleInit", _host, new { center = Center });
+        _appliedCenter = Center;
     }
 
     public override async ValueTask DisposeAsync()

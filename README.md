@@ -50,7 +50,7 @@ Depois:
 dotnet add package OpBlazorUI.Base
 ```
 
-Alternativamente, baixe o `.nupkg` na página de [Releases](../../releases) e use uma
+Alternativamente, baixe o `.nupkg` na página de [Releases](https://github.com/victorAFRodrigues/OpBlazorUI/releases) e use uma
 referência de projeto/pasta local.
 
 ## Configuração
@@ -134,13 +134,19 @@ Modo escuro e RTL: `Theme.SetDarkMode(true)` / `Theme.ToggleDarkMode()` e `Theme
 
 ## Componentes portados
 
-Button, CascadeSelect, Checkbox, DataTable, DatePicker, Editor, FloatLabel, IconField,
-IftaLabel, InputGroup, InputMask, InputNumber, InputOtp, InputText, KeyFilter, Listbox,
-Menu, Message, MultiSelect, Password, RadioButton, Rating, Select, SelectButton,
-SpeedDial, SplitButton, ThemeSwitcher, Toast, ToggleButton, ToggleSwitch, Tooltip,
-TreeSelect, Avatar, Badge, Chip, ProgressBar, ProgressSpinner, Skeleton, Tag,
-Dialog, Drawer, FocusTrap, Overlay, Popover, BlockUI, Card, Divider, Paginator,
-ScrollTop, VirtualScroller.
+Accordion, AutoComplete, Avatar, Badge, BlockUI, Breadcrumb, Button, Card, CascadeSelect,
+Checkbox, Chip, ColorPicker, ConfirmDialog, ConfirmPopup, DataTable, DataView, DatePicker,
+Dialog, Divider, Drawer, DynamicDialog, Editor, Fieldset, FileUpload, FloatLabel, FocusTrap,
+IconField, IftaLabel, InlineMessage, Inplace, InputChips, InputGroup, InputIcon, InputNumber,
+InputOtp, InputSwitch, InputText, Listbox, Menu, Message, MeterGroup, MultiSelect, OrderList,
+Overlay, Paginator, Password, PickList, Popover, ProgressBar, ProgressSpinner, RadioButton,
+Rating, ScrollTop, Select, SelectButton, Skeleton, Slider, SpeedDial, SplitButton, Stepper,
+Steps, Tabs, Tag, Textarea, ThemeSwitcher, Timeline, Toast, ToggleButton, Toolbar, Tooltip,
+Tree, TreeSelect, TreeTable, VirtualScroller.
+
+### Gráficos
+
+O `Chart` fica em um projeto separado, `OpBlazorUI.Charts`, sobre o Blazor-ApexCharts.
 
 ## Estrutura do repositório
 

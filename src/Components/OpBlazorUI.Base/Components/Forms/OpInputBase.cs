@@ -16,6 +16,13 @@ public abstract class OpInputBase<TValue> : InputBase<TValue>, IAsyncDisposable
 
     [Parameter] public string? StyleClass { get; set; }
 
+    /// <summary>
+    /// Impede o componente de se associar ao <see cref="EditContext"/> do formulário. Use em
+    /// instâncias internas (checkbox de MultiSelect/Listbox, etc.) para que não notifiquem um
+    /// campo falso ao formulário.
+    /// </summary>
+    [Parameter] public bool IgnoreEditContext { get; set; }
+
     [Inject] protected IJSRuntime Js { get; set; } = default!;
 
     [Inject] private ILoggerFactory LoggerFactory { get; set; } = default!;
@@ -50,25 +57,40 @@ public abstract class OpInputBase<TValue> : InputBase<TValue>, IAsyncDisposable
     public override Task SetParametersAsync(ParameterView parameters)
     {
         // O InputBase só exige ValueExpression no primeiro ciclo; sem ele qualquer uso sem
-        // @bind-Value lançaria. Injeta um fallback uma única vez para não reconstruir o
-        // ParameterView (e alocar expressão) a cada render — comum em checkboxes de listas.
+        // @bind-Value lançaria. Define o fallback diretamente na propriedade (antes do base) —
+        // reconstruir o ParameterView descartaria os parâmetros cascateados (EditContext).
         if (!_valueExpressionInjected
             && (!parameters.TryGetValue<Expression<Func<TValue>>>(nameof(ValueExpression), out var valueExpression)
                 || valueExpression is null))
         {
             _valueExpressionInjected = true;
-
-            var forwarded = new Dictionary<string, object?>();
-            foreach (var parameter in parameters)
-            {
-                forwarded[parameter.Name] = parameter.Value;
-            }
-
-            forwarded[nameof(ValueExpression)] = (Expression<Func<TValue>>)(() => Value!);
-            return base.SetParametersAsync(ParameterView.FromDictionary(forwarded));
+            ValueExpression = () => Value!;
         }
 
-        return base.SetParametersAsync(parameters);
+        if (!IgnoreEditContext)
+        {
+            return base.SetParametersAsync(parameters);
+        }
+
+        // Instâncias internas pedem para não participar do EditContext (senão notificam um campo
+        // falso, cujo FieldIdentifier aponta para o próprio componente). Remove só o cascateado.
+        var forwarded = new Dictionary<string, object?>();
+        foreach (var parameter in parameters)
+        {
+            if (parameter.Name == "CascadedEditContext")
+            {
+                continue;
+            }
+
+            forwarded[parameter.Name] = parameter.Value;
+        }
+
+        if (ValueExpression is not null)
+        {
+            forwarded[nameof(ValueExpression)] = ValueExpression;
+        }
+
+        return base.SetParametersAsync(ParameterView.FromDictionary(forwarded));
     }
 
     protected override bool TryParseValueFromString(

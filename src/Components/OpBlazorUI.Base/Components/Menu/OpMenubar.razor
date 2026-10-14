@@ -18,9 +18,10 @@
     <OpMenuItems Items="Model"
                  Prefix="menubar"
                  Root="true"
+                 Orientation="horizontal"
                  IsOpen="IsOpen"
                  OnToggle="ToggleAsync"
-                 OnItemClick="OnItemClick"/>
+                 OnItemClick="OnLeafClickAsync"/>
 
     @if (EndTemplate is not null)
     {

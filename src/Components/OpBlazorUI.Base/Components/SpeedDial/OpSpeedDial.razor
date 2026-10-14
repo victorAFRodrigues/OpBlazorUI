@@ -5,7 +5,7 @@
 @using OpBlazorUI.Base.Components.Tooltip
 @using OpBlazorUI.Base.Models
 
-<div @ref="_root" class="@RootClass" style="@RootStyle" @attributes="AdditionalAttributes">
+<div @ref="_root" class="@RootClass" style="@RootStyle" @onkeydown="OnRootKeydown" @attributes="AdditionalAttributes">
     @if (ButtonTemplate != null)
     {
         var ctx = new SpeedDialButtonContext { Toggle = () => _ = Toggle() };

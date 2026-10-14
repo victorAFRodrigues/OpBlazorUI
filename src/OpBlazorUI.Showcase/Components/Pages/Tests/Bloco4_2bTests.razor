@@ -1,0 +1,75 @@
+@page "/_tests/bloco4-2b"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.BlockUI
+@using OpBlazorUI.Base.Components.Dialog
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Components.Toast
+@using OpBlazorUI.Base.Components.Tooltip
+@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Base.Services
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_2bTests.cs). *@
+
+<PageTitle>Testes: bloco 4.2b</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.2b</h1>
+
+<section id="t-scroll">
+    <button id="t-open-scroll" type="button" @onclick="() => _scrollOpen = true">abrir</button>
+    <OpDialog @bind-Visible="_scrollOpen" Header="Scroll" BlockScroll="true">
+        <p>conteúdo</p>
+    </OpDialog>
+</section>
+
+<section id="t-drag">
+    <button id="t-open-drag" type="button" @onclick="() => _dragOpen = true">abrir</button>
+    <OpDialog @bind-Visible="_dragOpen" Header="Arrastável" Style="width: 24rem" Resizable="true"
+              Draggable="true" KeepInViewport="false">
+        <p>conteúdo</p>
+    </OpDialog>
+</section>
+
+<section id="t-blockui">
+    <button id="t-toggle-block" type="button" @onclick="() => _blocked = !_blocked">bloquear</button>
+    <OpBlockUI Blocked="_blocked" FullScreen="true">
+        <p>Conteúdo</p>
+    </OpBlockUI>
+</section>
+
+<section id="t-tooltip">
+    <OpTooltip Content="Dica" ShowDelay="0" HideDelay="0" Life="600" TooltipEvent="hover">
+        <button id="t-tt-btn" type="button">hover</button>
+    </OpTooltip>
+</section>
+
+<section id="t-toast">
+    <button id="t-toast-add" type="button" @onclick="AddToast">toast</button>
+    <OpToast Life="1200" Position="bottom-right"/>
+</section>
+
+<section id="t-ctx">
+    <OpContextMenu Model="_ctxItems" Global="true"/>
+    <p id="t-ctx-area">clique direito</p>
+</section>
+
+@code {
+    [Inject] private OpMessageService Messages { get; set; } = default!;
+
+    private bool _scrollOpen;
+    private bool _dragOpen;
+    private bool _blocked;
+
+    private readonly List<OpMenuItem> _ctxItems = new()
+    {
+        new OpMenuItem { Label = "Ação" }
+    };
+
+    private void AddToast()
+        => Messages.Add(new OpToastMessage
+        {
+            Severity = "info",
+            Summary = "Oi",
+            Detail = "detalhe",
+            Life = 1200
+        });
+}

@@ -24,6 +24,7 @@ public partial class OpSpeedDial : OpComponentBase
 {
     private string _id = "";
     private bool _visible;
+    private bool _focusFirstAction;
 
     // ---------------------------------------------------------------- params
     [Parameter] public IReadOnlyList<OpMenuItem>? Model { get; set; }
@@ -111,6 +112,12 @@ public partial class OpSpeedDial : OpComponentBase
             {
                 _listening = false;
                 await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "removeOutsideClickListener", _root);
+            }
+
+            if (_focusFirstAction && _visible)
+            {
+                _focusFirstAction = false;
+                await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusNextWithin", _root, ".p-speeddial-action", 1);
             }
         }
         catch (JSDisconnectedException)
@@ -250,6 +257,41 @@ public partial class OpSpeedDial : OpComponentBase
     {
         if (Disabled) return;
         await SetVisibleAsync(!_visible);
+    }
+
+    private Task OnRootKeydown(KeyboardEventArgs e)
+    {
+        if (Disabled)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (!_visible)
+        {
+            return e.Key is "ArrowDown" or "ArrowUp" or "Enter" or " " or "Spacebar"
+                ? OpenFromKeyboardAsync()
+                : Task.CompletedTask;
+        }
+
+        switch (e.Key)
+        {
+            case "ArrowDown":
+            case "ArrowRight":
+                return Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusNextWithin", _root, ".p-speeddial-action", 1).AsTask();
+            case "ArrowUp":
+            case "ArrowLeft":
+                return Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "focusNextWithin", _root, ".p-speeddial-action", -1).AsTask();
+            case "Escape":
+                return SetVisibleAsync(false);
+            default:
+                return Task.CompletedTask;
+        }
+    }
+
+    private async Task OpenFromKeyboardAsync()
+    {
+        _focusFirstAction = true;
+        await SetVisibleAsync(true);
     }
 
     private async Task SetVisibleAsync(bool value)

@@ -238,3 +238,76 @@ export function speedDialItemDiff(root) {
     list.style.setProperty('--item-diff-x', `${Math.abs(button.offsetWidth - item.offsetWidth) / 2}px`);
     list.style.setProperty('--item-diff-y', `${Math.abs(button.offsetHeight - item.offsetHeight) / 2}px`);
 }
+
+// Foca o primeiro elemento que casa com o seletor dentro de `root` (usado pelo teclado do DatePicker).
+export function focusSelector(root, selector) {
+    if (!root || !selector) return;
+    const el = root.querySelector(selector);
+    if (!el) return;
+    try {
+        el.focus();
+    } catch (_) {
+        // não focável
+    }
+}
+
+// Rola o elemento do seletor para dentro do container (opção focada em listas longas).
+export function scrollSelectorIntoView(root, selector) {
+    if (!root || !selector) return;
+    const el = root.querySelector(selector);
+    if (el && typeof el.scrollIntoView === 'function') {
+        try {
+            el.scrollIntoView({ block: 'nearest' });
+        } catch (_) {
+            // ignore
+        }
+    }
+}
+
+// Move o foco para o próximo/anterior elemento focável dentro de `root` (SpeedDial).
+export function focusNextWithin(root, selector, delta) {
+    if (!root || !selector) return;
+    const items = Array.from(root.querySelectorAll(selector)).filter((el) => !el.disabled);
+    if (!items.length) return;
+    const current = items.indexOf(document.activeElement);
+    const next = current < 0
+        ? (delta >= 0 ? 0 : items.length - 1)
+        : (current + delta + items.length) % items.length;
+    try {
+        items[next].focus();
+    } catch (_) {
+        // ignore
+    }
+}
+
+// Trava a rolagem do body enquanto há um overlay modal aberto (com contador para overlays
+// empilhados) compensando a largura da barra de rolagem para não deslocar o layout.
+let _opScrollLocks = 0;
+let _opSavedOverflow = '';
+let _opSavedPaddingRight = '';
+
+export function blockScroll() {
+    if (typeof document === 'undefined') return;
+    if (_opScrollLocks === 0) {
+        const body = document.body;
+        const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+        _opSavedOverflow = body.style.overflow;
+        _opSavedPaddingRight = body.style.paddingRight;
+        body.style.overflow = 'hidden';
+        if (scrollbar > 0) {
+            const current = parseFloat(getComputedStyle(body).paddingRight) || 0;
+            body.style.paddingRight = (current + scrollbar) + 'px';
+        }
+    }
+    _opScrollLocks++;
+}
+
+export function unblockScroll() {
+    if (typeof document === 'undefined') return;
+    if (_opScrollLocks > 0) _opScrollLocks--;
+    if (_opScrollLocks === 0) {
+        const body = document.body;
+        body.style.overflow = _opSavedOverflow;
+        body.style.paddingRight = _opSavedPaddingRight;
+    }
+}

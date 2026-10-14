@@ -16,9 +16,8 @@ permissions:
   packages: write
 
 env:
-  PACKAGE_ID: OpBlazorUI.Base
-  PACKAGE_PROJECT: src/Components/OpBlazorUI.Base/OpBlazorUI.Base.csproj
   FEED_OWNER: victorAFRodrigues
+  TEST_PROJECT: tests/OpBlazorUI.Playwright/OpBlazorUI.Playwright.csproj
 
 jobs:
   publish:
@@ -51,16 +50,30 @@ jobs:
           fi
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Publicando $PACKAGE_ID $VERSION"
+          echo "Publicando $VERSION"
 
       - name: Restore
-        run: dotnet restore "$PACKAGE_PROJECT"
+        run: dotnet restore OpBlazorUI.slnx
+
+      # Build + testes antes de publicar: a tag só gera pacote se o commit compilar e passar.
+      - name: Build (Debug) para testes
+        run: dotnet build OpBlazorUI.slnx --configuration Debug --no-restore
+
+      - name: Instalar Chromium (Playwright)
+        run: pwsh tests/OpBlazorUI.Playwright/bin/Debug/net10.0/playwright.ps1 install --with-deps chromium
+
+      - name: Testes
+        run: dotnet test "$TEST_PROJECT" --configuration Debug --no-build
 
       - name: Pack
         run: |
-          dotnet pack "$PACKAGE_PROJECT" \
+          dotnet pack src/Components/OpBlazorUI.Base/OpBlazorUI.Base.csproj \
             --configuration Release \
-            --no-restore \
+            -p:Version=${{ steps.version.outputs.version }} \
+            --output ./artifacts
+
+          dotnet pack src/Components/OpBlazorUI.Charts/OpBlazorUI.Charts.csproj \
+            --configuration Release \
             -p:Version=${{ steps.version.outputs.version }} \
             --output ./artifacts
 
@@ -75,7 +88,7 @@ jobs:
 
       - name: Push para o GitHub Packages
         run: |
-          dotnet nuget push "./artifacts/$PACKAGE_ID.${{ steps.version.outputs.version }}.nupkg" \
+          dotnet nuget push "./artifacts/*.${{ steps.version.outputs.version }}.nupkg" \
             --source github \
             --api-key ${{ secrets.GITHUB_TOKEN }} \
             --skip-duplicate

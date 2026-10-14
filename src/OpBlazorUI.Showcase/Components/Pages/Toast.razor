@@ -313,6 +313,7 @@
                         <li>Com <code>MessageTemplate</code> o botão de fechar padrão não é renderizado; feche pelo serviço (<code>Clear</code>/<code>Remove</code>) ou use <code>HeadlessTemplate</code>, que expõe <code>Close</code>.</li>
                         <li><code>PreventDuplicates</code> e <code>PreventOpenDuplicates</code> compartilham a mesma verificação (deduplicam por <code>Severity|Summary|Detail</code>), sem o controle temporal do upstream.</li>
                         <li><code>Breakpoints</code> recebe declarações CSS cruas por media query e é aplicado ao contêiner da posição; não há objeto de estilos aninhados por elemento como no Angular.</li>
+                        <li>Ao passar o cursor sobre a mensagem o fechamento automático é pausado e retomado com o tempo restante.</li>
                         <li>O auto-fechamento depende de <code>Task.Delay</code> no circuito e o estado é scoped: mensagens adicionadas durante o prerender estático não sobrevivem à hidratação, e as demos exigem um render mode interativo.</li>
                         <li><code>Data</code> existe em <code>OpToastMessage</code> mas não é consumido pelo componente; serve apenas para templates.</li>
                     </ul>

@@ -14,7 +14,25 @@ public partial class OpBreadcrumb : OpComponentBase
     [Parameter] public RenderFragment<OpMenuItem>? HomeTemplate { get; set; }
     [Parameter] public RenderFragment<OpMenuItem>? ItemTemplate { get; set; }
 
+    [Parameter] public EventCallback<OpMenuItem> OnItemClick { get; set; }
+
     private string RootClass => Class("p-breadcrumb p-component", StyleClass);
 
     private string SeparatorIconClass => Class("p-breadcrumb-separator-icon", SeparatorIcon);
+
+    private IReadOnlyList<OpMenuItem> VisibleModel => Model.Where(i => i.Visible).ToList();
+
+    private string? TargetRel(OpMenuItem item) =>
+        item.Target == "_blank" ? "noopener noreferrer" : null;
+
+    private async Task InvokeCommand(OpMenuItem item)
+    {
+        if (item.Disabled)
+        {
+            return;
+        }
+
+        item.Command?.Invoke();
+        await OnItemClick.InvokeAsync(item);
+    }
 }

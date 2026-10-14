@@ -41,7 +41,7 @@
                                                     <ol>
                                                         @foreach (var item in group.Items)
                                                         {
-                                                            <li><a href="@RelativeHref(item.Route)" class="@(IsActive(item.Route) ? "router-link-active" : null)"><span>@item.Label</span>@if (!item.ComingSoon) { <span class="menu-badge" title="Portado"></span> }</a></li>
+                                                            <li><a href="@RelativeHref(item.Route)" class="@(IsActive(item.Route) ? "router-link-active" : null)"><span>@item.Label</span>@if (!item.ComingSoon && !item.Placeholder) { <span class="menu-badge" title="Portado"></span> }</a></li>
                                                         }
                                                     </ol>
                                                 </div>
@@ -52,7 +52,7 @@
                                     {
                                         @foreach (var child in entry.Children)
                                         {
-                                            <li><a href="@RelativeHref(child.Route)" class="@(IsActive(child.Route) ? "router-link-active" : null)"><span>@child.Label</span>@if (!child.ComingSoon) { <span class="menu-badge" title="Portado"></span> }</a></li>
+                                            <li><a href="@RelativeHref(child.Route)" class="@(IsActive(child.Route) ? "router-link-active" : null)"><span>@child.Label</span>@if (!child.ComingSoon && !child.Placeholder) { <span class="menu-badge" title="Portado"></span> }</a></li>
                                         }
                                     }
                                 </ol>

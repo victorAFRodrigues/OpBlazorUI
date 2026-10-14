@@ -1,0 +1,32 @@
+@page "/_tests/bloco4-4"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using ApexCharts
+@using OpBlazorUI.Charts
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_4Tests.cs). *@
+
+<PageTitle>Testes: bloco 4.4</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.4 (Chart)</h1>
+
+<section id="t-chart">
+    <OpChart TItem="ChartItem" Height="220">
+        <ApexPointSeries TItem="ChartItem" Items="_data" Name="Valores"
+                         SeriesType="SeriesType.Bar" XValue="e => e.Month" YValue="e => e.Value"/>
+    </OpChart>
+</section>
+
+@code {
+    private sealed class ChartItem
+    {
+        public string Month { get; set; } = "";
+        public decimal Value { get; set; }
+    }
+
+    private readonly List<ChartItem> _data = new()
+    {
+        new ChartItem { Month = "Jan", Value = 10 },
+        new ChartItem { Month = "Fev", Value = 25 },
+        new ChartItem { Month = "Mar", Value = 18 }
+    };
+}

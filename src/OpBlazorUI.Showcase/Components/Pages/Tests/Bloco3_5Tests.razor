@@ -1,0 +1,190 @@
+@page "/_tests/bloco3-5"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Tree
+@using OpBlazorUI.Base.Components.TreeSelect
+@using OpBlazorUI.Base.Components.TreeTable
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_5Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.5 árvores</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.5 árvores</h1>
+
+<section id="t-leaf">
+    <OpTree Nodes="_leafNodes" ShowHeader="false" OnNodeExpand="OnLazyExpand"/>
+    <span id="t-leaf-log">@_leafLog</span>
+</section>
+
+<section id="t-tree-filter">
+    <OpTree Nodes="_filterNodes" Filter="true" FilterBy="@_filterBy" FilterMode="@_filterMode" ShowHeader="false"/>
+    <button id="t-filter-mode" type="button" @onclick="ToggleFilterMode">modo</button>
+    <button id="t-filter-by" type="button" @onclick="ToggleFilterBy">campo</button>
+</section>
+
+<section id="t-tree-checkbox">
+    <OpTree Nodes="_checkNodes" SelectionMode="checkbox" Filter="true" @bind-Selection="_checkSelection" ShowHeader="false"/>
+    <span id="t-check-keys">@KeysText(_checkSelection)</span>
+</section>
+
+<section id="t-treeselect-filter">
+    <OpTreeSelect Options="_tsNodes" Filter="true" FilterBy="label" InputId="t-tsfilter" Placeholder="Filtre" @bind-Value="_tsFilterValue"/>
+</section>
+
+<section id="t-treeselect-chip">
+    <OpTreeSelect Options="_tsChipNodes" SelectionMode="checkbox" Display="chip" InputId="t-tschip" Placeholder="Selecione" @bind-Selection="_tsChipSelection"/>
+    <span id="t-tschip-count">@CountSelected(_tsChipSelection)</span>
+</section>
+
+<section id="t-tt-page">
+    <OpTreeTable Nodes="_ttPageNodes" Columns="_columns" Paginator="true" Rows="1" @bind-First="_ttFirst" EmptyMessage="vazio"/>
+</section>
+
+<section id="t-tt-select">
+    <OpTreeTable Nodes="_ttSelectNodes" Columns="_columns" SelectionMode="checkbox" @bind-Selection="_ttSelection"/>
+</section>
+
+@code {
+    private List<OpTreeNode> _leafNodes = new();
+    private List<OpTreeNode> _filterNodes = new();
+    private List<OpTreeNode> _checkNodes = new();
+    private List<TreeNode> _tsNodes = new();
+    private List<TreeNode> _tsChipNodes = new();
+    private List<OpTreeNode> _ttPageNodes = new();
+    private List<OpTreeNode> _ttSelectNodes = new();
+    private List<OpTreeTableColumn> _columns = new();
+
+    private string _filterBy = "label";
+    private string _filterMode = "lenient";
+    private string _leafLog = "";
+    private string? _tsFilterValue;
+    private object? _checkSelection;
+    private IReadOnlyDictionary<string, bool>? _tsChipSelection;
+    private object? _ttSelection;
+    private int _ttFirst;
+
+    protected override void OnInitialized()
+    {
+        _leafNodes = new()
+        {
+            new OpTreeNode
+            {
+                Key = "p", Label = "Pai", Expanded = true,
+                Children = new() { new OpTreeNode { Key = "c", Label = "Filho" } }
+            },
+            new OpTreeNode { Key = "sem", Label = "SemFilho" },
+            new OpTreeNode { Key = "lazy", Label = "Lazy", Leaf = false }
+        };
+
+        _filterNodes = new()
+        {
+            new OpTreeNode
+            {
+                Key = "doc", Label = "Documentos", Expanded = true,
+                Children = new()
+                {
+                    new OpTreeNode { Key = "doc-c", Label = "Contratos", Leaf = true },
+                    new OpTreeNode { Key = "doc-i", Label = "Imagem", Leaf = true }
+                }
+            },
+            new OpTreeNode { Key = "alpha", Label = "Alpha", Data = "Zebra", Leaf = true }
+        };
+
+        _checkNodes = new()
+        {
+            new OpTreeNode
+            {
+                Key = "P", Label = "Pai", Expanded = true,
+                Children = new()
+                {
+                    new OpTreeNode { Key = "C1", Label = "Contratos", Leaf = true },
+                    new OpTreeNode { Key = "C2", Label = "Imagem", Leaf = true }
+                }
+            }
+        };
+
+        _tsNodes = new()
+        {
+            new TreeNode
+            {
+                Key = "d", Label = "Documentos", Expanded = true,
+                Children = new()
+                {
+                    new TreeNode { Key = "d-c", Label = "Contrato", Leaf = true },
+                    new TreeNode { Key = "d-i", Label = "Imagem", Leaf = true }
+                }
+            },
+            new TreeNode
+            {
+                Key = "e", Label = "Imagens",
+                Children = new() { new TreeNode { Key = "e-f", Label = "Foto", Leaf = true } }
+            }
+        };
+
+        _tsChipNodes = new()
+        {
+            new TreeNode
+            {
+                Key = "P", Label = "Pai",
+                Children = new()
+                {
+                    new TreeNode { Key = "C1", Label = "Filho A", Leaf = true },
+                    new TreeNode { Key = "C2", Label = "Filho B", Leaf = true }
+                }
+            }
+        };
+
+        _ttPageNodes = new()
+        {
+            new OpTreeNode
+            {
+                Key = "r1", Label = "Raiz 1", Expanded = true,
+                Children = new() { new OpTreeNode { Key = "r1-1", Label = "Filho 1.1", Leaf = true } }
+            },
+            new OpTreeNode
+            {
+                Key = "r2", Label = "Raiz 2", Expanded = true,
+                Children = new() { new OpTreeNode { Key = "r2-1", Label = "Filho 2.1", Leaf = true } }
+            }
+        };
+
+        _ttSelectNodes = new()
+        {
+            new OpTreeNode
+            {
+                Key = "P", Label = "Pai", Expanded = true,
+                Children = new()
+                {
+                    new OpTreeNode { Key = "C1", Label = "Filho A", Leaf = true },
+                    new OpTreeNode { Key = "C2", Label = "Filho B", Leaf = true, Selectable = false }
+                }
+            }
+        };
+
+        _columns = new List<OpTreeTableColumn>
+        {
+            new OpTreeTableColumn { Field = "label", Header = "Nome", Expandable = true }
+        };
+
+        _ttSelection = new Dictionary<string, bool> { ["P"] = true, ["C1"] = true };
+    }
+
+    private void OnLazyExpand(OpTreeNode node)
+    {
+        _leafLog = $"expandiu {node.Label}";
+    }
+
+    private void ToggleFilterMode() =>
+        _filterMode = _filterMode == "lenient" ? "strict" : "lenient";
+
+    private void ToggleFilterBy() =>
+        _filterBy = _filterBy == "label" ? "data" : "label";
+
+    private static string KeysText(object? selection) =>
+        selection is IReadOnlyDictionary<string, bool> map
+            ? string.Join(",", map.Where(e => e.Value).Select(e => e.Key).OrderBy(k => k))
+            : "";
+
+    private static int CountSelected(object? selection) =>
+        selection is IReadOnlyDictionary<string, bool> map ? map.Count(e => e.Value) : 0;
+}

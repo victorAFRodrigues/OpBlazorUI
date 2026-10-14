@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using OpBlazorUI.Base.Components.Forms;
@@ -19,10 +21,12 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     private string? _panelAnimationClass;
     private bool _focus;
     private int _focusedOptionIndex = -1;
+    private int _searchSeq;
     private string _searchValue = "";
     private string? _inputValue;
     private TValue? _prevValue;
     private IReadOnlyList<object>? _prevSuggestions;
+    private FieldIdentifier _multipleValueField;
     private bool _autoFocused;
 
     private ElementReference _inputRef;
@@ -35,6 +39,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     [Parameter] public bool Multiple { get; set; }
     [Parameter] public IReadOnlyList<TValue>? MultipleValue { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> MultipleValueChanged { get; set; }
+    [Parameter] public Expression<Func<IReadOnlyList<TValue>?>>? MultipleValueExpression { get; set; }
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public bool Dropdown { get; set; }
     [Parameter] public string DropdownMode { get; set; } = "blank";
@@ -50,6 +55,12 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     [Parameter] public bool AddOnTab { get; set; }
     [Parameter] public string? Separator { get; set; }
     [Parameter] public int MinLength { get; set; } = 1;
+
+    /// <summary>Debounce (ms) entre a digitação e a consulta de sugestões. 0 consulta imediatamente.</summary>
+    [Parameter] public int Delay { get; set; } = 300;
+
+    /// <summary>Consulta as sugestões ao receber o foco (além da digitação).</summary>
+    [Parameter] public bool CompleteOnFocus { get; set; }
     [Parameter] public string Variant { get; set; } = "outlined";
     [Parameter] public string? Size { get; set; }
     [Parameter] public bool Fluid { get; set; }
@@ -100,6 +111,12 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
 
     protected override void OnParametersSet()
     {
+        // Notifica a validação do EditForm pelo campo ligado a @bind-MultipleValue.
+        if (MultipleValueExpression is not null && EditContext is not null)
+        {
+            _multipleValueField = FieldIdentifier.Create(MultipleValueExpression);
+        }
+
         // Recalcula o rótulo quando o Value muda ou quando as Suggestions chegam depois
         // (ex.: carregadas de forma assíncrona) — o texto precisa acompanhar a nova lista.
         if (!Multiple && (!Equals(_prevValue, Value) || !ReferenceEquals(_prevSuggestions, Suggestions)))
@@ -116,6 +133,12 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         {
             _autoFocused = true;
             await _inputRef.FocusAsync();
+        }
+
+        if (_overlayVisible && _focusedOptionIndex >= 0)
+        {
+            await Interop.InvokeVoidAsync(
+                OpInterop.OptimusInterop, "scrollSelectorIntoView", _rootRef, "[data-p-focused=\"true\"]");
         }
     }
 
@@ -352,6 +375,16 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
             await OpenAsync();
         }
 
+        var seq = ++_searchSeq;
+        if (Delay > 0)
+        {
+            await Task.Delay(Delay);
+            if (seq != _searchSeq)
+            {
+                return;
+            }
+        }
+
         await CompleteMethod.InvokeAsync(new OpAutoCompleteCompleteEvent { Query = query });
     }
 
@@ -362,8 +395,8 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         await OnFocus.InvokeAsync(e);
         var query = Multiple ? _searchValue : (_inputValue ?? string.Empty);
 
-        // Só consulta as sugestões quando o texto atinge MinLength (como no PrimeNG).
-        if (query.Length >= MinLength)
+        // Só consulta as sugestões ao focar quando CompleteOnFocus está ativo (comportamento do PrimeNG).
+        if (CompleteOnFocus && query.Length >= MinLength)
         {
             await CompleteMethod.InvokeAsync(new OpAutoCompleteCompleteEvent { Query = query });
             if (!_overlayVisible && !Multiple)
@@ -613,6 +646,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         MultipleValue = list;
         await MultipleValueChanged.InvokeAsync(list);
         await OnChange.InvokeAsync(option);
+        EditContext?.NotifyFieldChanged(_multipleValueField);
         StateHasChanged();
     }
 
@@ -629,6 +663,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
         MultipleValue = list;
         await MultipleValueChanged.InvokeAsync(list);
         await OnChange.InvokeAsync(option);
+        EditContext?.NotifyFieldChanged(_multipleValueField);
     }
 
     private async Task AddChipAsync(string text)
@@ -646,6 +681,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
                 await MultipleValueChanged.InvokeAsync(list);
                 await OnChange.InvokeAsync(tv);
                 await OnSelect.InvokeAsync(new OpAutoCompleteSelectEvent { Option = tv });
+                EditContext?.NotifyFieldChanged(_multipleValueField);
             }
         }
 
@@ -660,6 +696,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
             MultipleValue = Array.Empty<TValue>();
             _searchValue = "";
             await MultipleValueChanged.InvokeAsync(Array.Empty<TValue>());
+            EditContext?.NotifyFieldChanged(_multipleValueField);
         }
         else
         {

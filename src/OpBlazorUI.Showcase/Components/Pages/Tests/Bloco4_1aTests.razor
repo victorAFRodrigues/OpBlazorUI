@@ -1,0 +1,73 @@
+@page "/_tests/bloco4-1a"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Menu
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1aTests.cs). *@
+
+<PageTitle>Testes: bloco 4.1a menus</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1a menus</h1>
+
+<section id="t-menubar">
+    <OpMenubar Model="_menubarItems" OnItemClick="OnMenuClick"/>
+    <span id="t-menubar-log">@_menuLog</span>
+</section>
+
+<section id="t-tiered">
+    <div style="width:14rem;">
+        <OpTieredMenu Model="_tieredItems" OnItemClick="OnTieredClick"/>
+    </div>
+    <span id="t-tiered-log">@_tieredLog</span>
+</section>
+
+@code {
+    private string _menuLog = "";
+    private string _tieredLog = "";
+
+    private readonly List<OpMenuItem> _menubarItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Arquivo",
+            Items = new()
+            {
+                new OpMenuItem { Label = "Novo" },
+                new OpMenuItem { Label = "Abrir" }
+            }
+        },
+        new OpMenuItem
+        {
+            Label = "Editar",
+            Items = new()
+            {
+                new OpMenuItem { Label = "Desfazer" },
+                new OpMenuItem { Label = "Refazer" }
+            }
+        }
+    };
+
+    private readonly List<OpMenuItem> _tieredItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "A",
+            Items = new()
+            {
+                new OpMenuItem { Label = "A1" },
+                new OpMenuItem { Label = "A2" }
+            }
+        },
+        new OpMenuItem
+        {
+            Label = "B",
+            Items = new()
+            {
+                new OpMenuItem { Label = "B1" }
+            }
+        }
+    };
+
+    private void OnMenuClick(OpMenuItem item) => _menuLog = item.Label ?? "";
+    private void OnTieredClick(OpMenuItem item) => _tieredLog = item.Label ?? "";
+}

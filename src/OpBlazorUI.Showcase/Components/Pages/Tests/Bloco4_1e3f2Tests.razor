@@ -1,0 +1,67 @@
+@page "/_tests/bloco4-1e3f2"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.CascadeSelect
+@using OpBlazorUI.Base.Components.SpeedDial
+@using OpBlazorUI.Base.Components.SplitButton
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1e3f2Tests.cs). *@
+
+<PageTitle>Testes: bloco 4.1e3/f2</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1e3/f2</h1>
+
+<section id="t-cascade">
+    <OpCascadeSelect TValue="CNode" InputId="cs" Options="_cascade" OptionLabel="Label"
+                     OptionGroupLabel="Label" OptionGroupChildren="@_children" Placeholder="Selecione"
+                     @bind-Value="_cascadeSel"/>
+</section>
+
+<section id="t-split">
+    <OpSplitButton Label="Acao" Model="_splitItems"/>
+    <span id="t-split-log">@_splitLog</span>
+</section>
+
+<section id="t-speed">
+    <OpSpeedDial Model="_dialItems"/>
+    <span id="t-speed-log">@_speedLog</span>
+</section>
+
+@code {
+    private CNode? _cascadeSel;
+    private string _splitLog = "";
+    private string _speedLog = "";
+
+    private sealed class CNode
+    {
+        public string Label { get; set; } = "";
+        public List<CNode>? Items { get; set; }
+    }
+
+    private readonly IReadOnlyList<string> _children = new[] { "Items" };
+
+    private readonly List<object> _cascade = new()
+    {
+        new CNode
+        {
+            Label = "Grupo",
+            Items = new()
+            {
+                new CNode { Label = "Item A" },
+                new CNode { Label = "Item B" }
+            }
+        }
+    };
+
+    private readonly List<OpMenuItem> _splitItems = new();
+    private readonly List<OpMenuItem> _dialItems = new();
+
+    protected override void OnInitialized()
+    {
+        _splitItems.Add(new OpMenuItem { Label = "Salvar", Command = () => _splitLog = "Salvar" });
+        _splitItems.Add(new OpMenuItem { Label = "Excluir", Command = () => _splitLog = "Excluir" });
+
+        _dialItems.Add(new OpMenuItem { Label = "Copiar", Icon = "pi pi-copy", Command = () => _speedLog = "Copiar" });
+        _dialItems.Add(new OpMenuItem { Label = "Colar", Icon = "pi pi-clipboard", Command = () => _speedLog = "Colar" });
+    }
+}

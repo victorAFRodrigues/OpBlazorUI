@@ -100,7 +100,13 @@ export function styleClassInit(element, options) {
     if (entry.options.hideOnResize) {
         const resizeTarget = resolveResizeTarget(entry.options.resizeSelector);
         if (resizeTarget) {
-            entry.resizeHandler = () => hideOnResize(element, entry);
+            entry.resizeHandler = () => {
+                if (!element.isConnected) {
+                    resizeTarget.removeEventListener('resize', entry.resizeHandler);
+                    return;
+                }
+                hideOnResize(element, entry);
+            };
             resizeTarget.addEventListener('resize', entry.resizeHandler);
         }
     }
@@ -228,6 +234,10 @@ function attachOverlay(element, entry, target) {
     const config = entry.options;
     if (config.hideOnOutsideClick && !entry.outsideHandler) {
         entry.outsideHandler = (event) => {
+            if (!element.isConnected) {
+                detachOverlay(element, entry);
+                return;
+            }
             if (!target.contains(event.target) && !element.contains(event.target)) {
                 styleClassToggle(element);
             }
@@ -236,6 +246,10 @@ function attachOverlay(element, entry, target) {
     }
     if (config.hideOnEscape && !entry.escapeHandler) {
         entry.escapeHandler = (event) => {
+            if (!element.isConnected) {
+                detachOverlay(element, entry);
+                return;
+            }
             if (event.key === 'Escape') styleClassToggle(element);
         };
         document.addEventListener('keydown', entry.escapeHandler);

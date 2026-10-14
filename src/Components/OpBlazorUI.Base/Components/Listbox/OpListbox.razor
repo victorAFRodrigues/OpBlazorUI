@@ -8,13 +8,14 @@
 @inherits OpInputBase<TValue>
 
 <div class="@RootClass" @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     @if (Filter || (Checkbox && ShowToggleAll) || HeaderTemplate != null || FilterTemplate != null)
     {
         <div class="p-listbox-header">
             @if (Checkbox && ShowToggleAll)
             {
                 <div class="p-listbox-header-checkbox">
-                    <OpCheckbox StyleClass="p-listbox-option-check-icon" Value="@AllSelected"
+                    <OpCheckbox IgnoreEditContext="true" StyleClass="p-listbox-option-check-icon" Value="@AllSelected"
                                 ValueChanged="@(c => OnToggleAll(c == true))"
                                 Disabled="@Disabled"
                                 Id="@($"{_id}_all")"/>
@@ -79,7 +80,9 @@
         <ul class="@ListClass" role="listbox" id="@($"{_id}_list")"
             aria-multiselectable="@(IsMultiple ? "true" : "false")"
             aria-label="@AriaLabel"
+            aria-activedescendant="@(_focusedOptionIndex >= 0 ? $"{_id}_{_focusedOptionIndex}" : null)"
             tabindex="@(Disabled ? -1 : TabIndex)"
+            @ref="_listRef"
             @onkeydown="OnListKeydown"
             @onclick="OnListClick">
             @if (Group)
@@ -152,7 +155,7 @@
             @onmouseenter="() => OnOptionMouseEnter(index)">
             @if (Checkbox)
             {
-                <OpCheckbox StyleClass="p-listbox-option-check-icon" Value="@isSelected" Readonly="true" Disabled="@isDisabled" />
+                <OpCheckbox IgnoreEditContext="true" StyleClass="p-listbox-option-check-icon" Value="@isSelected" Readonly="true" Disabled="@isDisabled" />
             }
 
             @if (Checkmark)

@@ -44,26 +44,41 @@ public partial class OpStyleClass : OpComponentBase
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    private string? _appliedSignature;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        var signature = string.Join('\u001f',
+            Target, ToggleClass, EnterFromClass, EnterActiveClass, EnterToClass,
+            LeaveFromClass, LeaveActiveClass, LeaveToClass,
+            HideOnOutsideClick.ToString(), HideOnEscape.ToString(), HideOnResize.ToString(), ResizeSelector);
+
+        if (!firstRender && signature == _appliedSignature)
         {
-            await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "styleClassInit", _host, new
-            {
-                target = Target,
-                toggleClass = ToggleClass,
-                enterFromClass = EnterFromClass,
-                enterActiveClass = EnterActiveClass,
-                enterToClass = EnterToClass,
-                leaveFromClass = LeaveFromClass,
-                leaveActiveClass = LeaveActiveClass,
-                leaveToClass = LeaveToClass,
-                hideOnOutsideClick = HideOnOutsideClick,
-                hideOnEscape = HideOnEscape,
-                hideOnResize = HideOnResize,
-                resizeSelector = ResizeSelector
-            });
+            return;
         }
+
+        if (_appliedSignature is not null)
+        {
+            await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "styleClassDispose", _host);
+        }
+
+        await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "styleClassInit", _host, new
+        {
+            target = Target,
+            toggleClass = ToggleClass,
+            enterFromClass = EnterFromClass,
+            enterActiveClass = EnterActiveClass,
+            enterToClass = EnterToClass,
+            leaveFromClass = LeaveFromClass,
+            leaveActiveClass = LeaveActiveClass,
+            leaveToClass = LeaveToClass,
+            hideOnOutsideClick = HideOnOutsideClick,
+            hideOnEscape = HideOnEscape,
+            hideOnResize = HideOnResize,
+            resizeSelector = ResizeSelector
+        });
+        _appliedSignature = signature;
     }
 
     public override async ValueTask DisposeAsync()

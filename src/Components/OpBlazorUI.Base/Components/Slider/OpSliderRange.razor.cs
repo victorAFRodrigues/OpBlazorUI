@@ -29,7 +29,8 @@ public partial class OpSliderRange : OpInputBase<double[]>
     {
         get
         {
-            var v = Value is { Length: >= 2 } ? Value : new[] { Lo, Hi };
+            var current = CurrentValue;
+            var v = current is { Length: >= 2 } ? current : new[] { Lo, Hi };
             var a = Math.Clamp(Math.Min(v[0], v[1]), Lo, Hi);
             var b = Math.Clamp(Math.Max(v[0], v[1]), Lo, Hi);
             return new[] { a, b };
@@ -85,6 +86,18 @@ public partial class OpSliderRange : OpInputBase<double[]>
 
     public override async ValueTask DisposeAsync()
     {
+        if (_initializedOrientation is not null)
+        {
+            try
+            {
+                await Interop.InvokeVoidAsync(OpInterop.SliderInterop, "dispose", _root);
+            }
+            catch (JSDisconnectedException)
+            {
+                // SSR estático / circuito desconectado
+            }
+        }
+
         _sliderInterop?.Dispose();
         await base.DisposeAsync();
     }
@@ -93,8 +106,11 @@ public partial class OpSliderRange : OpInputBase<double[]>
     {
         index = index == 1 ? 1 : 0;
         var values = (double[])Values.Clone();
-        var lower = index == 0 ? Lo : values[0];
-        var upper = index == 0 ? values[1] : Hi;
+
+        // Com os dois handles no mesmo ponto, libera o cruzamento para não travar em Min/Max.
+        var coincident = values[0].Equals(values[1]);
+        var lower = index == 0 ? Lo : coincident ? Lo : values[0];
+        var upper = index == 0 ? coincident ? Hi : values[1] : Hi;
 
         var raw = Lo + (Hi - Lo) * percent;
         var value = Math.Clamp(SliderMath.Snap(raw, Min, Max, Step), lower, upper);
@@ -106,6 +122,7 @@ public partial class OpSliderRange : OpInputBase<double[]>
 
         values[index] = value;
         CurrentValue = values;
+        StateHasChanged();
         await OnChange.InvokeAsync(values);
     }
 
@@ -160,8 +177,10 @@ public partial class OpSliderRange : OpInputBase<double[]>
     private async Task SetValueAsync(int index, double value)
     {
         var values = (double[])Values.Clone();
-        var lower = index == 0 ? Lo : values[0];
-        var upper = index == 0 ? values[1] : Hi;
+
+        var coincident = values[0].Equals(values[1]);
+        var lower = index == 0 ? Lo : coincident ? Lo : values[0];
+        var upper = index == 0 ? coincident ? Hi : values[1] : Hi;
 
         var next = Math.Clamp(SliderMath.Snap(value, Lo, Hi, Step), lower, upper);
         if (values[index].Equals(next))
@@ -171,6 +190,7 @@ public partial class OpSliderRange : OpInputBase<double[]>
 
         values[index] = next;
         CurrentValue = values;
+        StateHasChanged();
         await OnChange.InvokeAsync(values);
     }
 }

@@ -6,6 +6,7 @@
 
 <span class="@RootClass" @ref="_rootRef" @onkeydown="OnRootKeydown"
       @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
     <span class="@LabelClass"
           id="@_id"
           role="combobox"
@@ -13,6 +14,7 @@
           aria-haspopup="tree"
           aria-expanded="@(_overlayVisible ? "true" : "false")"
           aria-controls="@(_overlayVisible ? $"{_id}_tree" : null)"
+          aria-activedescendant="@(_overlayVisible && _focusedNode is not null ? $"{_id}_focused" : null)"
           aria-label="@AriaLabel"
           aria-labelledby="@AriaLabelledBy"
           aria-disabled="@(Disabled ? "true" : null)"
@@ -30,7 +32,7 @@
         }
         else
         {
-            @(Placeholder ?? "&nbsp;")
+            @(Placeholder ?? "\u00A0")
         }
     </span>
 

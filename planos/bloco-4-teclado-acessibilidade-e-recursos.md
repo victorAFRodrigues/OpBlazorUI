@@ -1,75 +1,117 @@
 # Bloco 4 — Teclado, acessibilidade e recursos que faltam
 
-**Status:** proposta, aguardando aprovação.
+**Status:** concluído (sub-fases empilhadas; ordem executada: 4.1 → 4.2 → 4.3 → 4.4).
 
 **Objetivo:** paridade de teclado/ARIA com o PrimeNG e os recursos mais usados que ainda faltam.
-Os testes Playwright deste bloco devem cobrir teclado, que hoje não tem nenhum teste.
+Os testes Playwright deste bloco cobrem teclado (hoje sem nenhum teste) e os recursos novos.
 
 Caminhos relativos a `src/Components/OpBlazorUI.Base/Components/`.
 
-## 4.1 Teclado e ARIA (D)
+## 4.0 Housekeeping
 
-- [ ] **Menus** (`Menu/OpMenuItems`, Menubar, TieredMenu, ContextMenu): todos os itens têm
-  `tabindex="-1"` e não há `onkeydown`. Implementar setas, Home/End, Enter/Space e Escape por nível,
-  com `aria-activedescendant`.
-- [ ] **MegaMenu** e **PanelMenu**: o item raiz é um `<a>` sem `href` (Enter não dispara click);
-  filhos inalcançáveis; falta `aria-controls`.
-- [ ] **Tabs/TabView**: mover o foco junto com a aba (`ElementReference` nos botões); pular abas
-  desabilitadas; Home/End; `aria-disabled`.
-- [ ] **TabMenu** e **Steps**: só o item ativo é alcançável; adicionar setas.
-- [ ] **Accordion**: ArrowUp/Down/Home/End entre cabeçalhos; `aria-disabled`.
-- [ ] **Tree**, **TreeTable** e **TreeSelect**: navegação por teclado completa (hoje inexistente).
-- [ ] **DatePicker**: setas na grade de dias; células de mês/ano focáveis.
-- [ ] **Select, MultiSelect, Listbox, AutoComplete**: `scrollIntoView` da opção focada; Space abre
-  o Select e alterna opção no MultiSelect; `aria-activedescendant` no Listbox e no CascadeSelect.
-- [ ] **DataTable**: ordenação pelo teclado (`tabindex`, `aria-sort`, Enter).
-- [ ] **Slider**: `preventDefault` nas setas/PageUp/PageDown/Home/End.
-- [ ] **SplitButton** e **SpeedDial**: navegação por setas; submenus abrem pelo teclado/toque.
-- [ ] **Tooltip**: fechar com Escape (WCAG 1.4.13).
-- [ ] Outros: `aria-required` onde `Required` é declarado e não usado; `aria-checked="mixed"` no
-  Checkbox indeterminado; `role="spinbutton"` no InputNumber; `aria-live` no medidor do Password.
+**Feito** (branch `feat/bloco4-0-housekeeping`):
+
+- [x] Removidas as páginas `Dock`, `Terminal` e `OrganizationChart` do Showcase e as entradas de
+  menu correspondentes (não serão portadas).
+- [x] Plano atualizado: a lista de "não portados" estava desatualizada (Carousel, Galleria, Image,
+  ImageCompare, Knob, Panel, ScrollPanel e Splitter já foram portados no lote P2).
+
+## 4.1 Teclado e ARIA
+
+Padrão adotado: foco roving (`tabindex` por item, só o focado em `0`), `aria-activedescendant` quando
+o contêiner recebe o foco, `preventDefault` nas setas quando o componente as consome.
+
+- [x] **4.1a Menus** (branch `feat/bloco4-1a-menus`): navegação por teclado (roving tabindex +
+  foco real) para a família `OpMenuItems` — Menubar, TieredMenu e ContextMenu: ←→ (horizontal),
+  ↑↓ (vertical), Home/End, Enter/Space (abre/seleciona), →/← (abre/fecha submenu), Escape fecha.
+  `OpMenu` (popup) já tinha teclado (Bloco 3). MegaMenu, PanelMenu e TabMenu passam para 4.1b.
+- [x] **4.1b Abas e accordion** (branch `feat/bloco4-1b-abas`): Tabs/TabView movem o foco junto
+  com a aba (`ElementReference`), pulam desabilitados, Home/End, `aria-disabled`; Accordion com
+  ↑↓/Home/End entre cabeçalhos, pulando desabilitados.
+- [x] **4.1b2 Steps, TabMenu, MegaMenu e PanelMenu** (branch `feat/bloco4-1b2-menus`): Steps e
+  TabMenu movem o foco e selecionam por setas/Home/End (pulando desabilitados); PanelMenu e MegaMenu
+  ganham teclado (roving) com Enter/Space ativando e ←/→ expandindo/recolhendo, além de
+  `aria-haspopup`/`aria-controls` no PanelMenu e foco no primeiro filho ao expandir.
+- [x] **4.1c Árvores — Tree** (branch `feat/bloco4-1c-arvores`): navegação por teclado (↑↓, →/←
+  expande/recolhe e move ao filho/pai, Home/End, Enter/Space seleciona) via `tree.interop.js` com
+  roving tabindex. TreeTable e TreeSelect ficam em 4.1c2.
+- [x] **4.1c2 Árvores — TreeTable e TreeSelect** (branch `feat/bloco4-1c2-arvores`): TreeSelect
+  reusa o teclado do Tree dentro do overlay; TreeTable ganhou `initTreeTableKeyboard` (↑↓, →/←,
+  Home/End, Enter/Space) usando `data-op-level` para pai/filho.
+- [x] **4.1d DatePicker** (branch `feat/bloco4-1d-datepicker`): setas na grade de dias (←→↑↓),
+  Home/End (início/fim da semana), PageUp/PageDown (mês), com o foco movido para a célula; dia com
+  tabstop roving e `@onfocus`. Células de mês/ano focáveis ficam para depois.
+- [x] **4.1e Seleção** (branch `feat/bloco4-1e-selecao`): `scrollIntoView` da opção focada no
+  Select e no Listbox; Space seleciona a opção focada no Select; `aria-activedescendant` no Listbox.
+  MultiSelect, AutoComplete e CascadeSelect ficam em 4.1e2.
+- [x] **4.1e2 Seleção — MultiSelect e AutoComplete** (branch `feat/bloco4-1e2-selecao`):
+  MultiSelect com Space alternando a opção focada e `scrollIntoView`; AutoComplete com
+  `scrollIntoView` da sugestão destacada. CascadeSelect (`aria-activedescendant`) fica em 4.1e3.
+- [x] **4.1e3 CascadeSelect** (branch `feat/bloco4-1e3-1f2`): `aria-activedescendant` aponta para o
+  nó focado (`{id}_focused`), com o `<li>` focado recebendo esse id.
+- [x] **4.1f Diversos — DataTable e Tooltip** (branch `feat/bloco4-1f-1g-diversos`): DataTable
+  ordena por teclado (`tabindex` no cabeçalho, `aria-sort`, Enter/Space); Tooltip fecha com Escape
+  (WCAG 1.4.13). SplitButton e SpeedDial ficam em 4.1f2.
+- [x] **4.1f2 SplitButton e SpeedDial** (mesma branch): abrem pelo teclado com o foco no primeiro
+  item/ação e navegam por setas (Home/End no menu); Escape fecha.
+- [x] **4.1g ARIA avulso** (mesma branch): `aria-checked="mixed"` no Checkbox indeterminado;
+  `role="spinbutton"` + `aria-valuenow/min/max` no InputNumber; `aria-live` no medidor do Password.
+  (`aria-required` já coberto pelos componentes com `Required`.)
 
 ## 4.2 Recursos que faltam
 
-### DataTable
-- [ ] Templates de célula, cabeçalho e corpo (hoje só `ToString()`; bloqueia uso real).
-- [ ] `DataKey` para seleção e para manter estado entre recargas.
-- [ ] Página controlada (`First`/`FirstChanged`), `RowsPerPageOptions`, relatório de página —
-  reutilizando o `OpPaginator` em vez dos dois paginadores escritos à mão.
-- [ ] Filtro (por coluna e global) usando o `OpFilterService`.
-- [ ] Modo lazy (`OnLazyLoad`, `TotalRecords`), com ordenação no servidor.
-- [ ] `SelectionMode="single"`; select-all de todos os itens (com `SelectionPageOnly`).
-- [ ] Cabeçalho fixo (scrollable).
+- [x] **4.2a1 DataTable (parte 1)** (branch `feat/bloco4-2a1-datatable`): `OpDataTableColumn<TItem>`
+  com `BodyTemplate`/`HeaderTemplate`/`FooterTemplate` (e `Footer` textual; `tfoot` automático);
+  `DataKey`; paginação controlada reusando `OpPaginator` (`@bind-First`/`@bind-Rows` +
+  `RowsPerPageOptions`, estado interno quando não vinculado); `SelectionMode="single"` +
+  `SelectionPageOnly` + `aria-selected` nas linhas; `StickyHeader` + `ScrollHeight`.
+- [x] **4.2a2 DataTable (parte 2)** (branch `feat/bloco4-2a2-datatable-filter-lazy`): filtro por coluna
+  (`OpDataTableColumn.Filter`/`FilterMatchMode`/`FilterPlaceholder`, input no cabeçalho) e global
+  (`GlobalFilter`/`GlobalFilterFields` + `FilterGlobalAsync`) via `OpFilterService`; `OnFilter`; modo
+  lazy (`Lazy`, `TotalRecords`, `OnLazyLoad`).
+- [x] **4.2b Overlays** (branch `feat/bloco4-2b-overlays`): `blockScroll` (Dialog, Drawer,
+  ConfirmDialog via `OpModalBase`, e BlockUI `FullScreen`); Dialog `Draggable`/`Resizable`/
+  `KeepInViewport` (JS `dialog.interop.js`, sem `Breakpoints`); Tooltip `TooltipEvent`/`AutoHide`/
+  `Life`; Toast pausa no hover (retoma com o tempo restante; dedupe já existia); ContextMenu
+  `Target`/`Global` (JS no `menu.interop.js`).
+- [x] **4.2c Outros (parte 1)** (branch `feat/bloco4-2c-recursos`): MultiSelect `SelectionLimit`/
+  `SelectedItemsLabel`; AutoComplete `Delay` (debounce) e `CompleteOnFocus`; Stepper `Linear`;
+  TabPanel `Closable` + `OnClose`.
+- [x] **4.2c Outros (parte 2)** (mesma branch): `OpListbox.OnItemDoubleClick` + PickList movendo
+  item por duplo clique. `VirtualScroller` já expõe `Delay`/`ResizeDelay`/`AutoSize` e o FileUpload
+  já tem `CustomUpload`/`UploadHandler`/`OnProgress` (verificado).
+- [ ] **4.2c Outros (parte 3, opcional)**: FileUpload com envio real por `Url`/`Method` (HTTP) —
+  hoje `Url`/`Method` são aceitos mas o envio padrão só marca os arquivos; envio customizado via
+  `UploadHandler`. Checkbox `TrueValue`/`FalseValue` (exige `OpCheckbox<TValue>` genérico, ~54
+  usos). Paginator com estado interno/`@bind` (já usado controlado pelo DataTable; sem API
+  imperativa de página).
 
-### Overlays
-- [ ] `blockScroll` (scroll lock no `body`) em Dialog, Drawer, ConfirmDialog e BlockUI de tela
-  inteira.
-- [ ] Dialog: `Draggable`, `Resizable`, `Breakpoints`, `KeepInViewport`.
-- [ ] Tooltip: `AutoHide`, `Life`, `TooltipEvent`.
-- [ ] Toast: pausar o timer no hover; `PreventDuplicates` x `PreventOpenDuplicates`.
-- [ ] ContextMenu: `Target`/`Global` com ligação automática ao evento `contextmenu`.
+## 4.3 DynamicDialog
 
-### Outros componentes
-- [ ] FileUpload: `Url`/`Method`/`CustomUpload`, `OnProgress`/`OnError`, barra de progresso,
-  botão de envio no modo `basic`.
-- [ ] TabPanel `Closable` com `OnClose`.
-- [ ] Stepper modo `linear`.
-- [ ] Paginator com estado interno e `@bind` (`FirstChanged`/`RowsChanged`).
-- [ ] MultiSelect `SelectionLimit` e `SelectedItemsLabel`; AutoComplete `Delay` (debounce) e
-  `CompleteOnFocus`.
-- [ ] PickList/OrderList: duplo clique, drag-and-drop, eventos `OnMoveToTarget`/`OnReorder`;
-  respeitar `Disabled` nos botões de mover.
-- [ ] VirtualScroller: `Delay`, `ResizeDelay`, `AutoSize`, virtualização de colunas.
-- [ ] Checkbox em grupo (`value` + model em array) e `TrueValue`/`FalseValue`.
+- [x] `OpDialogService` (scoped) + `OpDynamicDialogRef` + `OpDynamicDialogConfig` (`Header`, `Width`,
+  `Style`, `Modal`, `Closable`, `Data`, `InputValues`); host único no layout (`OpDynamicDialogHost`)
+  renderizando `DynamicComponent` dentro do `OpDialog`; `InputValues` via `ParameterView`; config/ref
+  via `CascadingParameter`; `Close(result)` resolve `Result`.
+- [x] Página `DynamicDialog.razor` reescrita com exemplos reais (padrão da `Button.razor`).
 
-### Componentes ainda não portados (só placeholder no Showcase)
+## 4.4 Chart (`OpBlazorUI.Charts`)
 
-Carousel, Chart, Dock, DynamicDialog, Galleria, Image, ImageCompare, Knob, OrganizationChart,
-Panel, ScrollPanel, Splitter e Terminal, além de Bind, ClassNames, DragDrop e Pass Through
-(só `/coming-soon`). Sugiro priorizar Panel, Splitter e ScrollPanel, que são de layout e baratos.
+Decisão: projeto separado, com dependência de `Blazor-ApexCharts` (MIT, `net10.0`), para não
+acoplar o `OpBlazorUI.Base` a uma lib de gráficos.
 
-## Decisões em aberto
+- [x] Novo RCL `src/Components/OpBlazorUI.Charts` (referencia `Blazor-ApexCharts` 7.0.0 e
+  `OpBlazorUI.Base`); adicionado ao `OpBlazorUI.slnx` e referenciado pelo Showcase.
+- [x] `AddOpBlazorCharts()` → `AddApexCharts()`; bridge de tema via `op-charts.interop.js`
+  (`OpChart` lê cores/fonte dos tokens CSS quando `Options.Colors` está vazio).
+- [x] `OpChart<TItem>` (wrapper fino) sobre `ApexChart`/`ApexPointSeries`, com placeholder no
+  prerender estático.
+- [x] Página `Chart.razor` reescrita com exemplos reais; divergência de API vs. o Chart.js do
+  PrimeNG e limitação de SSR documentadas.
+- [ ] Packaging do pacote: fica no bloco 5 (junto com o release).
 
-1. **Escopo:** este bloco é grande. Recomendo fazer 4.1 inteiro e, de 4.2, só o DataTable e o
-   `blockScroll` antes de portar componentes novos.
-2. **Componentes não portados:** entram neste bloco ou viram um bloco 6?
+## Decisões (resolvidas)
+
+1. **Chart:** projeto separado `OpBlazorUI.Charts` com `Blazor-ApexCharts` (não um wrapper de Chart.js).
+2. **Escopo:** 4.1 e 4.2 completos, entregues em sub-fases.
+3. **Ordem:** plano (4.1 → 4.2 → 4.3 → 4.4).
+4. **Dock/Terminal/OrganizationChart:** removidos (páginas e menu).

@@ -123,7 +123,9 @@
                 <p>
                     O carregamento lazy é útil ao lidar com grandes conjuntos de dados; neste exemplo, os nós são
                     carregados dinamicamente sob demanda usando <code>Loading</code> e o evento
-                    <code>OnNodeExpand</code>.
+                    <code>OnNodeExpand</code>. Como esses nós ainda não têm filhos, marque-os com
+                    <code>Leaf="false"</code> para indicar que são expansíveis (sem isso, um nó sem filhos é
+                    tratado como folha).
                 </p>
             </Description>
             <ChildContent>
@@ -341,7 +343,7 @@
     {
         foreach (var node in Flatten(_controlledNodes))
         {
-            if (!node.Leaf)
+            if (!node.IsLeaf)
             {
                 node.Expanded = true;
             }
@@ -432,8 +434,8 @@
 
     private static List<OpTreeNode> LazyTree() => new()
     {
-        new OpTreeNode { Key = "lz-0", Label = "Carregar Documentos", Icon = "pi pi-folder-open" },
-        new OpTreeNode { Key = "lz-1", Label = "Carregar Imagens", Icon = "pi pi-folder-open" }
+        new OpTreeNode { Key = "lz-0", Label = "Carregar Documentos", Icon = "pi pi-folder-open", Leaf = false },
+        new OpTreeNode { Key = "lz-1", Label = "Carregar Imagens", Icon = "pi pi-folder-open", Leaf = false }
     };
 
     private static List<OpTreeNode> TemplateTree() => new()

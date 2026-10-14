@@ -4,6 +4,7 @@
     </Folder>
     <Folder Name="/src/Components/">
         <Project Path="src\Components\OpBlazorUI.Base\OpBlazorUI.Base.csproj" />
+        <Project Path="src\Components\OpBlazorUI.Charts\OpBlazorUI.Charts.csproj" />
     </Folder>
     <Folder Name="/tests/">
         <Project Path="tests/OpBlazorUI.Playwright/OpBlazorUI.Playwright.csproj" />

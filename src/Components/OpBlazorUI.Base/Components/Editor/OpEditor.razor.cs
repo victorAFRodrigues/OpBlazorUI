@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OpBlazorUI.Base.Components.Common;
@@ -119,12 +120,21 @@ public partial class OpEditor : OpComponentBase
     [JSInvokable]
     public async Task NotifyTextChange(string html)
     {
-        _lastValue = html;
-        Value = html;
-        await ValueChanged.InvokeAsync(html);
-        await OnChange.InvokeAsync(html);
-        await OnTextChange.InvokeAsync(html);
+        var value = NormalizeHtml(html);
+        _lastValue = value;
+        Value = value;
+        await ValueChanged.InvokeAsync(value);
+        await OnChange.InvokeAsync(value);
+        await OnTextChange.InvokeAsync(value);
     }
+
+    // O editor envia markup "vazio" (ex.: <p><br></p>); normaliza para null como no upstream.
+    private static readonly Regex EmptyHtml = new(
+        @"^\s*(<p>\s*(<br\s*/?>\s*)*</p>|<br\s*/?>|&nbsp;|\s)*\s*$",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static string? NormalizeHtml(string? html) =>
+        string.IsNullOrEmpty(html) || EmptyHtml.IsMatch(html) ? null : html;
 
     [JSInvokable]
     public async Task NotifyFocus()

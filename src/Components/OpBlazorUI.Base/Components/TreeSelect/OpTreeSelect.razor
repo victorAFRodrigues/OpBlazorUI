@@ -38,7 +38,7 @@
             }
             else
             {
-                @(Placeholder ?? "&nbsp;")
+                @(Placeholder ?? "\u00A0")
             }
         </div>
     </div>
@@ -125,7 +125,7 @@
             }
             else
             {
-                <div class="p-treeselect-tree-container" style="max-height:@(ScrollHeight ?? "400px")">
+                <div class="p-treeselect-tree-container" style="max-height:@(ScrollHeight ?? "400px")" @ref="_treeContainer">
                     <div class="p-tree" id="@($"{_id}_tree")">
                         @if (VisibleRoots.Count == 0)
                         {
@@ -164,15 +164,19 @@
         var selected = IsSelected(node);
         var partial = IsPartial(node);
 
-        <li class="p-tree-node @(node.Leaf ? "p-tree-node-leaf" : "")" role="treeitem"
+        <li class="p-tree-node @(node.IsLeaf ? "p-tree-node-leaf" : "")" role="treeitem"
+            tabindex="-1"
+            data-op-tree-node="true"
+            data-op-expanded="@(node.Expanded ? "true" : "false")"
+            data-op-leaf="@(node.IsLeaf ? "true" : "false")"
             aria-label="@node.Label"
             aria-selected="@(selected ? "true" : "false")"
-            aria-expanded="@(node.HasChildren ? (node.Expanded ? "true" : "false") : null)">
+            aria-expanded="@(node.IsLeaf ? null : (node.Expanded ? "true" : "false"))">
             <div class="p-tree-node-content p-tree-node-selectable @(selected ? "p-tree-node-selected" : "")"
                  @onclick="() => OnNodeClick(node)">
                 @if (IsCheckbox)
                 {
-                    <OpCheckbox Value="@selected" Indeterminate="@partial" Readonly="true"/>
+                    <OpCheckbox IgnoreEditContext="true" Value="@selected" Indeterminate="@partial" Readonly="true"/>
                 }
 
                 <button type="button" class="p-tree-node-toggle-button" @onclick="() => ToggleExpand(node)"
@@ -214,16 +218,20 @@
         var partial = IsPartial(node);
         var indent = depth > 0 ? $"padding-inline-start:calc({depth} * var(--p-tree-indent));" : null;
 
-        <li class="p-tree-node @(node.Leaf ? "p-tree-node-leaf" : "")" role="treeitem"
+        <li class="p-tree-node @(node.IsLeaf ? "p-tree-node-leaf" : "")" role="treeitem"
+            tabindex="-1"
+            data-op-tree-node="true"
+            data-op-expanded="@(node.Expanded ? "true" : "false")"
+            data-op-leaf="@(node.IsLeaf ? "true" : "false")"
             aria-label="@node.Label"
             aria-selected="@(selected ? "true" : "false")"
-            aria-expanded="@(node.HasChildren ? (node.Expanded ? "true" : "false") : null)">
+            aria-expanded="@(node.IsLeaf ? null : (node.Expanded ? "true" : "false"))">
             <div class="p-tree-node-content p-tree-node-selectable @(selected ? "p-tree-node-selected" : "")"
                  style="@indent"
                  @onclick="() => OnNodeClick(node)">
                 @if (IsCheckbox)
                 {
-                    <OpCheckbox Value="@selected" Indeterminate="@partial" Readonly="true"/>
+                    <OpCheckbox IgnoreEditContext="true" Value="@selected" Indeterminate="@partial" Readonly="true"/>
                 }
 
                 <button type="button" class="p-tree-node-toggle-button" @onclick="() => ToggleExpand(node)"

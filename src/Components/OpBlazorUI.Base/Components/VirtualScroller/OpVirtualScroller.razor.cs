@@ -32,6 +32,7 @@ public partial class OpVirtualScroller<TItem> : OpComponentBase
     private double _viewportWidth;
     private double _viewportHeight;
     private int _columns = 1;
+    private bool _initialLazyRequested;
 
     // ---------------------------------------------------------------- params
     [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
@@ -203,6 +204,14 @@ public partial class OpVirtualScroller<TItem> : OpComponentBase
         {
             _first = 0;
             _last = 0;
+
+            // Lazy com dados iniciais vazios: pede o primeiro lote uma única vez.
+            if (count == 0 && Lazy && Step > 0 && !_initialLazyRequested)
+            {
+                _initialLazyRequested = true;
+                _ = OnLazyLoad.InvokeAsync(new OpVirtualScrollerLazyLoadEvent(0, Step));
+            }
+
             return;
         }
 
@@ -223,7 +232,8 @@ public partial class OpVirtualScroller<TItem> : OpComponentBase
         }
         else
         {
-            first = Math.Clamp((int)Math.Floor(_scrollTop / PrimaryItemSize) - tolerated, 0, count);
+            var offset = Orientation == "horizontal" ? _scrollLeft : _scrollTop;
+            first = Math.Clamp((int)Math.Floor(offset / PrimaryItemSize) - tolerated, 0, count);
             var visibleCount = (int)Math.Ceiling(viewport / PrimaryItemSize) + 2 * tolerated;
             last = Math.Min(first + visibleCount, count);
         }
@@ -346,11 +356,15 @@ public partial class OpVirtualScroller<TItem> : OpComponentBase
         var count = Count;
         if (count == 0) return null;
 
+        // Desabilitado: sem virtualização, renderiza tudo.
+        var first = Disabled ? 0 : _first;
+        var last = Disabled ? count : _last;
+
         if (ItemTemplate is not null)
         {
             return builder =>
             {
-                for (var i = _first; i < _last && i < count; i++)
+                for (var i = first; i < last && i < count; i++)
                 {
                     var index = i;
                     builder.AddContent(0, ItemTemplate(new OpVirtualScrollerItemContext<TItem>(Items![index], index, index % 2 == 0, index % 2 != 0)));
@@ -360,20 +374,20 @@ public partial class OpVirtualScroller<TItem> : OpComponentBase
 
         if (ContentTemplate is not null)
         {
-            var visible = new List<TItem>(Math.Max(0, _last - _first));
-            for (var i = _first; i < _last && i < count; i++)
+            var visible = new List<TItem>(Math.Max(0, last - first));
+            for (var i = first; i < last && i < count; i++)
             {
                 visible.Add(Items![i]);
             }
 
-            var ctx = new OpVirtualScrollerContentContext<TItem>(visible, _first, _last, ScrollToIndexAsync);
+            var ctx = new OpVirtualScrollerContentContext<TItem>(visible, first, last, ScrollToIndexAsync);
             return builder => builder.AddContent(0, ContentTemplate(ctx));
         }
 
         // default: render raw items
         return builder =>
         {
-            for (var i = _first; i < _last && i < count; i++)
+            for (var i = first; i < last && i < count; i++)
             {
                 builder.AddContent(0, Items![i]);
             }

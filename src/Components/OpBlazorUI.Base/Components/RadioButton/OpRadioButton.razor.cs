@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace OpBlazorUI.Base.Components.RadioButton;
@@ -8,6 +10,7 @@ public partial class OpRadioButton<TValue> : ComponentBase
     [Parameter] public TValue? Value { get; set; }
     [Parameter] public TValue? ModelValue { get; set; }
     [Parameter] public EventCallback<TValue?> ModelValueChanged { get; set; }
+    [Parameter] public Expression<Func<TValue?>>? ModelValueExpression { get; set; }
     [Parameter] public string? Name { get; set; }
     [Parameter] public string? Id { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
@@ -27,6 +30,25 @@ public partial class OpRadioButton<TValue> : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
+    [CascadingParameter] private EditContext? CascadedEditContext { get; set; }
+
+    private EditContext? _editContext;
+    private FieldIdentifier _fieldIdentifier;
+
+    protected override void OnParametersSet()
+    {
+        // Integra com o EditForm pelo ModelValue (é o campo ligado a @bind-ModelValue). Todos os
+        // radios do grupo compartilham o mesmo FieldIdentifier.
+        if (CascadedEditContext is not null && !ReferenceEquals(_editContext, CascadedEditContext))
+        {
+            _editContext = CascadedEditContext;
+            if (ModelValueExpression is not null)
+            {
+                _fieldIdentifier = FieldIdentifier.Create(ModelValueExpression);
+            }
+        }
+    }
+
     private bool Checked => EqualityComparer<TValue?>.Default.Equals(Value, ModelValue);
 
     private string RootClass => BuildClass(
@@ -45,6 +67,7 @@ public partial class OpRadioButton<TValue> : ComponentBase
         ModelValue = Value;
         await ModelValueChanged.InvokeAsync(Value);
         await OnChange.InvokeAsync(Value);
+        _editContext?.NotifyFieldChanged(_fieldIdentifier);
     }
 
     private static string BuildClass(params string?[] classes)

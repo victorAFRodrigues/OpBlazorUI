@@ -4,7 +4,7 @@
 @inherits OpComponentBase
 @using OpBlazorUI.Base.Components.Overlay
 
-<div class="@RootClass" @attributes="AdditionalAttributes">
+<div class="@RootClass" @ref="_rootRef" @attributes="AdditionalAttributes">
     @* Com algum submenu aberto, o root entra na pilha de overlays: clique fora e Escape fecham. *@
     @if (_open.Count > 0)
     {
@@ -32,7 +32,7 @@
                     <a class="p-megamenu-item-link"
                        href="@root.Url"
                        role="menuitem"
-                       tabindex="0"
+                       tabindex="-1"
                        aria-haspopup="@(hasChildren ? "true" : null)"
                        aria-expanded="@(hasChildren ? (open ? "true" : "false") : null)"
                        @onclick="() => OnSelectAsync(root, hasChildren)"

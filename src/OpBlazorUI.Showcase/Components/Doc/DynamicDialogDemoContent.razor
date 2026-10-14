@@ -1,0 +1,24 @@
+@namespace OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Base.Components.DynamicDialog
+
+<div class="flex flex-col gap-3">
+    <p>Olá, <strong>@Name</strong>! Este conteúdo foi carregado dinamicamente.</p>
+    <div class="flex gap-2">
+        <button type="button" class="p-button p-component" @onclick="CloseOk">
+            <span class="p-button-label">Confirmar</span>
+        </button>
+        <button type="button" class="p-button p-component p-button-text" @onclick="CloseCancel">
+            <span class="p-button-label">Cancelar</span>
+        </button>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] private OpDynamicDialogRef? DialogRef { get; set; }
+
+    [Parameter] public string? Name { get; set; }
+
+    private void CloseOk() => DialogRef?.Close("confirmado");
+
+    private void CloseCancel() => DialogRef?.Close(null);
+}

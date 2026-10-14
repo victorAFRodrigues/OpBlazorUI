@@ -17,6 +17,9 @@ public partial class OpTabPanel : ComponentBase, IDisposable
     [Parameter] public RenderFragment? HeaderTemplate { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Disparado ao acionar o botão de fechar (quando <see cref="Closable"/>).</summary>
+    [Parameter] public EventCallback<OpTabPanel> OnClose { get; set; }
+
     internal int Index { get; set; }
 
     protected override void OnInitialized() => Host?.Register(this);

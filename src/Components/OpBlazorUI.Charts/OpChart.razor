@@ -1,0 +1,25 @@
+@typeparam TItem where TItem : class
+@namespace OpBlazorUI.Charts
+@using ApexCharts
+
+<div class="op-chart @StyleClass" style="@Style">
+    @if (!_interactive)
+    {
+        @if (Placeholder is not null)
+        {
+            @Placeholder
+        }
+        else
+        {
+            <div class="op-chart-placeholder" style="@PlaceholderStyle" aria-hidden="true">
+                <span class="pi pi-chart-bar"></span>
+            </div>
+        }
+    }
+    else
+    {
+        <ApexChart TItem="TItem" Options="EffectiveOptions" Height="Height" Width="Width" Title="Title">
+            @ChildContent
+        </ApexChart>
+    }
+</div>

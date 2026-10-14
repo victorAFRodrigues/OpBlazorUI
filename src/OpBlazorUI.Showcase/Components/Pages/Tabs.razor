@@ -105,6 +105,8 @@
                               new[] { "Header", "string?", "null", "Texto do cabeçalho da aba." },
                               new[] { "Icon", "string?", "null", "Ícone da aba." },
                               new[] { "Disabled", "bool", "false", "Desabilita a aba." },
+                              new[] { "Closable", "bool", "false", "Exibe o ícone de fechar na aba." },
+                              new[] { "OnClose", "EventCallback&lt;OpTabPanel&gt;", "-", "Disparado ao fechar a aba (remova-a da coleção de painéis)." },
                               new[] { "HeaderTemplate", "RenderFragment?", "null", "Cabeçalho customizado." },
                               new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo da aba." }
                           })"/>

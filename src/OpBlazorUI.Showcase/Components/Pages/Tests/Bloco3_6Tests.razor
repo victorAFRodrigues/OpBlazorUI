@@ -1,0 +1,155 @@
+@page "/_tests/bloco3-6"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Accordion
+@using OpBlazorUI.Base.Components.Breadcrumb
+@using OpBlazorUI.Base.Components.DataView
+@using OpBlazorUI.Base.Components.Fieldset
+@using OpBlazorUI.Base.Components.Inplace
+@using OpBlazorUI.Base.Components.MeterGroup
+@using OpBlazorUI.Base.Components.Steps
+@using OpBlazorUI.Base.Components.Tabs
+@using OpBlazorUI.Base.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco3_6Tests.cs). *@
+
+<PageTitle>Testes: bloco 3.6 navegação</PageTitle>
+
+<h1 id="t-title">Testes: bloco 3.6 navegação</h1>
+
+<section id="t-tabs">
+    <OpTabs @bind-ActiveIndex="_tabsActive">
+        <OpTabPanel Header="Primeiro">conteudo-um</OpTabPanel>
+        <OpTabPanel Header="Segundo">conteudo-dois</OpTabPanel>
+        @if (_showThird)
+        {
+            <OpTabPanel Header="Terceiro">conteudo-tres</OpTabPanel>
+        }
+    </OpTabs>
+    <button id="t-tabs-remove" type="button" @onclick="() => _showThird = false">remover</button>
+    <span id="t-tabs-active">@_tabsActive</span>
+</section>
+
+<section id="t-tabs2">
+    <OpTabs>
+        <OpTabPanel Header="A">a</OpTabPanel>
+        <OpTabPanel Header="B">b</OpTabPanel>
+    </OpTabs>
+</section>
+
+<section id="t-accordion">
+    <OpAccordion ActiveIndexes="@_accordion" ActiveIndexesChanged="v => _accordion = v">
+        <OpAccordionPanel Header="Um">um</OpAccordionPanel>
+        <OpAccordionPanel Header="Dois">dois</OpAccordionPanel>
+    </OpAccordion>
+    <span id="t-accordion-active">@(_accordion is null ? "null" : string.Join(",", _accordion))</span>
+</section>
+
+<section id="t-fieldset">
+    <OpFieldset Legend="Dados" Toggleable="true" OnToggle="OnFieldsetToggle">
+        <ChildContent>conteudo-fieldset</ChildContent>
+    </OpFieldset>
+    <span id="t-fieldset-count">@_fieldsetToggles</span>
+</section>
+
+<section id="t-steps">
+    <OpSteps Model="_stepItems" ActiveIndex="@_stepIndex" ActiveIndexChanged="OnStepChanged" OnSelect="OnStepSelect"/>
+    <span id="t-steps-changes">@_stepChanges</span>
+    <span id="t-steps-command">@_stepCommand</span>
+</section>
+
+<section id="t-inplace">
+    <OpInplace Active="@_inplaceActive" ActiveChanged="v => _inplaceActive = v" PreventClick="true" Closable="true" CloseAriaLabel="Fechar">
+        <DisplayTemplate><span id="t-inplace-display">mostrar</span></DisplayTemplate>
+        <ContentTemplate Context="ctx"><span id="t-inplace-content">editando</span></ContentTemplate>
+    </OpInplace>
+    <span id="t-inplace-active">@_inplaceActive</span>
+</section>
+
+<section id="t-breadcrumb">
+    <OpBreadcrumb Model="_bcItems" OnItemClick="OnBreadcrumbClick"/>
+    <span id="t-bc-command">@_bcCommand</span>
+</section>
+
+<section id="t-dataview">
+    <OpDataView TItem="string" Items="_dvItems" Paginator="true" Rows="@_dvRows"
+                RowsChanged="v => _dvRows = v" RowsPerPageOptions="_dvRpp">
+        <ListTemplate Context="ctx">
+            @foreach (var item in ctx.Items)
+            {
+                <div class="dv-item">@item</div>
+            }
+        </ListTemplate>
+    </OpDataView>
+    <span id="t-dv-rows">@_dvRows</span>
+</section>
+
+<section id="t-metergroup">
+    <OpMeterGroup Items="_meterItems" LabelPosition="start">
+        <StartTemplate Context="ctx"><span id="t-meter-start">inicio</span></StartTemplate>
+    </OpMeterGroup>
+    <OpMeterGroup Items="_meterItems" LabelPosition="end">
+        <EndTemplate Context="ctx"><span id="t-meter-end">fim</span></EndTemplate>
+    </OpMeterGroup>
+</section>
+
+@code {
+    private int _tabsActive;
+    private bool _showThird = true;
+
+    private IReadOnlyList<int>? _accordion;
+
+    private int _fieldsetToggles;
+
+    private int _stepIndex;
+    private int _stepChanges;
+    private string _stepCommand = "";
+    private List<OpMenuItem> _stepItems = new();
+
+    private bool _inplaceActive = true;
+
+    private string _bcCommand = "";
+    private List<OpMenuItem> _bcItems = new();
+
+    private int _dvRows = 2;
+    private readonly IReadOnlyList<int> _dvRpp = new[] { 2, 5, 10 };
+    private readonly IReadOnlyList<string> _dvItems = new[] { "um", "dois", "tres", "quatro", "cinco", "seis", "sete" };
+
+    private readonly List<OpMeterItem> _meterItems = new()
+    {
+        new OpMeterItem { Label = "A", Value = 30, Color = "#3b82f6" },
+        new OpMeterItem { Label = "B", Value = 30, Color = "#22c55e" }
+    };
+
+    protected override void OnInitialized()
+    {
+        _stepItems = new()
+        {
+            new OpMenuItem { Label = "Primeiro" },
+            new OpMenuItem { Label = "Segundo", Command = () => _stepCommand = "dois" }
+        };
+
+        _bcItems = new()
+        {
+            new OpMenuItem { Label = "Um", Url = "/um", Command = () => _bcCommand = "um", Target = "_blank" },
+            new OpMenuItem { Label = "Oculto", Visible = false },
+            new OpMenuItem { Label = "Desabilitado", Disabled = true },
+            new OpMenuItem { Label = "Ultimo" }
+        };
+    }
+
+    private void OnFieldsetToggle(bool collapsed) => _fieldsetToggles++;
+
+    private void OnBreadcrumbClick(OpMenuItem item)
+    {
+    }
+
+    private void OnStepChanged(int index)
+    {
+        _stepIndex = index;
+        _stepChanges++;
+    }
+
+    private void OnStepSelect(OpMenuItem item)
+    {
+    }
+}

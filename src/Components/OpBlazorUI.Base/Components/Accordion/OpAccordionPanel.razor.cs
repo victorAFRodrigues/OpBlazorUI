@@ -7,6 +7,7 @@ namespace OpBlazorUI.Base.Components.Accordion;
 public partial class OpAccordionPanel : OpComponentBase
 {
     private readonly string _uid = "opacc_" + Guid.NewGuid().ToString("N")[..8];
+    private ElementReference _headerRef;
 
     [CascadingParameter] internal OpAccordion? Parent { get; set; }
 
@@ -44,6 +45,34 @@ public partial class OpAccordionPanel : OpComponentBase
         await Parent.ToggleAsync(Index);
     }
 
-    private Task OnKeyDownAsync(KeyboardEventArgs e)
-        => e.Code is "Enter" or "Space" or "NumpadEnter" ? ToggleAsync() : Task.CompletedTask;
+    internal async Task FocusAsync()
+    {
+        try
+        {
+            await _headerRef.FocusAsync();
+        }
+        catch
+        {
+            // elemento já removido
+        }
+    }
+
+    private async Task OnKeyDownAsync(KeyboardEventArgs e)
+    {
+        switch (e.Code)
+        {
+            case "Enter":
+            case "Space":
+            case "NumpadEnter":
+                await ToggleAsync();
+                break;
+
+            case "ArrowUp":
+            case "ArrowDown":
+            case "Home":
+            case "End":
+                Parent?.MoveFocus(Index, e.Code);
+                break;
+        }
+    }
 }

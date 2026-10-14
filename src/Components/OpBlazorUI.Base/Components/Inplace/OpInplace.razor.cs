@@ -44,7 +44,7 @@ public partial class OpInplace : OpComponentBase
 
     private async Task DeactivateAsync()
     {
-        if (Disabled || PreventClick || !Active)
+        if (Disabled || !Active)
         {
             return;
         }

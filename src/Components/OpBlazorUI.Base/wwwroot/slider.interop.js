@@ -109,10 +109,19 @@ export function init(dotNet, root, orientation) {
         });
     };
 
+    // Setas/PgUp/Home não devem rolar a página ao ajustar o slider.
+    const scrollKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'];
+    state.keydown = function (e) {
+        if (scrollKeys.indexOf(e.key) >= 0) {
+            e.preventDefault();
+        }
+    };
+
     root.addEventListener('pointerdown', state.down);
     root.addEventListener('pointermove', state.move);
     root.addEventListener('pointerup', state.up);
     root.addEventListener('pointercancel', state.up);
+    root.addEventListener('keydown', state.keydown);
     states.set(root, state);
 }
 
@@ -126,5 +135,6 @@ export function dispose(root) {
     root.removeEventListener('pointermove', state.move);
     root.removeEventListener('pointerup', state.up);
     root.removeEventListener('pointercancel', state.up);
+    root.removeEventListener('keydown', state.keydown);
     states.delete(root);
 }

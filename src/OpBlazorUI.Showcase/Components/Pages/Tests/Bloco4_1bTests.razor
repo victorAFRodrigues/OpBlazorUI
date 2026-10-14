@@ -1,0 +1,41 @@
+@page "/_tests/bloco4-1b"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Base.Components.Accordion
+@using OpBlazorUI.Base.Components.Tabs
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Bloco4_1bTests.cs). *@
+
+<PageTitle>Testes: bloco 4.1b abas e accordion</PageTitle>
+
+<h1 id="t-title">Testes: bloco 4.1b abas e accordion</h1>
+
+<section id="t-tabs">
+    <OpTabs @bind-ActiveIndex="_tabsActive">
+        <OpTabPanel Header="Um">conteudo-um</OpTabPanel>
+        <OpTabPanel Header="Dois" Disabled="true">conteudo-dois</OpTabPanel>
+        <OpTabPanel Header="Tres">conteudo-tres</OpTabPanel>
+    </OpTabs>
+    <span id="t-tabs-active">@_tabsActive</span>
+</section>
+
+<section id="t-tabview">
+    <OpTabView @bind-ActiveIndex="_viewActive">
+        <OpTabPanel Header="Alfa">view-alfa</OpTabPanel>
+        <OpTabPanel Header="Beta" Disabled="true">view-beta</OpTabPanel>
+        <OpTabPanel Header="Gama">view-gama</OpTabPanel>
+    </OpTabView>
+    <span id="t-tabview-active">@_viewActive</span>
+</section>
+
+<section id="t-accordion">
+    <OpAccordion>
+        <OpAccordionPanel Header="A">painel-a</OpAccordionPanel>
+        <OpAccordionPanel Header="B" Disabled="true">painel-b</OpAccordionPanel>
+        <OpAccordionPanel Header="C">painel-c</OpAccordionPanel>
+    </OpAccordion>
+</section>
+
+@code {
+    private int _tabsActive;
+    private int _viewActive;
+}

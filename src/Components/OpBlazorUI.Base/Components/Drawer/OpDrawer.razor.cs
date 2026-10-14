@@ -47,6 +47,9 @@ public partial class OpDrawer : OpModalBase
 
     [Parameter] public string AriaCloseLabel { get; set; } = "Close";
 
+    /// <summary>Trava a rolagem do body enquanto o drawer está aberto.</summary>
+    [Parameter] public bool BlockScroll { get; set; }
+
     [Parameter] public EventCallback OnShow { get; set; }
 
     [Parameter] public EventCallback OnHide { get; set; }
@@ -64,9 +67,20 @@ public partial class OpDrawer : OpModalBase
         _headerId = $"op-drawer-title-{Guid.NewGuid():N}";
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        // O pai pode fechar via binding: restaura o foco antes de o elemento sair do DOM.
+        if (!Visible)
+        {
+            await RestoreFocusAsync(_root);
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Visible && !_lastRenderedVisible)
+        var wasVisible = _lastRenderedVisible;
+
+        if (Visible && !wasVisible)
         {
             await OnShow.InvokeAsync();
 
@@ -75,12 +89,17 @@ public partial class OpDrawer : OpModalBase
             {
                 try
                 {
-                    await FocusTrapInitAsync(_root);
+                    await InitFocusTrapAsync(_root);
                 }
                 catch
                 {
                     // ignore
                 }
+            }
+
+            if (BlockScroll)
+            {
+                await BlockScrollAsync();
             }
 
             if (FocusOnShow)
@@ -95,16 +114,9 @@ public partial class OpDrawer : OpModalBase
                 }
             }
         }
-        else if (!Visible && _lastRenderedVisible && Modal)
+        else if (!Visible && wasVisible)
         {
-            try
-            {
-                await FocusTrapDisposeAsync(_root);
-            }
-            catch
-            {
-                // ignore
-            }
+            await UnblockScrollAsync();
         }
 
         _lastRenderedVisible = Visible;
@@ -131,16 +143,9 @@ public partial class OpDrawer : OpModalBase
     private async Task CloseAsync()
     {
         // Restaura o foco antes de o drawer sair do DOM (elemento ainda anexado para o JS).
-        if (Modal && Visible)
+        if (Modal)
         {
-            try
-            {
-                await FocusTrapDisposeAsync(_root);
-            }
-            catch
-            {
-                // ignore
-            }
+            await RestoreFocusAsync(_root);
         }
 
         Visible = false;
@@ -160,4 +165,11 @@ public partial class OpDrawer : OpModalBase
     // dentro do diálogo fecha antes), mesmo com o foco fora do diálogo.
     private EventCallback EscapeCallback =>
         CloseOnEscape ? EventCallback.Factory.Create(this, CloseAsync) : default;
+
+    public override async ValueTask DisposeAsync()
+    {
+        await UnblockScrollAsync();
+        await RestoreFocusAsync(_root);
+        await base.DisposeAsync();
+    }
 }

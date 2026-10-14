@@ -342,6 +342,10 @@
                               new[] { "ShowHeader", "bool", "true", "Exibe o cabeçalho." },
                               new[] { "Position", "string", "center", "Posição: <code>center</code>, <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code>, <code>topleft</code>, <code>topright</code>, <code>bottomleft</code>, <code>bottomright</code>." },
                               new[] { "Maximizable", "bool", "false", "Habilita o modo tela cheia." },
+                              new[] { "Draggable", "bool", "true", "Permite arrastar o diálogo pelo cabeçalho." },
+                              new[] { "Resizable", "bool", "false", "Permite redimensionar o diálogo pelas bordas/cantos." },
+                              new[] { "KeepInViewport", "bool", "true", "Mantém o diálogo dentro da viewport ao arrastar/redimensionar." },
+                              new[] { "BlockScroll", "bool", "false", "Trava a rolagem do body enquanto o diálogo está aberto." },
                               new[] { "FocusOnShow", "bool", "true", "Foca o diálogo ao abrir." },
                               new[] { "Style", "string?", "null", "Estilos inline do diálogo." },
                               new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
@@ -428,7 +432,7 @@
                     <ul>
                         <li>Não há template <code>Headless</code> nativo; a interface precisa ser recriada com <code>ShowHeader="false"</code> e conteúdo próprio.</li>
                         <li>A opção <code>breakpoints</code> (largura responsiva) ainda não foi portada — use CSS com media queries.</li>
-                        <li>Arrastar (<code>draggable</code>) e redimensionar (<code>resizable</code>) ainda não foram portados.</li>
+                        <li>Arrastar (<code>Draggable</code>) e redimensionar (<code>Resizable</code>) foram portados; o redimensionamento ajusta largura/altura e posição (norte/oeste), sem persistência da geometria.</li>
                         <li>O fechamento é instantâneo: a classe <code>p-dialog-leave-active</code> não é aplicada, então não há animação de saída.</li>
                         <li>O atributo <code>id</code> de <code>AdditionalAttributes</code> é repassado à máscara, não ao contêiner do diálogo.</li>
                         <li><code>aria-expanded</code> e <code>aria-controls</code> do gatilho precisam ser geridos manualmente.</li>

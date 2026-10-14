@@ -26,17 +26,29 @@ public partial class OpAnimateOnScroll : OpComponentBase
 
     private string RootClass => Class(StyleClass);
 
+    private string? _appliedSignature;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        var signature = $"{EnterClass}\u001f{LeaveClass}\u001f{Threshold.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+
+        if (!firstRender && signature == _appliedSignature)
         {
-            await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "animateOnScrollInit", _host, new
-            {
-                enterClass = EnterClass,
-                leaveClass = LeaveClass,
-                threshold = Threshold
-            });
+            return;
         }
+
+        if (_appliedSignature is not null)
+        {
+            await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "animateOnScrollDispose", _host);
+        }
+
+        await Interop.InvokeVoidAsync(OpInterop.DirectivesInterop, "animateOnScrollInit", _host, new
+        {
+            enterClass = EnterClass,
+            leaveClass = LeaveClass,
+            threshold = Threshold
+        });
+        _appliedSignature = signature;
     }
 
     public override async ValueTask DisposeAsync()

@@ -630,6 +630,10 @@ public partial class OpCascadeSelect<TValue> : OpInputBase<TValue>
         builder.OpenElement(seq++, "li");
         builder.AddAttribute(seq++, "class", optionClass);
         builder.AddAttribute(seq++, "role", "treeitem");
+        if (focused && _overlayVisible)
+        {
+            builder.AddAttribute(seq++, "id", $"{_id}_focused");
+        }
         builder.AddAttribute(seq++, "aria-label", GetNodeLabel(option, depth));
         builder.AddAttribute(seq++, "aria-selected", selected ? "true" : "false");
         builder.AddAttribute(seq++, "aria-expanded", isGroup ? (expanded ? "true" : "false") : null);

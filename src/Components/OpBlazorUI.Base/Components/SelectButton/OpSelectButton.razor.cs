@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Components.Select;
 
@@ -13,6 +15,7 @@ public partial class OpSelectButton<TValue> : OpInputBase<TValue>
     [Parameter] public bool Multiple { get; set; }
     [Parameter] public IReadOnlyList<TValue>? MultipleValue { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TValue>?> MultipleValueChanged { get; set; }
+    [Parameter] public Expression<Func<IReadOnlyList<TValue>?>>? MultipleValueExpression { get; set; }
     [Parameter] public bool AllowEmpty { get; set; } = true;
     [Parameter] public bool Fluid { get; set; }
     [Parameter] public string? Size { get; set; }
@@ -20,6 +23,16 @@ public partial class OpSelectButton<TValue> : OpInputBase<TValue>
     [Parameter] public RenderFragment<(TValue Option, int Index)>? ItemTemplate { get; set; }
 
     [Parameter] public EventCallback<TValue?> OnChange { get; set; }
+
+    private FieldIdentifier _multipleValueField;
+
+    protected override void OnParametersSet()
+    {
+        if (MultipleValueExpression is not null && EditContext is not null)
+        {
+            _multipleValueField = FieldIdentifier.Create(MultipleValueExpression);
+        }
+    }
 
     private IEnumerable<object> AllOptions => Options ?? Array.Empty<object>();
 
@@ -97,6 +110,7 @@ public partial class OpSelectButton<TValue> : OpInputBase<TValue>
             MultipleValue = list;
             await MultipleValueChanged.InvokeAsync(list);
             await OnChange.InvokeAsync(value);
+            EditContext?.NotifyFieldChanged(_multipleValueField);
         }
         else
         {
