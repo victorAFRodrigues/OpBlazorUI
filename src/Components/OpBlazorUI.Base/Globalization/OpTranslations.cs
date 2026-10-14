@@ -138,6 +138,8 @@ public static class OpTranslations
             ZoomOut = "Reduzir",
             RotateRight = "Girar para a direita",
             RotateLeft = "Girar para a esquerda",
+            ThumbnailPrev = "Miniaturas anteriores",
+            ThumbnailNext = "Próximas miniaturas",
             ListLabel = "Lista de opções",
             DropdownTrigger = "Mostrar opções",
             SelectColor = "Selecionar uma cor",

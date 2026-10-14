@@ -1,11 +1,17 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using OpBlazorUI.Base.Components.Common;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Image;
 
 public partial class OpImage : OpComponentBase
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private const double ZoomStep = 0.1;
     private const double MinScale = 0.5;
     private const double MaxScale = 1.5;
@@ -29,7 +35,7 @@ public partial class OpImage : OpComponentBase
 
     [Parameter] public string? ImageClass { get; set; }
     [Parameter] public string? ImageStyle { get; set; }
-    [Parameter] public string? AriaZoomImage { get; set; } = "Visualizar imagem";
+    [Parameter] public string? AriaZoomImage { get; set; }
 
     [Parameter] public RenderFragment? IndicatorTemplate { get; set; }
     [Parameter] public RenderFragment? ImageTemplate { get; set; }

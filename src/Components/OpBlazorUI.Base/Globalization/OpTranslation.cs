@@ -157,6 +157,8 @@ public sealed class OpAria
     public string ZoomOut { get; set; } = "Zoom Out";
     public string RotateRight { get; set; } = "Rotate Right";
     public string RotateLeft { get; set; } = "Rotate Left";
+    public string ThumbnailPrev { get; set; } = "Previous thumbnails";
+    public string ThumbnailNext { get; set; } = "Next thumbnails";
     public string ListLabel { get; set; } = "Option List";
     public string DropdownTrigger { get; set; } = "Show options";
     public string SelectColor { get; set; } = "Select a color";
