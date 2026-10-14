@@ -34,8 +34,8 @@
                                role="searchbox"
                                autocomplete="off"
                                value="@_filterValue"
-                               placeholder="Filter"
-                               aria-label="Filter"
+                               placeholder="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
+                               aria-label="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
                                @oninput="OnFilterInput"/>
                         <OpInputIcon><i class="p-icon pi pi-search"></i></OpInputIcon>
                     </OpIconField>
@@ -130,7 +130,7 @@
                     }
                     else
                     {
-                        @(!string.IsNullOrEmpty(_filterValue) ? EmptyFilterMessage : EmptyMessage)
+                        @(!string.IsNullOrEmpty(_filterValue) ? (EmptyFilterMessage ?? Tr.EmptyFilterMessage) : (EmptyMessage ?? Tr.EmptyMessage))
                     }
                 </li>
             }

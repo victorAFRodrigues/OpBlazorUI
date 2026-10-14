@@ -7,11 +7,17 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Components.Select;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.CascadeSelect;
 
 public partial class OpCascadeSelect<TValue> : OpInputBase<TValue>
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private ElementReference _rootRef;
 
     private string _id = "";

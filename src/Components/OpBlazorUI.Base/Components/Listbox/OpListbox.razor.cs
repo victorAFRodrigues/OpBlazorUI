@@ -4,11 +4,17 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Components.Select;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Listbox;
 
 public partial class OpListbox<TValue> : OpInputBase<TValue>
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private string _id = "";
     private ElementReference _listRef;
     private string _filterValue = "";
@@ -30,6 +36,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     [Parameter] public bool Checkmark { get; set; }
     [Parameter] public bool HighlightOnSelect { get; set; } = true;
     [Parameter] public bool Filter { get; set; }
+    [Parameter] public string? FilterPlaceholder { get; set; }
     [Parameter] public string? FilterBy { get; set; }
     [Parameter] public bool Group { get; set; }
     [Parameter] public string OptionGroupLabel { get; set; } = "label";
@@ -43,8 +50,8 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     [Parameter] public bool Required { get; set; }
     [Parameter] public int TabIndex { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
-    [Parameter] public string? EmptyMessage { get; set; } = "No results found";
-    [Parameter] public string? EmptyFilterMessage { get; set; } = "No results found";
+    [Parameter] public string? EmptyMessage { get; set; }
+    [Parameter] public string? EmptyFilterMessage { get; set; }
     [Parameter] public string? ListStyleClass { get; set; }
     [Parameter] public string? InputId { get; set; }
 
@@ -196,11 +203,11 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
     {
         if (!Filter || string.IsNullOrEmpty(_filterValue)) return true;
         var label = GetOptionLabel(option);
-        if (label.Contains(_filterValue, StringComparison.CurrentCultureIgnoreCase)) return true;
+        if (OpText.Contains(label, _filterValue)) return true;
         if (!string.IsNullOrEmpty(FilterBy))
         {
             var value = OpSelectOption.GetProperty(option, FilterBy)?.ToString();
-            if (value is not null && value.Contains(_filterValue, StringComparison.CurrentCultureIgnoreCase))
+            if (value is not null && OpText.Contains(value, _filterValue))
                 return true;
         }
 
@@ -448,7 +455,7 @@ public partial class OpListbox<TValue> : OpInputBase<TValue>
         for (var i = 0; i < visible.Count; i++)
         {
             var idx = (_focusedOptionIndex + 1 + i) % visible.Count;
-            if (GetOptionLabel(visible[idx]).StartsWith(key, StringComparison.CurrentCultureIgnoreCase))
+            if (OpText.StartsWith(GetOptionLabel(visible[idx]), key))
             {
                 _focusedOptionIndex = idx;
                 StateHasChanged();

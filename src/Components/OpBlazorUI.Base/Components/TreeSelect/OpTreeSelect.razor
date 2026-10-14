@@ -96,8 +96,8 @@
                                role="searchbox"
                                autocomplete="off"
                                value="@_filterValue"
-                               placeholder="Filter"
-                               aria-label="Filter"
+                               placeholder="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
+                               aria-label="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
                                @oninput="OnFilterInput"/>
                         <OpInputIcon><i class="p-icon pi pi-search"></i></OpInputIcon>
                     </OpIconField>
@@ -135,7 +135,7 @@
                             }
                             else
                             {
-                                <div class="p-treeselect-empty-message">@EmptyMessage</div>
+                                <div class="p-treeselect-empty-message">@(EmptyMessage ?? Tr.EmptyMessage)</div>
                             }
                         }
                         else

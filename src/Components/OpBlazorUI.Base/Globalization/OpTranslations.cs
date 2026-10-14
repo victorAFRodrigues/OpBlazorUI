@@ -53,6 +53,7 @@ public static class OpTranslations
         EmptySearchMessage = "Nenhum resultado encontrado",
         FileChosenMessage = "{0} arquivos escolhidos",
         NoFileChosenMessage = "Nenhum arquivo escolhido",
+        FilterPlaceholder = "Filtrar",
 
         DayNames = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"],
         DayNamesShort = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"],
@@ -137,6 +138,7 @@ public static class OpTranslations
             RotateRight = "Girar para a direita",
             RotateLeft = "Girar para a esquerda",
             ListLabel = "Lista de opções",
+            DropdownTrigger = "Mostrar opções",
             SelectColor = "Selecionar uma cor",
             RemoveLabel = "Remover",
             BrowseFiles = "Escolher arquivos",

@@ -1,11 +1,17 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Select;
 
 public partial class OpSelect<TValue> : OpInputBase<TValue>
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private ElementReference _rootRef;
 
     private string _id = "";
@@ -25,6 +31,7 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
     [Parameter] public string? OptionDisabled { get; set; }
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public bool Filter { get; set; }
+    [Parameter] public string? FilterPlaceholder { get; set; }
     [Parameter] public string? FilterBy { get; set; }
     [Parameter] public bool Checkmark { get; set; }
     [Parameter] public bool ShowClear { get; set; }
@@ -42,8 +49,8 @@ public partial class OpSelect<TValue> : OpInputBase<TValue>
     [Parameter] public int VirtualScrollItemSize { get; set; } = 38;
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string? DropdownIcon { get; set; }
-    [Parameter] public string? EmptyMessage { get; set; } = "No results found";
-    [Parameter] public string? EmptyFilterMessage { get; set; } = "No results found";
+    [Parameter] public string? EmptyMessage { get; set; }
+    [Parameter] public string? EmptyFilterMessage { get; set; }
     [Parameter] public int TabIndex { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? InputId { get; set; }

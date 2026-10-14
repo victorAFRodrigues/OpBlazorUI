@@ -57,6 +57,9 @@ public sealed class OpTranslation
     public string FileChosenMessage { get; set; } = "{0} files chosen";
     public string NoFileChosenMessage { get; set; } = "No file chosen";
 
+    /// <summary>Placeholder/rótulo do campo de filtro embutido nos seletores (extensão nossa).</summary>
+    public string FilterPlaceholder { get; set; } = "Filter";
+
     // Data / hora (DatePicker).
     public string[] DayNames { get; set; } =
         ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -152,6 +155,7 @@ public sealed class OpAria
     public string RotateRight { get; set; } = "Rotate Right";
     public string RotateLeft { get; set; } = "Rotate Left";
     public string ListLabel { get; set; } = "Option List";
+    public string DropdownTrigger { get; set; } = "Show options";
     public string SelectColor { get; set; } = "Select a color";
     public string RemoveLabel { get; set; } = "Remove";
     public string BrowseFiles { get; set; } = "Browse Files";

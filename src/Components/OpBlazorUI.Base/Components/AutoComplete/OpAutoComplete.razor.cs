@@ -5,12 +5,18 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Components.Select;
+using OpBlazorUI.Base.Globalization;
 using OpBlazorUI.Base.Models;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.AutoComplete;
 
 public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private ElementReference _rootRef;
 
     private string _id = "";
@@ -66,7 +72,7 @@ public partial class OpAutoComplete<TValue> : OpInputBase<TValue>
     [Parameter] public bool Fluid { get; set; }
     [Parameter] public string? ScrollHeight { get; set; } = "200px";
     [Parameter] public bool Loading { get; set; }
-    [Parameter] public string? EmptyMessage { get; set; } = "No results found";
+    [Parameter] public string? EmptyMessage { get; set; }
     [Parameter] public int TabIndex { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? AriaLabelledBy { get; set; }

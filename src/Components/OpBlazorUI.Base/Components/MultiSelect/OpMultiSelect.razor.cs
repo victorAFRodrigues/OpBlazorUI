@@ -2,11 +2,17 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
 using OpBlazorUI.Base.Components.Select;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.MultiSelect;
 
 public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private ElementReference _rootRef;
     private ElementReference _listRef;
 
@@ -37,6 +43,7 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
     /// <summary>Texto exibido quando <see cref="MaxSelectedLabels"/> é excedido. Use <c>{0}</c> para o total.</summary>
     [Parameter] public string? SelectedItemsLabel { get; set; }
     [Parameter] public bool Filter { get; set; }
+    [Parameter] public string? FilterPlaceholder { get; set; }
     [Parameter] public bool ShowHeader { get; set; } = true;
     [Parameter] public bool ShowToggleAll { get; set; } = true;
     [Parameter] public bool HighlightOnSelect { get; set; } = true;
@@ -54,8 +61,8 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
     [Parameter] public int VirtualScrollItemSize { get; set; } = 38;
     [Parameter] public bool Loading { get; set; }
     [Parameter] public string? DropdownIcon { get; set; }
-    [Parameter] public string? EmptyMessage { get; set; } = "No results found";
-    [Parameter] public string? EmptyFilterMessage { get; set; } = "No results found";
+    [Parameter] public string? EmptyMessage { get; set; }
+    [Parameter] public string? EmptyFilterMessage { get; set; }
     [Parameter] public int TabIndex { get; set; }
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? InputId { get; set; }
@@ -205,7 +212,7 @@ public partial class OpMultiSelect<TValue> : OpInputBase<IReadOnlyList<TValue>>
     {
         if (!Filter || string.IsNullOrEmpty(_filterValue)) return true;
         var label = GetOptionLabel(option);
-        return label.Contains(_filterValue, StringComparison.CurrentCultureIgnoreCase);
+        return OpText.Contains(label, _filterValue);
     }
 
     private bool HasVisibleOptions
@@ -611,7 +618,7 @@ private async Task CloseAsync()
         for (var i = 0; i < visible.Count; i++)
         {
             var idx = (_focusedOptionIndex + 1 + i) % visible.Count;
-            if (GetOptionLabel(visible[idx]).StartsWith(key, StringComparison.CurrentCultureIgnoreCase))
+            if (OpText.StartsWith(GetOptionLabel(visible[idx]), key))
             {
                 _focusedOptionIndex = idx;
                 StateHasChanged();
