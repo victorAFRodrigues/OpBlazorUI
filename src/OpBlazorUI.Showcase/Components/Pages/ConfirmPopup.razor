@@ -1,9 +1,9 @@
 @page "/confirmpopup"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.ConfirmPopup
-@using OpBlazorUI.Base.Components.ConfirmDialog.Models
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.ConfirmPopup
+@using OpBlazorUI.Components.ConfirmDialog.Models
+@using OpBlazorUI.Components.Button
 
 <PageTitle>ConfirmPopup - OpBlazorUI</PageTitle>
 
@@ -266,9 +266,9 @@
     private void HandleHide(ConfirmEvent e) => _lastHide = e.Accepted ? "aceito" : "rejeitado";
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.ConfirmPopup
-        @using OpBlazorUI.Base.Components.ConfirmDialog.Models
-        @using OpBlazorUI.Base.Components.Button
+        @using OpBlazorUI.Components.ConfirmPopup
+        @using OpBlazorUI.Components.ConfirmDialog.Models
+        @using OpBlazorUI.Components.Button
 
         <OpConfirmPopup @ref="_popup" Message="Tem certeza?" />
         """;

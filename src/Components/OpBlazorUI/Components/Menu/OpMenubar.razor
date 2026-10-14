@@ -1,0 +1,30 @@
+@namespace OpBlazorUI.Components.Menu
+@using OpBlazorUI.Models
+@using OpBlazorUI.Components.Common
+@inherits OpComponentBase
+@using OpBlazorUI.Components.Overlay
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @* Com algum submenu aberto, o root entra na pilha de overlays: clique fora e Escape fecham. *@
+    @if (_open.Count > 0)
+    {
+        <OpOverlayAttach AutoZIndex="false" OnOutsideClick="CloseAllAsync" OnEscape="CloseAllAsync"/>
+    }
+    @if (StartTemplate is not null)
+    {
+        <div class="p-menubar-start">@StartTemplate</div>
+    }
+
+    <OpMenuItems Items="Model"
+                 Prefix="menubar"
+                 Root="true"
+                 Orientation="horizontal"
+                 IsOpen="IsOpen"
+                 OnToggle="ToggleAsync"
+                 OnItemClick="OnLeafClickAsync"/>
+
+    @if (EndTemplate is not null)
+    {
+        <div class="p-menubar-end">@EndTemplate</div>
+    }
+</div>

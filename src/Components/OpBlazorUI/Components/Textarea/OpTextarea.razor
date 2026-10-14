@@ -1,0 +1,21 @@
+@namespace OpBlazorUI.Components.Textarea
+@using OpBlazorUI.Components.Forms
+@inherits OpInputBase<string>
+
+<textarea id="@Id"
+          name="@(Name ?? NameAttributeValue)"
+          class="@RootClass"
+          placeholder="@Placeholder"
+          maxlength="@MaxLength"
+          autocomplete="@Autocomplete"
+          value="@CurrentValue"
+          aria-label="@AriaLabel"
+          aria-invalid="@(IsInvalid ? "true" : null)"
+          disabled="@Disabled"
+          readonly="@Readonly"
+          @oninput="HandleInput"
+          @onchange="HandleChange"
+          @onfocus="OnFocus"
+          @onblur="HandleBlur"
+          @ref="_element"
+          @attributes="AdditionalAttributes"></textarea>

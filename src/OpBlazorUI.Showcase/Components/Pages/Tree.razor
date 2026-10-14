@@ -1,10 +1,10 @@
 @page "/tree"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Tree
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.InputSwitch
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.Tree
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.InputSwitch
+@using OpBlazorUI.Models
 
 <PageTitle>Tree - OpBlazorUI</PageTitle>
 
@@ -474,8 +474,8 @@
     };
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Tree
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.Tree
+        @using OpBlazorUI.Models
 
         <OpTree Nodes="_nodes" />
 

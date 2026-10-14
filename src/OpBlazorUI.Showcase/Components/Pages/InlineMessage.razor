@@ -1,7 +1,7 @@
 @page "/inlinemessage"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.InlineMessage
+@using OpBlazorUI.Components.InlineMessage
 
 <PageTitle>InlineMessage - OpBlazorUI</PageTitle>
 
@@ -169,7 +169,7 @@
     private static readonly string _richText = "Validação concluída. <a href=\"#\">Ver relatório</a>";
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InlineMessage
+        @using OpBlazorUI.Components.InlineMessage
 
         <OpInlineMessage Severity="success" Text="Pedido enviado." />
         <OpInlineMessage Severity="info">Com <a href="#">link</a></OpInlineMessage>

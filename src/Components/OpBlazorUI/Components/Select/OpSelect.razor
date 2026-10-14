@@ -1,0 +1,265 @@
+@namespace OpBlazorUI.Components.Select
+@using OpBlazorUI.Components.Overlay
+@using OpBlazorUI.Components.IconField
+@using OpBlazorUI.Components.InputIcon
+@using OpBlazorUI.Components.VirtualScroller
+@using OpBlazorUI.Components.Forms
+@typeparam TValue
+@inherits OpInputBase<TValue>
+
+<span class="@RootClass" @ref="_rootRef" @onkeydown="OnRootKeydown"
+      @attributes="AdditionalAttributes">
+    <input type="hidden" name="@NameAttributeValue" value="@CurrentValueAsString"/>
+    @if (!Editable)
+    {
+        <span class="@LabelClass"
+              id="@_id"
+              role="combobox"
+              tabindex="@(Disabled ? -1 : TabIndex)"
+              aria-haspopup="listbox"
+              aria-expanded="@(_overlayVisible ? "true" : "false")"
+              aria-controls="@(_overlayVisible ? $"{_id}_list" : null)"
+              aria-activedescendant="@(_focusedOptionIndex >= 0 ? $"{_id}_{_focusedOptionIndex}" : null)"
+              aria-label="@AriaLabel"
+              aria-disabled="@(Disabled ? "true" : null)"
+              @onfocus="OnLabelFocus"
+              @onblur="OnLabelBlur"
+              @onclick="OnLabelClick"
+              @onkeydown="OnLabelKeydown">
+            @if (SelectedItemTemplate != null && Value is not null)
+            {
+                @SelectedItemTemplate(Value)
+            }
+            else if (HasSelection)
+            {
+                @CurrentLabel
+            }
+            else
+            {
+                @(Placeholder ?? "\u00A0")
+            }
+        </span>
+    }
+    else
+    {
+        <input type="text"
+               class="p-select-label"
+               id="@_id"
+               role="combobox"
+               aria-haspopup="listbox"
+               aria-expanded="@(_overlayVisible ? "true" : "false")"
+               aria-controls="@(_overlayVisible ? $"{_id}_list" : null)"
+               placeholder="@Placeholder"
+               aria-label="@AriaLabel"
+               disabled="@Disabled"
+               value="@(_overlayVisible && !string.IsNullOrEmpty(_filterValue) ? _filterValue : CurrentLabel)"
+               @oninput="OnEditableInput"
+               @onfocus="OnLabelFocus"
+               @onblur="OnLabelBlur"
+               @onclick="OnLabelClick"
+               @onkeydown="OnLabelKeydown"/>
+    }
+
+    @if (ShowClear && !Disabled && HasSelection)
+    {
+        @if (ClearIconTemplate != null)
+        {
+            <span class="p-select-clear-icon" @onclick="Clear">@ClearIconTemplate</span>
+        }
+        else
+        {
+            <i class="p-icon pi pi-times p-select-clear-icon" @onclick="Clear"></i>
+        }
+    }
+
+    <div class="p-select-dropdown" role="button" aria-label="@Tr.Aria.DropdownTrigger" aria-haspopup="listbox"
+         aria-expanded="@(_overlayVisible ? "true" : "false")" @onclick="OnDropdownClick">
+        @if (Loading)
+        {
+            @if (LoadingIconTemplate != null)
+            {
+                @LoadingIconTemplate
+            }
+            else
+            {
+                <span class="p-select-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+            }
+        }
+        else if (DropdownIconTemplate != null)
+        {
+            @DropdownIconTemplate
+        }
+        else if (!string.IsNullOrEmpty(DropdownIcon))
+        {
+            <span class="p-select-dropdown-icon @DropdownIcon"></span>
+        }
+        else
+        {
+            <i class="p-icon pi pi-chevron-down p-select-dropdown-icon"></i>
+        }
+    </div>
+
+    @if (_panelRendered)
+    {
+        <div class="@PanelClass"
+             @onanimationend="OnPanelAnimationEnd">
+            <OpOverlayAttach Anchor="_rootRef" MatchWidth="true" Gap="2" OnOutsideClick="CloseAsync" OnEscape="CloseAsync"/>
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+
+            @HeaderTemplate
+
+            @if (Filter)
+            {
+                <div class="p-select-header" @onclick:stopPropagation="true">
+                    <OpIconField IconPosition="left">
+                        <input type="text"
+                               class="p-inputtext p-select-filter"
+                               role="searchbox"
+                               autocomplete="off"
+                               value="@_filterValue"
+                               placeholder="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
+                               aria-owns="@($"{_id}_list")"
+                               aria-label="@(FilterPlaceholder ?? Tr.FilterPlaceholder)"
+                               @oninput="OnFilterInput"
+                               @onkeydown="OnLabelKeydown"/>
+                        <OpInputIcon><i class="p-icon pi pi-search"></i></OpInputIcon>
+                    </OpIconField>
+                </div>
+            }
+
+            @if (VirtualScroll && !Group && VisibleOptions.Count > 0)
+            {
+                <OpVirtualScroller TItem="object"
+                                   Items="VisibleOptions"
+                                   ItemSize="VirtualScrollItemSize"
+                                   ScrollHeight="ScrollHeight"
+                                   StyleClass="p-select-list-container">
+                    <ContentTemplate Context="ctx">
+                        @BuildList(ctx.Items)
+                    </ContentTemplate>
+                </OpVirtualScroller>
+            }
+            else
+            {
+                <div class="p-select-list-container" style="max-height:@(ScrollHeight ?? "auto")">
+                    @BuildList(VisibleOptions)
+                </div>
+            }
+
+            @FooterTemplate
+
+            <span role="presentation" class="p-hidden-accessible p-hidden-focusable" tabindex="0"></span>
+        </div>
+    }
+</span>
+
+@code {
+    private RenderFragment BuildList(IReadOnlyList<object> options) => __builder =>
+    {
+        <ul class="p-select-list" role="listbox" id="@($"{_id}_list")" aria-label="@Tr.Aria.ListLabel">
+            @if (Group)
+            {
+                @foreach (var group in VisibleOptions)
+                {
+                    <li class="p-select-option-group" role="option">
+                        @if (GroupTemplate != null)
+                        {
+                            @GroupTemplate(group)
+                        }
+                        else
+                        {
+                            <span class="p-select-option-group-label">@GetOptionGroupLabelValue(group)</span>
+                        }
+                    </li>
+                    @foreach (var child in GetOptionGroupChildren(group))
+                    {
+                        @if (MatchesFilter(child))
+                        {
+                            <li class="@OptionClass(child)" role="option" aria-label="@GetOptionLabel(child)"
+                                aria-selected="@(IsSelected(child) ? "true" : "false")"
+                                @onclick="() => OnOptionClick(child)">
+                                @if (Checkmark)
+                                {
+                                    @if (IsSelected(child))
+                                    {
+                                        <i class="p-icon pi pi-check p-select-option-check-icon"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="p-icon pi p-select-option-blank-icon"></i>
+                                    }
+                                }
+                                @if (ItemTemplate != null && child is TValue childTv)
+                                {
+                                    @ItemTemplate(childTv)
+                                }
+                                else
+                                {
+                                    <span class="p-select-option-label">@GetOptionLabel(child)</span>
+                                }
+                            </li>
+                        }
+                    }
+                }
+            }
+            else
+            {
+                @for (var flatIndex = 0; flatIndex < options.Count; flatIndex++)
+                {
+                    @RenderOption(options[flatIndex], flatIndex)
+                }
+            }
+
+            @if (ShowEmptyMessage)
+            {
+                <li class="p-select-empty-message" role="option">
+                    @if (!string.IsNullOrEmpty(_filterValue) && EmptyFilterTemplate != null)
+                    {
+                        @EmptyFilterTemplate
+                    }
+                    else if (string.IsNullOrEmpty(_filterValue) && EmptyTemplate != null)
+                    {
+                        @EmptyTemplate
+                    }
+                    else
+                    {
+                        @(!string.IsNullOrEmpty(_filterValue) ? (EmptyFilterMessage ?? Tr.EmptyFilterMessage) : (EmptyMessage ?? Tr.EmptyMessage))
+                    }
+                </li>
+            }
+        </ul>
+    };
+
+    private RenderFragment RenderOption(object option, int index) => __builder =>
+    {
+        <li class="@OptionClass(option) @(_focusedOptionIndex == index ? "p-focus" : "")"
+            id="@($"{_id}_{index}")"
+            role="option"
+            aria-label="@GetOptionLabel(option)"
+            aria-selected="@(IsSelected(option) ? "true" : "false")"
+            data-p-focused="@(_focusedOptionIndex == index ? "true" : null)"
+            data-p-highlight="@(IsSelected(option) ? "true" : null)"
+            @onclick="() => OnOptionClick(option)"
+            @onmouseenter="() => OnOptionMouseEnter(index)">
+            @if (Checkmark)
+            {
+                @if (IsSelected(option))
+                {
+                    <i class="p-icon pi pi-check p-select-option-check-icon"></i>
+                }
+                else
+                {
+                    <i class="p-icon pi p-select-option-blank-icon"></i>
+                }
+            }
+            @if (ItemTemplate != null && option is TValue optTv)
+            {
+                @ItemTemplate(optTv)
+            }
+            else
+            {
+                <span class="p-select-option-label">@GetOptionLabel(option)</span>
+            }
+        </li>
+    };
+}

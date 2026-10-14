@@ -1,8 +1,8 @@
 @page "/avatar"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Avatar
-@using OpBlazorUI.Base.Components.Badge
+@using OpBlazorUI.Components.Avatar
+@using OpBlazorUI.Components.Badge
 
 <PageTitle>Avatar - OpBlazorUI</PageTitle>
 
@@ -109,7 +109,7 @@
         <DocSection Label="Badge" Id="badge">
             <Description>
                 O Avatar não tem badge embutido: envolva-o em um <code>OpOverlayBadge</code> (componente
-                <code>OpBlazorUI.Base.Components.Badge</code>) para posicionar um badge no canto. No Angular isso é
+                <code>OpBlazorUI.Components.Badge</code>) para posicionar um badge no canto. No Angular isso é
                 feito com a diretiva <code>pBadge</code>.
             </Description>
             <ChildContent>
@@ -261,7 +261,7 @@
 
 @code {
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Avatar
+        @using OpBlazorUI.Components.Avatar
 
         <OpAvatar Label="P" Shape="circle" />
         """;

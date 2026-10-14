@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 ### Quill
 
-`src/Components/OpBlazorUI.Base/wwwroot/quill.min.js` e `quill.snow.css` são o Quill Editor.
+`src/Components/OpBlazorUI/wwwroot/quill.min.js` e `quill.snow.css` são o Quill Editor.
 
 Copyright (c) 2017-2024, Slab
 Copyright (c) 2014, Jason Chen

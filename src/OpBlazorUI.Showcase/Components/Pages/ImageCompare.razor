@@ -1,7 +1,7 @@
 @page "/imagecompare"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.ImageCompare
+@using OpBlazorUI.Components.ImageCompare
 
 <PageTitle>ImageCompare - OpBlazorUI</PageTitle>
 
@@ -157,7 +157,7 @@
     private double _value = 50;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.ImageCompare
+        @using OpBlazorUI.Components.ImageCompare
 
         <OpImageCompare @bind-Value="_value">
             <Left><img src="/antes.jpg" alt="Antes" /></Left>

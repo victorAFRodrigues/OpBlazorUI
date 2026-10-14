@@ -1,9 +1,9 @@
 @page "/message"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Message
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Components.Message
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.InputText
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>Message - OpBlazorUI</PageTitle>
@@ -394,7 +394,7 @@
     private void ShowLife() => _lifeVisible = true;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Message
+        @using OpBlazorUI.Components.Message
 
         <OpMessage>Conteúdo da Mensagem</OpMessage>
         """;

@@ -1,0 +1,186 @@
+@namespace OpBlazorUI.Components.DataTable
+@using OpBlazorUI.Components.Checkbox
+@using OpBlazorUI.Components.Skeleton
+@using OpBlazorUI.Components.Paginator
+@using OpBlazorUI.Components.InputText
+@using OpBlazorUI.Models
+@typeparam TItem
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @if (Paginator && (PaginatorPosition == "top" || PaginatorPosition == "both"))
+    {
+        <div class="p-datatable-paginator-top">
+            <OpPaginator First="_first" Rows="_rows" TotalRecords="DisplayCount"
+                         PageLinkSize="PageLinkSize" RowsPerPageOptions="RowsPerPageOptions"
+                         OnPageChange="OnPaginatorChange"/>
+        </div>
+    }
+
+    @* Estilos inline do upstream (inlineStyles): tabela larga rola no contêiner em vez de vazar. *@
+    <div class="p-datatable-table-container" style="@TableContainerStyle">
+        <table class="p-datatable-table">
+            <thead class="p-datatable-thead" style="@TheadStyle">
+            <tr>
+                @if (ShowCheckboxColumn)
+                {
+                    <th class="p-datatable-header-cell p-datatable-selection-column" style="width: 3rem">
+                        <OpCheckbox IgnoreEditContext="true" Value="@AllPageSelected" ValueChanged="(v) => ToggleAllSelection()"
+                                    TabIndex="-1"/>
+                    </th>
+                }
+                @foreach (var col in Columns)
+                {
+                    <th class="@ThClass(col)" style="width:@col.Width"
+                        tabindex="@(col.Sortable && Sortable ? 0 : -1)"
+                        aria-sort="@SortAria(col)"
+                        @onclick="() => ToggleSort(col)"
+                        @onkeydown="e => OnHeaderKeydown(e, col)">
+                        <div class="p-datatable-column-header-content">
+                            @if (col is OpDataTableColumn<TItem> headerCol && headerCol.HeaderTemplate is not null)
+                            {
+                                @headerCol.HeaderTemplate
+                            }
+                            else
+                            {
+                                <span class="p-datatable-column-title">@col.Header</span>
+                            }
+                            @if (col.Sortable && Sortable)
+                            {
+                                <i class="p-icon pi pi-@(SortIconName(col)) p-datatable-sort-icon"></i>
+                            }
+                        </div>
+                    </th>
+                }
+            </tr>
+            @if (HasFilters)
+            {
+                <tr class="p-datatable-filter-row">
+                    @if (ShowCheckboxColumn)
+                    {
+                        <th class="p-datatable-filter-column p-datatable-selection-column"></th>
+                    }
+                    @foreach (var col in Columns)
+                    {
+                        <th class="p-datatable-filter-column @col.FilterStyleClass">
+                            @if (col.Filter)
+                            {
+                                <OpInputText IgnoreEditContext="true"
+                                             Value="@ColumnFilterValue(col.Field)"
+                                             ValueChanged="v => OnColumnFilterChanged(col.Field, v)"
+                                             Placeholder="@col.FilterPlaceholder"
+                                             AriaLabel="@(col.FilterPlaceholder ?? (string.IsNullOrEmpty(col.Header) ? Tr.FilterPlaceholder : string.Format(Tr.FilterColumn, col.Header)))"/>
+                            }
+                        </th>
+                    }
+                </tr>
+            }
+            </thead>
+            <tbody class="p-datatable-tbody">
+            @if (ShowSkeleton)
+            {
+                @for (var r = 0; r < SkeletonRowCount; r++)
+                {
+                    <tr class="p-datatable-skeleton-row">
+                        @if (ShowCheckboxColumn)
+                        {
+                            <td>
+                                <OpSkeleton Shape="circle" Width="1.5rem" Height="1.5rem"/>
+                            </td>
+                        }
+                        @foreach (var col in Columns)
+                        {
+                            <td>
+                                <OpSkeleton/>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            else if (PageItems.Count == 0)
+            {
+                <tr>
+                    <td class="p-datatable-empty-message"
+                        colspan="@(Columns.Count + (ShowCheckboxColumn ? 1 : 0))">@(EmptyMessage ?? Tr.EmptyMessage)</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in PageItems)
+                {
+                    <tr class="@TrClass(item)"
+                        aria-selected="@(Selection ? IsSelected(item).ToString().ToLowerInvariant() : null)"
+                        @onclick="() => OnRowClicked(item)">
+                        @if (ShowCheckboxColumn)
+                        {
+                            <td @onclick:stopPropagation="true">
+                                <OpCheckbox IgnoreEditContext="true" Value="@IsSelected(item)" ValueChanged="(v) => ToggleRowSelection(item)"
+                                            TabIndex="-1"/>
+                            </td>
+                        }
+                        @foreach (var col in Columns)
+                        {
+                            <td class="@col.BodyStyleClass">
+                                @if (col is OpDataTableColumn<TItem> bodyCol && bodyCol.BodyTemplate is not null)
+                                {
+                                    @bodyCol.BodyTemplate(item)
+                                }
+                                else
+                                {
+                                    @GetFieldValue(item, col.Field)
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            </tbody>
+            @if (HasFooter)
+            {
+                <tfoot class="p-datatable-tfoot">
+                <tr>
+                    @if (ShowCheckboxColumn)
+                    {
+                        <td class="p-datatable-selection-column"></td>
+                    }
+                    @foreach (var col in Columns)
+                    {
+                        <td class="@col.FooterStyleClass">
+                            @if (col is OpDataTableColumn<TItem> footerCol && footerCol.FooterTemplate is not null)
+                            {
+                                @footerCol.FooterTemplate
+                            }
+                            else
+                            {
+                                @col.Footer
+                            }
+                        </td>
+                    }
+                </tr>
+                </tfoot>
+            }
+        </table>
+    </div>
+
+    @if (Paginator && (PaginatorPosition == "bottom" || PaginatorPosition == "both"))
+    {
+        <div class="p-datatable-paginator-bottom">
+            <OpPaginator First="_first" Rows="_rows" TotalRecords="DisplayCount"
+                         PageLinkSize="PageLinkSize" RowsPerPageOptions="RowsPerPageOptions"
+                         OnPageChange="OnPaginatorChange"/>
+        </div>
+    }
+
+    @if (Loading && !ShowSkeleton)
+    {
+        <div class="p-datatable-mask p-overlay-mask">
+            @if (LoadingIconTemplate != null)
+            {
+                @LoadingIconTemplate
+            }
+            else
+            {
+                <span class="p-datatable-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></span>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,26 @@
+@namespace OpBlazorUI.Components.DynamicDialog
+@using OpBlazorUI.Components.Dialog
+@using OpBlazorUI.Services
+@implements IDisposable
+
+@* Host único: renderize uma vez no layout. Cada instância do OpDialogService vira um OpDialog. *@
+@foreach (var instance in _instances)
+{
+    <OpDialog Visible="true"
+              Header="@instance.Config.Header"
+              Style="@DialogStyle(instance.Config)"
+              Modal="@instance.Config.Modal"
+              Closable="@instance.Config.Closable"
+              CloseOnEscape="@instance.Config.CloseOnEscape"
+              DismissableMask="@instance.Config.DismissableMask"
+              Draggable="@instance.Config.Draggable"
+              Resizable="@instance.Config.Resizable"
+              StyleClass="@instance.Config.StyleClass"
+              OnHide="() => Close(instance, null)">
+        <CascadingValue Value="instance.Reference" IsFixed="true">
+            <CascadingValue Value="instance.Config" IsFixed="true">
+                <DynamicComponent Type="instance.ComponentType" Parameters="instance.Parameters"/>
+            </CascadingValue>
+        </CascadingValue>
+    </OpDialog>
+}

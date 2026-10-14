@@ -1,9 +1,9 @@
 @page "/multiselect"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.MultiSelect
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Components.MultiSelect
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>MultiSelect - OpBlazorUI</PageTitle>
@@ -597,7 +597,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.MultiSelect
+        @using OpBlazorUI.Components.MultiSelect
 
         <OpMultiSelect TValue="City" @bind-Value="_selectedCities" Options="Cities" OptionLabel="Name" />
         """;
@@ -713,7 +713,7 @@
         """;
 
     private const string FloatLabelCode = """
-        @using OpBlazorUI.Base.Components.FloatLabel
+        @using OpBlazorUI.Components.FloatLabel
 
         <OpFloatLabel>
             <OpMultiSelect TValue="City" InputId="over_label" @bind-Value="_over" Options="Cities"
@@ -735,7 +735,7 @@
         """;
 
     private const string IftaLabelCode = """
-        @using OpBlazorUI.Base.Components.IftaLabel
+        @using OpBlazorUI.Components.IftaLabel
 
         <OpIftaLabel>
             <OpMultiSelect TValue="City" InputId="ms_cities" @bind-Value="_selectedCities" Options="Cities"

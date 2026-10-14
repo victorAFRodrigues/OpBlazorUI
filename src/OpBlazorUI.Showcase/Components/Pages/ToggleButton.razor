@@ -1,7 +1,7 @@
 @page "/togglebutton"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.ToggleButton
+@using OpBlazorUI.Components.ToggleButton
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>ToggleButton - OpBlazorUI</PageTitle>
@@ -357,7 +357,7 @@
     private static string ContentLabel(bool on) => on ? "Conectado" : "Offline";
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.ToggleButton
+        @using OpBlazorUI.Components.ToggleButton
 
         <OpToggleButton @bind-Value="_on" OnLabel="Ligado" OffLabel="Desligado" />
         """;

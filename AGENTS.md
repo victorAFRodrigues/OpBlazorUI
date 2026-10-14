@@ -8,7 +8,7 @@ Instruções para agentes de código (OpenCode e similares) neste repositório. 
   Referência de comportamento e documentação: <https://v21.primeng.org>.
 - Biblioteca ainda em construção e sem consumidores externos: é permitido quebrar APIs e remover arquivos.
 - Estrutura:
-  - `src/Components/OpBlazorUI.Base` — biblioteca de componentes (Razor Class Library, prefixo `Op*`).
+  - `src/Components/OpBlazorUI` — biblioteca de componentes (Razor Class Library, prefixo `Op*`).
   - `src/OpBlazorUI.Showcase` — site de documentação (Blazor WebAssembly, publicado no GitHub Pages).
   - `tools/theme-gen` — gerador dos temas (Aura, Lara, Nora) a partir de `@openng/optimus-ui-themes`.
   - `tools/doc-upstream/fetch.sh` — baixa as seções da doc do PrimeNG de um componente.
@@ -62,12 +62,12 @@ dotnet run --project src/OpBlazorUI.Showcase
   ```
 
   - `tipo`: `fix`, `feat` ou `chore` (o histórico também usa `docs` e `refactor`).
-  - `Escopo`: o projeto modificado — `OpBlazorUI.Base`, `OpBlazorUI.Showcase`. Vários ficam separados por ` | `,
-    ex.: `fix(OpBlazorUI.Base | OpBlazorUI.Showcase): ...`. Fora dos projetos, use o nome da pasta
+  - `Escopo`: o projeto modificado — `OpBlazorUI`, `OpBlazorUI.Showcase`. Vários ficam separados por ` | `,
+    ex.: `fix(OpBlazorUI | OpBlazorUI.Showcase): ...`. Fora dos projetos, use o nome da pasta
     (`chore(tools)`, `chore(docs)`).
   - Descrição em pt-BR, verbo no presente e em minúsculo, sem ponto final; detalhes no corpo, em um segundo `-m`.
 - Nunca commite direto no `main`: crie um branch (`fix/...`, `feat/...`, `chore/...`) e abra um PR.
 - Faça commit e push só quando o usuário pedir.
-- **Tags `v*` publicam**: o `release.yml` gera o pacote `OpBlazorUI.Base` no GitHub Packages e cria uma release.
+- **Tags `v*` publicam**: o `release.yml` gera o pacote `OpBlazorUI` no GitHub Packages e cria uma release.
   Crie tags só quando pedido, sempre a partir do `main`, depois do merge.
 - Push no `main` republica o Showcase no GitHub Pages.

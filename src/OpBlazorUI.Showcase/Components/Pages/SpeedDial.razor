@@ -1,11 +1,11 @@
 @page "/speeddial"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.SpeedDial
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.Toast
-@using OpBlazorUI.Base.Models
-@using OpBlazorUI.Base.Services
+@using OpBlazorUI.Components.SpeedDial
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Toast
+@using OpBlazorUI.Models
+@using OpBlazorUI.Services
 @using Microsoft.AspNetCore.Components
 
 <PageTitle>SpeedDial - OpBlazorUI</PageTitle>
@@ -384,8 +384,8 @@
         MessageService.Add(new OpToastMessage { Key = "speeddial", Severity = severity, Summary = summary, Detail = detail });
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.SpeedDial
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.SpeedDial
+        @using OpBlazorUI.Models
 
         <OpSpeedDial Model="_items" Direction="up" />
         """;

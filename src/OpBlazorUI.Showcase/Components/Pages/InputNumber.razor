@@ -1,10 +1,10 @@
 @page "/inputnumber"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.InputNumber
+@using OpBlazorUI.Components.InputNumber
 @using System.ComponentModel.DataAnnotations
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
 
 <DocComponent Title="InputNumber"
               Description="O InputNumber é um componente de entrada numérica.">
@@ -348,7 +348,7 @@
     private decimal? _ifta;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InputNumber
+        @using OpBlazorUI.Components.InputNumber
 
         <OpInputNumber @bind-Value="_value" />
         """;

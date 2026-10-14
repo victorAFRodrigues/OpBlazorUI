@@ -1,8 +1,8 @@
 @page "/slider"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Slider
-@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Components.Slider
+@using OpBlazorUI.Components.InputText
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>Slider - OpBlazorUI</PageTitle>
@@ -176,7 +176,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Slider
+        @using OpBlazorUI.Components.Slider
 
         <OpSlider @bind-Value="_value" />
         <OpSliderRange @bind-Value="_range" />

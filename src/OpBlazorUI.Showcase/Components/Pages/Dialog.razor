@@ -1,9 +1,9 @@
 @page "/dialog"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Dialog
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Components.Dialog
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.InputText
 
 <PageTitle>Dialog - OpBlazorUI</PageTitle>
 
@@ -490,9 +490,9 @@
     private void ShowBottomRight() => ShowPosition("bottomright");
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Dialog
-        @using OpBlazorUI.Base.Components.Button
-        @using OpBlazorUI.Base.Components.InputText
+        @using OpBlazorUI.Components.Dialog
+        @using OpBlazorUI.Components.Button
+        @using OpBlazorUI.Components.InputText
 
         <OpDialog @bind-Visible="_visible" Header="Título" />
         """;

@@ -1,9 +1,9 @@
 @page "/galleria"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Galleria
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.SelectButton
+@using OpBlazorUI.Components.Galleria
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.SelectButton
 
 <PageTitle>Galleria - OpBlazorUI</PageTitle>
 
@@ -368,7 +368,7 @@
     private void OpenFullscreen() => _fullscreenVisible = true;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Galleria
+        @using OpBlazorUI.Components.Galleria
         """;
 
     private const string BasicCode = """

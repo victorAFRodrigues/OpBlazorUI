@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using OpBlazorUI.Base.Services;
+using OpBlazorUI.Services;
 
 namespace OpBlazorUI.Showcase.Components.Layout;
 

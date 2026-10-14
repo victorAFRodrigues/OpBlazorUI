@@ -1,9 +1,9 @@
 @page "/menu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Menu
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Models
 
 <PageTitle>Menu - OpBlazorUI</PageTitle>
 
@@ -357,8 +357,8 @@
     private void TogglePopup() => _ = _popupMenu!.ToggleAsync(_trigger);
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Menu
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.Menu
+        @using OpBlazorUI.Models
 
         <OpMenu Items="Items" StyleClass="w-56" OnItemClick="OnItemClick" />
         """;

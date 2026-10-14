@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { Theme, definePreset, evaluateDtExpressions, dt } from '@openng/optimus-ui-styled';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const THEMES_DIR = join(here, '../../src/Components/OpBlazorUI.Base/wwwroot/themes');
+const THEMES_DIR = join(here, '../../src/Components/OpBlazorUI/wwwroot/themes');
 const PRESETS = ['aura', 'lara', 'nora'];
 const OPTIONS = { prefix: 'p', darkModeSelector: '.app-dark', cssLayer: false };
 

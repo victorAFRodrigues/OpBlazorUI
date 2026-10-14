@@ -1,9 +1,9 @@
 @page "/inputmask"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.InputText
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Components.InputText
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>InputMask - OpBlazorUI</PageTitle>
@@ -424,7 +424,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InputText
+        @using OpBlazorUI.Components.InputText
 
         <OpInputText Mask="99-999999" @bind-Value="_value" Placeholder="99-999999" />
         """;

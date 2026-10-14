@@ -1,8 +1,8 @@
 @page "/contextmenu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Menu
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Models
 
 <PageTitle>ContextMenu - OpBlazorUI</PageTitle>
 
@@ -150,8 +150,8 @@
         """;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Menu
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.Menu
+        @using OpBlazorUI.Models
 
         <button class="p-button" @ref="_trigger" @onclick="ShowMenuAsync">Mostrar menu</button>
         <OpContextMenu @ref="_menu" Model="_items" />

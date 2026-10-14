@@ -1,7 +1,7 @@
 @page "/selectbutton"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.SelectButton
+@using OpBlazorUI.Components.SelectButton
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>SelectButton - OpBlazorUI</PageTitle>
@@ -368,7 +368,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.SelectButton
+        @using OpBlazorUI.Components.SelectButton
 
         <OpSelectButton TValue="StateOption" @bind-Value="_single" Options="StateOptions"
                         OptionLabel="Label" OptionValue="Value" />

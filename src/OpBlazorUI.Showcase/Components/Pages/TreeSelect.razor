@@ -1,9 +1,9 @@
 @page "/treeselect"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.TreeSelect
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Components.TreeSelect
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>TreeSelect - OpBlazorUI</PageTitle>
@@ -659,7 +659,7 @@
     };
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.TreeSelect
+        @using OpBlazorUI.Components.TreeSelect
 
         <OpTreeSelect @bind-Value="_key" Options="Nodes" Placeholder="Selecione um Item" />
         """;

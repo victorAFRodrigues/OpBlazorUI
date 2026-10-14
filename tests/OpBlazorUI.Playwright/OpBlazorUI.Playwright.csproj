@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Components\OpBlazorUI.Base\OpBlazorUI.Base.csproj" />
+    <ProjectReference Include="..\..\src\Components\OpBlazorUI\OpBlazorUI.csproj" />
   </ItemGroup>
 
 </Project>

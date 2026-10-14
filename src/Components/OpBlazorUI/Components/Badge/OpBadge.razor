@@ -1,0 +1,45 @@
+@namespace OpBlazorUI.Components.Badge
+
+@* Como o upstream (badgeDisabled): desabilitado some em vez de ficar esmaecido. *@
+<span class="@RootClass" style="@(Disabled ? "display: none;" : Style)" @attributes="AdditionalAttributes">
+    @if (Value is not null)
+    {
+        @Value
+    }
+</span>
+
+@code {
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public string? Severity { get; set; }
+    [Parameter] public string? Size { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public string? StyleClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string RootClass => OpCss.BuildClass(
+        "p-badge p-component",
+        string.IsNullOrEmpty(Value) ? "p-badge-dot" : Value.Length == 1 ? "p-badge-circle" : null,
+        GetSeverityClass(Severity),
+        Size switch
+        {
+            "small" => "p-badge-sm",
+            "large" => "p-badge-lg",
+            "xlarge" => "p-badge-xl",
+            _ => null
+        },
+        StyleClass);
+
+    internal static string? GetSeverityClass(string? severity) => severity?.ToLowerInvariant() switch
+    {
+        "secondary" => "p-badge-secondary",
+        "success" => "p-badge-success",
+        "info" => "p-badge-info",
+        "warn" => "p-badge-warn",
+        "danger" => "p-badge-danger",
+        "contrast" => "p-badge-contrast",
+        _ => null
+    };
+}

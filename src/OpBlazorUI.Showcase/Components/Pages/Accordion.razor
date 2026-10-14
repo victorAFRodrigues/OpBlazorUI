@@ -1,7 +1,7 @@
 @page "/accordion"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Accordion
+@using OpBlazorUI.Components.Accordion
 
 <PageTitle>Accordion - OpBlazorUI</PageTitle>
 
@@ -142,7 +142,7 @@
     private IReadOnlyList<int> _single = new[] { 0 };
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Accordion
+        @using OpBlazorUI.Components.Accordion
 
         <OpAccordion>
             <OpAccordionPanel Header="Cabeçalho I">Conteúdo</OpAccordionPanel>

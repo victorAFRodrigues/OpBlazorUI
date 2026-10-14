@@ -1,9 +1,9 @@
 @page "/tooltip"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Tooltip
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.InputText
+@using OpBlazorUI.Components.Tooltip
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.InputText
 
 <PageTitle>Tooltip - OpBlazorUI</PageTitle>
 
@@ -237,7 +237,7 @@
     private bool _targetFocused;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Tooltip
+        @using OpBlazorUI.Components.Tooltip
 
         <OpTooltip Content="Conteúdo do tooltip">
             <OpButton Label="Passe o mouse" />

@@ -1,7 +1,7 @@
 @page "/listbox"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Listbox
+@using OpBlazorUI.Components.Listbox
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>Listbox - OpBlazorUI</PageTitle>
@@ -436,7 +436,7 @@
     };
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Listbox
+        @using OpBlazorUI.Components.Listbox
 
         <OpListbox TValue="City" @bind-Value="_city" Options="Cities" OptionLabel="Name" OptionValue="Code" />
         """;

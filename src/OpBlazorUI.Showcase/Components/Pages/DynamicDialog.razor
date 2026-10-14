@@ -1,8 +1,8 @@
 @page "/dynamicdialog"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.DynamicDialog
-@using OpBlazorUI.Base.Services
+@using OpBlazorUI.Components.DynamicDialog
+@using OpBlazorUI.Services
 
 <PageTitle>DynamicDialog - OpBlazorUI</PageTitle>
 
@@ -156,8 +156,8 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.DynamicDialog
-        @using OpBlazorUI.Base.Services
+        @using OpBlazorUI.Components.DynamicDialog
+        @using OpBlazorUI.Services
 
         @inject OpDialogService DialogService
         """;

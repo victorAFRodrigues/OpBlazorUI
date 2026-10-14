@@ -1,10 +1,10 @@
 @page "/datepicker"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.DatePicker
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
+@using OpBlazorUI.Components.DatePicker
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>DatePicker - OpBlazorUI</PageTitle>
@@ -742,7 +742,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.DatePicker
+        @using OpBlazorUI.Components.DatePicker
 
         <OpDatePicker @bind-Value="_date" />
         """;
@@ -883,7 +883,7 @@
         """;
 
     private const string FloatLabelCode = """
-        @using OpBlazorUI.Base.Components.FloatLabel
+        @using OpBlazorUI.Components.FloatLabel
 
         <OpFloatLabel>
             <OpDatePicker @bind-Value="_over" InputId="over_label" ShowIcon="true" IconDisplay="input" />
@@ -902,7 +902,7 @@
         """;
 
     private const string IftaLabelCode = """
-        @using OpBlazorUI.Base.Components.IftaLabel
+        @using OpBlazorUI.Components.IftaLabel
 
         <OpIftaLabel>
             <OpDatePicker @bind-Value="_value" InputId="date" ShowIcon="true" IconDisplay="input" />

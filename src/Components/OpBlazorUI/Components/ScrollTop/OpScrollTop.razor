@@ -1,0 +1,24 @@
+@namespace OpBlazorUI.Components.ScrollTop
+@using OpBlazorUI.Components.Common
+@inherits OpComponentBase
+@using OpBlazorUI.Components.Button
+
+<span @ref="_root" style="display: contents">
+    <OpButton Type="button"
+              Rounded="true"
+              StyleClass="@ButtonStyleClass"
+              Style="@Style"
+              AriaLabel="@(ButtonAriaLabel ?? Tr.Aria.ScrollTop)"
+              @onclick="OnClick">
+        <IconTemplate>
+            @if (IconTemplate != null)
+            {
+                <span class="p-scrolltop-icon">@IconTemplate</span>
+            }
+            else
+            {
+                <span class="p-scrolltop-icon @Icon" aria-hidden="true"></span>
+            }
+        </IconTemplate>
+    </OpButton>
+</span>

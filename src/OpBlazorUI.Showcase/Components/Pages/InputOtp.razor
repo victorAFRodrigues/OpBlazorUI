@@ -1,8 +1,8 @@
 @page "/inputotp"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.InputOtp
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.InputOtp
+@using OpBlazorUI.Components.Button
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>InputOtp - OpBlazorUI</PageTitle>
@@ -335,7 +335,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InputOtp
+        @using OpBlazorUI.Components.InputOtp
 
         <OpInputOtp @bind-Value="_value" />
         """;

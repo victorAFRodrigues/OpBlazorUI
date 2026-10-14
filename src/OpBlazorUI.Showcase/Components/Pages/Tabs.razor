@@ -1,7 +1,7 @@
 @page "/tabs"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Tabs
+@using OpBlazorUI.Components.Tabs
 
 <PageTitle>Tabs - OpBlazorUI</PageTitle>
 
@@ -144,7 +144,7 @@
     private int _active;
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Tabs
+        @using OpBlazorUI.Components.Tabs
 
         <OpTabs @bind-ActiveIndex="_active">
             <OpTabPanel Header="Cabeçalho 1">Conteúdo 1</OpTabPanel>

@@ -1,9 +1,9 @@
 @page "/virtualscroller"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.VirtualScroller
-@using OpBlazorUI.Base.Components.Button
-@using OpBlazorUI.Base.Components.Skeleton
+@using OpBlazorUI.Components.VirtualScroller
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Skeleton
 
 <PageTitle>VirtualScroller - OpBlazorUI</PageTitle>
 
@@ -496,7 +496,7 @@
         => odd ? "background:var(--p-content-hover-background)" : "";
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.VirtualScroller
+        @using OpBlazorUI.Components.VirtualScroller
 
         <OpVirtualScroller TItem="string" Items="_items" ItemSize="30" ScrollHeight="300px">
             <ItemTemplate Context="ctx">

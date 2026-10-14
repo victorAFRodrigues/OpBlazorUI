@@ -38,7 +38,7 @@
  * O plugin @openng/optimus-ui-tailwindcss expõe as CSS variables do tema
  * Aura/Lara (--p-primary-color, --p-surface-0..950, etc.) como utilitários
  * Tailwind via color-mix(). Essas variáveis são definidas em tempo de
- * execução pelos arquivos de tema em OpBlazorUI.Base/wwwroot/themes/.
+ * execução pelos arquivos de tema em OpBlazorUI/wwwroot/themes/.
  */
 
 @tailwind base;

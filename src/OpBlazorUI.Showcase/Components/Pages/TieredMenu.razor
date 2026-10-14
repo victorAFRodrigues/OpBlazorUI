@@ -1,8 +1,8 @@
 @page "/tieredmenu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Menu
-@using OpBlazorUI.Base.Models
+@using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Models
 
 <PageTitle>TieredMenu - OpBlazorUI</PageTitle>
 
@@ -111,8 +111,8 @@
     };
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.Menu
-        @using OpBlazorUI.Base.Models
+        @using OpBlazorUI.Components.Menu
+        @using OpBlazorUI.Models
 
         <OpTieredMenu Model="_items" />
         """;

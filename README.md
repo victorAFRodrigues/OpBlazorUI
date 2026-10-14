@@ -47,7 +47,7 @@ autenticação do GitHub Packages derrube o restore de pacotes do nuget.org.
 Depois:
 
 ```bash
-dotnet add package OpBlazorUI.Base
+dotnet add package OpBlazorUI
 ```
 
 Alternativamente, baixe o `.nupkg` na página de [Releases](https://github.com/victorAFRodrigues/OpBlazorUI/releases) e use uma
@@ -64,8 +64,8 @@ builder.Services.AddOpBlazorUI();
 `_Imports.razor`:
 
 ```razor
-@using OpBlazorUI.Base
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI
+@using OpBlazorUI.Components.Button
 ```
 
 `App.razor` — o `op-theme.js` carrega o tema antes da primeira pintura (os `data-*` repetem o tema
@@ -74,7 +74,7 @@ do `AddOpBlazorUI`):
 ```razor
 <head>
     <base href="/" />
-    <script src="_content/OpBlazorUI.Base/op-theme.js" data-preset="aura" data-primary="noir"></script>
+    <script src="_content/OpBlazorUI/op-theme.js" data-preset="aura" data-primary="noir"></script>
     ...
     <HeadOutlet @rendermode="InteractiveAuto" />
 </head>
@@ -152,7 +152,7 @@ O `Chart` fica em um projeto separado, `OpBlazorUI.Charts`, sobre o Blazor-ApexC
 
 ```
 src/
-  Components/OpBlazorUI.Base/     biblioteca de componentes (RCL)
+  Components/OpBlazorUI/     biblioteca de componentes (RCL)
   OpBlazorUI.Showcase/             showcase/documentação, Blazor WebAssembly standalone (publicado no GitHub Pages)
 ```
 
@@ -165,7 +165,7 @@ dotnet run --project src/OpBlazorUI.Showcase
 
 Não é necessário Node.js/npm. O Showcase usa um bundle estático do Tailwind
 (`src/OpBlazorUI.Showcase/wwwroot/css/tailwind.css`, ~5 KB) versionado no repositório.
-O tema e os tokens são definidos por CSS em `OpBlazorUI.Base/wwwroot/themes/`.
+O tema e os tokens são definidos por CSS em `OpBlazorUI/wwwroot/themes/`.
 Se precisar regenerar o bundle ao adicionar uma classe nova, veja o cabeçalho de
 `wwwroot/css/tailwind.input.css`.
 

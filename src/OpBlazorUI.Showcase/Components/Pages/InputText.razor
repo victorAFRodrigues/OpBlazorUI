@@ -1,11 +1,11 @@
 @page "/inputtext"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.InputText
-@using OpBlazorUI.Base.Components.FloatLabel
-@using OpBlazorUI.Base.Components.IftaLabel
-@using OpBlazorUI.Base.Components.IconField
-@using OpBlazorUI.Base.Components.InputIcon
+@using OpBlazorUI.Components.InputText
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
+@using OpBlazorUI.Components.IconField
+@using OpBlazorUI.Components.InputIcon
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>InputText - OpBlazorUI</PageTitle>
@@ -384,7 +384,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InputText
+        @using OpBlazorUI.Components.InputText
         """;
 
     private const string BasicCode = """
@@ -397,7 +397,7 @@
         """;
 
     private const string FloatLabelCode = """
-        @using OpBlazorUI.Base.Components.FloatLabel
+        @using OpBlazorUI.Components.FloatLabel
 
         <OpFloatLabel>
             <OpInputText Id="over_label" @bind-Value="_over" Autocomplete="off" />
@@ -416,7 +416,7 @@
         """;
 
     private const string IftaLabelCode = """
-        @using OpBlazorUI.Base.Components.IftaLabel
+        @using OpBlazorUI.Components.IftaLabel
 
         <OpIftaLabel>
             <OpInputText Id="username" @bind-Value="_iftalabel" Autocomplete="off" />
@@ -443,8 +443,8 @@
         """;
 
     private const string IconsCode = """
-        @using OpBlazorUI.Base.Components.IconField
-        @using OpBlazorUI.Base.Components.InputIcon
+        @using OpBlazorUI.Components.IconField
+        @using OpBlazorUI.Components.InputIcon
 
         <OpIconField>
             <OpInputIcon><i class="pi pi-search"></i></OpInputIcon>

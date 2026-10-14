@@ -1,0 +1,63 @@
+@namespace OpBlazorUI.Components.ConfirmPopup
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Common
+@using OpBlazorUI.Components.ConfirmDialog.Models
+@using OpBlazorUI.Components.Overlay
+@inherits OpComponentBase
+
+@if (_visible)
+{
+    @* Mesmo layout do ConfirmDialog (icon + message + footer), porém ancorado a um alvo.
+       O OpOverlayAttach precisa ser o primeiro filho: ele lê o próprio pai como painel. *@
+    <div class="@RootClass"
+         @ref="_root"
+         role="dialog"
+         aria-labelledby="@_messageId"
+         tabindex="-1"
+         @attributes="AdditionalAttributes">
+
+        <OpOverlayAttach Anchor="_anchor" Placement="@Placement" KeepMargin="true" Arrow="popover"
+                         OnOutsideClick="OnOutsideClickAsync" Dismissable="DismissableMask" OnEscape="EscapeCallback"/>
+
+        <div class="p-confirmpopup-content">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <i class="@IconClass" aria-hidden="true"></i>
+            }
+            <span class="p-confirmpopup-message" id="@_messageId">@Message</span>
+        </div>
+
+        <div class="p-confirmpopup-footer">
+            @if (RejectVisible)
+            {
+                <OpButton Label="@EffectiveRejectLabel"
+                          data-pc-focus="reject"
+                          Icon="@RejectIcon"
+                          StyleClass="@RejectButtonClass"
+                          Severity="@OpButtonProps.GetSeverity(RejectButtonProps)"
+                          Outlined="@OpButtonProps.GetOutlined(RejectButtonProps)"
+                          Text="@OpButtonProps.GetText(RejectButtonProps)"
+                          Raised="@OpButtonProps.GetRaised(RejectButtonProps)"
+                          Rounded="@OpButtonProps.GetRounded(RejectButtonProps)"
+                          Variant="@OpButtonProps.GetVariant(RejectButtonProps)"
+                          AriaLabel="@EffectiveRejectLabel"
+                          @onclick="OnRejectClick" />
+            }
+            @if (AcceptVisible)
+            {
+                <OpButton Label="@EffectiveAcceptLabel"
+                          data-pc-focus="accept"
+                          Icon="@AcceptIcon"
+                          StyleClass="@AcceptButtonClass"
+                          Severity="@OpButtonProps.GetSeverity(AcceptButtonProps)"
+                          Outlined="@OpButtonProps.GetOutlined(AcceptButtonProps)"
+                          Text="@OpButtonProps.GetText(AcceptButtonProps)"
+                          Raised="@OpButtonProps.GetRaised(AcceptButtonProps)"
+                          Rounded="@OpButtonProps.GetRounded(AcceptButtonProps)"
+                          Variant="@OpButtonProps.GetVariant(AcceptButtonProps)"
+                          AriaLabel="@EffectiveAcceptLabel"
+                          @onclick="OnAcceptClick" />
+            }
+        </div>
+    </div>
+}

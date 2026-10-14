@@ -1,0 +1,108 @@
+@namespace OpBlazorUI.Components.SplitButton
+@using OpBlazorUI.Components.Overlay
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Models
+
+<div class="@RootClass" @ref="_rootRef"
+     @onkeydown="OnRootKeydown"
+     @attributes="AdditionalAttributes">
+    <OpButton StyleClass="p-splitbutton-button"
+              Label="@Label"
+              Icon="@Icon"
+              IconPos="@IconPos"
+              Severity="@Severity"
+              Text="@Text"
+              Outlined="@Outlined"
+              Size="@Size"
+              Disabled="@(Disabled || ButtonDisabled)"
+              TabIndex="@TabIndex"
+              autofocus="@Autofocus"
+              ChildContent="@ContentTemplate"
+              OnClick="OnClick"/>
+
+    <OpButton StyleClass="p-splitbutton-dropdown p-button-icon-only"
+              Icon="@DropdownIcon"
+              Severity="@Severity"
+              Text="@Text"
+              Outlined="@Outlined"
+              Size="@Size"
+              Disabled="@(Disabled || MenuButtonDisabled)"
+              AriaLabel="@ExpandAriaLabel"
+              aria-haspopup="menu"
+              aria-expanded="@(_overlayVisible ? "true" : "false")"
+              aria-controls="@($"{_id}_menu")"
+              IconTemplate="@DropdownIconTemplate"
+              OnClick="OnDropdownButtonClick"/>
+
+    @if (_panelRendered)
+    {
+        <div class="@OverlayClass"
+             @onmouseleave="CloseSubmenus"
+             @onanimationend="OnPanelAnimationEnd">
+            <OpOverlayAttach Anchor="_rootRef" Layer="menu" MatchWidth="true" Gap="4" OnOutsideClick="CloseAsync" OnEscape="CloseAsync"/>
+            <ul class="p-tieredmenu-root-list" role="menu" id="@($"{_id}_menu")" @ref="_menuRef">
+                @foreach (var item in Items)
+                {
+                    @RenderItem(item)
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+@code {
+    private RenderFragment RenderItem(OpMenuItem item) => __builder =>
+    {
+        if (item.Separator)
+        {
+            <li class="p-tieredmenu-separator" role="separator"></li>
+        }
+        else if (item.Visible)
+        {
+            var isOpen = _openPath.Contains(item);
+            <li class="p-tieredmenu-item @(isOpen ? "p-tieredmenu-item-active" : "") @(item.Disabled ? "p-disabled" : "")"
+                role="menuitem"
+                aria-label="@item.Label"
+                aria-disabled="@(item.Disabled ? "true" : null)"
+                @onmouseenter="() => OpenItem(item)">
+                <div class="p-tieredmenu-item-content">
+                    @if (item.Url is not null)
+                    {
+                        <a class="p-tieredmenu-item-link" href="@item.Url" target="@item.Target" @onclick="() => OnItemClick(item)">
+                            @RenderItemContent(item)
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="p-tieredmenu-item-link" @onclick="() => OnItemClick(item)">
+                            @RenderItemContent(item)
+                        </div>
+                    }
+                </div>
+
+                @if (item.HasChildren && isOpen)
+                {
+                    <ul class="p-tieredmenu-submenu" role="menu" style="left:100%; top:0; display:flex;">
+                        @foreach (var child in item.Items!)
+                        {
+                            @RenderItem(child)
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    };
+
+    private RenderFragment RenderItemContent(OpMenuItem item) => __builder =>
+    {
+        @if (!string.IsNullOrEmpty(item.Icon))
+        {
+            <span class="p-tieredmenu-item-icon @item.Icon"></span>
+        }
+        <span class="p-tieredmenu-item-label">@item.Label</span>
+        @if (item.HasChildren)
+        {
+            <i class="p-tieredmenu-submenu-icon pi pi-angle-right"></i>
+        }
+    };
+}

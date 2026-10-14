@@ -1,7 +1,7 @@
 @page "/installation"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.Button
+@using OpBlazorUI.Components.Button
 
 <PageTitle>Installation - OpBlazorUI</PageTitle>
 
@@ -48,7 +48,7 @@
             <p>Com a autenticação configurada, adicione o pacote normalmente:</p>
         </Description>
         <Code>
-            <CodeBlock Language="bash" Code="@("dotnet add package OpBlazorUI.Base")"/>
+            <CodeBlock Language="bash" Code="@("dotnet add package OpBlazorUI")"/>
             <p class="doc-section-description">Ou declare a referência manualmente no <code>.csproj</code>:</p>
             <CodeBlock Language="xml" Code="@PackageReferenceCode"/>
         </Code>
@@ -60,7 +60,7 @@
         </Description>
         <Code>
             <CodeBlock Language="bash"
-                       Code="@("dotnet nuget add source ./packages --name optimus-local\ndotnet add package OpBlazorUI.Base")"/>
+                       Code="@("dotnet nuget add source ./packages --name optimus-local\ndotnet add package OpBlazorUI")"/>
         </Code>
     </DocSection>
 
@@ -70,7 +70,7 @@
         </Description>
         <Code>
             <CodeBlock Language="bash"
-                       Code="@("dotnet add reference ../Components/OpBlazorUI.Base/OpBlazorUI.Base.csproj")"/>
+                       Code="@("dotnet add reference ../Components/OpBlazorUI/OpBlazorUI.csproj")"/>
         </Code>
     </DocSection>
 
@@ -80,7 +80,7 @@
         </Description>
         <Code>
             <CodeBlock Language="razor"
-                       Code="@("@using OpBlazorUI.Base\n@using OpBlazorUI.Base.Components.Button\n@using OpBlazorUI.Base.Services")"/>
+                       Code="@("@using OpBlazorUI\n@using OpBlazorUI.Components.Button\n@using OpBlazorUI.Services")"/>
         </Code>
     </DocSection>
 
@@ -206,7 +206,7 @@
 
     private const string PackageReferenceCode = """
         <ItemGroup>
-            <PackageReference Include="OpBlazorUI.Base" Version="1.0.0" />
+            <PackageReference Include="OpBlazorUI" Version="1.0.0" />
         </ItemGroup>
         """;
 
@@ -222,7 +222,7 @@
         @* App.razor *@
         <head>
             <base href="/" />
-            <script src="_content/OpBlazorUI.Base/op-theme.js"
+            <script src="_content/OpBlazorUI/op-theme.js"
                     data-preset="aura" data-primary="noir"></script>
             ...
             <HeadOutlet @rendermode="InteractiveAuto" />

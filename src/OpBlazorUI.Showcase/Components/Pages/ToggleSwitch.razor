@@ -1,7 +1,7 @@
 @page "/toggleswitch"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
-@using OpBlazorUI.Base.Components.InputSwitch
+@using OpBlazorUI.Components.InputSwitch
 @using System.ComponentModel.DataAnnotations
 
 <PageTitle>ToggleSwitch - OpBlazorUI</PageTitle>
@@ -222,7 +222,7 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>O componente é exposto como <code>OpInputSwitch</code>, no namespace <code>OpBlazorUI.Base.Components.InputSwitch</code>, preservando o nome legado do PrimeNG — a doc usa o nome atual ToggleSwitch.</li>
+                        <li>O componente é exposto como <code>OpInputSwitch</code>, no namespace <code>OpBlazorUI.Components.InputSwitch</code>, preservando o nome legado do PrimeNG — a doc usa o nome atual ToggleSwitch.</li>
                         <li>Não há template de ícone embutido; use <code>HandleTemplate</code> para desenhar o conteúdo do puxador.</li>
                     </ul>
                 </div>
@@ -251,7 +251,7 @@
     }
 
     private const string ImportCode = """
-        @using OpBlazorUI.Base.Components.InputSwitch
+        @using OpBlazorUI.Components.InputSwitch
         """;
 
     private const string BasicCode = """

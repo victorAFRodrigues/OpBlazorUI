@@ -1,0 +1,19 @@
+@namespace OpBlazorUI.Components.Menu
+@using OpBlazorUI.Models
+@using OpBlazorUI.Components.Common
+@inherits OpComponentBase
+@using OpBlazorUI.Components.Overlay
+
+<div class="@RootClass" @attributes="AdditionalAttributes">
+    @* Com algum submenu aberto, o root entra na pilha de overlays: clique fora e Escape fecham. *@
+    @if (_open.Count > 0)
+    {
+        <OpOverlayAttach AutoZIndex="false" OnOutsideClick="CloseAllAsync" OnEscape="CloseAllAsync"/>
+    }
+    <OpMenuItems Items="Model"
+                 Prefix="tieredmenu"
+                 Root="true"
+                 IsOpen="IsOpen"
+                 OnToggle="ToggleAsync"
+                 OnItemClick="OnLeafClickAsync"/>
+</div>

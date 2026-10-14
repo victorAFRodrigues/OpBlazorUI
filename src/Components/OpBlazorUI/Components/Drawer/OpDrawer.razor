@@ -1,0 +1,65 @@
+@namespace OpBlazorUI.Components.Drawer
+@using OpBlazorUI.Components.Common
+@using OpBlazorUI.Components.Overlay
+@inherits OpModalBase
+
+@*
+    Estrutura do Angular: o drawer se posiciona sozinho (p-drawer-{posição}, position: fixed) e a
+    máscara é um irmão que só existe quando Modal. O z-index da máscara é o do drawer menos 1 (MaskPrevious).
+*@
+@if (Visible)
+{
+    @if (Modal)
+    {
+        <div class="@MaskClass" style="@MaskStyle" @onclick="OnMaskClick"></div>
+    }
+    <div class="@RootClass"
+         @ref="_root"
+         style="@Style"
+         role="complementary"
+         aria-modal="@(Modal ? "true" : null)"
+         aria-labelledby="@(_headerId)"
+         tabindex="-1"
+         @attributes="AdditionalAttributes">
+        <OpOverlayAttach Layer="modal" BaseZIndex="BaseZIndex" MaskPrevious="Modal" AutoZIndex="AutoZIndex" OnEscape="EscapeCallback"/>
+        @if (ShowHeader)
+        {
+            <div class="p-drawer-header">
+                @if (HeaderTemplate != null)
+                {
+                    @HeaderTemplate
+                }
+                else if (!string.IsNullOrEmpty(Header))
+                {
+                    <div class="p-drawer-title" id="@_headerId">@Header</div>
+                }
+
+                @if (Closable)
+                {
+                    <button type="button"
+                            class="p-drawer-header-icon p-drawer-close-button"
+                            aria-label="@(AriaCloseLabel ?? Tr.Aria.Close)"
+                            @onclick="Close">
+                        @if (CloseIconTemplate != null)
+                        {
+                            @CloseIconTemplate
+                        }
+                        else
+                        {
+                            <span class="@CloseIcon" aria-hidden="true"></span>
+                        }
+                    </button>
+                }
+            </div>
+        }
+
+        <div class="p-drawer-content">
+            @ChildContent
+        </div>
+
+        @if (FooterTemplate != null)
+        {
+            <div class="p-drawer-footer">@FooterTemplate</div>
+        }
+    </div>
+}
