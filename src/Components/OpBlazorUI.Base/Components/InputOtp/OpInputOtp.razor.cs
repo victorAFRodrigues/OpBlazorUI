@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.InputOtp;
 
@@ -14,6 +16,10 @@ public sealed class OtpTokenContext
 
 public partial class OpInputOtp : OpInputBase<string>
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     [Parameter] public int Length { get; set; } = 4;
     [Parameter] public bool Mask { get; set; }
     [Parameter] public bool IntegerOnly { get; set; }

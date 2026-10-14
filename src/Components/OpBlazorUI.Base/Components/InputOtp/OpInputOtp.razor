@@ -29,7 +29,7 @@
                    maxlength="1"
                    disabled="@Disabled"
                    readonly="@Readonly"
-                   aria-label="@($"Caractere {idx + 1}")"
+                   aria-label="@string.Format(Tr.Aria.Character, idx + 1)"
                    @oninput="e => HandleInput(idx, e)"
                    @onkeydown="e => HandleKeyDown(idx, e)"
                    @ref="_inputs[idx]"/>

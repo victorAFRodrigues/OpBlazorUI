@@ -100,6 +100,9 @@ public sealed class OpTranslation
     public string Strong { get; set; } = "Strong";
     public string PasswordPrompt { get; set; } = "Enter a password";
 
+    // Editor (toolbar própria; o miolo do texto fica a cargo do Quill).
+    public OpEditorTranslation Editor { get; set; } = new();
+
     public OpAria Aria { get; set; } = new();
 }
 
@@ -166,4 +169,35 @@ public sealed class OpAria
     public string BrowseFiles { get; set; } = "Browse Files";
     public string MaximizeLabel { get; set; } = "Maximize";
     public string MinimizeLabel { get; set; } = "Minimize";
+
+    /// <summary>Nome acessível de um campo de caractere, com <c>{0}</c> = posição (extensão nossa).</summary>
+    public string Character { get; set; } = "Character {0}";
+}
+
+/// <summary>
+/// Textos da toolbar do <see cref="OpBlazorUI.Base.Components.Editor"/> (rótulos de acessibilidade e
+/// do seletor de cabeçalho). O conteúdo em si é do Quill — aqui só entra o que nós renderizamos.
+/// </summary>
+public sealed class OpEditorTranslation
+{
+    public string Bold { get; set; } = "Bold";
+    public string Italic { get; set; } = "Italic";
+    public string Underline { get; set; } = "Underline";
+    public string TextColor { get; set; } = "Text color";
+    public string BackgroundColor { get; set; } = "Background color";
+    public string OrderedList { get; set; } = "Ordered list";
+    public string UnorderedList { get; set; } = "Unordered list";
+    public string Align { get; set; } = "Align";
+    public string InsertLink { get; set; } = "Insert link";
+    public string InsertImage { get; set; } = "Insert image";
+    public string CodeBlock { get; set; } = "Code block";
+    public string ClearFormatting { get; set; } = "Clear formatting";
+
+    // Opções do seletor de cabeçalho (<select class="ql-header">).
+    public string Heading1 { get; set; } = "Title";
+    public string Heading2 { get; set; } = "Subtitle";
+    public string Normal { get; set; } = "Normal";
+
+    /// <summary>Mensagem exibida quando o Quill não carrega.</summary>
+    public string LoadError { get; set; } = "Could not load the editor (Quill).";
 }

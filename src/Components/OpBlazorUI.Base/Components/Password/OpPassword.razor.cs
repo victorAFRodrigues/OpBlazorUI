@@ -2,11 +2,17 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OpBlazorUI.Base.Components.Forms;
+using OpBlazorUI.Base.Globalization;
+using OpBlazorUI.Base.Services;
 
 namespace OpBlazorUI.Base.Components.Password;
 
 public partial class OpPassword : OpInputBase<string>
 {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private OpTranslation Tr => TranslationService.Translation;
+
     private ElementReference _rootRef;
 
     private string _id = "";
@@ -101,10 +107,10 @@ public partial class OpPassword : OpInputBase<string>
 
     private string MeterText => StrengthLevel switch
     {
-        1 => WeakLabel ?? "Fraca",
-        2 => MediumLabel ?? "Média",
-        3 => StrongLabel ?? "Forte",
-        _ => PromptLabel ?? ""
+        1 => WeakLabel ?? Tr.Weak,
+        2 => MediumLabel ?? Tr.Medium,
+        3 => StrongLabel ?? Tr.Strong,
+        _ => PromptLabel ?? Tr.PasswordPrompt
     };
 
     // ------------------------------------------------------------ handlers

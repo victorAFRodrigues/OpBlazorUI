@@ -88,6 +88,26 @@ public static class OpTranslations
         Strong = "Forte",
         PasswordPrompt = "Digite uma senha",
 
+        Editor = new OpEditorTranslation
+        {
+            Bold = "Negrito",
+            Italic = "Itálico",
+            Underline = "Sublinhado",
+            TextColor = "Cor do texto",
+            BackgroundColor = "Cor de fundo",
+            OrderedList = "Lista ordenada",
+            UnorderedList = "Lista não ordenada",
+            Align = "Alinhamento",
+            InsertLink = "Inserir link",
+            InsertImage = "Inserir imagem",
+            CodeBlock = "Bloco de código",
+            ClearFormatting = "Limpar formatação",
+            Heading1 = "Título",
+            Heading2 = "Subtítulo",
+            Normal = "Normal",
+            LoadError = "Não foi possível carregar o editor (Quill)."
+        },
+
         Aria = new OpAria
         {
             TrueLabel = "Sim",
@@ -146,7 +166,8 @@ public static class OpTranslations
             RemoveLabel = "Remover",
             BrowseFiles = "Escolher arquivos",
             MaximizeLabel = "Maximizar",
-            MinimizeLabel = "Minimizar"
+            MinimizeLabel = "Minimizar",
+            Character = "Caractere {0}"
         }
     };
 }
