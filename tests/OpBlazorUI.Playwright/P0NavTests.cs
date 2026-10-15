@@ -75,6 +75,41 @@ public class P0NavTests
     }
 
     [Fact]
+    public async Task Stepper_navega_entre_etapas()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors, "/stepper");
+
+        var steps = page.Locator("#stepper-horizontal .p-steplist .p-step");
+        await steps.First.WaitForAsync();
+        await Expect(steps).ToHaveCountAsync(3);
+        await Expect(steps.Nth(0)).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-step-active"));
+
+        // O separador (linha conectora) fica dentro de cada passo, exceto no último.
+        await Expect(steps.Nth(0).Locator(".p-stepper-separator")).ToHaveCountAsync(1);
+        await Expect(steps.Nth(2).Locator(".p-stepper-separator")).ToHaveCountAsync(0);
+
+        await steps.Nth(1).Locator(".p-step-header").ClickAsync();
+        await Expect(steps.Nth(1)).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-step-active"));
+        await Expect(page.Locator("#stepper-horizontal .p-steppanels .p-steppanel").First).ToContainTextAsync("Content II");
+
+        // Demo de template: cabeçalhos customizados navegam pelos painéis com activateCallback.
+        var template = page.Locator("#stepper-template");
+        await Expect(template.Locator(".p-steplist .p-step").First).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-step-active"));
+        await Expect(template.Locator(".p-steppanel")).ToContainTextAsync("Crie sua conta");
+
+        await template.Locator(".p-steplist .p-step").Nth(1).Locator("button").ClickAsync();
+        await Expect(template.Locator(".p-steppanel")).ToContainTextAsync("Escolha seus interesses");
+        await Expect(template.Locator(".p-steppanel .p-togglebutton").First).ToBeVisibleAsync();
+
+        await template.GetByRole(AriaRole.Button, new() { Name = "Next" }).ClickAsync();
+        await Expect(template.Locator(".p-steppanel")).ToContainTextAsync("Conta criada com sucesso");
+
+        Assert.Empty(errors);
+        await page.CloseAsync();
+    }
+
+    [Fact]
     public async Task Menubar_abre_submenu()
     {
         var errors = new List<string>();

@@ -27,7 +27,13 @@
 </section>
 
 <section id="t-step">
-    <OpStepper Model="_steps" @bind-ActiveIndex="_stepActive" Linear="true"/>
+    <OpStepper @bind-Value="_stepActive" Linear="true">
+        <OpStepList>
+            <OpStep Value="1">Um</OpStep>
+            <OpStep Value="2">Dois</OpStep>
+            <OpStep Value="3">Três</OpStep>
+        </OpStepList>
+    </OpStepper>
     <span id="t-step-log">@_stepActive</span>
 </section>
 
@@ -54,7 +60,7 @@
     private string? _ac;
     private List<City> _suggestions = new();
 
-    private int _stepActive;
+    private int _stepActive = 1;
     private int _tabActive;
     private readonly List<string> _tabs = new() { "A", "B", "C" };
 
@@ -63,13 +69,6 @@
     private readonly List<City> _cities = Enumerable.Range(1, 30)
         .Select(i => new City($"Cidade {i:00}", $"C{i:00}"))
         .ToList();
-
-    private readonly List<OpStepItem> _steps = new()
-    {
-        new OpStepItem { Label = "Um" },
-        new OpStepItem { Label = "Dois" },
-        new OpStepItem { Label = "Três" }
-    };
 
     private IReadOnlyList<City> _source = new List<City>
     {

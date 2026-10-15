@@ -1,0 +1,10 @@
+@namespace OpBlazorUI.Components.Stepper
+@using OpBlazorUI.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass"
+     data-p-active="@(Active ? "true" : "false")">
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</div>
