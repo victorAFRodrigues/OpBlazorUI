@@ -20,6 +20,9 @@ public partial class OpContextMenu : OpComponentBase
     [Parameter] public EventCallback OnShow { get; set; }
     [Parameter] public EventCallback OnHide { get; set; }
 
+    /// <summary>Template de item (equivalente ao <c>#item</c> do upstream).</summary>
+    [Parameter] public RenderFragment<OpMenuItemContext>? ItemTemplate { get; set; }
+
     /// <summary>Seletor CSS cujos elementos abrem o menu no clique direito.</summary>
     [Parameter] public string? Target { get; set; }
 

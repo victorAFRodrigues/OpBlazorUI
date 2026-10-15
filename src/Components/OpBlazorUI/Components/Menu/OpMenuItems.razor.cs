@@ -21,6 +21,20 @@ public partial class OpMenuItems : OpComponentBase
     [Parameter] public EventCallback<string> OnToggle { get; set; }
     [Parameter] public EventCallback<OpMenuItem> OnItemClick { get; set; }
 
+    /// <summary>
+    /// Substitui o conteúdo do item (equivalente ao template <c>#item</c> do upstream).
+    /// O template é renderizado dentro do link do item, que segue cuidando de foco e clique.
+    /// </summary>
+    [Parameter] public RenderFragment<OpMenuItemContext>? ItemTemplate { get; set; }
+
+    /// <summary>Contexto entregue ao <see cref="ItemTemplate"/>.</summary>
+    internal OpMenuItemContext ContextFor(OpMenuItem item, bool hasChildren) => new()
+    {
+        Item = item,
+        HasSubmenu = hasChildren,
+        Root = Root,
+    };
+
     private string ListClass => Root
         ? $"p-{Prefix}-root-list"
         : $"p-{Prefix}-submenu p-{Prefix}-submenu-open";

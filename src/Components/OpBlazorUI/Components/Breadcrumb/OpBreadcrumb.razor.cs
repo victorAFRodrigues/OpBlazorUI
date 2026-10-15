@@ -14,6 +14,9 @@ public partial class OpBreadcrumb : OpComponentBase
     [Parameter] public RenderFragment<OpMenuItem>? HomeTemplate { get; set; }
     [Parameter] public RenderFragment<OpMenuItem>? ItemTemplate { get; set; }
 
+    /// <summary>Conteúdo do separador entre itens (padrão: o ícone de <see cref="SeparatorIcon"/>).</summary>
+    [Parameter] public RenderFragment? SeparatorTemplate { get; set; }
+
     [Parameter] public EventCallback<OpMenuItem> OnItemClick { get; set; }
 
     private string RootClass => Class("p-breadcrumb p-component", StyleClass);

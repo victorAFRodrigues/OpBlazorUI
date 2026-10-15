@@ -27,7 +27,14 @@
                 }
             </li>
             <li class="p-breadcrumb-separator">
-                <i class="@SeparatorIconClass" aria-hidden="true"></i>
+                @if (SeparatorTemplate is not null)
+                {
+                    @SeparatorTemplate
+                }
+                else
+                {
+                    <i class="@SeparatorIconClass" aria-hidden="true"></i>
+                }
             </li>
         }
 
@@ -66,7 +73,14 @@
             @if (!last)
             {
                 <li class="p-breadcrumb-separator">
-                    <i class="@SeparatorIconClass" aria-hidden="true"></i>
+                    @if (SeparatorTemplate is not null)
+                    {
+                        @SeparatorTemplate
+                    }
+                    else
+                    {
+                        <i class="@SeparatorIconClass" aria-hidden="true"></i>
+                    }
                 </li>
             }
         }

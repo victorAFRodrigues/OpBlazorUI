@@ -37,21 +37,28 @@
                        aria-expanded="@(hasChildren ? (open ? "true" : "false") : null)"
                        @onclick="() => OnSelectAsync(root, hasChildren)"
                        @onclick:preventDefault="hasChildren">
-                        @if (!string.IsNullOrEmpty(root.Icon))
+                        @if (ItemTemplate is not null)
                         {
-                            <span class="p-megamenu-item-icon @root.Icon" aria-hidden="true"></span>
+                            @ItemTemplate(new OpMenuItemContext { Item = root, HasSubmenu = hasChildren, Root = true })
                         }
-                        <span class="p-megamenu-item-label">@root.Label</span>
-                        @if (hasChildren)
+                        else
                         {
-                            <span class="p-megamenu-submenu-icon pi pi-angle-down" aria-hidden="true"></span>
+                            @if (!string.IsNullOrEmpty(root.Icon))
+                            {
+                                <span class="p-megamenu-item-icon @root.Icon" aria-hidden="true"></span>
+                            }
+                            <span class="p-megamenu-item-label">@root.Label</span>
+                            @if (hasChildren)
+                            {
+                                <span class="@SubmenuIconClass" aria-hidden="true"></span>
+                            }
                         }
                     </a>
                 </div>
 
                 @if (hasChildren && open)
                 {
-                    <div class="p-megamenu-submenu p-megamenu-overlay" style="display: block; position: absolute; top: 100%; left: 0; z-index: 10;">
+                    <div class="p-megamenu-submenu p-megamenu-overlay" style="@OverlayStyle">
                         <div class="p-megamenu-grid">
                             @foreach (var column in root.Items!)
                             {
@@ -71,11 +78,18 @@
                                                        tabindex="-1"
                                                        @onclick="() => SelectItemAsync(link)"
                                                        @onclick:preventDefault="@(link.Command is not null || string.IsNullOrEmpty(link.Url))">
-                                                        @if (!string.IsNullOrEmpty(link.Icon))
+                                                        @if (ItemTemplate is not null)
                                                         {
-                                                            <span class="p-megamenu-item-icon @link.Icon" aria-hidden="true"></span>
+                                                            @ItemTemplate(new OpMenuItemContext { Item = link, HasSubmenu = false, Root = false })
                                                         }
-                                                        <span class="p-megamenu-item-label">@link.Label</span>
+                                                        else
+                                                        {
+                                                            @if (!string.IsNullOrEmpty(link.Icon))
+                                                            {
+                                                                <span class="p-megamenu-item-icon @link.Icon" aria-hidden="true"></span>
+                                                            }
+                                                            <span class="p-megamenu-item-label">@link.Label</span>
+                                                        }
                                                     </a>
                                                 </div>
                                             </li>
