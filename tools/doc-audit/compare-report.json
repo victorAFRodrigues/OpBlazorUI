@@ -1,0 +1,4804 @@
+[
+  {
+    "component": "Accordion",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-acc",
+      "api-panel",
+      "basic",
+      "import",
+      "issues",
+      "multiple",
+      "pt",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "controlled",
+      "disabled",
+      "dynamic",
+      "import",
+      "multiple",
+      "template"
+    ],
+    "missing": [
+      "controlled",
+      "disabled",
+      "dynamic"
+    ],
+    "extra": [
+      "api-acc",
+      "api-panel",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "multiple",
+      "template"
+    ]
+  },
+  {
+    "component": "AnimateOnScroll",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "import",
+      "style"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "style"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "AutoComplete",
+    "has_upstream": true,
+    "showcase_sections": [],
+    "upstream_sections": [
+      "accessibility",
+      "advancedchips",
+      "basic",
+      "basicchips",
+      "chips",
+      "clearicon",
+      "disabled",
+      "dropdown",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forceselection",
+      "forms",
+      "group",
+      "iftalabel",
+      "import",
+      "invalid",
+      "multiple",
+      "objects",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven",
+      "virtualscroll"
+    ],
+    "missing": [
+      "accessibility",
+      "advancedchips",
+      "basic",
+      "basicchips",
+      "chips",
+      "clearicon",
+      "disabled",
+      "dropdown",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forceselection",
+      "forms",
+      "group",
+      "iftalabel",
+      "import",
+      "invalid",
+      "multiple",
+      "objects",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven",
+      "virtualscroll"
+    ],
+    "extra": [],
+    "matched": []
+  },
+  {
+    "component": "AutoFocus",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "import",
+      "style"
+    ],
+    "upstream_sections": [
+      "basic",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "accessibility",
+      "api-props",
+      "style"
+    ],
+    "matched": [
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Avatar",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "avatargroup",
+      "badge",
+      "icon",
+      "image",
+      "import",
+      "issues",
+      "label",
+      "pt",
+      "shape",
+      "size",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "avatargroup",
+      "badge",
+      "icon",
+      "image",
+      "import",
+      "label",
+      "shape",
+      "size",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "avatargroup",
+      "badge",
+      "icon",
+      "image",
+      "import",
+      "label",
+      "shape",
+      "size",
+      "template"
+    ]
+  },
+  {
+    "component": "Badge",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-overlay",
+      "api-props",
+      "basic",
+      "button",
+      "import",
+      "issues",
+      "overlay",
+      "pt",
+      "severity",
+      "size",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "button",
+      "import",
+      "overlay",
+      "severity",
+      "size"
+    ],
+    "missing": [],
+    "extra": [
+      "api-overlay",
+      "api-props",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "button",
+      "import",
+      "overlay",
+      "severity",
+      "size"
+    ]
+  },
+  {
+    "component": "BlockUI",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "document",
+      "import",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "document",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "document",
+      "import"
+    ]
+  },
+  {
+    "component": "Breadcrumb",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "home",
+      "icons",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import",
+      "router",
+      "template"
+    ],
+    "missing": [
+      "router",
+      "template"
+    ],
+    "extra": [
+      "api-props",
+      "home",
+      "icons",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Button",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "anchor",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "badge",
+      "basic",
+      "buttongroup",
+      "disabled",
+      "events",
+      "fluid",
+      "icononly",
+      "icons",
+      "import",
+      "issues",
+      "link",
+      "loading",
+      "outlined",
+      "pt",
+      "raised",
+      "raisedtext",
+      "rounded",
+      "severity",
+      "sizes",
+      "style",
+      "template",
+      "text",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "badge",
+      "basic",
+      "buttongroup",
+      "directive",
+      "disabled",
+      "icononly",
+      "icons",
+      "import",
+      "link",
+      "loading",
+      "outlined",
+      "raised",
+      "raisedtext",
+      "rounded",
+      "severity",
+      "sizes",
+      "template",
+      "text"
+    ],
+    "missing": [
+      "directive"
+    ],
+    "extra": [
+      "anchor",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "events",
+      "fluid",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "badge",
+      "basic",
+      "buttongroup",
+      "disabled",
+      "icononly",
+      "icons",
+      "import",
+      "link",
+      "loading",
+      "outlined",
+      "raised",
+      "raisedtext",
+      "rounded",
+      "severity",
+      "sizes",
+      "template",
+      "text"
+    ]
+  },
+  {
+    "component": "Card",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "advanced",
+      "api-props",
+      "api-templates",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "advanced",
+      "basic",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "advanced",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Carousel",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-item",
+      "api-props",
+      "api-templates",
+      "basic",
+      "circular",
+      "import",
+      "issues",
+      "pt",
+      "responsive",
+      "theming",
+      "vertical"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "circular",
+      "import",
+      "responsive",
+      "vertical"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-item",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "circular",
+      "import",
+      "responsive",
+      "vertical"
+    ]
+  },
+  {
+    "component": "CascadeSelect",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "clearicon",
+      "disabled",
+      "filled",
+      "float-label",
+      "fluid",
+      "ifta-label",
+      "import",
+      "invalid",
+      "issues",
+      "loading",
+      "pt",
+      "reactive",
+      "sizes",
+      "style",
+      "template",
+      "templatedriven",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "clearicon",
+      "disabled",
+      "filled",
+      "float-label",
+      "fluid",
+      "forms",
+      "ifta-label",
+      "import",
+      "invalid",
+      "loading",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven"
+    ],
+    "missing": [
+      "forms"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "clearicon",
+      "disabled",
+      "filled",
+      "float-label",
+      "fluid",
+      "ifta-label",
+      "import",
+      "invalid",
+      "loading",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven"
+    ]
+  },
+  {
+    "component": "Checkbox",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "binding",
+      "disabled",
+      "dynamic",
+      "filled",
+      "forms",
+      "group",
+      "import",
+      "indeterminate",
+      "invalid",
+      "issues",
+      "pt",
+      "sizes",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "dynamic",
+      "filled",
+      "forms",
+      "group",
+      "import",
+      "indeterminate",
+      "invalid",
+      "reactive",
+      "sizes",
+      "templatedriven"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "binding",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "dynamic",
+      "filled",
+      "forms",
+      "group",
+      "import",
+      "indeterminate",
+      "invalid",
+      "sizes"
+    ]
+  },
+  {
+    "component": "Chip",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "icon",
+      "image",
+      "import",
+      "issues",
+      "pt",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "icon",
+      "image",
+      "import",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "icon",
+      "image",
+      "import",
+      "template"
+    ]
+  },
+  {
+    "component": "ColorPicker",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "disabled",
+      "format",
+      "forms",
+      "import",
+      "inline",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "format",
+      "forms",
+      "import",
+      "inline",
+      "reactive",
+      "templatedriven"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "format",
+      "forms",
+      "import",
+      "inline"
+    ]
+  },
+  {
+    "component": "ConfirmDialog",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-methods",
+      "api-options",
+      "api-props",
+      "api-service",
+      "api-templates",
+      "badge",
+      "basic",
+      "custom",
+      "declarative",
+      "events",
+      "headless",
+      "import",
+      "issues",
+      "position",
+      "pt",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "headless",
+      "import",
+      "position",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-methods",
+      "api-options",
+      "api-props",
+      "api-service",
+      "api-templates",
+      "badge",
+      "custom",
+      "declarative",
+      "events",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "headless",
+      "import",
+      "position",
+      "template"
+    ]
+  },
+  {
+    "component": "ConfirmPopup",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-methods",
+      "api-props",
+      "basic",
+      "custom",
+      "events",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "headless",
+      "import",
+      "template"
+    ],
+    "missing": [
+      "headless",
+      "template"
+    ],
+    "extra": [
+      "api-events",
+      "api-methods",
+      "api-props",
+      "custom",
+      "events",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "ContextMenu",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "cursor",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "command",
+      "document",
+      "import",
+      "router",
+      "table",
+      "template"
+    ],
+    "missing": [
+      "command",
+      "document",
+      "router",
+      "table",
+      "template"
+    ],
+    "extra": [
+      "api-props",
+      "cursor",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "DataView",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "empty",
+      "import",
+      "issues",
+      "layout",
+      "loading",
+      "pagination",
+      "pt",
+      "sorting",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import",
+      "layout",
+      "loading",
+      "pagination",
+      "sorting"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "empty",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "layout",
+      "loading",
+      "pagination",
+      "sorting"
+    ]
+  },
+  {
+    "component": "DatePicker",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "binding",
+      "buttonbar",
+      "clearicon",
+      "datetemplate",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "format",
+      "forms",
+      "icon",
+      "iftalabel",
+      "import",
+      "inline",
+      "invalid",
+      "issues",
+      "locale",
+      "minmax",
+      "monthpicker",
+      "multiple",
+      "multiplemonths",
+      "pt",
+      "range",
+      "sizes",
+      "style",
+      "theming",
+      "time",
+      "yearpicker"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "buttonbar",
+      "clearicon",
+      "datetemplate",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "format",
+      "forms",
+      "icon",
+      "iftalabel",
+      "import",
+      "inline",
+      "invalid",
+      "locale",
+      "minmax",
+      "monthpicker",
+      "multiple",
+      "multiplemonths",
+      "range",
+      "reactive",
+      "sizes",
+      "templatedriven",
+      "time",
+      "yearpicker"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "binding",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "buttonbar",
+      "clearicon",
+      "datetemplate",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "format",
+      "forms",
+      "icon",
+      "iftalabel",
+      "import",
+      "inline",
+      "invalid",
+      "locale",
+      "minmax",
+      "monthpicker",
+      "multiple",
+      "multiplemonths",
+      "range",
+      "sizes",
+      "time",
+      "yearpicker"
+    ]
+  },
+  {
+    "component": "Dialog",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "headless",
+      "import",
+      "issues",
+      "longcontent",
+      "maximizable",
+      "position",
+      "pt",
+      "responsive",
+      "style",
+      "template",
+      "theming",
+      "withoutmodal"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "headless",
+      "import",
+      "longcontent",
+      "maximizable",
+      "position",
+      "responsive",
+      "template",
+      "withoutmodal"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "headless",
+      "import",
+      "longcontent",
+      "maximizable",
+      "position",
+      "responsive",
+      "template",
+      "withoutmodal"
+    ]
+  },
+  {
+    "component": "Divider",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "content",
+      "import",
+      "issues",
+      "login",
+      "pt",
+      "style",
+      "theming",
+      "type",
+      "vertical"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "content",
+      "import",
+      "login",
+      "type",
+      "vertical"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "content",
+      "import",
+      "login",
+      "type",
+      "vertical"
+    ]
+  },
+  {
+    "component": "Drawer",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "fullscreen",
+      "headless",
+      "import",
+      "issues",
+      "position",
+      "pt",
+      "size",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "fullscreen",
+      "headless",
+      "import",
+      "position",
+      "size",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "fullscreen",
+      "headless",
+      "import",
+      "position",
+      "size",
+      "template"
+    ]
+  },
+  {
+    "component": "DynamicDialog",
+    "has_upstream": true,
+    "showcase_sections": [
+      "api-config",
+      "api-ref",
+      "api-service",
+      "close",
+      "import",
+      "issues",
+      "open",
+      "passing-data",
+      "theming",
+      "usage"
+    ],
+    "upstream_sections": [
+      "close",
+      "customization",
+      "example",
+      "import",
+      "open",
+      "passingdata",
+      "usage"
+    ],
+    "missing": [
+      "customization",
+      "example",
+      "passingdata"
+    ],
+    "extra": [
+      "api-config",
+      "api-ref",
+      "api-service",
+      "issues",
+      "passing-data",
+      "theming"
+    ],
+    "matched": [
+      "close",
+      "import",
+      "open",
+      "usage"
+    ]
+  },
+  {
+    "component": "Editor",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "events",
+      "import",
+      "issues",
+      "pt",
+      "quill",
+      "reactive",
+      "readonly",
+      "style",
+      "template",
+      "templatedriven",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "forms",
+      "import",
+      "quill",
+      "reactive",
+      "readonly",
+      "template",
+      "templatedriven"
+    ],
+    "missing": [
+      "forms"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "events",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "quill",
+      "reactive",
+      "readonly",
+      "template",
+      "templatedriven"
+    ]
+  },
+  {
+    "component": "Fieldset",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "template",
+      "theming",
+      "toggleable"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import",
+      "template",
+      "toggleable"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "template",
+      "toggleable"
+    ]
+  },
+  {
+    "component": "FileUpload",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "basic",
+      "custom",
+      "import",
+      "issues",
+      "pt",
+      "simple",
+      "template",
+      "theming",
+      "validation"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "advanced",
+      "auto",
+      "basic",
+      "import",
+      "template"
+    ],
+    "missing": [
+      "advanced",
+      "auto"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "custom",
+      "issues",
+      "pt",
+      "simple",
+      "theming",
+      "validation"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "template"
+    ]
+  },
+  {
+    "component": "FloatLabel",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "forms",
+      "import",
+      "invalid",
+      "issues",
+      "pt",
+      "style",
+      "theming",
+      "variants"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import",
+      "invalid",
+      "variants"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "forms",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "invalid",
+      "variants"
+    ]
+  },
+  {
+    "component": "Fluid",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api",
+      "basic",
+      "import",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "api",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "FocusTrap",
+    "has_upstream": true,
+    "showcase_sections": [
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "basic",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Galleria",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "advanced",
+      "api-events",
+      "api-item",
+      "api-props",
+      "api-templates",
+      "autoplay",
+      "basic",
+      "caption",
+      "controlled",
+      "import",
+      "issues",
+      "pt",
+      "responsive",
+      "theming",
+      "thumbnail"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "advanced",
+      "autoplay",
+      "basic",
+      "caption",
+      "clickevent",
+      "controlled",
+      "customcontent",
+      "fullscreen",
+      "hover",
+      "hoverevent",
+      "import",
+      "indicator",
+      "itemwiththumbnails",
+      "itemwithtouthumbnails",
+      "navigator",
+      "position",
+      "responsive",
+      "template",
+      "thumbnail",
+      "withindicators",
+      "withthumbnails",
+      "withtouthumbnails"
+    ],
+    "missing": [
+      "clickevent",
+      "customcontent",
+      "fullscreen",
+      "hover",
+      "hoverevent",
+      "indicator",
+      "itemwiththumbnails",
+      "itemwithtouthumbnails",
+      "navigator",
+      "position",
+      "template",
+      "withindicators",
+      "withthumbnails",
+      "withtouthumbnails"
+    ],
+    "extra": [
+      "api-events",
+      "api-item",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "advanced",
+      "autoplay",
+      "basic",
+      "caption",
+      "controlled",
+      "import",
+      "responsive",
+      "thumbnail"
+    ]
+  },
+  {
+    "component": "IconField",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "floatlabel",
+      "iftalabel",
+      "import",
+      "issues",
+      "pt",
+      "sizes",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "floatlabel",
+      "iftalabel",
+      "import",
+      "sizes",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "floatlabel",
+      "iftalabel",
+      "import",
+      "sizes",
+      "template"
+    ]
+  },
+  {
+    "component": "IftaLabel",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "forms",
+      "import",
+      "invalid",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import",
+      "invalid"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "forms",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "invalid"
+    ]
+  },
+  {
+    "component": "Image",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "preview",
+      "pt",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import",
+      "preview",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "preview",
+      "template"
+    ]
+  },
+  {
+    "component": "ImageCompare",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "responsive",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import",
+      "responsive"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "responsive"
+    ]
+  },
+  {
+    "component": "InlineMessage",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "content",
+      "icon",
+      "import",
+      "issues",
+      "pt",
+      "severities",
+      "theming"
+    ],
+    "upstream_sections": [],
+    "missing": [],
+    "extra": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "content",
+      "icon",
+      "import",
+      "issues",
+      "pt",
+      "severities",
+      "theming"
+    ],
+    "matched": []
+  },
+  {
+    "component": "Inplace",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "image",
+      "import",
+      "input",
+      "issues",
+      "lazy",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "image",
+      "import",
+      "input",
+      "lazy"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "image",
+      "import",
+      "input",
+      "lazy"
+    ]
+  },
+  {
+    "component": "InputChips",
+    "has_upstream": false,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "backspace",
+      "basic",
+      "forms",
+      "import",
+      "issues",
+      "max",
+      "pt",
+      "separators",
+      "theming"
+    ],
+    "upstream_sections": [],
+    "missing": [],
+    "extra": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "backspace",
+      "basic",
+      "forms",
+      "import",
+      "issues",
+      "max",
+      "pt",
+      "separators",
+      "theming"
+    ],
+    "matched": []
+  },
+  {
+    "component": "InputGroup",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "button",
+      "checkbox",
+      "floatlabel",
+      "iftalabel",
+      "import",
+      "issues",
+      "multiple",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "button",
+      "checkbox",
+      "floatlabel",
+      "iftalabel",
+      "import",
+      "multiple"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "button",
+      "checkbox",
+      "floatlabel",
+      "iftalabel",
+      "import",
+      "multiple"
+    ]
+  },
+  {
+    "component": "InputMask",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "basic",
+      "clearicon",
+      "disabled",
+      "events",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "iftalabel",
+      "import",
+      "invalid",
+      "issues",
+      "mask",
+      "optional",
+      "pt",
+      "reactive",
+      "sizes",
+      "slotchar",
+      "style",
+      "templatedriven",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "clearicon",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "iftalabel",
+      "import",
+      "invalid",
+      "mask",
+      "optional",
+      "reactive",
+      "sizes",
+      "slotchar",
+      "templatedriven"
+    ],
+    "missing": [
+      "forms"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "events",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "clearicon",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "iftalabel",
+      "import",
+      "invalid",
+      "mask",
+      "optional",
+      "reactive",
+      "sizes",
+      "slotchar",
+      "templatedriven"
+    ]
+  },
+  {
+    "component": "InputNumber",
+    "has_upstream": false,
+    "showcase_sections": [],
+    "upstream_sections": [],
+    "missing": [],
+    "extra": [],
+    "matched": []
+  },
+  {
+    "component": "InputOtp",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "import",
+      "integeronly",
+      "issues",
+      "mask",
+      "pt",
+      "reactive",
+      "sample",
+      "sizes",
+      "style",
+      "template",
+      "templatedriven",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "forms",
+      "import",
+      "integeronly",
+      "mask",
+      "reactive",
+      "sample",
+      "sizes",
+      "template",
+      "templatedriven"
+    ],
+    "missing": [
+      "forms"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "integeronly",
+      "mask",
+      "reactive",
+      "sample",
+      "sizes",
+      "template",
+      "templatedriven"
+    ]
+  },
+  {
+    "component": "InputText",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "basic",
+      "binding",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "helptext",
+      "icons",
+      "iftalabel",
+      "import",
+      "invalid",
+      "issues",
+      "keyfilter",
+      "pt",
+      "sizes",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "helptext",
+      "iftalabel",
+      "import",
+      "invalid",
+      "reactive",
+      "sizes",
+      "templatedriven"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "binding",
+      "icons",
+      "issues",
+      "keyfilter",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "helptext",
+      "iftalabel",
+      "import",
+      "invalid",
+      "sizes"
+    ]
+  },
+  {
+    "component": "KeyFilter",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "presets",
+      "pt",
+      "regex",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "import",
+      "presets",
+      "regex"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "basic",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "import",
+      "presets",
+      "regex"
+    ]
+  },
+  {
+    "component": "Knob",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-inherited",
+      "api-props",
+      "basic",
+      "color",
+      "disabled",
+      "import",
+      "issues",
+      "minmax",
+      "pt",
+      "readonly",
+      "size",
+      "step",
+      "stroke",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "color",
+      "disabled",
+      "forms",
+      "import",
+      "minmax",
+      "reactive",
+      "reactiveforms",
+      "readonly",
+      "size",
+      "step",
+      "stroke",
+      "template",
+      "templatedriven"
+    ],
+    "missing": [
+      "forms",
+      "reactive",
+      "reactiveforms",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-inherited",
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "color",
+      "disabled",
+      "import",
+      "minmax",
+      "readonly",
+      "size",
+      "step",
+      "stroke",
+      "template"
+    ]
+  },
+  {
+    "component": "Listbox",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "checkbox",
+      "checkmark",
+      "disabled",
+      "drag-drop",
+      "filter",
+      "forms",
+      "group",
+      "import",
+      "invalid",
+      "issues",
+      "multiple",
+      "pt",
+      "style",
+      "template",
+      "theming",
+      "virtualscroll"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "checkbox",
+      "checkmark",
+      "disabled",
+      "drag-drop",
+      "filter",
+      "forms",
+      "group",
+      "import",
+      "invalid",
+      "multiple",
+      "reactive",
+      "template",
+      "templatedriven",
+      "virtualscroll"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "checkbox",
+      "checkmark",
+      "disabled",
+      "drag-drop",
+      "filter",
+      "forms",
+      "group",
+      "import",
+      "invalid",
+      "multiple",
+      "template",
+      "virtualscroll"
+    ]
+  },
+  {
+    "component": "MegaMenu",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "command",
+      "import",
+      "router",
+      "template",
+      "vertical"
+    ],
+    "missing": [
+      "command",
+      "router",
+      "template",
+      "vertical"
+    ],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Menu",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-menuitem",
+      "api-methods",
+      "api-props",
+      "api-templates",
+      "basic",
+      "command",
+      "group",
+      "import",
+      "issues",
+      "popup",
+      "pt",
+      "router",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "command",
+      "group",
+      "import",
+      "popup",
+      "router",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-menuitem",
+      "api-methods",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "command",
+      "group",
+      "import",
+      "popup",
+      "router",
+      "template"
+    ]
+  },
+  {
+    "component": "Menubar",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "icons",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "command",
+      "import",
+      "router",
+      "template"
+    ],
+    "missing": [
+      "command",
+      "router",
+      "template"
+    ],
+    "extra": [
+      "api-props",
+      "icons",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Message",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "closable",
+      "dynamic",
+      "forms",
+      "icon",
+      "import",
+      "issues",
+      "life",
+      "outlined",
+      "pt",
+      "severity",
+      "simple",
+      "sizes",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "closable",
+      "dynamic",
+      "forms",
+      "icon",
+      "import",
+      "life",
+      "outlined",
+      "severity",
+      "simple",
+      "sizes"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "closable",
+      "dynamic",
+      "forms",
+      "icon",
+      "import",
+      "life",
+      "outlined",
+      "severity",
+      "simple",
+      "sizes"
+    ]
+  },
+  {
+    "component": "MeterGroup",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-contexts",
+      "api-item",
+      "api-props",
+      "basic",
+      "icon",
+      "import",
+      "issues",
+      "label",
+      "minmax",
+      "multiple",
+      "pt",
+      "template",
+      "theming",
+      "vertical"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "icon",
+      "import",
+      "label",
+      "minmax",
+      "multiple",
+      "template",
+      "vertical"
+    ],
+    "missing": [],
+    "extra": [
+      "api-contexts",
+      "api-item",
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "icon",
+      "import",
+      "label",
+      "minmax",
+      "multiple",
+      "template",
+      "vertical"
+    ]
+  },
+  {
+    "component": "MultiSelect",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "binding",
+      "chips",
+      "clearicon",
+      "disabled",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "group",
+      "iftalabel",
+      "import",
+      "invalid",
+      "issues",
+      "loadingstate",
+      "pt",
+      "sizes",
+      "style",
+      "template",
+      "theming",
+      "virtualscroll"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "chips",
+      "clearicon",
+      "disabled",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "group",
+      "iftalabel",
+      "import",
+      "invalid",
+      "loadingstate",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven",
+      "virtualscroll"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "binding",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "chips",
+      "clearicon",
+      "disabled",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "group",
+      "iftalabel",
+      "import",
+      "invalid",
+      "loadingstate",
+      "sizes",
+      "template",
+      "virtualscroll"
+    ]
+  },
+  {
+    "component": "OrderList",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "drag-drop",
+      "filter",
+      "import",
+      "issues",
+      "pt",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "drag-drop",
+      "filter",
+      "import",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "drag-drop",
+      "filter",
+      "import",
+      "template"
+    ]
+  },
+  {
+    "component": "Overlay",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "append-to",
+      "auto-z-index",
+      "base-z-index",
+      "basic",
+      "css-classes",
+      "events",
+      "hide-on-escape",
+      "import",
+      "issues",
+      "mode",
+      "options",
+      "pt",
+      "responsive",
+      "style",
+      "target",
+      "template",
+      "theming",
+      "transition-options"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "append-to",
+      "auto-z-index",
+      "base-z-index",
+      "basic",
+      "events",
+      "hide-on-escape",
+      "import",
+      "mode",
+      "options",
+      "responsive",
+      "style",
+      "target",
+      "template",
+      "transition-options"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "css-classes",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "append-to",
+      "auto-z-index",
+      "base-z-index",
+      "basic",
+      "events",
+      "hide-on-escape",
+      "import",
+      "mode",
+      "options",
+      "responsive",
+      "style",
+      "target",
+      "template",
+      "transition-options"
+    ]
+  },
+  {
+    "component": "Paginator",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-state",
+      "api-templates",
+      "basic",
+      "current-page-report",
+      "images",
+      "import",
+      "issues",
+      "pt",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "current-page-report",
+      "images",
+      "import",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-state",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "current-page-report",
+      "images",
+      "import",
+      "template"
+    ]
+  },
+  {
+    "component": "Panel",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "template",
+      "theming",
+      "toggleable"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "import",
+      "template",
+      "toggleable"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "template",
+      "toggleable"
+    ]
+  },
+  {
+    "component": "PanelMenu",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "single",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "command",
+      "controlled",
+      "import",
+      "multiple",
+      "router",
+      "template"
+    ],
+    "missing": [
+      "command",
+      "controlled",
+      "multiple",
+      "router",
+      "template"
+    ],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "single",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Password",
+    "has_upstream": false,
+    "showcase_sections": [],
+    "upstream_sections": [],
+    "missing": [],
+    "extra": [],
+    "matched": []
+  },
+  {
+    "component": "PickList",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "filter",
+      "import",
+      "issues",
+      "pt",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "filter",
+      "import",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "filter",
+      "import",
+      "template"
+    ]
+  },
+  {
+    "component": "Popover",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-methods",
+      "api-props",
+      "api-templates",
+      "basic",
+      "datatable",
+      "import",
+      "issues",
+      "pt",
+      "selectdata",
+      "style",
+      "target",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "datatable",
+      "import",
+      "selectdata",
+      "target",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-methods",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "datatable",
+      "import",
+      "selectdata",
+      "target",
+      "template"
+    ]
+  },
+  {
+    "component": "ProgressBar",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "dynamic",
+      "import",
+      "indeterminate",
+      "issues",
+      "pt",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "dynamic",
+      "import",
+      "indeterminate",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "dynamic",
+      "import",
+      "indeterminate",
+      "template"
+    ]
+  },
+  {
+    "component": "ProgressSpinner",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "custom",
+      "import",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "custom",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "custom",
+      "import"
+    ]
+  },
+  {
+    "component": "RadioButton",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "binding",
+      "disabled",
+      "dynamic",
+      "filled",
+      "forms",
+      "group",
+      "import",
+      "invalid",
+      "issues",
+      "pt",
+      "sizes",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "disabled",
+      "dynamic",
+      "filled",
+      "forms",
+      "group",
+      "import",
+      "invalid",
+      "reactive",
+      "sizes",
+      "templatedriven"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "binding",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "disabled",
+      "dynamic",
+      "filled",
+      "forms",
+      "group",
+      "import",
+      "invalid",
+      "sizes"
+    ]
+  },
+  {
+    "component": "Rating",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "disabled",
+      "events",
+      "forms",
+      "icons",
+      "import",
+      "issues",
+      "numberofstars",
+      "pt",
+      "readonly",
+      "style",
+      "template",
+      "theming",
+      "withoutcancel"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "forms",
+      "import",
+      "numberofstars",
+      "reactive",
+      "readonly",
+      "template",
+      "templatedriven"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "events",
+      "icons",
+      "issues",
+      "pt",
+      "style",
+      "theming",
+      "withoutcancel"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "forms",
+      "import",
+      "numberofstars",
+      "readonly",
+      "template"
+    ]
+  },
+  {
+    "component": "Ripple",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "custom",
+      "import",
+      "style"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "custom",
+      "default",
+      "import"
+    ],
+    "missing": [
+      "default"
+    ],
+    "extra": [
+      "api-props",
+      "basic",
+      "style"
+    ],
+    "matched": [
+      "accessibility",
+      "custom",
+      "import"
+    ]
+  },
+  {
+    "component": "ScrollPanel",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-methods",
+      "api-props",
+      "basic",
+      "custom",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "custom",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "api-methods",
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "custom",
+      "import"
+    ]
+  },
+  {
+    "component": "ScrollTop",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "element",
+      "import",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "element",
+      "import"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "element",
+      "import"
+    ]
+  },
+  {
+    "component": "Select",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "binding",
+      "checkmark",
+      "clearicon",
+      "disabled",
+      "editable",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "group",
+      "iftalabel",
+      "import",
+      "invalid",
+      "issues",
+      "lazyvirtualscroll",
+      "loadingstate",
+      "pt",
+      "sizes",
+      "style",
+      "template",
+      "theming",
+      "virtualscroll"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "checkmark",
+      "clearicon",
+      "disabled",
+      "editable",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "group",
+      "iftalabel",
+      "import",
+      "invalid",
+      "lazyvirtualscroll",
+      "loadingstate",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven",
+      "virtualscroll"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "binding",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "checkmark",
+      "clearicon",
+      "disabled",
+      "editable",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "group",
+      "iftalabel",
+      "import",
+      "invalid",
+      "lazyvirtualscroll",
+      "loadingstate",
+      "sizes",
+      "template",
+      "virtualscroll"
+    ]
+  },
+  {
+    "component": "SelectButton",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "disabled",
+      "fluid",
+      "import",
+      "invalid",
+      "issues",
+      "multiple",
+      "pt",
+      "reactive",
+      "sizes",
+      "style",
+      "template",
+      "templatedriven",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "fluid",
+      "forms",
+      "import",
+      "invalid",
+      "multiple",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven"
+    ],
+    "missing": [
+      "forms"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "fluid",
+      "import",
+      "invalid",
+      "multiple",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven"
+    ]
+  },
+  {
+    "component": "Skeleton",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "card",
+      "datatable",
+      "import",
+      "issues",
+      "list",
+      "pt",
+      "shapes",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "card",
+      "datatable",
+      "import",
+      "list",
+      "shapes"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "card",
+      "datatable",
+      "import",
+      "list",
+      "shapes"
+    ]
+  },
+  {
+    "component": "Slider",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "forms",
+      "import",
+      "input",
+      "issues",
+      "pt",
+      "range",
+      "step",
+      "theming",
+      "vertical"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "filter",
+      "forms",
+      "import",
+      "input",
+      "range",
+      "reactive",
+      "step",
+      "templatedriven",
+      "vertical"
+    ],
+    "missing": [
+      "filter",
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "forms",
+      "import",
+      "input",
+      "range",
+      "step",
+      "vertical"
+    ]
+  },
+  {
+    "component": "SpeedDial",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "circle",
+      "dynamic",
+      "import",
+      "issues",
+      "linear",
+      "mask",
+      "pt",
+      "quartercircle",
+      "semicircle",
+      "style",
+      "template",
+      "theming",
+      "tooltip"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "circle",
+      "import",
+      "linear",
+      "mask",
+      "quartercircle",
+      "semicircle",
+      "template",
+      "tooltip"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "dynamic",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "circle",
+      "import",
+      "linear",
+      "mask",
+      "quartercircle",
+      "semicircle",
+      "template",
+      "tooltip"
+    ]
+  },
+  {
+    "component": "SplitButton",
+    "has_upstream": false,
+    "showcase_sections": [],
+    "upstream_sections": [],
+    "missing": [],
+    "extra": [],
+    "matched": []
+  },
+  {
+    "component": "Splitter",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-panel",
+      "api-props",
+      "horizontal",
+      "import",
+      "issues",
+      "nested",
+      "pt",
+      "size",
+      "theming",
+      "vertical"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "horizontal",
+      "import",
+      "nested",
+      "size",
+      "vertical"
+    ],
+    "missing": [],
+    "extra": [
+      "api-panel",
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "horizontal",
+      "import",
+      "nested",
+      "size",
+      "vertical"
+    ]
+  },
+  {
+    "component": "Stepper",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-containers",
+      "api-events",
+      "api-step",
+      "api-step-item",
+      "api-step-panel",
+      "api-stepper",
+      "api-templates",
+      "horizontal",
+      "import",
+      "issues",
+      "linear",
+      "pt",
+      "steps-only",
+      "style",
+      "template",
+      "theming",
+      "vertical"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "horizontal",
+      "import",
+      "linear",
+      "steps-only",
+      "template",
+      "vertical"
+    ],
+    "missing": [],
+    "extra": [
+      "api-containers",
+      "api-events",
+      "api-step",
+      "api-step-item",
+      "api-step-panel",
+      "api-stepper",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "horizontal",
+      "import",
+      "linear",
+      "steps-only",
+      "template",
+      "vertical"
+    ]
+  },
+  {
+    "component": "Steps",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "disabled",
+      "import",
+      "issues",
+      "pt",
+      "readonly",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "controlled",
+      "import",
+      "interactive",
+      "routing"
+    ],
+    "missing": [
+      "controlled",
+      "interactive",
+      "routing"
+    ],
+    "extra": [
+      "api-props",
+      "disabled",
+      "issues",
+      "pt",
+      "readonly",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "StyleClass",
+    "has_upstream": true,
+    "showcase_sections": [
+      "animation",
+      "api-props",
+      "hideonresize",
+      "import",
+      "style",
+      "toggleclass"
+    ],
+    "upstream_sections": [
+      "animation",
+      "hideonresize",
+      "import",
+      "toggleclass"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "style"
+    ],
+    "matched": [
+      "animation",
+      "hideonresize",
+      "import",
+      "toggleclass"
+    ]
+  },
+  {
+    "component": "TabMenu",
+    "has_upstream": false,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "icons",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [],
+    "missing": [],
+    "extra": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "icons",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": []
+  },
+  {
+    "component": "TabView",
+    "has_upstream": false,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "scrollable",
+      "theming"
+    ],
+    "upstream_sections": [],
+    "missing": [],
+    "extra": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "scrollable",
+      "theming"
+    ],
+    "matched": []
+  },
+  {
+    "component": "Table",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-column",
+      "api-events",
+      "api-props",
+      "basic",
+      "binding",
+      "column-filter",
+      "dynamic",
+      "forms",
+      "global-filter",
+      "gridlines",
+      "import-demo",
+      "issues",
+      "lazy-load",
+      "loading-mask",
+      "loading-skeleton",
+      "multiple-selection",
+      "not-ported",
+      "paginator-basic",
+      "paginator-control",
+      "pt",
+      "selection-events",
+      "single-column-sort",
+      "single-selection",
+      "size",
+      "sticky-header",
+      "striped",
+      "style",
+      "table-style",
+      "templates",
+      "theming"
+    ],
+    "upstream_sections": [
+      "Edit",
+      "accessibility",
+      "basic",
+      "cell-edit",
+      "checkbox-selection",
+      "column-group",
+      "column-resize",
+      "column-selection",
+      "column-toggle",
+      "context-menu",
+      "customers",
+      "dynamic",
+      "expand",
+      "expand-mode",
+      "export",
+      "filter",
+      "filter-advanced",
+      "filter-basic",
+      "fit-mode",
+      "flex-scroll",
+      "frozen-columns",
+      "frozen-rows",
+      "gridlines",
+      "horizontal-scroll",
+      "import-demo",
+      "lazy-load",
+      "loading",
+      "loading-mask",
+      "loading-skeleton",
+      "multiple-columns-sort",
+      "multiple-selection",
+      "paginator",
+      "paginator-basic",
+      "paginator-programmatic",
+      "pre-sort",
+      "products",
+      "radio-button-selection",
+      "removable-sort",
+      "reorder",
+      "row-edit",
+      "row-expansion",
+      "row-group",
+      "row-selection",
+      "row-span",
+      "samples",
+      "scroll",
+      "scrollable",
+      "selection-events",
+      "single-column-sort",
+      "single-selection",
+      "size",
+      "sort",
+      "stateful",
+      "striped",
+      "subheader",
+      "table-style",
+      "template",
+      "vertical-scroll",
+      "virtual-scroll",
+      "virtual-scroll-basic",
+      "virtual-scroll-lazy"
+    ],
+    "missing": [
+      "Edit",
+      "cell-edit",
+      "checkbox-selection",
+      "column-group",
+      "column-resize",
+      "column-selection",
+      "column-toggle",
+      "context-menu",
+      "customers",
+      "expand",
+      "expand-mode",
+      "export",
+      "filter",
+      "filter-advanced",
+      "filter-basic",
+      "fit-mode",
+      "flex-scroll",
+      "frozen-columns",
+      "frozen-rows",
+      "horizontal-scroll",
+      "loading",
+      "multiple-columns-sort",
+      "paginator",
+      "paginator-programmatic",
+      "pre-sort",
+      "products",
+      "radio-button-selection",
+      "removable-sort",
+      "reorder",
+      "row-edit",
+      "row-expansion",
+      "row-group",
+      "row-selection",
+      "row-span",
+      "samples",
+      "scroll",
+      "scrollable",
+      "sort",
+      "stateful",
+      "subheader",
+      "template",
+      "vertical-scroll",
+      "virtual-scroll",
+      "virtual-scroll-basic",
+      "virtual-scroll-lazy"
+    ],
+    "extra": [
+      "api-column",
+      "api-events",
+      "api-props",
+      "binding",
+      "column-filter",
+      "forms",
+      "global-filter",
+      "issues",
+      "not-ported",
+      "paginator-control",
+      "pt",
+      "sticky-header",
+      "style",
+      "templates",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "dynamic",
+      "gridlines",
+      "import-demo",
+      "lazy-load",
+      "loading-mask",
+      "loading-skeleton",
+      "multiple-selection",
+      "paginator-basic",
+      "selection-events",
+      "single-column-sort",
+      "single-selection",
+      "size",
+      "striped",
+      "table-style"
+    ]
+  },
+  {
+    "component": "Tabs",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-panel",
+      "api-tabs",
+      "basic",
+      "icons",
+      "import",
+      "issues",
+      "pt",
+      "scrollable",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "controlled",
+      "disabled",
+      "dynamic",
+      "import",
+      "lazy",
+      "scrollable",
+      "tabmenu",
+      "template"
+    ],
+    "missing": [
+      "controlled",
+      "disabled",
+      "dynamic",
+      "lazy",
+      "tabmenu",
+      "template"
+    ],
+    "extra": [
+      "api-panel",
+      "api-tabs",
+      "icons",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import",
+      "scrollable"
+    ]
+  },
+  {
+    "component": "Tag",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "api-templates",
+      "basic",
+      "icon",
+      "import",
+      "issues",
+      "pill",
+      "pt",
+      "severity",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "icon",
+      "import",
+      "pill",
+      "severity",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "icon",
+      "import",
+      "pill",
+      "severity",
+      "template"
+    ]
+  },
+  {
+    "component": "Textarea",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "autoresize",
+      "basic",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "iftalabel",
+      "import",
+      "invalid",
+      "issues",
+      "pt",
+      "sizes",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "autoresize",
+      "basic",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "iftalabel",
+      "import",
+      "invalid",
+      "reactive",
+      "sizes",
+      "templatedriven"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "autoresize",
+      "basic",
+      "disabled",
+      "filled",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "iftalabel",
+      "import",
+      "invalid",
+      "sizes"
+    ]
+  },
+  {
+    "component": "TieredMenu",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "command",
+      "import",
+      "popup",
+      "router",
+      "template"
+    ],
+    "missing": [
+      "command",
+      "popup",
+      "router",
+      "template"
+    ],
+    "extra": [
+      "api-props",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Timeline",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "alignment",
+      "api-props",
+      "api-templates",
+      "basic",
+      "horizontal",
+      "import",
+      "issues",
+      "opposite",
+      "pt",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "alignment",
+      "basic",
+      "horizontal",
+      "import",
+      "opposite",
+      "template"
+    ],
+    "missing": [],
+    "extra": [
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "alignment",
+      "basic",
+      "horizontal",
+      "import",
+      "opposite",
+      "template"
+    ]
+  },
+  {
+    "component": "Toast",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-optoastmessage",
+      "api-props",
+      "api-templates",
+      "basic",
+      "headless",
+      "import",
+      "issues",
+      "multiple",
+      "position",
+      "pt",
+      "responsive",
+      "service",
+      "severity",
+      "sticky",
+      "style",
+      "templating",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "headless",
+      "import",
+      "multiple",
+      "position",
+      "responsive",
+      "severity",
+      "sticky",
+      "templating"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-optoastmessage",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "service",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "headless",
+      "import",
+      "multiple",
+      "position",
+      "responsive",
+      "severity",
+      "sticky",
+      "templating"
+    ]
+  },
+  {
+    "component": "ToggleButton",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "customized",
+      "disabled",
+      "fluid",
+      "import",
+      "invalid",
+      "issues",
+      "pt",
+      "reactive",
+      "sizes",
+      "style",
+      "template",
+      "templatedriven",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "customized",
+      "disabled",
+      "fluid",
+      "forms",
+      "import",
+      "invalid",
+      "reactive",
+      "sizes",
+      "templatedriven"
+    ],
+    "missing": [
+      "forms"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "template",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "customized",
+      "disabled",
+      "fluid",
+      "import",
+      "invalid",
+      "reactive",
+      "sizes",
+      "templatedriven"
+    ]
+  },
+  {
+    "component": "ToggleSwitch",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "binding",
+      "disabled",
+      "forms",
+      "import",
+      "invalid",
+      "issues",
+      "preselection",
+      "pt",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "forms",
+      "import",
+      "invalid",
+      "preselection",
+      "reactive",
+      "template",
+      "templatedriven"
+    ],
+    "missing": [
+      "reactive",
+      "templatedriven"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "binding",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "disabled",
+      "forms",
+      "import",
+      "invalid",
+      "preselection",
+      "template"
+    ]
+  },
+  {
+    "component": "Toolbar",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-props",
+      "basic",
+      "content",
+      "import",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "custom",
+      "import"
+    ],
+    "missing": [
+      "custom"
+    ],
+    "extra": [
+      "api-props",
+      "content",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "import"
+    ]
+  },
+  {
+    "component": "Tooltip",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "autohide",
+      "custom",
+      "delay",
+      "event",
+      "import",
+      "issues",
+      "options",
+      "position",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "autohide",
+      "custom",
+      "delay",
+      "event",
+      "import",
+      "options",
+      "position"
+    ],
+    "missing": [],
+    "extra": [
+      "api-events",
+      "api-props",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "autohide",
+      "custom",
+      "delay",
+      "event",
+      "import",
+      "options",
+      "position"
+    ]
+  },
+  {
+    "component": "Tree",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "checkbox",
+      "controlled",
+      "event",
+      "filter",
+      "import",
+      "issues",
+      "lazy",
+      "multiple",
+      "pt",
+      "single",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "checkbox",
+      "contextmenu",
+      "controlled",
+      "dragdrop",
+      "dragdrop-multiple",
+      "dragdrop-single",
+      "event",
+      "filter",
+      "import",
+      "lazy",
+      "lazyvirtualscroll",
+      "multiple",
+      "preload",
+      "selection",
+      "single",
+      "template",
+      "virtualscroll"
+    ],
+    "missing": [
+      "contextmenu",
+      "dragdrop",
+      "dragdrop-multiple",
+      "dragdrop-single",
+      "lazyvirtualscroll",
+      "preload",
+      "selection",
+      "virtualscroll"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "checkbox",
+      "controlled",
+      "event",
+      "filter",
+      "import",
+      "lazy",
+      "multiple",
+      "single",
+      "template"
+    ]
+  },
+  {
+    "component": "TreeSelect",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "checkbox",
+      "clearicon",
+      "disabled",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "iftalabel",
+      "import",
+      "invalid",
+      "issues",
+      "lazy",
+      "multiple",
+      "pt",
+      "reactive",
+      "sizes",
+      "style",
+      "template",
+      "templatedriven",
+      "theming",
+      "virtual-scroll-doc"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "checkbox",
+      "clearicon",
+      "disabled",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "forms",
+      "iftalabel",
+      "import",
+      "invalid",
+      "lazy",
+      "multiple",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven",
+      "virtual-scroll-doc"
+    ],
+    "missing": [
+      "forms"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "style",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "checkbox",
+      "clearicon",
+      "disabled",
+      "filled",
+      "filter",
+      "floatlabel",
+      "fluid",
+      "iftalabel",
+      "import",
+      "invalid",
+      "lazy",
+      "multiple",
+      "reactive",
+      "sizes",
+      "template",
+      "templatedriven",
+      "virtual-scroll-doc"
+    ]
+  },
+  {
+    "component": "TreeTable",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-column",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "checkbox",
+      "empty",
+      "import-demo",
+      "issues",
+      "loading-mask",
+      "paginatorbasic",
+      "pt",
+      "selectionmultiple",
+      "selectionsingle",
+      "theming"
+    ],
+    "upstream_sections": [
+      "accessibility",
+      "basic",
+      "checkbox",
+      "columngroup",
+      "columnresize",
+      "columntoggle",
+      "conditionalstyle",
+      "contextmenu",
+      "controlled",
+      "dynamiccolumns",
+      "edit",
+      "events",
+      "expandmode",
+      "filter",
+      "fitmode",
+      "flexible",
+      "frozencolumns",
+      "gridlines",
+      "horizontal",
+      "import-demo",
+      "lazyload",
+      "loading",
+      "loading-mask",
+      "loading-skeleton",
+      "paginator",
+      "paginatorbasic",
+      "paginatortemplate",
+      "reorder",
+      "scroll",
+      "scrollable",
+      "selection",
+      "selectionmultiple",
+      "selectionsingle",
+      "size",
+      "sort",
+      "sortmultiplecolumns",
+      "sortremovable",
+      "sortsinglecolumn",
+      "template",
+      "vertical"
+    ],
+    "missing": [
+      "columngroup",
+      "columnresize",
+      "columntoggle",
+      "conditionalstyle",
+      "contextmenu",
+      "controlled",
+      "dynamiccolumns",
+      "edit",
+      "events",
+      "expandmode",
+      "filter",
+      "fitmode",
+      "flexible",
+      "frozencolumns",
+      "gridlines",
+      "horizontal",
+      "lazyload",
+      "loading",
+      "loading-skeleton",
+      "paginator",
+      "paginatortemplate",
+      "reorder",
+      "scroll",
+      "scrollable",
+      "selection",
+      "size",
+      "sort",
+      "sortmultiplecolumns",
+      "sortremovable",
+      "sortsinglecolumn",
+      "template",
+      "vertical"
+    ],
+    "extra": [
+      "api-column",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "empty",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
+      "checkbox",
+      "import-demo",
+      "loading-mask",
+      "paginatorbasic",
+      "selectionmultiple",
+      "selectionsingle"
+    ]
+  },
+  {
+    "component": "VirtualScroller",
+    "has_upstream": true,
+    "showcase_sections": [
+      "accessibility",
+      "api-contexts",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "delay",
+      "grid",
+      "horizontal",
+      "import",
+      "issues",
+      "lazy",
+      "loading",
+      "programmatic",
+      "pt",
+      "scrolloptions",
+      "style",
+      "template",
+      "theming"
+    ],
+    "upstream_sections": [],
+    "missing": [],
+    "extra": [
+      "accessibility",
+      "api-contexts",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "delay",
+      "grid",
+      "horizontal",
+      "import",
+      "issues",
+      "lazy",
+      "loading",
+      "programmatic",
+      "pt",
+      "scrolloptions",
+      "style",
+      "template",
+      "theming"
+    ],
+    "matched": []
+  }
+]
