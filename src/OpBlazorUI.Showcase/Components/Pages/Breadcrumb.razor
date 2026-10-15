@@ -43,12 +43,42 @@
             <Code><CodeBlock Code="@IconsCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O <code>ItemTemplate</code> recebe o <code>OpMenuItem</code> e substitui o conteúdo de cada item; o
+                <code>SeparatorTemplate</code> substitui o separador. Diferente dos menus, aqui o template fornece o
+                próprio link do item.
+            </Description>
+            <ChildContent>
+                <OpBreadcrumb Home="_home" Model="_templateItems">
+                    <ItemTemplate Context="item">
+                        <a class="p-breadcrumb-item-link" href="@item.Url" @onclick:preventDefault="true">
+                            <span class="@($"p-breadcrumb-item-icon {item.Icon}")" aria-hidden="true"></span>
+                        </a>
+                    </ItemTemplate>
+                    <SeparatorTemplate> / </SeparatorTemplate>
+                </OpBreadcrumb>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Router" Id="router">
+            <Description>
+                A navegação usa <code>OpMenuItem.Url</code> (equivalente ao <code>routerLink</code>). O item
+                <code>Home</code> normalmente aponta para a raiz.
+            </Description>
+            <ChildContent>
+                <OpBreadcrumb Home="_routerHome" Model="_routerItems"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@RouterCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
                 <p>O componente usa o elemento <code>nav</code> com <code>aria-label</code>; o último item tem <code>aria-current="page"</code>.</p>
                 <h3>Suporte a teclado</h3>
-                <p>Os links são focáveis com <code>tab</code>.</p>
+                <p>Os itens são alcançáveis por <code>tab</code>.</p>
             </Description>
             <Code><CodeBlock Code="@AccessibilityCode"/></Code>
         </DocSection>
@@ -59,13 +89,14 @@
             <ChildContent>
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens do breadcrumb (o último é o ativo)." },
-                              new[] { "Home", "OpMenuItem?", "null", "Item inicial, normalmente com ícone." },
-                              new[] { "SeparatorIcon", "string", "pi pi-chevron-right", "Ícone separador entre itens." },
+                              new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens do breadcrumb." },
+                              new[] { "Home", "OpMenuItem?", "null", "Item inicial, exibido antes dos demais." },
+                              new[] { "HomeTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Conteúdo do item Home." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Conteúdo de cada item (equivale ao <code>#item</code> do upstream)." },
+                              new[] { "SeparatorTemplate", "RenderFragment?", "null", "Conteúdo do separador (equivale ao <code>#separator</code> do upstream)." },
+                              new[] { "SeparatorIcon", "string", "&quot;pi pi-angle-right&quot;", "Ícone do separador, quando não há <code>SeparatorTemplate</code>." },
                               new[] { "AriaLabel", "string?", "null", "Rótulo acessível do <code>nav</code>." },
-                              new[] { "HomeTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Template do item Home." },
-                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItem&gt;?", "null", "Template de cada item." },
-                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar num item, após executar <code>Command</code>; itens <code>Disabled</code> não disparam." }
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar num item, após executar <code>Command</code>." }
                           })"/>
             </ChildContent>
         </DocSection>
@@ -88,7 +119,8 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>Usa o modelo <code>OpMenuItem</code>: <code>Command</code> é executado no clique (com <code>OnItemClick</code> após), <code>Url</code>/<code>Target</code> viram links nativos (sem o roteador do Blazor), <code>Disabled</code> desabilita o item e <code>Visible=false</code> o oculta.</li>
+                        <li>Sem <code>ItemTemplate</code>, o último item é renderizado como texto (não clicável); os demais viram links.</li>
+                        <li>O <code>ItemTemplate</code> substitui o conteúdo do item por inteiro, incluindo o link (ver a seção Template).</li>
                     </ul>
                 </div>
             </ChildContent>
@@ -98,11 +130,29 @@
 
 @code {
     private readonly OpMenuItem _home = new() { Icon = "pi pi-home", Url = "/" };
+    private readonly OpMenuItem _routerHome = new() { Icon = "pi pi-home", Url = "/" };
+
     private readonly List<OpMenuItem> _items = new()
     {
         new OpMenuItem { Label = "Componentes", Url = "#" },
         new OpMenuItem { Label = "Formulário", Url = "#" },
         new OpMenuItem { Label = "InputText" }
+    };
+
+    private readonly List<OpMenuItem> _templateItems = new()
+    {
+        new() { Icon = "pi pi-sitemap" },
+        new() { Icon = "pi pi-book" },
+        new() { Icon = "pi pi-wallet" },
+        new() { Icon = "pi pi-shopping-bag" },
+        new() { Icon = "pi pi-calculator" }
+    };
+
+    private readonly List<OpMenuItem> _routerItems = new()
+    {
+        new() { Label = "Componentes", Url = "/" },
+        new() { Label = "Formulário" },
+        new() { Label = "InputText", Url = "/inputtext" }
     };
 
     private const string ImportCode = """
@@ -150,6 +200,40 @@
                 new OpMenuItem { Label = "Categoria", Icon = "pi pi-sitemap", Url = "#" },
                 new OpMenuItem { Label = "Documento", Icon = "pi pi-file", Url = "#" },
                 new OpMenuItem { Label = "Detalhe" }
+            };
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpBreadcrumb Home="_home" Model="_items">
+            <ItemTemplate Context="item">
+                <a class="p-breadcrumb-item-link" href="@item.Url">
+                    <span class="@($"p-breadcrumb-item-icon {item.Icon}")"></span>
+                </a>
+            </ItemTemplate>
+            <SeparatorTemplate> / </SeparatorTemplate>
+        </OpBreadcrumb>
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new() { Icon = "pi pi-sitemap" },
+                new() { Icon = "pi pi-book" },
+                new() { Icon = "pi pi-wallet" }
+            };
+        }
+        """;
+
+    private const string RouterCode = """
+        <OpBreadcrumb Home="_home" Model="_items" />
+
+        @code {
+            private OpMenuItem _home = new() { Icon = "pi pi-home", Url = "/" };
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Componentes", Url = "#" },
+                new OpMenuItem { Label = "Formulário", Url = "#" },
+                new OpMenuItem { Label = "InputText", Url = "/inputtext" }
             };
         }
         """;

@@ -1,7 +1,9 @@
 @page "/tieredmenu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Components.Button
 @using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Components.Toast
 @using OpBlazorUI.Models
 
 <PageTitle>TieredMenu - OpBlazorUI</PageTitle>
@@ -24,6 +26,81 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Popup" Id="popup">
+            <Description>
+                Com <code>Popup="true"</code> o menu fica oculto e é exibido por <code>ToggleAsync()</code>,
+                <code>ShowAsync()</code> ou <code>HideAsync()</code>. Sem âncora explícita, o painel ancora ao
+                elemento anterior — o botão do exemplo.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpButton Label="Alternar" OnClick="TogglePopupAsync"/>
+                </div>
+                <OpTieredMenu @ref="_popupMenu" Model="_items" Popup="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@PopupCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O <code>ItemTemplate</code> recebe um <code>OpMenuItemContext</code> com o item e a indicação de
+                submenu (<code>HasSubmenu</code>). No porte, o template substitui o conteúdo do link do item.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 20rem;">
+                    <OpTieredMenu Model="_templateItems">
+                        <ItemTemplate Context="ctx">
+                            @if (!string.IsNullOrEmpty(ctx.Item.Icon))
+                            {
+                                <span class="@($"p-tieredmenu-item-icon {ctx.Item.Icon}")" aria-hidden="true"></span>
+                            }
+                            <span class="p-tieredmenu-item-label">@ctx.Item.Label</span>
+                            @if (!string.IsNullOrEmpty(ctx.Item.Badge))
+                            {
+                                <span class="p-badge" style="margin-left:auto">@ctx.Item.Badge</span>
+                            }
+                            @if (!string.IsNullOrEmpty(ctx.Item.Shortcut))
+                            {
+                                <span style="margin-left:auto;border:1px solid var(--p-content-border-color);border-radius:var(--p-border-radius-sm);background:var(--p-content-hover-background);color:var(--p-text-muted-color);font-size:.75rem;padding:.15rem .35rem">@ctx.Item.Shortcut</span>
+                            }
+                            @if (ctx.HasSubmenu)
+                            {
+                                <span class="p-tieredmenu-submenu-icon pi pi-angle-right" style="margin-left:auto" aria-hidden="true"></span>
+                            }
+                        </ItemTemplate>
+                    </OpTieredMenu>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Command" Id="command">
+            <Description>
+                A propriedade <code>Command</code> define o callback executado quando o item é acionado por clique ou
+                evento de teclado.
+            </Description>
+            <ChildContent>
+                <OpToast Key="tieredmenu-command"/>
+                <div style="max-width: 20rem;">
+                    <OpTieredMenu Model="_commandItems"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CommandCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Router" Id="router">
+            <Description>
+                A navegação usa <code>OpMenuItem.Url</code> (equivalente ao <code>routerLink</code>); para navegação
+                programática, use <code>Command</code> com o <code>NavigationManager</code>.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 20rem;">
+                    <OpTieredMenu Model="_routerItems"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RouterCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
@@ -36,12 +113,18 @@
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades" Id="api-props">
+        <DocSection Label="Propriedades e Métodos" Id="api-props">
             <ChildContent>
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens do menu (com <code>Items</code> para submenus)." },
-                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um item-folha." }
+                              new[] { "Popup", "bool", "false", "Exibe o menu sobreposto, controlado por <code>ShowAsync</code>/<code>ToggleAsync</code>." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItemContext&gt;?", "null", "Conteúdo do item (equivale ao <code>#item</code> do upstream)." },
+                              new[] { "ShowAsync(anchor)", "Task", "—", "Exibe o menu no modo popup (ancorado ao elemento anterior quando sem âncora)." },
+                              new[] { "HideAsync()", "Task", "—", "Oculta o menu em modo popup." },
+                              new[] { "ToggleAsync(anchor)", "Task", "—", "Alterna exibição/ocultação no modo popup." },
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um item-folha." },
+                              new[] { "OnShow / OnHide", "EventCallback", "—", "Notificações de exibição/ocultação no modo popup." }
                           })"/>
             </ChildContent>
         </DocSection>
@@ -66,6 +149,7 @@
                     <ul>
                         <li>O submenu abre por clique (não por hover) e inverte para a esquerda perto da borda; clique fora ou Escape fecham.</li>
                         <li>Os submenus são posicionados de forma absoluta simples, sem detecção de colisão com a viewport.</li>
+                        <li>O <code>ItemTemplate</code> substitui o conteúdo do link, não o link inteiro (ver a seção Template).</li>
                     </ul>
                 </div>
             </ChildContent>
@@ -74,6 +158,11 @@
 </DocComponent>
 
 @code {
+    [Inject] private OpMessageService MessageService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private OpTieredMenu? _popupMenu;
+
     private readonly List<OpMenuItem> _items = new()
     {
         new OpMenuItem
@@ -110,6 +199,89 @@
         new OpMenuItem { Label = "Ajuda", Icon = "pi pi-question-circle" }
     };
 
+    private readonly List<OpMenuItem> _templateItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Arquivo",
+            Icon = "pi pi-file",
+            Items = new List<OpMenuItem>
+            {
+                new()
+                {
+                    Label = "Novo",
+                    Icon = "pi pi-plus",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Documento", Icon = "pi pi-file", Shortcut = "⌘+N" },
+                        new() { Label = "Imagem", Icon = "pi pi-image", Badge = "4" }
+                    }
+                },
+                new() { Label = "Abrir", Icon = "pi pi-folder-open", Shortcut = "⌘+O" }
+            }
+        },
+        new OpMenuItem { Label = "Editar", Icon = "pi pi-pencil" }
+    };
+
+    private List<OpMenuItem> _commandItems = new();
+    private List<OpMenuItem> _routerItems = new();
+
+    protected override void OnInitialized()
+    {
+        _commandItems = new List<OpMenuItem>
+        {
+            new OpMenuItem
+            {
+                Label = "Arquivo",
+                Icon = "pi pi-file",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Novo", Icon = "pi pi-plus", Command = () => Notify("success", "Sucesso", "Arquivo criado") },
+                    new() { Label = "Imprimir", Icon = "pi pi-print", Command = () => Notify("error", "Erro", "Nenhuma impressora conectada") }
+                }
+            },
+            new OpMenuItem { Label = "Buscar", Icon = "pi pi-search", Command = () => Notify("warn", "Busca", "Nenhum resultado encontrado") },
+            new OpMenuItem { Separator = true },
+            new OpMenuItem { Label = "Sincronizar", Icon = "pi pi-cloud-upload", Command = () => Notify("info", "Sincronizar", "Sincronização iniciada") }
+        };
+
+        _routerItems = new List<OpMenuItem>
+        {
+            new OpMenuItem
+            {
+                Label = "Router",
+                Icon = "pi pi-palette",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Temas", Url = "/theming" },
+                    new() { Label = "UI Kit", Url = "/uikit" }
+                }
+            },
+            new OpMenuItem { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") },
+            new OpMenuItem
+            {
+                Label = "Externo",
+                Icon = "pi pi-home",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Blazor", Url = "https://dotnet.microsoft.com/", Target = "_blank" },
+                    new() { Label = "PrimeNG", Url = "https://primeng.org", Target = "_blank" }
+                }
+            }
+        };
+    }
+
+    private async Task TogglePopupAsync()
+    {
+        if (_popupMenu is not null)
+        {
+            await _popupMenu.ToggleAsync();
+        }
+    }
+
+    private void Notify(string severity, string summary, string detail) =>
+        MessageService.Add(new OpToastMessage { Key = "tieredmenu-command", Severity = severity, Summary = summary, Detail = detail });
+
     private const string ImportCode = """
         @using OpBlazorUI.Components.Menu
         @using OpBlazorUI.Models
@@ -133,6 +305,98 @@
                     }
                 },
                 new OpMenuItem { Label = "Ajuda" }
+            };
+        }
+        """;
+
+    private const string PopupCode = """
+        <OpButton Label="Alternar" OnClick="TogglePopup" />
+        <OpTieredMenu @ref="_menu" Model="_items" Popup="true" />
+
+        @code {
+            private OpTieredMenu? _menu;
+
+            private async Task TogglePopup()
+            {
+                if (_menu is not null)
+                {
+                    await _menu.ToggleAsync();
+                }
+            }
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpTieredMenu Model="_items">
+            <ItemTemplate Context="ctx">
+                <span class="@($"p-tieredmenu-item-icon {ctx.Item.Icon}")"></span>
+                <span class="p-tieredmenu-item-label">@ctx.Item.Label</span>
+                @if (!string.IsNullOrEmpty(ctx.Item.Badge))
+                {
+                    <span class="p-badge" style="margin-left:auto">@ctx.Item.Badge</span>
+                }
+                @if (ctx.HasSubmenu)
+                {
+                    <span class="p-tieredmenu-submenu-icon pi pi-angle-right" style="margin-left:auto"></span>
+                }
+            </ItemTemplate>
+        </OpTieredMenu>
+        """;
+
+    private const string CommandCode = """
+        <OpToast Key="tieredmenu-command" />
+        <OpTieredMenu Model="_items" />
+
+        @code {
+            [Inject] private OpMessageService MessageService { get; set; } = default!;
+
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Arquivo",
+                    Icon = "pi pi-file",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Novo", Icon = "pi pi-plus", Command = () => Notify("success", "Sucesso", "Arquivo criado") },
+                        new() { Label = "Imprimir", Icon = "pi pi-print", Command = () => Notify("error", "Erro", "Nenhuma impressora conectada") }
+                    }
+                }
+            };
+
+            private void Notify(string severity, string summary, string detail) =>
+                MessageService.Add(new OpToastMessage { Key = "tieredmenu-command", Severity = severity, Summary = summary, Detail = detail });
+        }
+        """;
+
+    private const string RouterCode = """
+        <OpTieredMenu Model="_items" />
+
+        @code {
+            [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Router",
+                    Icon = "pi pi-palette",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Temas", Url = "/theming" },
+                        new() { Label = "UI Kit", Url = "/uikit" }
+                    }
+                },
+                new OpMenuItem { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") },
+                new OpMenuItem
+                {
+                    Label = "Externo",
+                    Icon = "pi pi-home",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Blazor", Url = "https://dotnet.microsoft.com/", Target = "_blank" }
+                    }
+                }
             };
         }
         """;
