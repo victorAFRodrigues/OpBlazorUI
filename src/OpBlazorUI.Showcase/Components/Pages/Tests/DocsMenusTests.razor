@@ -1,0 +1,114 @@
+@page "/_tests/docs-menus"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Components.Breadcrumb
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/DocsMenusTests.cs). *@
+
+<PageTitle>Testes: menus (doc)</PageTitle>
+
+<h1 id="t-title">Testes: menus (doc)</h1>
+
+<section id="t-popup">
+    <OpButton Label="Alternar" OnClick="TogglePopupAsync"/>
+    <OpTieredMenu @ref="_popup" Model="_popupItems" Popup="true"/>
+</section>
+
+<section id="t-vertical">
+    <OpMegaMenu Model="_mega" Orientation="vertical"/>
+</section>
+
+<section id="t-item-template">
+    <OpMenubar Model="_menu">
+        <ItemTemplate Context="ctx">
+            <span class="t-custom-item">@ctx.Item.Label</span>
+        </ItemTemplate>
+    </OpMenubar>
+</section>
+
+<section id="t-separator">
+    <OpBreadcrumb Home="_home" Model="_crumbs">
+        <SeparatorTemplate><span class="t-sep">/</span></SeparatorTemplate>
+    </OpBreadcrumb>
+</section>
+
+<section id="t-controlled">
+    <OpButton Label="Alternar tudo" OnClick="ToggleAll"/>
+    <OpPanelMenu Model="_controlled"/>
+</section>
+
+@code {
+    private OpTieredMenu? _popup;
+    private bool _allExpanded;
+
+    private readonly List<OpMenuItem> _popupItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Arquivo",
+            Items = new() { new OpMenuItem { Label = "Novo" } }
+        }
+    };
+
+    private readonly List<OpMenuItem> _mega = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Produtos",
+            Items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Hardware",
+                    Items = new() { new OpMenuItem { Label = "Notebooks" } }
+                }
+            }
+        }
+    };
+
+    private readonly List<OpMenuItem> _menu = new()
+    {
+        new OpMenuItem { Label = "ItemCustom" }
+    };
+
+    private readonly OpMenuItem _home = new() { Icon = "pi pi-home", Url = "/" };
+    private readonly List<OpMenuItem> _crumbs = new()
+    {
+        new OpMenuItem { Label = "Um", Url = "#" },
+        new OpMenuItem { Label = "Dois" }
+    };
+
+    private List<OpMenuItem> _controlled = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Painel",
+            Items = new() { new OpMenuItem { Label = "Filho" } }
+        }
+    };
+
+    private async Task TogglePopupAsync()
+    {
+        if (_popup is not null)
+        {
+            await _popup.ToggleAsync();
+        }
+    }
+
+    private void ToggleAll()
+    {
+        _allExpanded = !_allExpanded;
+
+        foreach (var item in _controlled)
+        {
+            if (item.Items is { Count: > 0 })
+            {
+                item.Expanded = _allExpanded;
+            }
+        }
+
+        _controlled = new List<OpMenuItem>(_controlled);
+    }
+}
