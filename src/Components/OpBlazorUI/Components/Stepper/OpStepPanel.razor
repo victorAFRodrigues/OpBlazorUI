@@ -1,0 +1,30 @@
+@namespace OpBlazorUI.Components.Stepper
+@using OpBlazorUI.Components.Common
+@inherits OpComponentBase
+
+@if (Active)
+{
+    <div class="@RootClass"
+         role="tabpanel"
+         id="@Stepper?.StepPanelId(ResolvedValue)"
+         aria-controls="@Stepper?.StepId(ResolvedValue)"
+         aria-labelledby="@Stepper?.StepId(ResolvedValue)"
+         data-p-active="true">
+        <div class="p-steppanel-content-wrapper">
+            @if (ShowSeparator)
+            {
+                <span class="p-stepper-separator" aria-hidden="true"></span>
+            }
+            <div class="p-steppanel-content">
+                @if (ContentTemplate is not null)
+                {
+                    @ContentTemplate(Context)
+                }
+                else
+                {
+                    @ChildContent
+                }
+            </div>
+        </div>
+    </div>
+}

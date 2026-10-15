@@ -66,17 +66,19 @@ public class Bloco4_2cTests
     }
 
     [Fact]
-    public async Task Stepper_linear_nao_pula_etapas()
+    public async Task Stepper_linear_desabilita_etapas_nao_ativas()
     {
         var errors = new List<string>();
         var page = await NewPageAsync(errors);
 
-        var steps = page.Locator("#t-step .p-step");
-        await steps.Nth(2).ClickAsync();
-        await Expect(page.Locator("#t-step-log")).ToHaveTextAsync("0");
-
-        await steps.Nth(1).ClickAsync();
+        var steps = page.Locator("#t-step .p-step-header");
+        await Expect(steps).ToHaveCountAsync(3);
         await Expect(page.Locator("#t-step-log")).ToHaveTextAsync("1");
+
+        // Em modo linear somente a etapa atual é acionável; as demais ficam desabilitadas.
+        await Expect(steps.Nth(0)).ToBeEnabledAsync();
+        await Expect(steps.Nth(1)).ToBeDisabledAsync();
+        await Expect(steps.Nth(2)).ToBeDisabledAsync();
 
         Assert.True(errors.Count == 0, string.Join(" || ", errors));
         await page.CloseAsync();

@@ -2,62 +2,418 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.Stepper
-@using OpBlazorUI.Models
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.InputText
+@using OpBlazorUI.Components.Password
+@using OpBlazorUI.Components.ToggleButton
 
 <PageTitle>Stepper - OpBlazorUI</PageTitle>
 
 <DocComponent Title="Stepper"
-              Description="O Stepper organiza um fluxo em etapas, cada uma com seu próprio painel de conteúdo.">
+              Description="O Stepper guia o usuário por um fluxo em etapas (wizard), organizando o conteúdo em passos numerados.">
 
     <Features>
         <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico" Id="basic">
-            <Description>Cada item do <code>Model</code> traz um <code>Label</code> e um <code>Content</code>.</Description>
+        <DocSection Label="Horizontal" Id="horizontal">
+            <Description>
+                Um Stepper é a combinação dos componentes <code>OpStepList</code>, <code>OpStep</code>,
+                <code>OpStepPanels</code> e <code>OpStepPanel</code>. A propriedade <code>Value</code> é o que associa
+                cada cabeçalho ao seu painel.
+            </Description>
             <ChildContent>
-                <OpStepper Model="_steps" @bind-ActiveIndex="_active"/>
+                <div class="flex justify-center">
+                    <OpStepper @bind-Value="_horizontal" Id="stepper-horizontal" StyleClass="basis-[50rem]">
+                        <OpStepList>
+                            <OpStep Value="1">Header I</OpStep>
+                            <OpStep Value="2">Header II</OpStep>
+                            <OpStep Value="3">Header III</OpStep>
+                        </OpStepList>
+                        <OpStepPanels>
+                            <OpStepPanel Value="1">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col h-48">
+                                        <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content I</div>
+                                    </div>
+                                    <div class="flex pt-6 justify-end">
+                                        <OpButton Label="Next" Icon="pi pi-arrow-right" IconPos="right" OnClick="() => panel.ActivateCallback(2)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                            <OpStepPanel Value="2">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col h-48">
+                                        <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content II</div>
+                                    </div>
+                                    <div class="flex pt-6 justify-between">
+                                        <OpButton Label="Back" Severity="secondary" Icon="pi pi-arrow-left" OnClick="() => panel.ActivateCallback(1)"/>
+                                        <OpButton Label="Next" Icon="pi pi-arrow-right" IconPos="right" OnClick="() => panel.ActivateCallback(3)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                            <OpStepPanel Value="3">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col h-48">
+                                        <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content III</div>
+                                    </div>
+                                    <div class="flex pt-6 justify-start">
+                                        <OpButton Label="Back" Severity="secondary" Icon="pi pi-arrow-left" IconPos="right" OnClick="() => panel.ActivateCallback(2)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                        </OpStepPanels>
+                    </OpStepper>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@BasicCode"/></Code>
+            <Code><CodeBlock Code="@HorizontalCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Readonly" Id="readonly">
-            <Description>Com <code>Readonly</code>, as etapas são apenas indicativas.</Description>
+        <DocSection Label="Vertical" Id="vertical">
+            <Description>
+                O layout vertical usa <code>OpStepItem</code> como invólucro de <code>OpStep</code> e
+                <code>OpStepPanel</code>. Nesse layout o <code>Value</code> é informado apenas no
+                <code>OpStepItem</code> e herdado pelos filhos.
+            </Description>
             <ChildContent>
-                <OpStepper Model="_steps" ActiveIndex="1" Readonly="true"/>
+                <OpStepper @bind-Value="_vertical" Id="stepper-vertical">
+                    <OpStepItem Value="1">
+                        <OpStep>Header I</OpStep>
+                        <OpStepPanel>
+                            <ContentTemplate Context="panel">
+                                <div class="flex flex-col h-48">
+                                    <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content I</div>
+                                </div>
+                                <div class="py-6">
+                                    <OpButton Label="Next" OnClick="() => panel.ActivateCallback(2)"/>
+                                </div>
+                            </ContentTemplate>
+                        </OpStepPanel>
+                    </OpStepItem>
+                    <OpStepItem Value="2">
+                        <OpStep>Header II</OpStep>
+                        <OpStepPanel>
+                            <ContentTemplate Context="panel">
+                                <div class="flex flex-col h-48">
+                                    <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content II</div>
+                                </div>
+                                <div class="flex py-6 gap-2">
+                                    <OpButton Label="Back" Severity="secondary" OnClick="() => panel.ActivateCallback(1)"/>
+                                    <OpButton Label="Next" OnClick="() => panel.ActivateCallback(3)"/>
+                                </div>
+                            </ContentTemplate>
+                        </OpStepPanel>
+                    </OpStepItem>
+                    <OpStepItem Value="3">
+                        <OpStep>Header III</OpStep>
+                        <OpStepPanel>
+                            <ContentTemplate Context="panel">
+                                <div class="flex flex-col h-48">
+                                    <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content III</div>
+                                </div>
+                                <div class="py-6">
+                                    <OpButton Label="Back" Severity="secondary" OnClick="() => panel.ActivateCallback(2)"/>
+                                </div>
+                            </ContentTemplate>
+                        </OpStepPanel>
+                    </OpStepItem>
+                </OpStepper>
             </ChildContent>
-            <Code><CodeBlock Code="@ReadonlyCode"/></Code>
+            <Code><CodeBlock Code="@VerticalCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Linear" Id="linear">
+            <Description>
+                Com <code>Linear="true"</code> a etapa atual precisa ser concluída antes de avançar: os demais
+                cabeçalhos ficam desabilitados. A navegação continua possível pelos botões do painel
+                (<code>activateCallback</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpStepper @bind-Value="_linear" Id="stepper-linear" Linear="true" StyleClass="basis-[50rem]">
+                        <OpStepList>
+                            <OpStep Value="1">Header I</OpStep>
+                            <OpStep Value="2">Header II</OpStep>
+                            <OpStep Value="3">Header III</OpStep>
+                        </OpStepList>
+                        <OpStepPanels>
+                            <OpStepPanel Value="1">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col h-48">
+                                        <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content I</div>
+                                    </div>
+                                    <div class="flex pt-6 justify-end">
+                                        <OpButton Label="Next" Icon="pi pi-arrow-right" IconPos="right" OnClick="() => panel.ActivateCallback(2)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                            <OpStepPanel Value="2">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col h-48">
+                                        <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content II</div>
+                                    </div>
+                                    <div class="flex pt-6 justify-between">
+                                        <OpButton Label="Back" Severity="secondary" Icon="pi pi-arrow-left" OnClick="() => panel.ActivateCallback(1)"/>
+                                        <OpButton Label="Next" Icon="pi pi-arrow-right" IconPos="right" OnClick="() => panel.ActivateCallback(3)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                            <OpStepPanel Value="3">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col h-48">
+                                        <div class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">Content III</div>
+                                    </div>
+                                    <div class="flex pt-6 justify-start">
+                                        <OpButton Label="Back" Severity="secondary" Icon="pi pi-arrow-left" IconPos="right" OnClick="() => panel.ActivateCallback(2)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                        </OpStepPanels>
+                    </OpStepper>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LinearCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Somente Passos" Id="steps-only">
+            <Description>
+                Use apenas <code>OpStepList</code> quando precisar somente do indicador de progresso, sem painéis —
+                útil em requisitos customizados.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpStepper @bind-Value="_stepsOnly" Id="stepper-steps-only" StyleClass="basis-[50rem]">
+                        <OpStepList>
+                            <OpStep Value="1">Header I</OpStep>
+                            <OpStep Value="2">Header II</OpStep>
+                            <OpStep Value="3">Header III</OpStep>
+                        </OpStepList>
+                    </OpStepper>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@StepsOnlyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                <code>OpStep</code> e <code>OpStepPanel</code> aceitam templates de conteúdo
+                (<code>ContentTemplate</code>) para customizar a interface padrão. No <code>OpStep</code> o template
+                recebe <code>ActivateCallback</code> e <code>Value</code>; no <code>OpStepPanel</code> o
+                <code>ActivateCallback</code> recebe o valor da etapa de destino.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpStepper @bind-Value="_template" Id="stepper-template" StyleClass="basis-[40rem]">
+                        <OpStepList>
+                            <OpStep Value="1" StyleClass="flex flex-row flex-auto gap-2">
+                                <ContentTemplate Context="step">
+                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2" type="button" @onclick="() => step.ActivateCallback()">
+                                        <span class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center @(step.Value <= _template ? "bg-primary text-primary-contrast border-primary" : "border-surface")">
+                                            <i class="pi pi-user"></i>
+                                        </span>
+                                    </button>
+                                </ContentTemplate>
+                            </OpStep>
+                            <OpStep Value="2" StyleClass="flex flex-row flex-auto gap-2">
+                                <ContentTemplate Context="step">
+                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2" type="button" @onclick="() => step.ActivateCallback()">
+                                        <span class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center @(step.Value <= _template ? "bg-primary text-primary-contrast border-primary" : "border-surface")">
+                                            <i class="pi pi-star"></i>
+                                        </span>
+                                    </button>
+                                </ContentTemplate>
+                            </OpStep>
+                            <OpStep Value="3" StyleClass="flex flex-row flex-auto gap-2">
+                                <ContentTemplate Context="step">
+                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2" type="button" @onclick="() => step.ActivateCallback()">
+                                        <span class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center @(step.Value <= _template ? "bg-primary text-primary-contrast border-primary" : "border-surface")">
+                                            <i class="pi pi-id-card"></i>
+                                        </span>
+                                    </button>
+                                </ContentTemplate>
+                            </OpStep>
+                        </OpStepList>
+                        <OpStepPanels>
+                            <OpStepPanel Value="1">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem;">
+                                        <div class="text-center mt-4 mb-4 text-xl font-semibold">Crie sua conta</div>
+                                        <OpInputText @bind-Value="_name" Placeholder="Nome" Fluid="true"/>
+                                        <OpInputText @bind-Value="_email" Type="email" Placeholder="E-mail" Fluid="true"/>
+                                        <OpPassword @bind-Value="_password" Placeholder="Senha" Fluid="true"/>
+                                    </div>
+                                    <div class="flex pt-6 justify-end">
+                                        <OpButton Label="Next" Icon="pi pi-arrow-right" IconPos="right" OnClick="() => panel.ActivateCallback(2)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                            <OpStepPanel Value="2">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 24rem;">
+                                        <div class="text-center mt-4 mb-4 text-xl font-semibold">Escolha seus interesses</div>
+                                        <div class="flex flex-wrap justify-center gap-4">
+                                            @foreach (var interest in _interests)
+                                            {
+                                                <OpToggleButton @bind-Value="interest.Selected" OnLabel="@interest.Label" OffLabel="@interest.Label"/>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="flex pt-6 justify-between">
+                                        <OpButton Label="Back" Severity="secondary" Icon="pi pi-arrow-left" OnClick="() => panel.ActivateCallback(1)"/>
+                                        <OpButton Label="Next" Icon="pi pi-arrow-right" IconPos="right" OnClick="() => panel.ActivateCallback(3)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                            <OpStepPanel Value="3">
+                                <ContentTemplate Context="panel">
+                                    <div class="flex flex-col items-center gap-2 mx-auto" style="min-height: 16rem; max-width: 24rem;">
+                                        <div class="text-center mt-4 mb-4 text-xl font-semibold">Conta criada com sucesso</div>
+                                        <div class="text-center text-primary-500">
+                                            <i class="pi pi-check-circle" style="font-size: 5rem;"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex pt-6 justify-start">
+                                        <OpButton Label="Back" Severity="secondary" Icon="pi pi-arrow-left" OnClick="() => panel.ActivateCallback(2)"/>
+                                    </div>
+                                </ContentTemplate>
+                            </OpStepPanel>
+                        </OpStepPanels>
+                    </OpStepper>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
-                <p>O passo ativo recebe <code>aria-current="step"</code>.</p>
+                <p>
+                    O contêiner do Stepper tem o papel <code>tablist</code>; qualquer atributo extra é repassado a ele,
+                    então <code>aria-labelledby</code> pode ser usado para descrevê-lo. Cada cabeçalho de passo tem
+                    <code>role="tab"</code> e <code>aria-controls</code> apontando para o painel correspondente. O painel
+                    tem <code>role="tabpanel"</code>, um <code>id</code> que casa com o <code>aria-controls</code> do
+                    cabeçalho e <code>aria-labelledby</code> referenciando o cabeçalho como nome acessível. O passo ativo
+                    recebe <code>aria-current="step"</code>.
+                </p>
                 <h3>Suporte a teclado</h3>
-                <p>Cada cabeçalho de passo é um botão alcançável por <code>tab</code> e acionável por <code>enter</code>.</p>
             </Description>
-            <Code><CodeBlock Code="@AccessibilityCode"/></Code>
+            <Code>
+                <ApiTable Headers="@(new[] { "Tecla", "Função" })"
+                          Rows="@(new[] {
+                              new[] { "tab", "Move o foco pelos cabeçalhos." },
+                              new[] { "enter", "Ativa o cabeçalho focado." },
+                              new[] { "space", "Ativa o cabeçalho focado." }
+                          })"/>
+            </Code>
         </DocSection>
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades" Id="api-props">
+        <DocSection Label="OpStepper" Id="api-stepper">
             <ChildContent>
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Model", "IReadOnlyList&lt;OpStepItem&gt;", "[]", "Passos (Label + Content + Disabled)." },
-                              new[] { "ActiveIndex", "int", "0", "Índice do passo ativo (usar <code>@@bind-ActiveIndex</code>)." },
-                              new[] { "Readonly", "bool", "false", "Impede a interação." },
-                              new[] { "Linear", "bool", "false", "Navegação linear: só avança para o próximo passo, sem pular etapas." },
-                              new[] { "OnSelect", "EventCallback&lt;OpStepItem&gt;", "—", "Disparado ao selecionar um passo." }
+                              new[] { "Value", "int", "0", "Etapa ativa (usar <code>@@bind-Value</code>)." },
+                              new[] { "Linear", "bool", "false", "Bloqueia os cabeçalhos não ativos; só o painel permite avançar." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Id", "string?", "null", "Id do elemento raiz (base dos ids de ARIA); gerado quando ausente." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo: <code>OpStepList</code> + <code>OpStepPanels</code> (horizontal) ou <code>OpStepItem</code>s (vertical)." },
+                              new[] { "ValueChanged", "EventCallback&lt;int&gt;", "—", "Disparado ao mudar a etapa." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos livres no elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpStepList / OpStepPanels" Id="api-containers">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ChildContent", "RenderFragment?", "null", "Os <code>OpStep</code> (na lista) ou <code>OpStepPanel</code>s (nos painéis)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento raiz." },
+                              new[] { "Id", "string?", "null", "Id do elemento." },
+                              new[] { "AdditionalAttributes", "Dictionary&lt;string, object&gt;?", "null", "Atributos livres no elemento raiz." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpStep" Id="api-step">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "int?", "null", "Valor do passo; no layout vertical é herdado do <code>OpStepItem</code>." },
+                              new[] { "Disabled", "bool", "false", "Desabilita o passo (não pode ser selecionado)." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Rótulo exibido ao lado do número." },
+                              new[] { "ContentTemplate", "RenderFragment&lt;OpStepContext&gt;?", "null", "Cabeçalho customizado (substitui o botão padrão)." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento do passo." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpStepPanel" Id="api-step-panel">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "int?", "null", "Valor do passo correspondente; herdado no layout vertical." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do painel." },
+                              new[] { "ContentTemplate", "RenderFragment&lt;OpStepPanelContext&gt;?", "null", "Conteúdo com <code>ActivateCallback</code> para navegar entre etapas." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no painel." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpStepItem" Id="api-step-item">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Value", "int?", "null", "Valor da etapa, herdado por <code>OpStep</code> e <code>OpStepPanel</code>." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Um <code>OpStep</code> seguido de um <code>OpStepPanel</code>." },
+                              new[] { "StyleClass", "string?", "null", "Classes adicionais no elemento." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Templates" Id="api-templates">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OpStep.ContentTemplate", "RenderFragment&lt;OpStepContext&gt;", "Cabeçalho do passo. O contexto traz <code>ActivateCallback()</code>, <code>Value</code> e <code>Active</code>." },
+                              new[] { "OpStepPanel.ContentTemplate", "RenderFragment&lt;OpStepPanelContext&gt;", "Conteúdo do painel. O contexto traz <code>ActivateCallback(int)</code>, <code>Value</code> e <code>Active</code>." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ValueChanged", "EventCallback&lt;int&gt;", "Disparado quando a etapa ativa muda (usar <code>@@bind-Value</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Classes CSS e Tokens" Id="theming">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelos componentes. Para as cores e medidas de cada tema, veja os tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="@(new[] {
+                              new[] { "p-stepper", "Elemento raiz (role <code>tablist</code>)." },
+                              new[] { "p-steplist", "Lista de cabeçalhos (horizontal)." },
+                              new[] { "p-step", "Passo; recebe <code>p-step-active</code> quando ativo." },
+                              new[] { "p-step-header", "Botão do cabeçalho (role <code>tab</code>)." },
+                              new[] { "p-step-number / p-step-title", "Número e rótulo do passo." },
+                              new[] { "p-stepper-separator", "Linha conectora entre os passos." },
+                              new[] { "p-steppanels / p-steppanel", "Contêiner e painel de conteúdo." },
+                              new[] { "p-stepitem / p-stepitem-active", "Item do layout vertical e seu estado ativo." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
             <ChildContent><DocTokens Component="stepper"/></ChildContent>
         </DocSection>
     </Theming>
@@ -73,8 +429,8 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>A API é model-driven (<code>OpStepItem</code> com <code>Content</code>), diferente da composição por componentes-filhos do Angular.</li>
-                        <li>O painel só é renderizado para o passo ativo (sem animação de slide entre passos).</li>
+                        <li>Apenas o painel da etapa ativa é renderizado — não há a animação de transição (<code>Motion</code>) do upstream.</li>
+                        <li>A propriedade <code>Readonly</code> de versões anteriores do port foi removida: o Stepper do upstream não a possui (use <code>Linear</code> para bloquear a navegação pelos cabeçalhos).</li>
                     </ul>
                 </div>
             </ChildContent>
@@ -83,54 +439,134 @@
 </DocComponent>
 
 @code {
-    private int _active;
-    private List<OpStepItem> _steps = new();
+    private int _horizontal = 1;
+    private int _vertical = 1;
+    private int _linear = 1;
+    private int _stepsOnly = 1;
+    private int _template = 1;
 
-    protected override void OnInitialized()
+    private string? _name;
+    private string? _email;
+    private string? _password;
+
+    private sealed class Interest
     {
-        _steps = new List<OpStepItem>
-        {
-            new() { Label = "Conta", Content = @<p class="m-0">Informe os dados da conta.</p> },
-            new() { Label = "Perfil", Content = @<p class="m-0">Configure o seu perfil.</p> },
-            new() { Label = "Confirmação", Content = @<p class="m-0">Revise e confirme.</p> }
-        };
+        public string Label { get; init; } = "";
+        public bool Selected { get; set; }
     }
+
+    private readonly List<Interest> _interests =
+    [
+        new() { Label = "Natureza" }, new() { Label = "Arte" }, new() { Label = "Música" },
+        new() { Label = "Design" }, new() { Label = "Fotografia" }, new() { Label = "Filmes" },
+        new() { Label = "Esportes" }, new() { Label = "Games" }, new() { Label = "Viagens" }
+    ];
 
     private const string ImportCode = """
         @using OpBlazorUI.Components.Stepper
-        @using OpBlazorUI.Models
+        """;
 
-        <OpStepper Model="_steps" @bind-ActiveIndex="_active" />
+    private const string HorizontalCode = """
+        <div class="flex justify-center">
+            <OpStepper @bind-Value="_step" StyleClass="basis-[50rem]">
+                <OpStepList>
+                    <OpStep Value="1">Header I</OpStep>
+                    <OpStep Value="2">Header II</OpStep>
+                    <OpStep Value="3">Header III</OpStep>
+                </OpStepList>
+                <OpStepPanels>
+                    <OpStepPanel Value="1">
+                        <ContentTemplate Context="panel">
+                            <p>Content I</p>
+                            <OpButton Label="Next" Icon="pi pi-arrow-right" IconPos="right"
+                                      OnClick="() => panel.ActivateCallback(2)" />
+                        </ContentTemplate>
+                    </OpStepPanel>
+                    <!-- ... -->
+                </OpStepPanels>
+            </OpStepper>
+        </div>
 
         @code {
-            private int _active;
-            private List<OpStepItem> _steps = new()
-            {
-                new() { Label = "Conta", Content = @<p>Dados da conta.</p> },
-                new() { Label = "Perfil", Content = @<p>Configuração do perfil.</p> }
-            };
+            private int _step = 1;
         }
         """;
 
-    private const string BasicCode = """
-        <OpStepper Model="_steps" @bind-ActiveIndex="_active" />
+    private const string VerticalCode = """
+        <OpStepper @bind-Value="_step">
+            <OpStepItem Value="1">
+                <OpStep>Header I</OpStep>
+                <OpStepPanel>
+                    <ContentTemplate Context="panel">
+                        <p>Content I</p>
+                        <OpButton Label="Next" OnClick="() => panel.ActivateCallback(2)" />
+                    </ContentTemplate>
+                </OpStepPanel>
+            </OpStepItem>
+            <!-- ... -->
+        </OpStepper>
 
         @code {
-            private int _active;
-            private List<OpStepItem> _steps = new()
-            {
-                new() { Label = "Conta", Content = @<p>Dados da conta.</p> },
-                new() { Label = "Perfil", Content = @<p>Configuração do perfil.</p> },
-                new() { Label = "Confirmação", Content = @<p>Revise e confirme.</p> }
-            };
+            private int _step = 1;
         }
         """;
 
-    private const string ReadonlyCode = """
-        <OpStepper Model="_steps" ActiveIndex="1" Readonly="true" />
+    private const string LinearCode = """
+        <OpStepper @bind-Value="_step" Linear="true">
+            <OpStepList>
+                <OpStep Value="1">Header I</OpStep>
+                <OpStep Value="2">Header II</OpStep>
+                <OpStep Value="3">Header III</OpStep>
+            </OpStepList>
+            <OpStepPanels>
+                <OpStepPanel Value="1">
+                    <ContentTemplate Context="panel">
+                        <OpButton Label="Next" OnClick="() => panel.ActivateCallback(2)" />
+                    </ContentTemplate>
+                </OpStepPanel>
+                <!-- ... -->
+            </OpStepPanels>
+        </OpStepper>
         """;
 
-    private const string AccessibilityCode = """
-        <OpStepper Model="_steps" @bind-ActiveIndex="_active" />
+    private const string StepsOnlyCode = """
+        <OpStepper @bind-Value="_step">
+            <OpStepList>
+                <OpStep Value="1">Header I</OpStep>
+                <OpStep Value="2">Header II</OpStep>
+                <OpStep Value="3">Header III</OpStep>
+            </OpStepList>
+        </OpStepper>
+        """;
+
+    private const string TemplateCode = """
+        <OpStepper @bind-Value="_step" StyleClass="basis-[40rem]">
+            <OpStepList>
+                <OpStep Value="1" StyleClass="flex flex-row flex-auto gap-2">
+                    <ContentTemplate Context="step">
+                        <button type="button" @onclick="() => step.ActivateCallback()">
+                            <span class="@(step.Value <= _step ? "bg-primary text-primary-contrast" : "")">
+                                <i class="pi pi-user"></i>
+                            </span>
+                        </button>
+                    </ContentTemplate>
+                </OpStep>
+                <!-- ... -->
+            </OpStepList>
+            <OpStepPanels>
+                <OpStepPanel Value="1">
+                    <ContentTemplate Context="panel">
+                        <OpInputText @bind-Value="_name" Placeholder="Nome" />
+                        <OpButton Label="Next" OnClick="() => panel.ActivateCallback(2)" />
+                    </ContentTemplate>
+                </OpStepPanel>
+                <!-- ... -->
+            </OpStepPanels>
+        </OpStepper>
+
+        @code {
+            private int _step = 1;
+            private string? _name;
+        }
         """;
 }

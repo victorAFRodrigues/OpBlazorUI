@@ -1,0 +1,33 @@
+@namespace OpBlazorUI.Components.Stepper
+@using OpBlazorUI.Components.Common
+@inherits OpComponentBase
+
+<div class="@RootClass"
+     role="presentation"
+     aria-current="@(Active ? "step" : null)"
+     data-p-active="@(Active ? "true" : "false")"
+     data-p-disabled="@(DisabledState ? "true" : "false")">
+    @if (ContentTemplate is null)
+    {
+        <button class="p-step-header"
+                role="tab"
+                type="button"
+                id="@Stepper?.StepId(ResolvedValue)"
+                aria-controls="@Stepper?.StepPanelId(ResolvedValue)"
+                tabindex="@(DisabledState ? -1 : (int?)null)"
+                disabled="@DisabledState"
+                @onclick="ActivateAsync">
+            <span class="p-step-number">@ResolvedValue</span>
+            <span class="p-step-title">@ChildContent</span>
+        </button>
+    }
+    else
+    {
+        @ContentTemplate(Context)
+    }
+
+    @if (ShowSeparator)
+    {
+        <span class="p-stepper-separator" aria-hidden="true"></span>
+    }
+</div>
