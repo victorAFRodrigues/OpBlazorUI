@@ -52,6 +52,8 @@
       "api-props",
       "basic",
       "import",
+      "pass-through",
+      "problemas-conhecidos",
       "style"
     ],
     "upstream_sections": [
@@ -62,6 +64,8 @@
     "missing": [],
     "extra": [
       "api-props",
+      "pass-through",
+      "problemas-conhecidos",
       "style"
     ],
     "matched": [
@@ -73,7 +77,31 @@
   {
     "component": "AutoComplete",
     "has_upstream": true,
-    "showcase_sections": [],
+    "showcase_sections": [
+      "accessibility",
+      "api-events",
+      "api-props",
+      "api-templates",
+      "basic",
+      "chips",
+      "clearicon",
+      "disabled",
+      "dropdown",
+      "fluid",
+      "forceselection",
+      "forms",
+      "group",
+      "import",
+      "invalid",
+      "issues",
+      "multiple",
+      "objects",
+      "pt",
+      "sizes",
+      "template",
+      "theming",
+      "virtualscroll"
+    ],
     "upstream_sections": [
       "accessibility",
       "advancedchips",
@@ -101,21 +129,31 @@
       "virtualscroll"
     ],
     "missing": [
-      "accessibility",
       "advancedchips",
-      "basic",
       "basicchips",
+      "filled",
+      "floatlabel",
+      "iftalabel"
+    ],
+    "extra": [
+      "api-events",
+      "api-props",
+      "api-templates",
+      "issues",
+      "pt",
+      "theming"
+    ],
+    "matched": [
+      "accessibility",
+      "basic",
       "chips",
       "clearicon",
       "disabled",
       "dropdown",
-      "filled",
-      "floatlabel",
       "fluid",
       "forceselection",
       "forms",
       "group",
-      "iftalabel",
       "import",
       "invalid",
       "multiple",
@@ -125,9 +163,7 @@
       "template",
       "templatedriven",
       "virtualscroll"
-    ],
-    "extra": [],
-    "matched": []
+    ]
   },
   {
     "component": "AutoFocus",
@@ -137,6 +173,8 @@
       "api-props",
       "basic",
       "import",
+      "pass-through",
+      "problemas-conhecidos",
       "style"
     ],
     "upstream_sections": [
@@ -147,6 +185,8 @@
     "extra": [
       "accessibility",
       "api-props",
+      "pass-through",
+      "problemas-conhecidos",
       "style"
     ],
     "matched": [
@@ -550,9 +590,7 @@
       "template",
       "templatedriven"
     ],
-    "missing": [
-      "forms"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -570,6 +608,7 @@
       "filled",
       "float-label",
       "fluid",
+      "forms",
       "ifta-label",
       "import",
       "invalid",
@@ -619,10 +658,7 @@
       "sizes",
       "templatedriven"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -644,7 +680,9 @@
       "import",
       "indeterminate",
       "invalid",
-      "sizes"
+      "reactive",
+      "sizes",
+      "templatedriven"
     ]
   },
   {
@@ -719,10 +757,7 @@
       "reactive",
       "templatedriven"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-props",
       "issues",
@@ -736,7 +771,9 @@
       "format",
       "forms",
       "import",
-      "inline"
+      "inline",
+      "reactive",
+      "templatedriven"
     ]
   },
   {
@@ -999,10 +1036,7 @@
       "time",
       "yearpicker"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -1036,7 +1070,9 @@
       "multiple",
       "multiplemonths",
       "range",
+      "reactive",
       "sizes",
+      "templatedriven",
       "time",
       "yearpicker"
     ]
@@ -1271,9 +1307,7 @@
       "template",
       "templatedriven"
     ],
-    "missing": [
-      "forms"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -1287,6 +1321,7 @@
     "matched": [
       "accessibility",
       "basic",
+      "forms",
       "import",
       "quill",
       "reactive",
@@ -1429,6 +1464,8 @@
       "api",
       "basic",
       "import",
+      "pass-through",
+      "problemas-conhecidos",
       "theming"
     ],
     "upstream_sections": [
@@ -1439,6 +1476,8 @@
     "missing": [],
     "extra": [
       "api",
+      "pass-through",
+      "problemas-conhecidos",
       "theming"
     ],
     "matched": [
@@ -1920,9 +1959,7 @@
       "slotchar",
       "templatedriven"
     ],
-    "missing": [
-      "forms"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -1940,6 +1977,7 @@
       "filled",
       "floatlabel",
       "fluid",
+      "forms",
       "iftalabel",
       "import",
       "invalid",
@@ -1954,10 +1992,52 @@
   {
     "component": "InputNumber",
     "has_upstream": false,
-    "showcase_sections": [],
+    "showcase_sections": [
+      "acessibilidade",
+      "basico",
+      "botoes",
+      "desabilitado",
+      "eventos",
+      "float-label",
+      "fluid",
+      "ifta-label",
+      "importacao",
+      "invalido",
+      "limpar",
+      "moeda",
+      "pass-through",
+      "preenchido",
+      "prefixo-sufixo",
+      "problemas-conhecidos",
+      "propriedades",
+      "tamanhos",
+      "temas",
+      "validacao"
+    ],
     "upstream_sections": [],
     "missing": [],
-    "extra": [],
+    "extra": [
+      "acessibilidade",
+      "basico",
+      "botoes",
+      "desabilitado",
+      "eventos",
+      "float-label",
+      "fluid",
+      "ifta-label",
+      "importacao",
+      "invalido",
+      "limpar",
+      "moeda",
+      "pass-through",
+      "preenchido",
+      "prefixo-sufixo",
+      "problemas-conhecidos",
+      "propriedades",
+      "tamanhos",
+      "temas",
+      "validacao"
+    ],
     "matched": []
   },
   {
@@ -1995,9 +2075,7 @@
       "template",
       "templatedriven"
     ],
-    "missing": [
-      "forms"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -2010,6 +2088,7 @@
     "matched": [
       "accessibility",
       "basic",
+      "forms",
       "import",
       "integeronly",
       "mask",
@@ -2062,10 +2141,7 @@
       "sizes",
       "templatedriven"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -2089,7 +2165,9 @@
       "iftalabel",
       "import",
       "invalid",
-      "sizes"
+      "reactive",
+      "sizes",
+      "templatedriven"
     ]
   },
   {
@@ -2238,10 +2316,7 @@
       "templatedriven",
       "virtualscroll"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -2264,7 +2339,9 @@
       "import",
       "invalid",
       "multiple",
+      "reactive",
       "template",
+      "templatedriven",
       "virtualscroll"
     ]
   },
@@ -2569,10 +2646,7 @@
       "templatedriven",
       "virtualscroll"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -2599,8 +2673,10 @@
       "import",
       "invalid",
       "loadingstate",
+      "reactive",
       "sizes",
       "template",
+      "templatedriven",
       "virtualscroll"
     ]
   },
@@ -2850,10 +2926,54 @@
   {
     "component": "Password",
     "has_upstream": false,
-    "showcase_sections": [],
+    "showcase_sections": [
+      "acessibilidade",
+      "basico",
+      "desabilitado",
+      "eventos",
+      "float-label",
+      "fluid",
+      "icone-de-limpar",
+      "ifta-label",
+      "importacao",
+      "invalido",
+      "medidor-de-forca",
+      "pass-through",
+      "preenchido",
+      "problemas-conhecidos",
+      "propriedades",
+      "tamanhos",
+      "temas",
+      "template",
+      "templates",
+      "toggle-mask",
+      "validacao"
+    ],
     "upstream_sections": [],
     "missing": [],
-    "extra": [],
+    "extra": [
+      "acessibilidade",
+      "basico",
+      "desabilitado",
+      "eventos",
+      "float-label",
+      "fluid",
+      "icone-de-limpar",
+      "ifta-label",
+      "importacao",
+      "invalido",
+      "medidor-de-forca",
+      "pass-through",
+      "preenchido",
+      "problemas-conhecidos",
+      "propriedades",
+      "tamanhos",
+      "temas",
+      "template",
+      "templates",
+      "toggle-mask",
+      "validacao"
+    ],
     "matched": []
   },
   {
@@ -3058,10 +3178,7 @@
       "sizes",
       "templatedriven"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -3080,7 +3197,9 @@
       "group",
       "import",
       "invalid",
-      "sizes"
+      "reactive",
+      "sizes",
+      "templatedriven"
     ]
   },
   {
@@ -3118,10 +3237,7 @@
       "template",
       "templatedriven"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -3141,8 +3257,10 @@
       "forms",
       "import",
       "numberofstars",
+      "reactive",
       "readonly",
-      "template"
+      "template",
+      "templatedriven"
     ]
   },
   {
@@ -3154,6 +3272,8 @@
       "basic",
       "custom",
       "import",
+      "pass-through",
+      "problemas-conhecidos",
       "style"
     ],
     "upstream_sections": [
@@ -3168,6 +3288,8 @@
     "extra": [
       "api-props",
       "basic",
+      "pass-through",
+      "problemas-conhecidos",
       "style"
     ],
     "matched": [
@@ -3305,10 +3427,7 @@
       "templatedriven",
       "virtualscroll"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -3337,8 +3456,10 @@
       "invalid",
       "lazyvirtualscroll",
       "loadingstate",
+      "reactive",
       "sizes",
       "template",
+      "templatedriven",
       "virtualscroll"
     ]
   },
@@ -3379,9 +3500,7 @@
       "template",
       "templatedriven"
     ],
-    "missing": [
-      "forms"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -3396,6 +3515,7 @@
       "basic",
       "disabled",
       "fluid",
+      "forms",
       "import",
       "invalid",
       "multiple",
@@ -3477,9 +3597,7 @@
       "vertical"
     ],
     "missing": [
-      "filter",
-      "reactive",
-      "templatedriven"
+      "filter"
     ],
     "extra": [
       "api-props",
@@ -3494,7 +3612,9 @@
       "import",
       "input",
       "range",
+      "reactive",
       "step",
+      "templatedriven",
       "vertical"
     ]
   },
@@ -3557,10 +3677,52 @@
   {
     "component": "SplitButton",
     "has_upstream": false,
-    "showcase_sections": [],
+    "showcase_sections": [
+      "acessibilidade",
+      "aninhado",
+      "arredondado",
+      "basico",
+      "contornado",
+      "desabilitado",
+      "elevado",
+      "eventos",
+      "icones",
+      "importacao",
+      "pass-through",
+      "problemas-conhecidos",
+      "propriedades",
+      "severidade",
+      "tamanhos",
+      "temas",
+      "template",
+      "templates",
+      "texto",
+      "texto-elevado"
+    ],
     "upstream_sections": [],
     "missing": [],
-    "extra": [],
+    "extra": [
+      "acessibilidade",
+      "aninhado",
+      "arredondado",
+      "basico",
+      "contornado",
+      "desabilitado",
+      "elevado",
+      "eventos",
+      "icones",
+      "importacao",
+      "pass-through",
+      "problemas-conhecidos",
+      "propriedades",
+      "severidade",
+      "tamanhos",
+      "temas",
+      "template",
+      "templates",
+      "texto",
+      "texto-elevado"
+    ],
     "matched": []
   },
   {
@@ -3709,6 +3871,8 @@
       "api-props",
       "hideonresize",
       "import",
+      "pass-through",
+      "problemas-conhecidos",
       "style",
       "toggleclass"
     ],
@@ -3721,6 +3885,8 @@
     "missing": [],
     "extra": [
       "api-props",
+      "pass-through",
+      "problemas-conhecidos",
       "style"
     ],
     "matched": [
@@ -4099,10 +4265,7 @@
       "sizes",
       "templatedriven"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-props",
       "issues",
@@ -4121,7 +4284,9 @@
       "iftalabel",
       "import",
       "invalid",
-      "sizes"
+      "reactive",
+      "sizes",
+      "templatedriven"
     ]
   },
   {
@@ -4304,9 +4469,7 @@
       "sizes",
       "templatedriven"
     ],
-    "missing": [
-      "forms"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -4323,6 +4486,7 @@
       "customized",
       "disabled",
       "fluid",
+      "forms",
       "import",
       "invalid",
       "reactive",
@@ -4363,10 +4527,7 @@
       "template",
       "templatedriven"
     ],
-    "missing": [
-      "reactive",
-      "templatedriven"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -4385,7 +4546,9 @@
       "import",
       "invalid",
       "preselection",
-      "template"
+      "reactive",
+      "template",
+      "templatedriven"
     ]
   },
   {
@@ -4600,9 +4763,7 @@
       "templatedriven",
       "virtual-scroll-doc"
     ],
-    "missing": [
-      "forms"
-    ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -4622,6 +4783,7 @@
       "filter",
       "floatlabel",
       "fluid",
+      "forms",
       "iftalabel",
       "import",
       "invalid",

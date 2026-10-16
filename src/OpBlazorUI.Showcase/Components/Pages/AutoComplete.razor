@@ -13,17 +13,17 @@
               Description="O AutoComplete é um campo de entrada que fornece sugestões em tempo real enquanto você digita.">
 
     <Features>
-        <DocSection Label="Acessibilidade">
+        <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 O valor pode ser descrito por um <code>&lt;label for&gt;</code> combinado com <code>InputId</code>, ou pelos atributos <code>AriaLabelledBy</code>/<code>AriaLabel</code>. O input tem <code>role="combobox"</code> com <code>aria-autocomplete</code>, <code>aria-haspopup</code> e <code>aria-expanded</code>. A relação entre input e popup é feita com <code>aria-controls</code>, e <code>aria-activedescendant</code> indica a opção ativa durante a navegação por teclado. No modo múltiplo, a lista de chips usa <code>role="listbox"</code> e cada chip usa <code>role="option"</code> com <code>aria-label</code> definido pelo rótulo do chip.
             </Description>
         </DocSection>
 
-        <DocSection Label="Importação">
+        <DocSection Label="Importação" Id="import">
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Básico">
+        <DocSection Label="Básico" Id="basic">
             <Description>
                 O AutoComplete usa <code>@@bind-Value</code>, uma lista de <code>Suggestions</code> e o <code>CompleteMethod</code> para consultar os resultados. O callback recebe a <code>Query</code> digitada e deve atualizar <code>Suggestions</code>.
             </Description>
@@ -34,7 +34,7 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Objetos">
+        <DocSection Label="Objetos" Id="objects">
             <Description>
                 Com <code>OptionLabel</code>, o AutoComplete exibe um campo do objeto como sugestão, mas o valor vinculado continua sendo a instância do objeto.
             </Description>
@@ -45,7 +45,7 @@
             <Code><CodeBlock Code="@ObjectsCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Dropdown">
+        <DocSection Label="Dropdown" Id="dropdown">
             <Description>
                 <code>Dropdown="true"</code> exibe um botão ao lado do campo. O <code>DropdownMode</code> define a query enviada no clique: <code>blank</code> (vazia, padrão) ou <code>current</code> (valor atual).
             </Description>
@@ -55,7 +55,7 @@
             <Code><CodeBlock Code="@DropdownCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Desabilitado">
+        <DocSection Label="Desabilitado" Id="disabled">
             <Description>
                 Quando <code>Disabled</code> está presente, o campo não pode ser editado nem focado.
             </Description>
@@ -65,7 +65,7 @@
             <Code><CodeBlock Code="@DisabledCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Inválido">
+        <DocSection Label="Inválido" Id="invalid">
             <Description>
                 <code>Invalid</code> aplica o estilo de erro, útil para indicar falha de validação.
             </Description>
@@ -78,7 +78,7 @@
             <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Variantes e Fluido">
+        <DocSection Label="Variantes e Fluido" Id="fluid">
             <Description>
                 Use <code>Variant="filled"</code> para o fundo preenchido e <code>Fluid="true"</code> para ocupar toda a largura do contêiner.
             </Description>
@@ -104,7 +104,7 @@
             <Code><CodeBlock Code="@FilledOnlyCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Tamanhos">
+        <DocSection Label="Tamanhos" Id="sizes">
             <ChildContent>
                 <div class="flex flex-col items-center gap-3">
                     <OpAutoComplete TValue="string" @bind-Value="_size1" Suggestions="_sizeSuggestions" CompleteMethod="SearchBasic" Size="small" Placeholder="Pequeno"/>
@@ -115,7 +115,7 @@
             <Code><CodeBlock Code="@SizesCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Múltiplo">
+        <DocSection Label="Múltiplo" Id="multiple">
             <Description>
                 Ative o modo múltiplo com <code>Multiple="true"</code>; o valor passa a ser uma lista (<code>@@bind-MultipleValue</code>).
             </Description>
@@ -126,7 +126,7 @@
             <Code><CodeBlock Code="@MultipleCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Chips (addOnBlur / addOnTab / separator)">
+        <DocSection Label="Chips (addOnBlur / addOnTab / separator)" Id="chips">
             <Description>
                 Com <code>Typeahead="false"</code>, o AutoComplete funciona como entrada de tags. <code>AddOnBlur</code>, <code>AddOnTab</code> e <code>Separator</code> controlam como os itens são adicionados.
             </Description>
@@ -195,7 +195,7 @@
             <Code><CodeBlock Code="@AdvancedChipsCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Forçar Seleção">
+        <DocSection Label="Forçar Seleção" Id="forceselection">
             <Description>
                 <code>ForceSelection="true"</code> valida a entrada manual: se o texto não corresponder a nenhuma sugestão, o valor é limpo, garantindo que o model sempre contenha uma sugestão válida.
             </Description>
@@ -205,7 +205,7 @@
             <Code><CodeBlock Code="@ForceCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Agrupado">
+        <DocSection Label="Agrupado" Id="group">
             <Description>
                 Com <code>Group="true"</code>, as sugestões vêm de grupos. <code>GroupTemplate</code> customiza o rótulo de cada grupo.
             </Description>
@@ -215,7 +215,7 @@
             <Code><CodeBlock Code="@GroupCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Templates">
+        <DocSection Label="Templates" Id="template">
             <Description>
                 <code>ItemTemplate</code>, <code>HeaderTemplate</code>, <code>FooterTemplate</code> e <code>SelectedItemTemplate</code> permitem customizar a lista e o item selecionado.
             </Description>
@@ -279,7 +279,7 @@
             <Code><CodeBlock Code="@IftaLabelCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Limpar">
+        <DocSection Label="Limpar" Id="clearicon">
             <Description>
                 Com <code>ShowClear="true"</code>, um ícone de limpar é exibido para restaurar o valor padrão.
             </Description>
@@ -289,7 +289,7 @@
             <Code><CodeBlock Code="@ClearCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Formulário (EditForm)">
+        <DocSection Label="Formulário (EditForm)" Id="forms">
             <Description>
                 O AutoComplete pode ser usado dentro de um <code>EditForm</code>. Neste exemplo, o campo é obrigatório e a validação é exibida via <code>OpMessage</code>.
             </Description>
@@ -316,7 +316,7 @@
             <Code><CodeBlock Code="@FormCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Virtual Scroll">
+        <DocSection Label="Virtual Scroll" Id="virtualscroll">
             <Description>
                 O scroll virtual renderiza apenas um subconjunto das opções por vez. Quando há muitos itens, use <code>VirtualScroll="true"</code>, <code>VirtualScrollItemSize</code> (altura do item) e <code>ItemsProvider</code>, que é chamado sob demanda conforme a rolagem — ideal para fetch paginado.
             </Description>
@@ -332,7 +332,7 @@
     </Features>
 
     <Api>
-        <DocSection Label="Propriedades">
+        <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
                 <ApiTable Caption="Propriedades"
                           Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
@@ -383,7 +383,7 @@
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Eventos">
+        <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
                 <ApiTable Caption="Eventos"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
@@ -401,7 +401,7 @@
                           })"/>
             </ChildContent>
         </DocSection>
-        <DocSection Label="Templates">
+        <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
                 <ApiTable Caption="Templates"
                           Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
@@ -421,13 +421,13 @@
     </Api>
 
     <Theming>
-        <DocSection Label="Temas">
+        <DocSection Label="Temas" Id="theming">
             <ChildContent><DocTokens Component="autocomplete"/></ChildContent>
         </DocSection>
     </Theming>
 
     <Passthrough>
-        <DocSection Label="Pass Through">
+        <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
                 <div class="doc-section-description"><p>O pass-through (pt) do Angular ainda não foi portado. Use <code>StyleClass</code>, <code>PanelStyleClass</code>, <code>AdditionalAttributes</code> e os templates para customização.</p></div>
             </ChildContent>
@@ -435,7 +435,7 @@
     </Passthrough>
 
     <KnownIssues>
-        <DocSection Label="Problemas Conhecidos">
+        <DocSection Label="Problemas Conhecidos" Id="issues">
             <ChildContent>
                 <div class="doc-section-description"><p>No modo <code>VirtualScroll</code>, a navegação por teclado (setas) fica limitada ao fechamento com Enter/Escape; a seleção é feita pelo clique.</p></div>
             </ChildContent>
