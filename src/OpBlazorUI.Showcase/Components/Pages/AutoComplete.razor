@@ -3,6 +3,8 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.AutoComplete
 @using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.FloatLabel
+@using OpBlazorUI.Components.IftaLabel
 @using OpBlazorUI.Components.Message
 @using OpBlazorUI.Models
 @using System.ComponentModel.DataAnnotations
@@ -89,6 +91,19 @@
             <Code><CodeBlock Code="@FilledCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Preenchido" Id="filled">
+            <Description>
+                Defina <code>Variant="filled"</code> para exibir o componente com uma ênfase visual maior que
+                o estilo <code>outlined</code> padrão.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpAutoComplete TValue="string" @bind-Value="_filledOnly" Suggestions="_filledOnlySuggestions" CompleteMethod="SearchBasic" Variant="filled" Placeholder="Preenchido"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilledOnlyCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Tamanhos">
             <ChildContent>
                 <div class="flex flex-col items-center gap-3">
@@ -123,6 +138,61 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ChipsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Chips básico" Id="basicchips">
+            <Description>
+                Com <code>Multiple="true"</code> e <code>Typeahead="false"</code>, o componente funciona como
+                entrada de tags. <code>AddOnBlur</code>, <code>AddOnTab</code> e <code>Separator</code> definem
+                como o texto digitado vira um chip.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <label for="ac-chips-blur" style="font-weight: 600;">Adiciona ao desfocar</label>
+                    <OpAutoComplete TValue="string" InputId="ac-chips-blur" @bind-MultipleValue="_chipBlur2" Multiple="true" Typeahead="false" AddOnBlur="true" Fluid="true" Placeholder="Digite e clique fora para adicionar..."/>
+
+                    <label for="ac-chips-tab" style="font-weight: 600; margin-top: 1rem;">Adiciona com Tab</label>
+                    <OpAutoComplete TValue="string" InputId="ac-chips-tab" @bind-MultipleValue="_chipTab2" Multiple="true" Typeahead="false" AddOnTab="true" Fluid="true" Placeholder="Digite e pressione Tab para adicionar..."/>
+
+                    <label for="ac-chips-sep" style="font-weight: 600; margin-top: 1rem;">Adiciona com separador</label>
+                    <OpAutoComplete TValue="string" InputId="ac-chips-sep" @bind-MultipleValue="_chipSep2" Multiple="true" Typeahead="false" Separator="," Fluid="true" Placeholder="Digite itens separados por vírgula..."/>
+
+                    <label for="ac-chips-combined" style="font-weight: 600; margin-top: 1rem;">Recursos combinados</label>
+                    <OpAutoComplete TValue="string" InputId="ac-chips-combined" @bind-MultipleValue="_chipCombined" Multiple="true" Typeahead="false" AddOnBlur="true" AddOnTab="true" Separator="," Fluid="true" Placeholder="Use Tab, desfoque ou vírgula para adicionar..."/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@BasicChipsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Chips avançado" Id="advancedchips">
+            <Description>
+                Caso avançado combinando múltiplos objetos, <code>Dropdown</code>, <code>Fluid</code> e os
+                templates <code>ItemTemplate</code>/<code>SelectedItemTemplate</code>.
+            </Description>
+            <ChildContent>
+                <OpAutoComplete TValue="Product" @bind-MultipleValue="_advancedProducts"
+                                 Suggestions="_advancedSuggestions" CompleteMethod="SearchProducts"
+                                 OptionLabel="Name" Multiple="true" Typeahead="false" Dropdown="true" Fluid="true"
+                                 Placeholder="Adicione produtos">
+                    <ItemTemplate Context="p">
+                        <div class="flex items-center gap-4" style="width: 100%;">
+                            <img src="@ImageUrl(p.Image)" alt="@p.Name" style="width: 3rem; height: 3rem; object-fit: cover; border-radius: var(--p-content-border-radius);"/>
+                            <div class="flex flex-col" style="flex: 1;">
+                                <span style="font-weight: 500;">@p.Name</span>
+                                <span class="text-sm">@p.Category</span>
+                            </div>
+                            <span style="font-weight: 700;">R$ @p.Price</span>
+                        </div>
+                    </ItemTemplate>
+                    <SelectedItemTemplate Context="p">
+                        <div class="flex items-center gap-2">
+                            <span style="font-weight: 600;">@p.Name</span>
+                            <span class="text-sm" style="color: var(--p-primary-color); font-weight: 700;">R$ @p.Price</span>
+                        </div>
+                    </SelectedItemTemplate>
+                </OpAutoComplete>
+            </ChildContent>
+            <Code><CodeBlock Code="@AdvancedChipsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Forçar Seleção">
@@ -166,6 +236,47 @@
                 </OpAutoComplete>
             </ChildContent>
             <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Float Label" Id="floatlabel">
+            <Description>
+                Um rótulo flutuante sobe sobre o campo quando ele recebe foco. Use <code>OpFloatLabel</code> com
+                o <code>&lt;label for&gt;</code> apontando para o <code>InputId</code>. Veja a documentação do
+                <a href="floatlabel">FloatLabel</a>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-wrap justify-center items-end gap-4">
+                    <OpFloatLabel>
+                        <OpAutoComplete TValue="string" InputId="ac-over-label" @bind-Value="_floatOver" Suggestions="_floatSuggestions" CompleteMethod="SearchFloat"/>
+                        <label for="ac-over-label">Rótulo Sobre</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="in">
+                        <OpAutoComplete TValue="string" InputId="ac-in-label" @bind-Value="_floatIn" Suggestions="_floatSuggestions" CompleteMethod="SearchFloat"/>
+                        <label for="ac-in-label">Rótulo Dentro</label>
+                    </OpFloatLabel>
+                    <OpFloatLabel Variant="on">
+                        <OpAutoComplete TValue="string" InputId="ac-on-label" @bind-Value="_floatOn" Suggestions="_floatSuggestions" CompleteMethod="SearchFloat"/>
+                        <label for="ac-on-label">Rótulo Sobre a Borda</label>
+                    </OpFloatLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FloatLabelCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ifta Label" Id="iftalabel">
+            <Description>
+                O <code>OpIftaLabel</code> cria rótulos alinhados ao topo, dentro do campo. Veja a documentação do
+                <a href="iftalabel">IftaLabel</a>.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpIftaLabel>
+                        <OpAutoComplete TValue="string" InputId="ac-ifta" @bind-Value="_ifta" Suggestions="_iftaSuggestions" CompleteMethod="SearchBasic" Placeholder="Identificador"/>
+                        <label for="ac-ifta">Identificador</label>
+                    </OpIftaLabel>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IftaLabelCode"/></Code>
         </DocSection>
 
         <DocSection Label="Limpar">
@@ -388,6 +499,30 @@
     private List<object> _formSuggestions = new();
     private bool _formSubmitted;
 
+    // chips básico
+    private IReadOnlyList<string>? _chipBlur2;
+    private IReadOnlyList<string>? _chipTab2;
+    private IReadOnlyList<string>? _chipSep2;
+    private IReadOnlyList<string>? _chipCombined;
+
+    // chips avançado
+    private IReadOnlyList<Product>? _advancedProducts;
+    private List<object> _advancedSuggestions = new();
+
+    // preenchido
+    private string? _filledOnly;
+    private List<object> _filledOnlySuggestions = new();
+
+    // float label
+    private string? _floatOver;
+    private string? _floatIn;
+    private string? _floatOn;
+    private List<object> _floatSuggestions = new();
+
+    // ifta label
+    private string? _ifta;
+    private List<object> _iftaSuggestions = new();
+
     public sealed class Country
     {
         public string Name { get; set; } = "";
@@ -405,6 +540,20 @@
         [Required]
         public string? Value { get; set; }
     }
+
+    public sealed record Product(string Name, string Category, string Image, decimal Price);
+
+    private static readonly List<Product> Products =
+    [
+        new("Bamboo Watch", "Acessórios", "bamboo-watch.jpg", 65),
+        new("Black Watch", "Acessórios", "black-watch.jpg", 72),
+        new("Blue Band", "Fitness", "blue-band.jpg", 79),
+        new("Blue T-Shirt", "Vestuário", "blue-t-shirt.jpg", 29),
+        new("Bolt Shirt", "Vestuário", "bolt-shirt.jpg", 89),
+        new("Gaming Set", "Eletrônicos", "gaming-set.jpg", 299)
+    ];
+
+    private static string ImageUrl(string image) => $"https://primefaces.org/cdn/primeng/images/demo/product/{image}";
 
     private sealed class CityGroup
     {
@@ -440,7 +589,25 @@
         _multipleSuggestions = _basicSuggestions;
         _clearSuggestions = _basicSuggestions;
         _formSuggestions = _basicSuggestions;
+        _filledOnlySuggestions = _basicSuggestions;
+        _iftaSuggestions = _basicSuggestions;
     }
+
+    private void SearchFloat(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query;
+        _floatSuggestions = Enumerable.Range(0, 10).Select(i => (object)$"{query}-{i}").ToList();
+    }
+
+    private void SearchProducts(OpAutoCompleteCompleteEvent e)
+    {
+        var query = e.Query;
+        _advancedSuggestions = Products
+            .Where(p => p.Name.StartsWith(query, StringComparison.CurrentCultureIgnoreCase))
+            .Cast<object>()
+            .ToList();
+    }
+
 
     private void SearchDropdown(OpAutoCompleteCompleteEvent e)
     {
@@ -538,6 +705,10 @@
         <OpAutoComplete TValue="string" @bind-Value="_value2" Suggestions="_suggestions" CompleteMethod="Search" Fluid="true" Placeholder="Fluido" />
         """;
 
+    private const string FilledOnlyCode = """
+        <OpAutoComplete TValue="string" @bind-Value="_value" Suggestions="_suggestions" CompleteMethod="Search" Variant="filled" Placeholder="Preenchido" />
+        """;
+
     private const string SizesCode = """
         <OpAutoComplete TValue="string" @bind-Value="_value1" Suggestions="_suggestions" CompleteMethod="Search" Size="small" Placeholder="Pequeno" />
         <OpAutoComplete TValue="string" @bind-Value="_value2" Suggestions="_suggestions" CompleteMethod="Search" Placeholder="Normal" />
@@ -557,6 +728,34 @@
         <OpAutoComplete TValue="string" @bind-MultipleValue="_v1" Multiple="true" Typeahead="false" AddOnBlur="true" Placeholder="Digite e clique fora para adicionar..." />
         <OpAutoComplete TValue="string" @bind-MultipleValue="_v2" Multiple="true" Typeahead="false" AddOnTab="true" Placeholder="Digite e pressione Tab para adicionar..." />
         <OpAutoComplete TValue="string" @bind-MultipleValue="_v3" Multiple="true" Typeahead="false" Separator="," Placeholder="Digite itens separados por vírgula..." />
+        """;
+
+    private const string BasicChipsCode = """
+        <OpAutoComplete TValue="string" @bind-MultipleValue="_v1" Multiple="true" Typeahead="false" AddOnBlur="true" Placeholder="Digite e clique fora para adicionar..." />
+        <OpAutoComplete TValue="string" @bind-MultipleValue="_v2" Multiple="true" Typeahead="false" AddOnTab="true" Placeholder="Digite e pressione Tab para adicionar..." />
+        <OpAutoComplete TValue="string" @bind-MultipleValue="_v3" Multiple="true" Typeahead="false" Separator="," Placeholder="Digite itens separados por vírgula..." />
+        <OpAutoComplete TValue="string" @bind-MultipleValue="_v4" Multiple="true" Typeahead="false" AddOnBlur="true" AddOnTab="true" Separator="," Placeholder="Use Tab, desfoque ou vírgula para adicionar..." />
+        """;
+
+    private const string AdvancedChipsCode = """
+        <OpAutoComplete TValue="Product" @bind-MultipleValue="_products"
+                         Suggestions="_suggestions" CompleteMethod="SearchProducts"
+                         OptionLabel="Name" Multiple="true" Typeahead="false" Dropdown="true" Fluid="true"
+                         Placeholder="Adicione produtos">
+            <ItemTemplate Context="p">
+                <div class="flex items-center gap-4" style="width: 100%;">
+                    <img src="@ImageUrl(p.Image)" alt="@p.Name" style="width: 3rem; height: 3rem; object-fit: cover;" />
+                    <div class="flex flex-col" style="flex: 1;">
+                        <span style="font-weight: 500;">@p.Name</span>
+                        <span class="text-sm">@p.Category</span>
+                    </div>
+                    <span style="font-weight: 700;">R$ @p.Price</span>
+                </div>
+            </ItemTemplate>
+            <SelectedItemTemplate Context="p">
+                <span style="font-weight: 600;">@p.Name</span>
+            </SelectedItemTemplate>
+        </OpAutoComplete>
         """;
 
     private const string ForceCode = """
@@ -581,6 +780,30 @@
                 </div>
             </ItemTemplate>
         </OpAutoComplete>
+        """;
+
+    private const string FloatLabelCode = """
+        <OpFloatLabel>
+            <OpAutoComplete TValue="string" InputId="over_label" @bind-Value="_value1" Suggestions="_suggestions" CompleteMethod="Search" />
+            <label for="over_label">Rótulo Sobre</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="in">
+            <OpAutoComplete TValue="string" InputId="in_label" @bind-Value="_value2" Suggestions="_suggestions" CompleteMethod="Search" />
+            <label for="in_label">Rótulo Dentro</label>
+        </OpFloatLabel>
+
+        <OpFloatLabel Variant="on">
+            <OpAutoComplete TValue="string" InputId="on_label" @bind-Value="_value3" Suggestions="_suggestions" CompleteMethod="Search" />
+            <label for="on_label">Rótulo Sobre a Borda</label>
+        </OpFloatLabel>
+        """;
+
+    private const string IftaLabelCode = """
+        <OpIftaLabel>
+            <OpAutoComplete TValue="string" InputId="ac" @bind-Value="_value" Suggestions="_suggestions" CompleteMethod="Search" Placeholder="Identificador" />
+            <label for="ac">Identificador</label>
+        </OpIftaLabel>
         """;
 
     private const string ClearCode = """
