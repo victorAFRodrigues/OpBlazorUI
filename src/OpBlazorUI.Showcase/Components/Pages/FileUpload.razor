@@ -30,6 +30,38 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Auto" Id="auto">
+            <Description>
+                Com <code>Auto="true"</code>, o arquivo é enviado assim que é selecionado, sem passar pelo botão de
+                envio. No port, o envio real é feito pelo <code>UploadHandler</code> (veja "Envio customizado").
+            </Description>
+            <ChildContent>
+                <div style="max-width: 40rem;">
+                    <OpFileUpload Mode="basic" Auto="true" Accept="image/*" ChooseIcon="pi pi-upload"
+                                  ChooseLabel="Escolher" OnUpload="OnAutoUpload"/>
+                </div>
+                @if (_autoCount > 0)
+                {
+                    <span class="text-sm">Enviados no modo auto: <b>@_autoCount</b></span>
+                }
+            </ChildContent>
+            <Code><CodeBlock Code="@AutoCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Avançado" Id="advanced">
+            <Description>
+                O modo <code>advanced</code> (padrão) exibe a área de arrastar-e-soltar, a lista de arquivos com o
+                progresso e os botões de ação; suporta múltiplos arquivos.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2" style="max-width: 40rem;">
+                    <OpFileUpload Multiple="true" OnUpload="OnUploaded" OnProgress="OnProgress"/>
+                    <span class="text-sm">Progresso: <b>@_progress</b>%</span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@AdvancedCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Básico (simples)" Id="simple">
             <Description>Com <code>Mode="basic"</code>, apenas o botão de escolha e o rótulo são exibidos.</Description>
             <ChildContent>
@@ -175,12 +207,18 @@
 
 @code {
     private int _uploadedCount;
+    private int _autoCount;
+    private int _progress;
     private List<string> _lastBatch = new();
 
     private void OnUploaded(IReadOnlyList<OpFileUploadFile> files)
     {
         _uploadedCount += files.Count;
     }
+
+    private void OnAutoUpload(IReadOnlyList<OpFileUploadFile> files) => _autoCount += files.Count;
+
+    private void OnProgress(int progress) => _progress = progress;
 
     private void OnSelected(IReadOnlyList<OpFileUploadFile> files)
     {
@@ -208,6 +246,28 @@
 
     private const string SimpleCode = """
         <OpFileUpload Mode="basic" Auto="true" Accept="image/*" />
+        """;
+
+    private const string AutoCode = """
+        <OpFileUpload Mode="basic" Auto="true" Accept="image/*"
+                      ChooseIcon="pi pi-upload" ChooseLabel="Escolher"
+                      OnUpload="OnAutoUpload" />
+
+        @code {
+            private void OnAutoUpload(IReadOnlyList<OpFileUploadFile> files) { /* ... */ }
+        }
+        """;
+
+    private const string AdvancedCode = """
+        <OpFileUpload Multiple="true" OnUpload="OnUploaded" OnProgress="OnProgress" />
+
+        @code {
+            private int _uploadedCount;
+            private int _progress;
+
+            private void OnUploaded(IReadOnlyList<OpFileUploadFile> files) => _uploadedCount += files.Count;
+            private void OnProgress(int progress) => _progress = progress;
+        }
         """;
 
     private const string CustomCode = """

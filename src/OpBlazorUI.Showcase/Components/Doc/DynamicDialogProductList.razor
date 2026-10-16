@@ -1,0 +1,24 @@
+@namespace OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Components.DynamicDialog
+
+<div class="flex flex-col gap-2">
+    @foreach (var product in Products)
+    {
+        <button type="button" class="p-button p-component p-button-text" style="justify-content:flex-start;"
+                @onclick="@(() => DialogRef?.Close(product))">
+            <span class="p-button-label">@product</span>
+        </button>
+    }
+</div>
+
+@code {
+    [CascadingParameter] private OpDynamicDialogRef? DialogRef { get; set; }
+
+    private static readonly string[] Products =
+    {
+        "Notebook Pro 15",
+        "Monitor UltraWide 34\"",
+        "Teclado Mecânico",
+        "Mouse Sem Fio"
+    };
+}

@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.Tabs
+@using OpBlazorUI.Models
 
 <PageTitle>Tabs - OpBlazorUI</PageTitle>
 
@@ -29,6 +30,51 @@
                 </OpTabs>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Dinâmico" Id="dynamic">
+            <Description>
+                As abas podem ser geradas dinamicamente com um laço <code>@@foreach</code> sobre uma coleção.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-end">
+                        <button type="button" class="p-button p-component" @onclick="AddPanel">Adicionar aba</button>
+                    </div>
+                    <OpTabs @bind-ActiveIndex="_dynamicActive">
+                        @foreach (var header in _dynamicPanels)
+                        {
+                            var h = header;
+                            <OpTabPanel Header="@h" Closable="true" OnClose="@(() => RemovePanel(h))">
+                                <p class="m-0">Conteúdo de @h.</p>
+                            </OpTabPanel>
+                        }
+                    </OpTabs>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Controlado" Id="controlled">
+            <Description>
+                As abas podem ser controladas programaticamente pela propriedade <code>ActiveIndex</code>
+                (<code>@@bind-ActiveIndex</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-end gap-2">
+                        <button type="button" class="p-button p-component" @onclick="@(() => _controlledActive = 0)">1</button>
+                        <button type="button" class="p-button p-component" @onclick="@(() => _controlledActive = 1)">2</button>
+                        <button type="button" class="p-button p-component" @onclick="@(() => _controlledActive = 2)">3</button>
+                    </div>
+                    <OpTabs @bind-ActiveIndex="_controlledActive">
+                        <OpTabPanel Header="Cabeçalho 1"><p class="m-0">Conteúdo 1.</p></OpTabPanel>
+                        <OpTabPanel Header="Cabeçalho 2"><p class="m-0">Conteúdo 2.</p></OpTabPanel>
+                        <OpTabPanel Header="Cabeçalho 3"><p class="m-0">Conteúdo 3.</p></OpTabPanel>
+                    </OpTabs>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ControlledCode"/></Code>
         </DocSection>
 
         <DocSection Label="Com ícones" Id="icons">
@@ -65,6 +111,89 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ScrollableCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Preguiçoso (Lazy)" Id="lazy">
+            <Description>
+                O conteúdo é renderizado apenas para a aba ativa: as demais só são criadas quando selecionadas. É
+                o equivalente à propriedade <code>lazy</code> do Angular — no Blazor esse é o comportamento padrão.
+            </Description>
+            <ChildContent>
+                <OpTabs @bind-ActiveIndex="_lazyActive">
+                    <OpTabPanel Header="Cabeçalho 1">
+                        <p class="m-0">O conteúdo desta aba é criado ao ser exibida.</p>
+                    </OpTabPanel>
+                    <OpTabPanel Header="Cabeçalho 2">
+                        <p class="m-0">As abas inativas não fazem parte do DOM.</p>
+                    </OpTabPanel>
+                    <OpTabPanel Header="Cabeçalho 3">
+                        <p class="m-0">Trocar de aba descarta o conteúdo anterior.</p>
+                    </OpTabPanel>
+                </OpTabs>
+            </ChildContent>
+            <Code><CodeBlock Code="@LazyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>Uma aba com <code>Disabled="true"</code> não pode ser ativada pelo usuário.</Description>
+            <ChildContent>
+                <OpTabs ActiveIndex="0">
+                    <OpTabPanel Header="Cabeçalho 1">
+                        <p class="m-0">Conteúdo da primeira aba.</p>
+                    </OpTabPanel>
+                    <OpTabPanel Header="Cabeçalho 2" Disabled="true">
+                        <p class="m-0">Indisponível.</p>
+                    </OpTabPanel>
+                    <OpTabPanel Header="Cabeçalho 3">
+                        <p class="m-0">Conteúdo da terceira aba.</p>
+                    </OpTabPanel>
+                </OpTabs>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O cabeçalho de uma aba é customizado por <code>HeaderTemplate</code>.
+            </Description>
+            <ChildContent>
+                <OpTabs ActiveIndex="0" Scrollable="true">
+                    <OpTabPanel>
+                        <HeaderTemplate>
+                            <span style="display:flex; align-items:center; gap:.5rem;">
+                                <span class="p-tab-icon pi pi-user" aria-hidden="true"></span>
+                                <span>Perfil</span>
+                                <span class="p-badge">3</span>
+                            </span>
+                        </HeaderTemplate>
+                        <ChildContent>
+                            <p class="m-0">Dados do perfil.</p>
+                        </ChildContent>
+                    </OpTabPanel>
+                    <OpTabPanel>
+                        <HeaderTemplate>
+                            <span style="display:flex; align-items:center; gap:.5rem;">
+                                <span class="p-tab-icon pi pi-cog" aria-hidden="true"></span>
+                                <span>Configurações</span>
+                            </span>
+                        </HeaderTemplate>
+                        <ChildContent>
+                            <p class="m-0">Preferências.</p>
+                        </ChildContent>
+                    </OpTabPanel>
+                </OpTabs>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tab Menu" Id="tabmenu">
+            <Description>
+                Para uma navegação somente por abas (sem painéis de conteúdo), use o <code>OpTabMenu</code>.
+            </Description>
+            <ChildContent>
+                <OpTabMenu Model="_tabMenuItems" @bind-ActiveIndex="_tabMenuActive"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@TabMenuCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
@@ -142,6 +271,30 @@
 
 @code {
     private int _active;
+    private int _dynamicActive;
+    private int _controlledActive;
+    private int _lazyActive;
+    private int _tabMenuActive;
+
+    private readonly List<string> _dynamicPanels = new() { "Aba 1", "Aba 2", "Aba 3" };
+
+    private readonly List<OpMenuItem> _tabMenuItems = new()
+    {
+        new OpMenuItem { Label = "Painel", Icon = "pi pi-home", Url = "/tabs" },
+        new OpMenuItem { Label = "Button", Icon = "pi pi-check", Url = "/button" },
+        new OpMenuItem { Label = "InputText", Icon = "pi pi-pencil", Url = "/inputtext" }
+    };
+
+    private void AddPanel() => _dynamicPanels.Add($"Aba {_dynamicPanels.Count + 1}");
+
+    private void RemovePanel(string header)
+    {
+        var index = _dynamicPanels.IndexOf(header);
+        if (index >= 0)
+        {
+            _dynamicPanels.RemoveAt(index);
+        }
+    }
 
     private const string ImportCode = """
         @using OpBlazorUI.Components.Tabs
@@ -182,5 +335,77 @@
                 <OpTabPanel Header="@($"Cabeçalho {i}")">Conteúdo @i</OpTabPanel>
             }
         </OpTabs>
+        """;
+
+    private const string DynamicCode = """
+        <OpTabs @bind-ActiveIndex="_active">
+            @foreach (var header in _panels)
+            {
+                <OpTabPanel Header="@header" Closable="true" OnClose="@(() => RemovePanel(header))">
+                    Conteúdo de @header
+                </OpTabPanel>
+            }
+        </OpTabs>
+
+        @code {
+            private int _active;
+            private List<string> _panels = new() { "Aba 1", "Aba 2", "Aba 3" };
+
+            private void RemovePanel(string header) => _panels.Remove(header);
+        }
+        """;
+
+    private const string ControlledCode = """
+        <OpTabs @bind-ActiveIndex="_active">
+            <OpTabPanel Header="Cabeçalho 1">Conteúdo 1</OpTabPanel>
+            <OpTabPanel Header="Cabeçalho 2">Conteúdo 2</OpTabPanel>
+        </OpTabs>
+
+        <button type="button" class="p-button" @onclick="@(() => _active = 1)">Abrir a segunda</button>
+
+        @code {
+            private int _active;
+        }
+        """;
+
+    private const string LazyCode = """
+        <OpTabs @bind-ActiveIndex="_active">
+            <OpTabPanel Header="Cabeçalho 1">O conteúdo é criado ao exibir a aba.</OpTabPanel>
+            <OpTabPanel Header="Cabeçalho 2">As abas inativas não ficam no DOM.</OpTabPanel>
+        </OpTabs>
+        """;
+
+    private const string DisabledCode = """
+        <OpTabs ActiveIndex="0">
+            <OpTabPanel Header="Cabeçalho 1">Conteúdo 1</OpTabPanel>
+            <OpTabPanel Header="Cabeçalho 2" Disabled="true">Indisponível</OpTabPanel>
+            <OpTabPanel Header="Cabeçalho 3">Conteúdo 3</OpTabPanel>
+        </OpTabs>
+        """;
+
+    private const string TemplateCode = """
+        <OpTabs ActiveIndex="0">
+            <OpTabPanel>
+                <HeaderTemplate>
+                    <span class="p-tab-icon pi pi-user"></span>
+                    <span>Perfil</span>
+                    <span class="p-badge">4</span>
+                </HeaderTemplate>
+                Conteúdo do perfil
+            </OpTabPanel>
+        </OpTabs>
+        """;
+
+    private const string TabMenuCode = """
+        <OpTabMenu Model="_items" @bind-ActiveIndex="_active" />
+
+        @code {
+            private int _active;
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Painel", Icon = "pi pi-home", Url = "/tabs" },
+                new OpMenuItem { Label = "Button", Icon = "pi pi-check", Url = "/button" }
+            };
+        }
         """;
 }

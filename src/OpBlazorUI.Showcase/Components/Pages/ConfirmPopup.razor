@@ -70,6 +70,46 @@
             <Code><CodeBlock Code="@CustomCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Template" Id="template">
+            <Description>
+                <p>
+                    No Angular o conteúdo do popup é customizável pelo template <code>content</code>. No port não
+                    há template de conteúdo: a mensagem é texto simples e a aparência é ajustada por
+                    <code>Icon</code> e pelas propriedades dos botões. Para uma UI totalmente própria, use um
+                    overlay próprio (veja <a href="#headless">Headless</a>).
+                    @* Desvio consciente: sem template "content"; a customização fica em Icon/props dos botões. *@
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <span @ref="_templateTarget" class="inline-flex">
+                        <OpButton Label="Excluir conta" Severity="danger" OnClick="ShowTemplate"/>
+                    </span>
+                </div>
+                <OpConfirmPopup @ref="_templatePopup"
+                                Icon="pi pi-exclamation-circle"
+                                Message="Tem certeza que deseja excluir a conta?"
+                                AcceptLabel="Confirmar"
+                                RejectLabel="Cancelar"
+                                AcceptIcon="pi pi-check"
+                                RejectIcon="pi pi-times"
+                                RejectButtonProps="@_templateRejectProps"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Headless" Id="headless">
+            <Description>
+                <p>
+                    O modo <code>headless</code> do Angular substitui toda a interface por um template. O port não
+                    expõe esse modo: para uma UI própria, componha um overlay (por exemplo <code>OpPopover</code> ou
+                    <code>OpDialog</code>) com os seus próprios botões e feche-o ao concluir.
+                    @* Desvio consciente: headless não portado; a alternativa é montar o overlay manualmente. *@
+                </p>
+            </Description>
+            <Code><CodeBlock Code="@HeadlessCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Eventos" Id="events">
             <Description>
                 <p>
@@ -229,14 +269,17 @@
     private OpConfirmPopup? _basicPopup;
     private OpConfirmPopup? _customPopup;
     private OpConfirmPopup? _eventsPopup;
+    private OpConfirmPopup? _templatePopup;
 
     private ElementReference _saveTarget;
     private ElementReference _deleteTarget;
     private ElementReference _customTarget;
     private ElementReference _eventsTarget;
+    private ElementReference _templateTarget;
 
     // Como no upstream, o rejeitar é secundário e outlined; o componente não impõe severidade.
     private readonly Dictionary<string, object> _rejectProps = new() { ["severity"] = "secondary", ["outlined"] = true };
+    private readonly Dictionary<string, object> _templateRejectProps = new() { ["severity"] = "secondary", ["outlined"] = true };
 
     private string _basicMessage = "";
     private int _acceptCount;
@@ -258,6 +301,8 @@
     private void ShowCustom() => _ = _customPopup!.ShowAsync(_customTarget);
 
     private void ShowEvents() => _ = _eventsPopup!.ShowAsync(_eventsTarget);
+
+    private void ShowTemplate() => _ = _templatePopup!.ShowAsync(_templateTarget);
 
     private void OnAccept() => _acceptCount++;
 
@@ -304,6 +349,41 @@
                         RejectIcon="pi pi-times"
                         AcceptButtonStyleClass="p-button-danger"
                         RejectButtonStyleClass="p-button-secondary p-button-text" />
+        """;
+
+    private const string TemplateCode = """
+        <OpConfirmPopup @ref="_popup"
+                        Icon="pi pi-exclamation-circle"
+                        Message="Tem certeza que deseja excluir a conta?"
+                        AcceptLabel="Confirmar"
+                        RejectLabel="Cancelar"
+                        AcceptIcon="pi pi-check"
+                        RejectIcon="pi pi-times"
+                        RejectButtonProps="@_rejectProps" />
+        """;
+
+    private const string HeadlessCode = """
+        @* Não há modo headless: monte o overlay com os seus próprios botões. *@
+        <OpButton Label="Salvar" @ref="_trigger" OnClick="Show" />
+
+        <OpPopover @ref="_popover">
+            <div class="flex flex-col gap-3 p-1">
+                <span>Salvar o processo atual?</span>
+                <div class="flex gap-2">
+                    <OpButton Label="Salvar" OnClick="Confirm" />
+                    <OpButton Label="Cancelar" Text="true" Severity="secondary" OnClick="Cancel"/>
+                </div>
+            </div>
+        </OpPopover>
+
+        @code {
+            private OpPopover? _popup;
+            private ElementReference _target;
+
+            private void Show() => _ = _popup!.ToggleAsync(_target);
+            private void Confirm() => _ = _popup!.HideAsync();
+            private void Cancel() => _ = _popup!.HideAsync();
+        }
         """;
 
     private const string EventsCode = """

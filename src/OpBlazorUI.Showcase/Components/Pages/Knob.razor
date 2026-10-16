@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.Knob
+@using System.ComponentModel.DataAnnotations
 
 <PageTitle>Knob - OpBlazorUI</PageTitle>
 
@@ -124,6 +125,27 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ReadonlyCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Formulários" Id="forms">
+            <Description>
+                O Knob herda de <code>OpInputBase&lt;double&gt;</code>: integra-se ao <code>EditForm</code> com
+                DataAnnotations, e o estado inválido é aplicado automaticamente quando há erro. Isso substitui as
+                abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
+            </Description>
+            <ChildContent>
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-center gap-2">
+                    <DataAnnotationsValidator/>
+                    <OpKnob @bind-Value="_form.Volume" AriaLabel="Volume"/>
+                    <ValidationMessage For="() => _form.Volume"/>
+                    <button type="submit" class="p-button p-component">Enviar</button>
+                    @if (_formSubmitted)
+                    {
+                        <div class="text-sm" style="color: var(--p-green-600)">Volume: @_form.Volume</div>
+                    }
+                </EditForm>
+            </ChildContent>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Desabilitado" Id="disabled">
@@ -252,6 +274,17 @@
     private double _readonly = 60;
     private double _disabled = 60;
 
+    private readonly KnobFormModel _form = new();
+    private bool _formSubmitted;
+
+    private void OnSubmit() => _formSubmitted = true;
+
+    private sealed class KnobFormModel
+    {
+        [Range(10, 90, ErrorMessage = "Informe um valor entre 10 e 90.")]
+        public double Volume { get; set; } = 60;
+    }
+
     private const string ImportCode = """
         @using OpBlazorUI.Components.Knob
 
@@ -331,6 +364,29 @@
 
         @code {
             private double _value = 60;
+        }
+        """;
+
+    private const string FormsCode = """
+        @using System.ComponentModel.DataAnnotations
+
+        <EditForm Model="_form" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <OpKnob @bind-Value="_form.Volume" AriaLabel="Volume" />
+            <ValidationMessage For="() => _form.Volume" />
+            <button type="submit" class="p-button p-component">Enviar</button>
+        </EditForm>
+
+        @code {
+            private readonly KnobFormModel _form = new();
+
+            private void OnSubmit() { /* ... */ }
+
+            private sealed class KnobFormModel
+            {
+                [Range(10, 90, ErrorMessage = "Informe um valor entre 10 e 90.")]
+                public double Volume { get; set; } = 60;
+            }
         }
         """;
 
