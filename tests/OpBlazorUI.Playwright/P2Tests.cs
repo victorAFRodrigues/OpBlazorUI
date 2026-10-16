@@ -189,6 +189,12 @@ public class P2Tests
     [InlineData("/imagecompare", ".p-imagecompare")]
     [InlineData("/galleria", ".p-galleria")]
     [InlineData("/carousel", ".p-carousel")]
+    [InlineData("/ripple", ".p-ripple")]
+    [InlineData("/toolbar", ".p-toolbar")]
+    [InlineData("/accordion", ".p-accordion")]
+    [InlineData("/button", ".p-button")]
+    [InlineData("/slider", ".p-slider")]
+    [InlineData("/autocomplete", ".p-autocomplete")]
     public async Task Paginas_renderizam_no_modo_escuro(string route, string selector)
     {
         var errors = new List<string>();
