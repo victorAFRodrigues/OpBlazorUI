@@ -1,0 +1,118 @@
+@page "/_tests/date-picker"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using System.ComponentModel.DataAnnotations
+@using OpBlazorUI.Components.DatePicker
+@using OpBlazorUI.Globalization
+@using OpBlazorUI.Services
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/DatePickerTests.cs). *@
+
+<PageTitle>Testes: DatePicker</PageTitle>
+
+<h1 id="t-title">Testes: DatePicker</h1>
+
+<section id="t-range-clear">
+    <OpDatePicker SelectionMode="OpDateSelectionMode.Range"
+                  Inline="true"
+                  ShowButtonBar="true"
+                  DateFormat="dd/mm/yyyy"
+                  @bind-RangeValue="_range"/>
+    <span id="t-range-value">@string.Join("|", (_range ?? []).Where(d => d.HasValue).Select(d => d!.Value.ToString("yyyy-MM-dd")))</span>
+</section>
+
+<section id="t-typing">
+    <OpDatePicker DateFormat="dd/mm/yyyy"
+                  InputId="t-typing-input"
+                  @bind-Value="_date"/>
+    <span id="t-typing-value">@(_date?.ToString("yyyy-MM-dd"))</span>
+</section>
+
+<section id="t-min">
+    <OpDatePicker Inline="true"
+                  DateFormat="dd/mm/yyyy"
+                  MinDate="_min"
+                  @bind-Value="_minValue"/>
+    <button id="t-min-toggle" type="button" @onclick="ToggleMin">alternar min</button>
+    <span id="t-min-before">@BeforeDate.ToString("yyyy-MM-dd")</span>
+</section>
+
+<section id="t-view">
+    <OpDatePicker View="OpDatePickerView.Month"
+                  DateFormat="dd/mm/yyyy"
+                  InputId="t-view-input"
+                  @bind-Value="_viewValue"/>
+</section>
+
+<section id="t-format">
+    <OpDatePicker DateFormat="dd 'de' MMMM 'de' yyyy"
+                  InputId="t-format-input"
+                  @bind-Value="_formatDate"/>
+</section>
+
+<section id="t-tokens">
+    <OpDatePicker DateFormat="y" InputId="t-token-y2" @bind-Value="_tokenDate"/>
+    <OpDatePicker DateFormat="yyyy" InputId="t-token-y4" @bind-Value="_tokenDate"/>
+    <OpDatePicker DateFormat="o" InputId="t-token-o" @bind-Value="_doyDate"/>
+    <OpDatePicker DateFormat="oo" InputId="t-token-oo" @bind-Value="_doyDate"/>
+    <OpDatePicker DateFormat="@@" InputId="t-token-at" @bind-Value="_tokenDate"/>
+    <OpDatePicker DateFormat="''" InputId="t-token-quote" @bind-Value="_tokenDate"/>
+</section>
+
+<section id="t-time">
+    <OpDatePicker ShowTime="true"
+                  InputId="t-time-input"
+                  @bind-Value="_timeDate"/>
+</section>
+
+<section id="t-form">
+    <EditForm Model="_form" OnValidSubmit="OnValid">
+        <DataAnnotationsValidator/>
+        <OpDatePicker @bind-RangeValue="_form.Range"
+                      SelectionMode="OpDateSelectionMode.Range"
+                      Inline="true"
+                      InputId="t-form-range"/>
+        <div id="t-form-msg">
+            <ValidationMessage For="() => _form.Range"/>
+        </div>
+        <button id="t-form-submit" type="submit">enviar</button>
+    </EditForm>
+    <span id="t-form-submitted">@_submitted</span>
+</section>
+
+@code {
+    [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+
+    private IReadOnlyList<DateTime?>? _range;
+    private DateTime? _date;
+    private DateTime? _minValue;
+    private DateTime? _viewValue;
+    private DateTime? _formatDate = new DateTime(2026, 10, 26);
+
+    private DateTime? _tokenDate = new DateTime(2026, 10, 26);
+    private DateTime? _doyDate = new DateTime(2026, 1, 5);
+    private DateTime? _timeDate;
+
+    private readonly TestFormModel _form = new();
+    private bool _submitted;
+
+    private DateTime? _min = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 15);
+    private DateTime BeforeDate => new(DateTime.Today.Year, DateTime.Today.Month, 10);
+
+    protected override void OnInitialized()
+    {
+        // Fixa a tradução em inglês para os nomes de mês não dependerem da tradução global nem do ICU.
+        TranslationService.SetTranslation(OpTranslations.EnUs);
+    }
+
+    private void ToggleMin() => _min = _min is null
+        ? new DateTime(DateTime.Today.Year, DateTime.Today.Month, 15)
+        : null;
+
+    private void OnValid() => _submitted = true;
+
+    private sealed class TestFormModel
+    {
+        [Required(ErrorMessage = "Informe o período.")]
+        public IReadOnlyList<DateTime?>? Range { get; set; }
+    }
+}

@@ -1,0 +1,31 @@
+@page "/_tests/globalizacao-midia"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Components.Galleria
+@using OpBlazorUI.Components.Image
+@using OpBlazorUI.Globalization
+@using OpBlazorUI.Services
+@inject OpTranslationService TranslationService
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/GlobalizacaoMidiaTests.cs).
+   Fixa a tradução em pt-BR para verificar os aria da mídia (imagem, galeria). *@
+
+<PageTitle>Testes: globalização — mídia</PageTitle>
+
+<h1 id="t-title">Testes: globalização — mídia</h1>
+
+<section id="t-image">
+    <OpImage Src="_src" Preview="true"/>
+</section>
+
+<section id="t-galleria">
+    <OpGalleria TItem="string" Value="_items" ShowItemNavigators="true" ShowThumbnails="true"/>
+</section>
+
+@code {
+    // GIF 1x1 transparente: evita erro de rede no teste.
+    private const string _src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+    private readonly List<string> _items = new() { "A", "B", "C" };
+
+    protected override void OnInitialized() => TranslationService.SetTranslation(OpTranslations.PtBr);
+}
