@@ -18,6 +18,12 @@ public class OpDataTableColumn
     /// <summary>Se a coluna participa da ordenação (combinado com o <c>Sortable</c> global).</summary>
     public bool Sortable { get; set; } = true;
 
+    /// <summary>
+    /// Renderiza um controle de seleção nesta coluna: <c>multiple</c> (checkbox, com select-all no
+    /// cabeçalho) ou <c>single</c> (radio). Coluna comum quando nulo (padrão).
+    /// </summary>
+    public string? SelectionMode { get; set; }
+
     /// <summary>Largura aplicada como <c>style="width:..."</c> no <c>th</c>.</summary>
     public string? Width { get; set; }
 

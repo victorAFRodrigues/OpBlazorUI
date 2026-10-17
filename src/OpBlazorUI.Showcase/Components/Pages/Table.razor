@@ -621,7 +621,7 @@
 
     private void OnPageChanged(int page) => _page = page;
 
-    private void OnSorted((string Field, int Order) info)
+    private void OnSorted(OpDataTableSortEvent info)
     {
         _sortField = info.Field;
         _sortOrder = info.Order;
