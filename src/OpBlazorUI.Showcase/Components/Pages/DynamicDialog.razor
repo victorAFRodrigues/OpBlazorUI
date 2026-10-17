@@ -45,7 +45,19 @@
             <Code><CodeBlock Code="@OpenCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Passando Dados" Id="passing-data">
+        <DocSection Label="Customização" Id="customization">
+            <Description>
+                <p>
+                    O <code>OpDynamicDialogConfig</code> reaproveita as opções do <code>OpDialog</code>, como
+                    <code>Width</code>, <code>Style</code> e <code>StyleClass</code>; veja a página
+                    <a href="dialog">Dialog</a> para todas as propriedades. No Angular há <code>breakpoints</code>
+                    para larguras responsivas — aqui use <code>Width</code> com uma unidade relativa (ex.: <code>50vw</code>).
+                </p>
+            </Description>
+            <Code><CodeBlock Code="@CustomizationCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Passando Dados" Id="passingdata">
             <Description>
                 <p>
                     Use <code>InputValues</code> para definir parâmetros do componente (tipagem segura) e
@@ -66,6 +78,24 @@
                 </p>
             </Description>
             <Code><CodeBlock Code="@CloseCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Exemplo" Id="example">
+            <Description>
+                <p>
+                    Exemplo completo: um diálogo cujo conteúdo é um componente de lista de produtos. O item escolhido
+                    é devolvido por <code>Close</code> e chega ao chamador pelo <code>Result</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <button type="button" class="p-button p-component w-fit" @onclick="OpenProductDialog">
+                        <span class="p-button-label">Selecionar produto</span>
+                    </button>
+                    <div class="text-sm">Produto: <strong>@_product</strong></div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ExampleCode"/></Code>
         </DocSection>
     </Features>
 
@@ -141,6 +171,7 @@
     [Inject] private OpDialogService DialogService { get; set; } = default!;
 
     private string _result = "nenhum";
+    private string _product = "nenhum";
 
     private async Task OpenDialog()
     {
@@ -153,6 +184,19 @@
 
         var result = await reference.Result;
         _result = result?.ToString() ?? "nenhum";
+    }
+
+    private async Task OpenProductDialog()
+    {
+        var reference = DialogService.Open<DynamicDialogProductList>(new OpDynamicDialogConfig
+        {
+            Header = "Selecione um produto",
+            Width = "34rem",
+            Modal = true
+        });
+
+        var result = await reference.Result;
+        _product = result?.ToString() ?? "nenhum";
     }
 
     private const string ImportCode = """
@@ -202,5 +246,34 @@
 
         // No chamador
         var result = await reference.Result; // "confirmado" ou null
+        """;
+
+    private const string CustomizationCode = """
+        var reference = DialogService.Open<ProdutoLista>(new OpDynamicDialogConfig
+        {
+            Header = "Selecione um produto",
+            Width = "50vw",
+            Modal = true,
+            StyleClass = "op-dynamic-dialog-custom"
+        });
+        """;
+
+    private const string ExampleCode = """
+        // DynamicDialogProductList.razor
+        @code {
+            [CascadingParameter] private OpDynamicDialogRef? DialogRef { get; set; }
+
+            private void Select(string product) => DialogRef?.Close(product);
+        }
+
+        // Chamador
+        var reference = DialogService.Open<DynamicDialogProductList>(new OpDynamicDialogConfig
+        {
+            Header = "Selecione um produto",
+            Width = "34rem",
+            Modal = true
+        });
+
+        var product = await reference.Result; // nome escolhido ou null
         """;
 }

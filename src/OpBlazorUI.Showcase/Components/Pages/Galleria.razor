@@ -4,6 +4,7 @@
 @using OpBlazorUI.Components.Galleria
 @using OpBlazorUI.Components.Button
 @using OpBlazorUI.Components.SelectButton
+@using OpBlazorUI.Components.InputSwitch
 
 <PageTitle>Galleria - OpBlazorUI</PageTitle>
 
@@ -68,6 +69,110 @@
             <Code><CodeBlock Code="@ControlledCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Indicadores" Id="indicator">
+            <Description>
+                <p>
+                    Indicadores são os marcadores de posição exibidos junto à imagem. Esta seção reúne as variações:
+                    <a href="#clickevent">clique</a>, <a href="#hoverevent">hover</a>,
+                    <a href="#position">posição</a> e <a href="#template">template</a>.
+                </p>
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Indicadores (Clique)" Id="clickevent">
+            <Description>
+                <p>
+                    Os indicadores são exibidos com <code>ShowIndicators="true"</code> e, por padrão, o item é ativado
+                    ao clicar em um indicador. Use <code>ShowThumbnails="false"</code> para ocultar as miniaturas.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" ShowIndicators="true" ShowThumbnails="false"
+                                ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ClickEventCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Indicadores (Hover)" Id="hoverevent">
+            <Description>
+                <p>
+                    Com <code>ChangeItemOnIndicatorHover="true"</code>, o item é ativado ao passar o mouse sobre o
+                    indicador, em vez de depender do clique.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" ShowIndicators="true" ShowThumbnails="false"
+                                ChangeItemOnIndicatorHover="true" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@HoverEventCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Indicadores (Posição)" Id="position">
+            <Description>
+                <p>
+                    A posição dos indicadores é definida com <code>IndicatorsPosition</code>
+                    (<code>bottom</code>, <code>top</code>, <code>left</code> ou <code>right</code>) e eles podem ser
+                    sobrepostos à imagem com <code>ShowIndicatorsOnItem="true"</code>.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <OpSelectButton TValue="string" @bind-Value="_indicatorPosition"
+                                        Options="_positionOptions" AllowEmpty="false"/>
+                        <span class="flex items-center gap-2 text-sm">
+                            <OpInputSwitch @bind-Value="_indicatorsOnItem"/> Sobrepor à imagem
+                        </span>
+                    </div>
+                    <div class="card flex justify-center">
+                        <OpGalleria TItem="Photo" Value="_photos" ShowIndicators="true" ShowThumbnails="false"
+                                    IndicatorsPosition="@_indicatorPosition" ShowIndicatorsOnItem="_indicatorsOnItem"
+                                    ContainerStyle="max-width:640px;">
+                            <ItemTemplate Context="photo">
+                                <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                            </ItemTemplate>
+                        </OpGalleria>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PositionCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Indicadores (Template)" Id="template">
+            <Description>
+                <p>
+                    O conteúdo de cada indicador é customizado com <code>IndicatorTemplate</code>; o contexto é o
+                    índice do item.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" ShowIndicators="true" ShowThumbnails="false"
+                                ShowIndicatorsOnItem="true" IndicatorsPosition="left" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <IndicatorTemplate Context="index">
+                            <span class="text-xs font-bold">@(index + 1)</span>
+                        </IndicatorTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@IndicatorTemplateCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Miniaturas" Id="thumbnail">
             <Description>
                 <p>
@@ -120,6 +225,175 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@ResponsiveCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tela cheia" Id="fullscreen">
+            <Description>
+                <p>
+                    No modo tela cheia a galeria é exibida em um overlay. Esta seção reúne as variações:
+                    <a href="#withthumbnails">com miniaturas</a>,
+                    <a href="#withtouthumbnails">sem miniaturas</a> e
+                    <a href="#customcontent">conteúdo customizado</a>.
+                </p>
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Tela cheia (com miniaturas)" Id="withthumbnails">
+            <Description>
+                <p>
+                    O modo tela cheia é habilitado com <code>FullScreen="true"</code> e controlado por
+                    <code>@@bind-Visible</code>; as miniaturas continuam disponíveis na camada modal.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <OpButton Label="Abrir em tela cheia" Icon="pi pi-external-link" OnClick="OpenFullscreen"/>
+                    <OpGalleria TItem="Photo" Value="_photos" FullScreen="true" @bind-Visible="_fullscreenVisible"
+                                Circular="true" NumVisible="5" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <ThumbnailTemplate Context="photo">
+                            <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ThumbnailTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@WithThumbnailsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tela cheia (sem miniaturas)" Id="withtouthumbnails">
+            <Description>
+                <p>As miniaturas podem ser ocultadas na tela cheia com <code>ShowThumbnails="false"</code>.</p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <OpButton Label="Abrir em tela cheia" Icon="pi pi-external-link" OnClick="OpenFullscreenNoThumbs"/>
+                    <OpGalleria TItem="Photo" Value="_photos" FullScreen="true" @bind-Visible="_fullscreenNoThumbs"
+                                Circular="true" ShowThumbnails="false" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@WithoutThumbnailsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tela cheia (conteúdo customizado)" Id="customcontent">
+            <Description>
+                <p>
+                    Um item inicial pode ser definido com <code>ActiveIndex</code> e as áreas de
+                    <code>HeaderTemplate</code>/<code>FooterTemplate</code> podem conter qualquer conteúdo.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex flex-col items-center gap-4">
+                    <OpButton Label="Abrir a partir do 3º item" Icon="pi pi-external-link" OnClick="OpenCustomContent"/>
+                    <OpGalleria TItem="Photo" Value="_photos" FullScreen="true" @bind-Visible="_fullscreenCustom"
+                                ActiveIndex="2" Circular="true" ShowThumbnails="false" ContainerStyle="max-width:640px;">
+                        <HeaderTemplate>
+                            <div class="text-lg font-bold">Galeria de fotos</div>
+                        </HeaderTemplate>
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <div class="text-sm">Use as setas para navegar · @_photos.Length imagens</div>
+                        </FooterTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomContentCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Navegadores" Id="navigator">
+            <Description>
+                <p>
+                    Navegadores são os botões de anterior/próximo. Esta seção reúne as variações:
+                    <a href="#itemwiththumbnails">com miniaturas</a>,
+                    <a href="#itemwithtouthumbnails">sem miniaturas</a>,
+                    <a href="#hover">visíveis no hover</a> e
+                    <a href="#withindicators">junto de indicadores</a>.
+                </p>
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Navegadores (com miniaturas)" Id="itemwiththumbnails">
+            <Description>
+                <p>
+                    Com <code>ShowItemNavigators="true"</code> os botões de anterior/próximo aparecem sobre o item,
+                    à esquerda e à direita.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" ShowItemNavigators="true" Circular="true" NumVisible="5"
+                                ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                        <ThumbnailTemplate Context="photo">
+                            <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ThumbnailTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ItemThumbnailsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Navegadores (sem miniaturas)" Id="itemwithtouthumbnails">
+            <Description>
+                <p>Os navegadores funcionam igualmente sem a faixa de miniaturas: basta <code>ShowThumbnails="false"</code>.</p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" ShowItemNavigators="true" Circular="true"
+                                ShowThumbnails="false" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ItemWithoutThumbnailsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Navegadores (hover)" Id="hover">
+            <Description>
+                <p>
+                    Com <code>ShowItemNavigatorsOnHover="true"</code> (além de <code>ShowItemNavigators</code>), os
+                    botões de navegação só aparecem ao passar o mouse sobre a imagem.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" ShowItemNavigators="true" ShowItemNavigatorsOnHover="true"
+                                Circular="true" ShowThumbnails="false" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@NavigatorHoverCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Navegadores com indicadores" Id="withindicators">
+            <Description>
+                <p>Navegadores e indicadores podem ser combinados na mesma galeria.</p>
+            </Description>
+            <ChildContent>
+                <div class="card flex justify-center">
+                    <OpGalleria TItem="Photo" Value="_photos" ShowItemNavigators="true" ShowIndicators="true"
+                                ShowThumbnails="false" Circular="true" ContainerStyle="max-width:640px;">
+                        <ItemTemplate Context="photo">
+                            <img src="@photo.ItemImageSrc" alt="@photo.Alt" style="width:100%; display:block;"/>
+                        </ItemTemplate>
+                    </OpGalleria>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@WithIndicatorsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Reprodução Automática" Id="autoplay">
@@ -239,6 +513,7 @@
                               new[] { "ShowIndicators", "bool", "false", "Exibe a lista de indicadores." },
                               new[] { "ShowIndicatorsOnItem", "bool", "false", "Sobrepõe os indicadores à imagem." },
                               new[] { "IndicatorsPosition", "string", "\"bottom\"", "Posição dos indicadores: <code>bottom</code>, <code>top</code>, <code>left</code> ou <code>right</code>." },
+                              new[] { "ChangeItemOnIndicatorHover", "bool", "false", "Ativa o item ao passar o mouse sobre o indicador." },
                               new[] { "ShowThumbnails", "bool", "true", "Exibe a faixa de miniaturas." },
                               new[] { "ThumbnailsPosition", "string", "\"bottom\"", "Posição das miniaturas: <code>bottom</code>, <code>top</code>, <code>left</code> ou <code>right</code>." },
                               new[] { "ShowItemNavigators", "bool", "false", "Exibe os botões de navegação sobre o item." },
@@ -347,7 +622,11 @@
 
     private int _activeIndex;
     private string _thumbPosition = "bottom";
+    private string _indicatorPosition = "bottom";
+    private bool _indicatorsOnItem;
     private bool _fullscreenVisible;
+    private bool _fullscreenNoThumbs;
+    private bool _fullscreenCustom;
 
     private void Prev()
     {
@@ -366,6 +645,10 @@
     }
 
     private void OpenFullscreen() => _fullscreenVisible = true;
+
+    private void OpenFullscreenNoThumbs() => _fullscreenNoThumbs = true;
+
+    private void OpenCustomContent() => _fullscreenCustom = true;
 
     private const string ImportCode = """
         @using OpBlazorUI.Components.Galleria
@@ -493,6 +776,121 @@
 
             private void OpenFullscreen() => _fullscreen = true;
         }
+        """;
+
+    private const string ClickEventCode = """
+        <OpGalleria TItem="Photo" Value="_photos" ShowIndicators="true" ShowThumbnails="false">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+        </OpGalleria>
+        """;
+
+    private const string HoverEventCode = """
+        <OpGalleria TItem="Photo" Value="_photos" ShowIndicators="true" ShowThumbnails="false"
+                    ChangeItemOnIndicatorHover="true">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+        </OpGalleria>
+        """;
+
+    private const string PositionCode = """
+        <OpGalleria TItem="Photo" Value="_photos"
+                    ShowIndicators="true" ShowThumbnails="false"
+                    IndicatorsPosition="@_position" ShowIndicatorsOnItem="@_onItem">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+        </OpGalleria>
+        """;
+
+    private const string IndicatorTemplateCode = """
+        <OpGalleria TItem="Photo" Value="_photos" ShowIndicators="true" ShowThumbnails="false"
+                    ShowIndicatorsOnItem="true" IndicatorsPosition="left">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+            <IndicatorTemplate Context="index">
+                <span>@(index + 1)</span>
+            </IndicatorTemplate>
+        </OpGalleria>
+        """;
+
+    private const string WithThumbnailsCode = """
+        <OpGalleria TItem="Photo" Value="_photos" FullScreen="true" @bind-Visible="_visible"
+                    Circular="true" NumVisible="5">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" />
+            </ThumbnailTemplate>
+        </OpGalleria>
+        """;
+
+    private const string WithoutThumbnailsCode = """
+        <OpGalleria TItem="Photo" Value="_photos" FullScreen="true" @bind-Visible="_visible"
+                    Circular="true" ShowThumbnails="false">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+        </OpGalleria>
+        """;
+
+    private const string CustomContentCode = """
+        <OpGalleria TItem="Photo" Value="_photos" FullScreen="true" @bind-Visible="_visible"
+                    ActiveIndex="2" Circular="true" ShowThumbnails="false">
+            <HeaderTemplate>
+                <div>Galeria de fotos</div>
+            </HeaderTemplate>
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+            <FooterTemplate>
+                <div>Use as setas para navegar</div>
+            </FooterTemplate>
+        </OpGalleria>
+        """;
+
+    private const string ItemThumbnailsCode = """
+        <OpGalleria TItem="Photo" Value="_photos" ShowItemNavigators="true" Circular="true" NumVisible="5">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+            <ThumbnailTemplate Context="photo">
+                <img src="@photo.ThumbnailImageSrc" alt="@photo.Alt" />
+            </ThumbnailTemplate>
+        </OpGalleria>
+        """;
+
+    private const string ItemWithoutThumbnailsCode = """
+        <OpGalleria TItem="Photo" Value="_photos" ShowItemNavigators="true" Circular="true"
+                    ShowThumbnails="false">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+        </OpGalleria>
+        """;
+
+    private const string NavigatorHoverCode = """
+        <OpGalleria TItem="Photo" Value="_photos"
+                    ShowItemNavigators="true" ShowItemNavigatorsOnHover="true"
+                    Circular="true" ShowThumbnails="false">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+        </OpGalleria>
+        """;
+
+    private const string WithIndicatorsCode = """
+        <OpGalleria TItem="Photo" Value="_photos"
+                    ShowItemNavigators="true" ShowIndicators="true"
+                    ShowThumbnails="false" Circular="true">
+            <ItemTemplate Context="photo">
+                <img src="@photo.ItemImageSrc" alt="@photo.Alt" />
+            </ItemTemplate>
+        </OpGalleria>
         """;
 
     private const string AccessibilityCode = """

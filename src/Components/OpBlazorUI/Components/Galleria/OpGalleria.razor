@@ -68,7 +68,9 @@ else
                         @for (var i = 0; i < Count; i++)
                         {
                             var index = i;
-                            <li class="@IndicatorClass(index)" tabindex="0" @onclick="() => SetIndexAsync(index)">
+                            <li class="@IndicatorClass(index)" tabindex="0"
+                                @onclick="() => SetIndexAsync(index)"
+                                @onmouseenter="() => IndicatorHover(index)">
                                 <button type="button" class="p-galleria-indicator-button" tabindex="-1">
                                     @if (IndicatorTemplate is not null)
                                     {

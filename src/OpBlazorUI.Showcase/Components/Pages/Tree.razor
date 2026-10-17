@@ -185,6 +185,76 @@
             <Code><CodeBlock Code="@FilterCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Virtual Scroll — Preload" Id="preload">
+            <Description>
+                <p>
+                    No Angular, o <i>virtual scroll</i> renderiza apenas os nós visíveis e permite pré-carregar os nós
+                    sob demanda conforme a rolagem. <b>Não foi portado por enquanto</b>: não existem
+                    <code>VirtualScroll</code> nem <code>VirtualScrollItemSize</code>.
+                </p>
+                <p>
+                    Alternativas: paginar os dados, ou carregar os filhos sob demanda com o modo <i>lazy</i>
+                    (veja <a href="#lazy">Lazy</a>). Detalhes em <a href="#issues">Problemas Conhecidos</a>.
+                    @* Desvio consciente: virtual scroll (preload) não portado na lib. *@
+                </p>
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Virtual Scroll — Lazy" Id="lazyvirtualscroll">
+            <Description>
+                <p>
+                    Combina o <i>virtual scroll</i> com o carregamento preguiçoso dos nós, buscando os filhos somente
+                    quando o nó é expandido. <b>Não foi portado por enquanto</b>, pois depende do virtual scroll para
+                    determinar quais nós estão visíveis.
+                </p>
+                <p>
+                    O carregamento sob demanda <i>sem</i> virtual scroll está disponível — veja
+                    <a href="#lazy">Lazy</a>. Detalhes em <a href="#issues">Problemas Conhecidos</a>.
+                    @* Desvio consciente: virtual scroll lazy não portado na lib. *@
+                </p>
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Arrastar e soltar — Único" Id="dragdrop-single">
+            <Description>
+                <p>
+                    No Angular, nós podem ser reordenados arrastando e soltando dentro de uma mesma árvore
+                    (<code>draggableNodes</code>/<code>droppableNodes</code>). <b>Não foi portado por enquanto</b>:
+                    não há <code>DraggableNodes</code>/<code>DroppableNodes</code> nem escopos de soltar.
+                </p>
+                <p>
+                    Para reordenar hoje, altere a ordem de <code>Nodes</code> e os nós filhos no seu próprio estado.
+                    @* Desvio consciente: drag and drop (single) não portado na lib. *@
+                </p>
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Arrastar e soltar — Múltiplo" Id="dragdrop-multiple">
+            <Description>
+                <p>
+                    No Angular, o arrastar e soltar também permite mover nós entre árvores diferentes e arrastar
+                    vários nós de uma vez. <b>Não foi portado por enquanto</b>, junto com o arrastar e soltar básico —
+                    detalhes em <a href="#issues">Problemas Conhecidos</a>.
+                    @* Desvio consciente: drag and drop (multiple) não portado na lib. *@
+                </p>
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Menu de contexto" Id="contextmenu">
+            <Description>
+                <p>
+                    No Angular, um <code>ContextMenu</code> pode ser associado à árvore para ações no nó clicado com o
+                    botão direito (<code>contextMenuSelection</code>). <b>Não foi portado por enquanto</b>: não há
+                    integração com <code>OpContextMenu</code> nem a propriedade <code>ContextMenuSelection</code>.
+                </p>
+                <p>
+                    Alternativa: envolva a árvore com <code>@@oncontextmenu</code> e reaja com um
+                    <code>OpContextMenu</code> próprio. Detalhes em <a href="#issues">Problemas Conhecidos</a>.
+                    @* Desvio consciente: integração com ContextMenu não portada na lib. *@
+                </p>
+            </Description>
+        </DocSection>
+
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>

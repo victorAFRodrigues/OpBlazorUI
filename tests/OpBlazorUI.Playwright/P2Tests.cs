@@ -193,8 +193,20 @@ public class P2Tests
     [InlineData("/toolbar", ".p-toolbar")]
     [InlineData("/accordion", ".p-accordion")]
     [InlineData("/button", ".p-button")]
+    [InlineData("/contextmenu", ".p-button")]
+    [InlineData("/panelmenu", ".p-panelmenu")]
+    [InlineData("/megamenu", ".p-megamenu")]
+    [InlineData("/tieredmenu", ".p-tieredmenu")]
+    [InlineData("/menubar", ".p-menubar")]
+    [InlineData("/breadcrumb", ".p-breadcrumb")]
     [InlineData("/slider", ".p-slider")]
     [InlineData("/autocomplete", ".p-autocomplete")]
+    [InlineData("/tabs", ".p-tabs")]
+    [InlineData("/steps", ".p-steps")]
+    [InlineData("/dynamicdialog", ".p-button")]
+    [InlineData("/confirmpopup", ".p-button")]
+    [InlineData("/fileupload", ".p-fileupload")]
+    [InlineData("/tree", ".p-tree")]
     public async Task Paginas_renderizam_no_modo_escuro(string route, string selector)
     {
         var errors = new List<string>();

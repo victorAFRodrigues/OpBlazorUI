@@ -35,7 +35,7 @@ public partial class OpTieredMenu : OpComponentBase
         return Task.CompletedTask;
     }
 
-    private string RootClass => Class("p-tieredmenu p-component", StyleClass);
+    private string RootClass => Class("p-tieredmenu p-component", Popup ? "p-tieredmenu-overlay" : null, StyleClass);
 
     private bool IsOpen(string path) => _open.Contains(path);
 

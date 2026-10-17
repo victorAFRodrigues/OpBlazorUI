@@ -25,6 +25,39 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Controlado" Id="controlled">
+            <Description>
+                As etapas podem ser controladas programaticamente pela propriedade <code>ActiveIndex</code>
+                (<code>@@bind-ActiveIndex</code>) — equivalente ao <code>activeIndex</code> do Angular.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-end gap-2">
+                        <button type="button" class="p-button p-component" @onclick="@(() => _controlledActive = 0)">1</button>
+                        <button type="button" class="p-button p-component" @onclick="@(() => _controlledActive = 1)">2</button>
+                        <button type="button" class="p-button p-component" @onclick="@(() => _controlledActive = 2)">3</button>
+                    </div>
+                    <OpSteps Model="_items" @bind-ActiveIndex="_controlledActive"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ControlledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Interativo" Id="interactive">
+            <Description>
+                No Blazor as etapas já são interativas por padrão: clique em uma etapa para ativá-la e use
+                <code>Readonly="true"</code> para desabilitar a interação. Isso equivale a ligar <code>readonly</code>
+                e ligar <code>activeIndexChange</code> no Angular.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpSteps Model="_items" @bind-ActiveIndex="_interactiveActive" OnSelect="OnStepSelect"/>
+                    <span class="text-sm">Selecionada: @_lastStep</span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@InteractiveCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Readonly" Id="readonly">
             <Description>Com <code>Readonly</code>, as etapas exibem o progresso sem permitir interação.</Description>
             <ChildContent>
@@ -39,6 +72,20 @@
                 <OpSteps Model="_disabledItems" @bind-ActiveIndex="_disabledActive"/>
             </ChildContent>
             <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Rotas" Id="routing">
+            <Description>
+                Uma etapa com <code>Url</code> navega pelo <code>NavigationManager</code> do Blazor; uma etapa com
+                <code>Command</code> executa a ação. Para ações use <code>Command</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpSteps Model="_routingItems" @bind-ActiveIndex="_routingActive"/>
+                    <span class="text-sm">Etapa ativa: <b>@(_routingActive + 1)</b></span>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RoutingCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
@@ -93,6 +140,10 @@
 @code {
     private int _active;
     private int _disabledActive;
+    private int _controlledActive;
+    private int _interactiveActive;
+    private int _routingActive;
+    private string _lastStep = "—";
     private readonly List<OpMenuItem> _items = new()
     {
         new OpMenuItem { Label = "Pessoal" },
@@ -105,6 +156,14 @@
         new OpMenuItem { Label = "Endereço", Disabled = true },
         new OpMenuItem { Label = "Pagamento" }
     };
+    private readonly List<OpMenuItem> _routingItems = new()
+    {
+        new OpMenuItem { Label = "Button", Url = "/button" },
+        new OpMenuItem { Label = "InputText", Url = "/inputtext" },
+        new OpMenuItem { Label = "Knob", Url = "/knob" }
+    };
+
+    private void OnStepSelect(OpMenuItem item) => _lastStep = item.Label ?? "—";
 
     private const string ImportCode = """
         @using OpBlazorUI.Components.Steps
@@ -140,6 +199,40 @@
                 new OpMenuItem { Label = "Pessoal" },
                 new OpMenuItem { Label = "Endereço", Disabled = true },
                 new OpMenuItem { Label = "Pagamento" }
+            };
+        }
+        """;
+
+    private const string ControlledCode = """
+        <OpSteps Model="_items" @bind-ActiveIndex="_active" />
+
+        <button type="button" class="p-button" @onclick="@(() => _active = 0)">1</button>
+
+        @code {
+            private int _active;
+        }
+        """;
+
+    private const string InteractiveCode = """
+        <OpSteps Model="_items" @bind-ActiveIndex="_active" OnSelect="OnStepSelect" />
+
+        @code {
+            private int _active;
+
+            private void OnStepSelect(OpMenuItem item) { /* re-renderiza o dono */ }
+        }
+        """;
+
+    private const string RoutingCode = """
+        <OpSteps Model="_items" @bind-ActiveIndex="_active" />
+
+        @code {
+            private int _active;
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem { Label = "Button", Url = "/button" },
+                new OpMenuItem { Label = "InputText", Url = "/inputtext" },
+                new OpMenuItem { Label = "Knob", Url = "/knob" }
             };
         }
         """;

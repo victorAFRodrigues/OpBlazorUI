@@ -35,6 +35,9 @@ public partial class OpGalleria<TItem> : OpComponentBase
     [Parameter] public bool ShowIndicatorsOnItem { get; set; }
     [Parameter] public string IndicatorsPosition { get; set; } = "bottom";
 
+    /// <summary>Ativa o item ao passar o mouse sobre o indicador (em vez de apenas no clique).</summary>
+    [Parameter] public bool ChangeItemOnIndicatorHover { get; set; }
+
     [Parameter] public bool ShowThumbnails { get; set; } = true;
     [Parameter] public string ThumbnailsPosition { get; set; } = "bottom";
 
@@ -214,6 +217,14 @@ public partial class OpGalleria<TItem> : OpComponentBase
     private string IndicatorClass(int index) => Class(
         "p-galleria-indicator",
         index == Current ? "p-galleria-indicator-active" : null);
+
+    private void IndicatorHover(int index)
+    {
+        if (ChangeItemOnIndicatorHover)
+        {
+            _ = SetIndexAsync(index);
+        }
+    }
 
     private string ThumbItemClass(int index) => Class(
         "p-galleria-thumbnail-item",
