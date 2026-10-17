@@ -11,6 +11,11 @@ As seções de formulários do Angular (``forms``, ``reactive``, ``reactiveforms
 ``templatedriven``) são tratadas como um único grupo ``forms`` — no Blazor há só
 o ``EditForm`` e uma seção ``forms`` cobre as três.
 
+Os contêineres de navegação do upstream (objetos com ``children`` e sem
+``component``, que só agrupam as seções filhas no menu do site) não entram no
+cálculo de ``missing``/``matched`` — as filhas, sim. Um pequeno conjunto de ids
+sem seção própria por decisão de escopo fica em ``DEFERRED``.
+
 Uso:
     python3 tools/doc-audit/compare.py [--report CAMINHO.json]
 
@@ -38,6 +43,13 @@ UPSTREAM_PAIR_RE = re.compile(
 )
 UPSTREAM_ID_RE = re.compile(r"id:\s*['\"]([^'\"]+)['\"]")
 
+# Contêineres de navegação do upstream: ``id`` + ``label`` + ``children``, sem
+# ``component``. Agrupam as seções filhas no menu; não são conteúdo documentável.
+UPSTREAM_CONTAINER_RE = re.compile(
+    r"id:\s*['\"]([^'\"]+)['\"]\s*,\s*label:\s*['\"][^'\"]*['\"]\s*,\s*children:",
+    re.S,
+)
+
 # Páginas que não são componentes de doc.
 SKIP = {
     "ComingSoon",
@@ -47,6 +59,14 @@ SKIP = {
     "Configuration",
     "Chart",
     "FilterService",
+}
+
+# Ids sem seção própria por decisão de escopo (lote 4): demos de dados de amostra
+# do contêiner ``samples`` do Table — o conteúdo equivalente já é coberto pelas
+# outras seções da página (que usam os mesmos datasets).
+DEFERRED = {
+    ("table", "customers"),
+    ("table", "products"),
 }
 
 # Seções que representam o mesmo conceito (formulários).
@@ -99,6 +119,12 @@ def extract_upstream_pairs(index_file: Path) -> list[tuple[str, str]]:
     return UPSTREAM_PAIR_RE.findall(index_file.read_text(encoding="utf-8"))
 
 
+def extract_upstream_containers(index_file: Path) -> list[str]:
+    if not index_file.exists():
+        return []
+    return sorted(set(UPSTREAM_CONTAINER_RE.findall(index_file.read_text(encoding="utf-8"))))
+
+
 def main() -> int:
     here = Path(__file__).resolve().parent
     root = find_repo_root(here)
@@ -119,7 +145,14 @@ def main() -> int:
     }
 
     report: list[dict[str, object]] = []
-    totals = {"missing": 0, "extra": 0, "matched": 0, "with_upstream": 0, "without": 0}
+    totals = {
+        "missing": 0,
+        "extra": 0,
+        "matched": 0,
+        "containers": 0,
+        "with_upstream": 0,
+        "without": 0,
+    }
 
     for page in sorted(pages_dir.glob("*.razor")):
         name = page.stem
@@ -137,6 +170,7 @@ def main() -> int:
                     "has_upstream": False,
                     "showcase_sections": showcase,
                     "upstream_sections": [],
+                    "upstream_containers": [],
                     "missing": [],
                     "extra": showcase,
                     "matched": [],
@@ -145,9 +179,15 @@ def main() -> int:
             continue
 
         totals["with_upstream"] += 1
-        upstream = extract_upstream_ids(folder / "index.ts")
+        upstream_all = extract_upstream_ids(folder / "index.ts")
+        containers = extract_upstream_containers(folder / "index.ts")
+        upstream = [
+            s
+            for s in upstream_all
+            if s not in containers and (name.lower(), s) not in DEFERRED
+        ]
         showcase_canonical = {ALIASES.get(s, s) for s in showcase}
-        upstream_canonical = {ALIASES.get(s, s) for s in upstream}
+        upstream_canonical = {ALIASES.get(s, s) for s in upstream_all}
 
         missing = [s for s in upstream if ALIASES.get(s, s) not in showcase_canonical]
         matched = [s for s in upstream if ALIASES.get(s, s) in showcase_canonical]
@@ -156,6 +196,7 @@ def main() -> int:
         totals["missing"] += len(missing)
         totals["extra"] += len(extra)
         totals["matched"] += len(matched)
+        totals["containers"] += len(containers)
 
         report.append(
             {
@@ -163,6 +204,7 @@ def main() -> int:
                 "has_upstream": True,
                 "showcase_sections": showcase,
                 "upstream_sections": upstream,
+                "upstream_containers": containers,
                 "missing": missing,
                 "extra": extra,
                 "matched": matched,
@@ -192,6 +234,7 @@ def main() -> int:
 
     print("\n=== RESUMO ===")
     print(f"Com upstream: {totals['with_upstream']}  |  Sem upstream: {totals['without']}")
+    print(f"Contêineres (nav): {totals['containers']}")
     print(f"Seções faltando: {totals['missing']}")
     print(f"Seções extras:   {totals['extra']}")
     print(f"Seções OK:       {totals['matched']}")
