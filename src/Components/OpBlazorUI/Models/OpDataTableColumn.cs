@@ -18,8 +18,24 @@ public class OpDataTableColumn
     /// <summary>Se a coluna participa da ordenação (combinado com o <c>Sortable</c> global).</summary>
     public bool Sortable { get; set; } = true;
 
-    /// <summary>Largura aplicada como <c>style="width:..."</c> no <c>th</c>.</summary>
+    /// <summary>
+    /// Renderiza um controle de seleção nesta coluna: <c>multiple</c> (checkbox, com select-all no
+    /// cabeçalho) ou <c>single</c> (radio). Coluna comum quando nulo (padrão).
+    /// </summary>
+    public string? SelectionMode { get; set; }
+
+    /// <summary>Largura aplicada como <c>style="width:..."</c> no <c>th</c>. Use valores em <c>px</c>
+    /// quando a coluna for congelada (o deslocamento do sticky é calculado a partir deles).</summary>
     public string? Width { get; set; }
+
+    /// <summary>Congela a coluna na borda do contêiner: <c>left</c> ou <c>right</c>.</summary>
+    public string? Frozen { get; set; }
+
+    /// <summary>Omite o <c>th</c> desta coluna na linha de cabeçalho (para cabeçalhos agrupados).</summary>
+    public bool HideHeader { get; set; }
+
+    /// <summary>Renderiza o puxador de reordenação de linhas nesta coluna (com <c>ReorderableRows</c>).</summary>
+    public bool RowReorder { get; set; }
 
     /// <summary>Classes extras no contêiner do cabeçalho e nas células (<c>th</c>/<c>td</c>).</summary>
     public string? StyleClass { get; set; }
@@ -60,4 +76,7 @@ public sealed class OpDataTableColumn<TItem> : OpDataTableColumn
 
     /// <summary>Template do conteúdo do rodapé (substitui <see cref="OpDataTableColumn.Footer"/>).</summary>
     public RenderFragment? FooterTemplate { get; set; }
+
+    /// <summary>Template de edição da célula (usado com <c>EditMode</c> na tabela).</summary>
+    public RenderFragment<TItem>? EditorTemplate { get; set; }
 }

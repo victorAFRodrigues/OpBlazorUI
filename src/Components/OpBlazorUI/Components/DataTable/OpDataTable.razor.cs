@@ -1,6 +1,9 @@
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using OpBlazorUI.Components.Paginator;
 using OpBlazorUI.Globalization;
 using OpBlazorUI.Models;
@@ -15,14 +18,57 @@ public sealed class OpDataTableLazyLoadEvent
     public int Rows { get; init; }
     public string? SortField { get; init; }
     public int SortOrder { get; init; }
+    public IReadOnlyList<OpDataTableSortMeta>? MultiSortMeta { get; init; }
     public IReadOnlyDictionary<string, object?>? Filters { get; init; }
     public string? GlobalFilter { get; init; }
 }
 
-public partial class OpDataTable<TItem> : ComponentBase
+/// <summary>Estado de ordenação de uma coluna (modo múltiplo).</summary>
+public sealed class OpDataTableSortMeta
 {
-    private string _sortField = "";
-    private int _sortOrder;
+    public string Field { get; init; } = "";
+
+    /// <summary>1 (ascendente) ou -1 (descendente).</summary>
+    public int Order { get; init; }
+}
+
+/// <summary>Estado entregue ao <see cref="OpDataTable{TItem}.OnSort"/>.</summary>
+public sealed class OpDataTableSortEvent
+{
+    public string Field { get; init; } = "";
+    public int Order { get; init; }
+    public IReadOnlyList<OpDataTableSortMeta> MultiSortMeta { get; init; } = Array.Empty<OpDataTableSortMeta>();
+}
+
+/// <summary>Célula de um cabeçalho agrupado (linhas extras acima da linha de colunas).</summary>
+public sealed class OpDataTableHeaderGroup
+{
+    public string Header { get; set; } = "";
+    public int ColSpan { get; set; } = 1;
+    public int RowSpan { get; set; } = 1;
+    public string? StyleClass { get; set; }
+}
+
+/// <summary>Dados de um grupo de linhas entregues aos templates de grupo.</summary>
+public sealed class OpDataTableGroupContext<TItem>
+{
+    /// <summary>Valor do campo <see cref="OpDataTable{TItem}.GroupRowsBy"/> que define o grupo.</summary>
+    public object? Key { get; init; }
+
+    /// <summary>Linhas do grupo (na página atual, já filtradas/ordenadas).</summary>
+    public IReadOnlyList<TItem> Items { get; init; } = Array.Empty<TItem>();
+
+    /// <summary>No modo de grupos expansíveis, indica se o grupo está aberto.</summary>
+    public bool Expanded { get; init; }
+}
+
+public partial class OpDataTable<TItem> : ComponentBase, IAsyncDisposable
+{
+    private readonly List<OpDataTableSortMeta> _sortMeta = new();
+    private string? _lastSortFieldParam;
+    private int _lastSortOrderParam;
+    private IReadOnlyList<OpDataTableSortMeta>? _lastMultiSortMetaParam;
+    private readonly string _selectionGroupName = $"op-dt-sel-{Guid.NewGuid():N}";
 
     private int _first;
     private int _rows = 5;
@@ -41,6 +87,20 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     [Inject] private OpFilterService FilterService { get; set; } = default!;
     [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+    [Inject] private IJSRuntime Js { get; set; } = default!;
+
+    private OpInterop? _interop;
+
+    private OpInterop Interop => _interop ??= new OpInterop(Js);
+
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+    {
+        if (_interop is not null)
+        {
+            await _interop.DisposeAsync();
+        }
+    }
 
     private OpTranslation Tr => TranslationService.Translation;
 
@@ -51,6 +111,22 @@ public partial class OpDataTable<TItem> : ComponentBase
     [Parameter] public string? DataKey { get; set; }
 
     [Parameter] public bool Sortable { get; set; } = true;
+
+    /// <summary><c>single</c> (padrão) ou <c>multiple</c> (com ⌘/Ctrl para adicionar colunas).</summary>
+    [Parameter] public string SortMode { get; set; } = "single";
+
+    /// <summary>Habilita o terceiro estado do ciclo de ordenação (asc → desc → sem ordenação).</summary>
+    [Parameter] public bool RemovableSort { get; set; }
+
+    /// <summary>Campo da ordenação inicial (combinado com <see cref="SortOrder"/>).</summary>
+    [Parameter] public string? SortField { get; set; }
+
+    /// <summary>1 (asc) ou -1 (desc) para a ordenação inicial.</summary>
+    [Parameter] public int SortOrder { get; set; }
+
+    /// <summary>Ordenação inicial do modo múltiplo (a ordem da lista define a prioridade).</summary>
+    [Parameter] public IReadOnlyList<OpDataTableSortMeta>? MultiSortMeta { get; set; }
+
     [Parameter] public bool StripedRows { get; set; }
     [Parameter] public bool ShowGridlines { get; set; }
     [Parameter] public bool RowHover { get; set; } = true;
@@ -59,14 +135,89 @@ public partial class OpDataTable<TItem> : ComponentBase
     /// <summary>Habilita seleção de linhas. <see cref="SelectionMode"/> define se é única ou múltipla.</summary>
     [Parameter] public bool Selection { get; set; }
 
-    /// <summary><c>multiple</c> (padrão, com checkboxes) ou <c>single</c> (uma linha por clique).</summary>
+    /// <summary><c>multiple</c> (padrão) ou <c>single</c> (uma linha por clique). A coluna de
+    /// checkbox/radio é declarada em <see cref="OpDataTableColumn.SelectionMode"/>.</summary>
     [Parameter] public string SelectionMode { get; set; } = "multiple";
+
+    /// <summary>Exige ⌘/Ctrl para somar linhas à seleção múltipla (clique simples seleciona só a linha).</summary>
+    [Parameter] public bool MetaKeySelection { get; set; }
 
     /// <summary>Em modo múltiplo, limita o select-all às linhas da página atual.</summary>
     [Parameter] public bool SelectionPageOnly { get; set; }
 
     [Parameter] public IReadOnlyList<TItem>? SelectedItems { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TItem>?> SelectedItemsChanged { get; set; }
+
+    /// <summary>Linhas expandidas (a chave é o <see cref="DataKey"/>, quando definido).</summary>
+    [Parameter] public IReadOnlyList<TItem>? ExpandedItems { get; set; }
+    [Parameter] public EventCallback<IReadOnlyList<TItem>?> ExpandedItemsChanged { get; set; }
+
+    /// <summary>Conteúdo da linha expandida (o template monta o próprio <c>&lt;tr&gt;</c>).</summary>
+    [Parameter] public RenderFragment<TItem>? RowExpansionTemplate { get; set; }
+
+    /// <summary>Agrupamento de linhas: <c>subheader</c> (faixa por grupo) ou <c>rowspan</c> (célula do grupo estendida).</summary>
+    [Parameter] public string? RowGroupMode { get; set; }
+
+    /// <summary>Campo que define os grupos (linhas iguais e consecutivas).</summary>
+    [Parameter] public string? GroupRowsBy { get; set; }
+
+    /// <summary>No modo <c>subheader</c>, permite abrir/fechar cada grupo (estado em <see cref="ExpandedGroups"/>).</summary>
+    [Parameter] public bool ExpandableRowGroups { get; set; }
+
+    /// <summary>Estado dos grupos expansíveis (valores de <see cref="GroupRowsBy"/>).</summary>
+    [Parameter] public IReadOnlyList<object?>? ExpandedGroups { get; set; }
+    [Parameter] public EventCallback<IReadOnlyList<object?>?> ExpandedGroupsChanged { get; set; }
+
+    /// <summary>Faixa do grupo (contexto com chave e linhas). Sem template, mostra a chave.</summary>
+    [Parameter] public RenderFragment<OpDataTableGroupContext<TItem>>? GroupHeaderTemplate { get; set; }
+
+    /// <summary>Rodapé do grupo, depois das linhas.</summary>
+    [Parameter] public RenderFragment<OpDataTableGroupContext<TItem>>? GroupFooterTemplate { get; set; }
+
+    /// <summary>Linhas fixas no topo da área de rolagem (congeladas).</summary>
+    [Parameter] public IReadOnlyList<TItem>? FrozenItems { get; set; }
+
+    /// <summary>Linhas de cabeçalho agrupadas (cada item é uma linha de células com colspan/rowspan).</summary>
+    [Parameter] public IReadOnlyList<IReadOnlyList<OpDataTableHeaderGroup>>? HeaderGroups { get; set; }
+
+    /// <summary>Permite reordenar colunas por arraste (o consumidor aplica via <see cref="OnColumnReorder"/>).</summary>
+    [Parameter] public bool ReorderableColumns { get; set; }
+
+    /// <summary>Índices (na lista <see cref="Columns"/>) de origem e destino da coluna solta.</summary>
+    [Parameter] public EventCallback<(int From, int To)> OnColumnReorder { get; set; }
+
+    /// <summary>Permite reordenar linhas por arraste (o consumidor aplica via <see cref="OnRowReorder"/>).</summary>
+    [Parameter] public bool ReorderableRows { get; set; }
+
+    /// <summary>Índices (na página atual) de origem e destino da linha solta.</summary>
+    [Parameter] public EventCallback<(int From, int To)> OnRowReorder { get; set; }
+
+    /// <summary>Modo de edição: <c>cell</c> (uma célula por vez, com o <c>EditorTemplate</c> da coluna) ou <c>row</c> (todos os editores da linha).</summary>
+    [Parameter] public string? EditMode { get; set; }
+
+    /// <summary>Começou a edição de uma célula (clique ou <see cref="StartEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnEditInit { get; set; }
+
+    /// <summary>A edição da célula foi salva (Enter, clique em outra célula ou <see cref="SaveEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnEditComplete { get; set; }
+
+    /// <summary>A edição da célula foi cancelada (Escape ou <see cref="CancelEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnEditCancel { get; set; }
+
+    /// <summary>Começou a edição de uma linha (modo <c>row</c>).</summary>
+    [Parameter] public EventCallback<TItem> OnRowEditInit { get; set; }
+
+    /// <summary>A edição da linha foi salva (com <see cref="SaveEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnRowEditSave { get; set; }
+
+    /// <summary>A edição da linha foi cancelada (com <see cref="CancelEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnRowEditCancel { get; set; }
+
+    /// <summary>Chave para persistir página, ordenação e filtros (como o <c>stateKey</c> do upstream).</summary>
+    [Parameter] public string? StateKey { get; set; }
+
+    /// <summary><c>session</c> (padrão) ou <c>local</c> para <see cref="StateKey"/>.</summary>
+    [Parameter] public string StateStorage { get; set; } = "session";
 
     [Parameter] public bool Paginator { get; set; }
     [Parameter] public string PaginatorPosition { get; set; } = "bottom";
@@ -112,9 +263,12 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     [Parameter] public RenderFragment? LoadingIconTemplate { get; set; }
 
-    [Parameter] public EventCallback<(string Field, int Order)> OnSort { get; set; }
+    [Parameter] public EventCallback<OpDataTableSortEvent> OnSort { get; set; }
     [Parameter] public EventCallback<int> OnPage { get; set; }
     [Parameter] public EventCallback<TItem> OnRowClick { get; set; }
+
+    /// <summary>Clique com o botão direito em uma linha (para um menu de contexto próprio).</summary>
+    [Parameter] public EventCallback<(TItem Item, MouseEventArgs Args)> OnRowContextMenu { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
@@ -122,8 +276,428 @@ public partial class OpDataTable<TItem> : ComponentBase
     private IReadOnlyList<TItem> SourceItems => Items ?? Array.Empty<TItem>();
 
     private bool IsSingleSelection => Selection && string.Equals(SelectionMode, "single", StringComparison.OrdinalIgnoreCase);
-    private bool ShowCheckboxColumn => Selection && !IsSingleSelection;
+    private bool IsMultipleSort => string.Equals(SortMode, "multiple", StringComparison.OrdinalIgnoreCase);
     private bool HasFilters => !Lazy && Columns.Any(c => c.Filter && !string.IsNullOrEmpty(c.Field));
+
+    private static bool IsSelectionColumn(OpDataTableColumn col) => !string.IsNullOrEmpty(col.SelectionMode);
+    private static bool IsSingleSelectionColumn(OpDataTableColumn col)
+        => string.Equals(col.SelectionMode, "single", StringComparison.OrdinalIgnoreCase);
+    private static bool IsMultipleSelectionColumn(OpDataTableColumn col)
+        => string.Equals(col.SelectionMode, "multiple", StringComparison.OrdinalIgnoreCase);
+
+    private int OrderOf(string field)
+    {
+        if (string.IsNullOrEmpty(field)) return 0;
+        for (var i = 0; i < _sortMeta.Count; i++)
+        {
+            if (string.Equals(_sortMeta[i].Field, field, StringComparison.OrdinalIgnoreCase)) return _sortMeta[i].Order;
+        }
+
+        return 0;
+    }
+
+    private int SortOrderOf(string field)
+    {
+        if (string.IsNullOrEmpty(field)) return 0;
+        for (var i = 0; i < _sortMeta.Count; i++)
+        {
+            if (string.Equals(_sortMeta[i].Field, field, StringComparison.OrdinalIgnoreCase)) return i + 1;
+        }
+
+        return 0;
+    }
+
+    private bool IsSubheaderGroup => string.Equals(RowGroupMode, "subheader", StringComparison.OrdinalIgnoreCase)
+        && !string.IsNullOrEmpty(GroupRowsBy);
+
+    private bool IsRowSpanGroup => string.Equals(RowGroupMode, "rowspan", StringComparison.OrdinalIgnoreCase)
+        && !string.IsNullOrEmpty(GroupRowsBy);
+
+    private bool IsRowGrouped => IsSubheaderGroup || IsRowSpanGroup;
+
+    /// <summary>Grupo de linhas da página atual (chave + itens, na ordem).</summary>
+    private sealed record RowGroup(object? Key, List<TItem> Items);
+
+    private List<RowGroup>? _groupedCache;
+
+    private bool IsGroupColumn(OpDataTableColumn col)
+        => !string.IsNullOrEmpty(GroupRowsBy) && string.Equals(col.Field, GroupRowsBy, StringComparison.OrdinalIgnoreCase);
+
+    private List<RowGroup> BuildGroups(List<TItem> page)
+    {
+        var groups = new List<RowGroup>();
+        foreach (var item in page)
+        {
+            var key = GetFieldValue(item, GroupRowsBy!);
+            if (groups.Count == 0 || !Equals(groups[^1].Key, key))
+            {
+                groups.Add(new RowGroup(key, new List<TItem>()));
+            }
+
+            groups[^1].Items.Add(item);
+        }
+
+        return groups;
+    }
+
+    private OpDataTableGroupContext<TItem> GroupContext(RowGroup group)
+        => new() { Key = group.Key, Items = group.Items, Expanded = IsGroupExpanded(group.Key) };
+
+    private bool IsGroupExpanded(object? key) => ExpandedGroups?.Any(g => Equals(g, key)) == true;
+
+    private bool IsRowExpanded(TItem item) => ExpandedItems?.Any(x => IsSameRow(x, item)) == true;
+
+    private RowGroup? GroupOf(TItem item)
+    {
+        if (_groupedCache is null) return null;
+        foreach (var group in _groupedCache)
+        {
+            foreach (var candidate in group.Items)
+            {
+                if (IsSameRow(candidate, item)) return group;
+            }
+        }
+
+        return null;
+    }
+
+    private bool IsFirstOfGroup(TItem item)
+    {
+        var group = GroupOf(item);
+        return group is not null && group.Items.Count > 0 && IsSameRow(group.Items[0], item);
+    }
+
+    private int GroupRowSpanOf(TItem item) => GroupOf(item)?.Items.Count ?? 1;
+
+    private static bool IsFrozen(OpDataTableColumn col) => !string.IsNullOrEmpty(col.Frozen);
+
+    private static double ParsePx(string? width)
+        => width is not null && width.EndsWith("px", StringComparison.OrdinalIgnoreCase)
+           && double.TryParse(width[..^2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var value)
+            ? value
+            : 0;
+
+    /// <summary>Deslocamento sticky da coluna congelada (soma das larguras congeladas anteriores).</summary>
+    private string? FrozenStyle(OpDataTableColumn col)
+    {
+        if (string.IsNullOrEmpty(col.Frozen)) return null;
+
+        var right = string.Equals(col.Frozen, "right", StringComparison.OrdinalIgnoreCase);
+        var frozenColumns = Columns
+            .Where(c => string.Equals(c.Frozen, right ? "right" : "left", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        var offset = 0d;
+        var index = frozenColumns.IndexOf(col);
+        if (right)
+        {
+            for (var i = index + 1; i < frozenColumns.Count; i++) offset += ParsePx(frozenColumns[i].Width);
+        }
+        else
+        {
+            for (var i = 0; i < index; i++) offset += ParsePx(frozenColumns[i].Width);
+        }
+
+        var side = right ? "right" : "left";
+        return $"{side}: {offset.ToString(System.Globalization.CultureInfo.InvariantCulture)}px";
+    }
+
+    private string? ThStyle(OpDataTableColumn col)
+    {
+        var parts = new List<string>();
+        if (!string.IsNullOrEmpty(col.Width)) parts.Add($"width: {col.Width}");
+        var frozen = FrozenStyle(col);
+        if (frozen is not null) parts.Add(frozen);
+        return parts.Count > 0 ? string.Join("; ", parts) : null;
+    }
+
+    private string? TdClass(OpDataTableColumn col, bool editing = false)
+        => BuildClass(
+            col.BodyStyleClass,
+            IsFrozen(col) ? "p-datatable-frozen-column" : null,
+            editing ? "p-editable-column p-cell-editing" : null);
+
+    private string? TdStyle(OpDataTableColumn col) => FrozenStyle(col);
+
+    private int _dragColumnIndex = -1;
+    private int _dragRowIndex = -1;
+    private TItem? _editingCellItem;
+    private string? _editingCellField;
+    private readonly List<TItem> _editingRows = new();
+    private bool _stateRestored;
+
+    private async Task OnDropColumnAsync(int index)
+    {
+        var from = _dragColumnIndex;
+        _dragColumnIndex = -1;
+        if (from < 0 || from == index) return;
+        await OnColumnReorder.InvokeAsync((from, index));
+    }
+
+    private async Task OnDropRowAsync(TItem item)
+    {
+        var from = _dragRowIndex;
+        _dragRowIndex = -1;
+        var to = PageIndex(item);
+        if (from < 0 || to < 0 || from == to) return;
+        await OnRowReorder.InvokeAsync((from, to));
+    }
+
+    private int PageIndex(TItem item)
+    {
+        var page = PageItems;
+        for (var i = 0; i < page.Count; i++)
+        {
+            if (IsSameRow(page[i], item)) return i;
+        }
+
+        return -1;
+    }
+
+    private bool IsCellEditMode => string.Equals(EditMode, "cell", StringComparison.OrdinalIgnoreCase);
+
+    private bool IsRowEditMode => string.Equals(EditMode, "row", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Indica se a linha está em edição — útil nos templates da coluna de ações (modo <c>row</c>).</summary>
+    public bool IsRowInEditMode(TItem item) => IsRowEditMode && _editingRows.Any(r => IsSameRow(r, item));
+
+    private static RenderFragment<TItem>? EditorTemplateOf(OpDataTableColumn col)
+        => col is OpDataTableColumn<TItem> typed ? typed.EditorTemplate : null;
+
+    private bool IsCellEditing(TItem item, OpDataTableColumn col)
+        => IsCellEditMode && _editingCellItem is not null && IsSameRow(_editingCellItem, item)
+           && string.Equals(_editingCellField, col.Field, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Célula deve renderizar o editor (linha inteira no modo <c>row</c>, uma célula no <c>cell</c>).</summary>
+    private bool IsColumnInEdit(TItem item, OpDataTableColumn col)
+        => IsRowEditMode
+            ? IsRowInEditMode(item) && EditorTemplateOf(col) is not null
+            : IsCellEditing(item, col);
+
+    private bool CanEditCell(OpDataTableColumn col)
+        => IsCellEditMode && !IsSelectionColumn(col) && EditorTemplateOf(col) is not null;
+
+    /// <summary>Inicia a edição: a célula de <paramref name="field"/> (modo <c>cell</c>) ou a linha (modo <c>row</c>).</summary>
+    public async Task StartEditAsync(TItem item, string? field = null)
+    {
+        if (IsCellEditMode)
+        {
+            if (_editingCellItem is not null)
+            {
+                if (IsSameRow(_editingCellItem, item) && string.Equals(_editingCellField, field, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                // Trocar de célula salva a anterior (como o onEditComplete do upstream).
+                await SaveEditAsync(_editingCellItem);
+            }
+
+            _editingCellItem = item;
+            _editingCellField = field;
+            StateHasChanged();
+            await OnEditInit.InvokeAsync(item);
+            return;
+        }
+
+        if (IsRowEditMode && !IsRowInEditMode(item))
+        {
+            _editingRows.Add(item);
+            StateHasChanged();
+            await OnRowEditInit.InvokeAsync(item);
+        }
+    }
+
+    /// <summary>Salva a edição da célula corrente (modo <c>cell</c>) ou a linha indicada (modo <c>row</c>).</summary>
+    public async Task SaveEditAsync(TItem item)
+    {
+        if (IsCellEditMode)
+        {
+            await CompleteCellEditAsync(saved: true);
+            return;
+        }
+
+        if (!IsRowEditMode) return;
+
+        var index = _editingRows.FindIndex(r => IsSameRow(r, item));
+        if (index < 0) return;
+        _editingRows.RemoveAt(index);
+        StateHasChanged();
+        await OnRowEditSave.InvokeAsync(item);
+    }
+
+    /// <summary>Salva a edição corrente (a célula ou a primeira linha em edição).</summary>
+    public async Task SaveEditAsync()
+    {
+        if (IsCellEditMode)
+        {
+            await CompleteCellEditAsync(saved: true);
+            return;
+        }
+
+        if (IsRowEditMode && _editingRows.Count > 0)
+        {
+            var target = _editingRows[0];
+            _editingRows.RemoveAt(0);
+            StateHasChanged();
+            await OnRowEditSave.InvokeAsync(target);
+        }
+    }
+
+    /// <summary>Cancela a edição da célula corrente (modo <c>cell</c>) ou da linha indicada (modo <c>row</c>).</summary>
+    public async Task CancelEditAsync(TItem item)
+    {
+        if (IsCellEditMode)
+        {
+            await CompleteCellEditAsync(saved: false);
+            return;
+        }
+
+        if (!IsRowEditMode) return;
+
+        var index = _editingRows.FindIndex(r => IsSameRow(r, item));
+        if (index < 0) return;
+        _editingRows.RemoveAt(index);
+        StateHasChanged();
+        await OnRowEditCancel.InvokeAsync(item);
+    }
+
+    /// <summary>Cancela a edição corrente (a célula ou a primeira linha em edição).</summary>
+    public async Task CancelEditAsync()
+    {
+        if (IsCellEditMode)
+        {
+            await CompleteCellEditAsync(saved: false);
+            return;
+        }
+
+        if (IsRowEditMode && _editingRows.Count > 0)
+        {
+            var target = _editingRows[0];
+            _editingRows.RemoveAt(0);
+            StateHasChanged();
+            await OnRowEditCancel.InvokeAsync(target);
+        }
+    }
+
+    private async Task CompleteCellEditAsync(bool saved)
+    {
+        if (_editingCellItem is null) return;
+
+        var done = _editingCellItem;
+        _editingCellItem = default;
+        _editingCellField = null;
+        StateHasChanged();
+
+        if (saved)
+        {
+            await OnEditComplete.InvokeAsync(done);
+        }
+        else
+        {
+            await OnEditCancel.InvokeAsync(done);
+        }
+    }
+
+    private async Task OnCellClicked(TItem item, OpDataTableColumn col)
+    {
+        if (CanEditCell(col))
+        {
+            await StartEditAsync(item, col.Field);
+        }
+    }
+
+    private async Task OnEditorKeydown(KeyboardEventArgs e, TItem item)
+    {
+        if (IsCellEditMode && e.Key == "Enter")
+        {
+            await SaveEditAsync(item);
+        }
+        else if (e.Key == "Escape")
+        {
+            await CancelEditAsync(item);
+        }
+    }
+
+    private string StorageName => string.Equals(StateStorage, "local", StringComparison.OrdinalIgnoreCase) ? "local" : "session";
+
+    // O estado é restaurado depois do primeiro render (JS só existe no modo interativo) e regravado
+    // a cada mudança de página/ordenação/filtro.
+    private async Task RestoreStateAsync()
+    {
+        var json = await Interop.InvokeAsync<string?>(OpInterop.DataTableInterop, "load", StateKey!, StorageName);
+        if (string.IsNullOrEmpty(json))
+        {
+            return;
+        }
+
+        DataTableState? state;
+        try
+        {
+            state = JsonSerializer.Deserialize(json, DataTableStateJsonContext.Default.DataTableState);
+        }
+        catch (JsonException)
+        {
+            return;
+        }
+
+        if (state is null)
+        {
+            return;
+        }
+
+        _first = Math.Max(0, state.First);
+        if (state.Rows > 0)
+        {
+            _rows = state.Rows;
+        }
+
+        if (state.GlobalFilter is not null)
+        {
+            _globalFilter = state.GlobalFilter;
+        }
+
+        _sortMeta.Clear();
+        if (state.Sort is not null)
+        {
+            _sortMeta.AddRange(state.Sort
+                .Where(s => !string.IsNullOrEmpty(s.Field) && s.Order != 0)
+                .Select(s => new OpDataTableSortMeta { Field = s.Field, Order = s.Order > 0 ? 1 : -1 }));
+        }
+
+        _columnFilters.Clear();
+        if (state.Filters is not null)
+        {
+            foreach (var (field, value) in state.Filters)
+            {
+                _columnFilters[field] = value;
+            }
+        }
+
+        _computed = false;
+        StateHasChanged();
+        await RaiseLazyLoadAsync();
+    }
+
+    private async Task SaveStateAsync()
+    {
+        if (string.IsNullOrEmpty(StateKey) || !_stateRestored)
+        {
+            return;
+        }
+
+        var state = new DataTableState
+        {
+            First = _first,
+            Rows = _rows,
+            GlobalFilter = _globalFilter,
+            Sort = _sortMeta.Select(m => new DataTableSortState { Field = m.Field, Order = m.Order }).ToList(),
+            Filters = _columnFilters.ToDictionary(kv => kv.Key, kv => kv.Value?.ToString(), StringComparer.OrdinalIgnoreCase)
+        };
+
+        await Interop.InvokeVoidAsync(OpInterop.DataTableInterop, "save", StateKey!, StorageName,
+            JsonSerializer.Serialize(state, DataTableStateJsonContext.Default.DataTableState));
+    }
 
     private bool ShowSkeleton => Loading && string.Equals(LoadingMode, "skeleton", StringComparison.OrdinalIgnoreCase);
 
@@ -167,19 +741,16 @@ public partial class OpDataTable<TItem> : ComponentBase
             _sortedCache = SourceItems.ToList();
             _pageCache = _sortedCache;
             _displayCount = TotalRecords;
+            _groupedCache = IsRowGrouped ? BuildGroups(_pageCache) : null;
             _computed = true;
             return;
         }
 
         var list = ApplyFilters(SourceItems);
 
-        if (_sortOrder != 0 && !string.IsNullOrEmpty(_sortField))
+        if (_sortMeta.Count > 0)
         {
-            list.Sort((a, b) =>
-            {
-                var cmp = SafeCompare(GetFieldValue(a, _sortField), GetFieldValue(b, _sortField));
-                return _sortOrder == 1 ? cmp : -cmp;
-            });
+            list.Sort(CompareItems);
         }
 
         _sortedCache = list;
@@ -195,6 +766,7 @@ public partial class OpDataTable<TItem> : ComponentBase
             _pageCache = list;
         }
 
+        _groupedCache = IsRowGrouped ? BuildGroups(_pageCache) : null;
         _computed = true;
     }
 
@@ -244,6 +816,29 @@ public partial class OpDataTable<TItem> : ComponentBase
             _globalFilter = GlobalFilter;
         }
 
+        if (!string.Equals(SortField, _lastSortFieldParam, StringComparison.Ordinal) || SortOrder != _lastSortOrderParam)
+        {
+            _lastSortFieldParam = SortField;
+            _lastSortOrderParam = SortOrder;
+            _sortMeta.Clear();
+            if (!string.IsNullOrEmpty(SortField) && SortOrder != 0)
+            {
+                _sortMeta.Add(new OpDataTableSortMeta { Field = SortField, Order = SortOrder > 0 ? 1 : -1 });
+            }
+        }
+
+        if (!ReferenceEquals(MultiSortMeta, _lastMultiSortMetaParam))
+        {
+            _lastMultiSortMetaParam = MultiSortMeta;
+            if (MultiSortMeta is { Count: > 0 })
+            {
+                _sortMeta.Clear();
+                _sortMeta.AddRange(MultiSortMeta
+                    .Where(m => !string.IsNullOrEmpty(m.Field) && m.Order != 0)
+                    .Select(m => new OpDataTableSortMeta { Field = m.Field, Order = m.Order > 0 ? 1 : -1 }));
+            }
+        }
+
         if (_rows <= 0)
         {
             _rows = 1;
@@ -263,6 +858,26 @@ public partial class OpDataTable<TItem> : ComponentBase
         {
             await RaiseLazyLoadAsync();
         }
+
+        if (firstRender && !_stateRestored && !string.IsNullOrEmpty(StateKey))
+        {
+            _stateRestored = true;
+            await RestoreStateAsync();
+        }
+    }
+
+    private int CompareItems(TItem a, TItem b)
+    {
+        foreach (var meta in _sortMeta)
+        {
+            var cmp = SafeCompare(GetFieldValue(a, meta.Field), GetFieldValue(b, meta.Field));
+            if (cmp != 0)
+            {
+                return meta.Order == 1 ? cmp : -cmp;
+            }
+        }
+
+        return 0;
     }
 
     private static int SafeCompare(object? a, object? b)
@@ -297,7 +912,24 @@ public partial class OpDataTable<TItem> : ComponentBase
         }
     }
 
-    private bool AllPageSelected => ShowCheckboxColumn && PageItems.Count > 0 && PageItems.All(IsSelected);
+    private bool AllSelected
+    {
+        get
+        {
+            EnsureComputed();
+            var universe = SelectionPageOnly ? PageItems : (_sortedCache ?? PageItems);
+            return universe.Count > 0 && universe.All(IsSelected);
+        }
+    }
+
+    private TItem? SelectedSingle
+    {
+        get
+        {
+            var selected = Selected;
+            return selected.Count > 0 ? selected[0] : default;
+        }
+    }
 
     private string RootClass => BuildClass(
         "p-datatable p-component",
@@ -306,12 +938,26 @@ public partial class OpDataTable<TItem> : ComponentBase
         ShowGridlines ? "p-datatable-gridlines" : null,
         Size == "small" ? "p-datatable-sm" : null,
         Size == "large" ? "p-datatable-lg" : null,
+        HasScrollableLayout ? "p-datatable-scrollable" : null,
+        // Paridade com scrollHeight="flex" do upstream: a raiz vira um flex column de 100% e o
+        // contêiner (tema) preenche a altura disponível do pai. O pai precisa ter altura definida.
+        ScrollHeight == "flex" ? "p-datatable-flex-scrollable" : null,
         StyleClass);
+
+    // O tema só torna colunas/linhas congeladas e o cabeçalho de grupo "sticky" dentro do modo
+    // scrollable (upstream: [scrollable]="true"). Como aqui a área de rolagem é o contêiner,
+    // aplicamos as classes sempre que há scroll vertical ou algo congelado (D1: o modo scrollable
+    // do upstream, com o resize por arraste, segue não suportado).
+    private bool HasScrollableLayout => ScrollHeight is not null
+        || (FrozenItems?.Count ?? 0) > 0
+        || Columns.Any(IsFrozen);
 
     private string ThClass(OpDataTableColumn col) => BuildClass(
         "p-datatable-header-cell",
         col.Sortable && Sortable ? "p-datatable-sortable-column" : null,
-        _sortField == col.Field && _sortOrder != 0 ? "p-datatable-column-sorted" : null,
+        OrderOf(col.Field) != 0 ? "p-datatable-column-sorted" : null,
+        IsFrozen(col) ? "p-datatable-frozen-column" : null,
+        ReorderableColumns ? "p-datatable-reorderable-column" : null,
         col.StyleClass,
         col.HeaderStyleClass);
 
@@ -319,7 +965,7 @@ public partial class OpDataTable<TItem> : ComponentBase
         Selection ? "p-datatable-selectable-row" : null,
         IsSelected(item) ? "p-datatable-row-selected" : null);
 
-    private string TableContainerStyle => ScrollHeight is null
+    private string TableContainerStyle => ScrollHeight is null or "flex"
         ? "overflow: auto;"
         : $"overflow: auto; max-height: {ScrollHeight};";
 
@@ -329,8 +975,19 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     private string SortIconName(OpDataTableColumn col)
     {
-        if (_sortField != col.Field || _sortOrder == 0) return "sort-alt";
-        return _sortOrder == 1 ? "sort-amount-up-alt" : "sort-amount-down";
+        var order = OrderOf(col.Field);
+        if (order == 0) return "sort-alt";
+        return order == 1 ? "sort-amount-up-alt" : "sort-amount-down";
+    }
+
+    private bool IsSameRow(TItem a, TItem b)
+    {
+        if (!string.IsNullOrEmpty(DataKey))
+        {
+            return Equals(GetFieldValue(a, DataKey), GetFieldValue(b, DataKey));
+        }
+
+        return EqualityComparer<TItem>.Default.Equals(a, b);
     }
 
     private bool IsSelected(TItem item)
@@ -338,20 +995,9 @@ public partial class OpDataTable<TItem> : ComponentBase
         var sel = SelectedItems;
         if (sel is null) return false;
 
-        if (!string.IsNullOrEmpty(DataKey))
-        {
-            var key = GetFieldValue(item, DataKey);
-            foreach (var s in sel)
-            {
-                if (Equals(GetFieldValue(s, DataKey), key)) return true;
-            }
-
-            return false;
-        }
-
         foreach (var s in sel)
         {
-            if (EqualityComparer<TItem>.Default.Equals(s, item)) return true;
+            if (IsSameRow(s, item)) return true;
         }
 
         return false;
@@ -360,9 +1006,10 @@ public partial class OpDataTable<TItem> : ComponentBase
     private string? SortAria(OpDataTableColumn col)
     {
         if (!Sortable || !col.Sortable) return null;
-        if (_sortField == col.Field && _sortOrder != 0)
+        var order = OrderOf(col.Field);
+        if (order != 0)
         {
-            return _sortOrder == 1 ? "ascending" : "descending";
+            return order == 1 ? "ascending" : "descending";
         }
 
         return "none";
@@ -372,31 +1019,55 @@ public partial class OpDataTable<TItem> : ComponentBase
         => _columnFilters.TryGetValue(field, out var value) ? value?.ToString() : null;
 
     private Task OnHeaderKeydown(KeyboardEventArgs e, OpDataTableColumn col)
-        => e.Key is "Enter" or " " or "Spacebar" ? ToggleSort(col) : Task.CompletedTask;
+        => e.Key is "Enter" or " " or "Spacebar" ? ToggleSortAsync(col, e.CtrlKey || e.MetaKey) : Task.CompletedTask;
 
-    private async Task ToggleSort(OpDataTableColumn col)
+    private async Task ToggleSortAsync(OpDataTableColumn col, bool multiKey)
     {
-        if (!Sortable || !col.Sortable) return;
-        // Ciclo: sem ordenação → asc → desc → sem ordenação. Após o reset (_sortOrder == 0) o
-        // próximo clique na mesma coluna precisa recomeçar em asc, e não permanecer em 0.
-        if (_sortField != col.Field || _sortOrder == 0)
+        if (!Sortable || !col.Sortable || string.IsNullOrEmpty(col.Field)) return;
+
+        var index = _sortMeta.FindIndex(m => string.Equals(m.Field, col.Field, StringComparison.OrdinalIgnoreCase));
+
+        if (IsMultipleSort && multiKey)
         {
-            _sortField = col.Field;
-            _sortOrder = 1;
-        }
-        else if (_sortOrder == 1)
-        {
-            _sortOrder = -1;
+            if (index < 0)
+            {
+                _sortMeta.Add(new OpDataTableSortMeta { Field = col.Field, Order = 1 });
+            }
+            else if (_sortMeta[index].Order == 1)
+            {
+                _sortMeta[index] = new OpDataTableSortMeta { Field = col.Field, Order = -1 };
+            }
+            else if (RemovableSort)
+            {
+                _sortMeta.RemoveAt(index);
+            }
+            else
+            {
+                _sortMeta[index] = new OpDataTableSortMeta { Field = col.Field, Order = 1 };
+            }
         }
         else
         {
-            _sortOrder = 0;
+            // Solteira (ou múltipla sem ⌘/Ctrl): a ordenação fica só nesta coluna.
+            // Ciclo asc → desc → asc; com RemovableSort o terceiro clique remove a ordenação.
+            var current = _sortMeta.Count == 1 ? OrderOf(col.Field) : 0;
+            _sortMeta.Clear();
+            if (current != -1 || !RemovableSort)
+            {
+                _sortMeta.Add(new OpDataTableSortMeta { Field = col.Field, Order = current == 1 ? -1 : 1 });
+            }
         }
 
         _first = 0;
         _computed = false;
-        await OnSort.InvokeAsync((_sortField, _sortOrder));
+        await OnSort.InvokeAsync(new OpDataTableSortEvent
+        {
+            Field = col.Field,
+            Order = OrderOf(col.Field),
+            MultiSortMeta = _sortMeta.ToList()
+        });
         await RaiseLazyLoadAsync();
+        await SaveStateAsync();
     }
 
     private async Task OnColumnFilterChanged(string field, string? value)
@@ -414,6 +1085,7 @@ public partial class OpDataTable<TItem> : ComponentBase
         _computed = false;
         await OnFilter.InvokeAsync(new Dictionary<string, object?>(_columnFilters, StringComparer.OrdinalIgnoreCase));
         await RaiseLazyLoadAsync();
+        await SaveStateAsync();
     }
 
     /// <summary>Filtro global imperativo (como o <c>filterGlobal</c> do upstream).</summary>
@@ -431,6 +1103,7 @@ public partial class OpDataTable<TItem> : ComponentBase
 
         await RaiseLazyLoadAsync();
         await InvokeAsync(StateHasChanged);
+        await SaveStateAsync();
     }
 
     private async Task RaiseLazyLoadAsync()
@@ -440,18 +1113,20 @@ public partial class OpDataTable<TItem> : ComponentBase
             return;
         }
 
+        var first = _sortMeta.Count > 0 ? _sortMeta[0] : null;
         await OnLazyLoad.InvokeAsync(new OpDataTableLazyLoadEvent
         {
             First = _first,
             Rows = _rows,
-            SortField = string.IsNullOrEmpty(_sortField) ? null : _sortField,
-            SortOrder = _sortOrder,
+            SortField = first?.Field,
+            SortOrder = first?.Order ?? 0,
+            MultiSortMeta = _sortMeta.Count > 0 ? _sortMeta.ToList() : null,
             Filters = new Dictionary<string, object?>(_columnFilters, StringComparer.OrdinalIgnoreCase),
             GlobalFilter = _globalFilter
         });
     }
 
-    private async Task ToggleRowSelection(TItem item)
+    private async Task ToggleRowSelectionAsync(TItem item, bool metaKey = false)
     {
         if (IsSingleSelection)
         {
@@ -460,26 +1135,82 @@ public partial class OpDataTable<TItem> : ComponentBase
             return;
         }
 
+        if (MetaKeySelection && !metaKey)
+        {
+            // Como no upstream: sem ⌘/Ctrl a seleção passa a ser apenas esta linha.
+            await SelectedItemsChanged.InvokeAsync(new List<TItem> { item });
+            return;
+        }
+
         var list = Selected;
-        var idx = list.FindIndex(s => EqualityComparer<TItem>.Default.Equals(s, item));
+        var idx = list.FindIndex(s => IsSameRow(s, item));
         if (idx >= 0) list.RemoveAt(idx);
         else list.Add(item);
         await SelectedItemsChanged.InvokeAsync(list);
     }
 
-    private async Task ToggleAllSelection()
+    /// <summary>Seleciona a linha programaticamente (ex.: botão dentro de um template de célula).</summary>
+    public async Task SelectRowAsync(TItem item)
+    {
+        if (IsSingleSelection)
+        {
+            await SelectedItemsChanged.InvokeAsync(new List<TItem> { item });
+            return;
+        }
+
+        var list = Selected;
+        if (list.All(s => !IsSameRow(s, item)))
+        {
+            list.Add(item);
+        }
+
+        await SelectedItemsChanged.InvokeAsync(list);
+    }
+
+    /// <summary>Remove a linha da seleção.</summary>
+    public async Task UnselectRowAsync(TItem item)
     {
         var list = Selected;
-        if (AllPageSelected)
+        list.RemoveAll(s => IsSameRow(s, item));
+        await SelectedItemsChanged.InvokeAsync(list);
+    }
+
+    /// <summary>Abre/fecha a linha (estado em <see cref="ExpandedItems"/>).</summary>
+    public async Task ToggleRowExpansionAsync(TItem item)
+    {
+        var list = ExpandedItems?.ToList() ?? new List<TItem>();
+        var idx = list.FindIndex(x => IsSameRow(x, item));
+        if (idx >= 0) list.RemoveAt(idx);
+        else list.Add(item);
+        await ExpandedItemsChanged.InvokeAsync(list);
+    }
+
+    /// <summary>Abre/fecha o grupo (estado em <see cref="ExpandedGroups"/>).</summary>
+    public async Task ToggleGroupExpansionAsync(object? key)
+    {
+        var list = ExpandedGroups?.ToList() ?? new List<object?>();
+        var idx = list.FindIndex(g => Equals(g, key));
+        if (idx >= 0) list.RemoveAt(idx);
+        else list.Add(key);
+        await ExpandedGroupsChanged.InvokeAsync(list);
+    }
+
+    private async Task ToggleAllSelection()
+    {
+        EnsureComputed();
+        var universe = SelectionPageOnly ? PageItems : (_sortedCache ?? PageItems);
+
+        var list = Selected;
+        if (AllSelected)
         {
-            foreach (var item in PageItems)
+            foreach (var item in universe)
             {
-                list.RemoveAll(s => EqualityComparer<TItem>.Default.Equals(s, item));
+                list.RemoveAll(s => IsSameRow(s, item));
             }
         }
         else
         {
-            foreach (var item in PageItems)
+            foreach (var item in universe)
             {
                 if (!IsSelected(item)) list.Add(item);
             }
@@ -509,17 +1240,45 @@ public partial class OpDataTable<TItem> : ComponentBase
 
         await OnPage.InvokeAsync(state.Page);
         await RaiseLazyLoadAsync();
+        await SaveStateAsync();
     }
 
-    private async Task OnRowClicked(TItem item)
+    private async Task OnRowClicked(TItem item, MouseEventArgs e)
     {
         if (Selection)
         {
-            await ToggleRowSelection(item);
+            await ToggleRowSelectionAsync(item, e.CtrlKey || e.MetaKey);
         }
 
         await OnRowClick.InvokeAsync(item);
     }
+
+    /// <summary>
+    /// Exporta os dados processados (filtrados e ordenados, sem paginação) em CSV.
+    /// No modo lazy exporta apenas a página corrente (<c>Items</c>).
+    /// </summary>
+    public string ExportCsv()
+    {
+        EnsureComputed();
+
+        var columns = Columns.Where(c => !IsSelectionColumn(c) && !string.IsNullOrEmpty(c.Field)).ToList();
+        var sb = new StringBuilder();
+        sb.Append(string.Join(',', columns.Select(c => CsvEscape(c.Header ?? c.Field))));
+        sb.Append("\r\n");
+
+        foreach (var item in _sortedCache ?? new List<TItem>())
+        {
+            sb.Append(string.Join(',', columns.Select(c => CsvEscape(GetFieldValue(item, c.Field)?.ToString() ?? ""))));
+            sb.Append("\r\n");
+        }
+
+        return sb.ToString();
+    }
+
+    private static string CsvEscape(string value)
+        => value.IndexOfAny(new[] { ',', '"', '\n', '\r' }) >= 0
+            ? "\"" + value.Replace("\"", "\"\"") + "\""
+            : value;
 
     private object? GetFieldValue(TItem item, string field)
     {

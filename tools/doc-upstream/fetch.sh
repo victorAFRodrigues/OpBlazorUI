@@ -23,6 +23,14 @@ for f in $files; do
     curl -sf "$base/doc/$comp/$f" -o "$out/$f"
 done
 
+# O index às vezes importa arquivos sem o sufixo `doc` (ex.: filterbasic.ts) — baixa os que faltarem.
+for import in $(grep -oE "from '@?/?doc/$comp/[A-Za-z0-9_-]+" "$out/index.ts" | sed 's|.*/||' | sort -u); do
+    if [ ! -f "$out/$import.ts" ]; then
+        curl -sf "$base/doc/$comp/$import.ts" -o "$out/$import.ts" || rm -f "$out/$import.ts"
+        files="$files $import.ts"
+    fi
+done
+
 echo "# $comp ($ref) — $(echo "$files" | wc -w) seções baixadas em $out"
 echo
 # Ordem oficial: pares id/label do array `docs` do index.ts
