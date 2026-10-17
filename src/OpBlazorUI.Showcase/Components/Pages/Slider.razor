@@ -2,8 +2,10 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.Slider
+@using OpBlazorUI.Components.SelectButton
 @using OpBlazorUI.Components.InputText
 @using System.ComponentModel.DataAnnotations
+@using System.Globalization
 
 <PageTitle>Slider - OpBlazorUI</PageTitle>
 
@@ -59,6 +61,23 @@
                 </div>
             </ChildContent>
             <Code><CodeBlock Code="@RangeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filtro" Id="filter">
+            <Description>
+                Implementação de filtro de imagem com múltiplos sliders: o <code>OpSelectButton</code> escolhe
+                o filtro aplicado e o <code>OpSlider</code> ajusta a intensidade.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col items-center gap-4">
+                    <img alt="Exemplo de filtro" src="https://primefaces.org/cdn/primevue/images/card-vue.jpg" style="@ImageFilterStyle"/>
+                    <OpSelectButton TValue="string" @bind-Value="_filter" Options="FilterOptions" AllowEmpty="false"/>
+                    <div style="width: 14rem;">
+                        <OpSlider @bind-Value="FilterValue" AriaLabel="Intensidade do filtro" Max="200"/>
+                    </div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilterCode"/></Code>
         </DocSection>
 
         <DocSection Label="Vertical" Id="vertical">
@@ -167,6 +186,26 @@
     private bool _submitted;
     private FormModel _form = new() { Score = 5 };
 
+    // Filtro de imagem (seção "filter" do upstream).
+    private string _filter = "Contraste";
+    private readonly double[] _filterValues = { 100, 100, 0 };
+    private static readonly List<string> FilterNames = new() { "Contraste", "Brilho", "Sépia" };
+    private static readonly IReadOnlyList<object> FilterOptions = FilterNames.Cast<object>().ToList();
+
+    private int FilterIndex => Math.Max(0, FilterNames.IndexOf(_filter));
+
+    private double FilterValue
+    {
+        get => _filterValues[FilterIndex];
+        set => _filterValues[FilterIndex] = value;
+    }
+
+    private string ImageFilterStyle =>
+        "width: 100%; max-width: 20rem; border-radius: var(--p-content-border-radius); filter: " +
+        $"contrast({Fmt(_filterValues[0])}%) brightness({Fmt(_filterValues[1])}%) sepia({Fmt(_filterValues[2])}%);";
+
+    private static string Fmt(double value) => value.ToString("0.##", CultureInfo.InvariantCulture);
+
     private void SubmitForm() => _submitted = true;
 
     private sealed class FormModel
@@ -211,6 +250,25 @@
 
         @code {
             private double[] _range = new[] { 20.0, 80.0 };
+        }
+        """;
+
+    private const string FilterCode = """
+        <OpSelectButton TValue="string" @bind-Value="_filter" Options="FilterOptions" />
+        <OpSlider @bind-Value="FilterValue" Max="200" />
+
+        @code {
+            private string _filter = "Contraste";
+            private readonly double[] _filterValues = { 100, 100, 0 };
+            private static readonly IReadOnlyList<object> FilterOptions = new List<object> { "Contraste", "Brilho", "Sépia" };
+
+            private int FilterIndex => /* índice de _filter em FilterOptions */;
+
+            private double FilterValue
+            {
+                get => _filterValues[FilterIndex];
+                set => _filterValues[FilterIndex] = value;
+            }
         }
         """;
 

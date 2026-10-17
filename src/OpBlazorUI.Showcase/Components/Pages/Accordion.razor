@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.Accordion
+@using OpBlazorUI.Components.Button
 
 <PageTitle>Accordion - OpBlazorUI</PageTitle>
 
@@ -31,6 +32,23 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Dinâmico" Id="dynamic">
+            <Description>
+                Os painéis podem ser gerados a partir de uma coleção com o bloco <code>@@foreach</code>.
+            </Description>
+            <ChildContent>
+                <OpAccordion ActiveIndexes="@(new[] { 0 })">
+                    @foreach (var panel in Panels)
+                    {
+                        <OpAccordionPanel Header="@panel.Header">
+                            <p class="m-0">@panel.Content</p>
+                        </OpAccordionPanel>
+                    }
+                </OpAccordion>
+            </ChildContent>
+            <Code><CodeBlock Code="@DynamicCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Múltiplo" Id="multiple">
             <Description>Com <code>Multiple</code>, vários painéis podem ficar abertos ao mesmo tempo.</Description>
             <ChildContent>
@@ -47,6 +65,55 @@
                 </OpAccordion>
             </ChildContent>
             <Code><CodeBlock Code="@MultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Desabilitado" Id="disabled">
+            <Description>Um painel pode ser desabilitado com <code>Disabled</code>.</Description>
+            <ChildContent>
+                <OpAccordion Multiple="true" ActiveIndexes="@(new[] { 0 })">
+                    <OpAccordionPanel Header="Cabeçalho I">
+                        <p class="m-0">Conteúdo do primeiro painel.</p>
+                    </OpAccordionPanel>
+                    <OpAccordionPanel Header="Cabeçalho II">
+                        <p class="m-0">Conteúdo do segundo painel.</p>
+                    </OpAccordionPanel>
+                    <OpAccordionPanel Header="Cabeçalho III">
+                        <p class="m-0">Conteúdo do terceiro painel.</p>
+                    </OpAccordionPanel>
+                    <OpAccordionPanel Header="Cabeçalho IV" Disabled="true">
+                        <p class="m-0">Conteúdo do quarto painel.</p>
+                    </OpAccordionPanel>
+                </OpAccordion>
+            </ChildContent>
+            <Code><CodeBlock Code="@DisabledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Controlado" Id="controlled">
+            <Description>
+                O estado pode ser controlado programaticamente pela propriedade <code>ActiveIndexes</code>
+                (com <code>@@bind-ActiveIndexes</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-end gap-2">
+                        <OpButton Label="1" Rounded="true" Outlined="@(_controlled[0] != 0)" OnClick="() => SelectPanel(0)"/>
+                        <OpButton Label="2" Rounded="true" Outlined="@(_controlled[0] != 1)" OnClick="() => SelectPanel(1)"/>
+                        <OpButton Label="3" Rounded="true" Outlined="@(_controlled[0] != 2)" OnClick="() => SelectPanel(2)"/>
+                    </div>
+                    <OpAccordion @bind-ActiveIndexes="_controlled">
+                        <OpAccordionPanel Header="Cabeçalho I">
+                            <p class="m-0">Conteúdo do primeiro painel.</p>
+                        </OpAccordionPanel>
+                        <OpAccordionPanel Header="Cabeçalho II">
+                            <p class="m-0">Conteúdo do segundo painel.</p>
+                        </OpAccordionPanel>
+                        <OpAccordionPanel Header="Cabeçalho III">
+                            <p class="m-0">Conteúdo do terceiro painel.</p>
+                        </OpAccordionPanel>
+                    </OpAccordion>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ControlledCode"/></Code>
         </DocSection>
 
         <DocSection Label="Template de cabeçalho" Id="template">
@@ -140,6 +207,18 @@
 
 @code {
     private IReadOnlyList<int> _single = new[] { 0 };
+    private IReadOnlyList<int> _controlled = new[] { 0 };
+
+    private void SelectPanel(int index) => _controlled = new[] { index };
+
+    private sealed record PanelData(string Header, string Content);
+
+    private static readonly List<PanelData> Panels = new()
+    {
+        new("Cabeçalho I", "Conteúdo do primeiro painel."),
+        new("Cabeçalho II", "Conteúdo do segundo painel."),
+        new("Cabeçalho III", "Conteúdo do terceiro painel.")
+    };
 
     private const string ImportCode = """
         @using OpBlazorUI.Components.Accordion
@@ -166,6 +245,49 @@
             <OpAccordionPanel Header="Cabeçalho I">...</OpAccordionPanel>
             <OpAccordionPanel Header="Cabeçalho II">...</OpAccordionPanel>
         </OpAccordion>
+        """;
+
+    private const string DynamicCode = """
+        <OpAccordion ActiveIndexes="@(new[] { 0 })">
+            @foreach (var panel in Panels)
+            {
+                <OpAccordionPanel Header="@panel.Header">
+                    <p class="m-0">@panel.Content</p>
+                </OpAccordionPanel>
+            }
+        </OpAccordion>
+
+        @code {
+            private sealed record PanelData(string Header, string Content);
+
+            private static readonly List<PanelData> Panels = new()
+            {
+                new("Cabeçalho I", "Conteúdo do primeiro painel."),
+                new("Cabeçalho II", "Conteúdo do segundo painel.")
+            };
+        }
+        """;
+
+    private const string DisabledCode = """
+        <OpAccordion Multiple="true" ActiveIndexes="@(new[] { 0 })">
+            <OpAccordionPanel Header="Cabeçalho I">...</OpAccordionPanel>
+            <OpAccordionPanel Header="Cabeçalho IV" Disabled="true">...</OpAccordionPanel>
+        </OpAccordion>
+        """;
+
+    private const string ControlledCode = """
+        <div class="flex justify-end gap-2">
+            <OpButton Label="1" Rounded="true" Outlined="@(active != 0)" OnClick="() => active = 0" />
+            <OpButton Label="2" Rounded="true" Outlined="@(active != 1)" OnClick="() => active = 1" />
+        </div>
+        <OpAccordion @bind-ActiveIndexes="_active">
+            <OpAccordionPanel Header="Cabeçalho I">...</OpAccordionPanel>
+            <OpAccordionPanel Header="Cabeçalho II">...</OpAccordionPanel>
+        </OpAccordion>
+
+        @code {
+            private IReadOnlyList<int> _active = new[] { 0 };
+        }
         """;
 
     private const string TemplateCode = """

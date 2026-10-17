@@ -25,12 +25,34 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Diretiva" Id="directive">
+            <Description>
+                No PrimeNG, <code>pButton</code> é uma diretiva aplicada a um <code>&lt;button&gt;</code> nativo;
+                no Blazor não existem diretivas de atributo. O equivalente é aplicar as classes
+                <code>p-button p-component</code> no próprio elemento — ou usar <code>OpButton</code>, que já
+                as renderiza.
+                @* Desvio consciente: a seção "directive" do upstream vira classes no elemento / OpButton. *@
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center flex-wrap gap-4">
+                    <button type="button" class="p-button p-component">
+                        <span class="p-button-label">Nativo</span>
+                    </button>
+                    <button type="button" class="p-button p-component p-button-outlined p-button-secondary">
+                        <span class="p-button-label">Nativo contornado</span>
+                    </button>
+                    <OpButton Label="Com OpButton"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@DirectiveCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Âncora" Id="anchor">
             <Description>
-                Não existe diretiva no Blazor como o <code>pButton</code> do Angular. Para estilizar um link
-                (<code>&lt;a&gt;</code> ou <code>NavLink</code>) como botão, aplique as classes
-                <code>p-button p-component</code> no elemento e envolva o texto em <code>p-button-label</code>.
-                Links internos (<code>href="/"</code>) são interceptados pelo roteador do Blazor.
+                Para estilizar um link (<code>&lt;a&gt;</code> ou <code>NavLink</code>) como botão, aplique as
+                classes <code>p-button p-component</code> no elemento e envolva o texto em
+                <code>p-button-label</code> (veja a seção <a href="#directive">Diretiva</a>). Links internos
+                (<code>href="/"</code>) são interceptados pelo roteador do Blazor.
             </Description>
             <ChildContent>
                 <div class="flex justify-center flex-wrap gap-4">
@@ -551,6 +573,16 @@
 
     private const string BasicCode = """
         <OpButton Label="Enviar" />
+        """;
+
+    private const string DirectiveCode = """
+        <!-- Não há diretiva no Blazor: as classes vão no próprio elemento -->
+        <button type="button" class="p-button p-component">
+            <span class="p-button-label">Nativo</span>
+        </button>
+
+        <!-- Alternativa: o componente já aplica as classes -->
+        <OpButton Label="Com OpButton" />
         """;
 
     private const string AnchorCode = """

@@ -2,6 +2,8 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.Toolbar
+@using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Avatar
 
 <PageTitle>Toolbar - OpBlazorUI</PageTitle>
 
@@ -33,6 +35,33 @@
                 </OpToolbar>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Customizado" Id="custom">
+            <Description>
+                Os templates <code>StartTemplate</code>/<code>EndTemplate</code> aceitam qualquer conteúdo —
+                aqui, um ícone de marca, botões e um <code>OpAvatar</code>. Ajuste borda e espaçamento
+                enviando <code>style</code> (atributo não mapeado).
+            </Description>
+            <ChildContent>
+                <OpToolbar style="border-radius: 3rem; padding: 1rem 1rem 1rem 1.5rem;">
+                    <StartTemplate>
+                        <div class="flex items-center gap-2">
+                            <i class="pi pi-prime" aria-hidden="true" style="font-size: 2rem; color: var(--p-primary-color); margin-right: .5rem;"></i>
+                            <OpButton Label="Arquivos" Text="true" Plain="true"/>
+                            <OpButton Label="Editar" Text="true" Plain="true"/>
+                            <OpButton Label="Visualizar" Text="true" Plain="true"/>
+                        </div>
+                    </StartTemplate>
+                    <EndTemplate>
+                        <div class="flex items-center gap-2">
+                            <OpButton Label="Compartilhar" Severity="contrast" Size="small"/>
+                            <OpAvatar Image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" Shape="circle" Alt="Amy Elsner" Style="width: 32px; height: 32px;"/>
+                        </div>
+                    </EndTemplate>
+                </OpToolbar>
+            </ChildContent>
+            <Code><CodeBlock Code="@CustomCode"/></Code>
         </DocSection>
 
         <DocSection Label="Somente conteúdo" Id="content">
@@ -118,6 +147,25 @@
     private const string ContentCode = """
         <OpToolbar>
             <span>Conteúdo livre dentro do toolbar.</span>
+        </OpToolbar>
+        """;
+
+    private const string CustomCode = """
+        <OpToolbar style="border-radius: 3rem; padding: 1rem 1rem 1rem 1.5rem;">
+            <StartTemplate>
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-prime" aria-hidden="true" style="font-size: 2rem; color: var(--p-primary-color);"></i>
+                    <OpButton Label="Arquivos" Text="true" Plain="true" />
+                    <OpButton Label="Editar" Text="true" Plain="true" />
+                    <OpButton Label="Visualizar" Text="true" Plain="true" />
+                </div>
+            </StartTemplate>
+            <EndTemplate>
+                <div class="flex items-center gap-2">
+                    <OpButton Label="Compartilhar" Severity="contrast" Size="small" />
+                    <OpAvatar Image="..." Shape="circle" Alt="Amy Elsner" Style="width: 32px; height: 32px;" />
+                </div>
+            </EndTemplate>
         </OpToolbar>
         """;
 
