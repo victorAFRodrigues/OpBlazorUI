@@ -44,14 +44,21 @@
                        tabindex="@(isTabStop ? 0 : -1)"
                        @onclick="() => OnSelectAsync(item, hasChildren, path)"
                        @onclick:preventDefault="@(hasChildren || item.Disabled)">
-                        @if (!string.IsNullOrEmpty(item.Icon))
+                        @if (ItemTemplate is not null)
                         {
-                            <span class="@($"p-{Prefix}-item-icon {item.Icon}")" aria-hidden="true"></span>
+                            @ItemTemplate(ContextFor(item, hasChildren))
                         }
-                        <span class="@($"p-{Prefix}-item-label")">@item.Label</span>
-                        @if (hasChildren)
+                        else
                         {
-                            <span class="@SubmenuIconClass" aria-hidden="true"></span>
+                            @if (!string.IsNullOrEmpty(item.Icon))
+                            {
+                                <span class="@($"p-{Prefix}-item-icon {item.Icon}")" aria-hidden="true"></span>
+                            }
+                            <span class="@($"p-{Prefix}-item-label")">@item.Label</span>
+                            @if (hasChildren)
+                            {
+                                <span class="@SubmenuIconClass" aria-hidden="true"></span>
+                            }
                         }
                     </a>
                 </div>
@@ -66,7 +73,8 @@
                                  PathPrefix="@path"
                                  IsOpen="@IsOpen"
                                  OnToggle="@OnToggle"
-                                 OnItemClick="@OnItemClick"/>
+                                 OnItemClick="@OnItemClick"
+                                 ItemTemplate="@ItemTemplate"/>
                 }
             </li>
         }

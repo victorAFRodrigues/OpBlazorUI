@@ -13,6 +13,18 @@ public sealed class OpMenuItem
     public bool Visible { get; set; } = true;
     public string? StyleClass { get; set; }
 
+    /// <summary>Etiqueta numérica exibida à direita do item (ex.: contador).</summary>
+    public string? Badge { get; set; }
+
+    /// <summary>Atalho de teclado exibido à direita do item (apenas informativo).</summary>
+    public string? Shortcut { get; set; }
+
+    /// <summary>
+    /// Estado de expansão do painel (usado pelo PanelMenu no modo controlado).
+    /// <c>null</c> deixa o painel controlar a própria expansão.
+    /// </summary>
+    public bool? Expanded { get; set; }
+
     public bool HasChildren => Items is { Count: > 0 };
 }
 

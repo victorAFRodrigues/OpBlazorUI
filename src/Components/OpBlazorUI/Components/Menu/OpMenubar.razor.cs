@@ -13,6 +13,9 @@ public partial class OpMenubar : OpComponentBase
     [Parameter] public RenderFragment? EndTemplate { get; set; }
     [Parameter] public EventCallback<OpMenuItem> OnItemClick { get; set; }
 
+    /// <summary>Template de item (equivalente ao <c>#item</c> do upstream).</summary>
+    [Parameter] public RenderFragment<OpMenuItemContext>? ItemTemplate { get; set; }
+
     private string RootClass => Class("p-menubar p-component", StyleClass);
 
     private bool IsOpen(string path) => _open.Contains(path);

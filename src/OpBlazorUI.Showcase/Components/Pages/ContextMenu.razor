@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Components.Toast
 @using OpBlazorUI.Models
 
 <PageTitle>ContextMenu - OpBlazorUI</PageTitle>
@@ -35,20 +36,90 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Coordenadas do mouse" Id="cursor">
+        <DocSection Label="Document" Id="document">
             <Description>
-                Chame <code>ShowAsync(x, y)</code> com <code>MouseEventArgs.ClientX/ClientY</code> para abrir o
-                menu na posição do cursor. Chamar de novo com o menu aberto reposiciona-o.
+                Com <code>Global="true"</code> o menu é anexado ao documento e abre com o clique direito em qualquer
+                ponto da página.
             </Description>
             <ChildContent>
-                <div class="flex items-center gap-3">
-                    <div style="width:16rem;height:6rem;border:1px dashed var(--p-content-border-color);display:flex;align-items:center;justify-content:center;"
-                         @oncontextmenu="OnContextMenu" @oncontextmenu:preventDefault="true">
-                        clique com o botão direito
-                    </div>
-                </div>
+                <OpContextMenu Model="_documentItems" Global="true"/>
+                <div class="doc-section-description"><p>Clique com o botão direito em qualquer ponto desta página para ver o menu global.</p></div>
             </ChildContent>
-            <Code><CodeBlock Code="@CursorCode"/></Code>
+            <Code><CodeBlock Code="@DocumentCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O <code>ItemTemplate</code> recebe um <code>OpMenuItemContext</code> com o item. No porte, o template
+                substitui o conteúdo do link do item.
+            </Description>
+            <ChildContent>
+                <div style="width:16rem;height:6rem;border:1px dashed var(--p-content-border-color);display:flex;align-items:center;justify-content:center;"
+                     @oncontextmenu="OnTemplateContextMenu" @oncontextmenu:preventDefault="true">
+                    clique com o botão direito
+                </div>
+                <OpContextMenu @ref="_templateMenu" Model="_templateItems">
+                    <ItemTemplate Context="ctx">
+                        @if (!string.IsNullOrEmpty(ctx.Item.Icon))
+                        {
+                            <span class="@($"p-contextmenu-item-icon {ctx.Item.Icon}")" aria-hidden="true"></span>
+                        }
+                        <span class="p-contextmenu-item-label">@ctx.Item.Label</span>
+                        @if (!string.IsNullOrEmpty(ctx.Item.Shortcut))
+                        {
+                            <span style="margin-left:auto;border:1px solid var(--p-content-border-color);border-radius:var(--p-border-radius-sm);background:var(--p-content-hover-background);color:var(--p-text-muted-color);font-size:.75rem;padding:.15rem .35rem">@ctx.Item.Shortcut</span>
+                        }
+                    </ItemTemplate>
+                </OpContextMenu>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Command" Id="command">
+            <Description>
+                A função executada no clique de um item é definida em <code>Command</code>. No exemplo, cada pessoa
+                abre o menu pelo clique direito e os itens disparam notificações.
+            </Description>
+            <ChildContent>
+                <OpToast Key="contextmenu-command"/>
+                <div style="max-width: 24rem;border:1px solid var(--p-content-border-color);border-radius:var(--p-border-radius-md);overflow:hidden">
+                    @foreach (var person in _people)
+                    {
+                        <div class="flex items-center justify-between"
+                             style="padding:.6rem .75rem;border-bottom:1px solid var(--p-content-border-color);cursor:context-menu"
+                             @oncontextmenu="e => ShowCommandMenu(e, person.Name)" @oncontextmenu:preventDefault="true">
+                            <span>@person.Name</span>
+                            <span style="background:var(--p-primary-color);color:var(--p-primary-contrast-color);border-radius:var(--p-border-radius-sm);padding:.15rem .5rem;font-size:.75rem">@person.Role</span>
+                        </div>
+                    }
+                </div>
+                <OpContextMenu @ref="_commandMenu" Model="_commandItems"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@CommandCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Router" Id="router">
+            <Description>
+                A navegação usa <code>OpMenuItem.Url</code> (equivalente ao <code>routerLink</code>); para navegação
+                programática, use <code>Command</code> com o <code>NavigationManager</code>.
+            </Description>
+            <ChildContent>
+                <div @ref="_routerTarget" style="width:4rem;height:4rem;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--p-primary-color);border-radius:var(--p-border-radius-md);cursor:context-menu"
+                     @oncontextmenu="ShowRouterMenu" @oncontextmenu:preventDefault="true">
+                    <span class="pi pi-box" style="font-size:1.25rem;color:var(--p-primary-color)"></span>
+                </div>
+                <OpContextMenu @ref="_routerMenu" Model="_routerItems"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@RouterCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Table" Id="table">
+            <Description>
+                A Table tem suporte nativo a ContextMenu; veja o exemplo na seção
+                <a href="/table#context-menu">ContextMenu da Table</a>. No porte, a integração com a Table é
+                documental — a Table ainda não foi portada (ver <a href="/table">Table</a>).
+            </Description>
+            <Code><CodeBlock Code="@TableCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
@@ -70,6 +141,7 @@
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "Itens do menu." },
                               new[] { "Target", "string?", "Seletor CSS cujos elementos abrem o menu no clique direito." },
                               new[] { "Global", "bool", "Abre o menu no clique direito em qualquer ponto do documento." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItemContext&gt;?", "Conteúdo do item (equivale ao <code>#item</code> do upstream)." },
                               new[] { "ShowAsync(anchor)", "Task", "Exibe o menu ancorado ao elemento (ou ao anterior)." },
                               new[] { "ShowAsync(x, y)", "Task", "Exibe o menu nas coordenadas do viewport (reposiciona se aberto)." },
                               new[] { "HideAsync()", "Task", "Oculta o menu." },
@@ -98,7 +170,8 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>O menu pode ser ancorado a um elemento (<code>ShowAsync(target)</code>) ou posicionado pelas coordenadas do cursor (<code>ShowAsync(x, y)</code>).</li>
+                        <li>A integração com a Table é apenas documental enquanto a Table não for portada.</li>
+                        <li>O <code>ItemTemplate</code> substitui o conteúdo do link, não o link inteiro (ver a seção Template).</li>
                     </ul>
                 </div>
             </ChildContent>
@@ -107,47 +180,127 @@
 </DocComponent>
 
 @code {
+    [Inject] private OpMessageService MessageService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
     private OpContextMenu? _menu;
+    private OpContextMenu? _templateMenu;
+    private OpContextMenu? _commandMenu;
+    private OpContextMenu? _routerMenu;
     private ElementReference _trigger;
+    private ElementReference _routerTarget;
     private string? _lastCommand;
+    private string? _selectedPerson;
+
+    private readonly List<Person> _people = new()
+    {
+        new("Ana Lima", "Admin"),
+        new("Bruno Sá", "Editor"),
+        new("Caio Dias", "Visualizador")
+    };
 
     private readonly List<OpMenuItem> _items = new()
     {
-        new OpMenuItem { Label = "Copiar", Icon = "pi pi-copy", Command = () => { } },
-        new OpMenuItem { Label = "Colar", Icon = "pi pi-clipboard" },
-        new OpMenuItem
+        new OpMenuItem { Label = "Copiar", Icon = "pi pi-copy" },
+        new() { Label = "Colar", Icon = "pi pi-clipboard" },
+        new()
         {
             Label = "Compartilhar",
             Icon = "pi pi-share-alt",
             Items = new List<OpMenuItem>
             {
-                new() { Label = "E-mail" },
-                new() { Label = "Link" }
+                new() { Label = "Link" },
+                new() { Label = "E-mail" }
             }
         },
-        new OpMenuItem { Separator = true },
-        new OpMenuItem { Label = "Excluir", Icon = "pi pi-trash" }
+        new() { Separator = true },
+        new() { Label = "Excluir", Icon = "pi pi-trash" }
     };
+
+    private readonly List<OpMenuItem> _documentItems = new()
+    {
+        new() { Label = "Traduzir", Icon = "pi pi-language" },
+        new()
+        {
+            Label = "Fala",
+            Icon = "pi pi-volume-up",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Iniciar", Icon = "pi pi-caret-right" },
+                new() { Label = "Parar", Icon = "pi pi-pause" }
+            }
+        },
+        new() { Separator = true },
+        new() { Label = "Imprimir", Icon = "pi pi-print" }
+    };
+
+    private readonly List<OpMenuItem> _templateItems = new()
+    {
+        new() { Label = "Editar", Icon = "pi pi-pencil", Shortcut = "⌘+E" },
+        new() { Label = "Duplicar", Icon = "pi pi-copy", Shortcut = "⌘+D" },
+        new() { Separator = true },
+        new() { Label = "Remover", Icon = "pi pi-trash", Shortcut = "⌫" }
+    };
+
+    private List<OpMenuItem> _commandItems = new();
+    private List<OpMenuItem> _routerItems = new();
+
+    protected override void OnInitialized()
+    {
+        _commandItems = new List<OpMenuItem>
+        {
+            new() { Label = "Ver", Icon = "pi pi-eye", Command = () => Notify("info", "Ver", _selectedPerson ?? "") },
+            new() { Label = "Editar", Icon = "pi pi-pencil", Command = () => Notify("success", "Editar", _selectedPerson ?? "") },
+            new() { Separator = true },
+            new() { Label = "Excluir", Icon = "pi pi-trash", Command = () => Notify("error", "Excluir", _selectedPerson ?? "") }
+        };
+
+        _routerItems = new List<OpMenuItem>
+        {
+            new()
+            {
+                Label = "Router",
+                Icon = "pi pi-palette",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Temas", Url = "/theming" },
+                    new() { Label = "UI Kit", Url = "/uikit" }
+                }
+            },
+            new() { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") },
+            new()
+            {
+                Label = "Externo",
+                Icon = "pi pi-home",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Blazor", Url = "https://dotnet.microsoft.com/", Target = "_blank" }
+                }
+            }
+        };
+    }
 
     private Task ShowMenuAsync() => _menu?.ShowAsync(_trigger) ?? Task.CompletedTask;
 
-    private void OnContextMenu(MouseEventArgs e) => _ = _menu?.ShowAsync(e.ClientX, e.ClientY);
+    private Task OnTemplateContextMenu(MouseEventArgs e) => _templateMenu?.ShowAsync(e.ClientX, e.ClientY) ?? Task.CompletedTask;
+
+    private void ShowCommandMenu(MouseEventArgs e, string person)
+    {
+        _selectedPerson = person;
+        if (_commandMenu is not null)
+        {
+            _ = _commandMenu.ShowAsync(e.ClientX, e.ClientY);
+        }
+    }
+
+    private Task ShowRouterMenu() => _routerMenu?.ShowAsync(_routerTarget) ?? Task.CompletedTask;
 
     private void OnItem(OpMenuItem item) => _lastCommand = item.Label;
 
-    private const string CursorCode = """
-        <div @@oncontextmenu="OnContextMenu" @@oncontextmenu:preventDefault="true">
-            Clique com o botão direito
-        </div>
-        <OpContextMenu @ref="_menu" Model="_items" />
+    private void Notify(string severity, string summary, string person) =>
+        MessageService.Add(new OpToastMessage { Key = "contextmenu-command", Severity = severity, Summary = $"{summary}: {person}", Detail = "Ação executada pelo ContextMenu" });
 
-        @code {
-            private OpContextMenu? _menu;
-
-            private void OnContextMenu(MouseEventArgs e) =>
-                _ = _menu?.ShowAsync(e.ClientX, e.ClientY);
-        }
-        """;
+    private sealed record Person(string Name, string Role);
 
     private const string ImportCode = """
         @using OpBlazorUI.Components.Menu
@@ -170,9 +323,89 @@
             private List<OpMenuItem> _items = new()
             {
                 new OpMenuItem { Label = "Copiar", Icon = "pi pi-copy" },
-                new OpMenuItem { Label = "Colar", Icon = "pi pi-clipboard" },
-                new OpMenuItem { Separator = true },
-                new OpMenuItem { Label = "Excluir", Icon = "pi pi-trash" }
+                new() { Label = "Colar", Icon = "pi pi-clipboard" },
+                new() { Separator = true },
+                new() { Label = "Excluir", Icon = "pi pi-trash" }
+            };
+        }
+        """;
+
+    private const string DocumentCode = """
+        <OpContextMenu Model="_items" Global="true" />
+        """;
+
+    private const string TemplateCode = """
+        <OpContextMenu @ref="_menu" Model="_items">
+            <ItemTemplate Context="ctx">
+                <span class="@($"p-contextmenu-item-icon {ctx.Item.Icon}")"></span>
+                <span class="p-contextmenu-item-label">@ctx.Item.Label</span>
+                @if (!string.IsNullOrEmpty(ctx.Item.Shortcut))
+                {
+                    <span style="margin-left:auto">@ctx.Item.Shortcut</span>
+                }
+            </ItemTemplate>
+        </OpContextMenu>
+        """;
+
+    private const string CommandCode = """
+        <OpContextMenu @ref="_menu" Model="_items" />
+
+        @code {
+            [Inject] private OpMessageService MessageService { get; set; } = default!;
+
+            private OpContextMenu? _menu;
+            private string _selected = "";
+
+            private void OnRowContextMenu(MouseEventArgs e, string name)
+            {
+                _selected = name;
+                _ = _menu!.ShowAsync(e.ClientX, e.ClientY);
+            }
+
+            private List<OpMenuItem> _items = new()
+            {
+                new() { Label = "Ver", Icon = "pi pi-eye", Command = () => Notify("info", "Ver", _selected) },
+                new() { Label = "Editar", Icon = "pi pi-pencil", Command = () => Notify("success", "Editar", _selected) }
+            };
+        }
+        """;
+
+    private const string RouterCode = """
+        <div @ref="_target" @oncontextmenu="ShowMenu" @oncontextmenu:preventDefault="true">clique direito</div>
+        <OpContextMenu @ref="_menu" Model="_items" />
+
+        @code {
+            [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+            private ElementReference _target;
+            private OpContextMenu? _menu;
+
+            private Task ShowMenu() => _menu?.ShowAsync(_target) ?? Task.CompletedTask;
+
+            private List<OpMenuItem> _items = new()
+            {
+                new()
+                {
+                    Label = "Router",
+                    Icon = "pi pi-palette",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Temas", Url = "/theming" }
+                    }
+                },
+                new() { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") }
+            };
+        }
+        """;
+
+    private const string TableCode = """
+        <OpContextMenu Model="_items" Target=".my-rows" />
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new() { Label = "Editar", Icon = "pi pi-pencil" },
+                new() { Label = "Excluir", Icon = "pi pi-trash" }
             };
         }
         """;
@@ -181,3 +414,4 @@
         <OpContextMenu @ref="_menu" Model="_items" />
         """;
 }
+

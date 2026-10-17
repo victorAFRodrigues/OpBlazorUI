@@ -4,16 +4,38 @@
 @inherits OpComponentBase
 @using OpBlazorUI.Components.Overlay
 
-<div class="@RootClass" @attributes="AdditionalAttributes">
-    @* Com algum submenu aberto, o root entra na pilha de overlays: clique fora e Escape fecham. *@
-    @if (_open.Count > 0)
+@if (Popup)
+{
+    @* Modo popup: o painel só existe enquanto visível e ancora no irmão anterior (o botão). *@
+    @if (_visible)
     {
-        <OpOverlayAttach AutoZIndex="false" OnOutsideClick="CloseAllAsync" OnEscape="CloseAllAsync"/>
+        <div class="@RootClass" @attributes="AdditionalAttributes">
+            <OpOverlayAttach Anchor="@_anchor" AnchorPrevious="@(_anchor is null)" Layer="menu"
+                             OnOutsideClick="HideAsync" OnEscape="HideAsync"/>
+            <OpMenuItems Items="Model"
+                         Prefix="tieredmenu"
+                         Root="true"
+                         IsOpen="IsOpen"
+                         OnToggle="ToggleSubmenuAsync"
+                         OnItemClick="OnLeafClickAsync"
+                         ItemTemplate="ItemTemplate"/>
+        </div>
     }
-    <OpMenuItems Items="Model"
-                 Prefix="tieredmenu"
-                 Root="true"
-                 IsOpen="IsOpen"
-                 OnToggle="ToggleAsync"
-                 OnItemClick="OnLeafClickAsync"/>
-</div>
+}
+else
+{
+    <div class="@RootClass" @attributes="AdditionalAttributes">
+        @* Com algum submenu aberto, o root entra na pilha de overlays: clique fora e Escape fecham. *@
+        @if (_open.Count > 0)
+        {
+            <OpOverlayAttach AutoZIndex="false" OnOutsideClick="CloseAllAsync" OnEscape="CloseAllAsync"/>
+        }
+        <OpMenuItems Items="Model"
+                     Prefix="tieredmenu"
+                     Root="true"
+                     IsOpen="IsOpen"
+                     OnToggle="ToggleSubmenuAsync"
+                     OnItemClick="OnLeafClickAsync"
+                     ItemTemplate="ItemTemplate"/>
+    </div>
+}

@@ -25,6 +25,66 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Vertical" Id="vertical">
+            <Description>
+                O layout muda com a propriedade <code>Orientation</code>, que aceita <code>horizontal</code> (padrão)
+                e <code>vertical</code>.
+            </Description>
+            <ChildContent>
+                <OpMegaMenu Model="_items" Orientation="vertical"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@VerticalCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                <code>StartTemplate</code>, <code>ItemTemplate</code> e <code>EndTemplate</code> colocam conteúdo
+                customizado no menu. O menubar deve ser <code>horizontal</code> para o conteúdo customizado. No porte,
+                o <code>ItemTemplate</code> substitui o conteúdo do link do item.
+            </Description>
+            <ChildContent>
+                <OpMegaMenu Model="_templateItems" StyleClass="p-3" style="border-radius:3rem;display:flex">
+                    <StartTemplate>
+                        <span class="pi pi-box" style="font-size:1.5rem;color:var(--p-primary-color)"></span>
+                    </StartTemplate>
+                    <ItemTemplate Context="ctx">
+                        @if (!string.IsNullOrEmpty(ctx.Item.Icon))
+                        {
+                            <span class="@($"p-megamenu-item-icon {ctx.Item.Icon}")" aria-hidden="true"></span>
+                        }
+                        <span class="p-megamenu-item-label">@ctx.Item.Label</span>
+                        @if (!string.IsNullOrEmpty(ctx.Item.Badge))
+                        {
+                            <span class="p-badge" style="margin-left:.5rem">@ctx.Item.Badge</span>
+                        }
+                    </ItemTemplate>
+                    <EndTemplate>
+                        <span class="pi pi-search" style="font-size:1.25rem"></span>
+                    </EndTemplate>
+                </OpMegaMenu>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Command" Id="command">
+            <Description>
+                A propriedade <code>Command</code> de um item define o callback executado ao ser acionado por clique ou
+                evento de teclado.
+            </Description>
+            <Code><CodeBlock Code="@CommandCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Router" Id="router">
+            <Description>
+                A navegação usa <code>OpMenuItem.Url</code> (equivalente ao <code>routerLink</code>); para navegação
+                programática, use <code>Command</code> com o <code>NavigationManager</code>.
+            </Description>
+            <ChildContent>
+                <OpMegaMenu Model="_routerItems"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@RouterCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
@@ -42,8 +102,10 @@
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens raiz; os filhos são colunas." },
+                              new[] { "Orientation", "string", "&quot;horizontal&quot;", "Layout: <code>horizontal</code> ou <code>vertical</code>." },
                               new[] { "StartTemplate", "RenderFragment?", "null", "Conteúdo à esquerda." },
                               new[] { "EndTemplate", "RenderFragment?", "null", "Conteúdo à direita." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItemContext&gt;?", "null", "Conteúdo do item (equivale ao <code>#item</code> do upstream)." },
                               new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um link." }
                           })"/>
             </ChildContent>
@@ -69,6 +131,7 @@
                     <ul>
                         <li>As colunas usam uma largura fixa (<code>p-megamenu-col-3</code>); não há colunas de largura variável por item.</li>
                         <li>O submenu abre por clique; o fechamento ao clicar fora ainda não é automático.</li>
+                        <li>O <code>ItemTemplate</code> substitui o conteúdo do link, não o link inteiro (ver a seção Template).</li>
                     </ul>
                 </div>
             </ChildContent>
@@ -77,6 +140,8 @@
 </DocComponent>
 
 @code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
     private readonly List<OpMenuItem> _items = new()
     {
         new OpMenuItem
@@ -119,6 +184,82 @@
         new OpMenuItem { Label = "Contato", Icon = "pi pi-envelope" }
     };
 
+    private readonly List<OpMenuItem> _templateItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Produtos",
+            Icon = "pi pi-box",
+            Items = new List<OpMenuItem>
+            {
+                new()
+                {
+                    Label = "Hardware",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Notebooks" },
+                        new() { Label = "Monitores" }
+                    }
+                },
+                new()
+                {
+                    Label = "Software",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Editor" },
+                        new() { Label = "Suíte" }
+                    }
+                }
+            }
+        },
+        new OpMenuItem { Label = "Empresa", Icon = "pi pi-building", Badge = "2" },
+        new OpMenuItem { Label = "Contato", Icon = "pi pi-envelope" }
+    };
+
+    private List<OpMenuItem> _routerItems = new();
+
+    protected override void OnInitialized()
+    {
+        _routerItems = new List<OpMenuItem>
+        {
+            new OpMenuItem
+            {
+                Label = "Router",
+                Icon = "pi pi-palette",
+                Items = new List<OpMenuItem>
+                {
+                    new()
+                    {
+                        Label = "RouterLink",
+                        Items = new List<OpMenuItem>
+                        {
+                            new() { Label = "Temas", Url = "/theming" },
+                            new() { Label = "UI Kit", Url = "/uikit" }
+                        }
+                    }
+                }
+            },
+            new OpMenuItem { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") },
+            new OpMenuItem
+            {
+                Label = "Externo",
+                Icon = "pi pi-home",
+                Items = new List<OpMenuItem>
+                {
+                    new()
+                    {
+                        Label = "Externo",
+                        Items = new List<OpMenuItem>
+                        {
+                            new() { Label = "Blazor", Url = "https://dotnet.microsoft.com/", Target = "_blank" },
+                            new() { Label = "PrimeNG", Url = "https://primeng.org", Target = "_blank" }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
     private const string ImportCode = """
         @using OpBlazorUI.Components.Menu
         @using OpBlazorUI.Models
@@ -142,6 +283,68 @@
                     }
                 },
                 new OpMenuItem { Label = "Contato" }
+            };
+        }
+        """;
+
+    private const string VerticalCode = """
+        <OpMegaMenu Model="_items" Orientation="vertical" />
+        """;
+
+    private const string TemplateCode = """
+        <OpMegaMenu Model="_items">
+            <StartTemplate>
+                <span class="pi pi-box"></span>
+            </StartTemplate>
+            <ItemTemplate Context="ctx">
+                <span class="@($"p-megamenu-item-icon {ctx.Item.Icon}")"></span>
+                <span class="p-megamenu-item-label">@ctx.Item.Label</span>
+                @if (!string.IsNullOrEmpty(ctx.Item.Badge))
+                {
+                    <span class="p-badge" style="margin-left:.5rem">@ctx.Item.Badge</span>
+                }
+            </ItemTemplate>
+            <EndTemplate>
+                <span class="pi pi-search"></span>
+            </EndTemplate>
+        </OpMegaMenu>
+        """;
+
+    private const string CommandCode = """
+        new OpMenuItem
+        {
+            Label = "Sair",
+            Icon = "pi pi-sign-out",
+            Command = () => { /* callback */ }
+        }
+        """;
+
+    private const string RouterCode = """
+        <OpMegaMenu Model="_items" />
+
+        @code {
+            [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Router",
+                    Icon = "pi pi-palette",
+                    Items = new List<OpMenuItem>
+                    {
+                        new()
+                        {
+                            Label = "RouterLink",
+                            Items = new List<OpMenuItem>
+                            {
+                                new() { Label = "Temas", Url = "/theming" },
+                                new() { Label = "UI Kit", Url = "/uikit" }
+                            }
+                        }
+                    }
+                },
+                new OpMenuItem { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") }
             };
         }
         """;

@@ -1,7 +1,9 @@
 @page "/panelmenu"
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
+@using OpBlazorUI.Components.Button
 @using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Components.Toast
 @using OpBlazorUI.Models
 
 <PageTitle>PanelMenu - OpBlazorUI</PageTitle>
@@ -15,7 +17,9 @@
         </DocSection>
 
         <DocSection Label="Básico" Id="basic">
-            <Description>Os itens raiz com filhos viram painéis expansíveis.</Description>
+            <Description>
+                Os itens raiz com filhos viram painéis expansíveis. Por padrão, apenas um painel raiz fica aberto.
+            </Description>
             <ChildContent>
                 <div style="max-width: 20rem;">
                     <OpPanelMenu Model="_items"/>
@@ -24,14 +28,89 @@
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Um por vez" Id="single">
-            <Description>Com <code>Multiple="false"</code>, apenas um painel fica aberto.</Description>
+        <DocSection Label="Multiple" Id="multiple">
+            <Description>
+                Por padrão apenas um item raiz fica ativo; habilite <code>Multiple="true"</code> para abrir mais de um
+                item.
+            </Description>
             <ChildContent>
                 <div style="max-width: 20rem;">
-                    <OpPanelMenu Model="_items" Multiple="false"/>
+                    <OpPanelMenu Model="_nestedItems" Multiple="true" StyleClass="w-full"/>
                 </div>
             </ChildContent>
-            <Code><CodeBlock Code="@SingleCode"/></Code>
+            <Code><CodeBlock Code="@MultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Controlled" Id="controlled">
+            <Description>
+                Os itens podem ser controlados programaticamente pelo campo <code>Expanded</code> do
+                <code>OpMenuItem</code>: quando definido, o painel passa a seguir o modelo em vez do estado interno.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpButton Label="Alternar tudo" Text="true" OnClick="ToggleAll"/>
+                </div>
+                <div style="max-width: 20rem;">
+                    <OpPanelMenu Model="_controlledItems"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ControlledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                O <code>ItemTemplate</code> recebe um <code>OpMenuItemContext</code> e customiza o conteúdo dos itens
+                folha (os cabeçalhos dos painéis seguem o padrão). No porte, o template substitui o conteúdo do link.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 20rem;">
+                    <OpPanelMenu Model="_templateItems">
+                        <ItemTemplate Context="ctx">
+                            @if (!string.IsNullOrEmpty(ctx.Item.Icon))
+                            {
+                                <span class="@($"p-panelmenu-item-icon {ctx.Item.Icon}")" aria-hidden="true"></span>
+                            }
+                            <span class="p-panelmenu-item-label">@ctx.Item.Label</span>
+                            @if (!string.IsNullOrEmpty(ctx.Item.Badge))
+                            {
+                                <span class="p-badge" style="margin-left:auto">@ctx.Item.Badge</span>
+                            }
+                            @if (!string.IsNullOrEmpty(ctx.Item.Shortcut))
+                            {
+                                <span style="margin-left:auto;border:1px solid var(--p-content-border-color);border-radius:var(--p-border-radius-sm);background:var(--p-content-hover-background);color:var(--p-text-muted-color);font-size:.75rem;padding:.15rem .35rem">@ctx.Item.Shortcut</span>
+                            }
+                        </ItemTemplate>
+                    </OpPanelMenu>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Command" Id="command">
+            <Description>
+                A propriedade <code>Command</code> define o callback executado quando o item é acionado por clique ou
+                evento de teclado.
+            </Description>
+            <ChildContent>
+                <OpToast Key="panelmenu-command"/>
+                <div style="max-width: 20rem;">
+                    <OpPanelMenu Model="_commandItems"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@CommandCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Router" Id="router">
+            <Description>
+                A navegação usa <code>OpMenuItem.Url</code> (equivalente ao <code>routerLink</code>); para navegação
+                programática, use <code>Command</code> com o <code>NavigationManager</code>.
+            </Description>
+            <ChildContent>
+                <div style="max-width: 20rem;">
+                    <OpPanelMenu Model="_routerItems"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@RouterCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
@@ -51,7 +130,8 @@
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens do menu." },
-                              new[] { "Multiple", "bool", "true", "Permite vários painéis abertos." },
+                              new[] { "Multiple", "bool", "false", "Permite vários painéis abertos ao mesmo tempo." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItemContext&gt;?", "null", "Conteúdo dos itens folha (equivale ao <code>#item</code> do upstream)." },
                               new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um item." }
                           })"/>
             </ChildContent>
@@ -75,8 +155,9 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>Os submenus aninhados (mais de dois níveis) são suportados.</li>
-                        <li>Sem animação de abertura; o painel é renderizado ao expandir.</li>
+                        <li>Um cabeçalho de painel com <code>Expanded</code> definido fica “controlado”: o clique não alterna, apenas a mudança do modelo.</li>
+                        <li>O <code>ItemTemplate</code> vale para os itens folha; os cabeçalhos dos painéis não são templatáveis.</li>
+                        <li>Não há animação de expansão; o painel é renderizado ao expandir.</li>
                     </ul>
                 </div>
             </ChildContent>
@@ -85,6 +166,9 @@
 </DocComponent>
 
 @code {
+    [Inject] private OpMessageService MessageService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
     private readonly List<OpMenuItem> _items = new()
     {
         new OpMenuItem
@@ -110,6 +194,195 @@
         },
         new OpMenuItem { Label = "Ajuda", Icon = "pi pi-question-circle" }
     };
+
+    private readonly List<OpMenuItem> _nestedItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Arquivos",
+            Icon = "pi pi-file",
+            Items = new List<OpMenuItem>
+            {
+                new()
+                {
+                    Label = "Documentos",
+                    Icon = "pi pi-file",
+                    Items = new List<OpMenuItem>
+                    {
+                        new()
+                        {
+                            Label = "Faturas",
+                            Icon = "pi pi-file-pdf",
+                            Items = new List<OpMenuItem>
+                            {
+                                new() { Label = "Pendentes", Icon = "pi pi-stop" },
+                                new() { Label = "Pagas", Icon = "pi pi-check-circle" }
+                            }
+                        },
+                        new() { Label = "Clientes", Icon = "pi pi-users" }
+                    }
+                },
+                new()
+                {
+                    Label = "Imagens",
+                    Icon = "pi pi-image",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Logos", Icon = "pi pi-image" }
+                    }
+                }
+            }
+        },
+        new OpMenuItem
+        {
+            Label = "Usuário",
+            Icon = "pi pi-user",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Perfil", Icon = "pi pi-id-card" },
+                new() { Label = "Sair", Icon = "pi pi-power-off" }
+            }
+        }
+    };
+
+    private List<OpMenuItem> _controlledItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Usuários",
+            Icon = "pi pi-users",
+            Items = new List<OpMenuItem>
+            {
+                new()
+                {
+                    Label = "Novo",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Membro" },
+                        new() { Label = "Grupo" }
+                    }
+                },
+                new() { Label = "Buscar" }
+            }
+        },
+        new OpMenuItem
+        {
+            Label = "Tarefas",
+            Icon = "pi pi-server",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Adicionar" },
+                new() { Label = "Pendentes" },
+                new() { Label = "Atrasadas" }
+            }
+        },
+        new OpMenuItem
+        {
+            Label = "Calendário",
+            Icon = "pi pi-calendar",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Hoje" },
+                new() { Label = "Semana" }
+            }
+        }
+    };
+
+    private readonly List<OpMenuItem> _templateItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Correio",
+            Icon = "pi pi-envelope",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Compor", Icon = "pi pi-file-edit", Shortcut = "⌘+N" },
+                new() { Label = "Entrada", Icon = "pi pi-inbox", Badge = "5" },
+                new() { Label = "Enviados", Icon = "pi pi-send", Shortcut = "⌘+S" },
+                new() { Label = "Lixeira", Icon = "pi pi-trash" }
+            }
+        },
+        new OpMenuItem
+        {
+            Label = "Configurações",
+            Icon = "pi pi-cog",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Perfil", Icon = "pi pi-id-card" }
+            }
+        }
+    };
+
+    private List<OpMenuItem> _commandItems = new();
+    private List<OpMenuItem> _routerItems = new();
+    private bool _allExpanded;
+
+    protected override void OnInitialized()
+    {
+        _commandItems = new List<OpMenuItem>
+        {
+            new OpMenuItem
+            {
+                Label = "Arquivo",
+                Icon = "pi pi-file",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Novo", Icon = "pi pi-plus", Command = () => Notify("success", "Sucesso", "Arquivo criado") },
+                    new() { Label = "Imprimir", Icon = "pi pi-print", Command = () => Notify("error", "Erro", "Nenhuma impressora conectada") }
+                }
+            },
+            new OpMenuItem { Label = "Buscar", Icon = "pi pi-search", Command = () => Notify("warn", "Busca", "Nenhum resultado encontrado") }
+        };
+
+        _routerItems = new List<OpMenuItem>
+        {
+            new OpMenuItem
+            {
+                Label = "Router",
+                Icon = "pi pi-palette",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Temas", Url = "/theming" },
+                    new() { Label = "UI Kit", Url = "/uikit" }
+                }
+            },
+            new OpMenuItem { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") },
+            new OpMenuItem
+            {
+                Label = "Externo",
+                Icon = "pi pi-home",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Blazor", Url = "https://dotnet.microsoft.com/", Target = "_blank" },
+                    new() { Label = "PrimeNG", Url = "https://primeng.org", Target = "_blank" }
+                }
+            }
+        };
+    }
+
+    private void ToggleAll()
+    {
+        _allExpanded = !_allExpanded;
+        SetExpanded(_controlledItems, _allExpanded);
+
+        // Nova referência força o PanelMenu a reprocessar os parâmetros e refletir o modelo.
+        _controlledItems = new List<OpMenuItem>(_controlledItems);
+    }
+
+    private static void SetExpanded(IEnumerable<OpMenuItem> items, bool expanded)
+    {
+        foreach (var item in items)
+        {
+            if (item.Items is { Count: > 0 })
+            {
+                item.Expanded = expanded;
+                SetExpanded(item.Items, expanded);
+            }
+        }
+    }
+
+    private void Notify(string severity, string summary, string detail) =>
+        MessageService.Add(new OpToastMessage { Key = "panelmenu-command", Severity = severity, Summary = summary, Detail = detail });
 
     private const string ImportCode = """
         @using OpBlazorUI.Components.Menu
@@ -139,8 +412,97 @@
         }
         """;
 
-    private const string SingleCode = """
-        <OpPanelMenu Model="_items" Multiple="false" />
+    private const string MultipleCode = """
+        <OpPanelMenu Model="_items" Multiple="true" />
+        """;
+
+    private const string ControlledCode = """
+        <OpButton Label="Alternar tudo" Text="true" OnClick="ToggleAll" />
+        <OpPanelMenu Model="_items" />
+
+        @code {
+            private bool _allExpanded;
+
+            private void ToggleAll()
+            {
+                _allExpanded = !_allExpanded;
+                SetExpanded(_items, _allExpanded);
+                _items = new List<OpMenuItem>(_items);
+            }
+
+            private static void SetExpanded(IEnumerable<OpMenuItem> items, bool expanded)
+            {
+                foreach (var item in items)
+                {
+                    if (item.Items is { Count: > 0 })
+                    {
+                        item.Expanded = expanded;
+                        SetExpanded(item.Items, expanded);
+                    }
+                }
+            }
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpPanelMenu Model="_items">
+            <ItemTemplate Context="ctx">
+                <span class="@($"p-panelmenu-item-icon {ctx.Item.Icon}")"></span>
+                <span class="p-panelmenu-item-label">@ctx.Item.Label</span>
+                @if (!string.IsNullOrEmpty(ctx.Item.Badge))
+                {
+                    <span class="p-badge" style="margin-left:auto">@ctx.Item.Badge</span>
+                }
+            </ItemTemplate>
+        </OpPanelMenu>
+        """;
+
+    private const string CommandCode = """
+        <OpToast Key="panelmenu-command" />
+        <OpPanelMenu Model="_items" />
+
+        @code {
+            [Inject] private OpMessageService MessageService { get; set; } = default!;
+
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Arquivo",
+                    Icon = "pi pi-file",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Novo", Icon = "pi pi-plus", Command = () => Notify("success", "Sucesso", "Arquivo criado") }
+                    }
+                }
+            };
+
+            private void Notify(string severity, string summary, string detail) =>
+                MessageService.Add(new OpToastMessage { Key = "panelmenu-command", Severity = severity, Summary = summary, Detail = detail });
+        }
+        """;
+
+    private const string RouterCode = """
+        <OpPanelMenu Model="_items" />
+
+        @code {
+            [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Router",
+                    Icon = "pi pi-palette",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Temas", Url = "/theming" },
+                        new() { Label = "UI Kit", Url = "/uikit" }
+                    }
+                },
+                new OpMenuItem { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") }
+            };
+        }
         """;
 
     private const string AccessibilityCode = """

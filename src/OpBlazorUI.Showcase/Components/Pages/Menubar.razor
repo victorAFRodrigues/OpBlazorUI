@@ -2,6 +2,7 @@
 @namespace OpBlazorUI.Showcase.Components.Pages
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Components.Toast
 @using OpBlazorUI.Models
 
 <PageTitle>Menubar - OpBlazorUI</PageTitle>
@@ -30,6 +31,68 @@
             <Code><CodeBlock Code="@IconsCode"/></Code>
         </DocSection>
 
+        <DocSection Label="Template" Id="template">
+            <Description>
+                <code>StartTemplate</code>, <code>ItemTemplate</code> e <code>EndTemplate</code> customizam o conteúdo
+                do menubar. No porte, o <code>ItemTemplate</code> substitui o <em>conteúdo</em> do link do item — o
+                clique e a navegação por teclado seguem a cargo do menu — enquanto no upstream o template
+                <code>#item</code> engloba o próprio elemento de link.
+            </Description>
+            <ChildContent>
+                <OpMenubar Model="_templateItems">
+                    <StartTemplate>
+                        <span class="pi pi-box" style="font-size:1.5rem;color:var(--p-primary-color)"></span>
+                    </StartTemplate>
+                    <ItemTemplate Context="ctx">
+                        @if (!string.IsNullOrEmpty(ctx.Item.Icon))
+                        {
+                            <span class="@($"p-menubar-item-icon {ctx.Item.Icon}")" aria-hidden="true"></span>
+                        }
+                        <span class="p-menubar-item-label">@ctx.Item.Label</span>
+                        @if (!string.IsNullOrEmpty(ctx.Item.Badge))
+                        {
+                            <span class="p-badge" style="margin-left:auto">@ctx.Item.Badge</span>
+                        }
+                        @if (!string.IsNullOrEmpty(ctx.Item.Shortcut))
+                        {
+                            <span style="margin-left:auto;border:1px solid var(--p-content-border-color);border-radius:var(--p-border-radius-sm);background:var(--p-content-hover-background);color:var(--p-text-muted-color);font-size:.75rem;padding:.15rem .35rem">@ctx.Item.Shortcut</span>
+                        }
+                    </ItemTemplate>
+                    <EndTemplate>
+                        <div class="flex items-center gap-2">
+                            <input class="p-inputtext p-component" placeholder="Buscar" style="width:9rem" />
+                            <span class="pi pi-user" style="font-size:1.25rem"></span>
+                        </div>
+                    </EndTemplate>
+                </OpMenubar>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Command" Id="command">
+            <Description>
+                A propriedade <code>Command</code> define o callback executado quando o item é acionado por clique ou
+                evento de teclado.
+            </Description>
+            <ChildContent>
+                <OpToast Key="menubar-command"/>
+                <OpMenubar Model="_commandItems"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@CommandCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Router" Id="router">
+            <Description>
+                A navegação usa <code>OpMenuItem.Url</code>, que vira um <code>href</code> nativo — equivalente ao
+                <code>routerLink</code> do upstream. Para navegação programática, use <code>Command</code> com o
+                <code>NavigationManager</code>.
+            </Description>
+            <ChildContent>
+                <OpMenubar Model="_routerItems"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@RouterCode"/></Code>
+        </DocSection>
+
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
@@ -49,6 +112,7 @@
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens do menu (com <code>Items</code> para submenus)." },
                               new[] { "StartTemplate", "RenderFragment?", "null", "Conteúdo à esquerda." },
                               new[] { "EndTemplate", "RenderFragment?", "null", "Conteúdo à direita." },
+                              new[] { "ItemTemplate", "RenderFragment&lt;OpMenuItemContext&gt;?", "null", "Conteúdo do item (equivale ao <code>#item</code> do upstream)." },
                               new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um item-folha." }
                           })"/>
             </ChildContent>
@@ -72,8 +136,9 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li>O submenu abre por clique (não por hover como no upstream); clique fora ou Escape fecham.</li>
-                        <li>O modo responsivo/mobile (<code>p-menubar-button</code>) não foi implementado.</li>
+                        <li>O submenu abre por clique (não por hover) e inverte para a esquerda perto da borda; clique fora ou Escape fecham.</li>
+                        <li>O menu móvel (<code>p-menubar-button</code>) ainda não é renderizado.</li>
+                        <li>O <code>ItemTemplate</code> substitui o conteúdo do link, não o link inteiro (ver a seção Template).</li>
                     </ul>
                 </div>
             </ChildContent>
@@ -82,6 +147,9 @@
 </DocComponent>
 
 @code {
+    [Inject] private OpMessageService MessageService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
     private readonly List<OpMenuItem> _items = new()
     {
         new OpMenuItem
@@ -123,6 +191,70 @@
         new OpMenuItem { Label = "Configurações", Icon = "pi pi-cog" }
     };
 
+    private readonly List<OpMenuItem> _templateItems = new()
+    {
+        new OpMenuItem
+        {
+            Label = "Arquivo",
+            Items = new List<OpMenuItem>
+            {
+                new() { Label = "Novo", Icon = "pi pi-plus", Shortcut = "⌘+N" },
+                new() { Label = "Pesquisar", Icon = "pi pi-search", Shortcut = "⌘+K" },
+                new() { Label = "Atualizações", Icon = "pi pi-cloud", Badge = "3" }
+            }
+        },
+        new OpMenuItem { Label = "Ajuda" }
+    };
+
+    private List<OpMenuItem> _commandItems = new();
+    private List<OpMenuItem> _routerItems = new();
+
+    protected override void OnInitialized()
+    {
+        _commandItems = new List<OpMenuItem>
+        {
+            new OpMenuItem
+            {
+                Label = "Arquivo",
+                Icon = "pi pi-file",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Novo", Icon = "pi pi-plus", Command = () => Notify("success", "Sucesso", "Arquivo criado") },
+                    new() { Label = "Imprimir", Icon = "pi pi-print", Command = () => Notify("error", "Erro", "Nenhuma impressora conectada") }
+                }
+            },
+            new OpMenuItem { Label = "Buscar", Icon = "pi pi-search", Command = () => Notify("warn", "Busca", "Nenhum resultado encontrado") }
+        };
+
+        _routerItems = new List<OpMenuItem>
+        {
+            new OpMenuItem
+            {
+                Label = "Router",
+                Icon = "pi pi-palette",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Instalação", Url = "/installation" },
+                    new() { Label = "Configuração", Url = "/configuration" }
+                }
+            },
+            new OpMenuItem { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") },
+            new OpMenuItem
+            {
+                Label = "Externo",
+                Icon = "pi pi-home",
+                Items = new List<OpMenuItem>
+                {
+                    new() { Label = "Blazor", Url = "https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor", Target = "_blank" },
+                    new() { Label = "PrimeNG", Url = "https://primeng.org", Target = "_blank" }
+                }
+            }
+        };
+    }
+
+    private void Notify(string severity, string summary, string detail) =>
+        MessageService.Add(new OpToastMessage { Key = "menubar-command", Severity = severity, Summary = summary, Detail = detail });
+
     private const string ImportCode = """
         @using OpBlazorUI.Components.Menu
         @using OpBlazorUI.Models
@@ -163,6 +295,98 @@
                     Items = new List<OpMenuItem> { new() { Label = "Perfil", Icon = "pi pi-id-card" } }
                 },
                 new OpMenuItem { Label = "Buscar", Icon = "pi pi-search" }
+            };
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpMenubar Model="_items">
+            <StartTemplate>
+                <span class="pi pi-box"></span>
+            </StartTemplate>
+            <ItemTemplate Context="ctx">
+                <span class="@($"p-menubar-item-icon {ctx.Item.Icon}")"></span>
+                <span class="p-menubar-item-label">@ctx.Item.Label</span>
+                @if (!string.IsNullOrEmpty(ctx.Item.Badge))
+                {
+                    <span class="p-badge" style="margin-left:auto">@ctx.Item.Badge</span>
+                }
+            </ItemTemplate>
+            <EndTemplate>
+                <input class="p-inputtext p-component" placeholder="Buscar" />
+            </EndTemplate>
+        </OpMenubar>
+
+        @code {
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Arquivo",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Novo", Icon = "pi pi-plus", Shortcut = "⌘+N" },
+                        new() { Label = "Atualizações", Icon = "pi pi-cloud", Badge = "3" }
+                    }
+                }
+            };
+        }
+        """;
+
+    private const string CommandCode = """
+        <OpToast Key="menubar-command" />
+        <OpMenubar Model="_items" />
+
+        @code {
+            [Inject] private OpMessageService MessageService { get; set; } = default!;
+
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Arquivo",
+                    Icon = "pi pi-file",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Novo", Icon = "pi pi-plus", Command = () => Notify("success", "Sucesso", "Arquivo criado") },
+                        new() { Label = "Imprimir", Icon = "pi pi-print", Command = () => Notify("error", "Erro", "Nenhuma impressora conectada") }
+                    }
+                }
+            };
+
+            private void Notify(string severity, string summary, string detail) =>
+                MessageService.Add(new OpToastMessage { Key = "menubar-command", Severity = severity, Summary = summary, Detail = detail });
+        }
+        """;
+
+    private const string RouterCode = """
+        <OpMenubar Model="_items" />
+
+        @code {
+            [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+            private List<OpMenuItem> _items = new()
+            {
+                new OpMenuItem
+                {
+                    Label = "Router",
+                    Icon = "pi pi-palette",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Instalação", Url = "/installation" },
+                        new() { Label = "Configuração", Url = "/configuration" }
+                    }
+                },
+                new OpMenuItem { Label = "Programático", Icon = "pi pi-link", Command = () => Navigation.NavigateTo("/installation") },
+                new OpMenuItem
+                {
+                    Label = "Externo",
+                    Icon = "pi pi-home",
+                    Items = new List<OpMenuItem>
+                    {
+                        new() { Label = "Blazor", Url = "https://dotnet.microsoft.com/", Target = "_blank" }
+                    }
+                }
             };
         }
         """;
