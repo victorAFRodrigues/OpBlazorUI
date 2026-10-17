@@ -19,12 +19,80 @@
 
     @* Estilos inline do upstream (inlineStyles): tabela larga rola no contêiner em vez de vazar. *@
     <div class="p-datatable-table-container" style="@TableContainerStyle">
-        <table class="p-datatable-table">
+        <table class="@BuildClass("p-datatable-table", HasScrollableLayout ? "p-datatable-scrollable-table" : null)">
+            @{
+                // Linha padrão reutilizada pelo corpo, pelas linhas congeladas e pelos grupos.
+                RenderFragment<TItem> renderRow = item => @<tr class="@TrClass(item)"
+                    aria-selected="@(Selection ? IsSelected(item).ToString().ToLowerInvariant() : null)"
+                    @onclick="e => OnRowClicked(item, e)"
+                    @oncontextmenu="e => OnRowContextMenu.InvokeAsync((item, e))"
+                    @oncontextmenu:preventDefault="@OnRowContextMenu.HasDelegate"
+                    draggable="@(ReorderableRows ? "true" : null)"
+                    @ondragstart="() => _dragRowIndex = PageIndex(item)"
+                    @ondragend="() => _dragRowIndex = -1"
+                    @ondragover:preventDefault="@ReorderableRows"
+                    @ondrop="() => OnDropRowAsync(item)">
+                    @foreach (var col in Columns)
+                    {
+                        @if (IsRowSpanGroup && IsGroupColumn(col) && !IsFirstOfGroup(item))
+                        {
+                            @* célula coberta pelo rowspan do grupo *@
+                        }
+                        else
+                        {
+                            <td class="@TdClass(col)" style="@TdStyle(col)"
+                                @onclick:stopPropagation="@IsSelectionColumn(col)"
+                                rowspan="@(IsRowSpanGroup && IsGroupColumn(col) ? GroupRowSpanOf(item) : (int?)null)">
+                                @if (IsMultipleSelectionColumn(col))
+                                {
+                                    <OpCheckbox IgnoreEditContext="true" Value="@IsSelected(item)"
+                                                ValueChanged="(v) => ToggleRowSelectionAsync(item, true)"
+                                                TabIndex="-1"/>
+                                }
+                                else if (IsSingleSelectionColumn(col))
+                                {
+                                    <OpRadioButton Name="@_selectionGroupName" Value="@item" ModelValue="@SelectedSingle"
+                                                   ModelValueChanged="(TItem? v) => SelectRowAsync(item)" TabIndex="-1"/>
+                                }
+                                else if (col.RowReorder)
+                                {
+                                    <span class="p-datatable-reorderable-row-handle pi pi-bars"></span>
+                                }
+                                else if (col is OpDataTableColumn<TItem> bodyCol && bodyCol.BodyTemplate is not null)
+                                {
+                                    @bodyCol.BodyTemplate(item)
+                                }
+                                else
+                                {
+                                    @GetFieldValue(item, col.Field)
+                                }
+                            </td>
+                        }
+                    }
+                </tr>;
+            }
             <thead class="p-datatable-thead" style="@TheadStyle">
-            <tr>
-                @foreach (var col in Columns)
+            @if (HeaderGroups is { Count: > 0 })
+            {
+                @foreach (var groupRow in HeaderGroups)
                 {
-                    @if (IsSelectionColumn(col))
+                    <tr>
+                        @foreach (var group in groupRow)
+                        {
+                            <th class="p-datatable-header-cell @group.StyleClass"
+                                colspan="@(group.ColSpan > 1 ? group.ColSpan : (int?)null)"
+                                rowspan="@(group.RowSpan > 1 ? group.RowSpan : (int?)null)">@group.Header</th>
+                        }
+                    </tr>
+                }
+            }
+            <tr>
+                @for (var ci = 0; ci < Columns.Count; ci++)
+                {
+                    var col = Columns[ci];
+                    // Cópia por iteração: o lambda do arraste capturaria a variável do for (valor final).
+                    var index = ci;
+                    if (IsSelectionColumn(col))
                     {
                         <th class="p-datatable-header-cell p-datatable-selection-column" style="width:@col.Width">
                             @if (IsMultipleSelectionColumn(col))
@@ -34,11 +102,20 @@
                             }
                         </th>
                     }
+                    else if (col.HideHeader)
+                    {
+                        @* coberto por uma célula com rowspan no cabeçalho agrupado *@
+                    }
                     else
                     {
-                        <th class="@ThClass(col)" style="width:@col.Width"
+                        <th class="@ThClass(col)" style="@ThStyle(col)"
                             tabindex="@(col.Sortable && Sortable ? 0 : -1)"
                             aria-sort="@SortAria(col)"
+                            draggable="@(ReorderableColumns ? "true" : null)"
+                            @ondragstart="() => _dragColumnIndex = index"
+                            @ondragend="() => _dragColumnIndex = -1"
+                            @ondragover:preventDefault="@ReorderableColumns"
+                            @ondrop="() => OnDropColumnAsync(index)"
                             @onclick="e => ToggleSortAsync(col, e.CtrlKey || e.MetaKey)"
                             @onkeydown="e => OnHeaderKeydown(e, col)">
                             <div class="p-datatable-column-header-content">
@@ -82,6 +159,15 @@
                 </tr>
             }
             </thead>
+            @if (FrozenItems is { Count: > 0 })
+            {
+                <tbody class="p-datatable-frozen-tbody">
+                    @foreach (var frozenItem in FrozenItems)
+                    {
+                        @renderRow(frozenItem)
+                    }
+                </tbody>
+            }
             <tbody class="p-datatable-tbody">
             @if (ShowSkeleton)
             {
@@ -110,40 +196,57 @@
                     <td class="p-datatable-empty-message" colspan="@Columns.Count">@(EmptyMessage ?? Tr.EmptyMessage)</td>
                 </tr>
             }
+            else if (IsSubheaderGroup && _groupedCache is not null)
+            {
+                @foreach (var group in _groupedCache)
+                {
+                    <tr class="p-datatable-row-group-header">
+                        <td colspan="@Columns.Count">
+                            @if (ExpandableRowGroups && GroupHeaderTemplate is null)
+                            {
+                                <button type="button" class="p-datatable-row-toggle-button"
+                                        @onclick="() => ToggleGroupExpansionAsync(group.Key)">
+                                    <i class="@($"pi pi-chevron-{(IsGroupExpanded(group.Key) ? "down" : "right")} p-datatable-row-toggle-icon")"></i>
+                                </button>
+                            }
+                            @if (GroupHeaderTemplate is not null)
+                            {
+                                @GroupHeaderTemplate(GroupContext(group))
+                            }
+                            else
+                            {
+                                @group.Key
+                            }
+                        </td>
+                    </tr>
+                    @if (!ExpandableRowGroups || IsGroupExpanded(group.Key))
+                    {
+                        @foreach (var groupItem in group.Items)
+                        {
+                            @renderRow(groupItem)
+                            @if (IsRowExpanded(groupItem) && RowExpansionTemplate is not null)
+                            {
+                                @RowExpansionTemplate(groupItem)
+                            }
+                        }
+                        @if (GroupFooterTemplate is not null)
+                        {
+                            <tr class="p-rowgroup-footer">
+                                <td colspan="@Columns.Count">@GroupFooterTemplate(GroupContext(group))</td>
+                            </tr>
+                        }
+                    }
+                }
+            }
             else
             {
                 @foreach (var item in PageItems)
                 {
-                    <tr class="@TrClass(item)"
-                        aria-selected="@(Selection ? IsSelected(item).ToString().ToLowerInvariant() : null)"
-                        @onclick="e => OnRowClicked(item, e)"
-                        @oncontextmenu="e => OnRowContextMenu.InvokeAsync((item, e))"
-                        @oncontextmenu:preventDefault="@OnRowContextMenu.HasDelegate">
-                        @foreach (var col in Columns)
-                        {
-                            <td class="@col.BodyStyleClass" @onclick:stopPropagation="@IsSelectionColumn(col)">
-                                @if (IsMultipleSelectionColumn(col))
-                                {
-                                    <OpCheckbox IgnoreEditContext="true" Value="@IsSelected(item)"
-                                                ValueChanged="(v) => ToggleRowSelectionAsync(item, true)"
-                                                TabIndex="-1"/>
-                                }
-                                else if (IsSingleSelectionColumn(col))
-                                {
-                                    <OpRadioButton Name="@_selectionGroupName" Value="@item" ModelValue="@SelectedSingle"
-                                                   ModelValueChanged="(TItem? v) => SelectRowAsync(item)" TabIndex="-1"/>
-                                }
-                                else if (col is OpDataTableColumn<TItem> bodyCol && bodyCol.BodyTemplate is not null)
-                                {
-                                    @bodyCol.BodyTemplate(item)
-                                }
-                                else
-                                {
-                                    @GetFieldValue(item, col.Field)
-                                }
-                            </td>
-                        }
-                    </tr>
+                    @renderRow(item)
+                    @if (IsRowExpanded(item) && RowExpansionTemplate is not null)
+                    {
+                        @RowExpansionTemplate(item)
+                    }
                 }
             }
             </tbody>

@@ -24,8 +24,18 @@ public class OpDataTableColumn
     /// </summary>
     public string? SelectionMode { get; set; }
 
-    /// <summary>Largura aplicada como <c>style="width:..."</c> no <c>th</c>.</summary>
+    /// <summary>Largura aplicada como <c>style="width:..."</c> no <c>th</c>. Use valores em <c>px</c>
+    /// quando a coluna for congelada (o deslocamento do sticky é calculado a partir deles).</summary>
     public string? Width { get; set; }
+
+    /// <summary>Congela a coluna na borda do contêiner: <c>left</c> ou <c>right</c>.</summary>
+    public string? Frozen { get; set; }
+
+    /// <summary>Omite o <c>th</c> desta coluna na linha de cabeçalho (para cabeçalhos agrupados).</summary>
+    public bool HideHeader { get; set; }
+
+    /// <summary>Renderiza o puxador de reordenação de linhas nesta coluna (com <c>ReorderableRows</c>).</summary>
+    public bool RowReorder { get; set; }
 
     /// <summary>Classes extras no contêiner do cabeçalho e nas células (<c>th</c>/<c>td</c>).</summary>
     public string? StyleClass { get; set; }

@@ -38,6 +38,28 @@ public sealed class OpDataTableSortEvent
     public IReadOnlyList<OpDataTableSortMeta> MultiSortMeta { get; init; } = Array.Empty<OpDataTableSortMeta>();
 }
 
+/// <summary>Célula de um cabeçalho agrupado (linhas extras acima da linha de colunas).</summary>
+public sealed class OpDataTableHeaderGroup
+{
+    public string Header { get; set; } = "";
+    public int ColSpan { get; set; } = 1;
+    public int RowSpan { get; set; } = 1;
+    public string? StyleClass { get; set; }
+}
+
+/// <summary>Dados de um grupo de linhas entregues aos templates de grupo.</summary>
+public sealed class OpDataTableGroupContext<TItem>
+{
+    /// <summary>Valor do campo <see cref="OpDataTable{TItem}.GroupRowsBy"/> que define o grupo.</summary>
+    public object? Key { get; init; }
+
+    /// <summary>Linhas do grupo (na página atual, já filtradas/ordenadas).</summary>
+    public IReadOnlyList<TItem> Items { get; init; } = Array.Empty<TItem>();
+
+    /// <summary>No modo de grupos expansíveis, indica se o grupo está aberto.</summary>
+    public bool Expanded { get; init; }
+}
+
 public partial class OpDataTable<TItem> : ComponentBase
 {
     private readonly List<OpDataTableSortMeta> _sortMeta = new();
@@ -109,6 +131,50 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     [Parameter] public IReadOnlyList<TItem>? SelectedItems { get; set; }
     [Parameter] public EventCallback<IReadOnlyList<TItem>?> SelectedItemsChanged { get; set; }
+
+    /// <summary>Linhas expandidas (a chave é o <see cref="DataKey"/>, quando definido).</summary>
+    [Parameter] public IReadOnlyList<TItem>? ExpandedItems { get; set; }
+    [Parameter] public EventCallback<IReadOnlyList<TItem>?> ExpandedItemsChanged { get; set; }
+
+    /// <summary>Conteúdo da linha expandida (o template monta o próprio <c>&lt;tr&gt;</c>).</summary>
+    [Parameter] public RenderFragment<TItem>? RowExpansionTemplate { get; set; }
+
+    /// <summary>Agrupamento de linhas: <c>subheader</c> (faixa por grupo) ou <c>rowspan</c> (célula do grupo estendida).</summary>
+    [Parameter] public string? RowGroupMode { get; set; }
+
+    /// <summary>Campo que define os grupos (linhas iguais e consecutivas).</summary>
+    [Parameter] public string? GroupRowsBy { get; set; }
+
+    /// <summary>No modo <c>subheader</c>, permite abrir/fechar cada grupo (estado em <see cref="ExpandedGroups"/>).</summary>
+    [Parameter] public bool ExpandableRowGroups { get; set; }
+
+    /// <summary>Estado dos grupos expansíveis (valores de <see cref="GroupRowsBy"/>).</summary>
+    [Parameter] public IReadOnlyList<object?>? ExpandedGroups { get; set; }
+    [Parameter] public EventCallback<IReadOnlyList<object?>?> ExpandedGroupsChanged { get; set; }
+
+    /// <summary>Faixa do grupo (contexto com chave e linhas). Sem template, mostra a chave.</summary>
+    [Parameter] public RenderFragment<OpDataTableGroupContext<TItem>>? GroupHeaderTemplate { get; set; }
+
+    /// <summary>Rodapé do grupo, depois das linhas.</summary>
+    [Parameter] public RenderFragment<OpDataTableGroupContext<TItem>>? GroupFooterTemplate { get; set; }
+
+    /// <summary>Linhas fixas no topo da área de rolagem (congeladas).</summary>
+    [Parameter] public IReadOnlyList<TItem>? FrozenItems { get; set; }
+
+    /// <summary>Linhas de cabeçalho agrupadas (cada item é uma linha de células com colspan/rowspan).</summary>
+    [Parameter] public IReadOnlyList<IReadOnlyList<OpDataTableHeaderGroup>>? HeaderGroups { get; set; }
+
+    /// <summary>Permite reordenar colunas por arraste (o consumidor aplica via <see cref="OnColumnReorder"/>).</summary>
+    [Parameter] public bool ReorderableColumns { get; set; }
+
+    /// <summary>Índices (na lista <see cref="Columns"/>) de origem e destino da coluna solta.</summary>
+    [Parameter] public EventCallback<(int From, int To)> OnColumnReorder { get; set; }
+
+    /// <summary>Permite reordenar linhas por arraste (o consumidor aplica via <see cref="OnRowReorder"/>).</summary>
+    [Parameter] public bool ReorderableRows { get; set; }
+
+    /// <summary>Índices (na página atual) de origem e destino da linha solta.</summary>
+    [Parameter] public EventCallback<(int From, int To)> OnRowReorder { get; set; }
 
     [Parameter] public bool Paginator { get; set; }
     [Parameter] public string PaginatorPosition { get; set; } = "bottom";
@@ -198,6 +264,146 @@ public partial class OpDataTable<TItem> : ComponentBase
         return 0;
     }
 
+    private bool IsSubheaderGroup => string.Equals(RowGroupMode, "subheader", StringComparison.OrdinalIgnoreCase)
+        && !string.IsNullOrEmpty(GroupRowsBy);
+
+    private bool IsRowSpanGroup => string.Equals(RowGroupMode, "rowspan", StringComparison.OrdinalIgnoreCase)
+        && !string.IsNullOrEmpty(GroupRowsBy);
+
+    private bool IsRowGrouped => IsSubheaderGroup || IsRowSpanGroup;
+
+    /// <summary>Grupo de linhas da página atual (chave + itens, na ordem).</summary>
+    private sealed record RowGroup(object? Key, List<TItem> Items);
+
+    private List<RowGroup>? _groupedCache;
+
+    private bool IsGroupColumn(OpDataTableColumn col)
+        => !string.IsNullOrEmpty(GroupRowsBy) && string.Equals(col.Field, GroupRowsBy, StringComparison.OrdinalIgnoreCase);
+
+    private List<RowGroup> BuildGroups(List<TItem> page)
+    {
+        var groups = new List<RowGroup>();
+        foreach (var item in page)
+        {
+            var key = GetFieldValue(item, GroupRowsBy!);
+            if (groups.Count == 0 || !Equals(groups[^1].Key, key))
+            {
+                groups.Add(new RowGroup(key, new List<TItem>()));
+            }
+
+            groups[^1].Items.Add(item);
+        }
+
+        return groups;
+    }
+
+    private OpDataTableGroupContext<TItem> GroupContext(RowGroup group)
+        => new() { Key = group.Key, Items = group.Items, Expanded = IsGroupExpanded(group.Key) };
+
+    private bool IsGroupExpanded(object? key) => ExpandedGroups?.Any(g => Equals(g, key)) == true;
+
+    private bool IsRowExpanded(TItem item) => ExpandedItems?.Any(x => IsSameRow(x, item)) == true;
+
+    private RowGroup? GroupOf(TItem item)
+    {
+        if (_groupedCache is null) return null;
+        foreach (var group in _groupedCache)
+        {
+            foreach (var candidate in group.Items)
+            {
+                if (IsSameRow(candidate, item)) return group;
+            }
+        }
+
+        return null;
+    }
+
+    private bool IsFirstOfGroup(TItem item)
+    {
+        var group = GroupOf(item);
+        return group is not null && group.Items.Count > 0 && IsSameRow(group.Items[0], item);
+    }
+
+    private int GroupRowSpanOf(TItem item) => GroupOf(item)?.Items.Count ?? 1;
+
+    private static bool IsFrozen(OpDataTableColumn col) => !string.IsNullOrEmpty(col.Frozen);
+
+    private static double ParsePx(string? width)
+        => width is not null && width.EndsWith("px", StringComparison.OrdinalIgnoreCase)
+           && double.TryParse(width[..^2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var value)
+            ? value
+            : 0;
+
+    /// <summary>Deslocamento sticky da coluna congelada (soma das larguras congeladas anteriores).</summary>
+    private string? FrozenStyle(OpDataTableColumn col)
+    {
+        if (string.IsNullOrEmpty(col.Frozen)) return null;
+
+        var right = string.Equals(col.Frozen, "right", StringComparison.OrdinalIgnoreCase);
+        var frozenColumns = Columns
+            .Where(c => string.Equals(c.Frozen, right ? "right" : "left", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        var offset = 0d;
+        var index = frozenColumns.IndexOf(col);
+        if (right)
+        {
+            for (var i = index + 1; i < frozenColumns.Count; i++) offset += ParsePx(frozenColumns[i].Width);
+        }
+        else
+        {
+            for (var i = 0; i < index; i++) offset += ParsePx(frozenColumns[i].Width);
+        }
+
+        var side = right ? "right" : "left";
+        return $"{side}: {offset.ToString(System.Globalization.CultureInfo.InvariantCulture)}px";
+    }
+
+    private string? ThStyle(OpDataTableColumn col)
+    {
+        var parts = new List<string>();
+        if (!string.IsNullOrEmpty(col.Width)) parts.Add($"width: {col.Width}");
+        var frozen = FrozenStyle(col);
+        if (frozen is not null) parts.Add(frozen);
+        return parts.Count > 0 ? string.Join("; ", parts) : null;
+    }
+
+    private string? TdClass(OpDataTableColumn col)
+        => BuildClass(col.BodyStyleClass, IsFrozen(col) ? "p-datatable-frozen-column" : null);
+
+    private string? TdStyle(OpDataTableColumn col) => FrozenStyle(col);
+
+    private int _dragColumnIndex = -1;
+    private int _dragRowIndex = -1;
+
+    private async Task OnDropColumnAsync(int index)
+    {
+        var from = _dragColumnIndex;
+        _dragColumnIndex = -1;
+        if (from < 0 || from == index) return;
+        await OnColumnReorder.InvokeAsync((from, index));
+    }
+
+    private async Task OnDropRowAsync(TItem item)
+    {
+        var from = _dragRowIndex;
+        _dragRowIndex = -1;
+        var to = PageIndex(item);
+        if (from < 0 || to < 0 || from == to) return;
+        await OnRowReorder.InvokeAsync((from, to));
+    }
+
+    private int PageIndex(TItem item)
+    {
+        var page = PageItems;
+        for (var i = 0; i < page.Count; i++)
+        {
+            if (IsSameRow(page[i], item)) return i;
+        }
+
+        return -1;
+    }
+
     private bool ShowSkeleton => Loading && string.Equals(LoadingMode, "skeleton", StringComparison.OrdinalIgnoreCase);
 
     private int SkeletonRowCount => SkeletonRows > 0 ? SkeletonRows : _rows;
@@ -240,6 +446,7 @@ public partial class OpDataTable<TItem> : ComponentBase
             _sortedCache = SourceItems.ToList();
             _pageCache = _sortedCache;
             _displayCount = TotalRecords;
+            _groupedCache = IsRowGrouped ? BuildGroups(_pageCache) : null;
             _computed = true;
             return;
         }
@@ -264,6 +471,7 @@ public partial class OpDataTable<TItem> : ComponentBase
             _pageCache = list;
         }
 
+        _groupedCache = IsRowGrouped ? BuildGroups(_pageCache) : null;
         _computed = true;
     }
 
@@ -429,12 +637,23 @@ public partial class OpDataTable<TItem> : ComponentBase
         ShowGridlines ? "p-datatable-gridlines" : null,
         Size == "small" ? "p-datatable-sm" : null,
         Size == "large" ? "p-datatable-lg" : null,
+        HasScrollableLayout ? "p-datatable-scrollable" : null,
         StyleClass);
+
+    // O tema só torna colunas/linhas congeladas e o cabeçalho de grupo "sticky" dentro do modo
+    // scrollable (upstream: [scrollable]="true"). Como aqui a área de rolagem é o contêiner,
+    // aplicamos as classes sempre que há scroll vertical ou algo congelado (D1: o modo scrollable
+    // do upstream, com o resize por arraste, segue não suportado).
+    private bool HasScrollableLayout => ScrollHeight is not null
+        || (FrozenItems?.Count ?? 0) > 0
+        || Columns.Any(IsFrozen);
 
     private string ThClass(OpDataTableColumn col) => BuildClass(
         "p-datatable-header-cell",
         col.Sortable && Sortable ? "p-datatable-sortable-column" : null,
         OrderOf(col.Field) != 0 ? "p-datatable-column-sorted" : null,
+        IsFrozen(col) ? "p-datatable-frozen-column" : null,
+        ReorderableColumns ? "p-datatable-reorderable-column" : null,
         col.StyleClass,
         col.HeaderStyleClass);
 
@@ -647,6 +866,26 @@ public partial class OpDataTable<TItem> : ComponentBase
         var list = Selected;
         list.RemoveAll(s => IsSameRow(s, item));
         await SelectedItemsChanged.InvokeAsync(list);
+    }
+
+    /// <summary>Abre/fecha a linha (estado em <see cref="ExpandedItems"/>).</summary>
+    public async Task ToggleRowExpansionAsync(TItem item)
+    {
+        var list = ExpandedItems?.ToList() ?? new List<TItem>();
+        var idx = list.FindIndex(x => IsSameRow(x, item));
+        if (idx >= 0) list.RemoveAt(idx);
+        else list.Add(item);
+        await ExpandedItemsChanged.InvokeAsync(list);
+    }
+
+    /// <summary>Abre/fecha o grupo (estado em <see cref="ExpandedGroups"/>).</summary>
+    public async Task ToggleGroupExpansionAsync(object? key)
+    {
+        var list = ExpandedGroups?.ToList() ?? new List<object?>();
+        var idx = list.FindIndex(g => Equals(g, key));
+        if (idx >= 0) list.RemoveAt(idx);
+        else list.Add(key);
+        await ExpandedGroupsChanged.InvokeAsync(list);
     }
 
     private async Task ToggleAllSelection()

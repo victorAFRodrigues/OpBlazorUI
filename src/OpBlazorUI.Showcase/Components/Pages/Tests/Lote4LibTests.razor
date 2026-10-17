@@ -1,0 +1,186 @@
+@page "/_tests/lote4-lib"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Components.DataTable
+@using OpBlazorUI.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Lote4LibTests.cs). *@
+
+<PageTitle>Testes: lote 4 (lib)</PageTitle>
+
+<h1 id="t-title">Testes: lote 4 (lib)</h1>
+
+<section id="t1">
+    <OpDataTable @ref="_expandTable" Items="_rows" Columns="_t1Cols" DataKey="Id"
+                 ExpandedItems="_expanded" ExpandedItemsChanged="(IReadOnlyList<Row>? v) => { _expanded = v ?? Array.Empty<Row>(); }">
+        <RowExpansionTemplate Context="row">
+            <tr class="t1-detail"><td colspan="2">Detalhe de @row.Name</td></tr>
+        </RowExpansionTemplate>
+    </OpDataTable>
+</section>
+
+<section id="t2">
+    <OpDataTable Items="_grouped" Columns="_simpleCols" RowGroupMode="subheader" GroupRowsBy="Category">
+        <GroupHeaderTemplate Context="group">
+            <span class="t2-group">@group.Key (@group.Items.Count)</span>
+        </GroupHeaderTemplate>
+        <GroupFooterTemplate Context="group">
+            <span class="t2-group-footer">Total: @group.Items.Count</span>
+        </GroupFooterTemplate>
+    </OpDataTable>
+</section>
+
+<section id="t3">
+    <OpDataTable Items="_grouped" Columns="_simpleCols" RowGroupMode="subheader" GroupRowsBy="Category"
+                 ExpandableRowGroups="true"
+                 ExpandedGroups="_expandedGroups" ExpandedGroupsChanged="(IReadOnlyList<object?>? v) => { _expandedGroups = v ?? Array.Empty<object?>(); }"/>
+</section>
+
+<section id="t4">
+    <OpDataTable @ref="_groupTable" Items="_grouped" Columns="_simpleCols" RowGroupMode="subheader" GroupRowsBy="Category"
+                 ExpandableRowGroups="true"
+                 ExpandedGroups="_customExpandedGroups" ExpandedGroupsChanged="(IReadOnlyList<object?>? v) => { _customExpandedGroups = v ?? Array.Empty<object?>(); }">
+        <GroupHeaderTemplate Context="group">
+            <button type="button" class="t4-toggle" @onclick="() => _groupTable!.ToggleGroupExpansionAsync(group.Key)">
+                <i class="@($"pi pi-chevron-{(group.Expanded ? "down" : "right")}")"></i>
+            </button>
+            <span class="t4-group">@group.Key</span>
+        </GroupHeaderTemplate>
+    </OpDataTable>
+</section>
+
+<section id="t5">
+    <OpDataTable Items="_grouped" Columns="_groupCols" RowGroupMode="rowspan" GroupRowsBy="Category"/>
+</section>
+
+<section id="t6">
+    <OpDataTable Items="_rows" Columns="_t6Cols" HeaderGroups="_headerGroups"/>
+</section>
+
+<section id="t7">
+    <OpDataTable Items="_many" Columns="_frozenCols" ScrollHeight="8rem"/>
+</section>
+
+<section id="t8">
+    <OpDataTable Items="_many" Columns="_simpleCols" FrozenItems="_frozenItems"/>
+</section>
+
+<section id="t9">
+    <OpDataTable Items="_rows" Columns="_reorderCols" ReorderableColumns="true" OnColumnReorder="ReorderColumns"/>
+    <span id="t9-log">@string.Join(",", _reorderCols.Select(c => c.Field))</span>
+</section>
+
+<section id="t10">
+    <OpDataTable Items="_rows" Columns="_rowReorderCols" ReorderableRows="true" OnRowReorder="ReorderRows"/>
+    <span id="t10-log">@string.Join(",", _rows.Select(r => r.Name))</span>
+</section>
+
+@code {
+    private sealed record Row(int Id, string Name, decimal Price, string Category);
+
+    private OpDataTable<Row>? _expandTable;
+    private OpDataTable<Row>? _groupTable;
+
+    private IReadOnlyList<Row> _expanded = Array.Empty<Row>();
+    private IReadOnlyList<object?> _expandedGroups = Array.Empty<object?>();
+    private IReadOnlyList<object?> _customExpandedGroups = Array.Empty<object?>();
+
+    private readonly List<Row> _rows = new()
+    {
+        new Row(1, "Alface", 2.5m, "Verdura"),
+        new Row(2, "Tomate", 4.9m, "Legume"),
+        new Row(3, "Banana", 3.2m, "Fruta")
+    };
+
+    private readonly List<Row> _grouped = new()
+    {
+        new Row(1, "Alface", 2.5m, "Verdura"),
+        new Row(2, "Rúcula", 3.1m, "Verdura"),
+        new Row(3, "Tomate", 4.9m, "Legume"),
+        new Row(4, "Banana", 3.2m, "Fruta")
+    };
+
+    private readonly List<Row> _many = Enumerable.Range(1, 25)
+        .Select(i => new Row(i, $"Item {i}", i, i % 2 == 0 ? "Par" : "Ímpar")).ToList();
+
+    private IReadOnlyList<Row> _frozenItems = Array.Empty<Row>();
+
+    private readonly List<OpDataTableColumn> _simpleCols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome" },
+        new OpDataTableColumn { Field = "Price", Header = "Preço" }
+    };
+
+    private readonly List<OpDataTableColumn> _groupCols = new()
+    {
+        new OpDataTableColumn { Field = "Category", Header = "Categoria" },
+        new OpDataTableColumn { Field = "Name", Header = "Nome" },
+        new OpDataTableColumn { Field = "Price", Header = "Preço" }
+    };
+
+    private readonly List<OpDataTableColumn<Row>> _t1Cols;
+
+    private readonly List<OpDataTableColumn<Row>> _t6Cols = new()
+    {
+        new OpDataTableColumn<Row> { Field = "Name", Header = "Nome", HideHeader = true },
+        new OpDataTableColumn<Row> { Field = "Price", Header = "Preço" }
+    };
+
+    private readonly IReadOnlyList<IReadOnlyList<OpDataTableHeaderGroup>> _headerGroups = new[]
+    {
+        new[]
+        {
+            new OpDataTableHeaderGroup { Header = "Produto", RowSpan = 2 },
+            new OpDataTableHeaderGroup { Header = "Valores", ColSpan = 1 }
+        }
+    };
+
+    private readonly List<OpDataTableColumn> _frozenCols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome", Frozen = "left", Width = "120px" },
+        new OpDataTableColumn { Field = "Price", Header = "Preço", Width = "30rem" },
+        new OpDataTableColumn { Field = "Category", Header = "Categoria", Frozen = "right", Width = "120px" }
+    };
+
+    private readonly List<OpDataTableColumn> _reorderCols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome", Sortable = false },
+        new OpDataTableColumn { Field = "Price", Header = "Preço", Sortable = false }
+    };
+
+    private readonly List<OpDataTableColumn> _rowReorderCols = new()
+    {
+        new OpDataTableColumn { Header = "", RowReorder = true, Sortable = false },
+        new OpDataTableColumn { Field = "Name", Header = "Nome", Sortable = false }
+    };
+
+    public Lote4LibTests()
+    {
+        _t1Cols = new List<OpDataTableColumn<Row>>
+        {
+            new() { Field = "Name", Header = "Nome", Sortable = false },
+            new() { Sortable = false, BodyTemplate = ToggleCell }
+        };
+    }
+
+    protected override void OnInitialized()
+    {
+        _frozenItems = _many.Take(2).ToList();
+    }
+
+    private RenderFragment ToggleCell(Row row) =>
+        @<button type="button" class="t1-toggle" @onclick="() => _expandTable!.ToggleRowExpansionAsync(row)">Expandir</button>;
+
+    private void ReorderColumns((int From, int To) info)
+    {
+        var col = _reorderCols[info.From];
+        _reorderCols.RemoveAt(info.From);
+        _reorderCols.Insert(info.To, col);
+    }
+
+    private void ReorderRows((int From, int To) info)
+    {
+        var row = _rows[info.From];
+        _rows.RemoveAt(info.From);
+        _rows.Insert(info.To, row);
+    }
+}
