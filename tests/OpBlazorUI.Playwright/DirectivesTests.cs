@@ -4,6 +4,10 @@ using static Microsoft.Playwright.Assertions;
 
 namespace OpBlazorUI.Playwright;
 
+/// <summary>
+/// Diretivas: AutoFocus, Ripple e StyleClass nas páginas de documentação
+/// <c>/autofocus</c>, <c>/ripple</c> e <c>/styleclass</c>.
+/// </summary>
 [Collection("showcase")]
 public class DirectivesTests
 {

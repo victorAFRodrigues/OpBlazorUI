@@ -82,7 +82,7 @@
             <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+        <DocSection Label="Formulários" Id="forms">
             <Description>
                 No Angular o Editor integra-se a formulários <i>Template Driven</i> via <code>ngModel</code>. No Blazor
                 o equivalente é o <code>EditForm</code> com <code>DataAnnotationsValidator</code>. Como o
@@ -90,12 +90,13 @@
                 <code>EditContext</code>: use <code>OnInvalidSubmit</code> para marcar <code>Invalid</code> e valide o
                 HTML com um atributo próprio — o Quill normaliza conteúdo vazio para <code>&lt;p&gt;&lt;br&gt;&lt;/p&gt;</code>,
                 o que faria um <code>[Required]</code> passar.
+                Isso substitui as abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
-                <EditForm Model="_formModel" OnValidSubmit="OnValidTemplate" OnInvalidSubmit="OnInvalidTemplate" class="flex flex-col gap-2">
+                <EditForm Model="_form" OnValidSubmit="OnValidTemplate" OnInvalidSubmit="OnInvalidTemplate" class="flex flex-col gap-2">
                     <DataAnnotationsValidator/>
-                    <OpEditor @bind-Value="_formModel.Content" Invalid="_templateInvalid" Style="height:280px"/>
-                    <ValidationMessage For="() => _formModel.Content"/>
+                    <OpEditor @bind-Value="_form.Content" Invalid="_templateInvalid" Style="height:280px"/>
+                    <ValidationMessage For="() => _form.Content"/>
                     <div>
                         <OpButton Label="Enviar" Type="submit" Severity="secondary"/>
                     </div>
@@ -107,34 +108,7 @@
                     </div>
                 }
             </ChildContent>
-            <Code><CodeBlock Code="@TemplateDrivenFormsCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Formulários (Reactive)" Id="reactive">
-            <Description>
-                No Angular os <i>Reactive Forms</i> validam o modelo programaticamente com <code>FormBuilder</code>. No
-                Blazor não há API equivalente para um componente que não é <code>InputBase</code>: mantenha o valor no
-                estado e calcule a validade no código, passando o resultado para <code>Invalid</code>. O exemplo valida
-                ao enviar e mostra a mensagem.
-            </Description>
-            <ChildContent>
-                <div class="flex flex-col gap-2">
-                    <OpEditor @bind-Value="_reactiveText" Invalid="_reactiveInvalid" Style="height:280px"/>
-                    @if (_reactiveInvalid)
-                    {
-                        <small style="color: var(--p-red-500)">Conteúdo é obrigatório.</small>
-                    }
-                    <div class="flex flex-wrap gap-2">
-                        <OpButton Label="Enviar" Severity="secondary" OnClick="OnSubmitReactive"/>
-                        <OpButton Label="Limpar" Variant="text" OnClick="OnClearReactive"/>
-                    </div>
-                    @if (_reactiveSuccess)
-                    {
-                        <OpMessage Severity="success" Size="small" Variant="simple">Conteúdo enviado com sucesso.</OpMessage>
-                    }
-                </div>
-            </ChildContent>
-            <Code><CodeBlock Code="@ReactiveFormsCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Eventos" Id="events">
@@ -289,13 +263,9 @@
     private string _customText = "<div>Hello World!</div><div>OpBlazorUI <b>Editor</b> Rocks</div>";
     private string _readonlyText = "Always bet on Prime!";
 
-    private FormModel _formModel = new();
+    private FormModel _form = new();
     private bool _templateInvalid;
     private bool _templateSuccess;
-
-    private string? _reactiveText;
-    private bool _reactiveInvalid;
-    private bool _reactiveSuccess;
 
     private string? _eventText;
     private int _changes;
@@ -329,26 +299,13 @@
     {
         _templateInvalid = false;
         _templateSuccess = true;
-        _formModel.Content = null;
+        _form.Content = null;
     }
 
     private void OnInvalidTemplate()
     {
         _templateInvalid = true;
         _templateSuccess = false;
-    }
-
-    private void OnSubmitReactive()
-    {
-        _reactiveInvalid = string.IsNullOrEmpty(StripHtml(_reactiveText));
-        _reactiveSuccess = !_reactiveInvalid;
-    }
-
-    private void OnClearReactive()
-    {
-        _reactiveText = null;
-        _reactiveInvalid = false;
-        _reactiveSuccess = false;
     }
 
     private void OnContentChange(string? html) => _changes++;
@@ -402,16 +359,16 @@
         }
         """;
 
-    private const string TemplateDrivenFormsCode = """
-        <EditForm Model="_formModel" OnValidSubmit="OnValidTemplate" OnInvalidSubmit="OnInvalidTemplate">
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="OnValidTemplate" OnInvalidSubmit="OnInvalidTemplate">
             <DataAnnotationsValidator />
-            <OpEditor @bind-Value="_formModel.Content" Invalid="_templateInvalid" Style="height:280px" />
-            <ValidationMessage For="() => _formModel.Content" />
+            <OpEditor @bind-Value="_form.Content" Invalid="_templateInvalid" Style="height:280px" />
+            <ValidationMessage For="() => _form.Content" />
             <OpButton Label="Enviar" Type="submit" Severity="secondary" />
         </EditForm>
 
         @code {
-            private FormModel _formModel = new();
+            private FormModel _form = new();
             private bool _templateInvalid;
             private bool _templateSuccess;
 
@@ -425,7 +382,7 @@
             {
                 _templateInvalid = false;
                 _templateSuccess = true;
-                _formModel.Content = null;
+                _form.Content = null;
             }
 
             private void OnInvalidTemplate()
@@ -433,42 +390,6 @@
                 _templateInvalid = true;
                 _templateSuccess = false;
             }
-        }
-        """;
-
-    private const string ReactiveFormsCode = """
-        <OpEditor @bind-Value="_reactiveText" Invalid="_reactiveInvalid" Style="height:280px" />
-
-        @if (_reactiveInvalid)
-        {
-            <small style="color: var(--p-red-500)">Conteúdo é obrigatório.</small>
-        }
-
-        <OpButton Label="Enviar" Severity="secondary" OnClick="OnSubmitReactive" />
-        <OpButton Label="Limpar" Variant="text" OnClick="OnClearReactive" />
-
-        @code {
-            private string? _reactiveText;
-            private bool _reactiveInvalid;
-            private bool _reactiveSuccess;
-
-            private void OnSubmitReactive()
-            {
-                _reactiveInvalid = string.IsNullOrEmpty(StripHtml(_reactiveText));
-                _reactiveSuccess = !_reactiveInvalid;
-            }
-
-            private void OnClearReactive()
-            {
-                _reactiveText = null;
-                _reactiveInvalid = false;
-                _reactiveSuccess = false;
-            }
-
-            private static string StripHtml(string? html) =>
-                string.IsNullOrEmpty(html)
-                    ? ""
-                    : System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(html, "<.*?>", "")).Trim();
         }
         """;
 

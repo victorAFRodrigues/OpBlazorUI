@@ -1,0 +1,301 @@
+@page "/_tests/tree-table-lib"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Components.InputText
+@using OpBlazorUI.Components.Paginator
+@using OpBlazorUI.Components.TreeTable
+@using OpBlazorUI.Models
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/TreeTableLibTests.cs). *@
+
+<PageTitle>Testes: TreeTable (lib)</PageTitle>
+
+<h1 id="t-title">Testes: TreeTable (lib)</h1>
+
+<section id="t1">
+    <OpTreeTable Nodes="_t1Tree" Columns="_sortCols" OnSort="(OpTreeTableSortEvent e) => _t1Log = SortLog(e)"/>
+    <span id="t1-log">@_t1Log</span>
+</section>
+
+<section id="t2">
+    <OpTreeTable Nodes="_t2Tree" Columns="_sortCols" SortMode="multiple"
+                 OnSort="(OpTreeTableSortEvent e) => _t2Log = SortLog(e)"/>
+    <span id="t2-log">@_t2Log</span>
+</section>
+
+<section id="t3">
+    <OpTreeTable Nodes="_t3Tree" Columns="_sortCols" RemovableSort="true"
+                 OnSort="(OpTreeTableSortEvent e) => _t3Log = SortLog(e)"/>
+    <span id="t3-log">@_t3Log</span>
+</section>
+
+<section id="t4a">
+    <OpTreeTable Nodes="_t4Tree" Columns="_filterCols" FilterMode="lenient"
+                 OnFilter="OnT4AFilter"/>
+    <span id="t4a-log">@_t4ALog</span>
+</section>
+
+<section id="t4b">
+    <OpTreeTable Nodes="_t4Tree" Columns="_filterCols" FilterMode="strict"
+                 OnFilter="OnT4BFilter"/>
+    <span id="t4b-log">@_t4BLog</span>
+</section>
+
+<section id="t5">
+    <OpInputText @bind-Value="_t5Input" Placeholder="Busca global" AriaLabel="Busca global"/>
+    <button type="button" id="t5-apply" @onclick="ApplyT5Filter">Filtrar</button>
+    <OpTreeTable @ref="_t5Table" Nodes="_t4Tree" Columns="_simpleCols"
+                 GlobalFilter="@_t5Filter" GlobalFilterChanged="v => _t5Filter = v"/>
+</section>
+
+<section id="t6">
+    <OpTreeTable Nodes="_t6Tree" Columns="_simpleCols" ShowGridlines="true" Size="small"/>
+</section>
+
+<section id="t7">
+    <OpTreeTable Nodes="_t7Tree" Columns="_simpleCols" Loading="true" LoadingMode="skeleton" SkeletonRows="3"/>
+</section>
+
+<section id="t8">
+    <OpTreeTable Nodes="_t8Nodes" Columns="_simpleCols" Lazy="true" Paginator="true" Rows="10"
+                 TotalRecords="100" OnLazyLoad="OnT8Lazy" OnNodeExpand="OnT8Expand"/>
+    <span id="t8-log">@_t8Log</span>
+</section>
+
+<section id="t9">
+    <OpTreeTable Nodes="_t9Tree" Columns="_simpleCols" OnRowContextMenu="OnT9Context"/>
+    <span id="t9-log">@_t9Log</span>
+</section>
+
+<section id="t10">
+    <OpTreeTable Nodes="_t10Tree" Columns="_t10Cols" ReorderableColumns="true" OnColumnReorder="ReorderT10Columns"/>
+    <span id="t10-log">@string.Join(",", _t10Cols.Select(c => c.Field))</span>
+</section>
+
+<section id="t11">
+    <OpTreeTable Nodes="_t11Tree" Columns="_t11Cols" HeaderGroups="_t11Groups"/>
+</section>
+
+<section id="t12">
+    <OpTreeTable Nodes="_t12Tree" Columns="_t12Cols" ScrollHeight="8rem"/>
+</section>
+
+<section id="t13">
+    <OpTreeTable Nodes="_t13Tree" Columns="_t13Cols" Paginator="true" Rows="2" RowClass="T13RowClass"
+                 OnPageChange="OnT13Page">
+        <PaginatorLeftTemplate>
+            <button type="button" class="t13-refresh" @onclick="() => _t13Log = refreshLog">Reiniciar</button>
+        </PaginatorLeftTemplate>
+        <PaginatorRightTemplate>
+            <button type="button" class="t13-download" @onclick="() => _t13Log = downloadLog">Baixar</button>
+        </PaginatorRightTemplate>
+    </OpTreeTable>
+    <span id="t13-log">@_t13Log</span>
+</section>
+
+<section id="t14">
+    <button type="button" id="t14-toggle" @onclick="ToggleT14">Alternar Pictures</button>
+    <OpTreeTable Nodes="_t14Tree" Columns="_simpleCols"/>
+</section>
+
+@code {
+    private sealed record NodeData(string Name, int Size, string Type);
+
+    private static OpTreeNode Make(string key, string name, int size, string type, params OpTreeNode[] children)
+        => new()
+        {
+            Key = key,
+            Label = name,
+            Data = new NodeData(name, size, type),
+            Children = children.Length > 0 ? children.ToList() : null
+        };
+
+    /// <summary>Nó sem filhos carregados, mas expansível (caso do lazy).</summary>
+    private static OpTreeNode MakeLazy(string key, string name, int size, string type)
+        => new()
+        {
+            Key = key,
+            Label = name,
+            Data = new NodeData(name, size, type),
+            Leaf = false
+        };
+
+    private static List<OpTreeNode> BuildTree() => new()
+    {
+        Make("d1", "Pictures", 50, "Folder",
+            Make("d1a", "Vacation", 70, "File")),
+        Make("d2", "Documents", 10, "Folder",
+            Make("d2a", "Work", 30, "Folder",
+                Make("d2a1", "Report", 5, "File")),
+            Make("d2b", "Home", 20, "Folder")),
+        Make("d3", "Videos", 40, "Folder")
+    };
+
+    private static List<OpTreeNode> BuildSalesTree() => new()
+    {
+        Make("s", "Sales", 90, "Folder",
+            Make("pa", "Product A", 60, "Folder",
+                Make("pa1", "Unit A1", 5, "File"),
+                Make("pa2", "Unit A2", 6, "File")),
+            Make("pb", "Product B", 60, "File")),
+        Make("v", "Services", 80, "Folder",
+            Make("sup", "Support", 7, "File"))
+    };
+
+    private static string SortLog(OpTreeTableSortEvent e)
+        => $"sort:{e.Field}:{e.Order}:{string.Join("+", e.MultiSortMeta.Select(m => $"{m.Field}={m.Order}"))}";
+
+    private readonly List<OpTreeTableColumn> _sortCols = new()
+    {
+        new OpTreeTableColumn { Field = "Name", Header = "Nome", Sortable = true },
+        new OpTreeTableColumn { Field = "Size", Header = "Tamanho", Sortable = true }
+    };
+
+    private readonly List<OpTreeTableColumn> _simpleCols = new()
+    {
+        new OpTreeTableColumn { Field = "Name", Header = "Nome" },
+        new OpTreeTableColumn { Field = "Size", Header = "Tamanho" }
+    };
+
+    private readonly List<OpTreeTableColumn> _filterCols = new()
+    {
+        new OpTreeTableColumn { Field = "Name", Header = "Nome", Filter = true, FilterPlaceholder = "Filtrar nome" },
+        new OpTreeTableColumn { Field = "Size", Header = "Tamanho" }
+    };
+
+    // t1/t2/t3
+    private readonly List<OpTreeNode> _t1Tree = BuildTree();
+    private readonly List<OpTreeNode> _t2Tree = BuildTree();
+    private readonly List<OpTreeNode> _t3Tree = BuildTree();
+    private string _t1Log = "—";
+    private string _t2Log = "—";
+    private string _t3Log = "—";
+
+    // t4
+    private readonly List<OpTreeNode> _t4Tree = BuildSalesTree();
+    private string _t4ALog = "—";
+    private string _t4BLog = "—";
+
+    // t5
+    private OpTreeTable? _t5Table;
+    private string _t5Input = "";
+    private string? _t5Filter;
+
+    // t6/t7
+    private readonly List<OpTreeNode> _t6Tree = BuildTree();
+    private readonly List<OpTreeNode> _t7Tree = BuildTree();
+
+    // t8
+    private IReadOnlyList<OpTreeNode> _t8Nodes = Array.Empty<OpTreeNode>();
+    private string _t8Log = "—";
+
+    // t9
+    private readonly List<OpTreeNode> _t9Tree = BuildTree();
+    private string _t9Log = "—";
+
+    // t10
+    private readonly List<OpTreeNode> _t10Tree = BuildTree();
+    private readonly List<OpTreeTableColumn> _t10Cols = new()
+    {
+        new OpTreeTableColumn { Field = "Name", Header = "Nome" },
+        new OpTreeTableColumn { Field = "Size", Header = "Tamanho" }
+    };
+
+    // t11
+    private readonly List<OpTreeNode> _t11Tree = BuildTree();
+    private readonly List<OpTreeTableColumn> _t11Cols = new()
+    {
+        new OpTreeTableColumn { Field = "Name", Header = "Nome", HideHeader = true },
+        new OpTreeTableColumn { Field = "Size", Header = "Tamanho", HideHeader = true },
+        new OpTreeTableColumn { Field = "Type", Header = "Tipo", HideHeader = true }
+    };
+
+    private readonly IReadOnlyList<IReadOnlyList<OpTreeTableHeaderGroup>> _t11Groups = new[]
+    {
+        new[]
+        {
+            new OpTreeTableHeaderGroup { Header = "Arquivo", RowSpan = 2, StyleClass = "t11-file" },
+            new OpTreeTableHeaderGroup { Header = "Detalhes", ColSpan = 2 }
+        },
+        new[]
+        {
+            new OpTreeTableHeaderGroup { Header = "Tamanho" },
+            new OpTreeTableHeaderGroup { Header = "Tipo" }
+        }
+    };
+
+    // t12
+    private readonly List<OpTreeNode> _t12Tree = BuildTree();
+    private readonly List<OpTreeTableColumn> _t12Cols = new()
+    {
+        new OpTreeTableColumn { Field = "Name", Header = "Nome", Frozen = "left", Width = "120px" },
+        new OpTreeTableColumn { Field = "Size", Header = "Tamanho", Width = "30rem" },
+        new OpTreeTableColumn { Field = "Type", Header = "Tipo", Frozen = "right", Width = "100px" }
+    };
+
+    // t13
+    private readonly List<OpTreeNode> _t13Tree = Enumerable.Range(1, 5)
+        .Select(i => Make($"p{i}", $"Item {i}", i * 10, "Tipo")).ToList();
+    private readonly List<OpTreeTableColumn> _t13Cols = new()
+    {
+        new OpTreeTableColumn { Field = "Name", Header = "Nome", Footer = "Total: 5" },
+        new OpTreeTableColumn { Field = "Size", Header = "Tamanho", Footer = "Soma: 150" }
+    };
+    private string _t13Log = "—";
+    private const string refreshLog = "refresh";
+    private const string downloadLog = "download";
+
+    // t14
+    private readonly List<OpTreeNode> _t14Tree = BuildTree();
+
+    private string? T13RowClass(OpTreeNode node)
+        => node.Data is NodeData data && data.Size >= 20 ? "t13-big" : null;
+
+    private void OnT4AFilter(IReadOnlyDictionary<string, object?> filters)
+        => _t4ALog = "filter:" + string.Join(",", filters.Select(kv => $"{kv.Key}={kv.Value}"));
+
+    private void OnT4BFilter(IReadOnlyDictionary<string, object?> filters)
+        => _t4BLog = "filter:" + string.Join(",", filters.Select(kv => $"{kv.Key}={kv.Value}"));
+
+    private async Task ApplyT5Filter()
+    {
+        if (_t5Table is not null)
+        {
+            await _t5Table.FilterGlobalAsync(_t5Input);
+        }
+    }
+
+    private void OnT8Lazy(OpTreeTableLazyLoadEvent e)
+    {
+        _t8Log = $"lazy:{e.First}:{e.Rows}:{e.SortField ?? "-"}:{e.SortOrder}";
+        _t8Nodes = Enumerable.Range(e.First + 1, e.Rows)
+            .Select(i => MakeLazy($"i{i}", $"Item {i}", i, "Tipo"))
+            .ToList();
+    }
+
+    private async Task OnT8Expand(OpTreeNode node)
+    {
+        await Task.Delay(400);
+        node.Children = new List<OpTreeNode>
+        {
+            Make($"{node.Key}-0", node.Label + " - 0", 1, "Tipo"),
+            Make($"{node.Key}-1", node.Label + " - 1", 2, "Tipo")
+        };
+        node.Loading = false;
+    }
+
+    private void OnT9Context((OpTreeNode Item, Microsoft.AspNetCore.Components.Web.MouseEventArgs Args) e)
+        => _t9Log = $"context:{e.Item.Label}";
+
+    private void ReorderT10Columns((int From, int To) info)
+    {
+        var col = _t10Cols[info.From];
+        _t10Cols.RemoveAt(info.From);
+        _t10Cols.Insert(info.To, col);
+    }
+
+    private void OnT13Page(OpPaginatorState state)
+        => _t13Log = $"page:{state.Page}:{state.First}";
+
+    private void ToggleT14()
+        => _t14Tree[0].Expanded = !_t14Tree[0].Expanded;
+}

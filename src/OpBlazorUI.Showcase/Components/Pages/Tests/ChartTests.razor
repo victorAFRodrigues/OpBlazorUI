@@ -1,0 +1,46 @@
+@page "/_tests/chart"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using ApexCharts
+@using OpBlazorUI.Charts
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/ChartTests.cs). *@
+
+<PageTitle>Testes: Chart</PageTitle>
+
+<h1 id="t-title">Testes: Chart</h1>
+
+<section id="t-chart">
+    <OpChart TItem="ChartItem" Height="220">
+        <ApexPointSeries TItem="ChartItem" Items="_data" Name="Valores"
+                         SeriesType="SeriesType.Bar" XValue="e => e.Month" YValue="e => e.Value"/>
+    </OpChart>
+</section>
+
+<section id="t-no-theme">
+    <OpChart TItem="ChartItem" Height="220" UseThemeColors="false">
+        <ApexPointSeries TItem="ChartItem" Items="_data" Name="Valores"
+                         SeriesType="SeriesType.Bar" XValue="e => e.Month" YValue="e => e.Value"/>
+    </OpChart>
+</section>
+
+<section id="t-attrs">
+    <OpChart TItem="ChartItem" Height="220" data-testid="op-chart-attrs" aria-label="Gráfico com atributos">
+        <ApexPointSeries TItem="ChartItem" Items="_data" Name="Valores"
+                         SeriesType="SeriesType.Bar" XValue="e => e.Month" YValue="e => e.Value"/>
+    </OpChart>
+</section>
+
+@code {
+    private sealed class ChartItem
+    {
+        public string Month { get; set; } = "";
+        public decimal Value { get; set; }
+    }
+
+    private readonly List<ChartItem> _data = new()
+    {
+        new ChartItem { Month = "Jan", Value = 10 },
+        new ChartItem { Month = "Fev", Value = 25 },
+        new ChartItem { Month = "Mar", Value = 18 }
+    };
+}

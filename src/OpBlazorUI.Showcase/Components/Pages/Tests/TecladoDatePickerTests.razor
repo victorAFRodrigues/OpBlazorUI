@@ -1,0 +1,18 @@
+@page "/_tests/teclado-date-picker"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Components.DatePicker
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/TecladoDatePickerTests.cs). *@
+
+<PageTitle>Testes: teclado do DatePicker</PageTitle>
+
+<h1 id="t-title">Testes: teclado do DatePicker</h1>
+
+<section id="t-dp">
+    <OpDatePicker @bind-Value="_date" InputId="t-dp-input" DateFormat="dd/mm/yyyy"/>
+    <span id="t-dp-value">@(_date?.ToString("yyyy-MM-dd"))</span>
+</section>
+
+@code {
+    private DateTime? _date = new DateTime(2026, 1, 15);
+}

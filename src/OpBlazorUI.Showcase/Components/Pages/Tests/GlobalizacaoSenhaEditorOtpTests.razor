@@ -1,0 +1,33 @@
+@page "/_tests/globalizacao-senha-editor-otp"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Components.Editor
+@using OpBlazorUI.Components.InputOtp
+@using OpBlazorUI.Components.Password
+@using OpBlazorUI.Globalization
+@using OpBlazorUI.Services
+@inject OpTranslationService TranslationService
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/GlobalizacaoSenhaEditorOtpTests.cs).
+   Fixa a tradução em pt-BR para verificar senha (medidor), editor (toolbar) e OTP. *@
+
+<PageTitle>Testes: globalização — senha, editor e OTP</PageTitle>
+
+<h1 id="t-title">Testes: globalização — senha, editor e OTP</h1>
+
+<section id="t-password">
+    <OpPassword @bind-Value="_password" InputId="pwd"/>
+</section>
+
+<section id="t-inputotp">
+    <OpInputOtp Length="4"/>
+</section>
+
+<section id="t-editor">
+    <OpEditor Value="texto"/>
+</section>
+
+@code {
+    private string? _password = "abc";
+
+    protected override void OnInitialized() => TranslationService.SetTranslation(OpTranslations.PtBr);
+}

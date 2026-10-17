@@ -7,6 +7,9 @@
       "api-acc",
       "api-panel",
       "basic",
+      "controlled",
+      "disabled",
+      "dynamic",
       "import",
       "issues",
       "multiple",
@@ -24,11 +27,8 @@
       "multiple",
       "template"
     ],
-    "missing": [
-      "controlled",
-      "disabled",
-      "dynamic"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-acc",
       "api-panel",
@@ -39,6 +39,9 @@
     "matched": [
       "accessibility",
       "basic",
+      "controlled",
+      "disabled",
+      "dynamic",
       "import",
       "multiple",
       "template"
@@ -61,6 +64,7 @@
       "basic",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -79,18 +83,23 @@
     "has_upstream": true,
     "showcase_sections": [
       "accessibility",
+      "advancedchips",
       "api-events",
       "api-props",
       "api-templates",
       "basic",
+      "basicchips",
       "chips",
       "clearicon",
       "disabled",
       "dropdown",
+      "filled",
+      "floatlabel",
       "fluid",
       "forceselection",
       "forms",
       "group",
+      "iftalabel",
       "import",
       "invalid",
       "issues",
@@ -107,7 +116,6 @@
       "advancedchips",
       "basic",
       "basicchips",
-      "chips",
       "clearicon",
       "disabled",
       "dropdown",
@@ -115,7 +123,6 @@
       "floatlabel",
       "fluid",
       "forceselection",
-      "forms",
       "group",
       "iftalabel",
       "import",
@@ -128,13 +135,11 @@
       "templatedriven",
       "virtualscroll"
     ],
-    "missing": [
-      "advancedchips",
-      "basicchips",
-      "filled",
-      "floatlabel",
-      "iftalabel"
+    "upstream_containers": [
+      "chips",
+      "forms"
     ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -145,15 +150,18 @@
     ],
     "matched": [
       "accessibility",
+      "advancedchips",
       "basic",
-      "chips",
+      "basicchips",
       "clearicon",
       "disabled",
       "dropdown",
+      "filled",
+      "floatlabel",
       "fluid",
       "forceselection",
-      "forms",
       "group",
+      "iftalabel",
       "import",
       "invalid",
       "multiple",
@@ -181,6 +189,7 @@
       "basic",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "accessibility",
@@ -228,6 +237,7 @@
       "size",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -278,6 +288,7 @@
       "severity",
       "size"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-overlay",
@@ -318,6 +329,7 @@
       "document",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -346,6 +358,8 @@
       "import",
       "issues",
       "pt",
+      "router",
+      "template",
       "theming"
     ],
     "upstream_sections": [
@@ -355,10 +369,8 @@
       "router",
       "template"
     ],
-    "missing": [
-      "router",
-      "template"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
       "home",
@@ -370,7 +382,9 @@
     "matched": [
       "accessibility",
       "basic",
-      "import"
+      "import",
+      "router",
+      "template"
     ]
   },
   {
@@ -385,6 +399,7 @@
       "badge",
       "basic",
       "buttongroup",
+      "directive",
       "disabled",
       "events",
       "fluid",
@@ -427,9 +442,8 @@
       "template",
       "text"
     ],
-    "missing": [
-      "directive"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "anchor",
       "api-events",
@@ -447,6 +461,7 @@
       "badge",
       "basic",
       "buttongroup",
+      "directive",
       "disabled",
       "icononly",
       "icons",
@@ -484,6 +499,7 @@
       "basic",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -526,6 +542,7 @@
       "responsive",
       "vertical"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -559,17 +576,16 @@
       "filled",
       "float-label",
       "fluid",
+      "forms",
       "ifta-label",
       "import",
       "invalid",
       "issues",
       "loading",
       "pt",
-      "reactive",
       "sizes",
       "style",
       "template",
-      "templatedriven",
       "theming"
     ],
     "upstream_sections": [
@@ -580,7 +596,6 @@
       "filled",
       "float-label",
       "fluid",
-      "forms",
       "ifta-label",
       "import",
       "invalid",
@@ -589,6 +604,9 @@
       "sizes",
       "template",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -608,7 +626,6 @@
       "filled",
       "float-label",
       "fluid",
-      "forms",
       "ifta-label",
       "import",
       "invalid",
@@ -649,7 +666,6 @@
       "disabled",
       "dynamic",
       "filled",
-      "forms",
       "group",
       "import",
       "indeterminate",
@@ -657,6 +673,9 @@
       "reactive",
       "sizes",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -675,7 +694,6 @@
       "disabled",
       "dynamic",
       "filled",
-      "forms",
       "group",
       "import",
       "indeterminate",
@@ -711,6 +729,7 @@
       "import",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -751,11 +770,13 @@
       "basic",
       "disabled",
       "format",
-      "forms",
       "import",
       "inline",
       "reactive",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -769,7 +790,6 @@
       "basic",
       "disabled",
       "format",
-      "forms",
       "import",
       "inline",
       "reactive",
@@ -809,6 +829,7 @@
       "position",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -846,9 +867,11 @@
       "basic",
       "custom",
       "events",
+      "headless",
       "import",
       "issues",
       "pt",
+      "template",
       "theming"
     ],
     "upstream_sections": [
@@ -858,10 +881,8 @@
       "import",
       "template"
     ],
-    "missing": [
-      "headless",
-      "template"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-events",
       "api-methods",
@@ -875,7 +896,9 @@
     "matched": [
       "accessibility",
       "basic",
-      "import"
+      "headless",
+      "import",
+      "template"
     ]
   },
   {
@@ -885,10 +908,14 @@
       "accessibility",
       "api-props",
       "basic",
-      "cursor",
+      "command",
+      "document",
       "import",
       "issues",
       "pt",
+      "router",
+      "table",
+      "template",
       "theming"
     ],
     "upstream_sections": [
@@ -901,16 +928,10 @@
       "table",
       "template"
     ],
-    "missing": [
-      "command",
-      "document",
-      "router",
-      "table",
-      "template"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
-      "cursor",
       "issues",
       "pt",
       "theming"
@@ -918,7 +939,12 @@
     "matched": [
       "accessibility",
       "basic",
-      "import"
+      "command",
+      "document",
+      "import",
+      "router",
+      "table",
+      "template"
     ]
   },
   {
@@ -949,6 +975,7 @@
       "pagination",
       "sorting"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -1018,7 +1045,6 @@
       "floatlabel",
       "fluid",
       "format",
-      "forms",
       "icon",
       "iftalabel",
       "import",
@@ -1035,6 +1061,9 @@
       "templatedriven",
       "time",
       "yearpicker"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -1058,7 +1087,6 @@
       "floatlabel",
       "fluid",
       "format",
-      "forms",
       "icon",
       "iftalabel",
       "import",
@@ -1111,6 +1139,7 @@
       "template",
       "withoutmodal"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -1161,6 +1190,7 @@
       "type",
       "vertical"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -1210,6 +1240,7 @@
       "size",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -1239,10 +1270,12 @@
       "api-ref",
       "api-service",
       "close",
+      "customization",
+      "example",
       "import",
       "issues",
       "open",
-      "passing-data",
+      "passingdata",
       "theming",
       "usage"
     ],
@@ -1255,23 +1288,22 @@
       "passingdata",
       "usage"
     ],
-    "missing": [
-      "customization",
-      "example",
-      "passingdata"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-config",
       "api-ref",
       "api-service",
       "issues",
-      "passing-data",
       "theming"
     ],
     "matched": [
       "close",
+      "customization",
+      "example",
       "import",
       "open",
+      "passingdata",
       "usage"
     ]
   },
@@ -1285,27 +1317,28 @@
       "api-templates",
       "basic",
       "events",
+      "forms",
       "import",
       "issues",
       "pt",
       "quill",
-      "reactive",
       "readonly",
       "style",
       "template",
-      "templatedriven",
       "theming"
     ],
     "upstream_sections": [
       "accessibility",
       "basic",
-      "forms",
       "import",
       "quill",
       "reactive",
       "readonly",
       "template",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -1321,7 +1354,6 @@
     "matched": [
       "accessibility",
       "basic",
-      "forms",
       "import",
       "quill",
       "reactive",
@@ -1352,6 +1384,7 @@
       "template",
       "toggleable"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -1373,8 +1406,10 @@
     "has_upstream": true,
     "showcase_sections": [
       "accessibility",
+      "advanced",
       "api-events",
       "api-props",
+      "auto",
       "basic",
       "custom",
       "import",
@@ -1393,10 +1428,8 @@
       "import",
       "template"
     ],
-    "missing": [
-      "advanced",
-      "auto"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -1409,6 +1442,8 @@
     ],
     "matched": [
       "accessibility",
+      "advanced",
+      "auto",
       "basic",
       "import",
       "template"
@@ -1438,6 +1473,7 @@
       "invalid",
       "variants"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -1473,6 +1509,7 @@
       "basic",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api",
@@ -1502,6 +1539,7 @@
       "basic",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -1528,13 +1566,27 @@
       "autoplay",
       "basic",
       "caption",
+      "clickevent",
       "controlled",
+      "customcontent",
+      "fullscreen",
+      "hover",
+      "hoverevent",
       "import",
+      "indicator",
       "issues",
+      "itemwiththumbnails",
+      "itemwithtouthumbnails",
+      "navigator",
+      "position",
       "pt",
       "responsive",
+      "template",
       "theming",
-      "thumbnail"
+      "thumbnail",
+      "withindicators",
+      "withthumbnails",
+      "withtouthumbnails"
     ],
     "upstream_sections": [
       "accessibility",
@@ -1545,14 +1597,11 @@
       "clickevent",
       "controlled",
       "customcontent",
-      "fullscreen",
       "hover",
       "hoverevent",
       "import",
-      "indicator",
       "itemwiththumbnails",
       "itemwithtouthumbnails",
-      "navigator",
       "position",
       "responsive",
       "template",
@@ -1561,22 +1610,12 @@
       "withthumbnails",
       "withtouthumbnails"
     ],
-    "missing": [
-      "clickevent",
-      "customcontent",
+    "upstream_containers": [
       "fullscreen",
-      "hover",
-      "hoverevent",
       "indicator",
-      "itemwiththumbnails",
-      "itemwithtouthumbnails",
-      "navigator",
-      "position",
-      "template",
-      "withindicators",
-      "withthumbnails",
-      "withtouthumbnails"
+      "navigator"
     ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-item",
@@ -1592,10 +1631,21 @@
       "autoplay",
       "basic",
       "caption",
+      "clickevent",
       "controlled",
+      "customcontent",
+      "hover",
+      "hoverevent",
       "import",
+      "itemwiththumbnails",
+      "itemwithtouthumbnails",
+      "position",
       "responsive",
-      "thumbnail"
+      "template",
+      "thumbnail",
+      "withindicators",
+      "withthumbnails",
+      "withtouthumbnails"
     ]
   },
   {
@@ -1625,6 +1675,7 @@
       "sizes",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -1666,6 +1717,7 @@
       "import",
       "invalid"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -1705,6 +1757,7 @@
       "preview",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -1741,6 +1794,7 @@
       "import",
       "responsive"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -1773,6 +1827,7 @@
       "theming"
     ],
     "upstream_sections": [],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "accessibility",
@@ -1813,6 +1868,7 @@
       "input",
       "lazy"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -1835,6 +1891,7 @@
     "has_upstream": false,
     "showcase_sections": [
       "accessibility",
+      "api-events",
       "api-props",
       "api-templates",
       "backspace",
@@ -1848,9 +1905,11 @@
       "theming"
     ],
     "upstream_sections": [],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "accessibility",
+      "api-events",
       "api-props",
       "api-templates",
       "backspace",
@@ -1893,6 +1952,7 @@
       "import",
       "multiple"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -1926,6 +1986,7 @@
       "filled",
       "floatlabel",
       "fluid",
+      "forms",
       "iftalabel",
       "import",
       "invalid",
@@ -1933,11 +1994,9 @@
       "mask",
       "optional",
       "pt",
-      "reactive",
       "sizes",
       "slotchar",
       "style",
-      "templatedriven",
       "theming"
     ],
     "upstream_sections": [
@@ -1948,7 +2007,6 @@
       "filled",
       "floatlabel",
       "fluid",
-      "forms",
       "iftalabel",
       "import",
       "invalid",
@@ -1958,6 +2016,9 @@
       "sizes",
       "slotchar",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -1977,7 +2038,6 @@
       "filled",
       "floatlabel",
       "fluid",
-      "forms",
       "iftalabel",
       "import",
       "invalid",
@@ -2015,6 +2075,7 @@
       "validacao"
     ],
     "upstream_sections": [],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "acessibilidade",
@@ -2049,23 +2110,21 @@
       "api-props",
       "api-templates",
       "basic",
+      "forms",
       "import",
       "integeronly",
       "issues",
       "mask",
       "pt",
-      "reactive",
       "sample",
       "sizes",
       "style",
       "template",
-      "templatedriven",
       "theming"
     ],
     "upstream_sections": [
       "accessibility",
       "basic",
-      "forms",
       "import",
       "integeronly",
       "mask",
@@ -2074,6 +2133,9 @@
       "sizes",
       "template",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -2088,7 +2150,6 @@
     "matched": [
       "accessibility",
       "basic",
-      "forms",
       "import",
       "integeronly",
       "mask",
@@ -2132,7 +2193,6 @@
       "filled",
       "floatlabel",
       "fluid",
-      "forms",
       "helptext",
       "iftalabel",
       "import",
@@ -2140,6 +2200,9 @@
       "reactive",
       "sizes",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -2160,7 +2223,6 @@
       "filled",
       "floatlabel",
       "fluid",
-      "forms",
       "helptext",
       "iftalabel",
       "import",
@@ -2191,6 +2253,7 @@
       "presets",
       "regex"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -2217,6 +2280,7 @@
       "basic",
       "color",
       "disabled",
+      "forms",
       "import",
       "issues",
       "minmax",
@@ -2233,7 +2297,6 @@
       "basic",
       "color",
       "disabled",
-      "forms",
       "import",
       "minmax",
       "reactive",
@@ -2245,12 +2308,10 @@
       "template",
       "templatedriven"
     ],
-    "missing": [
-      "forms",
-      "reactive",
-      "reactiveforms",
-      "templatedriven"
+    "upstream_containers": [
+      "forms"
     ],
+    "missing": [],
     "extra": [
       "api-inherited",
       "api-props",
@@ -2265,11 +2326,14 @@
       "disabled",
       "import",
       "minmax",
+      "reactive",
+      "reactiveforms",
       "readonly",
       "size",
       "step",
       "stroke",
-      "template"
+      "template",
+      "templatedriven"
     ]
   },
   {
@@ -2306,7 +2370,6 @@
       "disabled",
       "drag-drop",
       "filter",
-      "forms",
       "group",
       "import",
       "invalid",
@@ -2315,6 +2378,9 @@
       "template",
       "templatedriven",
       "virtualscroll"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -2334,7 +2400,6 @@
       "disabled",
       "drag-drop",
       "filter",
-      "forms",
       "group",
       "import",
       "invalid",
@@ -2352,10 +2417,14 @@
       "accessibility",
       "api-props",
       "basic",
+      "command",
       "import",
       "issues",
       "pt",
-      "theming"
+      "router",
+      "template",
+      "theming",
+      "vertical"
     ],
     "upstream_sections": [
       "accessibility",
@@ -2366,12 +2435,8 @@
       "template",
       "vertical"
     ],
-    "missing": [
-      "command",
-      "router",
-      "template",
-      "vertical"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
       "issues",
@@ -2381,7 +2446,11 @@
     "matched": [
       "accessibility",
       "basic",
-      "import"
+      "command",
+      "import",
+      "router",
+      "template",
+      "vertical"
     ]
   },
   {
@@ -2416,6 +2485,7 @@
       "router",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -2446,10 +2516,13 @@
       "accessibility",
       "api-props",
       "basic",
+      "command",
       "icons",
       "import",
       "issues",
       "pt",
+      "router",
+      "template",
       "theming"
     ],
     "upstream_sections": [
@@ -2460,11 +2533,8 @@
       "router",
       "template"
     ],
-    "missing": [
-      "command",
-      "router",
-      "template"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
       "icons",
@@ -2475,7 +2545,10 @@
     "matched": [
       "accessibility",
       "basic",
-      "import"
+      "command",
+      "import",
+      "router",
+      "template"
     ]
   },
   {
@@ -2516,6 +2589,7 @@
       "simple",
       "sizes"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -2572,6 +2646,7 @@
       "template",
       "vertical"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-contexts",
@@ -2634,7 +2709,6 @@
       "filter",
       "floatlabel",
       "fluid",
-      "forms",
       "group",
       "iftalabel",
       "import",
@@ -2645,6 +2719,9 @@
       "template",
       "templatedriven",
       "virtualscroll"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -2667,7 +2744,6 @@
       "filter",
       "floatlabel",
       "fluid",
-      "forms",
       "group",
       "iftalabel",
       "import",
@@ -2705,6 +2781,7 @@
       "import",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -2760,12 +2837,14 @@
       "hide-on-escape",
       "import",
       "mode",
-      "options",
       "responsive",
       "style",
       "target",
       "template",
       "transition-options"
+    ],
+    "upstream_containers": [
+      "options"
     ],
     "missing": [],
     "extra": [
@@ -2787,7 +2866,6 @@
       "hide-on-escape",
       "import",
       "mode",
-      "options",
       "responsive",
       "style",
       "target",
@@ -2822,6 +2900,7 @@
       "import",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -2864,6 +2943,7 @@
       "template",
       "toggleable"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -2887,10 +2967,14 @@
       "accessibility",
       "api-props",
       "basic",
+      "command",
+      "controlled",
       "import",
       "issues",
+      "multiple",
       "pt",
-      "single",
+      "router",
+      "template",
       "theming"
     ],
     "upstream_sections": [
@@ -2903,24 +2987,23 @@
       "router",
       "template"
     ],
-    "missing": [
-      "command",
-      "controlled",
-      "multiple",
-      "router",
-      "template"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
       "issues",
       "pt",
-      "single",
       "theming"
     ],
     "matched": [
       "accessibility",
       "basic",
-      "import"
+      "command",
+      "controlled",
+      "import",
+      "multiple",
+      "router",
+      "template"
     ]
   },
   {
@@ -2950,6 +3033,7 @@
       "validacao"
     ],
     "upstream_sections": [],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "acessibilidade",
@@ -2999,6 +3083,7 @@
       "import",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -3045,6 +3130,7 @@
       "target",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -3091,6 +3177,7 @@
       "indeterminate",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -3129,6 +3216,7 @@
       "custom",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -3170,13 +3258,15 @@
       "disabled",
       "dynamic",
       "filled",
-      "forms",
       "group",
       "import",
       "invalid",
       "reactive",
       "sizes",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -3193,7 +3283,6 @@
       "disabled",
       "dynamic",
       "filled",
-      "forms",
       "group",
       "import",
       "invalid",
@@ -3229,13 +3318,15 @@
       "accessibility",
       "basic",
       "disabled",
-      "forms",
       "import",
       "numberofstars",
       "reactive",
       "readonly",
       "template",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -3254,7 +3345,6 @@
       "accessibility",
       "basic",
       "disabled",
-      "forms",
       "import",
       "numberofstars",
       "reactive",
@@ -3269,8 +3359,8 @@
     "showcase_sections": [
       "accessibility",
       "api-props",
-      "basic",
       "custom",
+      "default",
       "import",
       "pass-through",
       "problemas-conhecidos",
@@ -3282,12 +3372,10 @@
       "default",
       "import"
     ],
-    "missing": [
-      "default"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
-      "basic",
       "pass-through",
       "problemas-conhecidos",
       "style"
@@ -3295,6 +3383,7 @@
     "matched": [
       "accessibility",
       "custom",
+      "default",
       "import"
     ]
   },
@@ -3318,6 +3407,7 @@
       "custom",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-methods",
@@ -3354,6 +3444,7 @@
       "element",
       "import"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -3414,7 +3505,6 @@
       "filter",
       "floatlabel",
       "fluid",
-      "forms",
       "group",
       "iftalabel",
       "import",
@@ -3426,6 +3516,9 @@
       "template",
       "templatedriven",
       "virtualscroll"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -3449,7 +3542,6 @@
       "filter",
       "floatlabel",
       "fluid",
-      "forms",
       "group",
       "iftalabel",
       "import",
@@ -3474,16 +3566,15 @@
       "basic",
       "disabled",
       "fluid",
+      "forms",
       "import",
       "invalid",
       "issues",
       "multiple",
       "pt",
-      "reactive",
       "sizes",
       "style",
       "template",
-      "templatedriven",
       "theming"
     ],
     "upstream_sections": [
@@ -3491,7 +3582,6 @@
       "basic",
       "disabled",
       "fluid",
-      "forms",
       "import",
       "invalid",
       "multiple",
@@ -3499,6 +3589,9 @@
       "sizes",
       "template",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -3515,7 +3608,6 @@
       "basic",
       "disabled",
       "fluid",
-      "forms",
       "import",
       "invalid",
       "multiple",
@@ -3549,6 +3641,7 @@
       "list",
       "shapes"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -3573,6 +3666,7 @@
       "accessibility",
       "api-props",
       "basic",
+      "filter",
       "forms",
       "import",
       "input",
@@ -3587,7 +3681,6 @@
       "accessibility",
       "basic",
       "filter",
-      "forms",
       "import",
       "input",
       "range",
@@ -3596,9 +3689,10 @@
       "templatedriven",
       "vertical"
     ],
-    "missing": [
-      "filter"
+    "upstream_containers": [
+      "forms"
     ],
+    "missing": [],
     "extra": [
       "api-props",
       "issues",
@@ -3608,7 +3702,7 @@
     "matched": [
       "accessibility",
       "basic",
-      "forms",
+      "filter",
       "import",
       "input",
       "range",
@@ -3651,6 +3745,7 @@
       "template",
       "tooltip"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -3700,6 +3795,7 @@
       "texto-elevado"
     ],
     "upstream_sections": [],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "acessibilidade",
@@ -3749,6 +3845,7 @@
       "size",
       "vertical"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-panel",
@@ -3798,6 +3895,7 @@
       "template",
       "vertical"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-containers",
@@ -3829,11 +3927,14 @@
       "accessibility",
       "api-props",
       "basic",
+      "controlled",
       "disabled",
       "import",
+      "interactive",
       "issues",
       "pt",
       "readonly",
+      "routing",
       "theming"
     ],
     "upstream_sections": [
@@ -3844,11 +3945,8 @@
       "interactive",
       "routing"
     ],
-    "missing": [
-      "controlled",
-      "interactive",
-      "routing"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
       "disabled",
@@ -3860,7 +3958,10 @@
     "matched": [
       "accessibility",
       "basic",
-      "import"
+      "controlled",
+      "import",
+      "interactive",
+      "routing"
     ]
   },
   {
@@ -3882,6 +3983,7 @@
       "import",
       "toggleclass"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -3901,6 +4003,7 @@
     "has_upstream": false,
     "showcase_sections": [
       "accessibility",
+      "api-events",
       "api-props",
       "basic",
       "icons",
@@ -3910,9 +4013,11 @@
       "theming"
     ],
     "upstream_sections": [],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "accessibility",
+      "api-events",
       "api-props",
       "basic",
       "icons",
@@ -3928,6 +4033,7 @@
     "has_upstream": false,
     "showcase_sections": [
       "accessibility",
+      "api-events",
       "api-props",
       "basic",
       "import",
@@ -3937,9 +4043,11 @@
       "theming"
     ],
     "upstream_sections": [],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "accessibility",
+      "api-events",
       "api-props",
       "basic",
       "import",
@@ -3958,51 +4066,74 @@
       "api-column",
       "api-events",
       "api-props",
+      "api-templates",
       "basic",
       "binding",
-      "column-filter",
+      "cell-edit",
+      "checkbox-selection",
+      "column-group",
+      "column-selection",
+      "column-toggle",
+      "context-menu",
       "dynamic",
+      "expand",
+      "expand-mode",
+      "export",
+      "filter-advanced",
+      "filter-basic",
+      "fit-mode",
+      "flex-scroll",
       "forms",
-      "global-filter",
+      "frozen-columns",
+      "frozen-rows",
       "gridlines",
+      "horizontal-scroll",
       "import-demo",
       "issues",
       "lazy-load",
       "loading-mask",
       "loading-skeleton",
+      "multiple-columns-sort",
       "multiple-selection",
-      "not-ported",
       "paginator-basic",
-      "paginator-control",
+      "paginator-programmatic",
+      "pre-sort",
       "pt",
+      "radio-button-selection",
+      "removable-sort",
+      "reorder",
+      "row-edit",
+      "row-expansion",
+      "row-span",
+      "scrollable",
       "selection-events",
       "single-column-sort",
       "single-selection",
       "size",
-      "sticky-header",
+      "stateful",
       "striped",
       "style",
+      "subheader",
       "table-style",
-      "templates",
-      "theming"
+      "template",
+      "theming",
+      "vertical-scroll",
+      "virtual-scroll-basic",
+      "virtual-scroll-lazy"
     ],
     "upstream_sections": [
-      "Edit",
       "accessibility",
       "basic",
       "cell-edit",
       "checkbox-selection",
       "column-group",
-      "column-resize",
       "column-selection",
       "column-toggle",
       "context-menu",
-      "customers",
       "dynamic",
       "expand",
       "expand-mode",
       "export",
-      "filter",
       "filter-advanced",
       "filter-basic",
       "fit-mode",
@@ -4013,123 +4144,108 @@
       "horizontal-scroll",
       "import-demo",
       "lazy-load",
-      "loading",
       "loading-mask",
       "loading-skeleton",
       "multiple-columns-sort",
       "multiple-selection",
-      "paginator",
       "paginator-basic",
       "paginator-programmatic",
       "pre-sort",
-      "products",
       "radio-button-selection",
       "removable-sort",
       "reorder",
       "row-edit",
       "row-expansion",
-      "row-group",
-      "row-selection",
       "row-span",
-      "samples",
-      "scroll",
       "scrollable",
       "selection-events",
       "single-column-sort",
       "single-selection",
       "size",
-      "sort",
       "stateful",
       "striped",
       "subheader",
       "table-style",
       "template",
       "vertical-scroll",
-      "virtual-scroll",
       "virtual-scroll-basic",
       "virtual-scroll-lazy"
     ],
-    "missing": [
+    "upstream_containers": [
       "Edit",
-      "cell-edit",
-      "checkbox-selection",
-      "column-group",
       "column-resize",
-      "column-selection",
-      "column-toggle",
-      "context-menu",
-      "customers",
-      "expand",
-      "expand-mode",
-      "export",
       "filter",
-      "filter-advanced",
-      "filter-basic",
-      "fit-mode",
-      "flex-scroll",
-      "frozen-columns",
-      "frozen-rows",
-      "horizontal-scroll",
       "loading",
-      "multiple-columns-sort",
       "paginator",
-      "paginator-programmatic",
-      "pre-sort",
-      "products",
-      "radio-button-selection",
-      "removable-sort",
-      "reorder",
-      "row-edit",
-      "row-expansion",
       "row-group",
       "row-selection",
-      "row-span",
       "samples",
       "scroll",
-      "scrollable",
       "sort",
-      "stateful",
-      "subheader",
-      "template",
-      "vertical-scroll",
-      "virtual-scroll",
-      "virtual-scroll-basic",
-      "virtual-scroll-lazy"
+      "virtual-scroll"
     ],
+    "missing": [],
     "extra": [
       "api-column",
       "api-events",
       "api-props",
+      "api-templates",
       "binding",
-      "column-filter",
       "forms",
-      "global-filter",
       "issues",
-      "not-ported",
-      "paginator-control",
       "pt",
-      "sticky-header",
       "style",
-      "templates",
       "theming"
     ],
     "matched": [
       "accessibility",
       "basic",
+      "cell-edit",
+      "checkbox-selection",
+      "column-group",
+      "column-selection",
+      "column-toggle",
+      "context-menu",
       "dynamic",
+      "expand",
+      "expand-mode",
+      "export",
+      "filter-advanced",
+      "filter-basic",
+      "fit-mode",
+      "flex-scroll",
+      "frozen-columns",
+      "frozen-rows",
       "gridlines",
+      "horizontal-scroll",
       "import-demo",
       "lazy-load",
       "loading-mask",
       "loading-skeleton",
+      "multiple-columns-sort",
       "multiple-selection",
       "paginator-basic",
+      "paginator-programmatic",
+      "pre-sort",
+      "radio-button-selection",
+      "removable-sort",
+      "reorder",
+      "row-edit",
+      "row-expansion",
+      "row-span",
+      "scrollable",
       "selection-events",
       "single-column-sort",
       "single-selection",
       "size",
+      "stateful",
       "striped",
-      "table-style"
+      "subheader",
+      "table-style",
+      "template",
+      "vertical-scroll",
+      "virtual-scroll-basic",
+      "virtual-scroll-lazy"
     ]
   },
   {
@@ -4140,11 +4256,17 @@
       "api-panel",
       "api-tabs",
       "basic",
+      "controlled",
+      "disabled",
+      "dynamic",
       "icons",
       "import",
       "issues",
+      "lazy",
       "pt",
       "scrollable",
+      "tabmenu",
+      "template",
       "theming"
     ],
     "upstream_sections": [
@@ -4159,14 +4281,8 @@
       "tabmenu",
       "template"
     ],
-    "missing": [
-      "controlled",
-      "disabled",
-      "dynamic",
-      "lazy",
-      "tabmenu",
-      "template"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-panel",
       "api-tabs",
@@ -4178,8 +4294,14 @@
     "matched": [
       "accessibility",
       "basic",
+      "controlled",
+      "disabled",
+      "dynamic",
       "import",
-      "scrollable"
+      "lazy",
+      "scrollable",
+      "tabmenu",
+      "template"
     ]
   },
   {
@@ -4209,6 +4331,7 @@
       "severity",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -4257,13 +4380,15 @@
       "filled",
       "floatlabel",
       "fluid",
-      "forms",
       "iftalabel",
       "import",
       "invalid",
       "reactive",
       "sizes",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -4280,7 +4405,6 @@
       "filled",
       "floatlabel",
       "fluid",
-      "forms",
       "iftalabel",
       "import",
       "invalid",
@@ -4296,9 +4420,13 @@
       "accessibility",
       "api-props",
       "basic",
+      "command",
       "import",
       "issues",
+      "popup",
       "pt",
+      "router",
+      "template",
       "theming"
     ],
     "upstream_sections": [
@@ -4310,12 +4438,8 @@
       "router",
       "template"
     ],
-    "missing": [
-      "command",
-      "popup",
-      "router",
-      "template"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
       "issues",
@@ -4325,7 +4449,11 @@
     "matched": [
       "accessibility",
       "basic",
-      "import"
+      "command",
+      "import",
+      "popup",
+      "router",
+      "template"
     ]
   },
   {
@@ -4354,6 +4482,7 @@
       "opposite",
       "template"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-props",
@@ -4408,6 +4537,7 @@
       "sticky",
       "templating"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -4445,15 +4575,14 @@
       "customized",
       "disabled",
       "fluid",
+      "forms",
       "import",
       "invalid",
       "issues",
       "pt",
-      "reactive",
       "sizes",
       "style",
       "template",
-      "templatedriven",
       "theming"
     ],
     "upstream_sections": [
@@ -4462,12 +4591,14 @@
       "customized",
       "disabled",
       "fluid",
-      "forms",
       "import",
       "invalid",
       "reactive",
       "sizes",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -4486,7 +4617,6 @@
       "customized",
       "disabled",
       "fluid",
-      "forms",
       "import",
       "invalid",
       "reactive",
@@ -4519,13 +4649,15 @@
       "accessibility",
       "basic",
       "disabled",
-      "forms",
       "import",
       "invalid",
       "preselection",
       "reactive",
       "template",
       "templatedriven"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -4542,7 +4674,6 @@
       "accessibility",
       "basic",
       "disabled",
-      "forms",
       "import",
       "invalid",
       "preselection",
@@ -4559,6 +4690,7 @@
       "api-props",
       "basic",
       "content",
+      "custom",
       "import",
       "issues",
       "pt",
@@ -4570,9 +4702,8 @@
       "custom",
       "import"
     ],
-    "missing": [
-      "custom"
-    ],
+    "upstream_containers": [],
+    "missing": [],
     "extra": [
       "api-props",
       "content",
@@ -4583,6 +4714,7 @@
     "matched": [
       "accessibility",
       "basic",
+      "custom",
       "import"
     ]
   },
@@ -4615,6 +4747,7 @@
       "options",
       "position"
     ],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "api-events",
@@ -4645,13 +4778,18 @@
       "api-templates",
       "basic",
       "checkbox",
+      "contextmenu",
       "controlled",
+      "dragdrop-multiple",
+      "dragdrop-single",
       "event",
       "filter",
       "import",
       "issues",
       "lazy",
+      "lazyvirtualscroll",
       "multiple",
+      "preload",
       "pt",
       "single",
       "template",
@@ -4663,7 +4801,6 @@
       "checkbox",
       "contextmenu",
       "controlled",
-      "dragdrop",
       "dragdrop-multiple",
       "dragdrop-single",
       "event",
@@ -4673,21 +4810,15 @@
       "lazyvirtualscroll",
       "multiple",
       "preload",
-      "selection",
       "single",
-      "template",
-      "virtualscroll"
+      "template"
     ],
-    "missing": [
-      "contextmenu",
+    "upstream_containers": [
       "dragdrop",
-      "dragdrop-multiple",
-      "dragdrop-single",
-      "lazyvirtualscroll",
-      "preload",
       "selection",
       "virtualscroll"
     ],
+    "missing": [],
     "extra": [
       "api-events",
       "api-props",
@@ -4700,12 +4831,17 @@
       "accessibility",
       "basic",
       "checkbox",
+      "contextmenu",
       "controlled",
+      "dragdrop-multiple",
+      "dragdrop-single",
       "event",
       "filter",
       "import",
       "lazy",
+      "lazyvirtualscroll",
       "multiple",
+      "preload",
       "single",
       "template"
     ]
@@ -4726,6 +4862,7 @@
       "filter",
       "floatlabel",
       "fluid",
+      "forms",
       "iftalabel",
       "import",
       "invalid",
@@ -4733,11 +4870,9 @@
       "lazy",
       "multiple",
       "pt",
-      "reactive",
       "sizes",
       "style",
       "template",
-      "templatedriven",
       "theming",
       "virtual-scroll-doc"
     ],
@@ -4751,7 +4886,6 @@
       "filter",
       "floatlabel",
       "fluid",
-      "forms",
       "iftalabel",
       "import",
       "invalid",
@@ -4762,6 +4896,9 @@
       "template",
       "templatedriven",
       "virtual-scroll-doc"
+    ],
+    "upstream_containers": [
+      "forms"
     ],
     "missing": [],
     "extra": [
@@ -4783,7 +4920,6 @@
       "filter",
       "floatlabel",
       "fluid",
-      "forms",
       "iftalabel",
       "import",
       "invalid",
@@ -4803,26 +4939,52 @@
       "accessibility",
       "api-column",
       "api-events",
+      "api-headergroup",
       "api-props",
       "api-templates",
       "basic",
       "checkbox",
-      "empty",
+      "columngroup",
+      "columntoggle",
+      "conditionalstyle",
+      "contextmenu",
+      "controlled",
+      "dynamiccolumns",
+      "edit",
+      "events",
+      "expandmode",
+      "filter",
+      "fitmode",
+      "flexible",
+      "frozencolumns",
+      "gridlines",
+      "horizontal",
       "import-demo",
       "issues",
+      "lazyload",
       "loading-mask",
+      "loading-skeleton",
       "paginatorbasic",
+      "paginatortemplate",
       "pt",
+      "reorder",
+      "scrollable",
       "selectionmultiple",
       "selectionsingle",
-      "theming"
+      "size",
+      "sortmultiplecolumns",
+      "sortremovable",
+      "sortsinglecolumn",
+      "style",
+      "template",
+      "theming",
+      "vertical"
     ],
     "upstream_sections": [
       "accessibility",
       "basic",
       "checkbox",
       "columngroup",
-      "columnresize",
       "columntoggle",
       "conditionalstyle",
       "contextmenu",
@@ -4839,79 +5001,76 @@
       "horizontal",
       "import-demo",
       "lazyload",
-      "loading",
       "loading-mask",
       "loading-skeleton",
-      "paginator",
       "paginatorbasic",
       "paginatortemplate",
       "reorder",
-      "scroll",
       "scrollable",
-      "selection",
       "selectionmultiple",
       "selectionsingle",
       "size",
-      "sort",
       "sortmultiplecolumns",
       "sortremovable",
       "sortsinglecolumn",
       "template",
       "vertical"
     ],
-    "missing": [
-      "columngroup",
+    "upstream_containers": [
       "columnresize",
-      "columntoggle",
-      "conditionalstyle",
-      "contextmenu",
-      "controlled",
-      "dynamiccolumns",
-      "edit",
-      "events",
-      "expandmode",
-      "filter",
-      "fitmode",
-      "flexible",
-      "frozencolumns",
-      "gridlines",
-      "horizontal",
-      "lazyload",
       "loading",
-      "loading-skeleton",
       "paginator",
-      "paginatortemplate",
-      "reorder",
       "scroll",
-      "scrollable",
       "selection",
-      "size",
-      "sort",
-      "sortmultiplecolumns",
-      "sortremovable",
-      "sortsinglecolumn",
-      "template",
-      "vertical"
+      "sort"
     ],
+    "missing": [],
     "extra": [
       "api-column",
       "api-events",
+      "api-headergroup",
       "api-props",
       "api-templates",
-      "empty",
       "issues",
       "pt",
+      "style",
       "theming"
     ],
     "matched": [
       "accessibility",
       "basic",
       "checkbox",
+      "columngroup",
+      "columntoggle",
+      "conditionalstyle",
+      "contextmenu",
+      "controlled",
+      "dynamiccolumns",
+      "edit",
+      "events",
+      "expandmode",
+      "filter",
+      "fitmode",
+      "flexible",
+      "frozencolumns",
+      "gridlines",
+      "horizontal",
       "import-demo",
+      "lazyload",
       "loading-mask",
+      "loading-skeleton",
       "paginatorbasic",
+      "paginatortemplate",
+      "reorder",
+      "scrollable",
       "selectionmultiple",
-      "selectionsingle"
+      "selectionsingle",
+      "size",
+      "sortmultiplecolumns",
+      "sortremovable",
+      "sortsinglecolumn",
+      "template",
+      "vertical"
     ]
   },
   {
@@ -4939,6 +5098,7 @@
       "theming"
     ],
     "upstream_sections": [],
+    "upstream_containers": [],
     "missing": [],
     "extra": [
       "accessibility",

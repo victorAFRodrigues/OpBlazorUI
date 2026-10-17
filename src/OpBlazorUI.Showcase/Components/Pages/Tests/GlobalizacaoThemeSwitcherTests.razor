@@ -1,0 +1,21 @@
+@page "/_tests/globalizacao-theme-switcher"
+@namespace OpBlazorUI.Showcase.Components.Pages.Tests
+@using OpBlazorUI.Components.ThemeSwitcher
+@using OpBlazorUI.Globalization
+@using OpBlazorUI.Services
+@inject OpTranslationService TranslationService
+
+@* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/GlobalizacaoThemeSwitcherTests.cs).
+   Fixa a tradução em pt-BR para verificar os rótulos do seletor de tema. *@
+
+<PageTitle>Testes: globalização — ThemeSwitcher</PageTitle>
+
+<h1 id="t-title">Testes: globalização — ThemeSwitcher</h1>
+
+<section id="t-themeswitcher">
+    <OpThemeSwitcher/>
+</section>
+
+@code {
+    protected override void OnInitialized() => TranslationService.SetTranslation(OpTranslations.PtBr);
+}

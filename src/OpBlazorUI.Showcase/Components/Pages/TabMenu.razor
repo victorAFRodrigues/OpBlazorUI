@@ -48,8 +48,17 @@
                           Rows="@(new[] {
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Itens de navegação." },
                               new[] { "ActiveIndex", "int", "0", "Índice ativo (usar <code>@@bind-ActiveIndex</code>)." },
-                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível." },
-                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao clicar em um item (após <code>Command</code>)." }
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ActiveIndexChanged", "EventCallback&lt;int&gt;", "Disparado quando o índice ativo muda (binding)." },
+                              new[] { "OnItemClick", "EventCallback&lt;OpMenuItem&gt;", "Disparado ao clicar em um item (após <code>Command</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>

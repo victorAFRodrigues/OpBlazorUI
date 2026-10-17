@@ -235,50 +235,29 @@
             <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+        <DocSection Label="Formulários" Id="forms">
             <Description>
                 No Blazor não há a distinção do Angular entre template driven e reactive forms: ambos usam
                 <code>EditForm</code>. Aqui o vínculo por <code>@@bind-Value</code> registra o campo no
                 <code>EditContext</code> e o <code>DataAnnotationsValidator</code> valida o modelo — equivalente ao
                 <code>ngModel</code> com <code>required</code>.
+                Isso substitui as abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
-                <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
                     <DataAnnotationsValidator/>
-                    <OpCascadeSelect TValue="City" @bind-Value="_tdModel.City" Options="Countries"
+                    <OpCascadeSelect TValue="City" @bind-Value="_form.City" Options="Countries"
                                      OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
                                      Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
-                    <ValidationMessage For="() => _tdModel.City"/>
+                    <ValidationMessage For="() => _form.City"/>
                     <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_tdSubmitted)
+                    @if (_submitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_tdModel.City?.Cname</div>
+                        <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_form.City?.Cname</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Formulários (Reactive)" Id="reactive">
-            <Description>
-                O equivalente ao <code>formControlName</code> é controlar o <code>EditContext</code> explicitamente.
-                Neste exemplo o contexto e um <code>ValidationMessageStore</code> são criados no código e a mensagem é
-                adicionada no envio, sem depender de DataAnnotations.
-            </Description>
-            <ChildContent>
-                <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
-                    <OpCascadeSelect TValue="City" @bind-Value="_reactiveModel.City" Options="Countries"
-                                     OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                                     Placeholder="Selecione uma Cidade" StyleClass="w-56"/>
-                    <ValidationMessage For="() => _reactiveModel.City"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_reactiveSubmitted && _reactiveModel.City is not null)
-                    {
-                        <div class="text-sm" style="color:var(--p-green-600)">Enviado: @_reactiveModel.City.Cname</div>
-                    }
-                </EditForm>
-            </ChildContent>
-            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
@@ -541,50 +520,16 @@
         _ => "\u2022"
     };
 
-    private sealed class TemplateDrivenModel
+    private sealed class FormModel
     {
         [Required(ErrorMessage = "Selecione uma cidade.")]
         public City? City { get; set; }
     }
 
-    private readonly TemplateDrivenModel _tdModel = new();
-    private bool _tdSubmitted;
+    private readonly FormModel _form = new();
+    private bool _submitted;
 
-    private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
-
-    private sealed class ReactiveModel
-    {
-        public City? City { get; set; }
-    }
-
-    private readonly ReactiveModel _reactiveModel = new();
-    private EditContext? _reactiveContext;
-    private ValidationMessageStore? _reactiveMessages;
-    private bool _reactiveSubmitted;
-
-    protected override void OnInitialized()
-    {
-        var context = new EditContext(_reactiveModel);
-        _reactiveContext = context;
-        _reactiveMessages = new ValidationMessageStore(context);
-        context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
-    }
-
-    private void OnReactiveSubmit()
-    {
-        _reactiveSubmitted = true;
-        ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.City)));
-    }
-
-    private void ValidateField(FieldIdentifier field)
-    {
-        _reactiveMessages?.Clear(field);
-
-        if (field.FieldName == nameof(ReactiveModel.City) && _reactiveModel.City is null)
-        {
-            _reactiveMessages?.Add(field, "Selecione uma cidade.");
-        }
-    }
+    private void OnSubmit() => _submitted = true;
 
     private const string ImportCode = """
         @using OpBlazorUI.Components.CascadeSelect
@@ -750,81 +695,31 @@
                          Placeholder="Selecione uma Cidade" StyleClass="w-56" />
         """;
 
-    private const string TemplateDrivenCode = """
-        <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
             <DataAnnotationsValidator />
-            <OpCascadeSelect TValue="City" @bind-Value="_tdModel.City" Options="Countries"
+            <OpCascadeSelect TValue="City" @bind-Value="_form.City" Options="Countries"
                              OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
                              Placeholder="Selecione uma Cidade" StyleClass="w-56" />
-            <ValidationMessage For="() => _tdModel.City" />
+            <ValidationMessage For="() => _form.City" />
             <button type="submit" class="p-button p-component">Enviar</button>
-            @if (_tdSubmitted)
+            @if (_submitted)
             {
-                <div class="text-sm">Enviado: @_tdModel.City?.Cname</div>
+                <div class="text-sm">Enviado: @_form.City?.Cname</div>
             }
         </EditForm>
 
         @code {
-            private sealed class TemplateDrivenModel
+            private sealed class FormModel
             {
                 [Required(ErrorMessage = "Selecione uma cidade.")]
                 public City? City { get; set; }
             }
 
-            private readonly TemplateDrivenModel _tdModel = new();
-            private bool _tdSubmitted;
+            private readonly FormModel _form = new();
+            private bool _submitted;
 
-            private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
-        }
-        """;
-
-    private const string ReactiveCode = """
-        <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
-            <OpCascadeSelect TValue="City" @bind-Value="_reactiveModel.City" Options="Countries"
-                             OptionLabel="Cname" OptionGroupLabel="Name" OptionGroupChildren="@GroupChildren"
-                             Placeholder="Selecione uma Cidade" StyleClass="w-56" />
-            <ValidationMessage For="() => _reactiveModel.City" />
-            <button type="submit" class="p-button p-component">Enviar</button>
-            @if (_reactiveSubmitted && _reactiveModel.City is not null)
-            {
-                <div class="text-sm">Enviado: @_reactiveModel.City.Cname</div>
-            }
-        </EditForm>
-
-        @code {
-            private sealed class ReactiveModel
-            {
-                public City? City { get; set; }
-            }
-
-            private readonly ReactiveModel _reactiveModel = new();
-            private EditContext? _reactiveContext;
-            private ValidationMessageStore? _reactiveMessages;
-            private bool _reactiveSubmitted;
-
-            protected override void OnInitialized()
-            {
-                var context = new EditContext(_reactiveModel);
-                _reactiveContext = context;
-                _reactiveMessages = new ValidationMessageStore(context);
-                context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
-            }
-
-            private void OnReactiveSubmit()
-            {
-                _reactiveSubmitted = true;
-                ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.City)));
-            }
-
-            private void ValidateField(FieldIdentifier field)
-            {
-                _reactiveMessages?.Clear(field);
-
-                if (field.FieldName == nameof(ReactiveModel.City) && _reactiveModel.City is null)
-                {
-                    _reactiveMessages?.Add(field, "Selecione uma cidade.");
-                }
-            }
+            private void OnSubmit() => _submitted = true;
         }
         """;
 

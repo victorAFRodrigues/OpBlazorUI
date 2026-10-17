@@ -110,46 +110,27 @@
             <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+        <DocSection Label="Formulários" Id="forms">
             <Description>
                 No Blazor não há a distinção do Angular entre template driven e reactive forms: ambos usam
                 <code>EditForm</code>. Aqui o vínculo por <code>@@bind-Value</code> registra o campo no
                 <code>EditContext</code> e o <code>DataAnnotationsValidator</code> valida o modelo — equivalente ao
                 <code>ngModel</code> com <code>required</code>.
+                Isso substitui as abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
-                <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
                     <DataAnnotationsValidator/>
-                    <OpToggleButton @bind-Value="_tdModel.Accepted" OnLabel="Aceitar" OffLabel="Recusar"/>
-                    <ValidationMessage For="() => _tdModel.Accepted"/>
+                    <OpToggleButton @bind-Value="_form.Accepted" OnLabel="Aceitar" OffLabel="Recusar"/>
+                    <ValidationMessage For="() => _form.Accepted"/>
                     <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_tdSubmitted)
+                    @if (_submitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Aceito: @_tdModel.Accepted</div>
+                        <div class="text-sm" style="color:var(--p-green-600)">Aceito: @_form.Accepted</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Formulários (Reactive)" Id="reactive">
-            <Description>
-                O equivalente ao <code>formControlName</code> é controlar o <code>EditContext</code> explicitamente.
-                Neste exemplo o contexto e um <code>ValidationMessageStore</code> são criados no código e a mensagem
-                é adicionada a cada alteração do campo, sem depender de DataAnnotations.
-            </Description>
-            <ChildContent>
-                <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
-                    <OpToggleButton @bind-Value="_reactiveModel.Accepted" OnLabel="Aceitar" OffLabel="Recusar"/>
-                    <ValidationMessage For="() => _reactiveModel.Accepted"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_reactiveSubmitted && _reactiveModel.Accepted)
-                    {
-                        <div class="text-sm" style="color:var(--p-green-600)">Aceito.</div>
-                    }
-                </EditForm>
-            </ChildContent>
-            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Conteúdo Personalizado" Id="template">
@@ -307,50 +288,16 @@
     private bool _invalidOn;
     private bool _wifi;
 
-    private sealed class TemplateDrivenModel
+    private sealed class FormModel
     {
         [Range(typeof(bool), "true", "true", ErrorMessage = "O aceite é obrigatório.")]
         public bool Accepted { get; set; }
     }
 
-    private readonly TemplateDrivenModel _tdModel = new();
-    private bool _tdSubmitted;
+    private readonly FormModel _form = new();
+    private bool _submitted;
 
-    private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
-
-    private sealed class ReactiveModel
-    {
-        public bool Accepted { get; set; }
-    }
-
-    private readonly ReactiveModel _reactiveModel = new();
-    private EditContext? _reactiveContext;
-    private ValidationMessageStore? _reactiveMessages;
-    private bool _reactiveSubmitted;
-
-    protected override void OnInitialized()
-    {
-        var context = new EditContext(_reactiveModel);
-        _reactiveContext = context;
-        _reactiveMessages = new ValidationMessageStore(context);
-        context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
-    }
-
-    private void OnReactiveSubmit()
-    {
-        _reactiveSubmitted = true;
-        ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.Accepted)));
-    }
-
-    private void ValidateField(FieldIdentifier field)
-    {
-        _reactiveMessages?.Clear(field);
-
-        if (field.FieldName == nameof(ReactiveModel.Accepted) && !_reactiveModel.Accepted)
-        {
-            _reactiveMessages?.Add(field, "O aceite é obrigatório.");
-        }
-    }
+    private void OnSubmit() => _submitted = true;
 
     private static string ContentIcon(bool on) => on ? "p-togglebutton-icon pi pi-wifi" : "p-togglebutton-icon pi pi-ban";
 
@@ -414,77 +361,29 @@
         }
         """;
 
-    private const string TemplateDrivenCode = """
-        <EditForm Model="_tdModel" OnValidSubmit="OnTemplateDrivenSubmit" class="flex flex-col items-start gap-2">
+    private const string FormsCode = """
+        <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-2">
             <DataAnnotationsValidator />
-            <OpToggleButton @bind-Value="_tdModel.Accepted" OnLabel="Aceitar" OffLabel="Recusar" />
-            <ValidationMessage For="() => _tdModel.Accepted" />
+            <OpToggleButton @bind-Value="_form.Accepted" OnLabel="Aceitar" OffLabel="Recusar" />
+            <ValidationMessage For="() => _form.Accepted" />
             <button type="submit" class="p-button p-component">Enviar</button>
-            @if (_tdSubmitted)
+            @if (_submitted)
             {
-                <div class="text-sm">Aceito: @_tdModel.Accepted</div>
+                <div class="text-sm">Aceito: @_form.Accepted</div>
             }
         </EditForm>
 
         @code {
-            private sealed class TemplateDrivenModel
+            private sealed class FormModel
             {
                 [Range(typeof(bool), "true", "true", ErrorMessage = "O aceite é obrigatório.")]
                 public bool Accepted { get; set; }
             }
 
-            private readonly TemplateDrivenModel _tdModel = new();
-            private bool _tdSubmitted;
+            private readonly FormModel _form = new();
+            private bool _submitted;
 
-            private void OnTemplateDrivenSubmit() => _tdSubmitted = true;
-        }
-        """;
-
-    private const string ReactiveCode = """
-        <EditForm EditContext="_reactiveContext" OnSubmit="OnReactiveSubmit" class="flex flex-col items-start gap-2">
-            <OpToggleButton @bind-Value="_reactiveModel.Accepted" OnLabel="Aceitar" OffLabel="Recusar" />
-            <ValidationMessage For="() => _reactiveModel.Accepted" />
-            <button type="submit" class="p-button p-component">Enviar</button>
-            @if (_reactiveSubmitted && _reactiveModel.Accepted)
-            {
-                <div class="text-sm">Aceito.</div>
-            }
-        </EditForm>
-
-        @code {
-            private sealed class ReactiveModel
-            {
-                public bool Accepted { get; set; }
-            }
-
-            private readonly ReactiveModel _reactiveModel = new();
-            private EditContext? _reactiveContext;
-            private ValidationMessageStore? _reactiveMessages;
-            private bool _reactiveSubmitted;
-
-            protected override void OnInitialized()
-            {
-                var context = new EditContext(_reactiveModel);
-                _reactiveContext = context;
-                _reactiveMessages = new ValidationMessageStore(context);
-                context.OnFieldChanged += (_, args) => ValidateField(args.FieldIdentifier);
-            }
-
-            private void OnReactiveSubmit()
-            {
-                _reactiveSubmitted = true;
-                ValidateField(new FieldIdentifier(_reactiveModel, nameof(ReactiveModel.Accepted)));
-            }
-
-            private void ValidateField(FieldIdentifier field)
-            {
-                _reactiveMessages?.Clear(field);
-
-                if (field.FieldName == nameof(ReactiveModel.Accepted) && !_reactiveModel.Accepted)
-                {
-                    _reactiveMessages?.Add(field, "O aceite é obrigatório.");
-                }
-            }
+            private void OnSubmit() => _submitted = true;
         }
         """;
 

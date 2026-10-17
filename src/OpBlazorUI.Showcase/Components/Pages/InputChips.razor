@@ -114,8 +114,7 @@
                               new[] { "AddOnTab", "bool", "false", "Adiciona o valor pendente ao pressionar tab." },
                               new[] { "SeparatorKeys", "IReadOnlyCollection&lt;string&gt;?", "null", "Teclas extras que adicionam um chip." },
                               new[] { "RemoveIcon / ChipIcon", "string", "pi pi-times", "Ícones de remoção e do chip." },
-                              new[] { "Disabled / Readonly / Invalid", "bool", "false", "Estados do campo." },
-                              new[] { "OnAdd / OnRemove", "EventCallback", "—", "Notificações ao adicionar/remover." }
+                              new[] { "Disabled / Readonly / Invalid", "bool", "false", "Estados do campo." }
                           })"/>
             </ChildContent>
         </DocSection>
@@ -124,6 +123,19 @@
             <ChildContent>
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] { new[] { "ChipTemplate", "RenderFragment&lt;string&gt;?", "Conteúdo customizado de cada chip." } })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "ValueChanged", "EventCallback&lt;List&lt;string&gt;?&gt;", "Disparado ao mudar a lista de chips (binding)." },
+                              new[] { "OnAdd", "EventCallback&lt;string&gt;", "Disparado ao adicionar um chip." },
+                              new[] { "OnRemove", "EventCallback&lt;int&gt;", "Disparado ao remover um chip (índice removido)." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao receber foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado ao perder o foco." }
+                          })"/>
             </ChildContent>
         </DocSection>
     </Api>
