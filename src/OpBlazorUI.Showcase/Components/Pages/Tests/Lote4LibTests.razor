@@ -1,6 +1,8 @@
 @page "/_tests/lote4-lib"
 @namespace OpBlazorUI.Showcase.Components.Pages.Tests
 @using OpBlazorUI.Components.DataTable
+@using OpBlazorUI.Components.InputNumber
+@using OpBlazorUI.Components.InputText
 @using OpBlazorUI.Models
 
 @* Página fora do menu, usada pelos testes Playwright (tests/OpBlazorUI.Playwright/Lote4LibTests.cs). *@
@@ -72,6 +74,29 @@
 <section id="t10">
     <OpDataTable Items="_rows" Columns="_rowReorderCols" ReorderableRows="true" OnRowReorder="ReorderRows"/>
     <span id="t10-log">@string.Join(",", _rows.Select(r => r.Name))</span>
+</section>
+
+<section id="t11">
+    <OpDataTable @ref="_cellTable" Items="_editable" Columns="_cellCols" DataKey="Id" EditMode="cell"
+                 OnEditInit="(MutableRow r) => OnCellEditInit(r)"
+                 OnEditComplete="(MutableRow r) => OnCellEditComplete(r)"
+                 OnEditCancel="(MutableRow r) => OnCellEditCancel(r)"/>
+    <span id="t11-log">@_cellLog</span>
+</section>
+
+<section id="t12">
+    <OpDataTable @ref="_rowTable" Items="_editable" Columns="_rowEditCols" DataKey="Id" EditMode="row"
+                 OnRowEditInit="(MutableRow r) => OnRowEditInit(r)"
+                 OnRowEditSave="(MutableRow r) => OnRowEditSave(r)"
+                 OnRowEditCancel="(MutableRow r) => OnRowEditCancel(r)"/>
+    <span id="t12-log">@_rowLog</span>
+</section>
+
+<section id="t13">
+    <OpDataTable Items="_many" Columns="_stateCols" Paginator="true"
+                 StateKey="t13-state" StateStorage="session"
+                 OnSort="OnT13Sort" OnFilter="OnT13Filter" OnPage="OnT13Page"/>
+    <span id="t13-log">@_t13Log</span>
 </section>
 
 @code {
@@ -153,12 +178,53 @@
         new OpDataTableColumn { Field = "Name", Header = "Nome", Sortable = false }
     };
 
+    // t11 — edição de célula (rascunho aplicado no complete; cancelar descarta)
+    private OpDataTable<MutableRow>? _cellTable;
+    private readonly List<OpDataTableColumn<MutableRow>> _cellCols;
+    private MutableRow _cellDraft = new();
+    private MutableRow? _cellOriginal;
+    private string _cellLog = "—";
+
+    // t12 — edição de linha (clone restaurado no cancel)
+    private OpDataTable<MutableRow>? _rowTable;
+    private readonly List<OpDataTableColumn<MutableRow>> _rowEditCols;
+    private readonly Dictionary<int, MutableRow> _clonedRows = new();
+    private string _rowLog = "—";
+
+    // t13 — stateful
+    private readonly List<OpDataTableColumn> _stateCols = new()
+    {
+        new OpDataTableColumn { Field = "Name", Header = "Nome" },
+        new OpDataTableColumn { Field = "Category", Header = "Categoria", Filter = true }
+    };
+
+    private string _t13Log = "—";
+
+    private readonly List<MutableRow> _editable = new()
+    {
+        new MutableRow { Id = 1, Name = "Alface", Price = 2.5m },
+        new MutableRow { Id = 2, Name = "Tomate", Price = 4.9m },
+        new MutableRow { Id = 3, Name = "Banana", Price = 3.2m }
+    };
     public Lote4LibTests()
     {
         _t1Cols = new List<OpDataTableColumn<Row>>
         {
             new() { Field = "Name", Header = "Nome", Sortable = false },
             new() { Sortable = false, BodyTemplate = ToggleCell }
+        };
+
+        _cellCols = new List<OpDataTableColumn<MutableRow>>
+        {
+            new() { Field = "Name", Header = "Nome", Sortable = false, EditorTemplate = CellNameEditor },
+            new() { Field = "Price", Header = "Preço", Sortable = false, EditorTemplate = CellPriceEditor }
+        };
+
+        _rowEditCols = new List<OpDataTableColumn<MutableRow>>
+        {
+            new() { Field = "Name", Header = "Nome", Sortable = false, EditorTemplate = RowNameEditor },
+            new() { Field = "Price", Header = "Preço", Sortable = false, EditorTemplate = RowPriceEditor },
+            new() { Sortable = false, BodyTemplate = RowActions }
         };
     }
 
@@ -169,6 +235,86 @@
 
     private RenderFragment ToggleCell(Row row) =>
         @<button type="button" class="t1-toggle" @onclick="() => _expandTable!.ToggleRowExpansionAsync(row)">Expandir</button>;
+
+    private RenderFragment CellNameEditor(MutableRow item) =>
+        @<OpInputText IgnoreEditContext="true" @bind-Value="_cellDraft.Name"/>;
+
+    private RenderFragment CellPriceEditor(MutableRow item) =>
+        @<OpInputNumber IgnoreEditContext="true" @bind-Value="_cellDraft.Price"/>;
+
+    private RenderFragment RowNameEditor(MutableRow item) =>
+        @<OpInputText IgnoreEditContext="true" @bind-Value="item.Name"/>;
+
+    private RenderFragment RowPriceEditor(MutableRow item) =>
+        @<OpInputNumber IgnoreEditContext="true" @bind-Value="item.Price"/>;
+
+    private RenderFragment RowActions(MutableRow item) =>
+        @<span>
+            @if (_rowTable!.IsRowInEditMode(item))
+            {
+                <button type="button" class="t12-save" @onclick="() => _rowTable!.SaveEditAsync(item)">Salvar</button>
+                <button type="button" class="t12-cancel" @onclick="() => _rowTable!.CancelEditAsync(item)">Cancelar</button>
+            }
+            else
+            {
+                <button type="button" class="t12-init" @onclick="() => _rowTable!.StartEditAsync(item)">Editar</button>
+            }
+        </span>;
+
+    private void OnCellEditInit(MutableRow item)
+    {
+        _cellOriginal = item;
+        _cellDraft = item.Clone();
+        _cellLog = $"init:{item.Name}";
+    }
+
+    private void OnCellEditComplete(MutableRow item)
+    {
+        if (_cellOriginal is not null)
+        {
+            _cellOriginal.Name = _cellDraft.Name;
+            _cellOriginal.Price = _cellDraft.Price;
+            _cellOriginal = null;
+        }
+
+        _cellLog = $"complete:{item.Name}";
+    }
+
+    private void OnCellEditCancel(MutableRow item)
+    {
+        _cellOriginal = null;
+        _cellLog = $"cancel:{item.Name}";
+    }
+
+    private void OnRowEditInit(MutableRow item)
+    {
+        _clonedRows[item.Id] = item.Clone();
+        _rowLog = $"init:{item.Name}";
+    }
+
+    private void OnRowEditSave(MutableRow item)
+    {
+        _clonedRows.Remove(item.Id);
+        _rowLog = $"save:{item.Name}";
+    }
+
+    private void OnRowEditCancel(MutableRow item)
+    {
+        if (_clonedRows.Remove(item.Id, out var clone))
+        {
+            item.Name = clone.Name;
+            item.Price = clone.Price;
+        }
+
+        _rowLog = $"cancel:{item.Name}";
+    }
+
+    private void OnT13Sort(OpDataTableSortEvent e) => _t13Log = $"sort:{e.Field}:{e.Order}";
+
+    private void OnT13Filter(IReadOnlyDictionary<string, object?> filters)
+        => _t13Log = "filter:" + string.Join(",", filters.Select(kv => $"{kv.Key}={kv.Value}"));
+
+    private void OnT13Page(int page) => _t13Log = $"page:{page}";
 
     private void ReorderColumns((int From, int To) info)
     {
@@ -182,5 +328,16 @@
         var row = _rows[info.From];
         _rows.RemoveAt(info.From);
         _rows.Insert(info.To, row);
+    }
+
+    private sealed class MutableRow
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; } = "";
+
+        public decimal? Price { get; set; }
+
+        public MutableRow Clone() => new() { Id = Id, Name = Name, Price = Price };
     }
 }

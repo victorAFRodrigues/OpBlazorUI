@@ -231,4 +231,92 @@ public class Lote4LibTests
         Assert.True(errors.Count == 0, string.Join(" || ", errors));
         await page.CloseAsync();
     }
+
+    [Fact]
+    public async Task Edicao_de_celula_salva_com_enter_e_cancela_com_escape()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        var priceCell = page.Locator("#t11 .p-datatable-tbody tr").First.Locator("td").Nth(1);
+
+        await priceCell.ClickAsync();
+        await Expect(priceCell).ToHaveClassAsync(new Regex("p-cell-editing"));
+        await Expect(priceCell.Locator("input")).ToHaveCountAsync(1);
+        await Expect(page.Locator("#t11-log")).ToHaveTextAsync("init:Alface");
+
+        await priceCell.Locator("input").FillAsync("9");
+        await priceCell.Locator("input").PressAsync("Enter");
+        await Expect(page.Locator("#t11-log")).ToHaveTextAsync("complete:Alface");
+        await Expect(priceCell).ToContainTextAsync("9");
+        await Expect(priceCell.Locator("input")).ToHaveCountAsync(0);
+
+        // Escape descarta o rascunho: o valor salvo (9) permanece.
+        await priceCell.ClickAsync();
+        await priceCell.Locator("input").FillAsync("3");
+        await priceCell.Locator("input").PressAsync("Escape");
+        await Expect(page.Locator("#t11-log")).ToHaveTextAsync("cancel:Alface");
+        await Expect(priceCell).ToContainTextAsync("9");
+        await Expect(priceCell).Not.ToContainTextAsync("3");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
+    public async Task Edicao_de_linha_salva_e_cancela_restaurando()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        var firstRow = page.Locator("#t12 .p-datatable-tbody tr").First;
+        await firstRow.Locator(".t12-init").ClickAsync();
+        await Expect(page.Locator("#t12-log")).ToHaveTextAsync("init:Alface");
+        await Expect(firstRow.Locator("input").First).ToHaveValueAsync("Alface");
+
+        await firstRow.Locator("input").First.FillAsync("Alface Editada");
+        await firstRow.Locator(".t12-save").ClickAsync();
+        await Expect(page.Locator("#t12-log")).ToHaveTextAsync("save:Alface Editada");
+        await Expect(firstRow.Locator("input")).ToHaveCountAsync(0);
+        await Expect(firstRow).ToContainTextAsync("Alface Editada");
+
+        var secondRow = page.Locator("#t12 .p-datatable-tbody tr").Nth(1);
+        await secondRow.Locator(".t12-init").ClickAsync();
+        await Expect(page.Locator("#t12-log")).ToHaveTextAsync("init:Tomate");
+        await secondRow.Locator("input").First.FillAsync("Tomate Editado");
+        await secondRow.Locator(".t12-cancel").ClickAsync();
+        await Expect(page.Locator("#t12-log")).ToHaveTextAsync("cancel:Tomate");
+        await Expect(secondRow).Not.ToContainTextAsync("Tomate Editado");
+        await Expect(secondRow).ToContainTextAsync("Tomate");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
+    public async Task Stateful_restaura_pagina_ordenacao_e_filtro()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        await page.Locator("#t13 .p-datatable-filter-row input").FillAsync("Par");
+        await Expect(page.Locator("#t13-log")).ToHaveTextAsync("filter:Category=Par");
+
+        await page.Locator("#t13 thead th").First.ClickAsync();
+        await Expect(page.Locator("#t13 thead th").First).ToHaveClassAsync(new Regex("p-datatable-column-sorted"));
+
+        await page.Locator("#t13 .p-paginator-next").ClickAsync();
+        await Expect(page.Locator("#t13-log")).ToHaveTextAsync("page:1");
+        await Expect(page.Locator("#t13 .p-paginator-page-selected")).ToHaveTextAsync("2");
+
+        await page.ReloadAsync(new PageReloadOptions { WaitUntil = WaitUntilState.NetworkIdle });
+        await page.Locator("#t-title").WaitForAsync();
+
+        await Expect(page.Locator("#t13 .p-paginator-page-selected")).ToHaveTextAsync("2");
+        await Expect(page.Locator("#t13 thead th").First).ToHaveClassAsync(new Regex("p-datatable-column-sorted"));
+        await Expect(page.Locator("#t13 .p-datatable-filter-row input")).ToHaveValueAsync("Par");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
 }

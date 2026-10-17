@@ -76,4 +76,7 @@ public sealed class OpDataTableColumn<TItem> : OpDataTableColumn
 
     /// <summary>Template do conteúdo do rodapé (substitui <see cref="OpDataTableColumn.Footer"/>).</summary>
     public RenderFragment? FooterTemplate { get; set; }
+
+    /// <summary>Template de edição da célula (usado com <c>EditMode</c> na tabela).</summary>
+    public RenderFragment<TItem>? EditorTemplate { get; set; }
 }

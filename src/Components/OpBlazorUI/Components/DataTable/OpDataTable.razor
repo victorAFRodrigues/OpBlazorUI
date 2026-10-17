@@ -40,10 +40,17 @@
                         }
                         else
                         {
-                            <td class="@TdClass(col)" style="@TdStyle(col)"
+                            <td class="@TdClass(col, IsColumnInEdit(item, col))" style="@TdStyle(col)"
                                 @onclick:stopPropagation="@IsSelectionColumn(col)"
+                                @onclick="() => OnCellClicked(item, col)"
                                 rowspan="@(IsRowSpanGroup && IsGroupColumn(col) ? GroupRowSpanOf(item) : (int?)null)">
-                                @if (IsMultipleSelectionColumn(col))
+                                @if (IsColumnInEdit(item, col))
+                                {
+                                    <p-celleditor @onkeydown="e => OnEditorKeydown(e, item)">
+                                        @(EditorTemplateOf(col)!.Invoke(item))
+                                    </p-celleditor>
+                                }
+                                else if (IsMultipleSelectionColumn(col))
                                 {
                                     <OpCheckbox IgnoreEditContext="true" Value="@IsSelected(item)"
                                                 ValueChanged="(v) => ToggleRowSelectionAsync(item, true)"

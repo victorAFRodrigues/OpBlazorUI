@@ -1,7 +1,9 @@
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using OpBlazorUI.Components.Paginator;
 using OpBlazorUI.Globalization;
 using OpBlazorUI.Models;
@@ -60,7 +62,7 @@ public sealed class OpDataTableGroupContext<TItem>
     public bool Expanded { get; init; }
 }
 
-public partial class OpDataTable<TItem> : ComponentBase
+public partial class OpDataTable<TItem> : ComponentBase, IAsyncDisposable
 {
     private readonly List<OpDataTableSortMeta> _sortMeta = new();
     private string? _lastSortFieldParam;
@@ -85,6 +87,20 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     [Inject] private OpFilterService FilterService { get; set; } = default!;
     [Inject] private OpTranslationService TranslationService { get; set; } = default!;
+    [Inject] private IJSRuntime Js { get; set; } = default!;
+
+    private OpInterop? _interop;
+
+    private OpInterop Interop => _interop ??= new OpInterop(Js);
+
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+    {
+        if (_interop is not null)
+        {
+            await _interop.DisposeAsync();
+        }
+    }
 
     private OpTranslation Tr => TranslationService.Translation;
 
@@ -175,6 +191,33 @@ public partial class OpDataTable<TItem> : ComponentBase
 
     /// <summary>Índices (na página atual) de origem e destino da linha solta.</summary>
     [Parameter] public EventCallback<(int From, int To)> OnRowReorder { get; set; }
+
+    /// <summary>Modo de edição: <c>cell</c> (uma célula por vez, com o <c>EditorTemplate</c> da coluna) ou <c>row</c> (todos os editores da linha).</summary>
+    [Parameter] public string? EditMode { get; set; }
+
+    /// <summary>Começou a edição de uma célula (clique ou <see cref="StartEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnEditInit { get; set; }
+
+    /// <summary>A edição da célula foi salva (Enter, clique em outra célula ou <see cref="SaveEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnEditComplete { get; set; }
+
+    /// <summary>A edição da célula foi cancelada (Escape ou <see cref="CancelEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnEditCancel { get; set; }
+
+    /// <summary>Começou a edição de uma linha (modo <c>row</c>).</summary>
+    [Parameter] public EventCallback<TItem> OnRowEditInit { get; set; }
+
+    /// <summary>A edição da linha foi salva (com <see cref="SaveEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnRowEditSave { get; set; }
+
+    /// <summary>A edição da linha foi cancelada (com <see cref="CancelEditAsync"/>).</summary>
+    [Parameter] public EventCallback<TItem> OnRowEditCancel { get; set; }
+
+    /// <summary>Chave para persistir página, ordenação e filtros (como o <c>stateKey</c> do upstream).</summary>
+    [Parameter] public string? StateKey { get; set; }
+
+    /// <summary><c>session</c> (padrão) ou <c>local</c> para <see cref="StateKey"/>.</summary>
+    [Parameter] public string StateStorage { get; set; } = "session";
 
     [Parameter] public bool Paginator { get; set; }
     [Parameter] public string PaginatorPosition { get; set; } = "bottom";
@@ -368,13 +411,20 @@ public partial class OpDataTable<TItem> : ComponentBase
         return parts.Count > 0 ? string.Join("; ", parts) : null;
     }
 
-    private string? TdClass(OpDataTableColumn col)
-        => BuildClass(col.BodyStyleClass, IsFrozen(col) ? "p-datatable-frozen-column" : null);
+    private string? TdClass(OpDataTableColumn col, bool editing = false)
+        => BuildClass(
+            col.BodyStyleClass,
+            IsFrozen(col) ? "p-datatable-frozen-column" : null,
+            editing ? "p-editable-column p-cell-editing" : null);
 
     private string? TdStyle(OpDataTableColumn col) => FrozenStyle(col);
 
     private int _dragColumnIndex = -1;
     private int _dragRowIndex = -1;
+    private TItem? _editingCellItem;
+    private string? _editingCellField;
+    private readonly List<TItem> _editingRows = new();
+    private bool _stateRestored;
 
     private async Task OnDropColumnAsync(int index)
     {
@@ -402,6 +452,251 @@ public partial class OpDataTable<TItem> : ComponentBase
         }
 
         return -1;
+    }
+
+    private bool IsCellEditMode => string.Equals(EditMode, "cell", StringComparison.OrdinalIgnoreCase);
+
+    private bool IsRowEditMode => string.Equals(EditMode, "row", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Indica se a linha está em edição — útil nos templates da coluna de ações (modo <c>row</c>).</summary>
+    public bool IsRowInEditMode(TItem item) => IsRowEditMode && _editingRows.Any(r => IsSameRow(r, item));
+
+    private static RenderFragment<TItem>? EditorTemplateOf(OpDataTableColumn col)
+        => col is OpDataTableColumn<TItem> typed ? typed.EditorTemplate : null;
+
+    private bool IsCellEditing(TItem item, OpDataTableColumn col)
+        => IsCellEditMode && _editingCellItem is not null && IsSameRow(_editingCellItem, item)
+           && string.Equals(_editingCellField, col.Field, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Célula deve renderizar o editor (linha inteira no modo <c>row</c>, uma célula no <c>cell</c>).</summary>
+    private bool IsColumnInEdit(TItem item, OpDataTableColumn col)
+        => IsRowEditMode
+            ? IsRowInEditMode(item) && EditorTemplateOf(col) is not null
+            : IsCellEditing(item, col);
+
+    private bool CanEditCell(OpDataTableColumn col)
+        => IsCellEditMode && !IsSelectionColumn(col) && EditorTemplateOf(col) is not null;
+
+    /// <summary>Inicia a edição: a célula de <paramref name="field"/> (modo <c>cell</c>) ou a linha (modo <c>row</c>).</summary>
+    public async Task StartEditAsync(TItem item, string? field = null)
+    {
+        if (IsCellEditMode)
+        {
+            if (_editingCellItem is not null)
+            {
+                if (IsSameRow(_editingCellItem, item) && string.Equals(_editingCellField, field, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                // Trocar de célula salva a anterior (como o onEditComplete do upstream).
+                await SaveEditAsync(_editingCellItem);
+            }
+
+            _editingCellItem = item;
+            _editingCellField = field;
+            StateHasChanged();
+            await OnEditInit.InvokeAsync(item);
+            return;
+        }
+
+        if (IsRowEditMode && !IsRowInEditMode(item))
+        {
+            _editingRows.Add(item);
+            StateHasChanged();
+            await OnRowEditInit.InvokeAsync(item);
+        }
+    }
+
+    /// <summary>Salva a edição da célula corrente (modo <c>cell</c>) ou a linha indicada (modo <c>row</c>).</summary>
+    public async Task SaveEditAsync(TItem item)
+    {
+        if (IsCellEditMode)
+        {
+            await CompleteCellEditAsync(saved: true);
+            return;
+        }
+
+        if (!IsRowEditMode) return;
+
+        var index = _editingRows.FindIndex(r => IsSameRow(r, item));
+        if (index < 0) return;
+        _editingRows.RemoveAt(index);
+        StateHasChanged();
+        await OnRowEditSave.InvokeAsync(item);
+    }
+
+    /// <summary>Salva a edição corrente (a célula ou a primeira linha em edição).</summary>
+    public async Task SaveEditAsync()
+    {
+        if (IsCellEditMode)
+        {
+            await CompleteCellEditAsync(saved: true);
+            return;
+        }
+
+        if (IsRowEditMode && _editingRows.Count > 0)
+        {
+            var target = _editingRows[0];
+            _editingRows.RemoveAt(0);
+            StateHasChanged();
+            await OnRowEditSave.InvokeAsync(target);
+        }
+    }
+
+    /// <summary>Cancela a edição da célula corrente (modo <c>cell</c>) ou da linha indicada (modo <c>row</c>).</summary>
+    public async Task CancelEditAsync(TItem item)
+    {
+        if (IsCellEditMode)
+        {
+            await CompleteCellEditAsync(saved: false);
+            return;
+        }
+
+        if (!IsRowEditMode) return;
+
+        var index = _editingRows.FindIndex(r => IsSameRow(r, item));
+        if (index < 0) return;
+        _editingRows.RemoveAt(index);
+        StateHasChanged();
+        await OnRowEditCancel.InvokeAsync(item);
+    }
+
+    /// <summary>Cancela a edição corrente (a célula ou a primeira linha em edição).</summary>
+    public async Task CancelEditAsync()
+    {
+        if (IsCellEditMode)
+        {
+            await CompleteCellEditAsync(saved: false);
+            return;
+        }
+
+        if (IsRowEditMode && _editingRows.Count > 0)
+        {
+            var target = _editingRows[0];
+            _editingRows.RemoveAt(0);
+            StateHasChanged();
+            await OnRowEditCancel.InvokeAsync(target);
+        }
+    }
+
+    private async Task CompleteCellEditAsync(bool saved)
+    {
+        if (_editingCellItem is null) return;
+
+        var done = _editingCellItem;
+        _editingCellItem = default;
+        _editingCellField = null;
+        StateHasChanged();
+
+        if (saved)
+        {
+            await OnEditComplete.InvokeAsync(done);
+        }
+        else
+        {
+            await OnEditCancel.InvokeAsync(done);
+        }
+    }
+
+    private async Task OnCellClicked(TItem item, OpDataTableColumn col)
+    {
+        if (CanEditCell(col))
+        {
+            await StartEditAsync(item, col.Field);
+        }
+    }
+
+    private async Task OnEditorKeydown(KeyboardEventArgs e, TItem item)
+    {
+        if (IsCellEditMode && e.Key == "Enter")
+        {
+            await SaveEditAsync(item);
+        }
+        else if (e.Key == "Escape")
+        {
+            await CancelEditAsync(item);
+        }
+    }
+
+    private string StorageName => string.Equals(StateStorage, "local", StringComparison.OrdinalIgnoreCase) ? "local" : "session";
+
+    // O estado é restaurado depois do primeiro render (JS só existe no modo interativo) e regravado
+    // a cada mudança de página/ordenação/filtro.
+    private async Task RestoreStateAsync()
+    {
+        var json = await Interop.InvokeAsync<string?>(OpInterop.DataTableInterop, "load", StateKey!, StorageName);
+        if (string.IsNullOrEmpty(json))
+        {
+            return;
+        }
+
+        DataTableState? state;
+        try
+        {
+            state = JsonSerializer.Deserialize(json, DataTableStateJsonContext.Default.DataTableState);
+        }
+        catch (JsonException)
+        {
+            return;
+        }
+
+        if (state is null)
+        {
+            return;
+        }
+
+        _first = Math.Max(0, state.First);
+        if (state.Rows > 0)
+        {
+            _rows = state.Rows;
+        }
+
+        if (state.GlobalFilter is not null)
+        {
+            _globalFilter = state.GlobalFilter;
+        }
+
+        _sortMeta.Clear();
+        if (state.Sort is not null)
+        {
+            _sortMeta.AddRange(state.Sort
+                .Where(s => !string.IsNullOrEmpty(s.Field) && s.Order != 0)
+                .Select(s => new OpDataTableSortMeta { Field = s.Field, Order = s.Order > 0 ? 1 : -1 }));
+        }
+
+        _columnFilters.Clear();
+        if (state.Filters is not null)
+        {
+            foreach (var (field, value) in state.Filters)
+            {
+                _columnFilters[field] = value;
+            }
+        }
+
+        _computed = false;
+        StateHasChanged();
+        await RaiseLazyLoadAsync();
+    }
+
+    private async Task SaveStateAsync()
+    {
+        if (string.IsNullOrEmpty(StateKey) || !_stateRestored)
+        {
+            return;
+        }
+
+        var state = new DataTableState
+        {
+            First = _first,
+            Rows = _rows,
+            GlobalFilter = _globalFilter,
+            Sort = _sortMeta.Select(m => new DataTableSortState { Field = m.Field, Order = m.Order }).ToList(),
+            Filters = _columnFilters.ToDictionary(kv => kv.Key, kv => kv.Value?.ToString(), StringComparer.OrdinalIgnoreCase)
+        };
+
+        await Interop.InvokeVoidAsync(OpInterop.DataTableInterop, "save", StateKey!, StorageName,
+            JsonSerializer.Serialize(state, DataTableStateJsonContext.Default.DataTableState));
     }
 
     private bool ShowSkeleton => Loading && string.Equals(LoadingMode, "skeleton", StringComparison.OrdinalIgnoreCase);
@@ -562,6 +857,12 @@ public partial class OpDataTable<TItem> : ComponentBase
         if (firstRender && Lazy)
         {
             await RaiseLazyLoadAsync();
+        }
+
+        if (firstRender && !_stateRestored && !string.IsNullOrEmpty(StateKey))
+        {
+            _stateRestored = true;
+            await RestoreStateAsync();
         }
     }
 
@@ -763,6 +1064,7 @@ public partial class OpDataTable<TItem> : ComponentBase
             MultiSortMeta = _sortMeta.ToList()
         });
         await RaiseLazyLoadAsync();
+        await SaveStateAsync();
     }
 
     private async Task OnColumnFilterChanged(string field, string? value)
@@ -780,6 +1082,7 @@ public partial class OpDataTable<TItem> : ComponentBase
         _computed = false;
         await OnFilter.InvokeAsync(new Dictionary<string, object?>(_columnFilters, StringComparer.OrdinalIgnoreCase));
         await RaiseLazyLoadAsync();
+        await SaveStateAsync();
     }
 
     /// <summary>Filtro global imperativo (como o <c>filterGlobal</c> do upstream).</summary>
@@ -797,6 +1100,7 @@ public partial class OpDataTable<TItem> : ComponentBase
 
         await RaiseLazyLoadAsync();
         await InvokeAsync(StateHasChanged);
+        await SaveStateAsync();
     }
 
     private async Task RaiseLazyLoadAsync()
@@ -933,6 +1237,7 @@ public partial class OpDataTable<TItem> : ComponentBase
 
         await OnPage.InvokeAsync(state.Page);
         await RaiseLazyLoadAsync();
+        await SaveStateAsync();
     }
 
     private async Task OnRowClicked(TItem item, MouseEventArgs e)

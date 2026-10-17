@@ -32,6 +32,7 @@ public sealed class OpInterop : IAsyncDisposable
     public const string KnobInterop = "./_content/OpBlazorUI/knob.interop.js";
     public const string SplitterInterop = "./_content/OpBlazorUI/splitter.interop.js";
     public const string ScrollPanelInterop = "./_content/OpBlazorUI/scrollpanel.interop.js";
+    public const string DataTableInterop = "./_content/OpBlazorUI/datatable.interop.js";
 
     private readonly IJSRuntime _js;
     private readonly ILogger? _logger;
