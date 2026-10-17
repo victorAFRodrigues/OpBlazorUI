@@ -939,6 +939,9 @@ public partial class OpDataTable<TItem> : ComponentBase, IAsyncDisposable
         Size == "small" ? "p-datatable-sm" : null,
         Size == "large" ? "p-datatable-lg" : null,
         HasScrollableLayout ? "p-datatable-scrollable" : null,
+        // Paridade com scrollHeight="flex" do upstream: a raiz vira um flex column de 100% e o
+        // contêiner (tema) preenche a altura disponível do pai. O pai precisa ter altura definida.
+        ScrollHeight == "flex" ? "p-datatable-flex-scrollable" : null,
         StyleClass);
 
     // O tema só torna colunas/linhas congeladas e o cabeçalho de grupo "sticky" dentro do modo
@@ -962,7 +965,7 @@ public partial class OpDataTable<TItem> : ComponentBase, IAsyncDisposable
         Selection ? "p-datatable-selectable-row" : null,
         IsSelected(item) ? "p-datatable-row-selected" : null);
 
-    private string TableContainerStyle => ScrollHeight is null
+    private string TableContainerStyle => ScrollHeight is null or "flex"
         ? "overflow: auto;"
         : $"overflow: auto; max-height: {ScrollHeight};";
 
