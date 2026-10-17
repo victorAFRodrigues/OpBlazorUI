@@ -208,6 +208,7 @@ public class P2Tests
     [InlineData("/fileupload", ".p-fileupload")]
     [InlineData("/tree", ".p-tree")]
     [InlineData("/table", ".p-datatable")]
+    [InlineData("/treetable", ".p-treetable")]
     public async Task Paginas_renderizam_no_modo_escuro(string route, string selector)
     {
         var errors = new List<string>();

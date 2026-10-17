@@ -3,18 +3,29 @@
 @using OpBlazorUI.Showcase.Components.Doc
 @using OpBlazorUI.Components.TreeTable
 @using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.Menu
+@using OpBlazorUI.Components.Dialog
+@using OpBlazorUI.Components.InputText
+@using OpBlazorUI.Components.MultiSelect
 @using OpBlazorUI.Components.Paginator
+@using OpBlazorUI.Components.SelectButton
 @using OpBlazorUI.Models
+@using Microsoft.AspNetCore.Components.Web
 
 <PageTitle>TreeTable - OpBlazorUI</PageTitle>
 
 <DocComponent Title="TreeTable"
-              Description="O TreeTable exibe dados hierárquicos em formato tabular, com colunas configuráveis, seleção, paginação e carregamento.">
+              Description="O TreeTable exibe dados hierárquicos em formato tabular, com colunas configuráveis, ordenação, filtro, seleção, paginação e rolagem.">
 
     <Features>
         <DocSection Label="Importação" Id="import-demo">
             <Description>
-                <p>O componente usa os modelos <code>OpTreeNode</code> e <code>OpTreeTableColumn</code> e é consumido diretamente em Razor.</p>
+                <p>
+                    O componente usa os modelos <code>OpTreeNode</code> (nós com <code>Label</code>,
+                    <code>Data</code> e <code>Children</code>) e <code>OpTreeTableColumn</code> (colunas com
+                    <code>Field</code> que lê as propriedades de <code>Data</code> por reflexão) e é consumido
+                    diretamente em Razor.
+                </p>
             </Description>
             <Code><CodeBlock Code="@ImportCode"/></Code>
         </DocSection>
@@ -22,147 +33,549 @@
         <DocSection Label="Básico" Id="basic">
             <Description>
                 <p>
-                    O TreeTable requer uma coleção de instâncias de <code>OpTreeNode</code> como <code>Nodes</code>,
-                    com colunas em <code>Columns</code>. A coluna marcada como <code>Expandable</code> recebe o botão
-                    de expandir/recolher (por padrão, a primeira).
+                    Informe <code>Nodes</code> e <code>Columns</code>. A coluna marcada com
+                    <code>Expandable</code> (por padrão, a primeira) recebe o botão de expandir/recolher e o
+                    recuo de cada nível. Sem nós, o componente exibe <code>EmptyMessage</code>.
                 </p>
             </Description>
             <ChildContent>
-                <OpTreeTable Nodes="_basicNodes" Columns="_columns" EmptyMessage="Nenhum registro encontrado"/>
+                <OpTreeTable Nodes="_basicNodes" Columns="_columns"/>
             </ChildContent>
             <Code><CodeBlock Code="@BasicCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Seleção - Única" Id="selectionsingle">
+        <DocSection Label="Colunas Dinâmicas" Id="dynamiccolumns">
             <Description>
                 <p>
-                    A seleção de um único nó é configurada definindo <code>SelectionMode</code> como
-                    <code>single</code>, junto da propriedade <code>Selection</code> para gerenciar o vínculo do valor
-                    selecionado.
+                    As colunas são montadas em código: além de <code>Field</code> (leitura por reflexão),
+                    <code>HeaderTemplate</code> e <code>BodyTemplate</code> permitem desenhar cabeçalho e célula
+                    com qualquer marcação — como no demo da referência, que monta as colunas a partir da lista de
+                    colunas exibidas.
                 </p>
             </Description>
             <ChildContent>
-                <OpTreeTable Nodes="_singleNodes" Columns="_columns" SelectionMode="single"
-                             @bind-Selection="_singleSelection" EmptyMessage="Nenhum registro encontrado"/>
-                <p class="mt-2">Selecionado: <b>@SelectedLabel(_singleSelection)</b></p>
+                <OpTreeTable Nodes="_dynamicNodes" Columns="_dynamicColumns"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@DynamicColumnsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Expansão Controlada" Id="controlled">
+            <Description>
+                <p>
+                    A expansão vive nos próprios nós (<code>OpTreeNode.Expanded</code>): a página pode expandir e
+                    recolher por código, e <code>OnNodeExpand</code>/<code>OnNodeCollapse</code> avisam a cada
+                    alternância (o modo <code>Lazy</code> usa o primeiro para carregar os filhos). O botão abaixo
+                    alterna as pastas da árvore.
+                </p>
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <div class="flex">
+                        <OpButton Label="Alternar pastas" Icon="pi pi-sort-alt" OnClick="ToggleControlledFolders"/>
+                    </div>
+                    <OpTreeTable Nodes="_controlledNodes" Columns="_columns"
+                                 OnNodeExpand="OnControlledExpand" OnNodeCollapse="OnControlledCollapse"/>
+                    <div class="text-sm">Último evento: @_controlledLog</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ControlledCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Template" Id="template">
+            <Description>
+                <p>
+                    O componente aceita <code>CaptionTemplate</code> (área acima da tabela),
+                    <code>HeaderTemplate</code> (linha extra no <code>thead</code>), <code>FooterTemplate</code>
+                    (substitui a linha padrão do <code>tfoot</code> — o template desenha o <code>tr</code>),
+                    <code>EmptyTemplate</code> e <code>LoadingTemplate</code>; cada coluna aceita
+                    <code>HeaderTemplate</code>, <code>BodyTemplate</code> e <code>FooterTemplate</code>. O demo
+                    usa a caption, o rodapé do componente e templates de célula com ícones.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_templateNodes" Columns="_templateColumns">
+                    <CaptionTemplate>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-sm font-semibold">Sistema de arquivos</span>
+                            <span class="text-sm">@_templateTotalSize.ToString("N0") KB</span>
+                        </div>
+                    </CaptionTemplate>
+                    <FooterTemplate>
+                        <tr>
+                            <td colspan="3">
+                                <div class="text-sm">Total de itens: @CountNodes(_templateNodes)</div>
+                            </td>
+                        </tr>
+                    </FooterTemplate>
+                </OpTreeTable>
+            </ChildContent>
+            <Code><CodeBlock Code="@TemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Tamanho" Id="size">
+            <Description>
+                <code>Size</code> aceita <code>small</code> e <code>large</code> (vazio usa o tamanho padrão do
+                tema), aplicando as classes <code>p-treetable-sm</code> e <code>p-treetable-lg</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <div class="flex">
+                        <OpSelectButton TValue="string" @bind-Value="_size" Options="_sizeOptions" AllowEmpty="false"/>
+                    </div>
+                    <OpTreeTable Nodes="_sizeNodes" Columns="_columns" Size="@_size"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SizeCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Linhas de Grade" Id="gridlines">
+            <Description>
+                <code>ShowGridlines</code> desenha as bordas verticais entre as colunas
+                (<code>p-treetable-gridlines</code>).
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_gridNodes" Columns="_columns" ShowGridlines="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@GridlinesCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Carregamento - Máscara" Id="loading-mask">
+            <Description>
+                <code>Loading</code> sobrepõe uma máscara à tabela e <code>LoadingTemplate</code> substitui o
+                spinner padrão. No exemplo, o botão simula uma consulta de 2 segundos.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <div class="flex">
+                        <OpButton Label="Carregar (2 s)" Icon="pi pi-refresh" OnClick="LoadMask" Loading="_maskLoading"/>
+                    </div>
+                    <OpTreeTable Nodes="_maskNodes" Columns="_columns" Loading="_maskLoading">
+                        <LoadingTemplate>
+                            <span class="pi pi-spin pi-spinner" aria-hidden="true"></span>
+                        </LoadingTemplate>
+                    </OpTreeTable>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoadingMaskCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Carregamento - Skeleton" Id="loading-skeleton">
+            <Description>
+                Com <code>LoadingMode="skeleton"</code> o componente exibe linhas de esqueleto em vez da máscara;
+                <code>SkeletonRows</code> define quantas linhas mostrar (0 usa <code>Rows</code>).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <div class="flex">
+                        <OpButton Label="Carregar (2 s)" Icon="pi pi-refresh" OnClick="LoadSkeleton" Loading="_skeletonLoading"/>
+                    </div>
+                    <OpTreeTable Nodes="_skeletonNodes" Columns="_columns" Loading="_skeletonLoading"
+                                 LoadingMode="skeleton" SkeletonRows="5"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@LoadingSkeletonCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Paginação - Básico" Id="paginatorbasic">
+            <Description>
+                <code>Paginator</code> habilita a paginação e <code>Rows</code> define quantas raízes por página —
+                cada raiz leva junto a subárvore visível. <code>PaginatorPosition</code> aceita
+                <code>bottom</code> (padrão), <code>top</code> ou <code>both</code>;
+                <code>RowsPerPageOptions</code> habilita o seletor de itens por página e <code>OnPageChange</code>
+                informa a página exibida (base 0).
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_pageNodes" Columns="_columns" Paginator="true" Rows="2"
+                                 PaginatorPosition="both" RowsPerPageOptions="_rowsPerPageOptions"
+                                 OnPageChange="OnTreePageChanged"/>
+                    <div class="text-sm">Última página navegada: @(_pageState + 1) · linhas por página: @_pageRows</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@PaginatorBasicCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Paginação - Template" Id="paginatortemplate">
+            <Description>
+                <code>PaginatorLeftTemplate</code> e <code>PaginatorRightTemplate</code> preenchem o início e o fim
+                do paginador — o <code>leftContent</code>/<code>rightContent</code> da referência. O demo usa um
+                botão que volta à primeira página e um contador.
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_pageTemplateNodes" Columns="_columns" Paginator="true" Rows="2"
+                             @bind-First="_pageTemplateFirst">
+                    <PaginatorLeftTemplate>
+                        <OpButton Label="Reiniciar" Icon="pi pi-refresh" Outlined="true"
+                                  OnClick="() => _pageTemplateFirst = 0"/>
+                    </PaginatorLeftTemplate>
+                    <PaginatorRightTemplate>
+                        <span class="text-sm">Raízes: @_pageTemplateNodes.Count</span>
+                    </PaginatorRightTemplate>
+                </OpTreeTable>
+            </ChildContent>
+            <Code><CodeBlock Code="@PaginatorTemplateCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ordenação - Coluna Única" Id="sortsinglecolumn">
+            <Description>
+                A ordenação é embutida: clicar no cabeçalho percorre ascendente e descendente (ciclo de 2 estados,
+                como na referência) e <code>aria-sort</code> acompanha. Cada nível é ordenado pelos campos das
+                colunas com <code>Sortable</code>; <code>Sortable</code> no componente desliga o recurso
+                globalmente. <code>OnSort</code> entrega o campo, a ordem e a lista de <code>MultiSortMeta</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_sortNodes" Columns="_sortColumns" OnSort="OnSingleSort"/>
+                    <div class="text-sm">Ordenação: @_singleSortLog</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SortSingleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ordenação - Múltiplas Colunas" Id="sortmultiplecolumns">
+            <Description>
+                Com <code>SortMode="multiple"</code>, <i>ctrl</i>/<i>meta</i> + clique adiciona a coluna à
+                ordenação (com badge numérico de prioridade); o clique simples ordena só por ela. Também é possível
+                controlar a ordenação pela página com <code>MultiSortMeta</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_multiSortNodes" Columns="_sortColumns" SortMode="multiple" OnSort="OnMultiSort"/>
+                    <div class="text-sm">Ordenação: @_multiSortLog</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SortMultipleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Ordenação Removível" Id="sortremovable">
+            <Description>
+                Com <code>RemovableSort</code> o terceiro clique na coluna remove a ordenação — a seção
+                <i>Removable Sort</i> que a referência mantém comentada no índice. O comportamento é o mesmo em
+                <code>SortMode="multiple"</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_removableSortNodes" Columns="_sortColumns" RemovableSort="true" OnSort="OnRemovableSort"/>
+                    <div class="text-sm">Ordenação: @_removableSortLog</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@SortRemovableCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Filtro" Id="filter">
+            <Description>
+                <p>
+                    Com <code>OpTreeTableColumn.Filter = true</code> a coluna exibe um campo de filtro no
+                    cabeçalho; a comparação usa <code>OpFilterService</code> (ignora acentos e caixa) no modo de
+                    <code>FilterMatchMode</code> da coluna. <code>FilterMode</code> escolhe o comportamento:
+                    <code>lenient</code> (padrão) mantém a subárvore inteira de um nó que casa;
+                    <code>strict</code> continua filtrando os descendentes. <code>GlobalFilter</code> filtra pelos
+                    campos de <code>GlobalFilterFields</code> (ou por todas as colunas) e o botão vinculado é
+                    desenhado pela página — no demo, na caption, como na referência. <code>OnFilter</code> entrega
+                    os filtros ativos.
+                </p>
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_filterNodes" Columns="_filterColumns" GlobalFilter="@_filterGlobal"
+                             FilterMode="@_filterMode"
+                             OnFilter="OnTreeFilters">
+                    <CaptionTemplate>
+                        <div class="flex items-center justify-between gap-2">
+                            <OpSelectButton TValue="string" @bind-Value="_filterMode" Options="_filterModes" AllowEmpty="false"/>
+                            <OpInputText IgnoreEditContext="true" @bind-Value="_filterGlobal"
+                                         Placeholder="Buscar" AriaLabel="Filtro global"/>
+                        </div>
+                    </CaptionTemplate>
+                </OpTreeTable>
+                <div class="text-sm mt-2">Filtros de coluna ativos: @_treeFilters.Count</div>
+            </ChildContent>
+            <Code><CodeBlock Code="@FilterCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Seleção - Única" Id="selectionsingle">
+            <Description>
+                <code>SelectionMode="single"</code> seleciona um nó por clique, com
+                <code>@@bind-Selection</code> ligando o nó selecionado à página — como na referência, a
+                seleção da linha é indicada por <code>aria-selected</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_singleNodes" Columns="_columns" SelectionMode="single" @bind-Selection="_singleSelection"/>
+                    <div class="text-sm">Selecionado: @SelectedLabel(_singleSelection)</div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@SelectionSingleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Seleção - Múltipla" Id="selectionmultiple">
             <Description>
-                <p>
-                    Mais de um nó pode ser selecionado definindo <code>SelectionMode</code> como
-                    <code>multiple</code>. No modo de seleção múltipla, o vínculo de valor é um par chave-valor, onde a
-                    chave é a <code>Key</code> do nó e o valor é um booleano que indica a seleção.
-                </p>
+                Com <code>SelectionMode="multiple"</code> o vínculo de <code>Selection</code> é um dicionário
+                <code>Key→bool</code> — a mesma chave do upstream, onde a seleção múltipla é um mapa de chaves
+                selecionadas. Cada clique alterna a marcação do nó (ao contrário da referência, que por padrão
+                exige <i>ctrl</i>/<i>meta</i> — veja os problemas conhecidos).
             </Description>
             <ChildContent>
-                <OpTreeTable Nodes="_multipleNodes" Columns="_columns" SelectionMode="multiple"
-                             @bind-Selection="_multiSelection" EmptyMessage="Nenhum registro encontrado"/>
-                <p class="mt-2">Selecionados: <b>@CountSelection(_multiSelection)</b></p>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_multipleNodes" Columns="_columns" SelectionMode="multiple" @bind-Selection="_multipleSelection"/>
+                    <div class="text-sm">Selecionados: @CountSelection(_multipleSelection)</div>
+                </div>
             </ChildContent>
             <Code><CodeBlock Code="@SelectionMultipleCode"/></Code>
         </DocSection>
 
         <DocSection Label="Seleção - Checkbox" Id="checkbox">
             <Description>
-                <p>
-                    A seleção de múltiplos nós via checkboxes é habilitada configurando <code>SelectionMode</code>
-                    como <code>checkbox</code>. Uma coluna de seleção é adicionada automaticamente, com propagação
-                    para os descendentes e recálculo dos ancestrais.
-                </p>
+                <code>SelectionMode="checkbox"</code> exibe checkboxes em cada linha (e no cabeçalho para marcar
+                tudo que está visível). O vínculo é o mesmo dicionário da seleção múltipla.
             </Description>
             <ChildContent>
-                <OpTreeTable Nodes="_checkboxNodes" Columns="_columns" SelectionMode="checkbox"
-                             @bind-Selection="_checkboxSelection" EmptyMessage="Nenhum registro encontrado"/>
-                <p class="mt-2">Selecionados: <b>@CountSelection(_checkboxSelection)</b></p>
-            </ChildContent>
-            <Code><CodeBlock Code="@SelectionCheckboxCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Paginação" Id="paginatorbasic">
-            <Description>
-                <p>
-                    A paginação é habilitada adicionando a propriedade <code>Paginator</code> e definindo
-                    <code>Rows</code> por página. A posição é controlada por <code>PaginatorPosition</code>
-                    (<code>top</code>, <code>bottom</code> ou <code>both</code>). A paginação percorre os nós
-                    raiz; os descendentes expandidos de cada raiz acompanham a página.
-                </p>
-            </Description>
-            <ChildContent>
-                <OpTreeTable Nodes="_pageNodes" Columns="_columns" Paginator="true" Rows="5"
-                             RowsPerPageOptions="_rowsPerPage" @bind-First="_first" OnPageChange="OnPage"
-                             EmptyMessage="Nenhum registro encontrado"/>
-                <p class="mt-2">Página atual: <b>@_pageLabel</b></p>
-            </ChildContent>
-            <Code><CodeBlock Code="@PaginatorCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Carregamento" Id="loading-mask">
-            <Description>
-                <p>
-                    A propriedade <code>Loading</code> exibe uma camada de máscara para indicar estado ocupado. O
-                    conteúdo pode ser customizado por <code>LoadingTemplate</code>.
-                </p>
-            </Description>
-            <ChildContent>
-                <div class="flex flex-wrap gap-2 mb-4">
-                    <OpButton Label="Alternar carregamento" Icon="pi pi-refresh" OnClick="ToggleLoading"/>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_checkboxNodes" Columns="_columns" SelectionMode="checkbox" @bind-Selection="_checkboxSelection"/>
+                    <div class="text-sm">Marcados: @CountSelection(_checkboxSelection)</div>
                 </div>
-                <OpTreeTable Nodes="_basicNodes" Columns="_columns" Loading="_loading" EmptyMessage="Nenhum registro encontrado"/>
             </ChildContent>
-            <Code><CodeBlock Code="@LoadingCode"/></Code>
+            <Code><CodeBlock Code="@CheckboxCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Vazio" Id="empty">
+        <DocSection Label="Eventos de Seleção" Id="events">
+            <Description>
+                <code>OnNodeSelect</code> e <code>OnNodeUnselect</code> entregam o nó alterado e
+                <code>SelectionChanged</code> entrega o estado completo da seleção — no demo a referência usa um
+                <i>growl</i>; aqui o evento fica em um rótulo.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_eventNodes" Columns="_columns" SelectionMode="multiple"
+                                 @bind-Selection="_eventSelection"
+                                 OnNodeSelect="OnTreeNodeSelect" OnNodeUnselect="OnTreeNodeUnselect"/>
+                    <div class="text-sm">Último evento: @_eventLog</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@EventsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Agrupamento de Colunas" Id="columngroup">
+            <Description>
+                Cabeçalhos podem ser agrupados com <code>HeaderGroups</code>: cada item é uma linha do
+                <code>thead</code>, com <code>Header</code>, <code>ColSpan</code> e <code>RowSpan</code>. A última
+                linha traz os títulos das colunas folha; colunas com <code>HideHeader="true"</code> não repetem o
+                título (quando todas as colunas o definem, a linha normal de títulos é omitida). O rodapé usa
+                <code>Footer</code>/<code>FooterTemplate</code> por coluna.
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_groupNodes" Columns="_groupColumns" HeaderGroups="_groupRows"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ColumnGroupCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Carregamento Lazy" Id="lazyload">
             <Description>
                 <p>
-                    Quando não há nós, é exibido <code>EmptyMessage</code> ou o conteúdo de
-                    <code>EmptyTemplate</code>.
+                    Com <code>Lazy="true"</code> a árvore cresce sob demanda: nós sem <code>Children</code> com
+                    <code>Leaf="false"</code> mostram o botão de expandir, que marca <code>Loading</code> e dispara
+                    <code>OnNodeExpand</code> — o handler preenche <code>Children</code> e zera o
+                    <code>Loading</code> do nó. No modo lazy os dados da página vêm prontos do "servidor": nada é
+                    ordenado ou filtrado localmente, e <code>OnLazyLoad</code> recebe primeira linha, linhas,
+                    ordenação e filtros. O demo simula a latência com um atraso de 600 ms.
                 </p>
             </Description>
             <ChildContent>
-                <OpTreeTable Nodes="_emptyNodes" Columns="_columns" EmptyMessage="Nenhum registro encontrado"/>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_lazyNodes" Columns="_columns" Lazy="true"
+                                 OnNodeExpand="LoadLazyNode" OnLazyLoad="OnTreeLazyLoad" TotalRecords="2"/>
+                    <div class="text-sm">Último carregamento lazy: @_lazyLog</div>
+                </div>
             </ChildContent>
-            <Code><CodeBlock Code="@EmptyCode"/></Code>
+            <Code><CodeBlock Code="@LazyLoadCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Edição" Id="edit">
+            <Description>
+                A edição por célula/linha da referência (demo legada com <code>pTemplate="editableColumn"</code>)
+                não foi portada — no próprio índice do upstream a seção aparece comentada. Para editar, use
+                templates de célula com os componentes de formulário do OpBlazorUI ou um diálogo, aplicando as
+                alterações no <code>Data</code> dos nós.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Rolagem Vertical" Id="vertical">
+            <Description>
+                <code>ScrollHeight</code> limita a altura do contêiner de rolagem (valor CSS, ex.: <code>200px</code>)
+                e <code>StickyHeader</code> reforça o cabeçalho fixo no <code>thead</code>. Sem
+                <code>ScrollHeight</code> a tabela cresce com o conteúdo.
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_scrollNodes" Columns="_columns" ScrollHeight="200px" StickyHeader="true"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@VerticalScrollCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Rolagem Flexível" Id="flexible">
+            <Description>
+                <code>ScrollHeight="flex"</code> faz a área rolável acompanhar o tamanho do pai (raiz com
+                <code>p-treetable-flex-scrollable</code>) em vez de uma altura fixa. O pai precisa ter altura
+                definida — no demo, o conteúdo do diálogo usa <code>ContentStyle="height: 300px"</code>:
+                maximize e veja a tabela se ajustar.
+            </Description>
+            <ChildContent>
+                <div class="flex justify-center">
+                    <OpButton Label="Mostrar" Icon="pi pi-external-link" OnClick="() => _flexDialog = true"/>
+                </div>
+                <OpDialog Header="Arquivos" Visible="_flexDialog" VisibleChanged="(bool v) => _flexDialog = v"
+                          Modal="true" Maximizable="true" Resizable="false" Style="width: 75vw" ContentStyle="height: 300px">
+                    <OpTreeTable Nodes="_flexNodes" Columns="_columns" ScrollHeight="flex"/>
+                </OpDialog>
+            </ChildContent>
+            <Code><CodeBlock Code="@FlexScrollCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Rolagem Horizontal" Id="horizontal">
+            <Description>
+                Quando a soma das larguras excede o contêiner, a rolagem horizontal aparece. Defina
+                <code>Width</code> nas colunas e opcionalmente <code>TableStyle</code> com uma largura mínima —
+                <code>min-width</code> — como na referência; <code>ScrollHeight</code> pode combinar a rolagem
+                vertical.
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_wideNodes" Columns="_wideColumns" TableStyle="min-width: 60rem"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@HorizontalScrollCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Colunas Congeladas" Id="frozencolumns">
+            <Description>
+                <code>OpTreeTableColumn.Frozen</code> aceita <code>left</code> ou <code>right</code> e fixa a
+                coluna durante a rolagem horizontal. Informe <code>Width</code> nas colunas congeladas: o
+                deslocamento <i>sticky</i> é calculado a partir delas. É um desvio consciente do upstream, que
+                congela um bloco de colunas com <code>frozenColumns</code>/<code>frozenWidth</code> e templates
+                espelhados — aqui o congelamento é por coluna. No demo, <i>Nome</i> fica à esquerda e <i>Tipo</i>
+                à direita.
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_frozenNodes" Columns="_frozenColumns" ScrollHeight="200px" TableStyle="min-width: 60rem"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@FrozenColumnsCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Fit Mode" Id="fitmode">
+            <Description>
+                O <code>fitMode</code> da referência pertence ao redimensionamento de colunas por arraste
+                (<i>Column Resize</i>): as colunas se ajustam à largura do contêiner enquanto a coluna arrastada
+                muda de tamanho. O redimensionamento por arraste ainda não foi portado — defina as larguras com
+                <code>OpTreeTableColumn.Width</code> ou classes de estilo.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Expand Mode" Id="expandmode">
+            <Description>
+                O <code>expandMode</code> também pertence ao redimensionamento de colunas: a coluna arrastada
+                expande em vez de empurrar as vizinhas. Como o recurso ainda não foi portado, esta seção fica
+                documentada sem demo.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Scrollable" Id="scrollable">
+            <Description>
+                O modo <code>[scrollable]="true"</code> da referência combina a área de rolagem com o
+                redimensionamento por arraste das colunas — por isso não foi portado. A rolagem vertical e
+                horizontal continuam disponíveis por <code>ScrollHeight</code>, <code>TableStyle</code> e
+                <code>Width</code> (veja as seções <i>Rolagem Vertical</i>, <i>Rolagem Flexível</i> e
+                <i>Rolagem Horizontal</i>); o congelamento por coluna também aplica a classe
+                <code>p-treetable-scrollable</code> automaticamente.
+            </Description>
+        </DocSection>
+
+        <DocSection Label="Reordenar Colunas" Id="reorder">
+            <Description>
+                <code>ReorderableColumns</code> habilita arrastar os cabeçalhos e
+                <code>OnColumnReorder</code> entrega <code>(from, to)</code> para a página reordenar a lista de
+                colunas — o arraste usa o drag-and-drop nativo do navegador, como na referência. No demo a
+                ordenação por clique fica desligada para não competir com o arraste.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_reorderNodes" Columns="_reorderColumns" Sortable="false"
+                                 ReorderableColumns="true" OnColumnReorder="ReorderTreeColumns"/>
+                    <div class="text-sm">Colunas: @string.Join(", ", _reorderColumns.Select(c => c.Header))</div>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ReorderCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Alternar Colunas" Id="columntoggle">
+            <Description>
+                O demo da referência implementa a alternância de colunas com o componente <i>multiselect</i> na
+                <i>caption</i>. Aqui o <code>OpMultiSelect</code> fica acima da tabela e a lista vinculada é
+                atribuída diretamente a <code>Columns</code>.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpMultiSelect TValue="OpTreeTableColumn" @bind-Value="_selectedColumns" Options="_toggleColumns"
+                                   OptionLabel="Header" Display="chip"
+                                   Placeholder="Escolha as colunas" StyleClass="w-fit"/>
+                    <OpTreeTable Nodes="_toggleNodes" Columns="@(_selectedColumns ?? Array.Empty<OpTreeTableColumn>())"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ColumnToggleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Estilo Condicional" Id="conditionalstyle">
+            <Description>
+                <code>RowClass</code> recebe o nó e devolve classes extras para a linha — o <code>rowClass</code>
+                da referência. No demo, pastas ficam em negrito; a mesma função pode destacar por tipo, tamanho ou
+                qualquer dado do nó.
+            </Description>
+            <ChildContent>
+                <OpTreeTable Nodes="_conditionalNodes" Columns="_columns" RowClass="FolderRowClass"/>
+            </ChildContent>
+            <Code><CodeBlock Code="@ConditionalStyleCode"/></Code>
+        </DocSection>
+
+        <DocSection Label="Menu de Contexto" Id="contextmenu">
+            <Description>
+                <code>OnRowContextMenu</code> entrega o nó clicado e o <code>MouseEventArgs</code> (o clique
+                direito já vem com <code>preventDefault</code>), permitindo abrir o <code>OpContextMenu</code> nas
+                coordenadas do cursor — a integração <code>pContextMenuRow</code> da referência. O item escolhido
+                fica guardado na página para as ações.
+            </Description>
+            <ChildContent>
+                <div class="flex flex-col gap-3">
+                    <OpTreeTable Nodes="_ctxNodes" Columns="_columns" OnRowContextMenu="TreeContextMenu"/>
+                    <div class="text-sm">Último clique direito: @(_ctxSelected?.Label ?? "nenhum") · Ação: @_ctxLog</div>
+                    <OpContextMenu @ref="_ctxMenu" Model="_ctxItems" OnItemClick="OnTreeCtxItemClick"/>
+                </div>
+            </ChildContent>
+            <Code><CodeBlock Code="@ContextMenuCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
             <Description>
                 <h3>Leitor de tela</h3>
                 <p>
-                    O papel padrão da tabela é <code>treegrid</code>. Os elementos de cabeçalho, corpo e rodapé usam
-                    <code>rowgroup</code>, as linhas usam o papel <code>row</code>, as células de cabeçalho têm
-                    <code>columnheader</code> e as células de corpo usam o papel <code>cell</code>.
+                    O componente usa a marcação semântica nativa (<code>table</code>, <code>thead</code>,
+                    <code>tbody</code>, <code>tr</code>, <code>th</code>, <code>td</code>), então os leitores de
+                    tela inferem os papéis <code>rowgroup</code>, <code>row</code>, <code>columnheader</code> e
+                    <code>cell</code> automaticamente. Os cabeçalhos ordenáveis são focáveis e expõem
+                    <code>aria-sort</code>; as linhas selecionáveis anunciam <code>aria-selected</code> e o botão de
+                    expandir/recolher tem rótulo ARIA vindo das traduções. Ainda faltam rótulos ARIA nas checkboxes
+                    da coluna de seleção.
                 </p>
                 <p>
-                    Os elementos de linha gerenciam <code>aria-expanded</code> e o atributo <code>aria-level</code>
-                    para definir a hierarquia.
-                </p>
-                <p>
-                    Quando a seleção está habilitada, as linhas expõem <code>aria-selected</code>. No modo checkbox, o
-                    checkbox interno usa o papel <code>checkbox</code> com o atributo de estado
-                    <code>aria-checked</code>.
-                </p>
-                <p>
-                    O Paginator é um componente autônomo usado dentro do TreeTable; consulte a documentação do
-                    Paginator para os recursos de acessibilidade.
+                    Papéis e rótulos podem ser reforçados pelos <code>AdditionalAttributes</code>: qualquer
+                    atributo extra (ex.: <code>aria-label</code>) é repassado ao contêiner raiz.
                 </p>
             </Description>
             <Code>
                 <CodeBlock Code="@AccessibilityCode"/>
-                <div class="doc-section-description"><h3>Suporte a teclado</h3></div>
+                <div class="doc-section-description"><h3>Suporte a teclado implementado</h3></div>
                 <ApiTable Headers="@(new[] { "Tecla", "Função" })"
                           Rows="@(new[] {
-                              new[] { "tab", "Move o foco para o primeiro nó selecionado quando o foco entra no componente; se não houver nenhum, o primeiro elemento recebe o foco. Se o foco já estiver dentro do componente, move o foco para o próximo elemento focalizável na sequência de tabulação da página." },
-                              new[] { "shift + tab", "Move o foco para o último nó selecionado quando o foco entra no componente; se não houver nenhum, o primeiro elemento recebe o foco. Se o foco já estiver dentro do componente, move o foco para o elemento focalizável anterior na sequência de tabulação da página." },
-                              new[] { "enter", "Seleciona o nó em foco." },
-                              new[] { "space", "Seleciona o nó em foco." },
-                              new[] { "down arrow", "Move o foco para o próximo nó." },
-                              new[] { "up arrow", "Move o foco para o nó anterior." },
-                              new[] { "right arrow", "Se o nó estiver fechado, abre o nó; caso contrário, move o foco para o primeiro nó filho." },
-                              new[] { "left arrow", "Se o nó estiver aberto, fecha o nó; caso contrário, move o foco para o nó pai." }
+                              new[] { "tab", "Percorre os cabeçalhos ordenáveis, o botão de expandir/recolher, as checkboxes, o paginador e os campos de filtro; as linhas participam com um único ponto de parada (tabindex móvel)." },
+                              new[] { "seta para baixo / para cima", "Move o foco entre as linhas." },
+                              new[] { "seta para a direita", "Expande o nó focado; se já estiver expandido, move o foco para a primeira linha filha." },
+                              new[] { "seta para a esquerda", "Recolhe o nó focado; se recolhido, move o foco para a linha anterior (pai)." },
+                              new[] { "home / end", "Move o foco para a primeira ou a última linha." },
+                              new[] { "enter / space", "Aciona a linha em foco (seleção ou alternância de expansão)." }
                           })"/>
             </Code>
         </DocSection>
@@ -171,77 +584,136 @@
     <Api>
         <DocSection Label="Propriedades" Id="api-props">
             <ChildContent>
-                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
+                <ApiTable Caption="Propriedades"
+                          Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "Nodes", "IReadOnlyList&lt;OpTreeNode&gt;?", "null", "Coleção de nós raiz." },
-                              new[] { "Columns", "IReadOnlyList&lt;OpTreeTableColumn&gt;", "[]", "Definição das colunas." },
-                              new[] { "SelectionMode", "string?", "null", "Modo de seleção: <code>single</code>, <code>multiple</code> ou <code>checkbox</code>." },
-                              new[] { "Selection", "object?", "null", "Em <code>single</code>, um <code>OpTreeNode</code>; em <code>multiple</code>/<code>checkbox</code>, um <code>IReadOnlyDictionary&lt;string, bool&gt;</code> chaveado por <code>Key</code>." },
-                              new[] { "SelectionChanged", "EventCallback&lt;object?&gt;", "—", "Notifica a mudança de seleção (usar com <code>@@bind-Selection</code>)." },
-                              new[] { "Loading", "bool", "false", "Exibe a máscara de carregamento." },
-                              new[] { "EmptyMessage", "string?", "No records found", "Mensagem exibida quando não há nós." },
-                              new[] { "Paginator", "bool", "false", "Habilita a paginação." },
-                              new[] { "Rows", "int", "10", "Número de linhas por página." },
-                              new[] { "First", "int", "0", "Índice da primeira linha da página (usar com <code>@@bind-First</code>)." },
-                              new[] { "FirstChanged", "EventCallback&lt;int&gt;", "—", "Notifica a mudança de página." },
-                              new[] { "TotalRecords", "int", "0", "Total lógico de registros no modo lazy; 0 usa a contagem real." },
-                              new[] { "Lazy", "bool", "false", "Indica carregamento sob demanda (flag; não há callback de dados)." },
-                              new[] { "RowHover", "bool", "true", "Destaca a linha sob o cursor." },
-                              new[] { "Size", "string?", "null", "Tamanho: <code>small</code> ou <code>large</code>." },
-                              new[] { "PaginatorPosition", "string", "bottom", "Posição do paginador: <code>top</code>, <code>bottom</code> ou <code>both</code>." },
-                              new[] { "PageLinks", "int", "5", "Quantidade de links de página exibidos." },
-                              new[] { "AlwaysShowPaginator", "bool", "true", "Exibe o paginador mesmo com uma única página." },
-                              new[] { "RowsPerPageOptions", "IReadOnlyList&lt;int&gt;?", "null", "Opções do seletor de linhas por página." },
-                              new[] { "StyleClass / AdditionalAttributes", "—", "—", "Classes e atributos extras repassados ao elemento raiz." }
+                              new[] { "Nodes", "IReadOnlyList&lt;OpTreeNode&gt;?", "null", "Raízes da árvore exibida." },
+                              new[] { "Columns", "IReadOnlyList&lt;OpTreeTableColumn&gt;", "vazio", "Definição das colunas." },
+                              new[] { "SelectionMode", "string?", "null", "single, multiple ou checkbox. Sem valor, a seleção fica desligada." },
+                              new[] { "Selection", "object?", "null", "Nó selecionado (single) ou dicionário Key→bool (multiple/checkbox)." },
+                              new[] { "Loading", "bool", "false", "Exibe a máscara ou o esqueleto de carregamento." },
+                              new[] { "LoadingMode", "string", "mask", "mask (padrão) ou skeleton." },
+                              new[] { "SkeletonRows", "int", "0", "Linhas do esqueleto (0 usa Rows)." },
+                              new[] { "EmptyMessage", "string?", "tradução", "Mensagem exibida sem nós." },
+                              new[] { "HeaderGroups", "IReadOnlyList&lt;IReadOnlyList&lt;OpTreeTableHeaderGroup&gt;&gt;?", "null", "Linhas do thead agrupado (a última costuma trazer os títulos folha)." },
+                              new[] { "RowHover", "bool", "true", "Realce da linha sob o cursor." },
+                              new[] { "RowClass", "Func&lt;OpTreeNode, string?&gt;?", "null", "Classes extras por linha (estilo condicional)." },
+                              new[] { "ShowGridlines", "bool", "false", "Bordas verticais entre colunas." },
+                              new[] { "Size", "string?", "null", "small ou large." },
+                              new[] { "Sortable", "bool", "true", "Liga/desliga a ordenação por clique no cabeçalho." },
+                              new[] { "SortMode", "string", "single", "single ou multiple." },
+                              new[] { "RemovableSort", "bool", "false", "O terceiro clique remove a ordenação." },
+                              new[] { "SortField / SortOrder", "string? / int", "null / 0", "Ordenação inicial exibida (controlada pela página)." },
+                              new[] { "MultiSortMeta", "IReadOnlyList&lt;OpTreeTableSortMeta&gt;?", "null", "Ordenação múltipla inicial controlada pela página." },
+                              new[] { "FilterMode", "string", "lenient", "lenient ou strict na filtragem de descendentes." },
+                              new[] { "GlobalFilter", "string?", "null", "Filtro global (a página desenha o campo)." },
+                              new[] { "GlobalFilterFields", "IReadOnlyList&lt;string&gt;?", "null", "Campos do filtro global (padrão: todas as colunas)." },
+                              new[] { "Paginator", "bool", "false", "Habilita a paginação (as raízes são paginadas)." },
+                              new[] { "Rows", "int", "10", "Raízes por página." },
+                              new[] { "First", "int", "0", "Deslocamento da primeira raiz exibida (base 0)." },
+                              new[] { "TotalRecords", "int", "0", "Total exibido no paginador no modo lazy." },
+                              new[] { "Lazy", "bool", "false", "Dados prontos do servidor: sem sort/filtro local e OnLazyLoad a cada mudança." },
+                              new[] { "PaginatorPosition", "string", "bottom", "top, bottom ou both." },
+                              new[] { "PageLinks", "int", "5", "Quantidade de botões de página." },
+                              new[] { "AlwaysShowPaginator", "bool", "true", "Mostra o paginador mesmo com uma página só." },
+                              new[] { "RowsPerPageOptions", "IReadOnlyList&lt;int&gt;?", "null", "Habilita o seletor de itens por página." },
+                              new[] { "ScrollHeight", "string?", "null", "Altura do contêiner de rolagem ou flex." },
+                              new[] { "StickyHeader", "bool", "false", "Cabeçalho fixo no thead durante a rolagem." },
+                              new[] { "TableStyle", "string?", "null", "Estilo inline da tabela (útil para min-width)." },
+                              new[] { "ReorderableColumns", "bool", "false", "Habilita arrastar os cabeçalhos." }
                           })"/>
             </ChildContent>
         </DocSection>
 
         <DocSection Label="Templates" Id="api-templates">
             <ChildContent>
-                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Caption="Templates"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "HeaderTemplate", "RenderFragment?", "Cabeçalho da tabela." },
-                              new[] { "FooterTemplate", "RenderFragment?", "Rodapé da tabela." },
-                              new[] { "EmptyTemplate", "RenderFragment?", "Conteúdo exibido no lugar de <code>EmptyMessage</code>." },
-                              new[] { "LoadingTemplate", "RenderFragment?", "Conteúdo exibido na máscara de carregamento." },
-                              new[] { "CaptionTemplate", "RenderFragment?", "Legenda/cabeçalho acima da tabela." }
-                          })"/>
-            </ChildContent>
-        </DocSection>
-
-        <DocSection Label="Coluna (OpTreeTableColumn)" Id="api-column">
-            <ChildContent>
-                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
-                          Rows="@(new[] {
-                              new[] { "Field", "string", "\"\"", "Campo lido do nó (ou de <code>Node.Data</code>)." },
-                              new[] { "Header", "string", "\"\"", "Texto do cabeçalho." },
-                              new[] { "Width", "string?", "null", "Largura da coluna (ex.: <code>8rem</code>)." },
-                              new[] { "Sortable", "bool", "false", "Marca a coluna como ordenável (exibe o ícone; sem ordenação implementada)." },
-                              new[] { "StyleClass", "string?", "null", "Classes adicionais da célula." },
-                              new[] { "BodyTemplate", "RenderFragment&lt;OpTreeTableCellContext&gt;?", "null", "Conteúdo customizado da célula; recebe <code>Node</code>, <code>Level</code> e <code>Field</code>." },
-                              new[] { "Expandable", "bool", "false", "Coluna que recebe o botão de expandir/recolher." }
+                              new[] { "CaptionTemplate", "RenderFragment?", "Área acima da tabela (p-treetable-header)." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "Linha extra no thead ocupando todas as colunas." },
+                              new[] { "FooterTemplate", "RenderFragment?", "Substitui a linha padrão do tfoot." },
+                              new[] { "EmptyTemplate", "RenderFragment?", "Conteúdo exibido quando não há nós." },
+                              new[] { "LoadingTemplate", "RenderFragment?", "Substitui o spinner da máscara de carregamento." },
+                              new[] { "PaginatorLeftTemplate", "RenderFragment?", "Conteúdo do início do paginador." },
+                              new[] { "PaginatorRightTemplate", "RenderFragment?", "Conteúdo do fim do paginador." }
                           })"/>
             </ChildContent>
         </DocSection>
 
         <DocSection Label="Eventos" Id="api-events">
             <ChildContent>
-                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                <ApiTable Caption="Eventos"
+                          Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
                           Rows="@(new[] {
-                              new[] { "OnNodeExpand", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao expandir um nó." },
-                              new[] { "OnNodeCollapse", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao recolher um nó." },
-                              new[] { "OnNodeSelect", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao selecionar um nó." },
-                              new[] { "OnNodeUnselect", "EventCallback&lt;OpTreeNode&gt;", "Disparado ao desmarcar um nó." },
-                              new[] { "OnPageChange", "EventCallback&lt;OpPaginatorState&gt;", "Disparado quando a página ou o número de linhas muda." },
-                              new[] { "SelectionChanged", "EventCallback&lt;object?&gt;", "Disparado quando a seleção muda." }
+                              new[] { "OnSort", "EventCallback&lt;OpTreeTableSortEvent&gt;", "Ordenação alterada (campo, ordem e MultiSortMeta)." },
+                              new[] { "OnFilter", "EventCallback&lt;IReadOnlyDictionary&lt;string, object?&gt;&gt;", "Filtros por coluna ativos." },
+                              new[] { "GlobalFilterChanged", "EventCallback&lt;string?&gt;", "Filtro global alterado pela API ou pela página." },
+                              new[] { "OnLazyLoad", "EventCallback&lt;OpTreeTableLazyLoadEvent&gt;", "No modo lazy: primeira linha, linhas, ordenação e filtros." },
+                              new[] { "OnPageChange", "EventCallback&lt;OpPaginatorState&gt;", "Página, primeira linha e linhas por página alteradas." },
+                              new[] { "FirstChanged / RowsChanged", "EventCallback&lt;int&gt;", "Vínculo @bind-First / @bind-Rows." },
+                              new[] { "SelectionChanged", "EventCallback&lt;object?&gt;", "Seleção alterada (nó ou dicionário)." },
+                              new[] { "OnNodeSelect / OnNodeUnselect", "EventCallback&lt;OpTreeNode&gt;", "Nó selecionado/desmarcado (unitário)." },
+                              new[] { "OnNodeExpand / OnNodeCollapse", "EventCallback&lt;OpTreeNode&gt;", "Nó expandido/recolhido (carrega filhos no modo lazy)." },
+                              new[] { "OnRowContextMenu", "EventCallback&lt;(OpTreeNode Item, MouseEventArgs Args)&gt;", "Clique direito na linha (coordenadas para o menu de contexto)." },
+                              new[] { "OnColumnReorder", "EventCallback&lt;(int From, int To)&gt;", "Colunas reordenadas por arraste." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpTreeTableColumn" Id="api-column">
+            <ChildContent>
+                <ApiTable Caption="OpTreeTableColumn"
+                          Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Field", "string", "vazio", "Propriedade de Data lida por reflexão (ou de OpTreeNode, ex.: label)." },
+                              new[] { "Header", "string", "vazio", "Título da coluna." },
+                              new[] { "Width", "string?", "null", "Largura da coluna (usada no cálculo do congelamento)." },
+                              new[] { "Sortable", "bool", "false", "Permite ordenar por esta coluna." },
+                              new[] { "Expandable", "bool", "false", "Coluna que recebe o botão de expandir/recolher (padrão: a primeira)." },
+                              new[] { "BodyTemplate", "RenderFragment&lt;OpTreeTableCellContext&gt;?", "null", "Template do conteúdo da célula (Node, Level e Field)." },
+                              new[] { "HeaderTemplate", "RenderFragment?", "null", "Template do conteúdo do cabeçalho." },
+                              new[] { "Footer", "string?", "null", "Texto do rodapé da coluna." },
+                              new[] { "FooterTemplate", "RenderFragment?", "null", "Template do rodapé da coluna." },
+                              new[] { "HideHeader", "bool", "false", "Oculta o título na linha normal de colunas (omitida quando todas ocultam)." },
+                              new[] { "Frozen", "string?", "null", "left ou right: congela a coluna na rolagem horizontal." },
+                              new[] { "Filter", "bool", "false", "Exibe o campo de filtro no cabeçalho." },
+                              new[] { "FilterMatchMode", "OpFilterMatchMode", "Contains", "Modo de comparação do filtro." },
+                              new[] { "FilterPlaceholder", "string?", "null", "Placeholder (e rótulo ARIA) do campo de filtro." },
+                              new[] { "FilterStyleClass", "string?", "null", "Classes extras no contêiner do filtro." },
+                              new[] { "StyleClass", "string?", "null", "Classes extras na célula." },
+                              new[] { "HeaderStyleClass / BodyStyleClass / FooterStyleClass", "string?", "null", "Classes extras no cabeçalho, na célula e no rodapé." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="OpTreeTableHeaderGroup" Id="api-headergroup">
+            <ChildContent>
+                <ApiTable Caption="OpTreeTableHeaderGroup"
+                          Headers="@(new[] { "Propriedade", "Tipo", "Padrão", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "Header", "string", "vazio", "Texto da célula do grupo." },
+                              new[] { "ColSpan", "int", "1", "Colunas ocupadas na linha do grupo." },
+                              new[] { "RowSpan", "int", "1", "Quantas linhas do thead a célula ocupa (some as demais linhas de HeaderGroups)." },
+                              new[] { "StyleClass", "string?", "null", "Classes extras na célula do grupo." }
                           })"/>
             </ChildContent>
         </DocSection>
     </Api>
 
     <Theming>
-        <DocSection Label="Classes CSS e Tokens" Id="theming">
+        <DocSection Label="Classes CSS" Id="style">
+            <Description>
+                Classes estruturais aplicadas pelo componente. Para as cores e medidas de cada tema, veja os
+                tokens abaixo.
+            </Description>
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Classe", "Elemento" })"
+                          Rows="StyleRows"/>
+            </ChildContent>
+        </DocSection>
+
+        <DocSection Label="Temas" Id="theming">
             <ChildContent><DocTokens Component="treetable"/></ChildContent>
         </DocSection>
     </Theming>
@@ -249,7 +721,14 @@
     <Passthrough>
         <DocSection Label="Pass Through" Id="pt">
             <ChildContent>
-                <div class="doc-section-description"><p>O pass-through (pt) do Angular não é portado; use <code>StyleClass</code>, os templates e os <code>AdditionalAttributes</code>.</p></div>
+                <div class="doc-section-description">
+                    <p>
+                        O pass-through (pt) do Angular ainda não foi portado para o Blazor. Para customização, use
+                        <code>StyleClass</code>, <code>OpTreeTableColumn.StyleClass</code>,
+                        <code>OpTreeTableColumn.Width</code> e os <code>AdditionalAttributes</code> (repassados ao
+                        contêiner raiz).
+                    </p>
+                </div>
             </ChildContent>
         </DocSection>
     </Passthrough>
@@ -259,125 +738,438 @@
             <ChildContent>
                 <div class="doc-section-description">
                     <ul>
-                        <li><b>Redimensionamento de colunas</b> (<code>resizableColumns</code>, fit/expand) não foi portado.</li>
-                        <li><b>Reordenar colunas</b> (<code>reorderableColumns</code>) não foi portado.</li>
-                        <li><b>Colunas fixas</b> (<code>frozenColumns</code>) não foi portado.</li>
-                        <li><b>Filtro</b> por coluna e global não foi portado.</li>
-                        <li><b>Ordenação</b> não foi implementada: <code>Sortable</code> existe na coluna e exibe o ícone, mas não há ordenação nem <code>OnSort</code>; as teclas de cabeçalhos ordenáveis do Angular não se aplicam.</li>
-                        <li><b>Edição</b> de células não foi portada.</li>
-                        <li><b>Virtual Scroll</b> não foi portado.</li>
-                        <li><b>Agrupamento de colunas</b> (<code>rowspan</code>/<code>colspan</code> e <code>colgroup</code>) não foi portado.</li>
-                        <li><b>Alternar colunas</b> (column toggle) não foi portado; é possível trocar <code>Columns</code> via código.</li>
-                        <li><b>Menu de contexto</b> não foi portado.</li>
-                        <li><b>Carregamento lazy</b>: a flag <code>Lazy</code> existe, mas não há callback de dados (<code>OnLazyLoad</code>) nem projeção de <code>TotalRecords</code>.</li>
-                        <li><b>Estilo condicional</b> por linha não é automático; aplique-o no <code>BodyTemplate</code>.</li>
+                        <li>
+                            Sem redimensionamento de colunas por arraste (seções <i>Fit Mode</i>, <i>Expand Mode</i>
+                            e <i>Scrollable</i>) e sem scroll virtual; para conjuntos grandes, use paginação ou
+                            <code>Lazy</code>.
+                        </li>
+                        <li>
+                            A edição de célula/linha da referência não foi portada — a própria seção <i>Edit</i> do
+                            índice do upstream está comentada; use templates de célula com formulários.
+                        </li>
+                        <li>
+                            Colunas congeladas são um desvio: o upstream congela um bloco com
+                            <code>frozenColumns</code>/<code>frozenWidth</code> e templates espelhados; aqui
+                            <code>OpTreeTableColumn.Frozen</code> aceita <code>left</code>/<code>right</code> por
+                            coluna.
+                        </li>
+                        <li>
+                            O filtro avançado da referência (menu com operadores e regras compostas) não foi
+                            portado: os filtros por coluna usam <code>FilterMatchMode</code> fixo por coluna e o
+                            global passa por <code>GlobalFilter</code>.
+                        </li>
+                        <li>
+                            Eventos de seleção e de carregamento não exibem <i>toast</i> como na referência: os
+                            demos usam rótulos e listas na página.
+                        </li>
+                        <li>
+                            <code>EmptyMessage</code> tem padrão em inglês (<code>"No results found"</code>) quando
+                            não há tradução configurada; informe um texto em pt-BR para manter a consistência.
+                        </li>
+                        <li>
+                            A seleção múltipla e por checkbox alterna a cada clique; a referência exige
+                            <i>ctrl</i>/<i>meta</i> por padrão (<code>metaKeySelection</code>). A seleção única
+                            alterna um único nó.
+                        </li>
+                        <li>
+                            As checkboxes da coluna de seleção não têm rótulo ARIA; a linha selecionável anuncia
+                            <code>aria-selected</code>.
+                        </li>
+                        <li>
+                            A reordenação de colunas é apenas por arraste (sem alternativa por teclado) e depende do
+                            drag-and-drop nativo do navegador.
+                        </li>
                     </ul>
                 </div>
             </ChildContent>
         </DocSection>
     </KnownIssues>
+
 </DocComponent>
 
 @code {
-    private List<OpTreeNode> _basicNodes = new();
-    private List<OpTreeNode> _singleNodes = new();
-    private List<OpTreeNode> _multipleNodes = new();
-    private List<OpTreeNode> _checkboxNodes = new();
-    private List<OpTreeNode> _pageNodes = new();
-    private List<OpTreeNode> _emptyNodes = new();
+    // ===================== Datasets =====================
+    private sealed record FileRecord(string Name, int Size, string Type);
 
-    private List<OpTreeTableColumn> _columns = new();
-    private readonly IReadOnlyList<int> _rowsPerPage = new[] { 5, 10, 25 };
+    private static OpTreeNode Folder(string key, string name, int size, params OpTreeNode[] children)
+        => new()
+        {
+            Key = key,
+            Label = name,
+            Data = new FileRecord(name, size, "Pasta"),
+            Children = children.ToList()
+        };
 
+    private static OpTreeNode FileNode(string key, string name, int size, string type)
+        => new() { Key = key, Label = name, Leaf = true, Data = new FileRecord(name, size, type) };
+
+    private static List<OpTreeNode> FileSystem() => new()
+    {
+        Folder("0", "Documentos", 125,
+            Folder("0-0", "Trabalho", 30,
+                FileNode("0-0-0", "contrato.pdf", 2, "PDF"),
+                FileNode("0-0-1", "curriculo.docx", 1, "Word")),
+            Folder("0-1", "Pessoal", 12,
+                FileNode("0-1-0", "notas.txt", 1, "Texto"))),
+        Folder("1", "Imagens", 150,
+            FileNode("1-0", "ferias.jpg", 8, "JPG"),
+            FileNode("1-1", "logo.png", 1, "PNG")),
+        Folder("2", "Vídeos", 1500,
+            FileNode("2-0", "apresentacao.mp4", 300, "MP4")),
+        FileNode("3", "README.md", 4, "Markdown")
+    };
+
+    private readonly List<OpTreeNode> _basicNodes = FileSystem();
+    private readonly List<OpTreeNode> _dynamicNodes = FileSystem();
+    private readonly List<OpTreeNode> _controlledNodes = FileSystem();
+    private readonly List<OpTreeNode> _templateNodes = FileSystem();
+    private readonly List<OpTreeNode> _sizeNodes = FileSystem();
+    private readonly List<OpTreeNode> _gridNodes = FileSystem();
+    private readonly List<OpTreeNode> _maskNodes = FileSystem();
+    private readonly List<OpTreeNode> _skeletonNodes = FileSystem();
+    private readonly List<OpTreeNode> _pageNodes = FileSystem();
+    private readonly List<OpTreeNode> _pageTemplateNodes = FileSystem();
+    private readonly List<OpTreeNode> _sortNodes = FileSystem();
+    private readonly List<OpTreeNode> _multiSortNodes = FileSystem();
+    private readonly List<OpTreeNode> _removableSortNodes = FileSystem();
+    private readonly List<OpTreeNode> _filterNodes = FileSystem();
+    private readonly List<OpTreeNode> _singleNodes = FileSystem();
+    private readonly List<OpTreeNode> _multipleNodes = FileSystem();
+    private readonly List<OpTreeNode> _checkboxNodes = FileSystem();
+    private readonly List<OpTreeNode> _eventNodes = FileSystem();
+    private readonly List<OpTreeNode> _groupNodes = FileSystem();
+    private readonly List<OpTreeNode> _scrollNodes = FileSystem();
+    private readonly List<OpTreeNode> _flexNodes = FileSystem();
+    private readonly List<OpTreeNode> _wideNodes = FileSystem();
+    private readonly List<OpTreeNode> _frozenNodes = FileSystem();
+    private readonly List<OpTreeNode> _reorderNodes = FileSystem();
+    private readonly List<OpTreeNode> _toggleNodes = FileSystem();
+    private readonly List<OpTreeNode> _conditionalNodes = FileSystem();
+    private readonly List<OpTreeNode> _ctxNodes = FileSystem();
+
+    // ===================== Colunas =====================
+    private readonly List<OpTreeTableColumn> _columns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true },
+        new() { Field = "size", Header = "Tamanho", Width = "8rem", BodyTemplate = SizeCell },
+        new() { Field = "type", Header = "Tipo", Width = "8rem" }
+    };
+
+    private readonly List<OpTreeTableColumn> _dynamicColumns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true, BodyTemplate = FileNameCell },
+        new() { Field = "size", Header = "Tamanho", Width = "8rem", BodyTemplate = SizeCell, Sortable = true },
+        new() { Field = "type", Header = "Tipo", Width = "8rem", BodyTemplate = TypeCell, Sortable = true }
+    };
+
+    private readonly List<OpTreeTableColumn> _templateColumns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true, BodyTemplate = FileNameCell },
+        new() { Field = "size", Header = "Tamanho", Width = "8rem", BodyTemplate = SizeCell },
+        new() { Field = "type", Header = "Tipo", Width = "8rem", BodyTemplate = TypeCell }
+    };
+
+    private readonly List<OpTreeTableColumn> _sortColumns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true, Sortable = true },
+        new() { Field = "size", Header = "Tamanho", Width = "8rem", Sortable = true, BodyTemplate = SizeCell },
+        new() { Field = "type", Header = "Tipo", Width = "8rem", Sortable = true }
+    };
+
+    private readonly List<OpTreeTableColumn> _filterColumns = new()
+    {
+        new()
+        {
+            Field = "name", Header = "Nome", Expandable = true, Filter = true,
+            FilterPlaceholder = "Filtrar por nome"
+        },
+        new() { Field = "size", Header = "Tamanho", Width = "8rem", BodyTemplate = SizeCell },
+        new() { Field = "type", Header = "Tipo", Width = "8rem", Filter = true, FilterPlaceholder = "Tipo" }
+    };
+
+    private readonly List<OpTreeTableColumn> _groupColumns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true, HideHeader = true, Footer = "Totais" },
+        new() { Field = "size", Header = "Tamanho", Width = "8rem", HideHeader = true, BodyTemplate = SizeCell, Footer = "2.134 KB" },
+        new() { Field = "type", Header = "Tipo", Width = "8rem", HideHeader = true }
+    };
+
+    private readonly IReadOnlyList<IReadOnlyList<OpTreeTableHeaderGroup>> _groupRows = new[]
+    {
+        new[]
+        {
+            new OpTreeTableHeaderGroup { Header = "Arquivo", RowSpan = 2 },
+            new OpTreeTableHeaderGroup { Header = "Detalhes", ColSpan = 2 }
+        },
+        new[]
+        {
+            new OpTreeTableHeaderGroup { Header = "Tamanho" },
+            new OpTreeTableHeaderGroup { Header = "Tipo" }
+        }
+    };
+
+    private readonly List<OpTreeTableColumn> _wideColumns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true, Width = "20rem" },
+        new() { Field = "size", Header = "Tamanho", Width = "14rem", BodyTemplate = SizeCell },
+        new() { Field = "type", Header = "Tipo", Width = "14rem" }
+    };
+
+    private readonly List<OpTreeTableColumn> _frozenColumns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true, Frozen = "left", Width = "14rem" },
+        new() { Field = "size", Header = "Tamanho", Width = "12rem", BodyTemplate = SizeCell },
+        new() { Field = "type", Header = "Tipo", Width = "12rem", Frozen = "right" }
+    };
+
+    private readonly List<OpTreeTableColumn> _reorderColumns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true },
+        new() { Field = "size", Header = "Tamanho", Width = "8rem" },
+        new() { Field = "type", Header = "Tipo", Width = "8rem" }
+    };
+
+    private readonly List<OpTreeTableColumn> _toggleColumns = new()
+    {
+        new() { Field = "name", Header = "Nome", Expandable = true },
+        new() { Field = "size", Header = "Tamanho", Width = "8rem" },
+        new() { Field = "type", Header = "Tipo", Width = "8rem" }
+    };
+
+    // ===================== Estado dos demos =====================
+    private string _controlledLog = "—";
+    private string _size = "small";
+    private readonly object[] _sizeOptions = ["small", "large"];
+    private bool _maskLoading;
+    private bool _skeletonLoading;
+    private int _pageState;
+    private int _pageRows = 2;
+    private readonly IReadOnlyList<int> _rowsPerPageOptions = new[] { 2, 4, 8 };
+    private int _pageTemplateFirst;
+    private string _singleSortLog = "nenhuma";
+    private string _multiSortLog = "nenhuma";
+    private string _removableSortLog = "nenhuma";
+    private string _filterGlobal = "";
+    private string _filterMode = "lenient";
+    private readonly object[] _filterModes = ["lenient", "strict"];
+    private IReadOnlyDictionary<string, object?> _treeFilters = new Dictionary<string, object?>();
     private object? _singleSelection;
-    private object? _multiSelection;
+    private object? _multipleSelection;
     private object? _checkboxSelection;
-    private bool _loading;
-    private int _first;
-    private string _pageLabel = "1";
+    private object? _eventSelection;
+    private string _eventLog = "—";
+    private string _lazyLog = "—";
+    private bool _flexDialog;
+    private IReadOnlyList<OpTreeTableColumn>? _selectedColumns;
+    private OpTreeNode? _ctxSelected;
+    private string _ctxLog = "—";
+    private OpContextMenu? _ctxMenu;
+    private List<OpMenuItem> _ctxItems = new();
+    private readonly List<OpTreeNode> _lazyNodes = BuildLazyNodes();
+    private int _templateTotalSize;
 
     protected override void OnInitialized()
     {
-        _basicNodes = FileTree();
-        _singleNodes = FileTree();
-        _multipleNodes = FileTree();
-        _checkboxNodes = FileTree();
-        _pageNodes = FileTree();
-        _emptyNodes = new();
-
-        _columns = new List<OpTreeTableColumn>
+        _selectedColumns = new List<OpTreeTableColumn>(_toggleColumns);
+        _templateTotalSize = _templateNodes.Sum(TotalSize);
+        _ctxItems = new List<OpMenuItem>
         {
-            new OpTreeTableColumn { Field = "label", Header = "Nome", Expandable = true },
-            new OpTreeTableColumn { Field = "size", Header = "Tamanho", Width = "8rem" },
-            new OpTreeTableColumn
-            {
-                Field = "type",
-                Header = "Tipo",
-                Width = "8rem",
-                BodyTemplate = ctx => @<span class="font-semibold">@TypeText(ctx.Node)</span>
-            }
+            new() { Label = "Ver", Icon = "pi pi-eye" },
+            new() { Label = "Excluir", Icon = "pi pi-trash" }
         };
     }
 
-    private void ToggleLoading() => _loading = !_loading;
+    // ===================== Células =====================
+    private static RenderFragment SizeCell(OpTreeTableCellContext ctx)
+        => @<span>@(((FileRecord)ctx.Node.Data!).Size) KB</span>;
 
-    private void OnPage(OpPaginatorState state)
+    private static RenderFragment FileNameCell(OpTreeTableCellContext ctx)
+        => @<span class="flex items-center gap-2">
+               <i class="@(FolderIcon(ctx.Node))" aria-hidden="true"></i>
+               @(((FileRecord)ctx.Node.Data!).Name)
+           </span>;
+
+    private static RenderFragment TypeCell(OpTreeTableCellContext ctx)
+        => @<span class="font-semibold">@(((FileRecord)ctx.Node.Data!).Type)</span>;
+
+    private static string FolderIcon(OpTreeNode node)
+        => node.Leaf == true ? "pi pi-file" : "pi pi-folder";
+
+    // ===================== Handlers =====================
+    private void ToggleControlledFolders()
     {
-        _first = state.First;
-        _pageLabel = state.Page.ToString();
+        var expand = Visits(_controlledNodes).Any(node => node.Children is { Count: > 0 } && !node.Expanded);
+        foreach (var node in Visits(_controlledNodes))
+        {
+            if (node.Children is { Count: > 0 })
+            {
+                node.Expanded = expand;
+            }
+        }
     }
+
+    private void OnControlledExpand(OpTreeNode node) => _controlledLog = $"expandido: {node.Label}";
+
+    private void OnControlledCollapse(OpTreeNode node) => _controlledLog = $"recolhido: {node.Label}";
+
+    private async Task LoadMask()
+    {
+        _maskLoading = true;
+        await Task.Delay(2000);
+        _maskLoading = false;
+    }
+
+    private async Task LoadSkeleton()
+    {
+        _skeletonLoading = true;
+        await Task.Delay(2000);
+        _skeletonLoading = false;
+    }
+
+    private void OnTreePageChanged(OpPaginatorState state)
+    {
+        _pageState = state.Page;
+        _pageRows = state.Rows;
+    }
+
+    private void OnSingleSort(OpTreeTableSortEvent e) => _singleSortLog = SortLog(e);
+
+    private void OnMultiSort(OpTreeTableSortEvent e) => _multiSortLog = SortLog(e);
+
+    private void OnRemovableSort(OpTreeTableSortEvent e) => _removableSortLog = SortLog(e);
+
+    private void OnTreeFilters(IReadOnlyDictionary<string, object?> filters) => _treeFilters = filters;
+
+    private void OnTreeNodeSelect(OpTreeNode node) => _eventLog = $"selecionado: {node.Label}";
+
+    private void OnTreeNodeUnselect(OpTreeNode node) => _eventLog = $"desselecionado: {node.Label}";
+
+    private async Task LoadLazyNode(OpTreeNode node)
+    {
+        await Task.Delay(600);
+        node.Children = new List<OpTreeNode>
+        {
+            FileNode($"{node.Key}-0", $"{node.Label}/arquivo-1.pdf", 12, "PDF"),
+            FileNode($"{node.Key}-1", $"{node.Label}/arquivo-2.docx", 5, "Word")
+        };
+        node.Loading = false;
+        _lazyLog = $"filhos de \"{node.Label}\" carregados";
+    }
+
+    private void OnTreeLazyLoad(OpTreeTableLazyLoadEvent e)
+        => _lazyLog = $"lazy: first={e.First} rows={e.Rows} campo={e.SortField ?? "—"} ordem={e.SortOrder}";
+
+    private void ReorderTreeColumns((int From, int To) info)
+    {
+        var column = _reorderColumns[info.From];
+        _reorderColumns.RemoveAt(info.From);
+        _reorderColumns.Insert(info.To, column);
+    }
+
+    private static string? FolderRowClass(OpTreeNode node)
+        => node.Data is FileRecord record && record.Type == "Pasta" ? "font-bold" : null;
+
+    private async Task TreeContextMenu((OpTreeNode Item, MouseEventArgs Args) info)
+    {
+        _ctxSelected = info.Item;
+
+        if (_ctxMenu is not null)
+        {
+            await _ctxMenu.ShowAsync(info.Args.ClientX, info.Args.ClientY);
+        }
+    }
+
+    private void OnTreeCtxItemClick(OpMenuItem item)
+    {
+        _ctxLog = $"{item.Label} {_ctxSelected?.Label ?? ""}".Trim();
+        _ctxSelected = null;
+    }
+
+    private static string SortLog(OpTreeTableSortEvent e)
+    {
+        if (e.MultiSortMeta.Count > 0)
+        {
+            return string.Join(", ", e.MultiSortMeta.Select(m => $"{m.Field} ({(m.Order == 1 ? "asc" : "desc")})"));
+        }
+
+        return string.IsNullOrEmpty(e.Field) || e.Order == 0
+            ? "nenhuma"
+            : $"{e.Field} ({(e.Order == 1 ? "asc" : "desc")})";
+    }
+
+    // ===================== Utilitários =====================
+    private static IEnumerable<OpTreeNode> Visits(IEnumerable<OpTreeNode> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            yield return node;
+            foreach (var child in Visits(node.Children ?? new List<OpTreeNode>()))
+            {
+                yield return child;
+            }
+        }
+    }
+
+    private static int CountNodes(IEnumerable<OpTreeNode> nodes) => Visits(nodes).Count();
+
+    private static int TotalSize(OpTreeNode node) => Visits(new[] { node }).Sum(n => ((FileRecord)n.Data!).Size);
 
     private static string SelectedLabel(object? selection) => selection is OpTreeNode node ? node.Label : "nenhum";
 
-    private static int CountSelection(object? selection) =>
-        selection is IReadOnlyDictionary<string, bool> map ? map.Count(entry => entry.Value) : 0;
+    private static int CountSelection(object? selection)
+        => selection is IReadOnlyDictionary<string, bool> map ? map.Count(entry => entry.Value) : 0;
 
-    private static string TypeText(OpTreeNode node) => node.Data is FileRecord record ? record.Type : string.Empty;
-
-    private static List<OpTreeNode> FileTree() => new()
+    private static List<OpTreeNode> BuildLazyNodes() => new()
     {
-        new OpTreeNode
-        {
-            Key = "0", Label = "Documentos", Expanded = true, Data = new FileRecord("Documentos", "—", "Pasta"),
-            Children = new()
-            {
-                new OpTreeNode { Key = "0-0", Label = "Contratos.pdf", Leaf = true, Data = new FileRecord("Contratos.pdf", "2 MB", "PDF") },
-                new OpTreeNode { Key = "0-1", Label = "Relatório.docx", Leaf = true, Data = new FileRecord("Relatório.docx", "845 KB", "Word") },
-                new OpTreeNode { Key = "0-2", Label = "Planilha.xlsx", Leaf = true, Data = new FileRecord("Planilha.xlsx", "120 KB", "Excel") }
-            }
-        },
-        new OpTreeNode
-        {
-            Key = "1", Label = "Imagens", Expanded = true, Data = new FileRecord("Imagens", "—", "Pasta"),
-            Children = new()
-            {
-                new OpTreeNode { Key = "1-0", Label = "logo.png", Leaf = true, Data = new FileRecord("logo.png", "48 KB", "PNG") },
-                new OpTreeNode { Key = "1-1", Label = "banner.jpg", Leaf = true, Data = new FileRecord("banner.jpg", "512 KB", "JPG") },
-                new OpTreeNode { Key = "1-2", Label = "icone.svg", Leaf = true, Data = new FileRecord("icone.svg", "12 KB", "SVG") }
-            }
-        },
-        new OpTreeNode { Key = "2", Label = "README.md", Leaf = true, Data = new FileRecord("README.md", "4 KB", "Markdown") }
+        new OpTreeNode { Key = "l0", Label = "Documentos", Leaf = false, Data = new FileRecord("Documentos", 0, "Pasta") },
+        new OpTreeNode { Key = "l1", Label = "Imagens", Leaf = false, Data = new FileRecord("Imagens", 0, "Pasta") }
     };
 
-    private sealed record FileRecord(string Name, string Size, string Type);
+    // ===================== Classes CSS =====================
+    private static readonly string[][] StyleRows =
+    [
+        ["p-treetable / p-component", "Contêiner raiz."],
+        ["p-treetable-hoverable", "Raiz quando RowHover (padrão) ou Selection está ativo."],
+        ["p-treetable-gridlines", "Raiz com ShowGridlines."],
+        ["p-treetable-sm / p-treetable-lg", "Raiz conforme Size."],
+        ["p-treetable-scrollable", "Raiz com layout de rolagem (ScrollHeight ou colunas congeladas)."],
+        ["p-treetable-flex-scrollable", "Raiz quando ScrollHeight=\"flex\": a área rolável acompanha a altura do pai."],
+        ["p-treetable-scrollable-table", "Elemento table no layout de rolagem (cabeçalho fixo)."],
+        ["p-treetable-table-container", "Contêiner com overflow: auto."],
+        ["p-treetable-table", "Elemento table."],
+        ["p-treetable-thead", "Elemento thead."],
+        ["p-treetable-tbody", "Elemento tbody."],
+        ["p-treetable-tfoot", "Elemento tfoot (quando alguma coluna tem rodapé)."],
+        ["p-treetable-header", "Área da caption (CaptionTemplate)."],
+        ["p-treetable-header-cell", "Célula th."],
+        ["p-treetable-column-header-content", "Div interna do cabeçalho."],
+        ["p-treetable-column-title", "Span com o título da coluna."],
+        ["p-treetable-sortable-column", "th com ordenação habilitada."],
+        ["p-treetable-column-sorted", "th atualmente ordenada."],
+        ["p-treetable-sort-icon", "Ícone de ordenação."],
+        ["p-treetable-sort-badge", "Badge numérico de prioridade na ordenação múltipla."],
+        ["p-treetable-filter-row / p-treetable-filter-column", "Linha e células dos filtros de coluna."],
+        ["p-treetable-reorderable-column", "th arrastável com ReorderableColumns."],
+        ["p-treetable-row", "Linha do corpo."],
+        ["p-treetable-selectable-row", "Linha selecionável."],
+        ["p-treetable-row-selected", "Linha atualmente selecionada."],
+        ["p-treetable-toggler-column", "Célula com o botão de expandir/recolher."],
+        ["p-treetable-node-toggle-button / p-treetable-node-toggle-icon", "Botão e ícone de expandir/recolher."],
+        ["p-treetable-toggler-column / p-treetable-indent", "Recuo de cada nível da árvore."],
+        ["p-treetable-frozen-column", "Célula congelada (Frozen)."],
+        ["p-treetable-selection-column", "Célula/checkbox da coluna de seleção."],
+        ["p-treetable-skeleton-row", "Linhas de esqueleto com LoadingMode=\"skeleton\"."],
+        ["p-treetable-mask", "Máscara de carregamento."],
+        ["p-treetable-empty-message", "Célula da mensagem de vazio."],
+        ["p-treetable-footer-cell", "Células do rodapé."],
+        ["p-treetable-paginator", "Paginador dentro do componente (quando Paginator)."]
+    ];
 
+    // ===================== Snippets =====================
     private const string ImportCode = """
         @using OpBlazorUI.Components.TreeTable
         @using OpBlazorUI.Models
 
-        <OpTreeTable Nodes="_nodes" Columns="_columns" />
-
-        @code {
-            private List<OpTreeTableColumn> _columns = new()
-            {
-                new() { Field = "label", Header = "Nome", Expandable = true },
-                new() { Field = "size", Header = "Tamanho" },
-                new() { Field = "type", Header = "Tipo" }
-            };
-        }
-        """;
-
-    private const string BasicCode = """
         <OpTreeTable Nodes="_nodes" Columns="_columns" />
 
         @code {
@@ -386,19 +1178,199 @@
                 new OpTreeNode
                 {
                     Key = "0", Label = "Documentos", Expanded = true,
+                    Data = new FileRecord("Documentos", 125, "Pasta"),
                     Children = new()
                     {
-                        new OpTreeNode { Key = "0-0", Label = "Contratos.pdf", Leaf = true }
+                        new OpTreeNode
+                        {
+                            Key = "0-0", Label = "contrato.pdf", Leaf = true,
+                            Data = new FileRecord("contrato.pdf", 2, "PDF")
+                        }
                     }
                 }
             };
 
             private List<OpTreeTableColumn> _columns = new()
             {
-                new() { Field = "label", Header = "Nome", Expandable = true },
+                new() { Field = "name", Header = "Nome", Expandable = true },
                 new() { Field = "size", Header = "Tamanho" },
                 new() { Field = "type", Header = "Tipo" }
             };
+
+            private sealed record FileRecord(string Name, int Size, string Type);
+        }
+        """;
+
+    private const string BasicCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" EmptyMessage="Nenhum registro encontrado" />
+        """;
+
+    private const string DynamicColumnsCode = """
+        @code {
+            private List<OpTreeTableColumn> _columns = new()
+            {
+                new()
+                {
+                    Field = "name", Header = "Nome", Expandable = true,
+                    BodyTemplate = ctx => @<span class="flex items-center gap-2">
+                        <i class="@(FolderIcon(ctx.Node))" aria-hidden="true"></i>
+                        @(((FileRecord)ctx.Node.Data!).Name)
+                    </span>
+                },
+                new() { Field = "size", Header = "Tamanho", Sortable = true },
+                new() { Field = "type", Header = "Tipo", Sortable = true }
+            };
+
+            private static string FolderIcon(OpTreeNode node)
+                => node.Leaf == true ? "pi pi-file" : "pi pi-folder";
+        }
+        """;
+
+    private const string ControlledCode = """
+        <OpButton Label="Alternar pastas" OnClick="ToggleFolders" />
+
+        <OpTreeTable Nodes="_nodes" Columns="_columns"
+                     OnNodeExpand="OnExpand" OnNodeCollapse="OnCollapse" />
+
+        @code {
+            private void ToggleFolders()
+            {
+                var expand = Walk(_nodes).Any(n => n.Children is { Count: > 0 } && !n.Expanded);
+                foreach (var node in Walk(_nodes))
+                {
+                    if (node.Children is { Count: > 0 })
+                    {
+                        node.Expanded = expand;
+                    }
+                }
+            }
+
+            private void OnExpand(OpTreeNode node) { /* ... */ }
+            private void OnCollapse(OpTreeNode node) { /* ... */ }
+        }
+        """;
+
+    private const string TemplateCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns">
+            <CaptionTemplate>
+                <span class="font-semibold">Sistema de arquivos</span>
+            </CaptionTemplate>
+            <FooterTemplate>
+                <tr><td colspan="3">Total de itens: @Count(_nodes)</td></tr>
+            </FooterTemplate>
+        </OpTreeTable>
+
+        @code {
+            private List<OpTreeTableColumn> _columns = new()
+            {
+                new() { Field = "name", Header = "Nome", Expandable = true, BodyTemplate = NameCell },
+                new() { Field = "size", Header = "Tamanho", BodyTemplate = SizeCell },
+                new() { Field = "type", Header = "Tipo", BodyTemplate = TypeCell }
+            };
+        }
+        """;
+
+    private const string SizeCode = """
+        <OpSelectButton TValue="string" @bind-Value="_size"
+                        Options="@(new object[] { "small", "large" })" AllowEmpty="false" />
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Size="@_size" />
+        """;
+
+    private const string GridlinesCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" ShowGridlines="true" />
+        """;
+
+    private const string LoadingMaskCode = """
+        <OpButton Label="Carregar (2 s)" Icon="pi pi-refresh" OnClick="Load" Loading="_loading" />
+
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Loading="_loading">
+            <LoadingTemplate>
+                <span class="pi pi-spin pi-spinner" aria-hidden="true"></span>
+            </LoadingTemplate>
+        </OpTreeTable>
+
+        @code {
+            private bool _loading;
+
+            private async Task Load()
+            {
+                _loading = true;
+                await Task.Delay(2000);
+                _loading = false;
+            }
+        }
+        """;
+
+    private const string LoadingSkeletonCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Loading="_loading"
+                     LoadingMode="skeleton" SkeletonRows="5" />
+        """;
+
+    private const string PaginatorBasicCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Paginator="true" Rows="2"
+                     PaginatorPosition="both" RowsPerPageOptions="@(new[] { 2, 4, 8 })"
+                     OnPageChange="OnPage" />
+
+        @code {
+            private void OnPage(OpPaginatorState state)
+            {
+                // state.Page é base 0; state.First traz o deslocamento da primeira raiz.
+            }
+        }
+        """;
+
+    private const string PaginatorTemplateCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Paginator="true" Rows="2"
+                     @bind-First="_first">
+            <PaginatorLeftTemplate>
+                <OpButton Label="Reiniciar" Icon="pi pi-refresh" Outlined="true"
+                          OnClick="() => _first = 0" />
+            </PaginatorLeftTemplate>
+            <PaginatorRightTemplate>
+                <span class="text-sm">Raízes: @_nodes.Count</span>
+            </PaginatorRightTemplate>
+        </OpTreeTable>
+        """;
+
+    private const string SortSingleCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" OnSort="OnSorted" />
+
+        @code {
+            private void OnSorted(OpTreeTableSortEvent e)
+            {
+                // e.Field, e.Order (1 asc / -1 desc) e e.MultiSortMeta
+            }
+        }
+        """;
+
+    private const string SortMultipleCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" SortMode="multiple" OnSort="OnSorted" />
+        """;
+
+    private const string SortRemovableCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" RemovableSort="true" OnSort="OnSorted" />
+        """;
+
+    private const string FilterCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" GlobalFilter="@_global"
+                     FilterMode="@_mode" OnFilter="OnFiltered">
+            <CaptionTemplate>
+                <div class="flex items-center justify-between gap-2">
+                    <OpSelectButton TValue="string" @bind-Value="_mode"
+                                    Options="@(new object[] { "lenient", "strict" })" AllowEmpty="false" />
+                    <OpInputText @bind-Value="_global" Placeholder="Buscar" AriaLabel="Filtro global" />
+                </div>
+            </CaptionTemplate>
+        </OpTreeTable>
+
+        @code {
+            private string _global = "";
+            private string _mode = "lenient";
+
+            private void OnFiltered(IReadOnlyDictionary<string, object?> filters)
+            {
+                // filtros ativos por coluna
+            }
         }
         """;
 
@@ -407,7 +1379,7 @@
                      @bind-Selection="_selection" />
 
         @code {
-            private object? _selection;
+            private object? _selection; // o OpTreeNode selecionado
         }
         """;
 
@@ -416,50 +1388,183 @@
                      @bind-Selection="_selection" />
 
         @code {
-            private object? _selection;
+            private object? _selection; // IReadOnlyDictionary<string, bool> (Key → marcado)
         }
         """;
 
-    private const string SelectionCheckboxCode = """
+    private const string CheckboxCode = """
         <OpTreeTable Nodes="_nodes" Columns="_columns" SelectionMode="checkbox"
                      @bind-Selection="_selection" />
+        """;
+
+    private const string EventsCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" SelectionMode="multiple"
+                     @bind-Selection="_selection"
+                     OnNodeSelect="OnSelect" OnNodeUnselect="OnUnselect" />
 
         @code {
             private object? _selection;
+            private string _log = "—";
+
+            private void OnSelect(OpTreeNode node) => _log = $"selecionado: {node.Label}";
+            private void OnUnselect(OpTreeNode node) => _log = $"desselecionado: {node.Label}";
         }
         """;
 
-    private const string PaginatorCode = """
-        <OpTreeTable Nodes="_nodes" Columns="_columns" Paginator="true" Rows="5"
-                     RowsPerPageOptions="_rowsPerPage" @bind-First="_first"
-                     OnPageChange="OnPage" />
+    private const string ColumnGroupCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" HeaderGroups="_groups" />
 
         @code {
-            private int _first;
-            private IReadOnlyList<int> _rowsPerPage = new[] { 5, 10, 25 };
+            private List<OpTreeTableColumn> _columns = new()
+            {
+                new() { Field = "name", Header = "Nome", Expandable = true, HideHeader = true, Footer = "Totais" },
+                new() { Field = "size", Header = "Tamanho", HideHeader = true, Footer = "1.836 KB" },
+                new() { Field = "type", Header = "Tipo", HideHeader = true }
+            };
 
-            private void OnPage(OpPaginatorState state) => _first = state.First;
+            private IReadOnlyList<IReadOnlyList<OpTreeTableHeaderGroup>> _groups = new[]
+            {
+                new[]
+                {
+                    new OpTreeTableHeaderGroup { Header = "Arquivo", RowSpan = 2 },
+                    new OpTreeTableHeaderGroup { Header = "Detalhes", ColSpan = 2 }
+                },
+                new[]
+                {
+                    new OpTreeTableHeaderGroup { Header = "Tamanho" },
+                    new OpTreeTableHeaderGroup { Header = "Tipo" }
+                }
+            };
         }
         """;
 
-    private const string LoadingCode = """
-        <OpTreeTable Nodes="_nodes" Columns="_columns" Loading="_loading" />
+    private const string LazyLoadCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Lazy="true"
+                     OnNodeExpand="LoadNode" OnLazyLoad="OnLazy" TotalRecords="2" />
 
         @code {
-            private bool _loading;
+            // Nós iniciais: sem Children e com Leaf = false (expansíveis para o lazy).
+            private List<OpTreeNode> _nodes = new()
+            {
+                new()
+                {
+                    Key = "0", Label = "Documentos", Leaf = false,
+                    Data = new FileRecord("Documentos", 0, "Pasta")
+                }
+            };
+
+            private async Task LoadNode(OpTreeNode node)
+            {
+                await Task.Delay(600); // simula a latência do servidor
+                node.Children = new List<OpTreeNode> { /* filhos vindos do servidor */ };
+                node.Loading = false;
+            }
+
+            private void OnLazy(OpTreeTableLazyLoadEvent e)
+            {
+                // e.First, e.Rows, e.SortField, e.SortOrder, e.MultiSortMeta, e.Filters
+            }
         }
         """;
 
-    private const string EmptyCode = """
-        <OpTreeTable Nodes="_nodes" Columns="_columns" EmptyMessage="Nenhum registro encontrado" />
+    private const string VerticalScrollCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" ScrollHeight="200px" StickyHeader="true" />
+        """;
+
+    private const string FlexScrollCode = """
+        <OpDialog Header="Arquivos" Visible="_visible" VisibleChanged="(bool v) => _visible = v"
+                  Maximizable="true" ContentStyle="height: 300px">
+            <OpTreeTable Nodes="_nodes" Columns="_columns" ScrollHeight="flex" />
+        </OpDialog>
+        """;
+
+    private const string HorizontalScrollCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_wideColumns" TableStyle="min-width: 60rem" />
 
         @code {
-            private List<OpTreeNode> _nodes = new();
+            private List<OpTreeTableColumn> _wideColumns = new()
+            {
+                new() { Field = "name", Header = "Nome", Expandable = true, Width = "20rem" },
+                new() { Field = "size", Header = "Tamanho", Width = "14rem" },
+                new() { Field = "type", Header = "Tipo", Width = "14rem" }
+            };
+        }
+        """;
+
+    private const string FrozenColumnsCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" ScrollHeight="200px" TableStyle="min-width: 60rem" />
+
+        @code {
+            private List<OpTreeTableColumn> _columns = new()
+            {
+                new() { Field = "name", Header = "Nome", Expandable = true, Frozen = "left", Width = "14rem" },
+                new() { Field = "size", Header = "Tamanho", Width = "12rem" },
+                new() { Field = "type", Header = "Tipo", Width = "12rem", Frozen = "right" }
+            };
+        }
+        """;
+
+    private const string ReorderCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" Sortable="false"
+                     ReorderableColumns="true" OnColumnReorder="OnReorder" />
+
+        @code {
+            private void OnReorder((int From, int To) info)
+            {
+                var column = _columns[info.From];
+                _columns.RemoveAt(info.From);
+                _columns.Insert(info.To, column);
+            }
+        }
+        """;
+
+    private const string ColumnToggleCode = """
+        <OpMultiSelect TValue="OpTreeTableColumn" @bind-Value="_selected" Options="_allColumns"
+                       OptionLabel="Header" Display="chip" Placeholder="Escolha as colunas" />
+
+        <OpTreeTable Nodes="_nodes" Columns="@(_selected ?? Array.Empty<OpTreeTableColumn>())" />
+
+        @code {
+            private IReadOnlyList<OpTreeTableColumn>? _selected;
+        }
+        """;
+
+    private const string ConditionalStyleCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" RowClass="RowStyle" />
+
+        @code {
+            private static string? RowStyle(OpTreeNode node)
+                => node.Data is FileRecord r && r.Type == "Pasta" ? "font-bold" : null;
+        }
+        """;
+
+    private const string ContextMenuCode = """
+        <OpTreeTable Nodes="_nodes" Columns="_columns" OnRowContextMenu="OnContext" />
+        <OpContextMenu @ref="_menu" Model="_items" OnItemClick="OnItem" />
+
+        @code {
+            private OpContextMenu? _menu;
+            private OpTreeNode? _selected;
+
+            private async Task OnContext((OpTreeNode Item, MouseEventArgs Args) info)
+            {
+                _selected = info.Item;
+
+                if (_menu is not null)
+                {
+                    await _menu.ShowAsync(info.Args.ClientX, info.Args.ClientY);
+                }
+            }
+
+            private void OnItem(OpMenuItem item)
+            {
+                // ação escolhida para _selected
+            }
         }
         """;
 
     private const string AccessibilityCode = """
         <OpTreeTable Nodes="_nodes" Columns="_columns" SelectionMode="single"
-                     @bind-Selection="_selection" />
+                     @bind-Selection="_selection" aria-label="Arquivos" />
         """;
 }

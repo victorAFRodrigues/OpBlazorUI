@@ -1,25 +1,13 @@
 @namespace OpBlazorUI.Components.TreeTable
 @using OpBlazorUI.Components.Checkbox
 @using OpBlazorUI.Components.Common
+@using OpBlazorUI.Components.InputText
 @using OpBlazorUI.Components.Paginator
+@using OpBlazorUI.Components.Skeleton
 @using OpBlazorUI.Models
 @inherits OpComponentBase
 
 <div class="@RootClass" @ref="_tableRoot" @attributes="AdditionalAttributes">
-    @if (Loading)
-    {
-        <div class="p-treetable-loading p-treetable-mask p-overlay-mask">
-            @if (LoadingTemplate is not null)
-            {
-                @LoadingTemplate
-            }
-            else
-            {
-                <i class="p-treetable-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></i>
-            }
-        </div>
-    }
-
     @if (CaptionTemplate is not null)
     {
         <div class="p-treetable-header">@CaptionTemplate</div>
@@ -30,15 +18,33 @@
         @RenderPaginator("top")
     }
 
-    <div class="p-treetable-table-container" style="overflow: auto;">
-        <table class="p-treetable-table" role="treegrid">
-            <thead class="p-treetable-thead">
+    <div class="p-treetable-table-container" style="@TableContainerStyle">
+        <table class="p-treetable-table @(HasScrollableLayout ? "p-treetable-scrollable-table" : null)"
+               style="@TableStyle"
+               role="treegrid">
+            <thead class="p-treetable-thead" style="@TheadStyle">
                 @if (HeaderTemplate is not null)
                 {
                     <tr>
                         <th class="p-treetable-header-cell" colspan="@ColumnSpan">@HeaderTemplate</th>
                     </tr>
                 }
+                @if (HasHeaderGroups)
+                {
+                    @foreach (var groupRow in HeaderGroups!)
+                    {
+                        <tr>
+                            @foreach (var group in groupRow)
+                            {
+                                <th class="p-treetable-header-cell @group.StyleClass"
+                                    colspan="@(group.ColSpan > 1 ? group.ColSpan : (int?)null)"
+                                    rowspan="@(group.RowSpan > 1 ? group.RowSpan : (int?)null)">@group.Header</th>
+                            }
+                        </tr>
+                    }
+                }
+            @if (ShowSelectionColumn || Columns.Any(c => !c.HideHeader))
+            {
                 <tr>
                     @if (ShowSelectionColumn)
                     {
@@ -49,23 +55,97 @@
                                         TabIndex="-1"/>
                         </th>
                     }
+                    @for (var ci = 0; ci < Columns.Count; ci++)
+                    {
+                        var column = Columns[ci];
+                        // Cópia por iteração: o lambda do arraste capturaria a variável do for (valor final).
+                        var index = ci;
+                        if (column.HideHeader)
+                        {
+                            @* coberto por uma célula com rowspan de HeaderGroups *@
+                        }
+                        else
+                        {
+                            <th class="@ThClass(column)"
+                                style="@ThStyle(column)"
+                                tabindex="@(column.Sortable && Sortable ? 0 : -1)"
+                                aria-sort="@SortAria(column)"
+                                draggable="@(ReorderableColumns ? "true" : null)"
+                                @ondragstart="() => _dragColumnIndex = index"
+                                @ondragend="() => _dragColumnIndex = -1"
+                                @ondragover:preventDefault="@ReorderableColumns"
+                                @ondrop="() => OnDropColumnAsync(index)"
+                                @onclick="e => ToggleSortAsync(column, e.CtrlKey || e.MetaKey)"
+                                @onkeydown="e => OnHeaderKeydown(e, column)">
+                                <div class="p-treetable-column-header-content">
+                                    @if (column.HeaderTemplate is not null)
+                                    {
+                                        @column.HeaderTemplate
+                                    }
+                                    else
+                                    {
+                                        <span class="p-treetable-column-title">@column.Header</span>
+                                    }
+                                    @if (column.Sortable && Sortable)
+                                    {
+                                        <i class="p-icon pi pi-@(SortIconName(column)) p-treetable-sort-icon"></i>
+                                    }
+                                    @if (IsMultipleSort && SortOrderOf(column.Field) > 0)
+                                    {
+                                        <span class="p-treetable-sort-badge">@SortOrderOf(column.Field)</span>
+                                    }
+                                </div>
+                            </th>
+                        }
+                    }
+                </tr>
+            }
+
+            @if (HasFilters)
+            {
+                <tr class="p-treetable-filter-row">
+                    @if (ShowSelectionColumn)
+                    {
+                        <th class="p-treetable-filter-column"></th>
+                    }
                     @foreach (var column in Columns)
                     {
-                        <th class="@ThClass(column)"
-                            style="@(string.IsNullOrEmpty(column.Width) ? null : $"width:{column.Width}")">
-                            <div class="p-treetable-column-header-content">
-                                <span class="p-treetable-column-title">@column.Header</span>
-                                @if (column.Sortable)
-                                {
-                                    <i class="p-icon pi pi-sort-alt p-treetable-sort-icon"></i>
-                                }
-                            </div>
+                        <th class="p-treetable-filter-column @column.FilterStyleClass">
+                            @if (column.Filter && !string.IsNullOrEmpty(column.Field))
+                            {
+                                <OpInputText IgnoreEditContext="true"
+                                             Value="@ColumnFilterValue(column.Field)"
+                                             ValueChanged="v => OnColumnFilterChanged(column.Field, v)"
+                                             Placeholder="@column.FilterPlaceholder"
+                                             AriaLabel="@(column.FilterPlaceholder ?? (string.IsNullOrEmpty(column.Header) ? Tr.FilterPlaceholder : string.Format(Tr.FilterColumn, column.Header)))"/>
+                            }
                         </th>
                     }
                 </tr>
+            }
             </thead>
             <tbody class="p-treetable-tbody">
-                @if (VisibleNodes.Count == 0)
+                @if (ShowSkeleton)
+                {
+                    @for (var r = 0; r < SkeletonRowCount; r++)
+                    {
+                        <tr class="p-treetable-skeleton-row">
+                            @if (ShowSelectionColumn)
+                            {
+                                <td class="p-treetable-body-cell p-treetable-selection-column">
+                                    <OpSkeleton Shape="circle" Width="1.5rem" Height="1.5rem"/>
+                                </td>
+                            }
+                            @foreach (var column in Columns)
+                            {
+                                <td class="p-treetable-body-cell @column.BodyStyleClass">
+                                    <OpSkeleton/>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+                else if (VisibleNodes.Count == 0)
                 {
                     <tr>
                         <td class="p-treetable-empty-message" colspan="@ColumnSpan">
@@ -85,12 +165,15 @@
                     @foreach (var flat in VisibleNodes)
                     {
                         <tr class="@TrClass(flat.Node)"
+                            aria-selected="@(IsSelectable ? IsSelected(flat.Node).ToString().ToLowerInvariant() : null)"
                             tabindex="-1"
                             data-op-tree-table="true"
                             data-op-level="@flat.Level"
-                            data-op-expanded="@(flat.Node.Expanded ? "true" : "false")"
+                            data-op-expanded="@(IsNodeExpanded(flat.Node) ? "true" : "false")"
                             data-op-leaf="@(flat.Node.IsLeaf ? "true" : "false")"
-                            @onclick="() => OnRowClicked(flat.Node)">
+                            @onclick="() => OnRowClicked(flat.Node)"
+                            @oncontextmenu="e => OnRowContextMenu.InvokeAsync((flat.Node, e))"
+                            @oncontextmenu:preventDefault="@OnRowContextMenu.HasDelegate">
                             @if (ShowSelectionColumn)
                             {
                                 <td class="p-treetable-body-cell p-treetable-selection-column"
@@ -103,19 +186,27 @@
                             }
                             @foreach (var column in Columns)
                             {
-                                <td class="p-treetable-body-cell @column.StyleClass">
-                                    <div class="p-treetable-body-cell-content" style="@CellStyle(CellContext(flat, column), column)">
+                                <td class="@TdClass(flat.Node, column)" style="@TdStyle(column)">
+                                    <div class="p-treetable-body-cell-content" style="@CellStyle(flat, column)">
                                         @if (IsExpandableColumn(column))
                                         {
                                             <button type="button"
                                                     class="p-treetable-node-toggle-button"
                                                     style="@(flat.Node.IsLeaf ? "visibility: hidden" : null)"
-                                                    aria-label="@(flat.Node.IsLeaf ? null : (flat.Node.Expanded ? Tr.Aria.CollapseRow : Tr.Aria.ExpandRow))"
-                                                    aria-expanded="@(flat.Node.IsLeaf ? null : (flat.Node.Expanded ? "true" : "false"))"
+                                                    disabled="@flat.Node.Loading"
+                                                    aria-label="@(flat.Node.IsLeaf ? null : (IsNodeExpanded(flat.Node) ? Tr.Aria.CollapseRow : Tr.Aria.ExpandRow))"
+                                                    aria-expanded="@(flat.Node.IsLeaf ? null : (IsNodeExpanded(flat.Node) ? "true" : "false"))"
                                                     tabindex="-1"
                                                     @onclick="() => ToggleExpand(flat.Node)"
                                                     @onclick:stopPropagation="true">
-                                                <i class="p-treetable-node-toggle-icon pi @(flat.Node.Expanded ? "pi-chevron-down" : "pi-chevron-right")"></i>
+                                                @if (flat.Node.Loading)
+                                                {
+                                                    <i class="p-treetable-node-toggle-icon pi pi-spinner pi-spin"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="p-treetable-node-toggle-icon pi @(IsNodeExpanded(flat.Node) ? "pi-chevron-down" : "pi-chevron-right")"></i>
+                                                }
                                             </button>
                                         }
                                         @if (column.BodyTemplate is not null)
@@ -133,9 +224,36 @@
                     }
                 }
             </tbody>
-            @if (FooterTemplate is not null)
+            @if (HasFooter)
             {
-                <tfoot class="p-treetable-tfoot">@FooterTemplate</tfoot>
+                <tfoot class="p-treetable-tfoot">
+                    @if (FooterTemplate is not null)
+                    {
+                        @FooterTemplate
+                    }
+                    else
+                    {
+                        <tr>
+                            @if (ShowSelectionColumn)
+                            {
+                                <td class="p-treetable-footer-cell"></td>
+                            }
+                            @foreach (var column in Columns)
+                            {
+                                <td class="p-treetable-footer-cell @column.FooterStyleClass">
+                                    @if (column.FooterTemplate is not null)
+                                    {
+                                        @column.FooterTemplate
+                                    }
+                                    else
+                                    {
+                                        @column.Footer
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tfoot>
             }
         </table>
     </div>
@@ -144,18 +262,35 @@
     {
         @RenderPaginator("bottom")
     }
+
+    @if (Loading && !ShowSkeleton)
+    {
+        <div class="p-treetable-mask p-overlay-mask">
+            @if (LoadingTemplate is not null)
+            {
+                @LoadingTemplate
+            }
+            else
+            {
+                <i class="p-treetable-loading-icon pi pi-spinner pi-spin" aria-hidden="true"></i>
+            }
+        </div>
+    }
 </div>
 
 @code {
     private RenderFragment RenderPaginator(string position) => __builder =>
     {
-        <OpPaginator First="@First"
-                     Rows="@Rows"
-                     TotalRecords="@EffectiveTotal"
-                     PageLinkSize="@PageLinks"
-                     AlwaysShow="@AlwaysShowPaginator"
-                     RowsPerPageOptions="@RowsPerPageOptions"
-                     StyleClass="@Class($"p-treetable-paginator-{position}")"
-                     OnPageChange="OnPageChangeHandler"/>
+        <div class="@Class($"p-treetable-paginator-{position}")">
+            <OpPaginator First="@_first"
+                         Rows="@_rows"
+                         TotalRecords="@DisplayCount"
+                         PageLinkSize="@PageLinks"
+                         AlwaysShow="@AlwaysShowPaginator"
+                         RowsPerPageOptions="@RowsPerPageOptions"
+                         TemplateLeft="@PaginatorLeftTemplate"
+                         TemplateRight="@PaginatorRightTemplate"
+                         OnPageChange="OnPaginatorChange"/>
+        </div>
     };
 }

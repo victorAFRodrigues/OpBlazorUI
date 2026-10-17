@@ -123,6 +123,26 @@ public sealed class OpFilterService
         return result;
     }
 
+    /// <summary>
+    /// Compara um valor unitário com o filtro usando o modo informado — usado por consumidores que
+    /// fazem a própria varredura (ex.: filtro da árvore no <c>OpTreeTable</c>), sem reflection de campo.
+    /// Filtro nulo casa tudo; modo desconhecido (ex.: Custom sem Register) também casa tudo.
+    /// </summary>
+    public bool IsMatch(object? value, object? filterValue, OpFilterMatchMode matchMode, CultureInfo? culture = null)
+    {
+        if (filterValue is null)
+        {
+            return true;
+        }
+
+        if (!_filters.TryGetValue(ToRule(matchMode), out var predicate))
+        {
+            return true;
+        }
+
+        return predicate(value, filterValue, culture ?? CultureInfo.CurrentCulture);
+    }
+
     /// <summary>Adiciona (ou substitui) um modo de comparação customizado.</summary>
     public void Register(string rule, Func<object?, object?, CultureInfo, bool> predicate)
         => _filters[rule] = predicate;
