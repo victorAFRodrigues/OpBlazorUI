@@ -200,47 +200,27 @@
             <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+        <DocSection Label="Formulários" Id="forms">
             <Description>
                 Como o <code>OpInputText</code> herda de <code>InputBase&lt;string&gt;</code>, a integração com o
                 <code>EditForm</code> é automática: <code>@@bind-Value</code> registra o campo no
                 <code>EditContext</code> e o <code>DataAnnotationsValidator</code> valida o modelo. Não passe
                 <code>Invalid</code> manualmente — o estado de erro é aplicado sozinho.
+                Isso substitui as abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
-                <EditForm Model="_tdForm" OnValidSubmit="SubmitTemplateDriven" class="flex flex-col items-start gap-3">
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-3">
                     <DataAnnotationsValidator/>
-                    <OpInputText Mask="99-999999" @bind-Value="_tdForm.Serial" Placeholder="99-999999" StyleClass="w-full"/>
-                    <ValidationMessage For="() => _tdForm.Serial"/>
+                    <OpInputText Mask="99-999999" @bind-Value="_form.Serial" Placeholder="99-999999" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _form.Serial"/>
                     <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_tdSubmitted)
+                    @if (_submitted)
                     {
                         <div class="text-sm" style="color:var(--p-green-600)">Número de série enviado.</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Formulários (Reactive)" Id="reactive">
-            <Description>
-                No upstream há duas abordagens (<i>Template Driven</i> e <i>Reactive</i>); no Blazor ambas convergem no
-                <code>EditForm</code>. Use <code>OnSubmit</code> com <code>EditContext.Validate()</code> quando quiser
-                controlar a validação manualmente.
-            </Description>
-            <ChildContent>
-                <EditForm Model="_reForm" OnSubmit="SubmitReactive" class="flex flex-col items-start gap-3">
-                    <DataAnnotationsValidator/>
-                    <OpInputText Mask="99-999999" @bind-Value="_reForm.Serial" Placeholder="99-999999" StyleClass="w-full"/>
-                    <ValidationMessage For="() => _reForm.Serial"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_reMessage is not null)
-                    {
-                        <div class="text-sm" style="color:var(--p-green-600)">@_reMessage</div>
-                    }
-                </EditForm>
-            </ChildContent>
-            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Eventos" Id="events">
@@ -403,19 +383,10 @@
     private string? _events;
     private int _inputCount;
 
-    private bool _tdSubmitted;
-    private SerialFormModel _tdForm = new();
+    private bool _submitted;
+    private SerialFormModel _form = new();
 
-    private SerialFormModel _reForm = new();
-    private string? _reMessage;
-
-    private void SubmitTemplateDriven() => _tdSubmitted = true;
-
-    private void SubmitReactive(EditContext context)
-    {
-        if (context.Validate()) _reMessage = $"Número enviado: {_reForm.Serial}";
-        else _reMessage = null;
-    }
+    private void OnSubmit() => _submitted = true;
 
     private sealed class SerialFormModel
     {
@@ -513,7 +484,7 @@
         <OpInputText Mask="99-999999" Variant="filled" Invalid="@(string.IsNullOrEmpty(_inv2))" @bind-Value="_inv2" Placeholder="Chave de série" />
         """;
 
-    private const string TemplateDrivenCode = """
+    private const string FormsCode = """
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
             <OpInputText Mask="99-999999" @bind-Value="_form.Serial" Placeholder="99-999999" />
@@ -532,31 +503,6 @@
             }
 
             private void OnSubmit() => _submitted = true;
-        }
-        """;
-
-    private const string ReactiveCode = """
-        <EditForm Model="_form" OnSubmit="OnSubmit">
-            <DataAnnotationsValidator />
-            <OpInputText Mask="99-999999" @bind-Value="_form.Serial" Placeholder="99-999999" />
-            <ValidationMessage For="() => _form.Serial" />
-            <button type="submit" class="p-button p-component">Enviar</button>
-        </EditForm>
-
-        @code {
-            private SerialFormModel _form = new();
-            private string? _message;
-
-            private sealed class SerialFormModel
-            {
-                [Required(ErrorMessage = "O número de série é obrigatório.")]
-                public string? Serial { get; set; }
-            }
-
-            private void OnSubmit(EditContext context)
-            {
-                if (context.Validate()) _message = $"Número enviado: {_form.Serial}";
-            }
         }
         """;
 

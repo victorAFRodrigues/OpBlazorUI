@@ -93,47 +93,26 @@
             <Code><CodeBlock Code="@TemplateCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+        <DocSection Label="Formulários" Id="forms">
             <Description>
                 Como herda de <code>InputBase&lt;string&gt;</code>, o InputOtp integra-se ao <code>EditForm</code> com
                 <code>DataAnnotationsValidator</code> e <code>ValidationMessage</code>. O <code>invalid</code> é
                 aplicado automaticamente quando há erro de validação — não passe <code>Invalid</code> manualmente.
+                Isso substitui as abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
-                <EditForm Model="_tdForm" OnValidSubmit="SubmitTemplateDriven" class="flex flex-col items-start gap-3">
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-3">
                     <DataAnnotationsValidator/>
-                    <OpInputOtp @bind-Value="_tdForm.Code" IntegerOnly="true"/>
-                    <ValidationMessage For="() => _tdForm.Code"/>
+                    <OpInputOtp @bind-Value="_form.Code" IntegerOnly="true"/>
+                    <ValidationMessage For="() => _form.Code"/>
                     <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_tdSubmitted)
+                    @if (_submitted)
                     {
                         <div class="text-sm" style="color:var(--p-green-600)">Código enviado.</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Formulários (Reactive)" Id="reactive">
-            <Description>
-                No Angular há duas abordagens (template driven e reactive). No Blazor ambas convergem no
-                <code>EditForm</code>: o <code>@@bind-Value</code> cria o <code>ValueExpression</code> que registra o
-                campo no <code>EditContext</code>. Use <code>OnSubmit</code> quando precisar controlar a validação
-                manualmente com <code>EditContext.Validate()</code>.
-            </Description>
-            <ChildContent>
-                <EditForm Model="_reForm" OnSubmit="SubmitReactive" class="flex flex-col items-start gap-3">
-                    <DataAnnotationsValidator/>
-                    <OpInputOtp @bind-Value="_reForm.Code" IntegerOnly="true"/>
-                    <ValidationMessage For="() => _reForm.Code"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_reMessage is not null)
-                    {
-                        <div class="text-sm" style="color:var(--p-green-600)">@_reMessage</div>
-                    }
-                </EditForm>
-            </ChildContent>
-            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Exemplo" Id="sample">
@@ -308,19 +287,10 @@
     private string? _custom;
     private string? _sample;
 
-    private bool _tdSubmitted;
-    private OtpFormModel _tdForm = new();
+    private bool _submitted;
+    private OtpFormModel _form = new();
 
-    private OtpFormModel _reForm = new();
-    private string? _reMessage;
-
-    private void SubmitTemplateDriven() => _tdSubmitted = true;
-
-    private void SubmitReactive(EditContext context)
-    {
-        if (context.Validate()) _reMessage = $"Código enviado: {_reForm.Code}";
-        else _reMessage = null;
-    }
+    private void OnSubmit() => _submitted = true;
 
     private static string SampleInputStyle(int index) =>
         "width:3rem;height:3rem;font-size:1.5rem;text-align:center;border:1px solid var(--p-inputtext-border-color);border-right:0;background:transparent;color:var(--p-inputtext-color);"
@@ -373,7 +343,7 @@
         </OpInputOtp>
         """;
 
-    private const string TemplateDrivenCode = """
+    private const string FormsCode = """
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
             <OpInputOtp @bind-Value="_form.Code" IntegerOnly="true" />
@@ -393,32 +363,6 @@
             }
 
             private void OnSubmit() => _submitted = true;
-        }
-        """;
-
-    private const string ReactiveCode = """
-        <EditForm Model="_form" OnSubmit="OnSubmit">
-            <DataAnnotationsValidator />
-            <OpInputOtp @bind-Value="_form.Code" IntegerOnly="true" />
-            <ValidationMessage For="() => _form.Code" />
-            <button type="submit" class="p-button p-component">Enviar</button>
-        </EditForm>
-
-        @code {
-            private OtpFormModel _form = new();
-            private string? _message;
-
-            private sealed class OtpFormModel
-            {
-                [Required(ErrorMessage = "O código é obrigatório.")]
-                [StringLength(4, MinimumLength = 4, ErrorMessage = "Informe os 4 dígitos.")]
-                public string? Code { get; set; }
-            }
-
-            private void OnSubmit(EditContext context)
-            {
-                if (context.Validate()) _message = $"Código enviado: {_form.Code}";
-            }
         }
         """;
 

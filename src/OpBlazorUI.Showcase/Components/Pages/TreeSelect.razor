@@ -309,48 +309,28 @@
             <Code><CodeBlock Code="@InvalidCode"/></Code>
         </DocSection>
 
-        <DocSection Label="Formulários (Template Driven)" Id="templatedriven">
+        <DocSection Label="Formulários" Id="forms">
             <Description>
                 Como herda de <code>OpInputBase&lt;string&gt;</code> (que estende <code>InputBase&lt;string&gt;</code>),
                 o TreeSelect integra-se ao <code>EditForm</code> com <code>DataAnnotationsValidator</code> e
                 <code>ValidationMessage</code>. O <code>@@bind-Value</code> gera o <code>ValueExpression</code> que
                 registra o campo no <code>EditContext</code>; o <code>p-invalid</code> sai automaticamente quando há
                 erro de validação — não passe <code>Invalid</code> manualmente.
+                Isso substitui as abordagens <i>Template Driven</i> e <i>Reactive Forms</i> do Angular.
             </Description>
             <ChildContent>
-                <EditForm Model="_tdForm" OnValidSubmit="SubmitTemplateDriven" class="flex flex-col items-start gap-3">
+                <EditForm Model="_form" OnValidSubmit="OnSubmit" class="flex flex-col items-start gap-3">
                     <DataAnnotationsValidator/>
-                    <OpTreeSelect @bind-Value="_tdForm.Key" Options="Nodes" Placeholder="Selecione um Item" StyleClass="w-full"/>
-                    <ValidationMessage For="() => _tdForm.Key"/>
+                    <OpTreeSelect @bind-Value="_form.Key" Options="Nodes" Placeholder="Selecione um Item" StyleClass="w-full"/>
+                    <ValidationMessage For="() => _form.Key"/>
                     <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_tdSubmitted)
+                    @if (_submitted)
                     {
-                        <div class="text-sm" style="color:var(--p-green-600)">Selecionado: @_tdForm.Key</div>
+                        <div class="text-sm" style="color:var(--p-green-600)">Selecionado: @_form.Key</div>
                     }
                 </EditForm>
             </ChildContent>
-            <Code><CodeBlock Code="@TemplateDrivenCode"/></Code>
-        </DocSection>
-
-        <DocSection Label="Formulários (Reactive)" Id="reactive">
-            <Description>
-                No Angular, os <i>Reactive Forms</i> validam o modelo programaticamente com <code>FormBuilder</code>.
-                No Blazor o mesmo <code>EditForm</code> cobre os dois casos: use <code>OnSubmit</code> e
-                <code>EditContext.Validate()</code> para controlar a validação no código.
-            </Description>
-            <ChildContent>
-                <EditForm Model="_reForm" OnSubmit="SubmitReactive" class="flex flex-col items-start gap-3">
-                    <DataAnnotationsValidator/>
-                    <OpTreeSelect @bind-Value="_reForm.Key" Options="Nodes" Placeholder="Selecione um Item" StyleClass="w-full"/>
-                    <ValidationMessage For="() => _reForm.Key"/>
-                    <button type="submit" class="p-button p-component">Enviar</button>
-                    @if (_reMessage is not null)
-                    {
-                        <div class="text-sm" style="color:var(--p-green-600)">@_reMessage</div>
-                    }
-                </EditForm>
-            </ChildContent>
-            <Code><CodeBlock Code="@ReactiveCode"/></Code>
+            <Code><CodeBlock Code="@FormsCode"/></Code>
         </DocSection>
 
         <DocSection Label="Acessibilidade" Id="accessibility">
@@ -560,21 +540,13 @@
     private List<TreeNode> _lazyNodes = new();
     private readonly List<TreeNode> _largeNodes = new();
 
-    private TreeFormModel _tdForm = new();
-    private bool _tdSubmitted;
-    private TreeFormModel _reForm = new();
-    private string? _reMessage;
+    private TreeFormModel _form = new();
+    private bool _submitted;
 
     private static int Count(IReadOnlyDictionary<string, bool>? selection)
         => selection?.Count(kv => kv.Value) ?? 0;
 
-    private void SubmitTemplateDriven() => _tdSubmitted = true;
-
-    private void SubmitReactive(EditContext context)
-    {
-        if (context.Validate()) _reMessage = $"Selecionado: {_reForm.Key}";
-        else _reMessage = null;
-    }
+    private void OnSubmit() => _submitted = true;
 
     private sealed class TreeFormModel
     {
@@ -861,7 +833,7 @@
         <OpTreeSelect @bind-Value="_key2" Options="Nodes" Invalid="true" Variant="filled" Placeholder="TreeSelect" />
         """;
 
-    private const string TemplateDrivenCode = """
+    private const string FormsCode = """
         <EditForm Model="_form" OnValidSubmit="OnSubmit">
             <DataAnnotationsValidator />
             <OpTreeSelect @bind-Value="_form.Key" Options="Nodes" Placeholder="Selecione um Item" />
@@ -880,31 +852,6 @@
             }
 
             private void OnSubmit() => _submitted = true;
-        }
-        """;
-
-    private const string ReactiveCode = """
-        <EditForm Model="_form" OnSubmit="OnSubmit">
-            <DataAnnotationsValidator />
-            <OpTreeSelect @bind-Value="_form.Key" Options="Nodes" Placeholder="Selecione um Item" />
-            <ValidationMessage For="() => _form.Key" />
-            <button type="submit" class="p-button p-component">Enviar</button>
-        </EditForm>
-
-        @code {
-            private TreeFormModel _form = new();
-            private string? _message;
-
-            private void OnSubmit(EditContext context)
-            {
-                if (context.Validate()) _message = $"Selecionado: {_form.Key}";
-            }
-
-            private sealed class TreeFormModel
-            {
-                [Required(ErrorMessage = "A seleção é obrigatória.")]
-                public string? Key { get; set; }
-            }
         }
         """;
 
