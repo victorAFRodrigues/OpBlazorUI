@@ -2,7 +2,7 @@
 @namespace OpBlazorUI.Charts
 @using ApexCharts
 
-<div class="op-chart @StyleClass" style="@Style">
+<div class="op-chart @StyleClass" style="@Style" @attributes="AdditionalAttributes">
     @if (!_interactive)
     {
         @if (Placeholder is not null)

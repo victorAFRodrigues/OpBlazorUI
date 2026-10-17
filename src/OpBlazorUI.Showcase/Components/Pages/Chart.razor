@@ -105,7 +105,8 @@
                               new[] { "UseThemeColors", "bool", "true", "Aplica cores/fonte dos tokens do tema quando <code>Options.Colors</code> está vazio." },
                               new[] { "Placeholder", "RenderFragment?", "null", "Conteúdo exibido no prerender estático." },
                               new[] { "ChildContent", "RenderFragment?", "null", "As séries (<code>ApexPointSeries&lt;TItem&gt;</code>)." },
-                              new[] { "Style / StyleClass", "string?", "null", "Estilos/classes do contêiner." }
+                              new[] { "Style / StyleClass", "string?", "null", "Estilos/classes do contêiner." },
+                              new[] { "Atributos", "Dictionary&lt;string, object&gt;?", "null", "Atributos extras repassados ao contêiner (ex.: <code>data-*</code>, <code>aria-*</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
@@ -148,6 +149,11 @@
                         <li>
                             <strong>Prerender estático:</strong> o gráfico não é renderizado no HTML de SSR; é
                             necessário um render mode interativo (Server, WebAssembly ou Auto).
+                        </li>
+                        <li>
+                            <strong>Cores do tema são lidas na montagem:</strong> trocar o tema depois (claro ⇄ escuro)
+                            não recalcula as cores do gráfico — recarregue a página ou informe
+                            <code>Options.Colors</code> para fixar uma paleta.
                         </li>
                         <li>
                             Cada instância precisa de um <code>ApexChartOptions</code> próprio; não compartilhe a

@@ -16,6 +16,20 @@
     </OpChart>
 </section>
 
+<section id="t-no-theme">
+    <OpChart TItem="ChartItem" Height="220" UseThemeColors="false">
+        <ApexPointSeries TItem="ChartItem" Items="_data" Name="Valores"
+                         SeriesType="SeriesType.Bar" XValue="e => e.Month" YValue="e => e.Value"/>
+    </OpChart>
+</section>
+
+<section id="t-attrs">
+    <OpChart TItem="ChartItem" Height="220" data-testid="op-chart-attrs" aria-label="Gráfico com atributos">
+        <ApexPointSeries TItem="ChartItem" Items="_data" Name="Valores"
+                         SeriesType="SeriesType.Bar" XValue="e => e.Month" YValue="e => e.Value"/>
+    </OpChart>
+</section>
+
 @code {
     private sealed class ChartItem
     {

@@ -209,6 +209,7 @@ public class P2Tests
     [InlineData("/tree", ".p-tree")]
     [InlineData("/table", ".p-datatable")]
     [InlineData("/treetable", ".p-treetable")]
+    [InlineData("/chart", ".apexcharts-canvas")]
     public async Task Paginas_renderizam_no_modo_escuro(string route, string selector)
     {
         var errors = new List<string>();
