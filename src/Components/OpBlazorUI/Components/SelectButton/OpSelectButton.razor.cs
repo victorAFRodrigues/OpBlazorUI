@@ -77,7 +77,7 @@ public partial class OpSelectButton<TValue> : OpInputBase<TValue>
     private RenderFragment<bool>? GetContentTemplate(object option, int index)
     {
         if (ItemTemplate is null) return null;
-        var value = OpSelectOption.ToValue<TValue>(option, !string.IsNullOrEmpty(OptionValue) ? OptionValue : OptionLabel);
+        var value = OpSelectOption.ToValue<TValue>(option, OptionValue);
         return _ => builder => ItemTemplate((value!, index))(builder);
     }
 
