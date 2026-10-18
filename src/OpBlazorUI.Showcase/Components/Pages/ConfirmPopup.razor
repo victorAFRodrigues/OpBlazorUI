@@ -116,7 +116,8 @@
                     <code>Accept</code> e <code>Reject</code> são disparados quando o usuário aceita ou rejeita.
                     <code>OnHide</code> é disparado ao fechar e entrega um <code>ConfirmEvent</code> cujo
                     <code>Accepted</code> indica o desfecho: <code>true</code> quando aceito e <code>false</code> ao
-                    rejeitar, fechar com <code>Escape</code> ou clicar fora (com <code>DismissableMask</code>).
+                    rejeitar, fechar com <code>Escape</code> ou clicar fora (padrão; <code>DismissableMask="false"</code>
+                    desativa o fechamento por clique fora).
                 </p>
             </Description>
             <ChildContent>
@@ -193,7 +194,7 @@
                               new[] { "AcceptVisible", "bool", "true", "Exibe o botão de aceitar." },
                               new[] { "RejectVisible", "bool", "true", "Exibe o botão de rejeitar." },
                               new[] { "CloseOnEscape", "bool", "true", "Fecha o popup ao pressionar <code>Escape</code> (dispara <code>Reject</code>)." },
-                              new[] { "DismissableMask", "bool", "false", "Fecha o popup ao clicar fora dele." },
+                              new[] { "DismissableMask", "bool", "true", "Fecha o popup ao clicar fora dele; padrão do upstream (<code>dismissableMask !== false</code>)." },
                               new[] { "DefaultFocus", "string", "\"accept\"", "Foco inicial: <code>accept</code>, <code>reject</code> ou <code>none</code>." },
                               new[] { "Target", "ElementReference?", "null", "Âncora usada quando <code>ShowAsync</code> é chamado sem alvo." },
                               new[] { "Placement", "string", "\"bottom\"", "Lado preferido do painel em relação ao alvo." },

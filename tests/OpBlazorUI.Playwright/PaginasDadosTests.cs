@@ -231,6 +231,24 @@ public class PaginasDadosTests
     }
 
     [Fact]
+    public async Task ConfirmPopup_fecha_ao_clicar_fora_por_padrao()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors, "/confirmpopup");
+
+        await page.Locator("button:has-text('Salvar')").First.ClickAsync();
+        var popup = page.Locator(".p-confirmpopup").First;
+        await Expect(popup).ToBeVisibleAsync();
+
+        // DismissableMask é true por padrão (dismissableMask !== false no upstream).
+        await page.Locator("h1").First.ClickAsync();
+        await Expect(popup).ToHaveCountAsync(0);
+
+        Assert.Empty(errors);
+        await page.CloseAsync();
+    }
+
+    [Fact]
     public async Task Timeline_renderiza_eventos()
     {
         var errors = new List<string>();
