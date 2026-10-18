@@ -372,14 +372,14 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
         {
             return SelectionMode switch
             {
-                OpDateSelectionMode.Single => Value is { } v ? FormatDate(v, EffectiveDateFormat) : string.Empty,
+                OpDateSelectionMode.Single => Value is { } v ? FormatDateTime(v) : string.Empty,
                 OpDateSelectionMode.Multiple => MultipleValue is { } m
                     ? string.Join(MultipleSeparator,
-                        m.Where(d => d.HasValue).Select(d => FormatDate(d!.Value, EffectiveDateFormat)))
+                        m.Where(d => d.HasValue).Select(d => FormatDateTime(d!.Value)))
                     : string.Empty,
                 OpDateSelectionMode.Range => RangeValue is { } r
                     ? string.Join(RangeSeparator,
-                        r.Where(d => d.HasValue).Select(d => FormatDate(d!.Value, EffectiveDateFormat)))
+                        r.Where(d => d.HasValue).Select(d => FormatDateTime(d!.Value)))
                     : string.Empty,
                 _ => string.Empty
             };
@@ -878,13 +878,16 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
 
         if (ReadonlyInput) return;
 
-        // Só aceita entrada completa (o texto inteiro precisa casar com o DateFormat).
+        // Só aceita entrada completa (o texto inteiro precisa casar com o formato). No ShowTime/TimeOnly
+        // a hora digitada passa a valer no seletor (SyncTimeFrom), para não ser sobrescrita depois pelo
+        // horário anterior do painel.
         switch (SelectionMode)
         {
             case OpDateSelectionMode.Single:
-                if (TryParseWithFormat(_inputText, out var parsed))
+                if (TryParseInput(_inputText, out var parsed))
                 {
-                    CurrentValue = (ShowTime || TimeOnly) ? WithCurrentTime(parsed) : parsed;
+                    CurrentValue = parsed;
+                    SyncTimeFrom(parsed);
                 }
 
                 break;
@@ -895,6 +898,11 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
                     MultipleValue = multiple;
                     await MultipleValueChanged.InvokeAsync(multiple);
                     NotifyEditContext(_multipleField);
+
+                    if (multiple.LastOrDefault(d => d.HasValue) is { } lastMultiple)
+                    {
+                        SyncTimeFrom(lastMultiple);
+                    }
                 }
 
                 break;
@@ -905,6 +913,11 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
                     RangeValue = range;
                     await RangeValueChanged.InvokeAsync(range);
                     NotifyEditContext(_rangeField);
+
+                    if (range.LastOrDefault(d => d.HasValue) is { } lastRange)
+                    {
+                        SyncTimeFrom(lastRange);
+                    }
                 }
 
                 break;
@@ -922,20 +935,103 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
 
         foreach (var part in parts)
         {
-            if (!TryParseWithFormat(part.Trim(), out var parsed)) return false;
-            result.Add((ShowTime || TimeOnly) ? WithCurrentTime(parsed) : parsed);
+            if (!TryParseInput(part.Trim(), out var parsed)) return false;
+            result.Add(parsed);
         }
 
         return result.Count > 0;
     }
 
-    private bool TryParseWithFormat(string? text, out DateTime value)
+    // Espelha o parseDateTime do upstream: no TimeOnly só a hora (com a data de hoje); no ShowTime a
+    // data seguida da hora (AM/PM obrigatório em 12h). Desvio consciente do port: no ShowTime um
+    // texto só com a data continua aceito e mantém o horário atual do seletor (o upstream exigiria
+    // a hora no texto e invalidaria a entrada).
+    private bool TryParseInput(string? text, out DateTime value)
     {
         value = default;
         if (string.IsNullOrWhiteSpace(text)) return false;
 
-        return ParseDate(text.Trim(), EffectiveDateFormat, out value);
+        var trimmed = text.Trim();
+
+        if (TimeOnly)
+        {
+            var tokens = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length == 0
+                || !TryParseTime(tokens[0], tokens.Length > 1 ? tokens[1] : null, out var h, out var m, out var s))
+            {
+                return false;
+            }
+
+            // Como no upstream, um texto só com hora usa a data de hoje.
+            var today = DateTime.Today;
+            value = new DateTime(today.Year, today.Month, today.Day, h, m, s);
+            return true;
+        }
+
+        if (ShowTime)
+        {
+            var parts = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+            string? ampm = null;
+
+            if (HourFormat == 12 && parts.Count > 0 && IsAmPm(parts[^1]))
+            {
+                ampm = parts[^1];
+                parts.RemoveAt(parts.Count - 1);
+            }
+
+            if (parts.Count > 1
+                && TryParseTime(parts[^1], ampm, out var hour, out var minute, out var second)
+                && ParseDate(string.Join(' ', parts.Take(parts.Count - 1)), EffectiveDateFormat, out var date))
+            {
+                value = new DateTime(date.Year, date.Month, date.Day, hour, minute, second);
+                return true;
+            }
+
+            // Desvio do port: só a data mantém o horário atual do seletor.
+            if (ParseDate(trimmed, EffectiveDateFormat, out var dateOnly))
+            {
+                value = WithCurrentTime(dateOnly);
+                return true;
+            }
+
+            return false;
+        }
+
+        return ParseDate(trimmed, EffectiveDateFormat, out value);
     }
+
+    // Espelha o parseTime do upstream: HH:mm (ou HH:mm:ss com ShowSeconds), em faixa válida; em 12h
+    // um AM/PM é obrigatório (como no upstream).
+    private bool TryParseTime(string? text, string? ampm, out int hour, out int minute, out int second)
+    {
+        hour = minute = second = 0;
+
+        var separator = string.IsNullOrEmpty(TimeSeparator) ? ":" : TimeSeparator;
+        var tokens = (text ?? string.Empty).Trim().Split(separator, StringSplitOptions.None);
+        var expected = ShowSeconds ? 3 : 2;
+        if (tokens.Length != expected) return false;
+
+        if (!int.TryParse(tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out hour)) return false;
+        if (!int.TryParse(tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out minute)) return false;
+        if (ShowSeconds && !int.TryParse(tokens[2], NumberStyles.None, CultureInfo.InvariantCulture, out second)) return false;
+
+        if (hour > 23 || minute > 59 || (HourFormat == 12 && hour > 12)) return false;
+        if (ShowSeconds && second > 59) return false;
+
+        if (HourFormat == 12)
+        {
+            if (string.IsNullOrEmpty(ampm)) return false;
+
+            var pm = ampm.Equals("PM", StringComparison.OrdinalIgnoreCase);
+            if (hour != 12 && pm) hour += 12;
+            else if (hour == 12 && !pm) hour -= 12;
+        }
+
+        return true;
+    }
+
+    private static bool IsAmPm(string token) =>
+        token.Equals("AM", StringComparison.OrdinalIgnoreCase) || token.Equals("PM", StringComparison.OrdinalIgnoreCase);
 
     private async Task OnInputBlur(FocusEventArgs e)
     {
@@ -1293,6 +1389,44 @@ public partial class OpDatePicker : OpInputBase<DateTime?>
             }
 
             i = j;
+        }
+
+        return sb.ToString();
+    }
+
+    // Espelha o formatDateTime do upstream: no TimeOnly o texto é só a hora; no ShowTime a data
+    // ganha a hora no fim.
+    private string FormatDateTime(DateTime date)
+    {
+        if (TimeOnly)
+        {
+            return FormatTime(date);
+        }
+
+        var text = FormatDate(date, EffectiveDateFormat);
+        return ShowTime ? $"{text} {FormatTime(date)}" : text;
+    }
+
+    // Espelha o formatTime do upstream: HH:mm[:ss] e, em 12h, hh:mm[:ss] AM/PM. O upstream formata
+    // com ':' fixo no input (embora o painel use timeSeparator); aqui o input segue TimeSeparator
+    // para o texto exibido casar com o parse.
+    private string FormatTime(DateTime date)
+    {
+        var hour = HourFormat == 12 ? (date.Hour % 12 == 0 ? 12 : date.Hour % 12) : date.Hour;
+        var sb = new System.Text.StringBuilder();
+        sb.Append(hour < 10 ? $"0{hour}" : hour.ToString(CultureInfo.InvariantCulture));
+        sb.Append(TimeSeparator);
+        sb.Append(date.Minute < 10 ? $"0{date.Minute}" : date.Minute.ToString(CultureInfo.InvariantCulture));
+
+        if (ShowSeconds)
+        {
+            sb.Append(TimeSeparator);
+            sb.Append(date.Second < 10 ? $"0{date.Second}" : date.Second.ToString(CultureInfo.InvariantCulture));
+        }
+
+        if (HourFormat == 12)
+        {
+            sb.Append(date.Hour > 11 ? " PM" : " AM");
         }
 
         return sb.ToString();

@@ -64,6 +64,25 @@
                   @bind-Value="_timeDate"/>
 </section>
 
+<section id="t-time-only">
+    <OpDatePicker TimeOnly="true" InputId="t-time-only-input" @bind-Value="_timeOnly"/>
+    <span id="t-time-only-value">@(_timeOnly?.ToString("HH:mm:ss"))</span>
+</section>
+
+<section id="t-time-formats">
+    <OpDatePicker ShowTime="true" DateFormat="dd/mm/yyyy" InputId="t-time-24-input" @bind-Value="_time24"/>
+    <span id="t-time-24-value">@(_time24?.ToString("yyyy-MM-dd HH:mm"))</span>
+
+    <OpDatePicker ShowTime="true" HourFormat="12" DateFormat="dd/mm/yyyy" InputId="t-time-12-input" @bind-Value="_time12"/>
+    <span id="t-time-12-value">@(_time12?.ToString("yyyy-MM-dd HH:mm"))</span>
+
+    <OpDatePicker TimeOnly="true" HourFormat="12" InputId="t-time-12-only-input" @bind-Value="_time12Only"/>
+    <span id="t-time-12-only-value">@(_time12Only?.ToString("HH:mm"))</span>
+
+    <OpDatePicker ShowTime="true" ShowSeconds="true" DateFormat="dd/mm/yyyy" InputId="t-time-seconds-input" @bind-Value="_timeSeconds"/>
+    <span id="t-time-seconds-value">@(_timeSeconds?.ToString("yyyy-MM-dd HH:mm:ss"))</span>
+</section>
+
 <section id="t-form">
     <EditForm Model="_form" OnValidSubmit="OnValid">
         <DataAnnotationsValidator/>
@@ -91,6 +110,11 @@
     private DateTime? _tokenDate = new DateTime(2026, 10, 26);
     private DateTime? _doyDate = new DateTime(2026, 1, 5);
     private DateTime? _timeDate;
+    private DateTime? _timeOnly;
+    private DateTime? _time24;
+    private DateTime? _time12;
+    private DateTime? _time12Only;
+    private DateTime? _timeSeconds;
 
     private readonly TestFormModel _form = new();
     private bool _submitted;
