@@ -134,6 +134,7 @@ function position(state) {
     el.setAttribute('data-op-placement', placed);
 
     if (opts.arrow === 'popover') alignPopoverArrow(el, a, left + (cb ? cb.getBoundingClientRect().left : 0), placed);
+    else if (opts.arrow === 'confirmpopup') alignConfirmPopupArrow(el, a, left + (cb ? cb.getBoundingClientRect().left : 0), placed);
     else if (opts.arrow === 'tooltip') alignTooltipArrow(state, a, top + (cb ? cb.getBoundingClientRect().top : 0), left + (cb ? cb.getBoundingClientRect().left : 0), placed);
 }
 
@@ -160,6 +161,21 @@ function alignPopoverArrow(el, a, left, placed) {
     const arrowLeft = clamp(a.left + a.width / 2 - left - offset, min, Math.max(min, max));
     el.style.setProperty('--p-popover-arrow-left', arrowLeft + 'px');
     el.classList.toggle('p-popover-flipped', placed === 'top');
+}
+
+// ConfirmPopup: espelha o alignArrow do upstream — a variável guarda só o deslocamento quando o
+// painel ficou à esquerda do alvo (ex.: preso na borda do viewport); o recuo base e o lado da seta
+// vêm do tema (left: calc(--p-confirmpopup-arrow-offset + var(--p-confirmpopup-arrow-left))).
+// Desvio consciente: o upstream adiciona a classe p-confirm-popup-flipped (com hífens), que não
+// casa com os seletores .p-confirmpopup-flipped do tema — lá a seta não troca de lado nem o gap
+// inverte ao abrir acima. Aqui usamos a classe que o tema estiliza, mantendo também o atributo
+// data-p-confirmpopup-flipped que o upstream expõe.
+function alignConfirmPopupArrow(el, a, left, placed) {
+    el.style.setProperty('--p-confirmpopup-arrow-left', Math.max(a.left - left, 0) + 'px');
+    const flipped = placed === 'top';
+    el.classList.toggle('p-confirmpopup-flipped', flipped);
+    if (flipped) el.setAttribute('data-p-confirmpopup-flipped', 'true');
+    else el.removeAttribute('data-p-confirmpopup-flipped');
 }
 
 // Tooltip: a classe de posição (p-tooltip-top/right/...) define o lado da seta; a seta é

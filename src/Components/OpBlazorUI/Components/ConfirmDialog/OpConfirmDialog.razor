@@ -97,6 +97,7 @@
                                       Raised="@OpButtonProps.GetRaised(CurrentOptions?.RejectButtonProps)"
                                       Rounded="@OpButtonProps.GetRounded(CurrentOptions?.RejectButtonProps)"
                                       Variant="@OpButtonProps.GetVariant(CurrentOptions?.RejectButtonProps)"
+                                      Size="@OpButtonProps.GetSize(CurrentOptions?.RejectButtonProps)"
                                       AriaLabel="@(CurrentOptions?.RejectAriaLabel ?? RejectAriaLabel)"
                                       @onclick="OnRejectClick" />
                         }
@@ -112,6 +113,7 @@
                                       Raised="@OpButtonProps.GetRaised(CurrentOptions?.AcceptButtonProps)"
                                       Rounded="@OpButtonProps.GetRounded(CurrentOptions?.AcceptButtonProps)"
                                       Variant="@OpButtonProps.GetVariant(CurrentOptions?.AcceptButtonProps)"
+                                      Size="@OpButtonProps.GetSize(CurrentOptions?.AcceptButtonProps)"
                                       AriaLabel="@(CurrentOptions?.AcceptAriaLabel ?? AcceptAriaLabel)"
                                       @onclick="OnAcceptClick" />
                         }

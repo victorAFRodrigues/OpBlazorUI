@@ -116,7 +116,8 @@
                     <code>Accept</code> e <code>Reject</code> são disparados quando o usuário aceita ou rejeita.
                     <code>OnHide</code> é disparado ao fechar e entrega um <code>ConfirmEvent</code> cujo
                     <code>Accepted</code> indica o desfecho: <code>true</code> quando aceito e <code>false</code> ao
-                    rejeitar, fechar com <code>Escape</code> ou clicar fora (com <code>DismissableMask</code>).
+                    rejeitar, fechar com <code>Escape</code> ou clicar fora (padrão; <code>DismissableMask="false"</code>
+                    desativa o fechamento por clique fora).
                 </p>
             </Description>
             <ChildContent>
@@ -132,6 +133,7 @@
                 </div>
                 <OpConfirmPopup @ref="_eventsPopup"
                                 Message="Aceite ou rejeite para ver os eventos."
+                                RejectButtonProps="@_rejectProps"
                                 Accept="OnAccept"
                                 Reject="OnReject"
                                 OnHide="HandleHide"/>
@@ -187,12 +189,12 @@
                               new[] { "RejectIcon", "string?", "null", "Classe do ícone do botão de rejeitar." },
                               new[] { "AcceptButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de aceitar." },
                               new[] { "RejectButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de rejeitar." },
-                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar (<code>severity</code>, <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>rounded</code>, <code>variant</code>)." },
-                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar." },
+                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar (<code>severity</code>, <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>rounded</code>, <code>variant</code>, <code>size</code>); sem <code>size</code>, o popup usa <code>small</code> como no upstream." },
+                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar (mesmas chaves; <code>size</code> padrão <code>small</code>)." },
                               new[] { "AcceptVisible", "bool", "true", "Exibe o botão de aceitar." },
                               new[] { "RejectVisible", "bool", "true", "Exibe o botão de rejeitar." },
                               new[] { "CloseOnEscape", "bool", "true", "Fecha o popup ao pressionar <code>Escape</code> (dispara <code>Reject</code>)." },
-                              new[] { "DismissableMask", "bool", "false", "Fecha o popup ao clicar fora dele." },
+                              new[] { "DismissableMask", "bool", "true", "Fecha o popup ao clicar fora dele; padrão do upstream (<code>dismissableMask !== false</code>)." },
                               new[] { "DefaultFocus", "string", "\"accept\"", "Foco inicial: <code>accept</code>, <code>reject</code> ou <code>none</code>." },
                               new[] { "Target", "ElementReference?", "null", "Âncora usada quando <code>ShowAsync</code> é chamado sem alvo." },
                               new[] { "Placement", "string", "\"bottom\"", "Lado preferido do painel em relação ao alvo." },
@@ -389,6 +391,7 @@
     private const string EventsCode = """
         <OpConfirmPopup @ref="_popup"
                         Message="Aceite ou rejeite para ver os eventos."
+                        RejectButtonProps="@_rejectProps"
                         Accept="OnAccept"
                         Reject="OnReject"
                         OnHide="HandleHide" />
@@ -397,6 +400,7 @@
 
         @code {
             private string? _lastHide;
+            private readonly Dictionary<string, object> _rejectProps = new() { ["severity"] = "secondary", ["outlined"] = true };
 
             private void OnAccept() { /* ... */ }
             private void OnReject() { /* ... */ }

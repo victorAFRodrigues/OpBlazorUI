@@ -197,8 +197,8 @@
                               new[] { "RejectIcon", "string?", "null", "Classe do ícone do botão de rejeitar." },
                               new[] { "AcceptButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de aceitar." },
                               new[] { "RejectButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de rejeitar." },
-                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar (<code>severity</code>, <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>rounded</code>, <code>variant</code>)." },
-                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar." },
+                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar (<code>severity</code>, <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>rounded</code>, <code>variant</code>, <code>size</code>)." },
+                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar (mesmas chaves)." },
                               new[] { "AcceptVisible", "bool", "true", "Exibe o botão de aceitar." },
                               new[] { "RejectVisible", "bool", "true", "Exibe o botão de rejeitar." },
                               new[] { "Modal", "bool", "true", "Exibe a máscara modal, bloqueando a interação de fundo." },
@@ -283,8 +283,8 @@
                               new[] { "RejectIcon", "string?", "null", "Ícone do botão de rejeitar." },
                               new[] { "AcceptButtonStyleClass", "string?", "null", "Classes CSS do botão de aceitar." },
                               new[] { "RejectButtonStyleClass", "string?", "null", "Classes CSS do botão de rejeitar." },
-                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar." },
-                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar." },
+                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar, incluindo <code>size</code>." },
+                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar, incluindo <code>size</code>." },
                               new[] { "AcceptVisible", "bool", "true", "Exibe o botão de aceitar." },
                               new[] { "RejectVisible", "bool", "true", "Exibe o botão de rejeitar." },
                               new[] { "Modal", "bool", "true", "Exibe a máscara modal." },
@@ -447,6 +447,7 @@
         Header = "Salvar Alterações",
         Message = "Deseja salvar as alterações?",
         Icon = "pi pi-save",
+        RejectButtonProps = new() { ["severity"] = "secondary", ["outlined"] = true },
         Accept = () => MessageService.Add(new OpToastMessage { Severity = "success", Summary = "Sucesso", Detail = "Salvo com sucesso" }),
         Reject = () => MessageService.Add(new OpToastMessage { Severity = "info", Summary = "Cancelado", Detail = "Operação cancelada" })
     });
@@ -489,6 +490,8 @@
             Header = $"Posição: {position}",
             Message = $"O dialog abre na posição {position}.",
             Position = position,
+            AcceptButtonProps = new() { ["text"] = true },
+            RejectButtonProps = new() { ["severity"] = "secondary", ["text"] = true },
             Accept = () => MessageService.Add(new OpToastMessage { Severity = "success", Summary = "OK", Detail = $"Posição {position} confirmada" })
         });
     }
@@ -565,6 +568,7 @@
                 Header = "Salvar Alterações",
                 Message = "Deseja salvar as alterações?",
                 Icon = "pi pi-save",
+                RejectButtonProps = new() { ["severity"] = "secondary", ["outlined"] = true },
                 Accept = () => MessageService.Add(new OpToastMessage
                 {
                     Severity = "success", Summary = "Sucesso", Detail = "Salvo com sucesso"
@@ -615,7 +619,9 @@
                     Key = "position",
                     Header = $"Posição: {position}",
                     Message = $"O dialog abre na posição {position}.",
-                    Position = position
+                    Position = position,
+                    AcceptButtonProps = new() { ["text"] = true },
+                    RejectButtonProps = new() { ["severity"] = "secondary", ["text"] = true }
                 });
             }
         }

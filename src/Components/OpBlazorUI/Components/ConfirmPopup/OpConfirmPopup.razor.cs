@@ -38,7 +38,11 @@ public partial class OpConfirmPopup : OpComponentBase
     [Parameter] public bool AcceptVisible { get; set; } = true;
     [Parameter] public bool RejectVisible { get; set; } = true;
     [Parameter] public bool CloseOnEscape { get; set; } = true;
-    [Parameter] public bool DismissableMask { get; set; }
+    /// <summary>
+    /// Fecha o popup ao clicar fora dele; <c>true</c> por padrão, como no upstream
+    /// (<c>confirmation.dismissableMask !== false</c>).
+    /// </summary>
+    [Parameter] public bool DismissableMask { get; set; } = true;
 
     /// <summary>Botão que recebe o foco ao abrir: <c>accept</c>, <c>reject</c> ou <c>none</c>.</summary>
     [Parameter] public string DefaultFocus { get; set; } = "accept";
