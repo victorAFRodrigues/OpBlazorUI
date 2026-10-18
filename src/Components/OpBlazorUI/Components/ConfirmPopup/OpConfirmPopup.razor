@@ -40,6 +40,7 @@
                           Raised="@OpButtonProps.GetRaised(RejectButtonProps)"
                           Rounded="@OpButtonProps.GetRounded(RejectButtonProps)"
                           Variant="@OpButtonProps.GetVariant(RejectButtonProps)"
+                          Size="@(OpButtonProps.GetSize(RejectButtonProps) ?? "small")"
                           AriaLabel="@EffectiveRejectLabel"
                           @onclick="OnRejectClick" />
             }
@@ -55,6 +56,7 @@
                           Raised="@OpButtonProps.GetRaised(AcceptButtonProps)"
                           Rounded="@OpButtonProps.GetRounded(AcceptButtonProps)"
                           Variant="@OpButtonProps.GetVariant(AcceptButtonProps)"
+                          Size="@(OpButtonProps.GetSize(AcceptButtonProps) ?? "small")"
                           AriaLabel="@EffectiveAcceptLabel"
                           @onclick="OnAcceptClick" />
             }

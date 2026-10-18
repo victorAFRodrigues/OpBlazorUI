@@ -162,10 +162,41 @@ public class PaginasDadosTests
         await Expect(reject).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-secondary"));
         await Expect(reject).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-outlined"));
 
-        // O aceitar continua primário (sem variante secundária/outlined).
+        // O popup força size small nos dois botões, como no upstream.
+        await Expect(reject).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-sm"));
+
+        // O aceitar continua primário (sem variante secundária/outlined), mas também small.
         var accept = popup.Locator("[data-pc-focus='accept']").First;
+        await Expect(accept).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-sm"));
         await Expect(accept).Not.ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-outlined"));
         await Expect(accept).Not.ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-secondary"));
+
+        Assert.Empty(errors);
+        await page.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ConfirmPopup_events_usa_reject_secundario_e_outlined()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors, "/confirmpopup");
+
+        var trigger = page.Locator("button:has-text('Confirmar ação')").First;
+        await trigger.WaitForAsync();
+        await trigger.ClickAsync();
+
+        var popup = page.Locator(".p-confirmpopup").First;
+        await Expect(popup).ToBeVisibleAsync();
+
+        // O demo de Eventos também declara RejectButtonProps (secondary + outlined).
+        var reject = popup.Locator("[data-pc-focus='reject']").First;
+        await Expect(reject).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-secondary"));
+        await Expect(reject).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-outlined"));
+        await Expect(reject).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-sm"));
+
+        var accept = popup.Locator("[data-pc-focus='accept']").First;
+        await Expect(accept).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-sm"));
+        await Expect(accept).Not.ToHaveClassAsync(new System.Text.RegularExpressions.Regex("p-button-outlined"));
 
         Assert.Empty(errors);
         await page.CloseAsync();

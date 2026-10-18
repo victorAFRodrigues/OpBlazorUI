@@ -115,6 +115,40 @@ public class OverlaysTests
     }
 
     [Fact]
+    public async Task ConfirmDialog_demo_basico_usa_reject_secundario_e_outlined()
+    {
+        var errors = new List<string>();
+        var page = await _fixture.Browser.NewPageAsync();
+        page.SetDefaultTimeout(60000);
+        page.Console += (_, msg) =>
+        {
+            if (msg.Type == "error")
+            {
+                errors.Add(msg.Text);
+            }
+        };
+        await page.GotoAsync($"{_fixture.BaseUrl}/confirmdialog", new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
+
+        // Demo "Básico" > Salvar: o reject é secondary + outlined (como no upstream); o diálogo
+        // não força size small — diferente do popup.
+        await page.Locator("button:has-text('Salvar')").First.ClickAsync();
+        var dialog = page.Locator(".p-confirmdialog");
+        await Expect(dialog).ToBeVisibleAsync();
+
+        var reject = dialog.Locator("[data-pc-focus='reject']").First;
+        await Expect(reject).ToHaveClassAsync(new Regex("p-button-secondary"));
+        await Expect(reject).ToHaveClassAsync(new Regex("p-button-outlined"));
+        await Expect(reject).Not.ToHaveClassAsync(new Regex("p-button-sm"));
+
+        var accept = dialog.Locator("[data-pc-focus='accept']").First;
+        await Expect(accept).Not.ToHaveClassAsync(new Regex("p-button-outlined"));
+        await Expect(accept).Not.ToHaveClassAsync(new Regex("p-button-sm"));
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
     public async Task ConfirmDialog_Close_do_servico_fecha()
     {
         var errors = new List<string>();

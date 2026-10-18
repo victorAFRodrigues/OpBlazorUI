@@ -27,6 +27,8 @@ internal static class OpButtonProps
 
     public static bool GetRounded(Dictionary<string, object>? props) => GetBool(props, "rounded");
 
+    public static string? GetSize(Dictionary<string, object>? props) => GetString(props, "size");
+
     private static string? GetString(Dictionary<string, object>? props, string key) =>
         TryGet(props, key, out var value) ? value?.ToString() : null;
 

@@ -132,6 +132,7 @@
                 </div>
                 <OpConfirmPopup @ref="_eventsPopup"
                                 Message="Aceite ou rejeite para ver os eventos."
+                                RejectButtonProps="@_rejectProps"
                                 Accept="OnAccept"
                                 Reject="OnReject"
                                 OnHide="HandleHide"/>
@@ -187,8 +188,8 @@
                               new[] { "RejectIcon", "string?", "null", "Classe do ícone do botão de rejeitar." },
                               new[] { "AcceptButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de aceitar." },
                               new[] { "RejectButtonStyleClass", "string?", "null", "Classes CSS adicionais no botão de rejeitar." },
-                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar (<code>severity</code>, <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>rounded</code>, <code>variant</code>)." },
-                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar." },
+                              new[] { "AcceptButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de aceitar (<code>severity</code>, <code>outlined</code>, <code>text</code>, <code>raised</code>, <code>rounded</code>, <code>variant</code>, <code>size</code>); sem <code>size</code>, o popup usa <code>small</code> como no upstream." },
+                              new[] { "RejectButtonProps", "Dictionary&lt;string, object&gt;?", "null", "Props do botão de rejeitar (mesmas chaves; <code>size</code> padrão <code>small</code>)." },
                               new[] { "AcceptVisible", "bool", "true", "Exibe o botão de aceitar." },
                               new[] { "RejectVisible", "bool", "true", "Exibe o botão de rejeitar." },
                               new[] { "CloseOnEscape", "bool", "true", "Fecha o popup ao pressionar <code>Escape</code> (dispara <code>Reject</code>)." },
@@ -389,6 +390,7 @@
     private const string EventsCode = """
         <OpConfirmPopup @ref="_popup"
                         Message="Aceite ou rejeite para ver os eventos."
+                        RejectButtonProps="@_rejectProps"
                         Accept="OnAccept"
                         Reject="OnReject"
                         OnHide="HandleHide" />
@@ -397,6 +399,7 @@
 
         @code {
             private string? _lastHide;
+            private readonly Dictionary<string, object> _rejectProps = new() { ["severity"] = "secondary", ["outlined"] = true };
 
             private void OnAccept() { /* ... */ }
             private void OnReject() { /* ... */ }
