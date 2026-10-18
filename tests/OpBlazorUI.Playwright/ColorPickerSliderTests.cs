@@ -82,6 +82,65 @@ public class ColorPickerSliderTests
     }
 
     [Fact]
+    public async Task ColorPicker_preview_mostra_a_cor_sem_texto()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        // Como no upstream, a prévia é só o quadrado colorido: sem value/texto.
+        await Expect(page.Locator("#t-color-input")).ToHaveValueAsync("");
+
+        var style = await page.Locator("#t-color-input").GetAttributeAsync("style");
+        Assert.Contains("336699", style);
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ColorPicker_fecha_ao_clicar_fora()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        await page.Locator("#t-color-input").ClickAsync();
+        await Expect(page.Locator("#t-color .p-colorpicker-color-selector")).ToBeVisibleAsync();
+
+        // O clique fora chega por [JSInvokable]; sem render o painel continuaria no DOM.
+        await page.Locator("#t-title").ClickAsync();
+        await Expect(page.Locator("#t-color .p-colorpicker-color-selector")).ToHaveCountAsync(0);
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ColorPicker_arraste_sem_binding_atualiza_a_previa()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        // Caso com Value estático (sem ValueChanged): o arraste chega por [JSInvokable] e a
+        // prévia precisa acompanhar mesmo sem re-render do consumidor.
+        var before = await page.Locator("#t-color8-input").GetAttributeAsync("style");
+        Assert.Contains("336699", before);
+
+        await page.Locator("#t-color8-input").ClickAsync();
+        var selector = page.Locator("#t-color8 .p-colorpicker-color-selector");
+        await Expect(selector).ToBeVisibleAsync();
+        await page.WaitForTimeoutAsync(300);
+
+        var box = await selector.BoundingBoxAsync();
+        Assert.NotNull(box);
+        await page.Mouse.ClickAsync((float)(box!.X + box.Width * 0.5), (float)(box.Y + box.Height * 0.5));
+
+        await Expect(page.Locator("#t-color8-input")).Not.ToHaveAttributeAsync("style", new Regex("336699"));
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
     public async Task Slider_nao_controlado_move_o_handle()
     {
         var errors = new List<string>();
