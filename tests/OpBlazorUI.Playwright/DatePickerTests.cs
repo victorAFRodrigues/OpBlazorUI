@@ -181,6 +181,87 @@ public class DatePickerTests
     }
 
     [Fact]
+    public async Task TimeOnly_mostra_e_aceita_a_hora_digitada()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        var input = page.Locator("#t-time-only-input");
+        await input.FillAsync("14:30");
+        await Expect(input).ToHaveValueAsync("14:30");
+        await Expect(page.Locator("#t-time-only-value")).ToHaveTextAsync("14:30:00");
+
+        // Entrada inválida mantém o valor anterior.
+        await input.FillAsync("25:99");
+        await Expect(page.Locator("#t-time-only-value")).ToHaveTextAsync("14:30:00");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ShowTime_texto_traz_data_e_hora_e_nao_sobrescreve_o_digitado()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        var input = page.Locator("#t-time-24-input");
+        await input.FillAsync("15/10/2026 14:30");
+        await Expect(input).ToHaveValueAsync("15/10/2026 14:30");
+        await Expect(page.Locator("#t-time-24-value")).ToHaveTextAsync("2026-10-15 14:30");
+
+        // A hora digitada vale no painel e escolher outro dia a mantém (e não 00:00).
+        await input.ClickAsync();
+        await Expect(page.Locator("#t-time-24-input-panel")).ToBeVisibleAsync();
+        await Expect(page.Locator("#t-time-24-input-panel .p-datepicker-hour-picker span").First).ToHaveTextAsync("14");
+        await page.Locator("#t-time-24-input-panel .p-datepicker-day[data-date='2026-10-20']").ClickAsync();
+        await Expect(page.Locator("#t-time-24-value")).ToHaveTextAsync("2026-10-20 14:30");
+        await Expect(input).ToHaveValueAsync("20/10/2026 14:30");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
+    public async Task Time_12h_formata_e_interpreta_ampm()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        var input = page.Locator("#t-time-12-input");
+        await input.FillAsync("15/10/2026 02:30 PM");
+        await Expect(input).ToHaveValueAsync("15/10/2026 02:30 PM");
+        await Expect(page.Locator("#t-time-12-value")).ToHaveTextAsync("2026-10-15 14:30");
+
+        // Em 12h o AM/PM é obrigatório (como no upstream).
+        await input.FillAsync("15/10/2026 02:30");
+        await Expect(page.Locator("#t-time-12-value")).ToHaveTextAsync("2026-10-15 14:30");
+
+        // TimeOnly em 12h: só a hora com o sufixo.
+        var only = page.Locator("#t-time-12-only-input");
+        await only.FillAsync("12:30 AM");
+        await Expect(page.Locator("#t-time-12-only-value")).ToHaveTextAsync("00:30");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ShowSeconds_inclui_os_segundos_no_texto_e_no_parse()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors);
+
+        var input = page.Locator("#t-time-seconds-input");
+        await input.FillAsync("15/10/2026 14:30:45");
+        await Expect(input).ToHaveValueAsync("15/10/2026 14:30:45");
+        await Expect(page.Locator("#t-time-seconds-value")).ToHaveTextAsync("2026-10-15 14:30:45");
+
+        Assert.True(errors.Count == 0, string.Join(" || ", errors));
+        await page.CloseAsync();
+    }
+
+    [Fact]
     public async Task Range_no_EditForm_valida_o_campo()
     {
         var errors = new List<string>();

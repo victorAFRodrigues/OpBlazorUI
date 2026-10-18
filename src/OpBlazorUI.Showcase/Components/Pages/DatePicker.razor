@@ -175,9 +175,11 @@
 
         <DocSection Label="Time" Id="time">
             <Description>
-                Com <code>ShowTime</code> o seletor de hora é exibido, no formato de 12 ou 24 horas conforme
-                <code>HourFormat</code>. Use <code>TimeOnly</code> para ocultar a parte de data e permitir apenas a
-                escolha de horário.
+                Com <code>ShowTime</code> o seletor de hora é exibido e a hora entra no texto do campo
+                (<code>15/10/2026 14:30</code>); o formato é de 12 ou 24 horas conforme
+                <code>HourFormat</code> (<code>02:30 PM</code>) e inclui os segundos com <code>ShowSeconds</code>.
+                Use <code>TimeOnly</code> para exibir e digitar apenas a hora. A hora também pode ser
+                digitada junto da data.
             </Description>
             <ChildContent>
                 <div class="flex flex-wrap justify-center items-end gap-4">
@@ -547,7 +549,7 @@
                               new[] { "StepHour", "int", "1", "Passo do seletor de hora." },
                               new[] { "StepMinute", "int", "1", "Passo do seletor de minuto." },
                               new[] { "StepSecond", "int", "1", "Passo do seletor de segundo." },
-                              new[] { "TimeSeparator", "string", ":", "Separador entre hora, minuto e segundo." },
+                              new[] { "TimeSeparator", "string", ":", "Separador entre hora, minuto e segundo (no painel e no texto do campo)." },
                               new[] { "MultipleSeparator", "string", ", ", "Separador entre datas no modo Multiple." },
                               new[] { "RangeSeparator", "string", " - ", "Separador entre as pontas no modo Range." },
                               new[] { "PanelStyleClass", "string?", "null", "Classes adicionais no painel." },
@@ -669,6 +671,7 @@
                     <ul>
                         <li>O <code>DateFormat</code> cobre os tokens do PrimeNG, com uma diferença consciente: sequências de 2+ caracteres de mês/dia (<code>MM</code>, <code>MMMM</code>, <code>DD</code>) são lidas de uma vez (nome completo) em vez de repetir o token, e <code>yyyy</code> equivale a <code>yy</code> (ano de 4 dígitos).</li>
                         <li>Não há máscara de digitação — como no próprio PrimeNG. O texto é interpretado conforme o <code>DateFormat</code> e só é aplicado quando o parse é bem-sucedido.</li>
+                        <li>Com <code>ShowTime</code>, digitar só a data é aceito e mantém o horário atual do seletor — diferença consciente do upstream, que exigiria a hora no texto digitado.</li>
                         <li>O pass-through (pt) do Angular não foi portado.</li>
                     </ul>
                 </div>
