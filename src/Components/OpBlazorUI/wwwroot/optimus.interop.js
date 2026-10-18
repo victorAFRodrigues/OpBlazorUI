@@ -72,12 +72,15 @@ export function focusTrapInit(element, initialFocusSelector, restoreFocus) {
     }
 
     // Foco inicial só quando há um seletor; sem ele, quem manda é o componente (FocusOnShow).
+    // preventScroll evita a corrida com o posicionamento do OpOverlayAttach: o painel ainda é
+    // position:absolute/top:0 no instante do foco e rolar a página para "alcançá-lo" levava o
+    // documento inteiro para o topo (desvio consciente; o upstream posiciona antes de focar).
     if (initialFocusSelector) {
         requestAnimationFrame(() => {
             const target = element.querySelector(initialFocusSelector) || getFocusableElements(element)[0];
             if (target) {
                 try {
-                    target.focus();
+                    target.focus({ preventScroll: true });
                 } catch (_) {
                     // ignore
                 }

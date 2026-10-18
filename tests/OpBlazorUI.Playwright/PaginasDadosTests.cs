@@ -242,4 +242,29 @@ public class PaginasDadosTests
         Assert.Empty(errors);
         await page.CloseAsync();
     }
+
+    [Fact]
+    public async Task ConfirmPopup_abre_sem_rolar_a_pagina()
+    {
+        var errors = new List<string>();
+        var page = await NewPageAsync(errors, "/confirmpopup");
+
+        // Scroll manual instantâneo até a seção de Eventos (o CSS pode ter scroll suave).
+        await page.EvaluateAsync(
+            "() => document.getElementById('events').scrollIntoView({ behavior: 'instant', block: 'center' })");
+        await page.WaitForTimeoutAsync(100);
+        var before = await page.EvaluateAsync<double>("() => Math.round(window.scrollY)");
+        Assert.True(before > 200, $"a página deveria estar rolada; scrollY={before}");
+
+        // O foco inicial não pode rolar a página para o topo: no instante do focus o painel
+        // ainda está em position:absolute/top:0, e o navegador rolava até ele.
+        await page.Locator("button:has-text('Confirmar ação')").First.ClickAsync();
+        await Expect(page.Locator(".p-confirmpopup").First).ToBeVisibleAsync();
+
+        var after = await page.EvaluateAsync<double>("() => Math.round(window.scrollY)");
+        Assert.Equal(before, after);
+
+        Assert.Empty(errors);
+        await page.CloseAsync();
+    }
 }
