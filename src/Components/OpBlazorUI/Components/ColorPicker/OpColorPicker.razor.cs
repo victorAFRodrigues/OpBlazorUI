@@ -166,6 +166,11 @@ public partial class OpColorPicker : OpInputBase<string>
         }
 
         _panelVisible = false;
+
+        // O clique fora chega por [JSInvokable]; fora de um evento do Blazor não há render
+        // automático, então o painel continuaria no DOM até o próximo render.
+        StateHasChanged();
+
         await OnHide.InvokeAsync();
     }
 
@@ -187,6 +192,11 @@ public partial class OpColorPicker : OpInputBase<string>
         var value = OpColorMath.Serialize(_h, _s, _b, Format);
         _lastParsed = value;
         CurrentValue = value;
+
+        // O arraste também chega por [JSInvokable]; sem ValueChanged (uso sem @bind-Value) o
+        // consumidor não re-renderiza, e a prévia/handles só acompanham com este render.
+        StateHasChanged();
+
         await OnChange.InvokeAsync(value);
     }
 }
