@@ -77,7 +77,7 @@ public static class AppMenu
         new AppMenuEntry
         {
             Label = "AI Tools", Icon = "pi pi-sparkles",
-            Children = [Item("LLMs.txt", "/llms-txt")]
+            Children = [Item("LLMs.txt", "/llms-txt"), Item("Skill", "/skill")]
         },
         new AppMenuEntry
         {

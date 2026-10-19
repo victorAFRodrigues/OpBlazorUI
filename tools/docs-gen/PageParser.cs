@@ -33,8 +33,16 @@ internal static class PageParser
         "private const string (\\w+)\\s*=\\s*\"\"\"(.*?)\"\"\";",
         RegexOptions.Compiled | RegexOptions.Singleline);
 
+    private static readonly Regex CodeBlockRegex = new(
+        "<CodeBlock\\b([^>]*)>",
+        RegexOptions.Compiled);
+
     private static readonly Regex CodeRefRegex = new(
-        "CodeBlock\\b[^>]*\\bCode\\s*=\\s*\"@(\\w+)\"",
+        "\\bCode\\s*=\\s*\"@(\\w+)\"",
+        RegexOptions.Compiled);
+
+    private static readonly Regex LanguageRegex = new(
+        "\\bLanguage\\s*=\\s*\"([^\"]*)\"",
         RegexOptions.Compiled);
 
     private static readonly Regex TypeTokenRegex = new(
@@ -226,13 +234,31 @@ internal static class PageParser
         foreach (var section in doc.Sections)
         {
             var raw = text[section.Start..section.End];
-            foreach (Match reference in CodeRefRegex.Matches(raw))
+            foreach (Match block in CodeBlockRegex.Matches(raw))
             {
+                var attributes = block.Groups[1].Value;
+                var reference = CodeRefRegex.Match(attributes);
+                if (!reference.Success)
+                {
+                    continue;
+                }
+
                 var name = reference.Groups[1].Value;
-                if (examples.TryGetValue(name, out var example) && example.SectionId is null)
+                if (!examples.TryGetValue(name, out var example))
+                {
+                    continue;
+                }
+
+                if (example.SectionId is null)
                 {
                     example.SectionId = section.Id;
                     example.SectionLabel = section.Label;
+                }
+
+                var language = LanguageRegex.Match(attributes);
+                if (language.Success && example.Language is null && language.Groups[1].Value.Length > 0)
+                {
+                    example.Language = language.Groups[1].Value;
                 }
             }
         }

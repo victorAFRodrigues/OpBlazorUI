@@ -45,9 +45,10 @@ internal static class Cli
             Assembly.Load("OpBlazorUI.Charts"));
 
         var manifest = ManifestBuilder.Build(repo, catalog, xml, manifestOptions);
+        var skill = SkillBundle.Load(repo.SkillDir);
         var path = Path.Combine(outDir, "manifest.json");
         Json.Write(path, manifest);
-        LlmsBuilder.Write(manifest, outDir, manifestOptions.BaseUrl);
+        LlmsBuilder.Write(manifest, outDir, manifestOptions.BaseUrl, skill);
 
         var types = manifest.Components.Sum(c => c.Types.Count);
         var parameters = manifest.Components.Sum(c => c.Types.Sum(t => t.Parameters.Count));
@@ -57,6 +58,7 @@ internal static class Cli
         Console.WriteLine($"[docs-gen] manifesto: {path}");
         Console.WriteLine($"  llms: {Path.Combine(outDir, "llms.txt")} + {manifest.Components.Count} Markdown em llms/");
         Console.WriteLine($"  completo: {Path.Combine(outDir, "llms-full.txt")}");
+        Console.WriteLine($"  skill: {skill.Recipes.Count} receitas em {Path.Combine(outDir, "skills")}");
         Console.WriteLine($"  componentes: {manifest.Components.Count} " +
                           $"({manifest.Components.Count(c => c.Kind == "component")} componentes, " +
                           $"{manifest.Components.Count(c => c.Kind == "service")} serviços, " +
@@ -171,7 +173,7 @@ internal static class Cli
             uso: docs-gen <comando> [opções]
 
             Comandos:
-              generate   Gera manifest.json, llms.txt, llms-full.txt e llms/<componente>.md
+              generate   Gera manifest.json, llms.txt, llms-full.txt, llms/<componente>.md e skills/
               audit      Compara as tabelas de API das páginas com o código
               verify     Confere a integridade dos artefatos de IA gerados
               help       Mostra esta ajuda

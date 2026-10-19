@@ -17,6 +17,11 @@
       "page": "LlmsTxt.razor",
       "aliases": ["llms", "ai tools", "agentes", "agents", "markdown"]
     },
+    "Skill": {
+      "id": "skill",
+      "page": "Skill.razor",
+      "aliases": ["agent skill", "skill de agente", "receitas", "recipes", "opencode", "claude"]
+    },
     "Overlay API": {
       "id": "overlay",
       "type": "OpOverlay",

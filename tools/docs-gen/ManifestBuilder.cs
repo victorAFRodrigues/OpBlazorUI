@@ -64,7 +64,7 @@ internal static class ManifestBuilder
                 tokens,
                 page.Sections.Select(s => new SectionManifest(s.Id, s.Label)).ToList(),
                 page.Examples
-                    .Select(e => new ExampleManifest(e.SectionId, e.SectionLabel, e.Code))
+                    .Select(e => new ExampleManifest(e.SectionId, e.SectionLabel, e.Code, e.Language))
                     .ToList()));
         }
 

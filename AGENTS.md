@@ -12,6 +12,8 @@ Instruções para agentes de código (OpenCode e similares) neste repositório. 
   - `src/OpBlazorUI.Showcase` — site de documentação (Blazor WebAssembly, publicado no GitHub Pages).
   - `tools/theme-gen` — gerador dos temas (Aura, Lara, Nora) a partir de `@openng/optimus-ui-themes`.
   - `tools/doc-upstream/fetch.sh` — baixa as seções da doc do PrimeNG de um componente.
+  - `tools/docs-gen` — gera o manifesto, o `llms.txt` e publica a skill de agentes.
+  - `.opencode/skills/opblazorui` — skill de agente com instruções e receitas de uso da lib.
 
 ## Grafo de código (graphify)
 
