@@ -52,7 +52,7 @@ dotnet build OpBlazorUI.slnx
 dotnet run --project src/OpBlazorUI.Showcase
 ```
 
-- O `global.json` fixa a versão do SDK; se ela não estiver instalada, rode o `dotnet` fora da pasta do repositório.
+- Não há `global.json`: o build local e o CI usam o SDK `10.0.x` instalado.
 - Mudança visual só está pronta depois de conferida no Showcase: modos claro e escuro, sem erros no console.
 
 ## Commits, branches e releases
