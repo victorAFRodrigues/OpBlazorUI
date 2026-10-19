@@ -182,6 +182,18 @@
                           })"/>
             </ChildContent>
         </DocSection>
+
+        <DocSection Label="Eventos" Id="api-events">
+            <ChildContent>
+                <ApiTable Headers="@(new[] { "Nome", "Tipo", "Descrição" })"
+                          Rows="@(new[] {
+                              new[] { "OnInput", "EventCallback&lt;string&gt;", "Disparado a cada alteração no texto." },
+                              new[] { "OnChange", "EventCallback&lt;string&gt;", "Disparado quando o valor é confirmado (blur)." },
+                              new[] { "OnFocus", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando o campo recebe foco." },
+                              new[] { "OnBlur", "EventCallback&lt;FocusEventArgs&gt;", "Disparado quando o campo perde foco." }
+                          })"/>
+            </ChildContent>
+        </DocSection>
     </Api>
 
     <Theming>

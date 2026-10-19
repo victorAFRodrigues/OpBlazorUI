@@ -198,19 +198,19 @@ public partial class OpDataTable<TItem> : ComponentBase, IAsyncDisposable
     /// <summary>Começou a edição de uma célula (clique ou <see cref="StartEditAsync"/>).</summary>
     [Parameter] public EventCallback<TItem> OnEditInit { get; set; }
 
-    /// <summary>A edição da célula foi salva (Enter, clique em outra célula ou <see cref="SaveEditAsync"/>).</summary>
+    /// <summary>A edição da célula foi salva (Enter, clique em outra célula ou <see cref="SaveEditAsync(TItem)"/>).</summary>
     [Parameter] public EventCallback<TItem> OnEditComplete { get; set; }
 
-    /// <summary>A edição da célula foi cancelada (Escape ou <see cref="CancelEditAsync"/>).</summary>
+    /// <summary>A edição da célula foi cancelada (Escape ou <see cref="CancelEditAsync(TItem)"/>).</summary>
     [Parameter] public EventCallback<TItem> OnEditCancel { get; set; }
 
     /// <summary>Começou a edição de uma linha (modo <c>row</c>).</summary>
     [Parameter] public EventCallback<TItem> OnRowEditInit { get; set; }
 
-    /// <summary>A edição da linha foi salva (com <see cref="SaveEditAsync"/>).</summary>
+    /// <summary>A edição da linha foi salva (com <see cref="SaveEditAsync()"/>).</summary>
     [Parameter] public EventCallback<TItem> OnRowEditSave { get; set; }
 
-    /// <summary>A edição da linha foi cancelada (com <see cref="CancelEditAsync"/>).</summary>
+    /// <summary>A edição da linha foi cancelada (com <see cref="CancelEditAsync()"/>).</summary>
     [Parameter] public EventCallback<TItem> OnRowEditCancel { get; set; }
 
     /// <summary>Chave para persistir página, ordenação e filtros (como o <c>stateKey</c> do upstream).</summary>

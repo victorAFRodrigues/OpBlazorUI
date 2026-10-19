@@ -112,7 +112,8 @@
                               new[] { "Model", "IReadOnlyList&lt;OpMenuItem&gt;", "[]", "Etapas." },
                               new[] { "ActiveIndex", "int", "0", "Índice da etapa ativa (usar <code>@@bind-ActiveIndex</code>)." },
                               new[] { "Readonly", "bool", "false", "Impede a interação." },
-                              new[] { "OnSelect", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao selecionar uma etapa; itens com <code>Command</code> executam a ação e itens com <code>Url</code> navegam (via <code>NavigationManager</code>)." }
+                              new[] { "OnSelect", "EventCallback&lt;OpMenuItem&gt;", "—", "Disparado ao selecionar uma etapa; itens com <code>Command</code> executam a ação e itens com <code>Url</code> navegam (via <code>NavigationManager</code>)." },
+                              new[] { "ActiveIndexChanged", "EventCallback&lt;int&gt;", "—", "Disparado quando a etapa ativa muda (usado por <code>@@bind-ActiveIndex</code>)." }
                           })"/>
             </ChildContent>
         </DocSection>
