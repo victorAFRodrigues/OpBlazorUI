@@ -161,7 +161,9 @@
                 <ApiTable Headers="@(new[] { "Nome", "Tipo", "Padrão", "Descrição" })"
                           Rows="@(new[] {
                               new[] { "Multiple", "bool", "false", "Permite vários painéis abertos." },
-                              new[] { "ActiveIndexes", "IReadOnlyList&lt;int&gt;?", "null", "Índices abertos (usar <code>@@bind-ActiveIndexes</code>); <code>null</code> equivale a nenhum." }
+                              new[] { "ActiveIndexes", "IReadOnlyList&lt;int&gt;?", "null", "Índices abertos (usar <code>@@bind-ActiveIndexes</code>); <code>null</code> equivale a nenhum." },
+                              new[] { "ActiveIndexesChanged", "EventCallback&lt;IReadOnlyList&lt;int&gt;&gt;", "—", "Disparado quando os índices abertos mudam (usado por <code>@@bind-ActiveIndexes</code>)." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do acordeão; normalmente os painéis." }
                           })"/>
             </ChildContent>
         </DocSection>

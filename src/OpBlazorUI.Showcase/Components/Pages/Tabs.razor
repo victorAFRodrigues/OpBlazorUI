@@ -222,7 +222,9 @@
                               new[] { "ActiveIndex", "int", "0", "Índice da aba ativa (usar <code>@@bind-ActiveIndex</code>)." },
                               new[] { "Scrollable", "bool", "false", "Habilita a rolagem com botões de navegação." },
                               new[] { "AriaLabel", "string?", "null", "Rótulo acessível da lista de abas." },
-                              new[] { "OnChange", "EventCallback&lt;int&gt;", "—", "Disparado ao trocar de aba." }
+                              new[] { "OnChange", "EventCallback&lt;int&gt;", "—", "Disparado ao trocar de aba." },
+                              new[] { "ActiveIndexChanged", "EventCallback&lt;int&gt;", "—", "Disparado quando a aba ativa muda (usado por <code>@@bind-ActiveIndex</code>)." },
+                              new[] { "ChildContent", "RenderFragment?", "null", "Conteúdo do componente; normalmente os painéis de aba." }
                           })"/>
             </ChildContent>
         </DocSection>

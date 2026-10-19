@@ -67,7 +67,8 @@
                           Rows="@(new[] {
                               new[] { "ActiveIndex", "int", "0", "Índice da aba ativa (usar <code>@@bind-ActiveIndex</code>)." },
                               new[] { "Scrollable", "bool", "false", "Rolagem das abas." },
-                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível." }
+                              new[] { "AriaLabel", "string?", "null", "Rótulo acessível." },
+                              new[] { "ChildContent", "RenderFragment", "—", "Conteúdo do componente; normalmente os painéis de aba." }
                           })"/>
             </ChildContent>
         </DocSection>
