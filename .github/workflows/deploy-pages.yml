@@ -45,6 +45,21 @@ jobs:
       - name: Publicar (Release)
         run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o release --nologo --no-restore
 
+      - name: Gerar documentação para agentes
+        run: |
+          dotnet run --project tools/docs-gen/OpBlazorUI.DocsGen.csproj \
+            --configuration Release -- generate --out artifacts/docs --version 0.0.0-pages
+          dotnet run --project tools/docs-gen/OpBlazorUI.DocsGen.csproj \
+            --configuration Release --no-build -- verify --dir artifacts/docs
+
+      - name: Publicar os artefatos de IA no site
+        run: |
+          mkdir -p release/wwwroot/llms
+          cp artifacts/docs/llms.txt release/wwwroot/
+          cp artifacts/docs/llms-full.txt release/wwwroot/
+          cp artifacts/docs/manifest.json release/wwwroot/llms/manifest.json
+          cp artifacts/docs/llms/*.md release/wwwroot/llms/
+
       - name: Ajustar base href para o subcaminho do GitHub Pages
         run: |
           sed -i 's|<base href="/" />|<base href="/${{ env.REPO_NAME }}/" />|g; s|<base href="/"/>|<base href="/${{ env.REPO_NAME }}/"/>|g' \

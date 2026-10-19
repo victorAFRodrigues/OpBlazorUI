@@ -12,6 +12,11 @@
       "page": "Chart.razor",
       "aliases": ["chart", "graph", "gráfico", "grafico"]
     },
+    "LLMs.txt": {
+      "id": "llms-txt",
+      "page": "LlmsTxt.razor",
+      "aliases": ["llms", "ai tools", "agentes", "agents", "markdown"]
+    },
     "Overlay API": {
       "id": "overlay",
       "type": "OpOverlay",

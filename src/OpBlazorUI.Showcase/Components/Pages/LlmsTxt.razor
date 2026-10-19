@@ -1,0 +1,199 @@
+@page "/llms-txt"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@inject NavigationManager Navigation
+
+<PageTitle>LLMs.txt - OpBlazorUI</PageTitle>
+
+<GuidePage Title="LLMs.txt"
+           Description="Arquivos estáticos para agentes de IA e crawlers lerem a documentação do OpBlazorUI sem executar JavaScript."
+           Sections="@Sections">
+
+    <DocSection Label="Por que existe">
+        <Description>
+            <p>
+                O Showcase é uma aplicação <strong>Blazor WebAssembly</strong>: o HTML entregue ao
+                navegador contém apenas o shell, e o conteúdo das páginas é renderizado no cliente.
+                Crawlers e agentes que não executam JavaScript não conseguem ler a documentação.
+            </p>
+            <p>
+                Por isso o build publica artefatos estáticos no padrão
+                <a href="https://llmstxt.org/" target="_blank" rel="noopener noreferrer">llms.txt</a>:
+                um índice em Markdown, um arquivo por componente e uma versão completa em um único arquivo.
+                O gerador vive em <code>tools/docs-gen</code> e roda no CI a partir do código e das páginas do Showcase.
+            </p>
+        </Description>
+    </DocSection>
+
+    <DocSection Label="Arquivos publicados">
+        <Description>
+            <p>
+                Para a versão atual, abra
+                <a href="@LlmsTxtUrl" target="_blank" rel="noopener noreferrer">llms.txt</a>,
+                <a href="@LlmsFullUrl" target="_blank" rel="noopener noreferrer">llms-full.txt</a> e
+                <a href="@ManifestUrl" target="_blank" rel="noopener noreferrer">llms/manifest.json</a>.
+                Os arquivos ficam ao lado da documentação, na raiz publicada do site.
+            </p>
+            <p>
+                No Showcase local os arquivos não são versionados: rode
+                <code>dotnet run --project tools/docs-gen -- generate --out artifacts/docs</code>
+                e copie o conteúdo de <code>artifacts/docs/llms</code> para <code>wwwroot/llms</code>.
+                O workflow de deploy faz essa cópia automaticamente.
+            </p>
+        </Description>
+        <ChildContent>
+            <ApiTable Headers="@ArtifactHeaders" Rows="@ArtifactRows"/>
+        </ChildContent>
+        <Code>
+            <CodeBlock Language="text" Code="@ArtifactTree"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Usando com um agente">
+        <Description>
+            <p>
+                Aponte a ferramenta para o índice e para o Markdown do componente antes de pedir código.
+                O índice funciona como um mapa; o arquivo do componente traz a API refletida, os exemplos,
+                as classes CSS, os tokens e os links para a documentação visual.
+            </p>
+        </Description>
+        <Code>
+            <CodeBlock Language="bash" Code="@CurlCode"/>
+            <CodeBlock Language="text" Code="@PromptCode"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Manifesto">
+        <Description>
+            <p>
+                O <a href="@ManifestUrl" target="_blank" rel="noopener noreferrer">manifest.json</a>
+                é a fonte de verdade para nomes, tipos, valores padrão, eventos, templates, serviços,
+                enums e ícones. Ele é gerado por reflexão sobre os assemblies da biblioteca e inclui a
+                versão e o commit usados na geração.
+            </p>
+            <p>
+                Use o manifesto para validar uma resposta ou para localizar o arquivo Markdown de um
+                componente; use os arquivos Markdown para o contexto narrativo em pt-BR.
+            </p>
+        </Description>
+        <Code>
+            <CodeBlock Language="json" Code="@ManifestExample"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Versões e releases">
+        <Description>
+            <p>
+                O GitHub Pages publica sempre a documentação da <code>main</code>. Para fixar uma
+                versão, baixe os artefatos anexados à release correspondente:
+                <code>manifest.json</code>, <code>llms.txt</code> e <code>llms-full.txt</code>.
+                O <code>llms-full.txt</code> contém todo o conteúdo em um único arquivo e não depende
+                dos arquivos publicados no Pages.
+            </p>
+            <p>
+                Consulte as <a href="@ReleasesUrl" target="_blank" rel="noopener noreferrer">releases</a>
+                para ver versões, notas e os pacotes <code>OpBlazorUI</code> e <code>OpBlazorUI.Charts</code>.
+            </p>
+        </Description>
+    </DocSection>
+
+    <DocSection Label="Limitações">
+        <Description>
+            <ul>
+                <li>Os artefatos são um retrato da <code>main</code> no momento do build; para reprodutibilidade, use uma release.</li>
+                <li>As descrições vêm das páginas do Showcase em pt-BR; nomes de tipos e propriedades ficam em inglês.</li>
+                <li>O restore do pacote exige um PAT com <code>read:packages</code>, mesmo para pacotes públicos.</li>
+                <li>Ícones usam a fonte nativa <code>pi pi-*</code>; não há SVGs para agentes copiarem.</li>
+                <li>O audit de documentação é híbrido: drift hard bloqueia o CI; divergências herdadas continuam como aviso.</li>
+                <li>Um servidor MCP com consultas estruturadas está planejado para uma fase futura; por enquanto, use os arquivos estáticos.</li>
+            </ul>
+        </Description>
+    </DocSection>
+
+</GuidePage>
+
+@code {
+    private static readonly IReadOnlyList<string> Sections =
+    [
+        "Por que existe",
+        "Arquivos publicados",
+        "Usando com um agente",
+        "Manifesto",
+        "Versões e releases",
+        "Limitações"
+    ];
+
+    private static readonly IReadOnlyList<string> ArtifactHeaders = ["Arquivo", "Conteúdo"];
+
+    private static readonly IReadOnlyList<string[]> ArtifactRows =
+    [
+        ["llms.txt", "Índice em Markdown com guias, componentes, serviços e links para os arquivos."],
+        ["llms-full.txt", "Toda a documentação gerada em um único arquivo, útil para fixar uma versão."],
+        ["llms/manifest.json", "Manifesto da API: tipos, parâmetros, eventos, templates, serviços, enums e ícones."],
+        ["llms/<componente>.md", "Um arquivo por componente, guia ou serviço, com API, exemplos e theming."],
+        ["llms/icons.md", "Lista dos glyphs disponíveis na fonte nativa."],
+        ["llms/services.md", "Assinaturas de todos os serviços registrados pela biblioteca."],
+        ["llms/enums.md", "Valores dos enums públicos usados pela API."]
+    ];
+
+    private const string ArtifactTree = """
+        llms.txt
+        llms-full.txt
+        llms/
+          manifest.json
+          button.md
+          table.md
+          ...
+          icons.md
+          services.md
+          enums.md
+        """;
+
+    private const string ManifestExample = """
+        {
+          "library": {
+            "name": "OpBlazorUI",
+            "version": "1.2.3",
+            "docsBaseUrl": "https://victorafrodrigues.github.io/OpBlazorUI"
+          },
+          "components": [
+            {
+              "id": "button",
+              "name": "Button",
+              "kind": "component",
+              "types": [
+                {
+                  "name": "OpButton",
+                  "parameters": [
+                    { "name": "Label", "type": "string", "defaultValue": null }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        """;
+
+    private const string ReleasesUrl = "https://github.com/victorAFRodrigues/OpBlazorUI/releases";
+
+    private string LlmsTxtUrl => Url("llms.txt");
+    private string LlmsFullUrl => Url("llms-full.txt");
+    private string ManifestUrl => Url("llms/manifest.json");
+    private string ButtonMdUrl => Url("llms/button.md");
+
+    private string CurlCode => $"""
+        curl -s {LlmsTxtUrl}
+        curl -s {ButtonMdUrl}
+        """;
+
+    private string PromptCode => $"""
+        Antes de gerar código com OpBlazorUI, leia:
+        1. {LlmsTxtUrl}
+        2. {ButtonMdUrl}
+        3. {ManifestUrl}
+
+        Use os nomes, tipos e valores padrão do manifesto. Não invente propriedades.
+        """;
+
+    private string Url(string relative) => new Uri(new Uri(Navigation.BaseUri), relative).ToString();
+}

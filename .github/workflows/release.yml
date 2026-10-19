@@ -77,6 +77,14 @@ jobs:
             -p:Version=${{ steps.version.outputs.version }} \
             --output ./artifacts
 
+      - name: Gerar documentação para agentes
+        run: |
+          dotnet run --project tools/docs-gen/OpBlazorUI.DocsGen.csproj \
+            --configuration Release -- generate --out artifacts/docs \
+            --version ${{ steps.version.outputs.version }}
+          dotnet run --project tools/docs-gen/OpBlazorUI.DocsGen.csproj \
+            --configuration Release --no-build -- verify --dir artifacts/docs
+
       - name: Autenticar no GitHub Packages
         run: |
           dotnet nuget add source \
@@ -99,9 +107,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release upload "$GITHUB_REF_NAME" ./artifacts/*.nupkg --clobber
+            gh release upload "$GITHUB_REF_NAME" \
+              ./artifacts/*.nupkg \
+              ./artifacts/docs/manifest.json \
+              ./artifacts/docs/llms.txt \
+              ./artifacts/docs/llms-full.txt \
+              --clobber
           else
-            gh release create "$GITHUB_REF_NAME" ./artifacts/*.nupkg \
+            gh release create "$GITHUB_REF_NAME" \
+              ./artifacts/*.nupkg \
+              ./artifacts/docs/manifest.json \
+              ./artifacts/docs/llms.txt \
+              ./artifacts/docs/llms-full.txt \
               --title "$GITHUB_REF_NAME" \
               --generate-notes
           fi

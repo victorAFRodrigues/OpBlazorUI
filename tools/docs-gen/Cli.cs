@@ -24,6 +24,7 @@ internal static class Cli
         {
             "generate" => Generate(repo, catalog, options),
             "audit" => Audit(repo, catalog, overrides, options),
+            "verify" => Verify(repo, options),
             _ => Unknown(command)
         };
     }
@@ -46,6 +47,7 @@ internal static class Cli
         var manifest = ManifestBuilder.Build(repo, catalog, xml, manifestOptions);
         var path = Path.Combine(outDir, "manifest.json");
         Json.Write(path, manifest);
+        LlmsBuilder.Write(manifest, outDir, manifestOptions.BaseUrl);
 
         var types = manifest.Components.Sum(c => c.Types.Count);
         var parameters = manifest.Components.Sum(c => c.Types.Sum(t => t.Parameters.Count));
@@ -53,6 +55,8 @@ internal static class Cli
         var templates = manifest.Components.Sum(c => c.Types.Sum(t => t.Templates.Count));
 
         Console.WriteLine($"[docs-gen] manifesto: {path}");
+        Console.WriteLine($"  llms: {Path.Combine(outDir, "llms.txt")} + {manifest.Components.Count} Markdown em llms/");
+        Console.WriteLine($"  completo: {Path.Combine(outDir, "llms-full.txt")}");
         Console.WriteLine($"  componentes: {manifest.Components.Count} " +
                           $"({manifest.Components.Count(c => c.Kind == "component")} componentes, " +
                           $"{manifest.Components.Count(c => c.Kind == "service")} serviços, " +
@@ -90,6 +94,26 @@ internal static class Cli
         Console.WriteLine($"[docs-gen] relatório: {reportPath}");
 
         return mode == "fail" && report.Summary.Hard > 0 ? 1 : 0;
+    }
+
+    private static int Verify(RepoContext repo, Dictionary<string, string?> options)
+    {
+        var directory = options.GetValueOrDefault("dir") ?? Path.Combine(repo.Root, "artifacts", "docs");
+        var errors = LlmsBuilder.Verify(directory);
+
+        if (errors.Count > 0)
+        {
+            foreach (var error in errors)
+            {
+                Console.Error.WriteLine($"[docs-gen] verify: {error}");
+            }
+
+            Console.Error.WriteLine($"[docs-gen] verify: {errors.Count} problema(s) em {directory}");
+            return 1;
+        }
+
+        Console.WriteLine($"[docs-gen] verify: ok ({directory})");
+        return 0;
     }
 
     private static int Unknown(string command)
@@ -147,8 +171,9 @@ internal static class Cli
             uso: docs-gen <comando> [opções]
 
             Comandos:
-              generate   Gera o manifest.json a partir da reflexão + páginas do Showcase
+              generate   Gera manifest.json, llms.txt, llms-full.txt e llms/<componente>.md
               audit      Compara as tabelas de API das páginas com o código
+              verify     Confere a integridade dos artefatos de IA gerados
               help       Mostra esta ajuda
 
             Opções de generate:
@@ -161,6 +186,9 @@ internal static class Cli
               --mode <warn|fail> warn = só reporta (padrão); fail = sai com código 1 se houver hard drift
               --report <arquivo> Caminho do relatório JSON (padrão: artifacts/docs/docs-audit.json)
               --version <semver> Versão carimbada no relatório
+
+            Opções de verify:
+              --dir <dir>        Diretório dos artefatos (padrão: artifacts/docs)
 
             Opções globais:
               --repo <caminho>   Raiz do repositório (padrão: procura OpBlazorUI.slnx subindo do cwd)
