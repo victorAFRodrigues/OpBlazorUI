@@ -12,6 +12,7 @@ internal sealed class RepoContext
     public string DocThemingPath => Path.Combine(ShowcaseDir, "Components", "Doc", "DocTheming.cs");
     public string IconsCssPath => Path.Combine(Root, "src", "Components", "OpBlazorUI", "wwwroot", "openng-icons.css");
     public string OverridesPath => Path.Combine(Root, "tools", "docs-gen", "overrides.json");
+    public string SkillDir => Path.Combine(Root, ".opencode", "skills", "opblazorui");
 
     public static RepoContext Locate(string? explicitRoot)
     {
@@ -43,7 +44,7 @@ internal sealed class RepoContext
         var full = Path.GetFullPath(root);
         var ctx = new RepoContext { Root = full };
 
-        foreach (var path in new[] { ctx.AppMenuPath, ctx.DocThemingPath, ctx.IconsCssPath, ctx.PagesDir })
+        foreach (var path in new[] { ctx.AppMenuPath, ctx.DocThemingPath, ctx.IconsCssPath, ctx.PagesDir, ctx.SkillDir })
         {
             if (!File.Exists(path) && !Directory.Exists(path))
             {

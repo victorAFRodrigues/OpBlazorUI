@@ -14,6 +14,9 @@ lê a solução .NET, as páginas do Showcase e os arquivos estáticos do reposi
 | `artifacts/docs/llms/icons.md` | Glyphs da fonte nativa (`pi pi-*`). |
 | `artifacts/docs/llms/services.md` | Assinaturas de todos os serviços públicos. |
 | `artifacts/docs/llms/enums.md` | Enums públicos da biblioteca. |
+| `artifacts/docs/skills/opblazorui/SKILL.md` | Skill de agente (frontmatter + instruções) publicada para ferramentas compatíveis. |
+| `artifacts/docs/skills/opblazorui/references/*.md` | Receitas da skill (instalação, formulários, DataTable, overlays e temas). |
+| `artifacts/docs/skills/index.json` | Catálogo HTTP de skills (`name`, `version` e `files`) para instalação por URL. |
 | `artifacts/docs/docs-audit.json` | Relatório de divergências entre as tabelas de API das páginas e o código. |
 
 Os artefatos são **gerados no CI** e ficam fora do commit (`artifacts/` está no `.gitignore`).
@@ -29,7 +32,7 @@ dotnet run --project tools/docs-gen -- generate --out artifacts/docs
 dotnet run --project tools/docs-gen -- audit --mode warn
 dotnet run --project tools/docs-gen -- audit --mode fail
 
-# confere se os artefatos de IA estão completos e se os links locais existem
+# confere se os artefatos de IA (incluindo a skill) estão completos e se os links locais existem
 dotnet run --project tools/docs-gen -- verify --dir artifacts/docs
 
 # ajuda
@@ -60,6 +63,8 @@ Opções úteis:
 - **`AppMenu.cs`**: rótulo, rota, categoria e status de cada página.
 - **`DocTheming.cs`**: classes CSS e tokens documentados.
 - **`openng-icons.css`**: lista de glyphs `pi pi-*`.
+- **`.opencode/skills/opblazorui`**: skill de agente e receitas, publicadas em `skills/` e
+  incluídas no `llms-full.txt`.
 - **`overrides.json`**: exceções e aliases (ver abaixo).
 
 ## Auditoria (`audit`)
@@ -119,14 +124,30 @@ Sempre que possível, corrija a página em vez de ampliar a allowlist.
 4. Rode `generate` e `audit --mode fail`; corrija os hard e revise os soft.
 5. O CI publica o manifesto e os arquivos de `llms/` como artefato (`docs-artifacts`).
 
+## Skill de agentes
+
+A skill vive em `.opencode/skills/opblazorui` (descoberta automaticamente pelo OpenCode no
+repositório) e é publicada em `artifacts/docs/skills/`:
+
+- `opblazorui/SKILL.md` — frontmatter, fluxo de trabalho, convenções e armadilhas.
+- `opblazorui/opblazorui.md` — cópia na forma nomeada exigida pelo catálogo HTTP.
+- `opblazorui/references/*.md` — receitas (instalação, formulários, DataTable, overlays e temas).
+- `index.json` — catálogo no formato `{ "skills": [{ "name", "version", "files" }] }`; a
+  `version` é o commit (ou a versão da lib quando não há commit).
+
+O `llms.txt` ganha uma seção com os links da skill e das receitas, e o `llms-full.txt` inclui
+todo o conteúdo — é o que permite fixar uma versão sem depender do Pages. O `verify` confere
+o frontmatter, os arquivos publicados e o catálogo.
+
 ## Publicação
 
 - **GitHub Pages** (`deploy-pages.yml`): gera os artefatos e copia `llms.txt`,
-  `llms-full.txt` e `llms/manifest.json` para a raiz do site, além de `llms/*.md`.
-  A página `/llms-txt` do Showcase documenta o uso.
+  `llms-full.txt` e `llms/manifest.json` para a raiz do site, além de `llms/*.md` e de
+  `skills/` (skill + receitas + catálogo HTTP). As páginas `/llms-txt` e `/skill` do Showcase
+  documentam o uso.
 - **Release** (`release.yml`): gera com a versão da tag e anexa `manifest.json`,
   `llms.txt` e `llms-full.txt` à GitHub Release. Para fixar uma versão, o
-  `llms-full.txt` é autossuficiente; os links do `llms.txt` apontam para a versão
-  publicada no Pages.
+  `llms-full.txt` é autossuficiente (inclui a skill e as receitas); os links do `llms.txt`
+  apontam para a versão publicada no Pages.
 - **CI**: o job `Docs em dia` roda `generate`, `verify` e `audit --mode fail`, e
   publica o diretório `artifacts/docs` como artefato.

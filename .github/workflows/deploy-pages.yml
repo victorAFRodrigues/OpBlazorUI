@@ -59,6 +59,8 @@ jobs:
           cp artifacts/docs/llms-full.txt release/wwwroot/
           cp artifacts/docs/manifest.json release/wwwroot/llms/manifest.json
           cp artifacts/docs/llms/*.md release/wwwroot/llms/
+          mkdir -p release/wwwroot/skills
+          cp -R artifacts/docs/skills/. release/wwwroot/skills/
 
       - name: Ajustar base href para o subcaminho do GitHub Pages
         run: |

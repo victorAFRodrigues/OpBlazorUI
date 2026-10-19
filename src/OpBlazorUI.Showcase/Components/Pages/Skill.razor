@@ -1,0 +1,169 @@
+@page "/skill"
+@namespace OpBlazorUI.Showcase.Components.Pages
+@using OpBlazorUI.Showcase.Components.Doc
+@inject NavigationManager Navigation
+
+<PageTitle>Skill para agentes - OpBlazorUI</PageTitle>
+
+<GuidePage Title="Skill"
+           Description="Skill de agente com instruções e receitas para gerar código com a biblioteca — instalável em OpenCode, Claude e outras ferramentas compatíveis com o padrão de skills."
+           Sections="@Sections">
+
+    <DocSection Label="O que é">
+        <Description>
+            <p>
+                A skill <code>opblazorui</code> é um conjunto de instruções em Markdown que ensina um
+                agente a usar a biblioteca: convenções, armadilhas comuns e receitas de formulários,
+                DataTable, overlays e temas. Ela complementa o <a href="/llms-txt">LLMs.txt</a>: o
+                agente carrega a skill quando a tarefa envolve a lib e consulta os artefatos estáticos
+                para confirmar a API.
+            </p>
+            <p>
+                A skill vive no repositório em <code>.opencode/skills/opblazorui</code> e é publicada
+                no site em
+                <a href="@SkillUrl" target="_blank" rel="noopener noreferrer">skills/opblazorui/SKILL.md</a>
+                a cada deploy. As receitas ficam em <code>references/</code>, ao lado do
+                <code>SKILL.md</code>.
+            </p>
+        </Description>
+    </DocSection>
+
+    <DocSection Label="Instalação">
+        <Description>
+            <p>
+                No <strong>catálogo HTTP</strong>, adicione a URL do catálogo ao
+                <code>opencode.json</code> (do projeto ou global); a ferramenta baixa a skill e a
+                mantém atualizada pela versão publicada.
+            </p>
+        </Description>
+        <Code>
+            <CodeBlock Language="json" Code="@OpencodeConfigExample"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Cópia local">
+        <Description>
+            <p>
+                Como alternativa, copie a pasta <code>.opencode/skills/opblazorui</code> do repositório
+                para o seu projeto (ou para <code>~/.config/opencode/skills/</code>). O OpenCode também
+                lê <code>.claude/skills</code> e <code>.agents/skills</code>. Em último caso, baixe o
+                <code>SKILL.md</code> e as receitas e cole como instruções do agente.
+            </p>
+        </Description>
+        <Code>
+            <CodeBlock Language="bash" Code="@CopyExample"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Receitas">
+        <Description>
+            <p>
+                Cada receita é um Markdown independente, com código verificado contra o manifesto da API.
+                O agente lê a receita quando a tarefa casa com o cenário.
+            </p>
+        </Description>
+        <ChildContent>
+            <ApiTable Headers="@RecipeHeaders" Rows="@RecipeRows"/>
+        </ChildContent>
+    </DocSection>
+
+    <DocSection Label="Como o agente usa">
+        <Description>
+            <p>
+                A skill define um fluxo curto: localizar o componente no índice, ler o Markdown do
+                componente, confirmar os parâmetros no manifesto e só então escrever o código. As
+                receitas entram quando a tarefa casa com um cenário conhecido.
+            </p>
+        </Description>
+        <Code>
+            <CodeBlock Language="text" Code="@WorkflowExample"/>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Versões">
+        <Description>
+            <p>
+                O catálogo HTTP usa o commit publicado como <code>version</code>: quando a skill muda, a
+                ferramenta baixa a nova versão. O GitHub Pages publica a <code>main</code>; para fixar uma
+                versão, use os artefatos da release — o <code>llms-full.txt</code> inclui a skill e as
+                receitas.
+            </p>
+        </Description>
+    </DocSection>
+
+    <DocSection Label="Limitações">
+        <Description>
+            <ul>
+                <li>A skill é opcional: ferramentas sem suporte a skills continuam usando o <code>llms.txt</code> e o manifesto.</li>
+                <li>As receitas são escritas à mão (não geradas); a API refletida no manifesto é a fonte de verdade.</li>
+                <li>O catálogo baixa arquivos Markdown do site publicado; não há execução de código.</li>
+                <li>O ID da skill é <code>opblazorui</code> (definido pelo caminho), independente do <code>name</code> no frontmatter.</li>
+                <li>Um servidor MCP com consultas estruturadas está planejado para uma fase futura.</li>
+            </ul>
+        </Description>
+    </DocSection>
+
+</GuidePage>
+
+@code {
+    private static readonly IReadOnlyList<string> Sections =
+    [
+        "O que é",
+        "Instalação",
+        "Cópia local",
+        "Receitas",
+        "Como o agente usa",
+        "Versões",
+        "Limitações"
+    ];
+
+    private static readonly IReadOnlyList<string> RecipeHeaders = ["Arquivo", "Conteúdo"];
+
+    private const string OpencodeConfigExample = """
+        {
+          "$schema": "https://opencode.ai/config.json",
+          "skills": ["https://victorafrodrigues.github.io/OpBlazorUI/skills/"]
+        }
+        """;
+
+    private const string CopyExample = """
+        # no seu projeto
+        mkdir -p .opencode/skills
+        cp -R /caminho/da/lib/.opencode/skills/opblazorui .opencode/skills/
+
+        # ou global, para todos os projetos
+        mkdir -p ~/.config/opencode/skills
+        cp -R /caminho/da/lib/.opencode/skills/opblazorui ~/.config/opencode/skills/
+        """;
+
+    private const string WorkflowExample = """
+        1. Leia llms.txt (índice de guias, componentes, serviços e receitas).
+        2. Abra llms/<componente>.md do que for usar.
+        3. Confirme nomes, tipos e padrões em llms/manifest.json.
+        4. Se a tarefa casar com uma receita, siga references/<receita>.md.
+        5. Compile o projeto para validar o que foi gerado.
+        """;
+
+    private IReadOnlyList<string[]> RecipeRows =>
+    [
+        [FileName(InstallRecipe), $"<a href=\"{RecipeUrl(InstallRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Instalação e render modes</a> — pacote, serviços, tema e render modes."],
+        [FileName(FormsRecipe), $"<a href=\"{RecipeUrl(FormsRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Formulários e validação</a> — binding, EditForm, DataAnnotations e componentes de entrada."],
+        [FileName(TableRecipe), $"<a href=\"{RecipeUrl(TableRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">DataTable (CRUD)</a> — colunas, templates, seleção, lazy loading e edição."],
+        [FileName(OverlayRecipe), $"<a href=\"{RecipeUrl(OverlayRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Overlays e feedback</a> — Dialog, ConfirmDialog, Toast e DynamicDialog."],
+        [FileName(ThemeRecipe), $"<a href=\"{RecipeUrl(ThemeRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Temas e ícones</a> — presets, modo escuro, RTL, tokens e glyphs."]
+    ];
+
+    private const string InstallRecipe = "instalacao-e-render-modes.md";
+    private const string FormsRecipe = "formularios-e-validacao.md";
+    private const string TableRecipe = "datatable-crud.md";
+    private const string OverlayRecipe = "overlays-e-feedback.md";
+    private const string ThemeRecipe = "temas-e-icones.md";
+
+    private string SkillUrl => Url("skills/opblazorui/SKILL.md");
+
+    private static string FileName(string recipe) => "references/" + recipe;
+
+    private string RecipeUrl(string recipe) => Url("skills/opblazorui/references/" + recipe);
+
+    private string Url(string relative) => new Uri(new Uri(Navigation.BaseUri), relative).ToString();
+}

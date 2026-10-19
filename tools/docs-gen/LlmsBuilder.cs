@@ -12,7 +12,7 @@ internal static class LlmsBuilder
 {
     private static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false);
 
-    public static void Write(Manifest manifest, string outDir, string baseUrl)
+    public static void Write(Manifest manifest, string outDir, string baseUrl, SkillBundle skill)
     {
         baseUrl = NormalizeBaseUrl(baseUrl, manifest);
         var llmsDir = Path.Combine(outDir, "llms");
@@ -46,8 +46,9 @@ internal static class LlmsBuilder
         WriteFile(Path.Combine(llmsDir, "icons.md"), RenderIcons(manifest));
         WriteFile(Path.Combine(llmsDir, "services.md"), RenderServices(manifest, baseUrl));
         WriteFile(Path.Combine(llmsDir, "enums.md"), RenderEnums(manifest));
-        WriteFile(Path.Combine(outDir, "llms.txt"), RenderIndex(manifest, baseUrl, entries));
-        WriteFile(Path.Combine(outDir, "llms-full.txt"), RenderFull(manifest, baseUrl, entries));
+        skill.Stage(outDir, manifest);
+        WriteFile(Path.Combine(outDir, "llms.txt"), RenderIndex(manifest, baseUrl, entries, skill));
+        WriteFile(Path.Combine(outDir, "llms-full.txt"), RenderFull(manifest, baseUrl, entries, skill));
     }
 
     /// <summary>Confere se os artefatos estão completos e se os links locais do índice existem.</summary>
@@ -137,6 +138,13 @@ internal static class LlmsBuilder
                 }
             }
 
+            errors.AddRange(SkillBundle.Verify(outDir, full));
+
+            if (index.Length > 0 && !index.Contains("skills/", StringComparison.Ordinal))
+            {
+                errors.Add("llms.txt não referencia a skill de agentes");
+            }
+
             if (baseUrl.Length > 0 && index.Length > 0)
             {
                 foreach (Match match in Regex.Matches(index, @"\]\((?<url>https?://[^)\s]+)\)"))
@@ -169,7 +177,8 @@ internal static class LlmsBuilder
     private static string RenderIndex(
         Manifest manifest,
         string baseUrl,
-        IReadOnlyList<ComponentManifest> entries)
+        IReadOnlyList<ComponentManifest> entries,
+        SkillBundle skill)
     {
         var guides = entries.Where(e => e.Kind == "guide").ToList();
         var services = entries.Where(e => e.Kind == "service").ToList();
@@ -199,6 +208,37 @@ internal static class LlmsBuilder
         sb.AppendLine($"- [Configuration]({baseUrl}/llms/configuration.md) — temas, modo escuro, RTL e render modes.");
         sb.AppendLine($"- [Manifesto da API]({baseUrl}/llms/manifest.json) — nomes, tipos, valores padrão e descrições em JSON.");
         sb.AppendLine($"- [Documentação completa]({baseUrl}/llms-full.txt) — todos os arquivos em um único texto.");
+        sb.AppendLine();
+
+        sb.AppendLine("## Skill para agentes");
+        sb.AppendLine();
+        sb.AppendLine(
+            $"- [Skill {skill.Name}]({baseUrl}/skills/{skill.Id}/SKILL.md) — instruções e receitas para agentes " +
+            "que geram código com a biblioteca.");
+        sb.AppendLine(
+            $"- [Catálogo HTTP]({baseUrl}/skills/index.json) — instalação direta em ferramentas compatíveis " +
+            $"(ex.: `\"skills\": [\"{baseUrl}/skills/\"]` no `opencode.json`).");
+        sb.AppendLine();
+        sb.AppendLine("Receitas:");
+        sb.AppendLine();
+        foreach (var recipe in skill.Recipes)
+        {
+            var description = OneLine(recipe.Description);
+            if (description.Length > 180)
+            {
+                var cut = description.LastIndexOf(' ', 176);
+                description = (cut > 120 ? description[..cut] : description[..177]).TrimEnd() + "...";
+            }
+
+            sb.Append($"- [{EscapeInline(recipe.Title)}]({baseUrl}/skills/{skill.Id}/references/{recipe.FileName})");
+            if (description.Length > 0)
+            {
+                sb.Append($" — {WithPeriod(EscapeInline(description))}");
+            }
+
+            sb.AppendLine();
+        }
+
         sb.AppendLine();
 
         if (guides.Count > 0)
@@ -587,7 +627,8 @@ internal static class LlmsBuilder
     private static string RenderFull(
         Manifest manifest,
         string baseUrl,
-        IReadOnlyList<ComponentManifest> entries)
+        IReadOnlyList<ComponentManifest> entries,
+        SkillBundle skill)
     {
         var sb = new StringBuilder();
         sb.AppendLine("# OpBlazorUI — documentação completa para agentes");
@@ -604,6 +645,22 @@ internal static class LlmsBuilder
         sb.AppendLine("## Instalação e configuração");
         sb.AppendLine();
         AppendGettingStartedBody(sb, manifest);
+
+        sb.AppendLine("## Skill e receitas para agentes");
+        sb.AppendLine();
+        sb.AppendLine(
+            $"Conteúdo publicado em {baseUrl}/skills/{skill.Id}/ e instalável como skill em ferramentas compatíveis " +
+            $"(catálogo: {baseUrl}/skills/index.json).");
+        sb.AppendLine();
+        sb.AppendLine(skill.Body.TrimEnd());
+        sb.AppendLine();
+        foreach (var recipe in skill.Recipes)
+        {
+            sb.AppendLine("---");
+            sb.AppendLine();
+            sb.AppendLine(recipe.Content.TrimEnd());
+            sb.AppendLine();
+        }
 
         foreach (var entry in entries)
         {
@@ -840,6 +897,7 @@ internal static class LlmsBuilder
                 "installation" => "Instalação do pacote, autenticação no GitHub Packages e primeiro componente.",
                 "configuration" => "Temas, modo escuro, RTL e configuração dos serviços.",
                 "llms-txt" => "Arquivos estáticos (llms.txt, manifest.json e Markdown) para agentes de IA consumirem a documentação.",
+                "skill" => "Skill de agente com instruções e receitas para gerar código com a biblioteca.",
                 "fluid" => "Ainda não portado para Blazor.",
                 _ => $"Documentação de {entry.Name}."
             };
@@ -883,6 +941,11 @@ internal static class LlmsBuilder
 
     private static string LanguageFor(ExampleManifest example)
     {
+        if (!string.IsNullOrWhiteSpace(example.Language))
+        {
+            return example.Language.Trim().ToLowerInvariant();
+        }
+
         var code = example.Code;
         var trimmed = code.TrimStart();
         if (trimmed.StartsWith('{') || trimmed.StartsWith('['))

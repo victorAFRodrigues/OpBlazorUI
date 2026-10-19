@@ -54,6 +54,7 @@ internal sealed class ExampleDoc
 {
     public string? SectionId { get; set; }
     public string? SectionLabel { get; set; }
+    public string? Language { get; set; }
     public string ConstName { get; set; } = "";
     public string Code { get; set; } = "";
 }
@@ -138,7 +139,7 @@ internal sealed record TokenManifest(string Var, string Value);
 
 internal sealed record SectionManifest(string Id, string Label);
 
-internal sealed record ExampleManifest(string? SectionId, string? SectionLabel, string Code);
+internal sealed record ExampleManifest(string? SectionId, string? SectionLabel, string Code, string? Language);
 
 internal sealed record ServiceManifest(
     string Name,
