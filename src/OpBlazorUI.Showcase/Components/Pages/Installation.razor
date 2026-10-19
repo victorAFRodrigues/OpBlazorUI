@@ -33,19 +33,9 @@
         </ChildContent>
     </DocSection>
 
-    <DocSection Label="Autenticação no GitHub Packages">
-        <Description>
-            <p>O pacote é publicado no <strong>GitHub Packages</strong> deste repositório. O registro do GitHub exige autenticação mesmo para pacotes públicos, então comece criando um <code>nuget.config</code> na raiz do seu projeto com um PAT de escopo <code>read:packages</code>:</p>
-            <p>O <code>packageSourceMapping</code> do exemplo garante que apenas <code>OpBlazorUI.*</code> venha do GitHub. Sem ele, uma falha de autenticação do GitHub Packages pode derrubar o restore de pacotes do nuget.org.</p>
-        </Description>
-        <Code>
-            <CodeBlock Language="xml" Code="@NuGetConfigCode"/>
-        </Code>
-    </DocSection>
-
     <DocSection Label="Adicionar o pacote">
         <Description>
-            <p>Com a autenticação configurada, adicione o pacote normalmente:</p>
+            <p>O pacote está no <strong>NuGet.org</strong>, a fonte padrão do <code>dotnet</code> — o restore não exige feed nem credencial extra:</p>
         </Description>
         <Code>
             <CodeBlock Language="bash" Code="@("dotnet add package OpBlazorUI")"/>
@@ -56,7 +46,7 @@
 
     <DocSection Label="Alternativa: GitHub Release">
         <Description>
-            <p>Se preferir não configurar credenciais, baixe o <code>.nupkg</code> na página de releases e aponte um source local para a pasta onde salvou:</p>
+            <p>Para fixar um <code>.nupkg</code> específico (por exemplo, em CI sem acesso ao NuGet.org), baixe na página de releases e aponte um source local para a pasta onde salvou:</p>
         </Description>
         <Code>
             <CodeBlock Language="bash"
@@ -167,7 +157,6 @@
     [
         "Pré-requisitos",
         "Compatibilidade",
-        "Autenticação no GitHub Packages",
         "Adicionar o pacote",
         "Alternativa: GitHub Release",
         "Alternativa: referência de projeto",
@@ -179,30 +168,6 @@
         "Verificação",
         "Próximos passos"
     ];
-
-    private const string NuGetConfigCode = """
-        <?xml version="1.0" encoding="utf-8"?>
-        <configuration>
-            <packageSources>
-                <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-                <add key="github" value="https://nuget.pkg.github.com/victorAFRodrigues/index.json" />
-            </packageSources>
-            <packageSourceCredentials>
-                <github>
-                    <add key="Username" value="SEU_USUARIO_GITHUB" />
-                    <add key="ClearTextPassword" value="SEU_PAT" />
-                </github>
-            </packageSourceCredentials>
-            <packageSourceMapping>
-                <packageSource key="nuget.org">
-                    <package pattern="*" />
-                </packageSource>
-                <packageSource key="github">
-                    <package pattern="OpBlazorUI.*" />
-                </packageSource>
-            </packageSourceMapping>
-        </configuration>
-        """;
 
     private const string PackageReferenceCode = """
         <ItemGroup>

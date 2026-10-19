@@ -14,40 +14,17 @@ já portados para Blazor.
 
 ## Instalação
 
-O pacote é publicado no GitHub Packages deste repositório. Como o registro do GitHub exige
-autenticação mesmo para pacotes públicos, adicione um `nuget.config` na raiz do seu projeto:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-    <packageSources>
-        <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-        <add key="github" value="https://nuget.pkg.github.com/victorAFRodrigues/index.json" />
-    </packageSources>
-    <packageSourceCredentials>
-        <github>
-            <add key="Username" value="SEU_USUARIO_GITHUB" />
-            <add key="ClearTextPassword" value="SEU_PAT" />
-        </github>
-    </packageSourceCredentials>
-    <packageSourceMapping>
-        <packageSource key="nuget.org">
-            <package pattern="*" />
-        </packageSource>
-        <packageSource key="github">
-            <package pattern="OpBlazorUI.*" />
-        </packageSource>
-    </packageSourceMapping>
-</configuration>
-```
-
-O PAT precisa do escopo `read:packages`. O `packageSourceMapping` evita que uma falha de
-autenticação do GitHub Packages derrube o restore de pacotes do nuget.org.
-
-Depois:
+O pacote é publicado no [NuGet.org](https://www.nuget.org/packages/OpBlazorUI), a fonte padrão
+do `dotnet` — o restore não exige feed nem credencial extra:
 
 ```bash
 dotnet add package OpBlazorUI
+```
+
+Para os gráficos:
+
+```bash
+dotnet add package OpBlazorUI.Charts
 ```
 
 Alternativamente, baixe o `.nupkg` na página de [Releases](https://github.com/victorAFRodrigues/OpBlazorUI/releases) e use uma
@@ -171,8 +148,9 @@ Se precisar regenerar o bundle ao adicionar uma classe nova, veja o cabeçalho d
 
 ## Publicação
 
-O workflow `.github/workflows/release.yml` publica no GitHub Packages e cria uma Release
-com o `.nupkg` anexado. A versão vem da tag:
+O workflow `.github/workflows/release.yml` publica `OpBlazorUI` e `OpBlazorUI.Charts` no
+NuGet.org (autenticação por Trusted Publishing via OIDC, sem API key armazenada) e cria uma
+Release com os `.nupkg` anexados. A versão vem da tag:
 
 ```bash
 git tag v1.0.0

@@ -20,6 +20,7 @@
         <PackageProjectUrl>https://github.com/victorAFRodrigues/OpBlazorUI</PackageProjectUrl>
         <RepositoryUrl>https://github.com/victorAFRodrigues/OpBlazorUI</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
@@ -33,6 +34,10 @@
 
     <ItemGroup>
         <ProjectReference Include="../OpBlazorUI/OpBlazorUI.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="../../../README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>

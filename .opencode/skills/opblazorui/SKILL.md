@@ -45,8 +45,7 @@ Base padrão: <https://victorafrodrigues.github.io/OpBlazorUI>. Para fixar uma v
 
 - Não escreva componentes "de memória": confirme os parâmetros no manifesto. Propriedade
   inexistente quebra a compilação.
-- O pacote vem do GitHub Packages: o restore exige um PAT com `read:packages`, mesmo para
-  pacotes públicos.
+- O pacote está no NuGet.org: `dotnet add package OpBlazorUI` não exige feed nem PAT.
 - `<OpBlazorUiSetup />` precisa estar na parte interativa da aplicação (não em SSR estático).
 - Estado sempre *scoped*; nunca `static` — a lib funciona em Server, WebAssembly e Auto.
 - O tema é aplicado por `op-theme.js` + `<OpBlazorUiSetup />`; o modo escuro é a classe

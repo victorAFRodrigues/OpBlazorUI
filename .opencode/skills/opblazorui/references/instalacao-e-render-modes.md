@@ -2,36 +2,10 @@
 
 Como instalar o pacote, registrar os serviços, configurar o tema e escolher o render mode.
 
-## 1. Autenticação no GitHub Packages
+## 1. Adicionar o pacote
 
-O pacote é publicado no GitHub Packages e o restore exige um PAT com escopo `read:packages`,
-mesmo para pacotes públicos. Crie ou atualize o `nuget.config` na raiz da solução:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-    <packageSources>
-        <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-        <add key="github" value="https://nuget.pkg.github.com/victorAFRodrigues/index.json" />
-    </packageSources>
-    <packageSourceCredentials>
-        <github>
-            <add key="Username" value="SEU_USUARIO_GITHUB" />
-            <add key="ClearTextPassword" value="SEU_PAT" />
-        </github>
-    </packageSourceCredentials>
-    <packageSourceMapping>
-        <packageSource key="nuget.org">
-            <package pattern="*" />
-        </packageSource>
-        <packageSource key="github">
-            <package pattern="OpBlazorUI.*" />
-        </packageSource>
-    </packageSourceMapping>
-</configuration>
-```
-
-## 2. Adicionar o pacote
+O pacote está no NuGet.org, a fonte padrão do `dotnet`; não é preciso configurar feed nem
+credencial.
 
 ```bash
 dotnet add package OpBlazorUI
@@ -39,7 +13,7 @@ dotnet add package OpBlazorUI
 dotnet add package OpBlazorUI.Charts
 ```
 
-## 3. Registrar os serviços
+## 2. Registrar os serviços
 
 ```csharp
 // Program.cs
@@ -62,7 +36,7 @@ builder.Services.AddOpBlazorUI(theme =>
 });
 ```
 
-## 4. `_Imports.razor`
+## 3. `_Imports.razor`
 
 ```razor
 @using OpBlazorUI
@@ -71,7 +45,7 @@ builder.Services.AddOpBlazorUI(theme =>
 
 Cada componente vive no namespace `OpBlazorUI.Components.<Nome>`; importe o que usar.
 
-## 5. Tema e render mode
+## 4. Tema e render mode
 
 ```razor
 <head>
@@ -87,7 +61,7 @@ Cada componente vive no namespace `OpBlazorUI.Components.<Nome>`; importe o que 
 O `op-theme.js` aplica o tema antes da primeira pintura, sem flash; os atributos `data-*`
 repetem os padrões registrados no `AddOpBlazorUI`.
 
-## 6. Setup no layout
+## 5. Setup no layout
 
 ```razor
 @* Precisa estar dentro da parte interativa da aplicação. *@
@@ -123,7 +97,7 @@ Adicione uma única vez, no `MainLayout`.
 
 ## Checklist
 
-- [ ] `nuget.config` com o PAT (`read:packages`).
+- [ ] `dotnet add package OpBlazorUI` no projeto.
 - [ ] `AddOpBlazorUI()` registrado.
 - [ ] `op-theme.js` no `<head>`, depois do `<base href>`.
 - [ ] `<OpBlazorUiSetup />` na parte interativa do layout.

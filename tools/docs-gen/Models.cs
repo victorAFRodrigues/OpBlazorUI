@@ -84,9 +84,6 @@ internal sealed record GettingStartedManifest(
 internal sealed record PackageManifest(
     string Id,
     string? ChartsId,
-    string Feed,
-    bool RequiresPat,
-    string NugetConfig,
     string AddPackage);
 
 internal sealed record ConfigureManifest(
