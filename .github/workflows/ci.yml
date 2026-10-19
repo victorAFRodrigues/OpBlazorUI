@@ -120,6 +120,12 @@ jobs:
           --configuration Release --no-build --
           generate --out artifacts/docs
 
+      - name: Verificar os artefatos de IA
+        run: >
+          dotnet run --project tools/docs-gen/OpBlazorUI.DocsGen.csproj
+          --configuration Release --no-build --
+          verify --dir artifacts/docs
+
       - name: Auditar a documentação (falha em drift hard)
         run: >
           dotnet run --project tools/docs-gen/OpBlazorUI.DocsGen.csproj

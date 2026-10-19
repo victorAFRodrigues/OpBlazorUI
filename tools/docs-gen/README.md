@@ -8,6 +8,12 @@ lê a solução .NET, as páginas do Showcase e os arquivos estáticos do reposi
 | Arquivo | Conteúdo |
 | --- | --- |
 | `artifacts/docs/manifest.json` | Catálogo completo: componentes, tipos, parâmetros, eventos, templates, serviços, enums, ícones, seções e exemplos. |
+| `artifacts/docs/llms.txt` | Índice em Markdown no padrão [llms.txt](https://llmstxt.org/), com guias, componentes, serviços e recursos. |
+| `artifacts/docs/llms/<id>.md` | Um arquivo por componente, guia ou serviço: API refletida, exemplos, theming e links. |
+| `artifacts/docs/llms-full.txt` | Todo o conteúdo em um único arquivo, para fixar uma versão ou dar contexto amplo ao agente. |
+| `artifacts/docs/llms/icons.md` | Glyphs da fonte nativa (`pi pi-*`). |
+| `artifacts/docs/llms/services.md` | Assinaturas de todos os serviços públicos. |
+| `artifacts/docs/llms/enums.md` | Enums públicos da biblioteca. |
 | `artifacts/docs/docs-audit.json` | Relatório de divergências entre as tabelas de API das páginas e o código. |
 
 Os artefatos são **gerados no CI** e ficam fora do commit (`artifacts/` está no `.gitignore`).
@@ -16,12 +22,15 @@ As páginas do Showcase continuam sendo a fonte das descrições em pt-BR.
 ## Uso
 
 ```bash
-# manifesto
+# manifesto + llms.txt + Markdown por componente + llms-full.txt
 dotnet run --project tools/docs-gen -- generate --out artifacts/docs
 
 # auditoria (warn = só relata; fail = código 1 se houver drift hard)
 dotnet run --project tools/docs-gen -- audit --mode warn
 dotnet run --project tools/docs-gen -- audit --mode fail
+
+# confere se os artefatos de IA estão completos e se os links locais existem
+dotnet run --project tools/docs-gen -- verify --dir artifacts/docs
 
 # ajuda
 dotnet run --project tools/docs-gen -- help
@@ -32,6 +41,7 @@ Opções úteis:
 - `--version <semver>` carimba a versão da lib no manifesto/relatório.
 - `--commit <sha>` carimba o commit (padrão: `git rev-parse --short HEAD`).
 - `--base-url <url>` muda a base das URLs de documentação.
+- `--dir <diretório>` aponta o diretório conferido pelo `verify` (padrão: `artifacts/docs`).
 - `--repo <caminho>` aponta a raiz do repositório quando o comando não roda na raiz.
 
 ## De onde vêm os dados
@@ -107,4 +117,16 @@ Sempre que possível, corrija a página em vez de ampliar a allowlist.
    seção com o nome do tipo (ex.: `OpAccordionPanel`) ou `Caption="NomeDoTipo"`.
 3. Se o componente tiver theming, registre em `DocTheming.cs`.
 4. Rode `generate` e `audit --mode fail`; corrija os hard e revise os soft.
-5. O CI publica o manifesto da execução como artefato (`docs-artifacts`).
+5. O CI publica o manifesto e os arquivos de `llms/` como artefato (`docs-artifacts`).
+
+## Publicação
+
+- **GitHub Pages** (`deploy-pages.yml`): gera os artefatos e copia `llms.txt`,
+  `llms-full.txt` e `llms/manifest.json` para a raiz do site, além de `llms/*.md`.
+  A página `/llms-txt` do Showcase documenta o uso.
+- **Release** (`release.yml`): gera com a versão da tag e anexa `manifest.json`,
+  `llms.txt` e `llms-full.txt` à GitHub Release. Para fixar uma versão, o
+  `llms-full.txt` é autossuficiente; os links do `llms.txt` apontam para a versão
+  publicada no Pages.
+- **CI**: o job `Docs em dia` roda `generate`, `verify` e `audit --mode fail`, e
+  publica o diretório `artifacts/docs` como artefato.
