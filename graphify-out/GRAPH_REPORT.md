@@ -1,17 +1,17 @@
 # Graph Report - OpBlazorUI  (2026-10-19)
 
 ## Corpus Check
-- 539 files · ~361,117 words
+- 548 files · ~366,540 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 80 file(s) not represented in the graph (top: .css 71, (none) 5, .eot 1)
 
 ## Summary
-- 9598 nodes · 14411 edges · 463 communities (384 shown, 79 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 154 edges (avg confidence: 0.84)
+- 9688 nodes · 14584 edges · 462 communities (385 shown, 77 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 209 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `560eca82`
+- Built from commit: `92d0709d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -95,7 +95,7 @@
 - SpeedDial.razor
 - .OpenAsync
 - VirtualScroller.razor
-- KeyboardEventArgs
+- OpInputOtp
 - Rating.razor
 - InputText.razor
 - OpTooltip
@@ -109,7 +109,7 @@
 - Menu.razor
 - ToggleButton.razor
 - TreeTable.razor
-- .BuildServices
+- OpBlazorUI.Components.Overlay
 - OpModalBase
 - Password.razor
 - ConfirmPopup.razor
@@ -158,7 +158,7 @@
 - Toolbar.razor
 - BlockUI.razor
 - CamposFormularioTests.razor
-- OpBlazorUI.Components.Listbox
+- SkillBundle
 - Avatar.razor
 - ContextMenu.razor
 - Skeleton.razor
@@ -170,7 +170,7 @@
 - OpChart
 - Divider.razor
 - MeterGroup.razor
-- .RaiseLazyLoadAsync
+- OrderList.razor
 - DynamicDialog.razor
 - .InvokeAsync
 - OpInputBase
@@ -239,7 +239,7 @@
 - Panel.razor
 - ScrollPanel.razor
 - Splitter.razor
-- ColorPickerSliderTests.razor
+- OpAccordion
 - .Filter
 - OpFilterService
 - .NewPageAsync
@@ -255,7 +255,7 @@
 - .OpenAsync
 - .OpenAsync
 - .NewPageAsync
-- ArvoresTests.razor
+- OpMessageService
 - OpStepper
 - OpMenubar
 - Overrides
@@ -269,14 +269,14 @@
 - .NewPageAsync
 - Configurator.razor
 - Configuration.razor
-- OpSelect.razor
+- OpConfirmationService
 - OpDateMeta
 - OpDynamicDialogConfig
 - OpRating.razor
 - menu.interop.js
 - .NewPageAsync
 - .NewPageAsync
-- TecladoTreeSelectTreeTableTests.razor
+- Skill.razor
 - OpTieredMenu
 - .NewPageAsync
 - OpBlazorUiSetup.razor
@@ -285,8 +285,8 @@
 - slider.interop.js
 - tree.interop.js
 - .GetProperty
-- OpIftaLabel
-- GlobalizacaoSeletoresTests.razor
+- MenusTests.razor
+- Task
 - OpStepPanel
 - OpAnimateOnScroll
 - OpMultiSelect.razor
@@ -301,7 +301,7 @@
 - Task
 - OpBlazorUI.Components.DataTable
 - OpTreeSelect.razor
-- Task
+- docs-gen
 - ComponentBase
 - OverlaysInteracaoTests.razor
 - OpButtonProps
@@ -326,18 +326,18 @@
 - .NewPageAsync
 - .NewPageAsync
 - PageParser
-- .Toggle
+- EntradaTextoNumerosTests.razor
 - OpFocusTrap
 - OpOverlayAttach.razor
 - DataTableFiltroLazyTests.razor
 - Topbar.razor
 - RegressoesBaseTests.razor
-- SpeedDialItemContext
+- .RestartAutoPlay
 - .NewPageAsync
 - OpSteps
 - App.razor
 - OpDynamicDialogHost
-- OpFloatLabel
+- OpBlazorUI.Components.FloatLabel
 - OpIconField
 - .NewPageAsync
 - .NewPageAsync
@@ -359,11 +359,11 @@
 - OpBlazorUI Mascot Logo
 - OpChart.razor
 - Row
-- Task
+- .OnInputChangeAsync
 - OpDataTableLazyLoadEvent
 - .NavigateAsync
-- OpBlazorUI.Showcase/_Imports.razor
-- MaskFilter
+- OpBlazorUI.Showcase.Components.Doc
+- OpBlazorUI.Components.Checkbox
 - .BuildGroups
 - DataTableRenderizacaoTests.razor
 - DocSectionNav
@@ -372,10 +372,10 @@
 - dialog.interop.js
 - compare.py
 - .NewPageAsync
-- OpDataTableGroupContext
+- .RenderContent
 - .NewPageAsync
 - OpDynamicDialogInstance
-- .BuildClass
+- .SetIndexAsync
 - CodeBlock.razor
 - DocComponent.razor
 - DocSectionNav.razor
@@ -393,7 +393,7 @@
 - .NewPageAsync
 - IDisposable
 - TraducaoGuardTests
-- TecladoCascadeSelectSplitButtonSpeedDialTests.razor
+- GlobalizacaoSeletoresTests.razor
 - OpDataTableHeaderGroup
 - datatable.interop.js
 - OpPaginatorState
@@ -402,43 +402,42 @@
 - virtualscroller.interop.js
 - OpDatePickerView
 - OpDateSelectionMode
-- OpToastHeadlessContext
+- Task
 - OpCard
 - OpTranslations
-- OpToastCloseEvent
 - .GetChildren
 - SelecaoTests.razor
 - OpAutoFocus
 - OpDivider
 - .NewPageAsync
-- OpBlazorUI.Showcase.Components.Doc
+- .Recalculate
 - OpAvatar.razor
 - OpOverlayBadge.razor
 - OpChip.razor
 - OpAutoComplete.razor
 - OpMessage.razor
-- .AutoCloseAsync
+- OpBlazorUI.Components.ToggleButton
 - OpOverlay.razor
 - .RenderOption
 - OpToolbar
 - OpBlazorUI/_Imports.razor
 - OpBlazorUI Favicon
 - OpBlazorUI.Components.InputText
-- TecladoSelecaoTests.razor
-- .SetTheme
+- Armadilhas comuns
+- .RestartAutoPlay
 - OpTreeTableHeaderGroup
 - .Contains
 - Task
 - OpButton.razor
 - .AsDate
+- .Pagina_skill_renderiza_sem_erros
 - .ToList
-- .FindSelected
-- OpTextarea.razor
+- OpInputChips.razor
+- OpCheckbox.razor
 - OpPanelMenu.razor
 - OpDataView.razor
 - OpAutoCompleteCompleteEvent
 - OpAutoCompleteSelectEvent
-- .Pagina_llms_txt_renderiza_sem_erros
 - OpInputNumber.razor
 - OpColorPicker.razor
 - OpInputSwitch.razor
@@ -447,8 +446,8 @@
 - OpToggleButton.razor
 
 ## God Nodes (most connected - your core abstractions)
-1. `OpDatePicker` - 202 edges
-2. `OpDataTable` - 195 edges
+1. `OpDatePicker` - 204 edges
+2. `OpDataTable` - 196 edges
 3. `OpTreeTable` - 165 edges
 4. `OpTranslation` - 123 edges
 5. `OpAutoComplete` - 122 edges
@@ -456,24 +455,24 @@
 7. `OpMultiSelect` - 113 edges
 8. `OpSelect` - 109 edges
 9. `OpTreeSelect` - 105 edges
-10. `OpBlazorUI.Showcase.Components.Doc` - 102 edges
+10. `OpBlazorUI.Showcase.Components.Doc` - 103 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Adicionar um componente novo` --references--> `OpAccordionPanel`  [INFERRED]
   tools/docs-gen/README.md → src/Components/OpBlazorUI/Components/Accordion/OpAccordionPanel.razor.cs
-- `Commits, branches e releases` --references--> `main()`  [INFERRED]
-  AGENTS.md → tools/doc-audit/compare.py
-- `OpBlazorUI.Playwright README` --references--> `OpBlazorUI.Showcase`  [EXTRACTED]
-  tests/OpBlazorUI.Playwright/README.md → src/OpBlazorUI.Showcase/_Imports.razor
-- `Deploy Showcase to GitHub Pages Workflow` --references--> `OpBlazorUI.Showcase`  [EXTRACTED]
-  .github/workflows/deploy-pages.yml → src/OpBlazorUI.Showcase/_Imports.razor
-- `Optimus UI (Blazor) README` --references--> `OpBlazorUI.Showcase`  [EXTRACTED]
-  README.md → src/OpBlazorUI.Showcase/_Imports.razor
+- `Seleção` --references--> `OpDataTableColumn`  [INFERRED]
+  .opencode/skills/opblazorui/references/datatable-crud.md → src/Components/OpBlazorUI/Models/OpDataTableColumn.cs
+- `Convenções` --references--> `OpButton`  [INFERRED]
+  .opencode/skills/opblazorui/SKILL.md → src/Components/OpBlazorUI/Components/Button/OpButton.razor.cs
+- `Erros comuns` --references--> `OpConfirmDialog`  [INFERRED]
+  .opencode/skills/opblazorui/references/overlays-e-feedback.md → src/Components/OpBlazorUI/Components/ConfirmDialog/OpConfirmDialog.razor.cs
+- `Armadilhas comuns` --references--> `OpConfirmDialog`  [INFERRED]
+  .opencode/skills/opblazorui/SKILL.md → src/Components/OpBlazorUI/Components/ConfirmDialog/OpConfirmDialog.razor.cs
 
 ## Import Cycles
 - None detected.
 
-## Communities (463 total, 79 thin omitted)
+## Communities (462 total, 77 thin omitted)
 
 ### Community 0 - "OpTranslation"
 Cohesion: 0.02
@@ -481,7 +480,7 @@ Nodes (83): OpTranslation, Accept, AddRule, After, Am, Apply, Aria, Before (+75 
 
 ### Community 1 - "OpAutoComplete"
 Cohesion: 0.03
-Nodes (84): ItemsProviderDelegate, ElementReference, EventCallback, Expression, FieldIdentifier, FocusEventArgs, Func, IEnumerable (+76 more)
+Nodes (85): ItemsProviderDelegate, ElementReference, EventCallback, Expression, FieldIdentifier, FocusEventArgs, Func, IEnumerable (+77 more)
 
 ### Community 2 - "OpListbox"
 Cohesion: 0.03
@@ -493,11 +492,11 @@ Nodes (108): End, ElementReference, Expression, Func, IReadOnlyCollection, Rende
 
 ### Community 4 - "OpMultiSelect"
 Cohesion: 0.03
-Nodes (78): ElementReference, EventCallback, FocusEventArgs, IEnumerable, IReadOnlyList, MouseEventArgs, RenderFragment, Task (+70 more)
+Nodes (79): ElementReference, EventCallback, FocusEventArgs, IEnumerable, IReadOnlyList, List, MouseEventArgs, RenderFragment (+71 more)
 
 ### Community 5 - "OpTranslationService"
-Cohesion: 0.06
-Nodes (30): OpBlazorUI.Components.Image, OpBlazorUI.Components.PickList, OpBlazorUI.Components.ThemeSwitcher, OpBlazorUI.Components.Carousel, OpBlazorUI.Components.OrderList, OpBlazorUI.Components.Galleria, route:/_tests/globalizacao-midia, route:/_tests/globalizacao-navegacao (+22 more)
+Cohesion: 0.04
+Nodes (39): OpBlazorUI.Components.InputOtp, OpBlazorUI.Components.Image, OpBlazorUI.Components.PickList, OpBlazorUI.Components.Editor, OpBlazorUI.Components.ThemeSwitcher, OpBlazorUI.Components.Carousel, OpBlazorUI.Components.Password, OpBlazorUI.Components.OrderList (+31 more)
 
 ### Community 6 - "OpConfirmDialog"
 Cohesion: 0.03
@@ -517,19 +516,19 @@ Nodes (109): Args, Dictionary, EventCallback, From, IJSRuntime, OpInterop, Prope
 
 ### Community 10 - "OpBlazorUI.Models"
 Cohesion: 0.04
-Nodes (45): OpBlazorUI.Models, OpBlazorUI.Components.Menu, OpBlazorUI.Components.Steps, route:/_tests/menus, route:/_tests/teclado-menus, route:/_tests/teclado-steps-menus, ItemContent, OpComponentBase (+37 more)
+Nodes (37): OpBlazorUI.Models, OpBlazorUI.Components.Menu, route:/_tests/teclado-menus, ItemContent, OpComponentBase, OpComponentBase, OpMenuItems, OpOverlayAttach (+29 more)
 
 ### Community 11 - "OpSpeedDial"
 Cohesion: 0.04
-Nodes (49): DotNetObjectReference, ElementReference, EventCallback, IReadOnlyList, RenderFragment, OpSpeedDial, AriaLabel, AriaLabelledBy (+41 more)
+Nodes (52): DotNetObjectReference, ElementReference, EventCallback, IReadOnlyList, JSInvokable, MouseEventArgs, RenderFragment, Task (+44 more)
 
 ### Community 12 - "OpBlazorUI.Components.Common"
 Cohesion: 0.02
 Nodes (49): OpBlazorUI.Components.Common, OpBlazorUI.Components.Stepper, OpBlazorUI.Components.Directives, InputFile, CascadingValue, OpComponentBase, OpComponentBase, OpComponentBase (+41 more)
 
 ### Community 13 - "Overlay.razor"
-Cohesion: 0.02
-Nodes (69): OpBlazorUI.Components.Overlay, OpInputBase<DateTime, route:/overlay, OpInputBase<TValue>, OpOverlayAttach, TValue, MouseEventArgs, OpOverlayAttach (+61 more)
+Cohesion: 0.05
+Nodes (36): route:/overlay, HandleBeforeHide, HandleBeforeShow, HandleHide, HandleShow, LogEvent, Api, ApiTable (+28 more)
 
 ### Community 14 - "OpTreeTable"
 Cohesion: 0.02
@@ -537,7 +536,7 @@ Nodes (95): IComparer, Args, ElementReference, EventCallback, From, Func, MouseE
 
 ### Community 15 - "OpInputNumber"
 Cohesion: 0.05
-Nodes (41): NumberFormatInfo, Dictionary, EventCallback, FocusEventArgs, Task, OpInputNumber, AriaLabel, Autocomplete (+33 more)
+Nodes (40): NumberFormatInfo, Dictionary, EventCallback, FocusEventArgs, OpInputNumber, AriaLabel, Autocomplete, ButtonLayout (+32 more)
 
 ### Community 16 - "OpTreeSelect"
 Cohesion: 0.03
@@ -553,7 +552,7 @@ Nodes (60): OpAria, BrowseFiles, CancelEdit, Character, Close, CollapseRow, Drop
 
 ### Community 19 - "ConfirmOptions"
 Cohesion: 0.04
-Nodes (52): Dictionary, ElementReference, RenderFragment, ConfirmMessageContext, Options, ConfirmOptions, Accept, AcceptAriaLabel (+44 more)
+Nodes (48): Dictionary, ElementReference, RenderFragment, ConfirmMessageContext, Options, ConfirmOptions, Accept, AcceptAriaLabel (+40 more)
 
 ### Community 20 - "OpSplitButton"
 Cohesion: 0.05
@@ -581,7 +580,7 @@ Nodes (51): Severity, EventCallback, IReadOnlyList, RenderFragment, OpFileUpload
 
 ### Community 26 - "OpGalleria"
 Cohesion: 0.05
-Nodes (40): CancellationTokenSource, EventCallback, IReadOnlyList, RenderFragment, Task, ValueTask, OpGalleria, ActiveIndex (+32 more)
+Nodes (38): CancellationTokenSource, EventCallback, IReadOnlyList, RenderFragment, OpGalleria, ActiveIndex, ActiveIndexChanged, AutoPlay (+30 more)
 
 ### Community 27 - "OpDialog"
 Cohesion: 0.05
@@ -600,8 +599,8 @@ Cohesion: 0.04
 Nodes (45): Dictionary, EventCallback, FocusEventArgs, MouseEventArgs, RenderFragment, OpButton, AdditionalAttributes, AriaLabel (+37 more)
 
 ### Community 31 - "OpCarousel"
-Cohesion: 0.05
-Nodes (35): CancellationTokenSource, EventCallback, IReadOnlyList, RenderFragment, Task, ValueTask, OpCarousel, AutoPlayInterval (+27 more)
+Cohesion: 0.06
+Nodes (33): CancellationTokenSource, EventCallback, IReadOnlyList, RenderFragment, OpCarousel, AutoPlayInterval, Circular, ContentClass (+25 more)
 
 ### Community 32 - "GlobalizacaoAcoesTests.razor"
 Cohesion: 0.04
@@ -632,7 +631,7 @@ Cohesion: 0.05
 Nodes (30): MarkupString, ElementReference, EventCallback, OpKnob, AriaLabel, AriaLabelledBy, Max, Min (+22 more)
 
 ### Community 39 - "OpMenu"
-Cohesion: 0.08
+Cohesion: 0.07
 Nodes (25): Dictionary, ElementReference, EventCallback, IReadOnlyList, List, RenderFragment, Task, OpMenu (+17 more)
 
 ### Community 40 - "OpPickList"
@@ -641,7 +640,7 @@ Nodes (39): EventCallback, IReadOnlyList, List, RenderFragment, Task, OpPickList
 
 ### Community 41 - "LlmsBuilder"
 Cohesion: 0.17
-Nodes (5): IReadOnlyList, StringBuilder, LlmsBuilder, Manifest, UTF8Encoding
+Nodes (6): IReadOnlyList, StringBuilder, UTF8Encoding, LlmsBuilder, ComponentManifest, Manifest
 
 ### Community 42 - "CascadeSelect.razor"
 Cohesion: 0.06
@@ -653,11 +652,11 @@ Nodes (36): route:/select, Build, BuildItems, City, CountryGroup, OnFilter, OnIn
 
 ### Community 44 - "OpVirtualScroller"
 Cohesion: 0.05
-Nodes (50): DotNetObjectReference, ElementReference, EventCallback, Func, IReadOnlyList, JSInvokable, RenderFragment, Task (+42 more)
+Nodes (38): DotNetObjectReference, ElementReference, EventCallback, OpVirtualScroller, AppendOnly, AutoSize, ContentStyle, Count (+30 more)
 
 ### Community 45 - "OpAccordionPanel"
-Cohesion: 0.05
-Nodes (36): EventCallback, IReadOnlyList, List, RenderFragment, Task, OpAccordion, ActiveIndexes, ActiveIndexesChanged (+28 more)
+Cohesion: 0.12
+Nodes (15): ElementReference, RenderFragment, Task, OpAccordionPanel, Active, ChildContent, ContentId, Disabled (+7 more)
 
 ### Community 46 - "OpImage"
 Cohesion: 0.06
@@ -684,8 +683,8 @@ Cohesion: 0.09
 Nodes (16): Dictionary, IReadOnlyDictionary, List, List, OpTreeNode, Children, Data, Expanded (+8 more)
 
 ### Community 52 - "RepoContext"
-Cohesion: 0.07
-Nodes (23): EditorRequiredAttribute, CascadingParameterAttribute, MethodInfo, ParameterAttribute, Type, IReadOnlyList, Dictionary, RepoContext (+15 more)
+Cohesion: 0.08
+Nodes (23): EditorRequiredAttribute, CascadingParameterAttribute, ParameterAttribute, Type, IReadOnlyList, Dictionary, RepoContext, AppMenuPath (+15 more)
 
 ### Community 53 - "AutoComplete.razor"
 Cohesion: 0.05
@@ -697,7 +696,7 @@ Nodes (35): OpBlazorUI.Components.Popover, route:/popover, ClearProduct, CopyLin
 
 ### Community 55 - "OpDrawer"
 Cohesion: 0.06
-Nodes (36): ElementReference, EventCallback, MouseEventArgs, RenderFragment, Task, OpDrawer, AriaCloseLabel, AutoZIndex (+28 more)
+Nodes (34): ElementReference, EventCallback, RenderFragment, OpDrawer, AriaCloseLabel, AutoZIndex, BaseZIndex, BlockScroll (+26 more)
 
 ### Community 56 - "Drawer.razor"
 Cohesion: 0.06
@@ -708,16 +707,16 @@ Cohesion: 0.06
 Nodes (31): route:/treeselect, Count, OnInitialized, OnLazyNodeExpand, OnNodeExpand, OnSubmit, Api, ApiTable (+23 more)
 
 ### Community 58 - "OpMenuItem"
-Cohesion: 0.09
-Nodes (21): List, Action, List, OpMenuGroup, Items, Label, OpMenuItem, Badge (+13 more)
+Cohesion: 0.07
+Nodes (28): Action, SpeedDialButtonContext, Toggle, SpeedDialItemContext, Click, Index, Item, List (+20 more)
 
 ### Community 59 - "OpOverlay"
 Cohesion: 0.07
 Nodes (31): Dictionary, EventCallback, MouseEventArgs, RenderFragment, Task, OpOverlay, AdditionalAttributes, AppendTo (+23 more)
 
 ### Community 60 - "MultiSelectAutoCompleteStepperTabPanelPickListTests.razor"
-Cohesion: 0.13
-Nodes (14): route:/_tests/multi-select-auto-complete-stepper-tab-panel-pick-list, City, OnComplete, City, OpAutoComplete, OpMultiSelect, OpPickList, OpStep (+6 more)
+Cohesion: 0.08
+Nodes (23): OpBlazorUI.Components.MultiSelect, OpBlazorUI.Components.AutoComplete, route:/_tests/multi-select-auto-complete-stepper-tab-panel-pick-list, route:/_tests/teclado-multi-select-auto-complete, City, OnComplete, City, OpAutoComplete (+15 more)
 
 ### Community 61 - "SplitButton.razor"
 Cohesion: 0.09
@@ -787,9 +786,9 @@ Nodes (8): errors, Fact, ILocator, IPage, List, page, Task, DocsTableTests
 Cohesion: 0.07
 Nodes (29): LoaderIconTemplate, LoaderTemplate, route:/virtualscroller, AppendLazy, OnInitialized, OnLazyLoad, Api, ApiTable (+21 more)
 
-### Community 79 - "KeyboardEventArgs"
-Cohesion: 0.07
-Nodes (28): ElementReference, EventCallback, FocusEventArgs, RenderFragment, Task, KeyboardEventArgs, OpInputOtp, InputClass (+20 more)
+### Community 79 - "OpInputOtp"
+Cohesion: 0.09
+Nodes (20): ElementReference, FocusEventArgs, RenderFragment, Task, OpInputOtp, InputClass, IntegerOnly, Length (+12 more)
 
 ### Community 80 - "Rating.razor"
 Cohesion: 0.07
@@ -800,20 +799,20 @@ Cohesion: 0.07
 Nodes (26): route:/inputtext, OnSubmit, Api, ApiTable, ChildContent, Code, CodeBlock, DataAnnotationsValidator (+18 more)
 
 ### Community 82 - "OpTooltip"
-Cohesion: 0.10
+Cohesion: 0.09
 Nodes (20): Dictionary, ElementReference, RenderFragment, Task, OpTooltip, AdditionalAttributes, AutoHide, ChildContent (+12 more)
 
 ### Community 83 - "OpInputText"
 Cohesion: 0.07
-Nodes (26): ElementReference, EventCallback, FocusEventArgs, Task, OpInputText, AriaLabel, AutoClear, Autocomplete (+18 more)
+Nodes (28): Dictionary, MaskFilter, ElementReference, EventCallback, FocusEventArgs, Task, OpInputText, AriaLabel (+20 more)
 
 ### Community 84 - "OpPanel"
 Cohesion: 0.07
 Nodes (29): EventCallback, RenderFragment, OpPanel, ChildContent, Collapsed, CollapsedChanged, ContentContainerClass, ContentId (+21 more)
 
 ### Community 85 - "OpToast"
-Cohesion: 0.07
-Nodes (26): CancellationTokenSource, DateTime, Dictionary, EventCallback, HashSet, IReadOnlyList, RenderFragment, OpToast (+18 more)
+Cohesion: 0.06
+Nodes (28): CancellationToken, CancellationTokenSource, DateTime, Dictionary, EventCallback, HashSet, IReadOnlyList, RenderFragment (+20 more)
 
 ### Community 86 - "SyntaxHighlighter"
 Cohesion: 0.23
@@ -824,12 +823,12 @@ Cohesion: 0.15
 Nodes (23): addAll(), animateOnScrollInit(), animates, applyClasses(), attachOverlay(), autofocuses, createInk(), detachOverlay() (+15 more)
 
 ### Community 88 - "TecladoDataTableTooltipAriaTests.razor"
-Cohesion: 0.05
-Nodes (32): OpBlazorUI.Components.ToggleButton, OpBlazorUI.Components.Rating, OpBlazorUI.Components.Tooltip, OpBlazorUI.Components.InputChips, OpBlazorUI.Components.InputNumber, route:/_tests/entrada-texto-numeros, route:/_tests/globalizacao-numeros-formularios, route:/_tests/teclado-data-table-tooltip-aria (+24 more)
+Cohesion: 0.09
+Nodes (19): OpBlazorUI.Components.Tooltip, OpBlazorUI.Components.InputNumber, route:/_tests/globalizacao-numeros-formularios, route:/_tests/teclado-data-table-tooltip-aria, OpButton, OpComponentBase, OpTooltip, RenderAction (+11 more)
 
 ### Community 89 - "OpBlazorUI.Playwright"
-Cohesion: 0.17
-Nodes (7): OpBlazorUI.Playwright, microsoft_playwright, microsoft_playwright_assertions, System.Text, System.Text.RegularExpressions, LlmsTxtPageTests, xunit
+Cohesion: 0.16
+Nodes (9): OpBlazorUI.Playwright, microsoft_playwright, microsoft_playwright_assertions, System.Text.RegularExpressions, Fact, Task, LlmsTxtPageTests, SkillPageTests (+1 more)
 
 ### Community 90 - "Menu.razor"
 Cohesion: 0.07
@@ -843,13 +842,13 @@ Nodes (24): route:/togglebutton, ContentIcon, ContentLabel, OnSubmit, Api, ApiTa
 Cohesion: 0.03
 Nodes (79): route:/treetable, BuildLazyNodes, CountNodes, CountSelection, FileNameCell, FileNode, FileRecord, FileSystem (+71 more)
 
-### Community 93 - ".BuildServices"
-Cohesion: 0.15
-Nodes (14): RowInfo, Assembly, Dictionary, IReadOnlyDictionary, IReadOnlyList, ManifestBuilder, ManifestOptions, BaseUrl (+6 more)
+### Community 93 - "OpBlazorUI.Components.Overlay"
+Cohesion: 0.07
+Nodes (20): OpBlazorUI.Components.Overlay, OpInputBase<DateTime, OpInputBase<TValue>, OpOverlayAttach, TValue, MouseEventArgs, OpOverlayAttach, OpModalBase (+12 more)
 
 ### Community 94 - "OpModalBase"
-Cohesion: 0.16
-Nodes (9): ElementReference, Task, OpModalBase, IsFocusTrapActive, IsScrollBlocked, Task, ValueTask, ValueTask (+1 more)
+Cohesion: 0.14
+Nodes (10): ElementReference, Task, OpModalBase, IsFocusTrapActive, IsScrollBlocked, Task, ValueTask, ValueTask (+2 more)
 
 ### Community 95 - "Password.razor"
 Cohesion: 0.08
@@ -872,8 +871,8 @@ Cohesion: 0.08
 Nodes (24): route:/inputotp, OnSubmit, Api, ApiTable, ChildContent, Code, CodeBlock, DataAnnotationsValidator (+16 more)
 
 ### Community 100 - "OpBlazorUI.DocsGen"
-Cohesion: 0.09
-Nodes (13): OpBlazorUI.DocsGen, ICollectionFixture, system_diagnostics, system_net, system_net_sockets, system_xml_linq, ShowcaseCollection, Regex (+5 more)
+Cohesion: 0.08
+Nodes (15): OpBlazorUI.DocsGen, ICollectionFixture, system_diagnostics, system_net, system_net_sockets, system_text_encodings_web, system_text_json, system_xml_linq (+7 more)
 
 ### Community 101 - "OpSplitter"
 Cohesion: 0.09
@@ -928,24 +927,24 @@ Cohesion: 0.09
 Nodes (22): EventCallback, Func, RenderFragment, Task, OpInplace, Active, ActiveChanged, Closable (+14 more)
 
 ### Community 114 - "OpSlider"
-Cohesion: 0.11
-Nodes (18): ElementReference, EventCallback, Task, ValueTask, OpSlider, Animate, AriaLabel, AriaLabelledBy (+10 more)
+Cohesion: 0.09
+Nodes (19): ElementReference, EventCallback, Task, ValueTask, OpSlider, Animate, AriaLabel, AriaLabelledBy (+11 more)
 
 ### Community 115 - "Timeline.razor"
 Cohesion: 0.08
 Nodes (23): OpBlazorUI.Components.Timeline, MarkerTemplate, OppositeTemplate, OpTimeline, route:/timeline, Api, ApiTable, ChildContent (+15 more)
 
 ### Community 116 - "OpRating"
-Cohesion: 0.08
-Nodes (22): EventCallback, FocusEventArgs, RenderFragment, Task, OpRating, AriaLabel, Cancel, CancelIconTemplate (+14 more)
+Cohesion: 0.06
+Nodes (23): EventCallback, FocusEventArgs, RenderFragment, Task, OpRating, AriaLabel, Cancel, CancelIconTemplate (+15 more)
 
 ### Community 117 - "FloatLabel.razor"
-Cohesion: 0.08
-Nodes (23): OpBlazorUI.Components.FloatLabel, route:/floatlabel, Api, ApiTable, ChildContent, Code, CodeBlock, DataAnnotationsValidator (+15 more)
+Cohesion: 0.09
+Nodes (22): route:/floatlabel, Api, ApiTable, ChildContent, Code, CodeBlock, DataAnnotationsValidator, Description (+14 more)
 
 ### Community 118 - "IconField.razor"
-Cohesion: 0.09
-Nodes (21): route:/iconfield, Api, ApiTable, ChildContent, Code, CodeBlock, Description, DocComponent (+13 more)
+Cohesion: 0.08
+Nodes (22): OpBlazorUI.Components.IftaLabel, route:/iconfield, Api, ApiTable, ChildContent, Code, CodeBlock, Description (+14 more)
 
 ### Community 119 - "InputNumber.razor"
 Cohesion: 0.09
@@ -968,12 +967,12 @@ Cohesion: 0.09
 Nodes (22): route:/button, Load, Api, ApiTable, ChildContent, Code, CodeBlock, Description (+14 more)
 
 ### Community 124 - "IftaLabel.razor"
-Cohesion: 0.08
-Nodes (23): OpBlazorUI.Components.IftaLabel, route:/iftalabel, OnSubmit, Api, ApiTable, ChildContent, Code, CodeBlock (+15 more)
+Cohesion: 0.09
+Nodes (22): route:/iftalabel, OnSubmit, Api, ApiTable, ChildContent, Code, CodeBlock, DataAnnotationsValidator (+14 more)
 
 ### Community 125 - "PickList.razor"
-Cohesion: 0.04
-Nodes (43): route:/orderlist, route:/picklist, ImageUrl, Product, Products, Api, ApiTable, ChildContent (+35 more)
+Cohesion: 0.09
+Nodes (22): route:/picklist, ImageUrl, Product, Api, ApiTable, ChildContent, Code, CodeBlock (+14 more)
 
 ### Community 126 - "Slider.razor"
 Cohesion: 0.08
@@ -1012,16 +1011,16 @@ Cohesion: 0.09
 Nodes (21): route:/radiobutton, Category, Ingredient, OnInitialized, OnSubmit, Api, ApiTable, ChildContent (+13 more)
 
 ### Community 135 - "OpCheckbox"
-Cohesion: 0.08
-Nodes (23): EventCallback, FocusEventArgs, RenderFragment, Task, OpCheckbox, AriaLabel, AriaLabelledBy, CheckboxIcon (+15 more)
+Cohesion: 0.07
+Nodes (28): Binding básico, Componentes de entrada mais usados, EditForm + DataAnnotations, Fluxo típico de CRUD em formulário, Formulários e validação, EventCallback, FocusEventArgs, RenderFragment (+20 more)
 
 ### Community 136 - "OpPopover"
 Cohesion: 0.12
 Nodes (18): ElementReference, EventCallback, RenderFragment, Task, OpPopover, AriaLabel, AriaLabelledBy, ChildContent (+10 more)
 
 ### Community 137 - "OpSliderRange"
-Cohesion: 0.08
-Nodes (24): SliderMath, ElementReference, EventCallback, Task, OpSliderRange, Animate, AriaLabel, AriaLabelledBy (+16 more)
+Cohesion: 0.09
+Nodes (23): ElementReference, EventCallback, Task, OpSliderRange, Animate, AriaLabel, AriaLabelledBy, HandleStyle0 (+15 more)
 
 ### Community 138 - "OpFilterMatchMode"
 Cohesion: 0.09
@@ -1039,9 +1038,9 @@ Nodes (20): OpBlazorUI.Components.Card, route:/blockui, BlockDocument, Api, ApiT
 Cohesion: 0.11
 Nodes (18): OpBlazorUI.Components.Textarea, route:/_tests/campos-formulario, City, ClearText, IsValid, OnValid, City, DataAnnotationsValidator (+10 more)
 
-### Community 142 - "OpBlazorUI.Components.Listbox"
-Cohesion: 0.29
-Nodes (5): OpBlazorUI.Components.Listbox, OpComponentBase, OpListbox, OpComponentBase, OpListbox
+### Community 142 - "SkillBundle"
+Cohesion: 0.13
+Nodes (11): Frontmatter, IReadOnlyList, UTF8Encoding, SkillBundle, Body, Description, Id, Markdown (+3 more)
 
 ### Community 143 - "Avatar.razor"
 Cohesion: 0.10
@@ -1072,8 +1071,8 @@ Cohesion: 0.12
 Nodes (13): IOpTabHost, EventCallback, RenderFragment, OpTabPanel, ChildContent, Closable, Disabled, Header (+5 more)
 
 ### Community 150 - "AbasAccordionTests.razor"
-Cohesion: 0.08
-Nodes (25): route:/_tests/abas-accordion, OnBreadcrumbClick, OnFieldsetToggle, OnInitialized, OnStepChanged, OnStepSelect, ChildContent, ContentTemplate (+17 more)
+Cohesion: 0.04
+Nodes (44): OpBlazorUI.Components.Accordion, OpBlazorUI.Components.Steps, OpBlazorUI.Components.Tabs, route:/_tests/abas-accordion, route:/_tests/teclado-abas-accordion, route:/_tests/teclado-steps-menus, OnBreadcrumbClick, OnFieldsetToggle (+36 more)
 
 ### Community 151 - "OpChart"
 Cohesion: 0.08
@@ -1087,16 +1086,16 @@ Nodes (19): OpBlazorUI.Components.Divider, OpDivider, route:/divider, Api, ApiTa
 Cohesion: 0.10
 Nodes (19): OpBlazorUI.Components.MeterGroup, LabelTemplate, MeterTemplate, route:/metergroup, Api, ApiTable, ChildContent, Code (+11 more)
 
-### Community 154 - ".RaiseLazyLoadAsync"
-Cohesion: 0.16
-Nodes (7): OpDataTableSortEvent, Field, MultiSortMeta, Order, OpDataTableSortMeta, Field, Order
+### Community 154 - "OrderList.razor"
+Cohesion: 0.09
+Nodes (21): route:/orderlist, ImageUrl, Product, Products, Api, ApiTable, ChildContent, Code (+13 more)
 
 ### Community 155 - "DynamicDialog.razor"
 Cohesion: 0.08
 Nodes (23): DynamicDialogDemoContent, DynamicDialogProductList, ProdutoLista, route:/dynamicdialog, CloseCancel, CloseOk, OpenDialog, OpenProductDialog (+15 more)
 
 ### Community 156 - ".InvokeAsync"
-Cohesion: 0.13
+Cohesion: 0.12
 Nodes (11): Exception, IAsyncDisposable, ILogger, ValueTask, Dictionary, IJSObjectReference, IJSRuntime, Task (+3 more)
 
 ### Community 157 - "OpInputBase"
@@ -1108,24 +1107,28 @@ Cohesion: 0.10
 Nodes (19): route:/badge, Api, ApiTable, ChildContent, Code, CodeBlock, Description, DocComponent (+11 more)
 
 ### Community 159 - "OpThemeService"
-Cohesion: 0.13
-Nodes (13): Action, IReadOnlyList, OpThemeService, DarkMode, Persist, Preset, Presets, Primaries (+5 more)
+Cohesion: 0.09
+Nodes (21): Configuração inicial, Modo escuro e RTL, Personalização, Temas e ícones, Trocando o tema em tempo de execução, Ícones, Task, OpThemeOption (+13 more)
 
 ### Community 160 - "TreeTableLibTests.razor"
 Cohesion: 0.08
 Nodes (24): route:/_tests/tree-table-lib, ApplyT5Filter, BuildSalesTree, BuildTree, Make, MakeLazy, NodeData, OnT13Page (+16 more)
 
+### Community 161 - "Task"
+Cohesion: 0.12
+Nodes (3): Edição de linha, MouseEventArgs, Task
+
 ### Community 162 - "OpDataTableColumn"
 Cohesion: 0.06
-Nodes (23): RenderFragment, OpDataTableColumn, BodyStyleClass, BodyTemplate, EditorTemplate, Field, Filter, FilterMatchMode (+15 more)
+Nodes (24): RenderFragment, RenderFragment, OpDataTableColumn, BodyStyleClass, BodyTemplate, EditorTemplate, Field, Filter (+16 more)
 
 ### Community 163 - "OpStyleClass"
 Cohesion: 0.10
 Nodes (18): ElementReference, RenderFragment, Task, ValueTask, OpStyleClass, ChildContent, EnterActiveClass, EnterFromClass (+10 more)
 
 ### Community 164 - "OpScrollTop"
-Cohesion: 0.11
-Nodes (17): DotNetObjectReference, ElementReference, JSInvokable, MouseEventArgs, RenderFragment, Task, OpScrollTop, Behavior (+9 more)
+Cohesion: 0.10
+Nodes (18): DotNetObjectReference, ElementReference, JSInvokable, MouseEventArgs, RenderFragment, Task, ValueTask, OpScrollTop (+10 more)
 
 ### Community 165 - ".NewPageAsync"
 Cohesion: 0.36
@@ -1161,7 +1164,7 @@ Nodes (19): EventCallback, RenderFragment, Task, OpToggleButton, AriaLabel, Cont
 
 ### Community 173 - "TreeNode"
 Cohesion: 0.11
-Nodes (13): Dictionary, List, List, TreeNode, Children, Data, Expanded, HasChildren (+5 more)
+Nodes (14): Dictionary, List, List, OpTreeFlatNode, TreeNode, Children, Data, Expanded (+6 more)
 
 ### Community 174 - "OpInputGroup"
 Cohesion: 0.11
@@ -1272,15 +1275,15 @@ Cohesion: 0.12
 Nodes (16): route:/styleclass, Api, ApiTable, ChildContent, Code, CodeBlock, Description, DocComponent (+8 more)
 
 ### Community 201 - "OpImageCompare"
-Cohesion: 0.12
-Nodes (16): EventCallback, RenderFragment, OpImageCompare, AriaLabel, AriaLabelledBy, Left, Max, Min (+8 more)
+Cohesion: 0.11
+Nodes (17): EventCallback, RenderFragment, Task, OpImageCompare, AriaLabel, AriaLabelledBy, Left, Max (+9 more)
 
 ### Community 202 - "OpMegaMenu"
 Cohesion: 0.11
 Nodes (17): ElementReference, EventCallback, HashSet, IReadOnlyList, RenderFragment, Task, OpMegaMenu, EndTemplate (+9 more)
 
 ### Community 203 - "Task"
-Cohesion: 0.24
+Cohesion: 0.27
 Nodes (3): FocusEventArgs, MouseEventArgs, Task
 
 ### Community 204 - "Installation.razor"
@@ -1304,7 +1307,7 @@ Cohesion: 0.14
 Nodes (13): ElementReference, RenderFragment, Task, ValueTask, OpScrollPanel, ChildContent, ContentId, ContentTemplate (+5 more)
 
 ### Community 209 - "Task"
-Cohesion: 0.18
+Cohesion: 0.17
 Nodes (3): FocusEventArgs, MouseEventArgs, Task
 
 ### Community 210 - "OpEditorTranslation"
@@ -1313,19 +1316,19 @@ Nodes (17): OpEditorTranslation, Align, BackgroundColor, Bold, ClearFormatting, 
 
 ### Community 211 - "OpToastMessage"
 Cohesion: 0.09
-Nodes (18): IEqualityComparer, OpToastMessageComparer, OpToastMessage, Closable, Data, Detail, Icon, Key (+10 more)
+Nodes (20): IEqualityComparer, Action, OpToastHeadlessContext, Close, Message, OpToastMessageComparer, OpToastCloseEvent, Index (+12 more)
 
 ### Community 212 - ".NewPageAsync"
 Cohesion: 0.29
 Nodes (5): Fact, IPage, List, Task, DatePickerTests
 
 ### Community 213 - "RegressoesEstabilidadeTests.razor"
-Cohesion: 0.08
-Nodes (21): OpBlazorUI.Components.InputOtp, OpBlazorUI.Components.Editor, OpBlazorUI.Components.FileUpload, OpBlazorUI.Components.Password, route:/_tests/globalizacao-senha-editor-otp, route:/_tests/regressoes-estabilidade, OnInitialized, OpEditor (+13 more)
+Cohesion: 0.14
+Nodes (12): OpBlazorUI.Components.FileUpload, route:/_tests/regressoes-estabilidade, BuildRows, OpDataTable, OpDataTableColumn, OpFileUpload, OpInputOtp, OpSliderRange (+4 more)
 
 ### Community 214 - "OpListbox.razor"
-Cohesion: 0.17
-Nodes (11): BuildList, OnListClick, ContentTemplate, OpBlazorUI.Components.InputIcon, OpCheckbox, OpIconField, OpInputBase<TValue>, OpInputIcon (+3 more)
+Cohesion: 0.08
+Nodes (23): OpBlazorUI.Components.IconField, OpBlazorUI.Components.VirtualScroller, BuildList, OnListClick, ContentTemplate, OpBlazorUI.Components.InputIcon, OpCheckbox, OpIconField (+15 more)
 
 ### Community 215 - "Carousel.razor"
 Cohesion: 0.11
@@ -1359,9 +1362,9 @@ Nodes (18): OpBlazorUI.Components.ScrollPanel, OpScrollPanel, route:/scrollpanel
 Cohesion: 0.11
 Nodes (17): route:/splitter, Api, ApiTable, ChildContent, Code, CodeBlock, Description, DocComponent (+9 more)
 
-### Community 223 - "ColorPickerSliderTests.razor"
-Cohesion: 0.18
-Nodes (8): OpBlazorUI.Components.ColorPicker, route:/_tests/color-picker-slider, ChangeScClass, OpColorPicker, OpSlider, OpSliderRange, OpStyleClass, PageTitle
+### Community 223 - "OpAccordion"
+Cohesion: 0.13
+Nodes (12): EventCallback, IReadOnlyList, List, RenderFragment, Task, OpAccordion, ActiveIndexes, ActiveIndexesChanged (+4 more)
 
 ### Community 224 - ".Filter"
 Cohesion: 0.20
@@ -1379,6 +1382,10 @@ Nodes (7): InlineData, Fact, IPage, List, Task, PaginasLayoutMidiaTests, Theory
 Cohesion: 0.34
 Nodes (5): Fact, IPage, List, Task, OverlaysTests
 
+### Community 228 - "ChangeEventArgs"
+Cohesion: 0.15
+Nodes (8): ChangeEventArgs, EventCallback, OtpTokenContext, Index, OnInput, OnKeyDown, Token, OpInputBase<string>
+
 ### Community 229 - ".NewPageAsync"
 Cohesion: 0.36
 Nodes (6): FilePayload, Fact, IPage, List, Task, RegressoesEstabilidadeTests
@@ -1392,12 +1399,12 @@ Cohesion: 0.12
 Nodes (16): EventCallback, FocusEventArgs, RenderFragment, Task, OpInputSwitch, AriaLabel, AriaLabelledBy, HandleTemplate (+8 more)
 
 ### Community 232 - "OpFileUploadFile"
-Cohesion: 0.13
-Nodes (12): InputFileChangeEventArgs, List, IBrowserFile, OpFileUploadFile, Content, ContentType, File, IsImage (+4 more)
+Cohesion: 0.15
+Nodes (10): IBrowserFile, OpFileUploadFile, Content, ContentType, File, IsImage, IsUploaded, Name (+2 more)
 
 ### Community 233 - "PageDoc"
-Cohesion: 0.07
-Nodes (31): Dictionary, List, ApiTableDoc, Caption, Headers, InsideApi, Rows, SectionId (+23 more)
+Cohesion: 0.06
+Nodes (32): Dictionary, List, ApiTableDoc, Caption, Headers, InsideApi, Rows, SectionId (+24 more)
 
 ### Community 234 - ".NewPageAsync"
 Cohesion: 0.33
@@ -1408,7 +1415,7 @@ Cohesion: 0.14
 Nodes (13): ASPNETCORE_ENVIRONMENT, applicationUrl, commandName, dotnetRunMessages, environmentVariables, launchBrowser, applicationUrl, sslPort (+5 more)
 
 ### Community 236 - ".OpenAsync"
-Cohesion: 0.30
+Cohesion: 0.33
 Nodes (8): errors, Fact, ILocator, IPage, List, page, Task, DocsDiversosSecoesTests
 
 ### Community 237 - ".OpenAsync"
@@ -1419,9 +1426,9 @@ Nodes (8): errors, Fact, ILocator, IPage, List, page, Task, DocsMenusSecoesTests
 Cohesion: 0.32
 Nodes (5): Fact, IPage, List, Task, PaginasDadosTests
 
-### Community 239 - "ArvoresTests.razor"
-Cohesion: 0.13
-Nodes (14): route:/_tests/arvores, CountSelected, KeysText, OnInitialized, OnLazyExpand, OpTree, OpTreeNode, OpTreeSelect (+6 more)
+### Community 239 - "OpMessageService"
+Cohesion: 0.14
+Nodes (11): Dialog, Dialog dinâmico, Drawer, Popover e Tooltip, Erros comuns, Overlays e feedback, Toast, IEnumerable, IReadOnlyList (+3 more)
 
 ### Community 240 - "OpStepper"
 Cohesion: 0.08
@@ -1432,8 +1439,8 @@ Cohesion: 0.15
 Nodes (12): EventCallback, HashSet, IReadOnlyList, RenderFragment, Task, OpMenubar, EndTemplate, ItemTemplate (+4 more)
 
 ### Community 242 - "Overrides"
-Cohesion: 0.10
-Nodes (20): JsonSerializerOptions, system_text_encodings_web, system_text_json, system_text_json_serialization, Json, Dictionary, HashSet, AuditOverrides (+12 more)
+Cohesion: 0.14
+Nodes (15): Dictionary, HashSet, AuditOverrides, AlwaysIgnore, AlwaysIgnoreSet, Ignore, ComponentOverride, Aliases (+7 more)
 
 ### Community 243 - ".NewPageAsync"
 Cohesion: 0.38
@@ -1456,7 +1463,7 @@ Cohesion: 0.15
 Nodes (12): Dispose, IsActive, IsExpanded, OnDarkChanged, OnInitialized, OnLocationChanged, OnSidebarToggled, Configurator (+4 more)
 
 ### Community 248 - ".OpenAsync"
-Cohesion: 0.35
+Cohesion: 0.32
 Nodes (8): errors, Fact, ILocator, IPage, List, page, Task, DocsFormulariosSecoesTests
 
 ### Community 249 - ".OpenAsync"
@@ -1464,7 +1471,7 @@ Cohesion: 0.34
 Nodes (8): errors, Fact, ILocator, IPage, List, page, Task, DocsNavegacaoSecoesTests
 
 ### Community 250 - ".NewPageAsync"
-Cohesion: 0.38
+Cohesion: 0.34
 Nodes (5): Fact, IPage, List, Task, PaginasNavegacaoTests
 
 ### Community 251 - "Configurator.razor"
@@ -1475,9 +1482,9 @@ Nodes (11): OpBlazorUI.Components.InputSwitch, Dispose, IsActivePreset, OnInitia
 Cohesion: 0.17
 Nodes (11): route:/configuration, ApiTable, ChildContent, Code, CodeBlock, Description, DocSection, GuidePage (+3 more)
 
-### Community 253 - "OpSelect.razor"
-Cohesion: 0.17
-Nodes (11): OpBlazorUI.Components.VirtualScroller, BuildList, ContentTemplate, OpBlazorUI.Components.InputIcon, OpIconField, OpInputBase<TValue>, OpInputIcon, OpOverlayAttach (+3 more)
+### Community 253 - "OpConfirmationService"
+Cohesion: 0.21
+Nodes (6): Excluir com confirmação, Confirmação, Action, OpConfirmationService, CurrentOptions, HasActiveConfirmation
 
 ### Community 254 - "OpDateMeta"
 Cohesion: 0.16
@@ -1492,20 +1499,20 @@ Cohesion: 0.26
 Nodes (13): _ctxMenus, disposeContextMenu(), focusAnchors(), focusFirstChild(), focusItem(), hasSubmenu(), initContextMenu(), initMenuFocusKeyboard() (+5 more)
 
 ### Community 258 - ".NewPageAsync"
-Cohesion: 0.40
+Cohesion: 0.35
 Nodes (5): Fact, IPage, List, Task, EntradaTextoNumerosTests
 
 ### Community 259 - ".NewPageAsync"
 Cohesion: 0.34
 Nodes (6): Fact, ILocator, IPage, List, Task, MenusTests
 
-### Community 260 - "TecladoTreeSelectTreeTableTests.razor"
-Cohesion: 0.17
-Nodes (10): OpBlazorUI.Components.TreeSelect, route:/_tests/teclado-tree-select-tree-table, OpTreeFlatNode, OnTtSelect, OpTreeNode, OpTreeSelect, OpTreeTable, OpTreeTableColumn (+2 more)
+### Community 260 - "Skill.razor"
+Cohesion: 0.14
+Nodes (13): route:/skill, FileName, ApiTable, ChildContent, Code, CodeBlock, Description, DocSection (+5 more)
 
 ### Community 261 - "OpTieredMenu"
-Cohesion: 0.14
-Nodes (14): ElementReference, EventCallback, HashSet, IReadOnlyList, RenderFragment, Task, OpTieredMenu, ItemTemplate (+6 more)
+Cohesion: 0.10
+Nodes (16): HashSet, OpMenuPaths, ElementReference, EventCallback, HashSet, IReadOnlyList, RenderFragment, Task (+8 more)
 
 ### Community 262 - ".NewPageAsync"
 Cohesion: 0.40
@@ -1533,15 +1540,11 @@ Nodes (10): firstChild(), focusNode(), focusRow(), initTreeKeyboard(), initTreeT
 
 ### Community 268 - ".GetProperty"
 Cohesion: 0.08
-Nodes (5): BindingFlags, List, List, IEnumerable, OpSelectOption
+Nodes (4): BindingFlags, List, IEnumerable, OpSelectOption
 
-### Community 269 - "OpIftaLabel"
-Cohesion: 0.25
-Nodes (7): Dictionary, RenderFragment, OpIftaLabel, AdditionalAttributes, ChildContent, RootClass, StyleClass
-
-### Community 270 - "GlobalizacaoSeletoresTests.razor"
-Cohesion: 0.10
-Nodes (19): OpBlazorUI.Components.MultiSelect, OpBlazorUI.Components.AutoComplete, route:/_tests/globalizacao-seletores, route:/_tests/teclado-multi-select-auto-complete, City, OnInitialized, OpAutoComplete, OpCascadeSelect (+11 more)
+### Community 269 - "MenusTests.razor"
+Cohesion: 0.17
+Nodes (11): route:/_tests/menus, OnContextMenu, OnCtxClick, OnInitialized, OnMenuClick, OpContextMenu, OpMenu, OpMenuItem (+3 more)
 
 ### Community 271 - "OpStepPanel"
 Cohesion: 0.17
@@ -1552,16 +1555,16 @@ Cohesion: 0.17
 Nodes (10): ElementReference, RenderFragment, Task, ValueTask, OpAnimateOnScroll, ChildContent, EnterClass, LeaveClass (+2 more)
 
 ### Community 273 - "OpMultiSelect.razor"
-Cohesion: 0.09
-Nodes (21): OpBlazorUI.Components.Checkbox, OpBlazorUI.Components.IconField, OpInputBase<IReadOnlyList<TValue>>, BuildList, ContentTemplate, OpBlazorUI.Components.Chip, OpBlazorUI.Components.InputIcon, OpCheckbox (+13 more)
+Cohesion: 0.14
+Nodes (13): OpInputBase<IReadOnlyList<TValue>>, BuildList, ContentTemplate, OpBlazorUI.Components.Chip, OpBlazorUI.Components.InputIcon, OpCheckbox, OpChip, OpIconField (+5 more)
 
 ### Community 274 - "Models.cs"
-Cohesion: 0.19
-Nodes (16): GettingStarted, IReadOnlyList, IReadOnlyList, ComponentManifest, ConfigureManifest, CssClassManifest, EnumManifest, ExampleManifest (+8 more)
+Cohesion: 0.08
+Nodes (31): RowInfo, GettingStarted, IReadOnlyList, Assembly, Dictionary, IReadOnlyDictionary, IReadOnlyList, MethodInfo (+23 more)
 
 ### Community 275 - "ChartTests.razor"
 Cohesion: 0.07
-Nodes (18): apexcharts, OpBlazorUI, OpBlazorUI.Charts, microsoft_aspnetcore_components_webassembly_hosting, microsoft_extensions_dependencyinjection, microsoft_extensions_logging, route:/_tests/chart, Microsoft.AspNetCore.Components (+10 more)
+Nodes (17): apexcharts, OpBlazorUI, OpBlazorUI.Charts, microsoft_extensions_dependencyinjection, microsoft_extensions_logging, route:/_tests/chart, Microsoft.AspNetCore.Components, Microsoft.AspNetCore.Components.Web (+9 more)
 
 ### Community 276 - ".NewPageAsync"
 Cohesion: 0.44
@@ -1572,7 +1575,7 @@ Cohesion: 0.37
 Nodes (5): Fact, IPage, List, Task, ColorPickerSliderTests
 
 ### Community 278 - ".OpenAsync"
-Cohesion: 0.29
+Cohesion: 0.32
 Nodes (8): errors, Fact, ILocator, IPage, List, page, Task, DocsOverlaysSecoesTests
 
 ### Community 279 - ".NewPageAsync"
@@ -1580,43 +1583,43 @@ Cohesion: 0.41
 Nodes (5): Fact, IPage, List, Task, OverlaysInteracaoTests
 
 ### Community 280 - ".NewPageAsync"
-Cohesion: 0.38
+Cohesion: 0.34
 Nodes (6): Fact, ILocator, IPage, List, Task, RegressoesBaseTests
 
 ### Community 281 - "GlobalizacaoDadosArvoreTests.razor"
-Cohesion: 0.09
-Nodes (20): OpBlazorUI.Components.DataView, OpBlazorUI.Components.TreeTable, OpBlazorUI.Components.Tree, route:/_tests/globalizacao-dados-arvore, route:/_tests/teclado-arvores, OnInitialized, OpDataTable, OpDataTableColumn (+12 more)
+Cohesion: 0.04
+Nodes (43): OpBlazorUI.Components.TreeSelect, OpBlazorUI.Components.DataView, OpBlazorUI.Components.TreeTable, OpBlazorUI.Components.Tree, route:/_tests/arvores, route:/_tests/globalizacao-dados-arvore, route:/_tests/teclado-arvores, route:/_tests/teclado-tree-select-tree-table (+35 more)
 
 ### Community 282 - "Task"
 Cohesion: 0.17
 Nodes (3): FocusEventArgs, MouseEventArgs, Task
 
 ### Community 283 - "OpBlazorUI.Components.DataTable"
-Cohesion: 0.14
-Nodes (14): OpBlazorUI.Components.DataTable, JsonSerializerContext, Dictionary, List, DataTableSortState, Field, Order, DataTableState (+6 more)
+Cohesion: 0.13
+Nodes (15): OpBlazorUI.Components.DataTable, JsonSerializerContext, Dictionary, List, DataTableSortState, Field, Order, DataTableState (+7 more)
 
 ### Community 284 - "OpTreeSelect.razor"
 Cohesion: 0.15
 Nodes (12): ContentTemplate, OpBlazorUI.Components.Chip, OpBlazorUI.Components.InputIcon, OpCheckbox, OpChip, OpIconField, OpInputBase<string>, OpInputIcon (+4 more)
 
-### Community 285 - "Task"
-Cohesion: 0.31
-Nodes (3): JSInvokable, MouseEventArgs, Task
+### Community 285 - "docs-gen"
+Cohesion: 0.18
+Nodes (10): Adicionar um componente novo, Allowlist (`overrides.json`), Auditoria (`audit`), De onde vêm os dados, docs-gen, O que ele gera, `overrides.json`, Publicação (+2 more)
 
 ### Community 286 - "ComponentBase"
-Cohesion: 0.10
-Nodes (18): ComponentBase, OpBlazorUI.Components.Button.Parts, RenderFragment, OpButtonIcon, HasLabel, Icon, IconClass, IconPos (+10 more)
+Cohesion: 0.08
+Nodes (24): ComponentBase, RenderFragment, OpButtonIcon, HasLabel, Icon, IconClass, IconPos, Template (+16 more)
 
 ### Community 287 - "OverlaysInteracaoTests.razor"
-Cohesion: 0.17
-Nodes (11): OpBlazorUI.Components.Toast, OpBlazorUI.Components.BlockUI, route:/_tests/overlays-interacao, AddToast, OpBlockUI, OpContextMenu, OpDialog, OpMenuItem (+3 more)
+Cohesion: 0.09
+Nodes (20): OpBlazorUI.Components.Toast, OpBlazorUI.Components.BlockUI, route:/_tests/overlays-interacao, Dictionary, IReadOnlyList, OpConfig, PrimaryPalettes, SurfacePalettes (+12 more)
 
 ### Community 289 - "OpRipple"
 Cohesion: 0.18
 Nodes (9): ElementReference, RenderFragment, Task, ValueTask, OpRipple, Center, ChildContent, RootClass (+1 more)
 
 ### Community 290 - ".NewPageAsync"
-Cohesion: 0.37
+Cohesion: 0.42
 Nodes (5): Fact, IPage, List, Task, PaginasFormulariosTests
 
 ### Community 291 - "OpSplitterPanel"
@@ -1628,7 +1631,7 @@ Cohesion: 0.18
 Nodes (11): IReadOnlyList, RenderFragment, OpTimeline, Align, ContentTemplate, DataP, Items, Layout (+3 more)
 
 ### Community 293 - ".NewPageAsync"
-Cohesion: 0.38
+Cohesion: 0.44
 Nodes (5): Fact, IPage, List, Task, GlobalizacaoSeletoresTests
 
 ### Community 294 - ".NewPageAsync"
@@ -1648,11 +1651,11 @@ Cohesion: 0.17
 Nodes (11): route:/llms-txt, ApiTable, ChildContent, Code, CodeBlock, Description, DocSection, GuidePage (+3 more)
 
 ### Community 298 - ".NewPageAsync"
-Cohesion: 0.38
+Cohesion: 0.44
 Nodes (5): Fact, IPage, List, Task, DirectivesTests
 
 ### Community 299 - ".NewPageAsync"
-Cohesion: 0.38
+Cohesion: 0.44
 Nodes (5): Fact, IPage, List, Task, CamposFormularioTests
 
 ### Community 300 - "ConfirmHeadlessContext"
@@ -1664,8 +1667,8 @@ Cohesion: 0.38
 Nodes (5): Fact, IPage, List, Task, DataTableRenderizacaoTests
 
 ### Community 302 - ".AddOpBlazorUI"
-Cohesion: 0.18
-Nodes (9): Action, IServiceCollection, OpServiceCollectionExtensions, OpThemeOptions, PersistTheme, Preset, Primary, Rtl (+1 more)
+Cohesion: 0.10
+Nodes (19): 1. Autenticação no GitHub Packages, 2. Adicionar o pacote, 3. Registrar os serviços, 4. `_Imports.razor`, 5. Tema e render mode, 6. Setup no layout, Checklist, Instalação e render modes (+11 more)
 
 ### Community 303 - "colorpicker.interop.js"
 Cohesion: 0.31
@@ -1684,7 +1687,7 @@ Cohesion: 0.42
 Nodes (5): Fact, IPage, List, Task, TecladoAbasAccordionTests
 
 ### Community 307 - ".NewPageAsync"
-Cohesion: 0.44
+Cohesion: 0.38
 Nodes (5): Fact, IPage, List, Task, TecladoDataTableTooltipAriaTests
 
 ### Community 308 - ".NewPageAsync"
@@ -1692,8 +1695,12 @@ Cohesion: 0.49
 Nodes (5): Fact, IPage, List, Task, TecladoMenusTests
 
 ### Community 309 - "PageParser"
-Cohesion: 0.22
+Cohesion: 0.20
 Nodes (5): Dictionary, IEnumerable, List, Regex, PageParser
+
+### Community 310 - "EntradaTextoNumerosTests.razor"
+Cohesion: 0.20
+Nodes (9): OpBlazorUI.Components.Rating, OpBlazorUI.Components.InputChips, route:/_tests/entrada-texto-numeros, OpInputChips, OpInputNumber, OpInputText, OpRating, OpToggleButton (+1 more)
 
 ### Community 311 - "OpFocusTrap"
 Cohesion: 0.20
@@ -1712,12 +1719,8 @@ Cohesion: 0.25
 Nodes (7): Dispose, OnDarkChanged, OnInitialized, Configurator, OpThemeService, ToggleConfig, ToggleDarkMode
 
 ### Community 315 - "RegressoesBaseTests.razor"
-Cohesion: 0.09
-Nodes (19): OpBlazorUI.Components.Accordion, route:/_tests/regressoes-base, route:/_tests/teclado-abas-accordion, OnInitialized, OpAccordion, OpAccordionPanel, OpDialog, OpMenu (+11 more)
-
-### Community 316 - "SpeedDialItemContext"
-Cohesion: 0.25
-Nodes (7): Action, SpeedDialButtonContext, Toggle, SpeedDialItemContext, Click, Index, Item
+Cohesion: 0.08
+Nodes (20): OpBlazorUI.Components.Slider, OpBlazorUI.Components.ColorPicker, route:/_tests/color-picker-slider, route:/_tests/regressoes-base, ChangeScClass, OpColorPicker, OpSlider, OpSliderRange (+12 more)
 
 ### Community 317 - ".NewPageAsync"
 Cohesion: 0.38
@@ -1735,9 +1738,9 @@ Nodes (5): FocusOnNavigate, Found, Router, RouteView, OpBlazorUiSetup
 Cohesion: 0.28
 Nodes (3): IReadOnlyList, OpDynamicDialogHost, DialogService
 
-### Community 322 - "OpFloatLabel"
-Cohesion: 0.22
-Nodes (8): Dictionary, RenderFragment, OpFloatLabel, AdditionalAttributes, ChildContent, RootClass, StyleClass, Variant
+### Community 322 - "OpBlazorUI.Components.FloatLabel"
+Cohesion: 0.18
+Nodes (9): OpBlazorUI.Components.FloatLabel, Dictionary, RenderFragment, OpFloatLabel, AdditionalAttributes, ChildContent, RootClass, StyleClass (+1 more)
 
 ### Community 323 - "OpIconField"
 Cohesion: 0.22
@@ -1764,7 +1767,7 @@ Cohesion: 0.31
 Nodes (6): DotNetObjectReference, Func, JSInvokable, Task, OpSplitterInterop, Reference
 
 ### Community 329 - "DocsMenusTests.razor"
-Cohesion: 0.13
+Cohesion: 0.12
 Nodes (14): OpBlazorUI.Components.Breadcrumb, route:/_tests/docs-menus, ItemTemplate, OpBreadcrumb, OpButton, OpMegaMenu, OpMenubar, OpMenuItem (+6 more)
 
 ### Community 330 - "graphify.js"
@@ -1796,15 +1799,15 @@ Cohesion: 0.38
 Nodes (5): Fact, IPage, List, Task, GlobalizacaoSenhaEditorOtpTests
 
 ### Community 339 - "microsoft_aspnetcore_components"
-Cohesion: 0.06
-Nodes (26): OpBlazorUI.Components.Splitter, OpBlazorUI.Components.Slider, OpBlazorUI.Components.Paginator, OpBlazorUI.Components.Select, OpBlazorUI.Components.Knob, OpBlazorUI.Components.Tabs, OpBlazorUI.Services, OpBlazorUI.Globalization (+18 more)
+Cohesion: 0.07
+Nodes (23): OpBlazorUI.Components.Splitter, OpBlazorUI.Components.Paginator, OpBlazorUI.Components.Select, OpBlazorUI.Components.Knob, OpBlazorUI.Services, OpBlazorUI.Globalization, OpBlazorUI.Components.Forms, microsoft_aspnetcore_components (+15 more)
 
 ### Community 340 - ".NewPageAsync"
-Cohesion: 0.47
+Cohesion: 0.40
 Nodes (5): Fact, IPage, List, Task, TecladoArvoresTests
 
 ### Community 341 - ".NewPageAsync"
-Cohesion: 0.38
+Cohesion: 0.44
 Nodes (5): Fact, IPage, List, Task, TecladoTreeSelectTreeTableTests
 
 ### Community 342 - "OpBlazorUI Mascot Logo"
@@ -1815,21 +1818,25 @@ Nodes (4): OpBlazorUI Visual Brand Identity, Red Hard Hat with Letter A, OpBlazo
 Cohesion: 0.67
 Nodes (3): DateOnly, DateTime, Row
 
-### Community 345 - "Task"
-Cohesion: 0.25
-Nodes (3): DragEventArgs, IBrowserFile, Task
+### Community 345 - ".OnInputChangeAsync"
+Cohesion: 0.18
+Nodes (5): DragEventArgs, InputFileChangeEventArgs, IBrowserFile, List, Task
 
 ### Community 346 - "OpDataTableLazyLoadEvent"
-Cohesion: 0.17
-Nodes (10): IReadOnlyDictionary, IReadOnlyList, OpDataTableLazyLoadEvent, Filters, First, GlobalFilter, MultiSortMeta, Rows (+2 more)
-
-### Community 348 - "OpBlazorUI.Showcase/_Imports.razor"
 Cohesion: 0.09
-Nodes (18): OpBlazorUI.Showcase.Components.Layout, Microsoft.AspNetCore.Components.Routing, OpBlazorUI.Showcase.Components.Pages, Dictionary, IReadOnlyList, OpConfig, PrimaryPalettes, SurfacePalettes (+10 more)
+Nodes (22): Carregamento lazy (servidor), DataTable (CRUD), Dicas, Lista com ordenação, filtro e paginação, Seleção, Templates de coluna e rodapé, IReadOnlyDictionary, OpDataTableLazyLoadEvent (+14 more)
+
+### Community 348 - "OpBlazorUI.Showcase.Components.Doc"
+Cohesion: 0.09
+Nodes (16): OpBlazorUI.Showcase.Components.Doc, OpBlazorUI.Showcase.Components.Layout, Microsoft.AspNetCore.Components.Routing, OpBlazorUI.Showcase.Components.Pages, Dictionary, Value, Var, DocTheming (+8 more)
+
+### Community 349 - "OpBlazorUI.Components.Checkbox"
+Cohesion: 0.25
+Nodes (7): OpBlazorUI.Components.Checkbox, OpBlazorUI.Components.InputIcon, OpCheckbox, OpComponentBase, OpIconField, OpInputIcon, RenderNode
 
 ### Community 350 - ".BuildGroups"
-Cohesion: 0.18
-Nodes (3): List, RenderFragment, RowGroup
+Cohesion: 0.13
+Nodes (8): RowGroup, IReadOnlyList, List, OpDataTableGroupContext, Expanded, Items, Key, RowGroup
 
 ### Community 351 - "DataTableRenderizacaoTests.razor"
 Cohesion: 0.25
@@ -1851,9 +1858,9 @@ Nodes (23): AGENTS.md — OpBlazorUI, Build e verificação, Commits, branches e
 Cohesion: 0.36
 Nodes (5): Fact, IPage, List, Task, GlobalizacaoAcoesTests
 
-### Community 358 - "OpDataTableGroupContext"
-Cohesion: 0.20
-Nodes (5): RowGroup, OpDataTableGroupContext, Expanded, Items, Key
+### Community 358 - ".RenderContent"
+Cohesion: 0.25
+Nodes (7): Func, IReadOnlyList, RenderFragment, ContentTemplate, ItemTemplate, OpVirtualScrollerContentContext, OpVirtualScrollerItemContext
 
 ### Community 359 - ".NewPageAsync"
 Cohesion: 0.36
@@ -1876,15 +1883,15 @@ Cohesion: 0.36
 Nodes (5): Fact, IPage, List, Task, GlobalizacaoReordenacaoTests
 
 ### Community 372 - ".Run"
-Cohesion: 0.18
-Nodes (9): CascadingParameterAttribute, IReadOnlyList, ParameterAttribute, Regex, AuditRunner, AuditIssue, AuditReport, AuditSummary (+1 more)
+Cohesion: 0.23
+Nodes (8): CascadingParameterAttribute, IReadOnlyList, ParameterAttribute, Regex, AuditRunner, AuditIssue, AuditReport, AuditSummary
 
 ### Community 373 - ".Generate"
-Cohesion: 0.21
-Nodes (5): Dictionary, IReadOnlyList, Cli, Git, Program
+Cohesion: 0.19
+Nodes (7): JsonSerializerOptions, Dictionary, IReadOnlyList, Cli, Git, Json, Program
 
 ### Community 374 - "ThemingData"
-Cohesion: 0.16
+Cohesion: 0.15
 Nodes (11): Dictionary, Regex, Value, Var, Section, Classes, None, Tokens (+3 more)
 
 ### Community 375 - "OpPanel.razor.cs"
@@ -1903,9 +1910,9 @@ Nodes (5): Fact, IPage, List, Task, TecladoMultiSelectAutoCompleteTests
 Cohesion: 0.25
 Nodes (7): IDisposable, DotNetObjectReference, Func, JSInvokable, Task, OpKnobInterop, Reference
 
-### Community 380 - "TecladoCascadeSelectSplitButtonSpeedDialTests.razor"
-Cohesion: 0.17
-Nodes (11): CNode, OpBlazorUI.Components.SpeedDial, OpBlazorUI.Components.SplitButton, OpBlazorUI.Components.CascadeSelect, route:/_tests/teclado-cascade-select-split-button-speed-dial, OnInitialized, OpCascadeSelect, OpMenuItem (+3 more)
+### Community 380 - "GlobalizacaoSeletoresTests.razor"
+Cohesion: 0.05
+Nodes (32): CNode, OpBlazorUI.Components.SpeedDial, OpBlazorUI.Components.SplitButton, OpBlazorUI.Components.CascadeSelect, OpBlazorUI.Components.Listbox, route:/_tests/globalizacao-seletores, route:/_tests/teclado-cascade-select-split-button-speed-dial, route:/_tests/teclado-selecao (+24 more)
 
 ### Community 381 - "OpDataTableHeaderGroup"
 Cohesion: 0.40
@@ -1931,9 +1938,9 @@ Nodes (4): OpDatePickerView, Date, Month, Year
 Cohesion: 0.50
 Nodes (4): OpDateSelectionMode, Multiple, Range, Single
 
-### Community 390 - "OpToastHeadlessContext"
-Cohesion: 0.50
-Nodes (4): Action, OpToastHeadlessContext, Close, Message
+### Community 390 - "Task"
+Cohesion: 0.33
+Nodes (3): JSInvokable, Task, OpVirtualScrollerScrollEvent
 
 ### Community 391 - "OpCard"
 Cohesion: 0.18
@@ -1942,10 +1949,6 @@ Nodes (11): RenderFragment, OpCard, ChildContent, FooterTemplate, Header, Header
 ### Community 392 - "OpTranslations"
 Cohesion: 0.50
 Nodes (3): OpTranslations, EnUs, PtBr
-
-### Community 393 - "OpToastCloseEvent"
-Cohesion: 0.50
-Nodes (3): OpToastCloseEvent, Index, Message
 
 ### Community 396 - "SelecaoTests.razor"
 Cohesion: 0.15
@@ -1963,10 +1966,6 @@ Nodes (9): RenderFragment, OpDivider, Align, AlignClass, ChildContent, Layout, R
 Cohesion: 0.36
 Nodes (5): Fact, IPage, List, Task, TecladoDatePickerTests
 
-### Community 400 - "OpBlazorUI.Showcase.Components.Doc"
-Cohesion: 0.25
-Nodes (5): OpBlazorUI.Showcase.Components.Doc, Dictionary, Value, Var, DocTheming
-
 ### Community 403 - "OpChip.razor"
 Cohesion: 0.33
 Nodes (5): OnKeyDown, OnRemoveClick, OnRemoveKeyDown, ErrorEventArgs, MouseEventArgs
@@ -1979,6 +1978,14 @@ Nodes (7): FocusInput, OnOptionMouseEnter, Microsoft.AspNetCore.Components.Web.V
 Cohesion: 0.33
 Nodes (5): AutoCloseAsync, CloseAsync, OnCloseClick, OnInitialized, MouseEventArgs
 
+### Community 406 - "OpBlazorUI.Components.ToggleButton"
+Cohesion: 0.40
+Nodes (4): OpBlazorUI.Components.ToggleButton, OpInputBase<TValue>, OpToggleButton, TValue
+
+### Community 408 - ".RenderOption"
+Cohesion: 0.22
+Nodes (4): RenderTreeBuilder, IReadOnlyList, RenderFragment, ItemTemplate
+
 ### Community 409 - "OpToolbar"
 Cohesion: 0.25
 Nodes (8): RenderFragment, OpToolbar, AriaLabel, CenterTemplate, ChildContent, EndTemplate, RootClass, StartTemplate
@@ -1987,21 +1994,17 @@ Nodes (8): RenderFragment, OpToolbar, AriaLabel, CenterTemplate, ChildContent, E
 Cohesion: 0.40
 Nodes (4): OpBlazorUI.Components.InputText, OpInputBase<string>, OpInputText, OpOverlayAttach
 
-### Community 440 - "TecladoSelecaoTests.razor"
-Cohesion: 0.29
-Nodes (6): route:/_tests/teclado-selecao, City, City, OpListbox, OpSelect, PageTitle
+### Community 440 - "Armadilhas comuns"
+Cohesion: 0.40
+Nodes (5): Armadilhas comuns, Convenções, Fluxo de trabalho, OpBlazorUI, Receitas
 
 ### Community 442 - "OpTreeTableHeaderGroup"
 Cohesion: 0.40
 Nodes (5): OpTreeTableHeaderGroup, ColSpan, Header, RowSpan, StyleClass
 
 ### Community 445 - "OpButton.razor"
-Cohesion: 0.33
-Nodes (5): OpButtonIcon, OpButtonLabel, OpButtonLoadingIcon, OpBadge, OpBlazorUI.Components.Badge
-
-### Community 449 - ".FindSelected"
-Cohesion: 0.33
-Nodes (3): RenderTreeBuilder, IReadOnlyList, RenderFragment
+Cohesion: 0.20
+Nodes (6): OpBlazorUI.Components.Button.Parts, OpButtonIcon, OpButtonLabel, OpButtonLoadingIcon, OpBadge, OpBlazorUI.Components.Badge
 
 ### Community 451 - "OpPanelMenu.razor"
 Cohesion: 0.33
@@ -2012,24 +2015,24 @@ Cohesion: 0.40
 Nodes (4): OpComponentBase, OpPaginator, TItem, RenderPaginator
 
 ## Knowledge Gaps
-- **5857 isolated node(s):** `$schema`, `plugin`, `net10.0`, `Blazor-ApexCharts (7.0.0)`, `Microsoft.NET.Sdk.Razor` (+5852 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 6716 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **79 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **5894 isolated node(s):** `$schema`, `plugin`, `net10.0`, `Blazor-ApexCharts (7.0.0)`, `Microsoft.NET.Sdk.Razor` (+5889 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 6758 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **77 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `OpBlazorUI.Showcase.Components.Doc` connect `OpBlazorUI.Showcase.Components.Doc` to `Checkbox.razor`, `Overlay.razor`, `FocusTrap.razor`, `Toast.razor`, `DataView.razor`, `Dialog.razor`, `CascadeSelect.razor`, `Select.razor`, `Table.razor`, `Tree.razor`, `AutoComplete.razor`, `Popover.razor`, `Drawer.razor`, `TreeSelect.razor`, `SplitButton.razor`, `Message.razor`, `SelectButton.razor`, `Editor.razor`, `MultiSelect.razor`, `ConfirmDialog.razor`, `DatePicker.razor`, `SpeedDial.razor`, `VirtualScroller.razor`, `Rating.razor`, `InputText.razor`, `Menu.razor`, `ToggleButton.razor`, `TreeTable.razor`, `Password.razor`, `ConfirmPopup.razor`, `InputMask.razor`, `InputOtp.razor`, `OpBlazorUI.DocsGen`, `InputGroup.razor`, `Listbox.razor`, `Tooltip.razor`, `Paginator.razor`, `Textarea.razor`, `Timeline.razor`, `FloatLabel.razor`, `IconField.razor`, `InputNumber.razor`, `ToggleSwitch.razor`, `ProgressBar.razor`, `Button.razor`, `IftaLabel.razor`, `PickList.razor`, `Slider.razor`, `Inplace.razor`, `FileUpload.razor`, `Card.razor`, `ColorPicker.razor`, `InputChips.razor`, `RadioButton.razor`, `Toolbar.razor`, `BlockUI.razor`, `Avatar.razor`, `ContextMenu.razor`, `Skeleton.razor`, `Tag.razor`, `Divider.razor`, `MeterGroup.razor`, `DynamicDialog.razor`, `Badge.razor`, `Fieldset.razor`, `Breadcrumb.razor`, `Chart.razor`, `Accordion.razor`, `Stepper.razor`, `ScrollTop.razor`, `InlineMessage.razor`, `ProgressSpinner.razor`, `Chip.razor`, `MegaMenu.razor`, `Menubar.razor`, `PanelMenu.razor`, `Steps.razor`, `TabMenu.razor`, `Tabs.razor`, `TabView.razor`, `TieredMenu.razor`, `Fluid.razor`, `Ripple.razor`, `FilterService.razor`, `KeyFilter.razor`, `StyleClass.razor`, `Installation.razor`, `AnimateOnScroll.razor`, `AutoFocus.razor`, `Carousel.razor`, `Galleria.razor`, `Image.razor`, `ImageCompare.razor`, `Knob.razor`, `Panel.razor`, `ScrollPanel.razor`, `Splitter.razor`, `Configuration.razor`, `LlmsTxt.razor`, `OpBlazorUI.Showcase/_Imports.razor`?**
-  _High betweenness centrality (0.208) - this node is a cross-community bridge._
-- **Why does `OpTranslationService` connect `OpTranslationService` to `OpTranslation`, `OpAutoComplete`, `OpListbox`, `OpDatePicker`, `OpMultiSelect`, `OpTabs`, `OpConfirmDialog`, `OpSelect`, `OpCascadeSelect`, `OpDataTable`, `OpTreeTable`, `OpInputNumber`, `OpTreeSelect`, `GlobalizacaoSeletoresTests.razor`, `OpTree`, `OpFileUpload`, `OpGalleria`, `OpDialog`, `GlobalizacaoDadosArvoreTests.razor`, `OpInputBase`, `OpPassword`, `OpCarousel`, `GlobalizacaoAcoesTests.razor`, `OpConfirmPopup`, `OpScrollTop`, `OpInputChips`, `OpPickList`, `OpImage`, `OpDataView`, `OpTabView`, `.AddOpBlazorUI`, `OpDrawer`, `OpPaginator`, `OpOrderList`, `OpEditor`, `KeyboardEventArgs`, `microsoft_aspnetcore_components`, `OpToast`, `RegressoesEstabilidadeTests.razor`, `TecladoDataTableTooltipAriaTests.razor`, `OpInplace`, `OpThemeSwitcher`?**
-  _High betweenness centrality (0.120) - this node is a cross-community bridge._
-- **Why does `OpBlazorUI.Models` connect `OpBlazorUI.Models` to `TecladoTreeSelectTreeTableTests.razor`, `OpToastCloseEvent`, `SelecaoTests.razor`, `Overlay.razor`, `GlobalizacaoSeletoresTests.razor`, `ContextMenu.razor`, `OpMultiSelect.razor`, `Skeleton.razor`, `OpMenuItems`, `AbasAccordionTests.razor`, `GlobalizacaoDadosArvoreTests.razor`, `MeterGroup.razor`, `OverlaysInteracaoTests.razor`, `TreeTableLibTests.razor`, `Toast.razor`, `TecladoSelecaoTests.razor`, `Breadcrumb.razor`, `Table.razor`, `Tree.razor`, `OpTreeNode`, `AutoComplete.razor`, `Popover.razor`, `MegaMenu.razor`, `Menubar.razor`, `PanelMenu.razor`, `OpMenuItem`, `Steps.razor`, `TabMenu.razor`, `SplitButton.razor`, `Tabs.razor`, `DataTableFiltroLazyTests.razor`, `MultiSelectAutoCompleteStepperTabPanelPickListTests.razor`, `RegressoesBaseTests.razor`, `TieredMenu.razor`, `OpPanelMenu.razor`, `OpAutoCompleteCompleteEvent`, `OpAutoCompleteSelectEvent`, `OpMeterGroup`, `ConfirmDialog.razor`, `DocsMenusTests.razor`, `SpeedDial.razor`, `microsoft_aspnetcore_components`, `RegressoesEstabilidadeTests.razor`, `TecladoDataTableTooltipAriaTests.razor`, `Menu.razor`, `TreeTable.razor`, `DataTableRenderizacaoTests.razor`, `DataTableLibTests.razor`, `ArvoresTests.razor`, `OpDataTable.razor`, `TecladoCascadeSelectSplitButtonSpeedDialTests.razor`?**
-  _High betweenness centrality (0.114) - this node is a cross-community bridge._
+- **Why does `OpBlazorUI.Showcase.Components.Doc` connect `OpBlazorUI.Showcase.Components.Doc` to `Checkbox.razor`, `Overlay.razor`, `FocusTrap.razor`, `Toast.razor`, `DataView.razor`, `Dialog.razor`, `CascadeSelect.razor`, `Select.razor`, `Table.razor`, `Tree.razor`, `AutoComplete.razor`, `Popover.razor`, `Drawer.razor`, `TreeSelect.razor`, `SplitButton.razor`, `Message.razor`, `SelectButton.razor`, `Editor.razor`, `MultiSelect.razor`, `ConfirmDialog.razor`, `DatePicker.razor`, `SpeedDial.razor`, `VirtualScroller.razor`, `Rating.razor`, `InputText.razor`, `Menu.razor`, `ToggleButton.razor`, `TreeTable.razor`, `Password.razor`, `ConfirmPopup.razor`, `InputMask.razor`, `InputOtp.razor`, `OpBlazorUI.DocsGen`, `InputGroup.razor`, `Listbox.razor`, `Tooltip.razor`, `Paginator.razor`, `Textarea.razor`, `Timeline.razor`, `FloatLabel.razor`, `IconField.razor`, `InputNumber.razor`, `ToggleSwitch.razor`, `ProgressBar.razor`, `Button.razor`, `IftaLabel.razor`, `PickList.razor`, `Slider.razor`, `Inplace.razor`, `FileUpload.razor`, `Card.razor`, `ColorPicker.razor`, `InputChips.razor`, `RadioButton.razor`, `Toolbar.razor`, `BlockUI.razor`, `Avatar.razor`, `ContextMenu.razor`, `Skeleton.razor`, `Tag.razor`, `Divider.razor`, `MeterGroup.razor`, `OrderList.razor`, `DynamicDialog.razor`, `Badge.razor`, `Fieldset.razor`, `Breadcrumb.razor`, `Chart.razor`, `Accordion.razor`, `Stepper.razor`, `ScrollTop.razor`, `InlineMessage.razor`, `ProgressSpinner.razor`, `Chip.razor`, `MegaMenu.razor`, `Menubar.razor`, `PanelMenu.razor`, `Steps.razor`, `TabMenu.razor`, `Tabs.razor`, `TabView.razor`, `TieredMenu.razor`, `Fluid.razor`, `Ripple.razor`, `FilterService.razor`, `KeyFilter.razor`, `StyleClass.razor`, `Installation.razor`, `AnimateOnScroll.razor`, `AutoFocus.razor`, `Carousel.razor`, `Galleria.razor`, `Image.razor`, `ImageCompare.razor`, `Knob.razor`, `Panel.razor`, `ScrollPanel.razor`, `Splitter.razor`, `Configuration.razor`, `Skill.razor`, `LlmsTxt.razor`?**
+  _High betweenness centrality (0.195) - this node is a cross-community bridge._
+- **Why does `OpTranslationService` connect `OpTranslationService` to `OpTranslation`, `OpAutoComplete`, `OpListbox`, `OpDatePicker`, `OpMultiSelect`, `OpTabs`, `OpConfirmDialog`, `OpSelect`, `OpCascadeSelect`, `OpDataTable`, `OpTreeTable`, `OpInputNumber`, `OpTreeSelect`, `OpTree`, `OpFileUpload`, `OpGalleria`, `OpDialog`, `GlobalizacaoDadosArvoreTests.razor`, `OpInputBase`, `OpPassword`, `OpCarousel`, `GlobalizacaoAcoesTests.razor`, `OpConfirmPopup`, `OpScrollTop`, `OpInputChips`, `OpPickList`, `OpImage`, `OpDataView`, `OpTabView`, `.AddOpBlazorUI`, `OpDrawer`, `OpPaginator`, `OpOrderList`, `OpEditor`, `OpInputOtp`, `microsoft_aspnetcore_components`, `OpToast`, `TecladoDataTableTooltipAriaTests.razor`, `OpInplace`, `OpThemeSwitcher`, `GlobalizacaoSeletoresTests.razor`?**
+  _High betweenness centrality (0.121) - this node is a cross-community bridge._
+- **Why does `OpBlazorUI.Models` connect `OpBlazorUI.Models` to `SelecaoTests.razor`, `MenusTests.razor`, `ContextMenu.razor`, `Skeleton.razor`, `OpMenuItems`, `AbasAccordionTests.razor`, `GlobalizacaoDadosArvoreTests.razor`, `MeterGroup.razor`, `OverlaysInteracaoTests.razor`, `TreeTableLibTests.razor`, `Toast.razor`, `Breadcrumb.razor`, `Table.razor`, `Tree.razor`, `OpTreeNode`, `AutoComplete.razor`, `Popover.razor`, `MegaMenu.razor`, `Menubar.razor`, `PanelMenu.razor`, `OpMenuItem`, `Steps.razor`, `TabMenu.razor`, `SplitButton.razor`, `Tabs.razor`, `DataTableFiltroLazyTests.razor`, `MultiSelectAutoCompleteStepperTabPanelPickListTests.razor`, `RegressoesBaseTests.razor`, `TieredMenu.razor`, `OpPanelMenu.razor`, `OpAutoCompleteCompleteEvent`, `OpAutoCompleteSelectEvent`, `OpMeterGroup`, `DocsMenusTests.razor`, `ConfirmDialog.razor`, `SpeedDial.razor`, `microsoft_aspnetcore_components`, `OpToastMessage`, `RegressoesEstabilidadeTests.razor`, `TecladoDataTableTooltipAriaTests.razor`, `Menu.razor`, `TreeTable.razor`, `OpBlazorUI.Components.Checkbox`, `OpBlazorUI.Components.Overlay`, `DataTableRenderizacaoTests.razor`, `DataTableLibTests.razor`, `OpDataTable.razor`, `GlobalizacaoSeletoresTests.razor`?**
+  _High betweenness centrality (0.119) - this node is a cross-community bridge._
+- **Are the 2 inferred relationships involving `OpDatePicker` (e.g. with `Binding básico` and `Componentes de entrada mais usados`) actually correct?**
+  _`OpDatePicker` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `$schema`, `plugin`, `net10.0` to the rest of the system?**
-  _5857 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _5894 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `OpTranslation` be split into smaller, more focused modules?**
   _Cohesion score 0.024096385542168676 - nodes in this community are weakly interconnected._
 - **Should `OpAutoComplete` be split into smaller, more focused modules?**
-  _Cohesion score 0.0266994266994267 - nodes in this community are weakly interconnected._
-- **Should `OpListbox` be split into smaller, more focused modules?**
-  _Cohesion score 0.02653854953099977 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.026544401544401543 - nodes in this community are weakly interconnected._
