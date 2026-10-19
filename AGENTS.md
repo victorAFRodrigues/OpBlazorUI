@@ -70,6 +70,7 @@ dotnet run --project src/OpBlazorUI.Showcase
   - Descrição em pt-BR, verbo no presente e em minúsculo, sem ponto final; detalhes no corpo, em um segundo `-m`.
 - Nunca commite direto no `main`: crie um branch (`fix/...`, `feat/...`, `chore/...`) e abra um PR.
 - Faça commit e push só quando o usuário pedir.
-- **Tags `v*` publicam**: o `release.yml` gera o pacote `OpBlazorUI` no GitHub Packages e cria uma release.
+- **Tags `v*` publicam**: o `release.yml` publica `OpBlazorUI` e `OpBlazorUI.Charts` no NuGet.org
+  (Trusted Publishing via OIDC) e cria uma release.
   Crie tags só quando pedido, sempre a partir do `main`, depois do merge.
 - Push no `main` republica o Showcase no GitHub Pages.

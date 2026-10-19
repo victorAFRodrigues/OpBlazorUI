@@ -13,15 +13,14 @@ on:
 
 permissions:
   contents: write
-  packages: write
+  id-token: write # OIDC para o Trusted Publishing do NuGet.org
 
 env:
-  FEED_OWNER: victorAFRodrigues
   TEST_PROJECT: tests/OpBlazorUI.Playwright/OpBlazorUI.Playwright.csproj
 
 jobs:
   publish:
-    name: Publicar no GitHub Packages
+    name: Publicar no NuGet.org
     runs-on: ubuntu-latest
 
     steps:
@@ -85,20 +84,19 @@ jobs:
           dotnet run --project tools/docs-gen/OpBlazorUI.DocsGen.csproj \
             --configuration Release --no-build -- verify --dir artifacts/docs
 
-      - name: Autenticar no GitHub Packages
-        run: |
-          dotnet nuget add source \
-            --username ${{ github.actor }} \
-            --password ${{ secrets.GITHUB_TOKEN }} \
-            --store-password-in-clear-text \
-            --name github \
-            "https://nuget.pkg.github.com/$FEED_OWNER/index.json"
+      # Trusted Publishing: a política no NuGet.org é vinculada a este repositório e ao release.yml.
+      # A API key temporária vale 1h, então o login acontece imediatamente antes do push.
+      - name: Autenticar no NuGet.org (OIDC)
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
 
-      - name: Push para o GitHub Packages
+      - name: Push para o NuGet.org
         run: |
           dotnet nuget push "./artifacts/*.${{ steps.version.outputs.version }}.nupkg" \
-            --source github \
-            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} \
             --skip-duplicate
 
       - name: Criar/atualizar GitHub Release

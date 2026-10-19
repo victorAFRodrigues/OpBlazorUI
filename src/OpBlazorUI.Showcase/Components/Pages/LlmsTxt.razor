@@ -106,7 +106,7 @@
             <ul>
                 <li>Os artefatos são um retrato da <code>main</code> no momento do build; para reprodutibilidade, use uma release.</li>
                 <li>As descrições vêm das páginas do Showcase em pt-BR; nomes de tipos e propriedades ficam em inglês.</li>
-                <li>O restore do pacote exige um PAT com <code>read:packages</code>, mesmo para pacotes públicos.</li>
+                <li>O pacote está no NuGet.org; o restore usa a fonte padrão do <code>dotnet</code>, sem feed nem credencial extra.</li>
                 <li>Ícones usam a fonte nativa <code>pi pi-*</code>; não há SVGs para agentes copiarem.</li>
                 <li>O audit de documentação é híbrido: drift hard bloqueia o CI; divergências herdadas continuam como aviso.</li>
                 <li>Um servidor MCP com consultas estruturadas está planejado para uma fase futura; por enquanto, use os arquivos estáticos.</li>

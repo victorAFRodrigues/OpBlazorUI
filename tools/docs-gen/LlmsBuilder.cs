@@ -196,15 +196,16 @@ internal static class LlmsBuilder
                       (string.IsNullOrWhiteSpace(manifest.Library.Commit) ? "" : $" (commit `{manifest.Library.Commit}`)"));
         sb.AppendLine($"- Target: `{manifest.Library.TargetFramework}`");
         sb.AppendLine($"- Documentação: <{baseUrl}>");
-        sb.AppendLine($"- Pacote: `{manifest.GettingStarted.Package.Id}` no GitHub Packages" +
-                      (manifest.GettingStarted.Package.RequiresPat ? " (o restore exige PAT com `read:packages`)" : ""));
+        var package = manifest.GettingStarted.Package;
+        sb.AppendLine($"- Pacote: `{package.Id}` no NuGet.org — `dotnet add package {package.Id}`" +
+                      (string.IsNullOrWhiteSpace(package.ChartsId) ? "" : $" (gráficos: `{package.ChartsId}`)"));
         sb.AppendLine();
         sb.AppendLine("As páginas HTML do Showcase são renderizadas no cliente (Blazor WebAssembly). " +
                       "Os arquivos Markdown abaixo são a fonte estática para agentes e crawlers.");
         sb.AppendLine();
         sb.AppendLine("## Comece por aqui");
         sb.AppendLine();
-        sb.AppendLine($"- [Installation]({baseUrl}/llms/installation.md) — instalação, autenticação no GitHub Packages e primeiro componente.");
+        sb.AppendLine($"- [Installation]({baseUrl}/llms/installation.md) — instalação do pacote e primeiro componente.");
         sb.AppendLine($"- [Configuration]({baseUrl}/llms/configuration.md) — temas, modo escuro, RTL e render modes.");
         sb.AppendLine($"- [Manifesto da API]({baseUrl}/llms/manifest.json) — nomes, tipos, valores padrão e descrições em JSON.");
         sb.AppendLine($"- [Documentação completa]({baseUrl}/llms-full.txt) — todos os arquivos em um único texto.");
@@ -290,7 +291,7 @@ internal static class LlmsBuilder
         sb.AppendLine($"- [Ícones]({baseUrl}/llms/icons.md) — glyphs disponíveis na fonte nativa (`pi pi-*`).");
         sb.AppendLine($"- [Serviços]({baseUrl}/llms/services.md) — assinaturas de todos os serviços registrados.");
         sb.AppendLine($"- [Enums]({baseUrl}/llms/enums.md) — enums públicos da biblioteca.");
-        sb.AppendLine("- [Repositório](https://github.com/victorAFRodrigues/OpBlazorUI) · [Releases](https://github.com/victorAFRodrigues/OpBlazorUI/releases)");
+        sb.AppendLine($"- [Repositório](https://github.com/victorAFRodrigues/OpBlazorUI) · [Releases](https://github.com/victorAFRodrigues/OpBlazorUI/releases) · [NuGet.org](https://www.nuget.org/packages/{package.Id})");
         sb.AppendLine();
         sb.AppendLine("## Notas para agentes");
         sb.AppendLine();
@@ -298,7 +299,7 @@ internal static class LlmsBuilder
         sb.AppendLine("- Os textos estão em pt-BR, mas os nomes de tipos, propriedades, classes CSS e aliases estão em inglês.");
         sb.AppendLine("- As classes CSS dos componentes são `p-*` (PrimeNG/Optimus UI). Utilitários de layout são da aplicação.");
         sb.AppendLine("- Ícones usam a fonte nativa: `<i class=\"pi pi-*\"></i>`; não crie SVGs.");
-        sb.AppendLine("- O pacote é publicado no GitHub Packages e o restore exige um PAT com `read:packages`.");
+        sb.AppendLine("- O pacote está no NuGet.org: `dotnet add package` usa a fonte padrão, sem feed nem PAT.");
         sb.AppendLine("- Para uma versão específica, use o `llms-full.txt` e o `manifest.json` anexados à release correspondente.");
 
         return sb.ToString();
@@ -354,9 +355,9 @@ internal static class LlmsBuilder
                 sb.AppendLine("## Instalação");
                 sb.AppendLine();
                 sb.AppendLine(
-                    $"O pacote `{manifest.GettingStarted.Package.Id}` é publicado no GitHub Packages e exige um PAT com " +
-                    $"`read:packages` no restore. Veja [Installation]({baseUrl}/llms/installation.md) para o `nuget.config`, " +
-                    "o registro dos serviços e o setup do tema.");
+                    $"O pacote `{manifest.GettingStarted.Package.Id}` está no NuGet.org e restaura pela fonte padrão, " +
+                    $"sem feed nem credencial. Veja [Installation]({baseUrl}/llms/installation.md) para o registro " +
+                    "dos serviços e o setup do tema.");
                 sb.AppendLine();
                 sb.AppendLine($"Para temas, modo escuro, RTL e render modes, veja [Configuration]({baseUrl}/llms/configuration.md).");
                 sb.AppendLine();
@@ -576,14 +577,7 @@ internal static class LlmsBuilder
         var package = manifest.GettingStarted.Package;
         var configure = manifest.GettingStarted.Configure;
 
-        sb.AppendLine("### 1. Autenticação no GitHub Packages");
-        sb.AppendLine();
-        sb.AppendLine(
-            $"O pacote é publicado em <{package.Feed}> e o restore exige um PAT com escopo `read:packages`, " +
-            "mesmo para pacotes públicos. Crie ou atualize o `nuget.config` na raiz da solução:");
-        sb.AppendLine();
-        AppendCode(sb, "xml", package.NugetConfig);
-        sb.AppendLine("### 2. Adicionar o pacote");
+        sb.AppendLine("### 1. Adicionar o pacote");
         sb.AppendLine();
         AppendCode(sb, "bash", package.AddPackage);
         if (!string.IsNullOrWhiteSpace(package.ChartsId))
@@ -592,16 +586,16 @@ internal static class LlmsBuilder
             sb.AppendLine();
         }
 
-        sb.AppendLine("### 3. Registrar os serviços");
+        sb.AppendLine("### 2. Registrar os serviços");
         sb.AppendLine();
         AppendCode(sb, "csharp", configure.Program);
-        sb.AppendLine("### 4. `_Imports.razor`");
+        sb.AppendLine("### 3. `_Imports.razor`");
         sb.AppendLine();
         AppendCode(sb, "razor", configure.Imports);
-        sb.AppendLine("### 5. Tema e render mode");
+        sb.AppendLine("### 4. Tema e render mode");
         sb.AppendLine();
         AppendCode(sb, "razor", configure.Head);
-        sb.AppendLine("### 6. Setup do layout");
+        sb.AppendLine("### 5. Setup do layout");
         sb.AppendLine();
         AppendCode(sb, "razor", configure.Layout);
         AppendNotes(sb, manifest);
@@ -894,7 +888,7 @@ internal static class LlmsBuilder
         {
             summary = entry.Id switch
             {
-                "installation" => "Instalação do pacote, autenticação no GitHub Packages e primeiro componente.",
+                "installation" => "Instalação do pacote e primeiro componente.",
                 "configuration" => "Temas, modo escuro, RTL e configuração dos serviços.",
                 "llms-txt" => "Arquivos estáticos (llms.txt, manifest.json e Markdown) para agentes de IA consumirem a documentação.",
                 "skill" => "Skill de agente com instruções e receitas para gerar código com a biblioteca.",
