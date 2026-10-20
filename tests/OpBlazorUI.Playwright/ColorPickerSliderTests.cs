@@ -16,7 +16,7 @@ public class ColorPickerSliderTests
 
     public ColorPickerSliderTests(ShowcaseFixture fixture) => _fixture = fixture;
 
-    private async Task<IPage> NewPageAsync(List<string> consoleErrors)
+    private async Task<IPage> NewPageAsync(List<string> consoleErrors, TimeSpan? moduleDelay = null)
     {
         var page = await _fixture.Browser.NewPageAsync();
         page.SetDefaultTimeout(60000);
@@ -27,6 +27,16 @@ public class ColorPickerSliderTests
                 consoleErrors.Add(msg.Text);
             }
         };
+
+        if (moduleDelay is not null)
+        {
+            await page.RouteAsync("**/colorpicker.interop.js", async route =>
+            {
+                await Task.Delay(moduleDelay.Value);
+                await route.ContinueAsync();
+            });
+        }
+
         await page.GotoAsync($"{_fixture.BaseUrl}/_tests/color-picker-slider", new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
         await page.Locator("#t-title").WaitForAsync();
         return page;
@@ -101,7 +111,10 @@ public class ColorPickerSliderTests
     public async Task ColorPicker_fecha_ao_clicar_fora()
     {
         var errors = new List<string>();
-        var page = await NewPageAsync(errors);
+
+        // Atrasa o interop como no CI: o painel só pode aparecer depois que o listener de
+        // clique fora estiver registrado, senão o clique imediato no título se perde.
+        var page = await NewPageAsync(errors, TimeSpan.FromMilliseconds(500));
 
         await page.Locator("#t-color-input").ClickAsync();
         await Expect(page.Locator("#t-color .p-colorpicker-color-selector")).ToBeVisibleAsync();

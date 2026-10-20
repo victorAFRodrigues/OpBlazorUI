@@ -37,11 +37,15 @@ public class InstallationTests
         foreach (var heading in new[]
                  {
                      "Tipografia",
+                     "Escolha o modelo",
+                     "Tema inicial e setup",
                      "Blazor Web App: Server",
                      "Blazor Web App: WebAssembly",
                      "Blazor Web App: Auto",
                      "WebAssembly standalone",
-                     "MAUI Blazor Hybrid"
+                     "MAUI Blazor Hybrid",
+                     "SSR estático",
+                     "Referência: modos de renderização"
                  })
         {
             // O h2 inclui o texto do link âncora (#) além do rótulo.

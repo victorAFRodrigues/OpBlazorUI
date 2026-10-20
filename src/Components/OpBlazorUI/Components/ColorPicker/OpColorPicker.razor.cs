@@ -13,6 +13,7 @@ public partial class OpColorPicker : OpInputBase<string>
     private OpColorPickerInterop? _colorInterop;
     private bool _panelVisible;
     private bool _interopInitialized;
+    private bool _outsideWatched;
     private string? _lastParsed;
     private double _h;
     private double _s = 100;
@@ -66,9 +67,10 @@ public partial class OpColorPicker : OpInputBase<string>
         if (!shouldInitialize)
         {
             // Painel fechado/desabilitado: remove os listeners do document uma única vez.
-            if (_interopInitialized)
+            if (_interopInitialized || _outsideWatched)
             {
                 _interopInitialized = false;
+                _outsideWatched = false;
                 await InvokeDisposeAsync();
             }
 
@@ -80,12 +82,13 @@ public partial class OpColorPicker : OpInputBase<string>
             return;
         }
 
-        _colorInterop ??= new OpColorPickerInterop(HandlePickColorAsync, HandlePickHueAsync, HandleOutsideClickAsync);
+        var colorInterop = EnsureColorInterop();
 
         try
         {
-            await Interop.InvokeVoidAsync(OpInterop.ColorPickerInterop, "init", _colorInterop.Reference, _root, _selector, _hue, !Inline);
+            await Interop.InvokeVoidAsync(OpInterop.ColorPickerInterop, "init", colorInterop.Reference, _root, _selector, _hue, !Inline);
             _interopInitialized = true;
+            _outsideWatched = !Inline;
         }
         catch (JSDisconnectedException)
         {
@@ -107,9 +110,10 @@ public partial class OpColorPicker : OpInputBase<string>
 
     public override async ValueTask DisposeAsync()
     {
-        if (_interopInitialized)
+        if (_interopInitialized || _outsideWatched)
         {
             _interopInitialized = false;
+            _outsideWatched = false;
             await InvokeDisposeAsync();
         }
 
@@ -124,17 +128,25 @@ public partial class OpColorPicker : OpInputBase<string>
             return;
         }
 
-        _panelVisible = !_panelVisible;
-
         if (_panelVisible)
         {
-            await OnShow.InvokeAsync();
-        }
-        else
-        {
+            _panelVisible = false;
             await OnHide.InvokeAsync();
+            return;
         }
+
+        // Registra o clique fora antes de renderizar o painel. O init dos seletores só roda
+        // depois do render; sem esta ordem, um clique imediato fora podia se perder no CI.
+        var colorInterop = EnsureColorInterop();
+        await Interop.InvokeVoidAsync(OpInterop.ColorPickerInterop, "watchOutside", colorInterop.Reference, _root);
+        _outsideWatched = true;
+
+        _panelVisible = true;
+        await OnShow.InvokeAsync();
     }
+
+    private OpColorPickerInterop EnsureColorInterop() =>
+        _colorInterop ??= new OpColorPickerInterop(HandlePickColorAsync, HandlePickHueAsync, HandleOutsideClickAsync);
 
     private Task HandleInputKeyDown(KeyboardEventArgs e)
     {

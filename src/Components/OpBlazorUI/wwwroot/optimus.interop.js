@@ -201,17 +201,63 @@ function ensureLink(id, href) {
     }
 }
 
+let _systemThemeDotNet = null;
+let _systemThemeMedia = null;
+
+function onSystemThemeChange(event) {
+    if (window.__opThemeMode !== "system") return;
+    document.documentElement.classList.toggle("app-dark", event.matches);
+    if (_systemThemeDotNet) {
+        _systemThemeDotNet.invokeMethodAsync("OnSystemDarkChanged", event.matches).catch(() => {
+            // circuito encerrado
+        });
+    }
+}
+
+// Registra o callback .NET para o modo System. O op-theme.js já aplica a classe antes do boot.
+export function observeSystemTheme(dotnetRef) {
+    _systemThemeDotNet = dotnetRef;
+    if (!window.matchMedia || _systemThemeMedia) return;
+    _systemThemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
+    if (typeof _systemThemeMedia.addEventListener === "function") {
+        _systemThemeMedia.addEventListener("change", onSystemThemeChange);
+    } else if (typeof _systemThemeMedia.addListener === "function") {
+        _systemThemeMedia.addListener(onSystemThemeChange);
+    }
+}
+
+export function unobserveSystemTheme() {
+    _systemThemeDotNet = null;
+    if (!_systemThemeMedia) return;
+    if (typeof _systemThemeMedia.removeEventListener === "function") {
+        _systemThemeMedia.removeEventListener("change", onSystemThemeChange);
+    } else if (typeof _systemThemeMedia.removeListener === "function") {
+        _systemThemeMedia.removeListener(onSystemThemeChange);
+    }
+    _systemThemeMedia = null;
+}
+
+// Normaliza o formato atual e o antigo (boolean) para "light" | "dark" | "system".
+function normalizeDarkMode(value) {
+    if (value === true || value === "dark") return "dark";
+    if (value === false || value === "light") return "light";
+    if (value === "system") return "system";
+    return null;
+}
+
 // Aplica o estado do OpThemeService no documento.
 export function applyTheme(state) {
     ensureLink("optimus-theme", THEMES_BASE + state.preset + ".css");
     ensureLink("optimus-palettes", THEMES_BASE + "palettes.css");
     setPalette(state.primary, state.surface);
     setDarkMode(state.darkMode);
+    window.__opThemeMode = normalizeDarkMode(state.darkModePreference)
+        || (state.darkMode ? "dark" : "light");
     setRtl(state.rtl);
 }
 
-// Estado atual: o salvo (se houver) e o que já está no documento (aplicado pelo op-theme.js ou
-// pelo prefers-color-scheme).
+// Estado atual: o salvo (se houver), o que já está no documento (aplicado pelo op-theme.js) e a
+// preferência do sistema. O modo salvo é normalizado para o formato atual.
 export function readTheme() {
     let stored = null;
     try {
@@ -219,12 +265,27 @@ export function readTheme() {
     } catch (_) {
         stored = null;
     }
-    return { stored, darkMode: getDarkMode() };
+
+    if (stored && typeof stored === "object") {
+        stored = { ...stored, darkMode: normalizeDarkMode(stored.darkMode) };
+    } else {
+        stored = null;
+    }
+
+    return {
+        stored,
+        darkMode: getDarkMode(),
+        prefersDark: !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    };
 }
 
 export function saveTheme(state) {
     try {
-        localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(state));
+        const value = {
+            ...state,
+            darkMode: normalizeDarkMode(state.darkMode) || "light"
+        };
+        localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(value));
     } catch (_) {
         // localStorage indisponível
     }

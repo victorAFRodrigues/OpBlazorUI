@@ -1,4 +1,5 @@
 const states = new WeakMap();
+const outsideWatchers = new WeakMap();
 
 function clamp01(value) {
     return Math.min(1, Math.max(0, value));
@@ -65,27 +66,56 @@ export function init(dotNet, root, selector, hue, outside) {
         state.dragging = null;
     };
 
-    if (outside) {
-        state.outside = function (e) {
-            if (!root.contains(e.target)) {
-                state.dotNet.invokeMethodAsync('OnOutsideClick').catch(function () {
-                    /* disposed */
-                });
-            }
-        };
-    }
-
     root.addEventListener('pointerdown', state.down);
     document.addEventListener('pointermove', state.move);
     document.addEventListener('pointerup', state.up);
-    if (state.outside) {
-        document.addEventListener('pointerdown', state.outside, true);
+    if (outside) {
+        watchOutside(dotNet, root);
     }
 
     states.set(root, state);
 }
 
+// O painel só é renderizado depois que estes listeners estão ativos (TogglePanel aguarda
+// watchOutside), então um clique fora logo após abrir não se perde enquanto o módulo carrega.
+export function watchOutside(dotNet, root) {
+    if (!root) {
+        return;
+    }
+
+    unwatchOutside(root);
+
+    const handler = function (e) {
+        if (root.contains(e.target)) {
+            return;
+        }
+
+        try {
+            dotNet.invokeMethodAsync('OnOutsideClick').catch(function () {
+                /* disposed */
+            });
+        } catch (_) {
+            // referência já descartada
+        }
+    };
+
+    outsideWatchers.set(root, handler);
+    document.addEventListener('pointerdown', handler, true);
+}
+
+export function unwatchOutside(root) {
+    const handler = root && outsideWatchers.get(root);
+    if (!handler) {
+        return;
+    }
+
+    document.removeEventListener('pointerdown', handler, true);
+    outsideWatchers.delete(root);
+}
+
 export function dispose(root) {
+    unwatchOutside(root);
+
     const state = states.get(root);
     if (!state) {
         return;
@@ -94,8 +124,5 @@ export function dispose(root) {
     root.removeEventListener('pointerdown', state.down);
     document.removeEventListener('pointermove', state.move);
     document.removeEventListener('pointerup', state.up);
-    if (state.outside) {
-        document.removeEventListener('pointerdown', state.outside, true);
-    }
     states.delete(root);
 }

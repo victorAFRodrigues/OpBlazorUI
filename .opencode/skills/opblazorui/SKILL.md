@@ -23,7 +23,7 @@ Base padrão: <https://victorafrodrigues.github.io/OpBlazorUI>. Para fixar uma v
 ## Receitas
 
 - [Instalação e render modes](references/instalacao-e-render-modes.md)
-- [Hospedagem: Blazor Web App, WebAssembly e MAUI](references/hospedagem-web-e-maui.md)
+- [Hospedagem: Blazor Web App, WebAssembly, MAUI e SSR](references/hospedagem-web-e-maui.md)
 - [Formulários e validação](references/formularios-e-validacao.md)
 - [DataTable (CRUD)](references/datatable-crud.md)
 - [Overlays e feedback](references/overlays-e-feedback.md)
@@ -53,12 +53,16 @@ Base padrão: <https://victorafrodrigues.github.io/OpBlazorUI>. Para fixar uma v
 - Estado sempre *scoped*; nunca `static` — a lib funciona em Server, WebAssembly e Auto.
 - O tema é aplicado por `op-theme.js` + `<OpBlazorUiSetup />`; o modo escuro é a classe
   `app-dark` no `<html>`.
+- O padrão da lib é **claro**, mesmo com o sistema operacional escuro. Use
+  `theme.DarkMode = OpDarkMode.Light | Dark | System` e repita a escolha em `data-dark`.
+- Com `PersistTheme = true`, a escolha salva no `localStorage` vence o padrão. Para forçar
+  claro/escuro, use `PersistTheme = false` + `data-persist="false"`.
 - Numa Blazor Web App com WebAssembly/Auto, registre `AddOpBlazorUI()` no servidor **e** no
   `.Client`. No Auto, o servidor registra `AddInteractiveServerComponents` +
   `AddInteractiveWebAssemblyComponents` e mapeia os dois render modes; use `InteractiveAuto`
   no `HeadOutlet` e no `Routes`.
-- Em SSR estático, inclua `fonts/inter/inter.css`, `openng-icons.css` e `optimus-base.css` no
-  `<head>`: o setup interativo não roda.
+- Em SSR estático, não use `<OpBlazorUiSetup />`: inclua `fonts/inter/inter.css`,
+  `openng-icons.css` e `optimus-base.css` no `<head>` e deixe o tema com o `op-theme.js`.
 - MAUI Blazor Hybrid não tem `HeadOutlet`: carregue `fonts/inter/inter.css`,
   `openng-icons.css`, `optimus-base.css` e `op-theme.js` no `wwwroot/index.html`; monte
   `<OpBlazorUiSetup />` no `Routes.razor`/layout e não use `@rendermode`.
@@ -66,6 +70,8 @@ Base padrão: <https://victorafrodrigues.github.io/OpBlazorUI>. Para fixar uma v
   `--op-font-family` (e, se quiser, `html { font-size: ... }`).
 - `OpToast`, `OpConfirmDialog` e `OpDynamicDialogHost` precisam estar montados no layout
   (uma vez) e os serviços registrados por `AddOpBlazorUI()`.
+- Instalação: cada modelo tem uma seção autossuficiente em `installation`; não use o exemplo
+  de `InteractiveAuto` como se fosse universal.
 - `OpDataTable`: `Items` + `Columns` (lista de `OpDataTableColumn`); use `DataKey` para
   seleção, expansão e edição.
 - Não edite os CSS de `wwwroot/themes/*.css` à mão: personalize pelas variáveis `--p-*` ou
