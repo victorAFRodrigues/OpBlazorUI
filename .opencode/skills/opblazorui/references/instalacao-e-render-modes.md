@@ -5,11 +5,11 @@ Como instalar o pacote, registrar os serviços, configurar o tema e escolher o r
 ## 1. Adicionar o pacote
 
 O pacote está no NuGet.org, a fonte padrão do `dotnet`; não é preciso configurar feed nem
-credencial.
+credencial. O comando instala a versão estável mais recente; para fixar, use `--version <versão>`.
 
 ```bash
 dotnet add package OpBlazorUI
-# opcional: gráficos (Chart.js)
+# opcional: gráficos (Blazor-ApexCharts)
 dotnet add package OpBlazorUI.Charts
 ```
 
@@ -17,40 +17,48 @@ dotnet add package OpBlazorUI.Charts
 
 ```csharp
 // Program.cs
-builder.Services.AddOpBlazorUI();
+using OpBlazorUI.Globalization;
+// using OpBlazorUI.Charts;    // opcional: pacote OpBlazorUI.Charts
 
-// opcional: gráficos (pacote OpBlazorUI.Charts)
-builder.Services.AddOpBlazorCharts();
+builder.Services.AddOpBlazorUI(
+    theme =>
+    {
+        theme.Preset = "aura";          // aura (padrão), lara ou nora
+        theme.Primary = "noir";         // paleta primária
+        theme.Surface = "slate";        // paleta de superfícies (opcional)
+        theme.Rtl = false;
+        theme.PersistTheme = true;      // salva as escolhas no localStorage
+    },
+    OpTranslations.PtBr);               // opcional; padrão en-US
+
+// Opcional: gráficos (pacote OpBlazorUI.Charts)
+// builder.Services.AddOpBlazorCharts();
 ```
 
-Para definir o tema inicial:
-
-```csharp
-builder.Services.AddOpBlazorUI(theme =>
-{
-    theme.Preset = "lara";    // aura (padrão), lara ou nora
-    theme.Primary = "blue";   // paleta primária
-    theme.Surface = "zinc";   // paleta de superfícies
-    theme.Rtl = false;
-    theme.PersistTheme = true; // salva as escolhas no localStorage
-});
-```
+Para gráficos, instale `OpBlazorUI.Charts`, descomente `using OpBlazorUI.Charts;` e
+`AddOpBlazorCharts()`. `AddOpBlazorUI()` registra `OpThemeService`, `OpTranslationService`,
+`OpMessageService`, `OpConfirmationService`, `OpFilterService` e `OpDialogService`. Numa
+Blazor Web App com WebAssembly ou Auto, chame nos dois `Program.cs` (servidor e `.Client`).
 
 ## 3. `_Imports.razor`
 
 ```razor
 @using OpBlazorUI
 @using OpBlazorUI.Components.Button
+@using OpBlazorUI.Components.InputText
+@using OpBlazorUI.Services
+@using OpBlazorUI.Globalization
 ```
 
-Cada componente vive no namespace `OpBlazorUI.Components.<Nome>`; importe o que usar.
+Cada componente vive no namespace `OpBlazorUI.Components.<Nome>`; importe o que usar. Modelos
+como `OpToastMessage` ficam em `OpBlazorUI.Models`.
 
 ## 4. Tema e render mode
 
 ```razor
 <head>
     <base href="/" />
-    <script src="_content/OpBlazorUI/op-theme.js" data-preset="aura" data-primary="noir"></script>
+    <script src="_content/OpBlazorUI/op-theme.js" data-preset="aura" data-primary="noir" data-surface="slate"></script>
     <HeadOutlet @rendermode="InteractiveAuto" />
 </head>
 <body>
@@ -59,7 +67,8 @@ Cada componente vive no namespace `OpBlazorUI.Components.<Nome>`; importe o que 
 ```
 
 O `op-theme.js` aplica o tema antes da primeira pintura, sem flash; os atributos `data-*`
-repetem os padrões registrados no `AddOpBlazorUI`.
+repetem os padrões registrados no `AddOpBlazorUI`. Em WebAssembly standalone, o script fica no
+`wwwroot/index.html`.
 
 ## 5. Setup no layout
 
@@ -68,14 +77,28 @@ repetem os padrões registrados no `AddOpBlazorUI`.
 <OpBlazorUiSetup />
 ```
 
-Adicione uma única vez, no `MainLayout`.
+Adicione uma única vez, no `App.razor` ou no `MainLayout`. Em WebAssembly standalone, o setup
+fica no `App.razor` (ou no layout), nunca no `index.html`.
+
+## 6. Overlays (opcional)
+
+Toast, ConfirmDialog e DynamicDialog precisam de um host montado uma única vez no layout:
+
+```razor
+<OpToast Key="app" />
+<OpConfirmDialog Key="app" />
+<OpDynamicDialogHost />
+```
+
+O `Key` liga a chamada do serviço ao host.
 
 ## Render modes
 
 - **InteractiveServer, InteractiveWebAssembly e InteractiveAuto**: funcionam sem mudanças; o
   estado da lib é sempre *scoped* (nunca `static`).
 - **SSR estático**: a marcação renderiza, mas componentes com interação (overlays, foco,
-  JS interop) precisam de uma parte interativa para funcionar.
+  JS interop) precisam de uma parte interativa para funcionar. O gráfico também exige um
+  render mode interativo.
 - Não use estado `static` na sua aplicação para guardar dados de tela: isso vaza entre
   circuitos do Server e entre usuários no WASM.
 
@@ -98,7 +121,9 @@ Adicione uma única vez, no `MainLayout`.
 ## Checklist
 
 - [ ] `dotnet add package OpBlazorUI` no projeto.
-- [ ] `AddOpBlazorUI()` registrado.
-- [ ] `op-theme.js` no `<head>`, depois do `<base href>`.
+- [ ] `AddOpBlazorUI()` registrado; `AddOpBlazorCharts()` se usar gráficos.
+- [ ] Tradução definida (`OpTranslations.PtBr` é opcional).
+- [ ] `op-theme.js` no `<head>`, depois do `<base href>` (ou no `index.html` standalone).
 - [ ] `<OpBlazorUiSetup />` na parte interativa do layout.
+- [ ] Hosts de overlay (`OpToast`, `OpConfirmDialog`, `OpDynamicDialogHost`) se usar overlays.
 - [ ] Import do namespace do componente que for usar.
