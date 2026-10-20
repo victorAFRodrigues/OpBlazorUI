@@ -22,6 +22,7 @@
 @code {
     private bool _restored;
     private bool _pendingApply;
+    private DotNetObjectReference<OpBlazorUiSetup>? _self;
 
     protected override void OnInitialized()
     {
@@ -45,14 +46,36 @@
                 var current = await Interop.InvokeAsync<ThemeSnapshot?>(OpInterop.OptimusInterop, "readTheme");
                 if (current is null) return;
                 var stored = Theme.Persist ? current.Stored : null;
+
+                // Sem escolha salva, o modo vem de OpThemeOptions.DarkMode (claro por padrão).
+                // System só resolve para o SO quando essa é a preferência; um escuro salvo
+                // anteriormente não vence a configuração quando PersistTheme = false.
+                var darkMode = stored?.DarkMode;
+                bool? resolvedDark = null;
+                if (darkMode == "system" || (darkMode is null && Theme.DarkModePreference == OpDarkMode.System))
+                {
+                    darkMode = "system";
+                    resolvedDark = current.DarkMode || current.PrefersDark;
+                }
+
                 // Antes do Restore: o Changed pode renderizar na hora (WebAssembly); o
                 // OnAfterRender seguinte aplica e salva.
                 _restored = true;
                 _pendingApply = true;
-                if (stored is not null)
-                    Theme.Restore(stored.Preset, stored.Primary, stored.Surface, stored.DarkMode, stored.Rtl, hasPalette: true);
-                else
-                    Theme.Restore(null, null, null, current.DarkMode, null, hasPalette: false);
+                Theme.Restore(
+                    stored?.Preset,
+                    stored?.Primary,
+                    stored?.Surface,
+                    darkMode,
+                    resolvedDark,
+                    stored?.Rtl,
+                    hasPalette: stored is not null);
+
+                // Mantém o estado do serviço (e o ícone do switcher) sincronizado quando o SO
+                // muda de tema com a página aberta e a preferência é System.
+                _self = DotNetObjectReference.Create(this);
+                await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "observeSystemTheme", _self);
+
                 StateHasChanged();
                 return;
             }
@@ -60,29 +83,67 @@
             if (!_pendingApply || !_restored) return;
             _pendingApply = false;
 
+            var preference = Theme.DarkModePreference switch
+            {
+                OpDarkMode.System => "system",
+                OpDarkMode.Dark => "dark",
+                _ => "light"
+            };
             var state = new
             {
                 preset = Theme.Preset,
                 primary = Theme.Primary,
                 surface = Theme.Surface,
                 darkMode = Theme.DarkMode,
+                darkModePreference = preference,
                 rtl = Theme.Rtl
             };
             await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "applyTheme", state);
-            if (Theme.Persist) await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "saveTheme", state);
+            if (Theme.Persist)
+            {
+                var saved = new
+                {
+                    preset = Theme.Preset,
+                    primary = Theme.Primary,
+                    surface = Theme.Surface,
+                    darkMode = preference,
+                    rtl = Theme.Rtl
+                };
+                await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "saveTheme", saved);
+            }
         }
         catch (JSDisconnectedException)
         {
         }
     }
 
+    [JSInvokable]
+    public Task OnSystemDarkChanged(bool dark)
+    {
+        if (Theme.DarkModePreference == OpDarkMode.System)
+        {
+            Theme.SetResolvedDarkMode(dark);
+        }
+
+        return Task.CompletedTask;
+    }
+
     public override async ValueTask DisposeAsync()
     {
         Theme.Changed -= OnThemeChanged;
+        try
+        {
+            await Interop.InvokeVoidAsync(OpInterop.OptimusInterop, "unobserveSystemTheme");
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+
+        _self?.Dispose();
         await base.DisposeAsync();
     }
 
-    private sealed record ThemeSnapshot(StoredTheme? Stored, bool DarkMode);
+    private sealed record ThemeSnapshot(StoredTheme? Stored, bool DarkMode, bool PrefersDark);
 
-    private sealed record StoredTheme(string? Preset, string? Primary, string? Surface, bool? DarkMode, bool? Rtl);
+    private sealed record StoredTheme(string? Preset, string? Primary, string? Surface, string? DarkMode, bool? Rtl);
 }

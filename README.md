@@ -10,13 +10,13 @@ já portados para Blazor.
 ## Requisitos
 
 - .NET SDK **10.0** ou superior
-- Blazor Web App (Server, WebAssembly ou Auto), Blazor WebAssembly standalone ou .NET MAUI Blazor Hybrid
+- Blazor Web App (Server, WebAssembly ou Auto), Blazor WebAssembly standalone, .NET MAUI Blazor Hybrid
+  ou SSR estático (somente componentes de exibição)
 - Para MAUI, o workload do .NET MAUI (`dotnet workload install maui`)
 
 ## Instalação
 
-O guia completo, com setup, render modes e exemplos para Blazor Web App (Server, WebAssembly e
-Auto), WebAssembly standalone e MAUI Blazor Hybrid, está em
+O guia completo, com o código de cada arquivo e seções autossuficientes por modelo, está em
 [Installation](https://victorafrodrigues.github.io/OpBlazorUI/installation).
 
 O pacote é publicado no [NuGet.org](https://www.nuget.org/packages/OpBlazorUI), a fonte padrão
@@ -35,26 +35,97 @@ dotnet add package OpBlazorUI.Charts
 Os comandos instalam a versão estável mais recente. Para fixar uma versão, use
 `dotnet add package OpBlazorUI --version <versão>` (a versão atual está no NuGet).
 
-Alternativamente, baixe o `.nupkg` na página de [Releases](https://github.com/victorAFRodrigues/OpBlazorUI/releases) e use uma
-referência de projeto/pasta local.
+### Escolha o modelo
+
+| Modelo | `Program.cs` | `op-theme.js` | `<OpBlazorUiSetup />` |
+| --- | --- | --- | --- |
+| Blazor Web App: Server | servidor | `App.razor` | `MainLayout` |
+| Blazor Web App: WebAssembly | servidor e `.Client` | `App.razor` do servidor | `MainLayout` do `.Client` |
+| Blazor Web App: Auto | servidor e `.Client` | `App.razor` do servidor | `MainLayout` do `.Client` |
+| WebAssembly standalone | projeto único | `wwwroot/index.html` | `App.razor` |
+| MAUI Blazor Hybrid | `MauiProgram.cs` | `wwwroot/index.html` | `Routes.razor` ou layout |
+| SSR estático | servidor | `App.razor` | não usa |
+
+### Blazor Web App: Server
+
+- Registre os serviços no `Program.cs` do servidor e mapeie `AddInteractiveServerComponents`.
+- No `App.razor`, coloque o script do tema depois de `<base href="/" />` e use
+  `InteractiveServer` no `HeadOutlet` e no `Routes`.
+- Monte o `<OpBlazorUiSetup />`, o Toast, o ConfirmDialog e o DynamicDialog no `MainLayout`.
+
+### Blazor Web App: WebAssembly
+
+- Registre `AddOpBlazorUI` no `Program.cs` do servidor **e** no `Program.cs` do projeto `.Client`.
+- Coloque o script no `App.razor` do servidor e use `InteractiveWebAssembly` no `HeadOutlet` e no
+  `Routes`.
+- O setup e os hosts ficam no `MainLayout` do projeto `.Client`.
+
+### Blazor Web App: Auto
+
+- Registre os serviços nos dois `Program.cs` e mapeie `AddInteractiveServerRenderMode` +
+  `AddInteractiveWebAssemblyRenderMode` no servidor.
+- No `App.razor`, use `InteractiveAuto` no `HeadOutlet` e no `Routes`.
+- O setup fica no `MainLayout` do `.Client`. Com `PersistTheme`, o tema é restaurado quando a
+  aplicação passa de Server para WebAssembly.
+
+### WebAssembly standalone
+
+- Registre os serviços no `Program.cs`, adicione `HeadOutlet` em `builder.RootComponents` e monte o
+  `<OpBlazorUiSetup />` no `App.razor`, antes do `Router`.
+- Coloque o script no `wwwroot/index.html`, depois de `<base href="/" />`.
+- Não há render mode nem projeto servidor.
+
+### MAUI Blazor Hybrid
+
+- Registre `AddOpBlazorUI` no `MauiProgram.cs`.
+- O template não tem `HeadOutlet`: carregue o `op-theme.js` e os CSS fixos
+  (`fonts/inter/inter.css`, `openng-icons.css`, `optimus-base.css` e `quill.snow.css`) no
+  `wwwroot/index.html`.
+- Monte o `<OpBlazorUiSetup />` no `Routes.razor` ou no layout e não use `@rendermode`.
+
+### SSR estático
+
+- Sem parte interativa, não use `<OpBlazorUiSetup />` nem `@rendermode`.
+- Inclua manualmente no `<head>` os links de `fonts/inter/inter.css`, `openng-icons.css` e
+  `optimus-base.css`, além do `op-theme.js`.
+- Componentes de exibição funcionam; componentes que dependem de eventos ou JavaScript não respondem.
+  O tema é fixo e definido pelo `data-dark`.
 
 ## Configuração
 
-`Program.cs`:
+`Program.cs` (ou `MauiProgram.cs` no MAUI):
 
 ```csharp
 using OpBlazorUI;
+using OpBlazorUI.Services;
 using OpBlazorUI.Globalization;
 
 builder.Services.AddOpBlazorUI(
     theme =>
     {
-        theme.Preset = "aura";          // aura, lara ou nora
-        theme.Primary = "noir";         // noir ou uma das paletas
-        theme.Surface = "slate";        // opcional
-        theme.PersistTheme = true;      // opcional
+        theme.Preset = "aura";             // aura, lara ou nora
+        theme.Primary = "noir";            // noir ou uma das paletas
+        theme.Surface = "slate";           // opcional
+        theme.DarkMode = OpDarkMode.Light; // padrão; Dark ou System
+        theme.PersistTheme = true;         // opcional
     },
-    OpTranslations.PtBr);               // opcional; padrão en-US
+    OpTranslations.PtBr);                  // opcional; padrão en-US
+```
+
+`op-theme.js` — depois de `<base href="/" />`, no `App.razor` ou no `wwwroot/index.html`. Os
+`data-*` repetem as opções do `AddOpBlazorUI`:
+
+```html
+<script src="_content/OpBlazorUI/op-theme.js"
+        data-preset="aura" data-primary="noir" data-surface="slate"
+        data-dark="light" data-persist="true"></script>
+```
+
+O `<OpBlazorUiSetup />` fica **dentro da parte interativa**, uma única vez:
+
+```razor
+<OpBlazorUiSetup />
+@Body
 ```
 
 `_Imports.razor` — cada componente vive em `OpBlazorUI.Components.<Nome>`; modelos ficam em
@@ -67,45 +138,8 @@ builder.Services.AddOpBlazorUI(
 @using OpBlazorUI.Globalization
 ```
 
-`App.razor` — o `op-theme.js` carrega o tema antes da primeira pintura (os `data-*` repetem o tema
-do `AddOpBlazorUI`):
-
-```razor
-<head>
-    <base href="/" />
-    <script src="_content/OpBlazorUI/op-theme.js" data-preset="aura" data-primary="noir" data-surface="slate"></script>
-    ...
-    <HeadOutlet @rendermode="InteractiveAuto" />
-</head>
-<body>
-    <Routes @rendermode="InteractiveAuto" />
-</body>
-```
-
-`App.razor` (ou `MainLayout.razor`) — o `<OpBlazorUiSetup />` precisa ficar **dentro da parte
-interativa** (ícones, CSS base e trocas de tema em runtime):
-
-```razor
-<OpBlazorUiSetup />
-@Body
-```
-
-Em WebAssembly standalone, o `op-theme.js` fica no `wwwroot/index.html` e o `<OpBlazorUiSetup />`
-no `App.razor` (ou no layout); o setup não pode ficar no `index.html`.
-
-No MAUI Blazor Hybrid, o template não inclui `HeadOutlet`: carregue o `op-theme.js` e os CSS fixos
-(`fonts/inter/inter.css`, `openng-icons.css`, `optimus-base.css` e `quill.snow.css`) no
-`wwwroot/index.html`, registre `AddOpBlazorUI` no `MauiProgram.cs` e monte `<OpBlazorUiSetup />` no
-`Routes.razor` (ou no layout). Não use `@rendermode` no MAUI.
-
-Em SSR estático, sem parte interativa, inclua manualmente no `<head>` os links de
-`fonts/inter/inter.css`, `openng-icons.css` e `optimus-base.css`; o tema inicial continua no
-`op-theme.js`.
-
-Os componentes funcionam em Interactive Server, WebAssembly, Auto e MAUI Blazor Hybrid. Com
-interatividade por página, use no `<OpBlazorUiSetup>` o mesmo `@rendermode` das páginas que trocam o
-tema; numa Blazor Web App com WebAssembly/Auto, chame `AddOpBlazorUI` nos dois `Program.cs` (servidor
-e `.Client`).
+Com interatividade por página, use no `<OpBlazorUiSetup>` o mesmo `@rendermode` das páginas que
+trocam o tema. Os componentes funcionam em Interactive Server, WebAssembly, Auto e MAUI.
 
 Para Toast, ConfirmDialog e DynamicDialog, monte os hosts uma vez no layout:
 
@@ -144,11 +178,10 @@ O tamanho base pode ser ajustado em `html` (`font-size: 16px`, por exemplo). A v
 ## Temas
 
 O tema combina um **preset** (`aura`, `lara`, `nora`), uma **primária** e uma **superfície**.
-O padrão é Aura com primária `noir`:
+O padrão é Aura com primária `noir` e **modo claro**:
 
-```razor
-@inject OpThemeService Theme
-
+```csharp
+// Em um componente com @inject OpThemeService Theme
 Theme.SetPreset("lara");       // themes/lara.css
 Theme.SetPrimary("blue");      // noir, emerald, green, lime, orange, amber, yellow, teal, cyan,
                                // sky, blue, indigo, violet, purple, fuchsia, pink, rose
@@ -168,9 +201,29 @@ npm run build     # regenera wwwroot/themes/{aura,lara,nora}.css e palettes.css
 
 Não edite os arquivos gerados à mão; ajustes do OpBlazorUI ficam em `optimus-base.css`.
 
-Modo escuro e RTL: `Theme.SetDarkMode(true)` / `Theme.ToggleDarkMode()` e `Theme.SetRtl(true)`. O
-`OpThemeService` é scoped (um estado por usuário no Server) e, com `PersistTheme`, salva as escolhas no
-`localStorage`.
+### Modo escuro e persistência
+
+`OpThemeOptions.DarkMode` aceita `OpDarkMode.Light` (padrão), `Dark` ou `System`. O `System` segue
+o `prefers-color-scheme` e reage à troca do tema do sistema com a página aberta. Sem configuração
+e sem escolha salva, a aplicação começa clara.
+
+O `op-theme.js` aplica o modo antes da primeira pintura; o `data-dark` deve refletir o
+`Program.cs`:
+
+```html
+<script src="_content/OpBlazorUI/op-theme.js"
+        data-preset="aura" data-primary="noir" data-surface="slate"
+        data-dark="light" data-persist="true"></script>
+```
+
+Com `PersistTheme = true`, a escolha do usuário no `localStorage` (chave `op-theme`) tem prioridade
+sobre o padrão. Para **forçar** claro ou escuro sem switcher, use `DarkMode = Light` (ou `Dark`),
+`data-dark` com o mesmo valor, `PersistTheme = false` e `data-persist="false"`. Assim um estado
+escuro salvo anteriormente não vence a configuração.
+
+`Theme.SetDarkMode(true)` / `Theme.ToggleDarkMode()` alternam em runtime e passam a ser uma escolha
+explícita; `Theme.SetRtl(true)` ativa o RTL. O `OpThemeService` é scoped (um estado por usuário no
+Server). Veja [Configuration](https://victorafrodrigues.github.io/OpBlazorUI/configuration).
 
 ## Componentes portados
 
@@ -206,7 +259,7 @@ renderiza em um render mode interativo; veja [Chart](https://victorafrodrigues.g
 
 ```
 src/
-  Components/OpBlazorUI/     biblioteca de componentes (RCL)
+  Components/OpBlazorUI/           biblioteca de componentes (RCL)
   OpBlazorUI.Showcase/             showcase/documentação, Blazor WebAssembly standalone (publicado no GitHub Pages)
 ```
 
@@ -227,11 +280,11 @@ Se precisar regenerar o bundle ao adicionar uma classe nova, veja o cabeçalho d
 
 O workflow `.github/workflows/release.yml` publica `OpBlazorUI` e `OpBlazorUI.Charts` no
 NuGet.org (autenticação por Trusted Publishing via OIDC, sem API key armazenada) e cria uma
-Release com os `.nupkg` anexados. A versão vem da tag; o exemplo usa a versão atual (2.0.2):
+Release com os `.nupkg` anexados. A versão vem da tag; o exemplo usa a versão atual (2.1.0):
 
 ```bash
-git tag v2.0.2
-git push origin v2.0.2
+git tag v2.1.0
+git push origin v2.1.0
 ```
 
 ## Licença

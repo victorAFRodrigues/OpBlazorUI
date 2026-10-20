@@ -12,6 +12,9 @@ public sealed class OpThemeOptions
     /// <summary>Superfície inicial; <c>null</c> usa a do preset (slate no claro, zinc no escuro).</summary>
     public string? Surface { get; set; }
 
+    /// <summary>Modo inicial: claro, escuro ou seguindo o sistema. O padrão é claro.</summary>
+    public OpDarkMode DarkMode { get; set; } = OpDarkMode.Light;
+
     public bool Rtl { get; set; }
 
     /// <summary>
@@ -52,6 +55,8 @@ public sealed class OpThemeService
         Preset = Validate(options.Preset, Presets, nameof(options.Preset))!;
         Primary = Validate(options.Primary, Primaries, nameof(options.Primary));
         Surface = Validate(options.Surface, Surfaces, nameof(options.Surface));
+        DarkModePreference = options.DarkMode;
+        DarkMode = options.DarkMode == OpDarkMode.Dark;
         Rtl = options.Rtl;
     }
 
@@ -59,6 +64,9 @@ public sealed class OpThemeService
     public event Action? Changed;
 
     public bool Persist { get; }
+
+    /// <summary>Preferência inicial usada para decidir o modo escuro no primeiro render.</summary>
+    internal OpDarkMode DarkModePreference { get; private set; }
 
     public string Preset { get; private set; }
 
@@ -78,14 +86,28 @@ public sealed class OpThemeService
 
     public void SetSurface(string? surface) => Update(() => Surface = Validate(surface, Surfaces, nameof(surface)));
 
-    public void SetDarkMode(bool dark) => Update(() => DarkMode = dark);
+    public void SetDarkMode(bool dark) => Update(() =>
+    {
+        DarkModePreference = dark ? OpDarkMode.Dark : OpDarkMode.Light;
+        DarkMode = dark;
+    });
 
     public void ToggleDarkMode() => SetDarkMode(!DarkMode);
+
+    /// <summary>Atualiza só o resultado do modo System, preservando a preferência.</summary>
+    internal void SetResolvedDarkMode(bool dark) => Update(() => DarkMode = dark);
 
     public void SetRtl(bool rtl) => Update(() => Rtl = rtl);
 
     /// <summary>Restaura um estado (salvo ou lido do documento). Valores inválidos são ignorados.</summary>
-    internal void Restore(string? preset, string? primary, string? surface, bool? dark, bool? rtl, bool hasPalette)
+    internal void Restore(
+        string? preset,
+        string? primary,
+        string? surface,
+        string? darkMode,
+        bool? resolvedDark,
+        bool? rtl,
+        bool hasPalette)
     {
         if (preset is not null && Presets.Contains(preset)) Preset = preset;
         if (hasPalette)
@@ -94,7 +116,22 @@ public sealed class OpThemeService
             if (surface is null || Surfaces.Contains(surface)) Surface = surface;
         }
 
-        if (dark is not null) DarkMode = dark.Value;
+        switch (darkMode)
+        {
+            case "system":
+                DarkModePreference = OpDarkMode.System;
+                if (resolvedDark is not null) DarkMode = resolvedDark.Value;
+                break;
+            case "dark":
+                DarkModePreference = OpDarkMode.Dark;
+                DarkMode = true;
+                break;
+            case "light":
+                DarkModePreference = OpDarkMode.Light;
+                DarkMode = false;
+                break;
+        }
+
         if (rtl is not null) Rtl = rtl.Value;
         Changed?.Invoke();
     }

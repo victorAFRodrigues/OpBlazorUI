@@ -6,7 +6,7 @@
 <PageTitle>Installation - OpBlazorUI</PageTitle>
 
 <GuidePage Title="Installation"
-           Description="Como instalar o OpBlazorUI em Blazor Web App, WebAssembly standalone e MAUI Blazor Hybrid e colocar o primeiro componente na tela."
+           Description="Como instalar o OpBlazorUI em Blazor Web App (Server, WebAssembly e Auto), WebAssembly standalone, MAUI Blazor Hybrid e SSR estático, com instruções autossuficientes por modelo."
            Sections="@Sections">
 
     <DocSection Label="Pré-requisitos">
@@ -34,13 +34,34 @@
         </ChildContent>
     </DocSection>
 
+    <DocSection Label="Escolha o modelo">
+        <Description>
+            <p>Escolha o modelo do seu projeto. As seções de instalação abaixo são <strong>autossuficientes</strong>: cada uma mostra os arquivos e o conteúdo completo daquele modelo, sem depender de “use o exemplo anterior”.</p>
+        </Description>
+        <ChildContent>
+            <ApiTable Caption="Modelos"
+                      Headers="@(new[] { "Modelo", "Onde fica o setup", "Pontos de atenção" })"
+                      Rows="@(new[] {
+                          new[] { "Blazor Web App: Server", "MainLayout interativo", "Program.cs do servidor; App.razor com <code>InteractiveServer</code>." },
+                          new[] { "Blazor Web App: WebAssembly", "MainLayout no projeto <code>.Client</code>", "Registre nos dois Program.cs; App.razor com <code>InteractiveWebAssembly</code>." },
+                          new[] { "Blazor Web App: Auto", "MainLayout no projeto <code>.Client</code>", "Registre nos dois Program.cs e mapeie Server + WebAssembly." },
+                          new[] { "WebAssembly standalone", "App.razor", "Script no <code>wwwroot/index.html</code>; não há render mode." },
+                          new[] { "MAUI Blazor Hybrid", "Routes.razor ou layout", "CSS fixo no <code>wwwroot/index.html</code>; o template não tem <code>HeadOutlet</code>." },
+                          new[] { "SSR estático", "não usa <code>OpBlazorUiSetup</code>", "Links de CSS no App.razor; componentes interativos não respondem." }
+                      })"/>
+        </ChildContent>
+        <Description>
+            <p>As seções comuns (pacote, imports, serviços, tema e tipografia) valem para todos os modelos. O <code>data-dark</code> e o <code>data-persist</code> do script devem refletir o <code>AddOpBlazorUI</code>; veja <a href="configuration">Configuration</a>.</p>
+        </Description>
+    </DocSection>
+
     <DocSection Label="Adicionar o pacote">
         <Description>
             <p>O pacote está no <strong>NuGet.org</strong>, a fonte padrão do <code>dotnet</code> — o restore não exige feed nem credencial extra. O comando instala a versão estável mais recente:</p>
         </Description>
         <Code>
             <CodeBlock Language="bash" Code="@("dotnet add package OpBlazorUI")"/>
-            <p class="doc-section-description">Ou declare a referência manualmente no <code>.csproj</code>. No exemplo, usamos a versão atual do pacote (<code>2.0.2</code>); consulte o <a href="https://www.nuget.org/packages/OpBlazorUI" target="_blank" rel="noopener noreferrer">NuGet</a> para confirmar a versão mais recente:</p>
+            <p class="doc-section-description">Ou declare a referência manualmente no <code>.csproj</code>. No exemplo, usamos a versão atual do pacote (<code>2.1.0</code>); consulte o <a href="https://www.nuget.org/packages/OpBlazorUI" target="_blank" rel="noopener noreferrer">NuGet</a> para confirmar a versão mais recente:</p>
             <CodeBlock Language="xml" Code="@PackageReferenceCode"/>
         </Code>
     </DocSection>
@@ -51,7 +72,7 @@
         </Description>
         <Code>
             <CodeBlock Language="bash"
-                       Code="@("dotnet add package OpBlazorUI --version 2.0.2 --source ./packages")"/>
+                       Code="@("dotnet add package OpBlazorUI --version 2.1.0 --source ./packages")"/>
             <p class="doc-section-description">Se for usar gráficos, baixe também o <code>.nupkg</code> do <code>OpBlazorUI.Charts</code> para a mesma pasta e repita o comando trocando o ID do pacote.</p>
         </Code>
     </DocSection>
@@ -96,16 +117,15 @@
         </Code>
     </DocSection>
 
-    <DocSection Label="Adicionar o setup">
+    <DocSection Label="Tema inicial e setup">
         <Description>
-            <p>Duas peças:</p>
+            <p>São duas peças, e cada seção de modelo abaixo mostra onde colocá-las:</p>
             <ul>
-                <li><code>op-theme.js</code> no <code>&lt;head&gt;</code>, depois do <code>&lt;base href&gt;</code>: carrega o CSS do tema e aplica cores, modo escuro e RTL antes da primeira pintura. Os <code>data-*</code> repetem o tema do <code>AddOpBlazorUI</code>.</li>
-                <li><code>&lt;OpBlazorUiSetup /&gt;</code> <strong>dentro da parte interativa</strong> da aplicação: carrega a fonte Inter, os ícones e o CSS base, e aplica as trocas de tema feitas em tempo de execução.</li>
+                <li><code>op-theme.js</code> no <code>&lt;head&gt;</code>, depois do <code>&lt;base href&gt;</code>: carrega o CSS do tema e aplica preset, cores, modo escuro e RTL <strong>antes da primeira pintura</strong>. Os <code>data-*</code> repetem as opções do <code>AddOpBlazorUI</code>.</li>
+                <li><code>&lt;OpBlazorUiSetup /&gt;</code> <strong>uma vez, dentro da parte interativa</strong>: carrega a fonte Inter, os ícones e o CSS base, e aplica as trocas de tema em tempo de execução.</li>
             </ul>
-            <p><strong>Blazor Web App e WebAssembly standalone:</strong> o script fica no <code>App.razor</code> (Web App) ou no <code>wwwroot/index.html</code> (standalone); o setup fica no <code>App.razor</code> ou no <code>MainLayout</code>.</p>
-            <p><strong>MAUI Blazor Hybrid:</strong> o template não inclui <code>HeadOutlet</code>, então os <code>&lt;link&gt;</code> de CSS fixo precisam ficar no <code>wwwroot/index.html</code>, junto do <code>op-theme.js</code>. O <code>&lt;OpBlazorUiSetup /&gt;</code> continua no <code>Routes.razor</code> ou no layout; ele cuida do tema em runtime e do interop, mas o <code>HeadContent</code> é ignorado sem <code>HeadOutlet</code>.</p>
-            <p><strong>SSR estático:</strong> sem parte interativa, inclua manualmente no <code>&lt;head&gt;</code> os links de <code>fonts/inter/inter.css</code>, <code>openng-icons.css</code> e <code>optimus-base.css</code>; o tema inicial continua sendo aplicado pelo <code>op-theme.js</code>.</p>
+            <p>O padrão é o <strong>modo claro</strong>. <code>data-dark</code> aceita <code>light</code>, <code>dark</code> ou <code>system</code> e deve refletir <code>OpThemeOptions.DarkMode</code>. Com <code>PersistTheme = true</code>, um estado salvo anteriormente tem prioridade; para forçar um modo, use <code>PersistTheme = false</code> + <code>data-persist="false"</code>. Detalhes em <a href="configuration">Configuration</a>.</p>
+            <p>No <strong>SSR estático</strong> não existe parte interativa: use apenas o script e os links de CSS, como mostra a seção específica.</p>
         </Description>
         <Code>
             <p class="doc-section-description"><code>op-theme.js</code> — depois do <code>&lt;base href&gt;</code>:</p>
@@ -142,6 +162,7 @@
             <CodeBlock Language="razor" Code="@ServerAppCode"/>
             <p class="doc-section-description"><code>Components/Layout/MainLayout.razor</code> — setup e hosts dos overlays:</p>
             <CodeBlock Language="razor" Code="@WebAppLayoutCode"/>
+            <p class="doc-section-description">Checklist do modelo: o script está no <code>App.razor</code>, o setup e os hosts estão no <code>MainLayout</code>, e <code>Routes</code>/<code>HeadOutlet</code> usam <code>InteractiveServer</code>. O <code>data-dark="light"</code> acompanha <code>theme.DarkMode</code>.</p>
         </Code>
     </DocSection>
 
@@ -156,7 +177,9 @@
             <CodeBlock Language="csharp" Code="@WasmClientProgramCode"/>
             <p class="doc-section-description"><code>Components/App.razor</code> do servidor:</p>
             <CodeBlock Language="razor" Code="@WasmAppCode"/>
-            <p class="doc-section-description">Use o mesmo conteúdo de <code>MainLayout.razor</code> do exemplo Server. No template com interatividade global, o layout e as páginas ficam no projeto <code>.Client</code> (<code>Layout/MainLayout.razor</code>).</p>
+            <p class="doc-section-description"><code>Components/Layout/MainLayout.razor</code> no projeto <code>.Client</code> — setup e hosts dos overlays:</p>
+            <CodeBlock Language="razor" Code="@WebAppLayoutCode"/>
+            <p class="doc-section-description">Checklist do modelo: os serviços estão nos dois <code>Program.cs</code>, o script está no <code>App.razor</code> do servidor, o setup está no <code>MainLayout</code> do <code>.Client</code>, e <code>Routes</code>/<code>HeadOutlet</code> usam <code>InteractiveWebAssembly</code>.</p>
         </Code>
     </DocSection>
 
@@ -167,9 +190,13 @@
         <Code>
             <p class="doc-section-description"><code>Program.cs</code> do servidor:</p>
             <CodeBlock Language="csharp" Code="@AutoServerProgramCode"/>
+            <p class="doc-section-description"><code>Program.cs</code> do projeto <code>.Client</code>:</p>
+            <CodeBlock Language="csharp" Code="@WasmClientProgramCode"/>
             <p class="doc-section-description"><code>Components/App.razor</code>:</p>
             <CodeBlock Language="razor" Code="@AutoAppCode"/>
-            <p class="doc-section-description">O <code>Program.cs</code> do <code>.Client</code> é o mesmo do exemplo WebAssembly. Use o mesmo conteúdo de <code>MainLayout.razor</code>; no template Auto com interatividade global, ele fica em <code>.Client/Layout/MainLayout.razor</code>.</p>
+            <p class="doc-section-description"><code>Components/Layout/MainLayout.razor</code> no projeto <code>.Client</code> — setup e hosts dos overlays:</p>
+            <CodeBlock Language="razor" Code="@WebAppLayoutCode"/>
+            <p class="doc-section-description">Checklist do modelo: os serviços estão nos dois <code>Program.cs</code>, o servidor mapeia <code>AddInteractiveServerRenderMode</code> e <code>AddInteractiveWebAssemblyRenderMode</code>, o script está no <code>App.razor</code>, e o setup está no <code>MainLayout</code> do <code>.Client</code>.</p>
         </Code>
     </DocSection>
 
@@ -185,6 +212,7 @@
             <p class="doc-section-description"><code>App.razor</code>:</p>
             <CodeBlock Language="razor" Code="@StandaloneAppCode"/>
             <p class="doc-section-description">O <code>HeadOutlet</code> registrado em <code>builder.RootComponents</code> é o que permite ao setup injetar os <code>&lt;link&gt;</code> de CSS no <code>&lt;head&gt;</code>.</p>
+            <p class="doc-section-description">Checklist do modelo: os serviços estão no <code>Program.cs</code>, o script está no <code>index.html</code> e o setup aparece uma única vez antes do <code>Router</code>. Não há <code>@@rendermode</code>; os hosts de Toast/Dialog ficam no <code>MainLayout</code> (veja a seção <strong>Opcional: overlays</strong>).</p>
         </Code>
     </DocSection>
 
@@ -206,17 +234,36 @@
         </Code>
     </DocSection>
 
-    <DocSection Label="Modos de renderização">
+    <DocSection Label="SSR estático">
         <Description>
-            <p>Os componentes são agnósticos ao modo de renderização: o mesmo código roda em <strong>Interactive Server</strong>, <strong>Interactive WebAssembly</strong> e <strong>Interactive Auto</strong> (validado nos três) e no <strong>MAUI Blazor Hybrid</strong>. Algumas regras do Blazor valem para o tema:</p>
-            <ul>
-                <li><strong>Interatividade global</strong> (<code>&lt;Routes @@rendermode="..." /&gt;</code>) é o cenário mais simples: há um <code>OpThemeService</code> por circuito (Server) ou instância (WebAssembly), compartilhado pelas páginas interativas.</li>
-                <li><strong>Interatividade por página</strong>: o <code>&lt;OpBlazorUiSetup /&gt;</code> precisa usar o <strong>mesmo</strong> render mode das páginas que trocam o tema (por exemplo, <code>&lt;OpBlazorUiSetup @@rendermode="InteractiveServer" /&gt;</code> no layout). Ilhas com render modes diferentes não compartilham o estado; um Setup em Server não enxerga trocas feitas numa página WebAssembly.</li>
-                <li><strong>Auto</strong>: a primeira visita roda em Server e as seguintes em WebAssembly. O estado do serviço não passa de um runtime para o outro; com <code>PersistTheme = true</code> o tema salvo é restaurado nos dois.</li>
-                <li><strong>MAUI Blazor Hybrid</strong>: o WebView mantém a interatividade local; não use <code>@@rendermode</code>. O setup fica no <code>Routes.razor</code> ou no layout, e os CSS fixos ficam no <code>wwwroot/index.html</code>.</li>
-                <li><strong>SSR estático</strong> (sem interatividade): os componentes de exibição renderizam normalmente, mas os interativos (Select, Dialog, DatePicker...) não respondem a eventos, como qualquer componente Blazor. O tema vem só do <code>op-theme.js</code>.</li>
-            </ul>
+            <p>No <strong>SSR estático</strong> (sem interatividade) não existe circuito para o <code>OpBlazorUiSetup</code> executar interop. Use o <code>op-theme.js</code> para o tema inicial e inclua manualmente no <code>&lt;head&gt;</code> os CSS que o setup carregaria. O modo é fixo: escolha claro ou escuro no <code>data-dark</code>.</p>
+            <p>Componentes de exibição renderizam normalmente; componentes que dependem de eventos ou JavaScript (Select, Dialog, DatePicker, Chart etc.) não respondem, como em qualquer app Blazor sem render mode interativo.</p>
+            <p>Esta seção é completa para o modelo: não adicione <code>&lt;OpBlazorUiSetup /&gt;</code> nem <code>@@rendermode</code>.</p>
         </Description>
+        <Code>
+            <p class="doc-section-description"><code>Program.cs</code>:</p>
+            <CodeBlock Language="csharp" Code="@SsrProgramCode"/>
+            <p class="doc-section-description"><code>Components/App.razor</code>:</p>
+            <CodeBlock Language="razor" Code="@SsrAppCode"/>
+            <p class="doc-section-description">Como não há setup para salvar escolhas, o exemplo usa <code>data-persist="false"</code> e ignora qualquer estado anterior no <code>localStorage</code>. Para deixar o site sempre escuro, troque os dois pontos para <code>Dark</code>/<code>"dark"</code>.</p>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Referência: modos de renderização">
+        <Description>
+            <p>Esta tabela é só uma referência rápida; as seções acima já mostram o código completo de cada modelo. O mesmo componente roda em Interactive Server, Interactive WebAssembly, Interactive Auto e MAUI, mas o estado do tema é sempre <em>scoped</em>.</p>
+        </Description>
+        <ChildContent>
+            <ApiTable Caption="Modos de renderização"
+                      Headers="@(new[] { "Cenário", "Onde fica o setup", "Regra" })"
+                      Rows="@(new[] {
+                          new[] { "Interatividade global", "MainLayout", "Um <code>OpThemeService</code> por circuito (Server) ou instância (WASM), compartilhado pelas páginas interativas." },
+                          new[] { "Interatividade por página", "O mesmo render mode das páginas", "O setup precisa usar o mesmo render mode; ilhas diferentes não compartilham estado." },
+                          new[] { "Auto", "MainLayout do <code>.Client</code>", "Server na primeira visita e WASM nas seguintes; o estado não passa de um runtime para o outro. Use <code>PersistTheme</code> para restaurar." },
+                          new[] { "MAUI Blazor Hybrid", "Routes.razor ou layout", "Sem anotação de render mode; CSS fixo no <code>index.html</code>." },
+                          new[] { "SSR estático", "não usa setup", "Somente exibição; o tema vem do <code>op-theme.js</code> e não há troca em runtime." }
+                      })"/>
+        </ChildContent>
     </DocSection>
 
     <DocSection Label="Opcional: gráficos">
@@ -275,7 +322,7 @@
     <DocSection Label="Próximos passos">
         <Description>
             <ul>
-                <li><a href="configuration">Configuration</a> — temas, modo escuro, RTL, tipografia e interop.</li>
+                <li><a href="configuration">Configuration</a> — tema claro por padrão, <code>OpDarkMode</code>, persistência, RTL, tipografia e interop.</li>
                 <li><a href="button">Button</a> — comece pelos componentes básicos.</li>
                 <li><a href="chart">Chart</a> — gráficos com o pacote <code>OpBlazorUI.Charts</code>.</li>
                 <li><a href="toast">Toast</a>, <a href="confirmdialog">ConfirmDialog</a> e <a href="dynamicdialog">DynamicDialog</a> — overlays e feedback.</li>
@@ -289,19 +336,21 @@
     [
         "Pré-requisitos",
         "Compatibilidade",
+        "Escolha o modelo",
         "Adicionar o pacote",
         "Alternativa: GitHub Release",
         "Alternativa: referência de projeto",
         "Imports",
         "Registrar os serviços",
-        "Adicionar o setup",
+        "Tema inicial e setup",
         "Tipografia",
         "Blazor Web App: Server",
         "Blazor Web App: WebAssembly",
         "Blazor Web App: Auto",
         "WebAssembly standalone",
         "MAUI Blazor Hybrid",
-        "Modos de renderização",
+        "SSR estático",
+        "Referência: modos de renderização",
         "Opcional: gráficos",
         "Opcional: overlays",
         "Ícones",
@@ -311,14 +360,15 @@
 
     private const string PackageReferenceCode = """
         <ItemGroup>
-            <!-- Substitua 2.0.2 pela versão atual exibida no NuGet.org -->
-            <PackageReference Include="OpBlazorUI" Version="2.0.2" />
+            <!-- Substitua 2.1.0 pela versão atual exibida no NuGet.org -->
+            <PackageReference Include="OpBlazorUI" Version="2.1.0" />
         </ItemGroup>
         """;
 
     private const string ServicesCode = """
         using OpBlazorUI;
         using OpBlazorUI.Globalization;
+        using OpBlazorUI.Services;
 
         builder.Services.AddOpBlazorUI(
             theme =>
@@ -326,6 +376,7 @@
                 theme.Preset = "aura";          // aura, lara ou nora
                 theme.Primary = "noir";         // noir ou uma das paletas
                 theme.Surface = "slate";        // opcional
+                theme.DarkMode = OpDarkMode.Light; // padrão; Dark ou System
                 theme.PersistTheme = true;      // opcional
             },
             OpTranslations.PtBr);               // opcional; padrão en-US
@@ -333,11 +384,12 @@
 
     private const string ThemeScriptCode = """
         <script src="_content/OpBlazorUI/op-theme.js"
-                data-preset="aura" data-primary="noir" data-surface="slate"></script>
+                data-preset="aura" data-primary="noir" data-surface="slate"
+                data-dark="light" data-persist="true"></script>
         """;
 
     private const string SetupCode = """
-        @* No App.razor ou no MainLayout.razor, dentro da parte interativa. *@
+        @* Uma única vez, no App.razor ou no MainLayout, dentro da parte interativa. *@
         <OpBlazorUiSetup />
         """;
 
@@ -356,6 +408,7 @@
     private const string ServerProgramCode = """
         using OpBlazorUI;
         using OpBlazorUI.Globalization;
+        using OpBlazorUI.Services;
         using SeuApp.Components;
 
         var builder = WebApplication.CreateBuilder(args);
@@ -369,6 +422,7 @@
                 theme.Preset = "aura";
                 theme.Primary = "noir";
                 theme.Surface = "slate";
+                theme.DarkMode = OpDarkMode.Light;
                 theme.PersistTheme = true;
             },
             OpTranslations.PtBr);
@@ -392,7 +446,8 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <base href="/" />
             <script src="_content/OpBlazorUI/op-theme.js"
-                    data-preset="aura" data-primary="noir" data-surface="slate"></script>
+                    data-preset="aura" data-primary="noir" data-surface="slate"
+                    data-dark="light" data-persist="true"></script>
             <HeadOutlet @rendermode="InteractiveServer" />
         </head>
         <body>
@@ -418,6 +473,7 @@
     private const string WasmServerProgramCode = """
         using OpBlazorUI;
         using OpBlazorUI.Globalization;
+        using OpBlazorUI.Services;
         using SeuApp.Components;
 
         var builder = WebApplication.CreateBuilder(args);
@@ -431,6 +487,7 @@
                 theme.Preset = "aura";
                 theme.Primary = "noir";
                 theme.Surface = "slate";
+                theme.DarkMode = OpDarkMode.Light;
                 theme.PersistTheme = true;
             },
             OpTranslations.PtBr);
@@ -451,6 +508,7 @@
         using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
         using OpBlazorUI;
         using OpBlazorUI.Globalization;
+        using OpBlazorUI.Services;
 
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -460,6 +518,7 @@
                 theme.Preset = "aura";
                 theme.Primary = "noir";
                 theme.Surface = "slate";
+                theme.DarkMode = OpDarkMode.Light;
                 theme.PersistTheme = true;
             },
             OpTranslations.PtBr);
@@ -475,7 +534,8 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <base href="/" />
             <script src="_content/OpBlazorUI/op-theme.js"
-                    data-preset="aura" data-primary="noir" data-surface="slate"></script>
+                    data-preset="aura" data-primary="noir" data-surface="slate"
+                    data-dark="light" data-persist="true"></script>
             <HeadOutlet @rendermode="InteractiveWebAssembly" />
         </head>
         <body>
@@ -488,6 +548,7 @@
     private const string AutoServerProgramCode = """
         using OpBlazorUI;
         using OpBlazorUI.Globalization;
+        using OpBlazorUI.Services;
         using SeuApp.Components;
 
         var builder = WebApplication.CreateBuilder(args);
@@ -502,6 +563,7 @@
                 theme.Preset = "aura";
                 theme.Primary = "noir";
                 theme.Surface = "slate";
+                theme.DarkMode = OpDarkMode.Light;
                 theme.PersistTheme = true;
             },
             OpTranslations.PtBr);
@@ -527,7 +589,8 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <base href="/" />
             <script src="_content/OpBlazorUI/op-theme.js"
-                    data-preset="aura" data-primary="noir" data-surface="slate"></script>
+                    data-preset="aura" data-primary="noir" data-surface="slate"
+                    data-dark="light" data-persist="true"></script>
             <HeadOutlet @rendermode="InteractiveAuto" />
         </head>
         <body>
@@ -542,6 +605,7 @@
         using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
         using OpBlazorUI;
         using OpBlazorUI.Globalization;
+        using OpBlazorUI.Services;
         using SeuApp;
 
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -555,6 +619,7 @@
                 theme.Preset = "aura";
                 theme.Primary = "noir";
                 theme.Surface = "slate";
+                theme.DarkMode = OpDarkMode.Light;
                 theme.PersistTheme = true;
             },
             OpTranslations.PtBr);
@@ -571,7 +636,8 @@
             <title>SeuApp</title>
             <base href="/" />
             <script src="_content/OpBlazorUI/op-theme.js"
-                    data-preset="aura" data-primary="noir" data-surface="slate"></script>
+                    data-preset="aura" data-primary="noir" data-surface="slate"
+                    data-dark="light" data-persist="true"></script>
         </head>
         <body>
             <div id="app">Carregando...</div>
@@ -595,6 +661,7 @@
         using Microsoft.Extensions.Logging;
         using OpBlazorUI;
         using OpBlazorUI.Globalization;
+        using OpBlazorUI.Services;
 
         namespace SeuApp;
 
@@ -617,6 +684,7 @@
                         theme.Preset = "aura";
                         theme.Primary = "noir";
                         theme.Surface = "slate";
+                        theme.DarkMode = OpDarkMode.Light;
                         theme.PersistTheme = true;
                     },
                     OpTranslations.PtBr);
@@ -639,15 +707,17 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
             <base href="/" />
 
+            <!-- O script entra antes dos CSS para o tema ser criado antes do CSS base. -->
+            <script src="_content/OpBlazorUI/op-theme.js"
+                    data-preset="aura" data-primary="noir" data-surface="slate"
+                    data-dark="light" data-persist="true"></script>
+
             <!-- CSS fixo da lib: o template MAUI não tem HeadOutlet. -->
             <link rel="stylesheet" href="_content/OpBlazorUI/fonts/inter/inter.css" />
             <link rel="stylesheet" href="_content/OpBlazorUI/openng-icons.css" />
             <link rel="stylesheet" href="_content/OpBlazorUI/optimus-base.css" />
             <link rel="stylesheet" href="_content/OpBlazorUI/quill.snow.css" />
             <link rel="stylesheet" href="app.css" />
-
-            <script src="_content/OpBlazorUI/op-theme.js"
-                    data-preset="aura" data-primary="noir" data-surface="slate"></script>
         </head>
         <body>
             <div id="app">Carregando...</div>
@@ -677,6 +747,53 @@
         <main>
             @Body
         </main>
+        """;
+
+    private const string SsrProgramCode = """
+        using OpBlazorUI;
+        using OpBlazorUI.Services;
+        using SeuApp.Components;
+
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddRazorComponents();
+        builder.Services.AddOpBlazorUI(theme =>
+        {
+            theme.DarkMode = OpDarkMode.Light;
+        });
+
+        var app = builder.Build();
+
+        app.UseHttpsRedirection();
+        app.UseAntiforgery();
+        app.MapStaticAssets();
+        app.MapRazorComponents<App>();
+
+        app.Run();
+        """;
+
+    private const string SsrAppCode = """
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <base href="/" />
+
+            @* Sem setup interativo: o script aplica o tema e os CSS entram manualmente. *@
+            <script src="_content/OpBlazorUI/op-theme.js"
+                    data-preset="aura" data-primary="noir" data-surface="slate"
+                    data-dark="light" data-persist="false"></script>
+            <link rel="stylesheet" href="_content/OpBlazorUI/fonts/inter/inter.css" />
+            <link rel="stylesheet" href="_content/OpBlazorUI/openng-icons.css" />
+            <link rel="stylesheet" href="_content/OpBlazorUI/optimus-base.css" />
+            <HeadOutlet />
+        </head>
+        <body>
+            <Routes />
+            <script src="_framework/blazor.web.js"></script>
+        </body>
+        </html>
         """;
 
     private const string ChartsPackageCode = "dotnet add package OpBlazorUI.Charts";

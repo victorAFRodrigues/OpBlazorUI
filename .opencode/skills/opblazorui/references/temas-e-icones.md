@@ -7,25 +7,30 @@ Há três presets: **aura** (padrão), **lara** e **nora**.
 
 ```csharp
 // Program.cs
+using OpBlazorUI.Services;
+
 builder.Services.AddOpBlazorUI(theme =>
 {
-    theme.Preset = "lara";      // aura, lara ou nora
-    theme.Primary = "blue";     // paleta primária
-    theme.Surface = "zinc";     // paleta de superfícies
-    theme.Rtl = false;          // direção do documento
-    theme.PersistTheme = true;  // guarda as escolhas no localStorage (chave "op-theme")
+    theme.Preset = "lara";             // aura, lara ou nora
+    theme.Primary = "blue";            // paleta primária
+    theme.Surface = "zinc";            // paleta de superfícies
+    theme.DarkMode = OpDarkMode.Light; // padrão; Dark ou System
+    theme.Rtl = false;                 // direção do documento
+    theme.PersistTheme = true;         // guarda as escolhas no localStorage (chave "op-theme")
 });
 ```
 
 ```razor
 @* no <head>, depois do <base href> *@
 <script src="_content/OpBlazorUI/op-theme.js"
-        data-preset="aura" data-primary="noir" data-surface=""></script>
+        data-preset="aura" data-primary="noir" data-surface="slate"
+        data-dark="light" data-persist="true"></script>
 ```
 
 Os atributos `data-*` repetem os padrões do `AddOpBlazorUI` e evitam o flash de tema errado
-antes de o Blazor iniciar. O `<OpBlazorUiSetup />` (no layout, na parte interativa) mantém o
-documento sincronizado com o `OpThemeService`.
+antes de o Blazor iniciar. `data-dark` deve refletir `OpDarkMode`; sem ele, o padrão é claro.
+`data-persist="false"` ignora o estado salvo no `localStorage`. O `<OpBlazorUiSetup />` (no
+layout, na parte interativa) mantém o documento sincronizado com o `OpThemeService`.
 
 ## Trocando o tema em tempo de execução
 
@@ -55,9 +60,16 @@ O `<OpThemeSwitcher />` já traz a paleta de primárias e o botão de modo escur
 
 ## Modo escuro e RTL
 
+- O padrão da lib é **claro**, mesmo com o sistema operacional em modo escuro. Configure
+  `theme.DarkMode = OpDarkMode.Light | Dark | System`.
+- `System` segue `prefers-color-scheme` e reage à troca do tema com a página aberta.
 - O modo escuro é a classe `app-dark` no `<html>`; use `SetDarkMode`/`ToggleDarkMode`, não
   manipule a classe na mão.
-- O estado inicial pode vir do `prefers-color-scheme` aplicado pelo `op-theme.js`.
+- Com `PersistTheme = true`, a escolha salva no `localStorage` vence o padrão. Para forçar
+  claro/escuro para todos, use `DarkMode` + `data-dark` iguais, `PersistTheme = false` e
+  `data-persist="false"`.
+- Alternar pelo switcher grava uma escolha explícita `light`/`dark`; `System` é apenas a
+  preferência inicial salva.
 - RTL: `theme.Rtl = true` no registro ou `Theme.SetRtl(true)` em runtime; o atributo `dir`
   do `<html>` é atualizado e o CSS usa propriedades lógicas.
 
