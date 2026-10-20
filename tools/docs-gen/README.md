@@ -15,7 +15,7 @@ lê a solução .NET, as páginas do Showcase e os arquivos estáticos do reposi
 | `artifacts/docs/llms/services.md` | Assinaturas de todos os serviços públicos. |
 | `artifacts/docs/llms/enums.md` | Enums públicos da biblioteca. |
 | `artifacts/docs/skills/opblazorui/SKILL.md` | Skill de agente (frontmatter + instruções) publicada para ferramentas compatíveis. |
-| `artifacts/docs/skills/opblazorui/references/*.md` | Receitas da skill (instalação, formulários, DataTable, overlays e temas). |
+| `artifacts/docs/skills/opblazorui/references/*.md` | Receitas da skill (instalação, hospedagem, formulários, DataTable, overlays e temas). |
 | `artifacts/docs/skills/index.json` | Catálogo HTTP de skills (`name`, `version` e `files`) para instalação por URL. |
 | `artifacts/docs/docs-audit.json` | Relatório de divergências entre as tabelas de API das páginas e o código. |
 
@@ -131,7 +131,7 @@ repositório) e é publicada em `artifacts/docs/skills/`:
 
 - `opblazorui/SKILL.md` — frontmatter, fluxo de trabalho, convenções e armadilhas.
 - `opblazorui/opblazorui.md` — cópia na forma nomeada exigida pelo catálogo HTTP.
-- `opblazorui/references/*.md` — receitas (instalação, formulários, DataTable, overlays e temas).
+- `opblazorui/references/*.md` — receitas (instalação, hospedagem, formulários, DataTable, overlays e temas).
 - `index.json` — catálogo no formato `{ "skills": [{ "name", "version", "files" }] }`; a
   `version` é o commit (ou a versão da lib quando não há commit).
 

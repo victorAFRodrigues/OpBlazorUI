@@ -17,6 +17,7 @@ dotnet add package OpBlazorUI.Charts
 
 ```csharp
 // Program.cs
+using OpBlazorUI;
 using OpBlazorUI.Globalization;
 // using OpBlazorUI.Charts;    // opcional: pacote OpBlazorUI.Charts
 
@@ -78,7 +79,22 @@ repetem os padrões registrados no `AddOpBlazorUI`. Em WebAssembly standalone, o
 ```
 
 Adicione uma única vez, no `App.razor` ou no `MainLayout`. Em WebAssembly standalone, o setup
-fica no `App.razor` (ou no layout), nunca no `index.html`.
+fica no `App.razor` (ou no layout), nunca no `index.html`. O setup carrega a fonte Inter, os
+ícones e o CSS base, e aplica as trocas de tema em runtime.
+
+No MAUI Blazor Hybrid, o template não tem `HeadOutlet`: carregue no `wwwroot/index.html` o
+`op-theme.js` e os CSS fixos (`fonts/inter/inter.css`, `openng-icons.css`, `optimus-base.css` e
+`quill.snow.css`), monte o setup no `Routes.razor`/layout e não use `@rendermode`. Os exemplos
+completos estão em [Hospedagem](hospedagem-web-e-maui.md).
+
+Em SSR estático, sem parte interativa, inclua os mesmos links de CSS no `<head>`; o setup não roda
+e o tema inicial fica por conta do `op-theme.js`.
+
+## Tipografia
+
+A lib empacota Inter Variable 4.1 e usa 14px como base do documento. Para trocar a família,
+sobrescreva `--op-font-family` depois do CSS da lib; para mudar o tamanho, use
+`html { font-size: ... }`. A fonte é SIL OFL 1.1 e funciona offline.
 
 ## 6. Overlays (opcional)
 
@@ -121,9 +137,10 @@ O `Key` liga a chamada do serviço ao host.
 ## Checklist
 
 - [ ] `dotnet add package OpBlazorUI` no projeto.
-- [ ] `AddOpBlazorUI()` registrado; `AddOpBlazorCharts()` se usar gráficos.
+- [ ] `using OpBlazorUI;` e `AddOpBlazorUI()` registrados; `AddOpBlazorCharts()` se usar gráficos.
 - [ ] Tradução definida (`OpTranslations.PtBr` é opcional).
-- [ ] `op-theme.js` no `<head>`, depois do `<base href>` (ou no `index.html` standalone).
+- [ ] `op-theme.js` no `<head>`, depois do `<base href>` (ou no `index.html` standalone/MAUI).
 - [ ] `<OpBlazorUiSetup />` na parte interativa do layout.
 - [ ] Hosts de overlay (`OpToast`, `OpConfirmDialog`, `OpDynamicDialogHost`) se usar overlays.
 - [ ] Import do namespace do componente que for usar.
+- [ ] No MAUI, CSS fixo no `wwwroot/index.html` e setup no `Routes.razor`/layout, sem `@rendermode`.
