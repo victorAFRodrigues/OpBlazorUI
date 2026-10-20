@@ -13,19 +13,32 @@ internal static class GettingStarted
             "dotnet add package OpBlazorUI"),
         new ConfigureManifest(
             """
-            builder.Services.AddOpBlazorUI();
+            using OpBlazorUI.Globalization;
+            // using OpBlazorUI.Charts; // opcional: pacote OpBlazorUI.Charts
+
+            builder.Services.AddOpBlazorUI(
+                theme =>
+                {
+                    theme.Preset = "aura";
+                    theme.Primary = "noir";
+                    theme.Surface = "slate";
+                    theme.PersistTheme = true;
+                },
+                OpTranslations.PtBr); // opcional; padrão en-US
 
             // Opcional: gráficos (pacote OpBlazorUI.Charts)
-            builder.Services.AddOpBlazorCharts();
+            // builder.Services.AddOpBlazorCharts();
             """,
             """
             @using OpBlazorUI
             @using OpBlazorUI.Components.Button
+            @using OpBlazorUI.Services
+            @using OpBlazorUI.Globalization
             """,
             """
             <head>
                 <base href="/" />
-                <script src="_content/OpBlazorUI/op-theme.js" data-preset="aura" data-primary="noir"></script>
+                <script src="_content/OpBlazorUI/op-theme.js" data-preset="aura" data-primary="noir" data-surface="slate"></script>
                 <HeadOutlet @rendermode="InteractiveAuto" />
             </head>
             <body>
@@ -37,9 +50,12 @@ internal static class GettingStarted
             <OpBlazorUiSetup />
             """),
         [
-            "O pacote é publicado no NuGet.org, a fonte padrão do dotnet: o restore não exige feed nem credencial extra.",
-            "O tema é aplicado por JS antes da primeira pintura; os atributos data-preset/data-primary repetem o tema registrado no AddOpBlazorUI.",
-            "Funciona em Blazor Web App (Server, WebAssembly e Auto) e em SSR estático: o estado é sempre scoped, nunca static.",
+            "O pacote é publicado no NuGet.org, a fonte padrão do dotnet: o restore não exige feed nem credencial extra. A versão atual está no NuGet.org.",
+            "O tema é aplicado por JS antes da primeira pintura; os atributos data-preset/data-primary/data-surface repetem o tema registrado no AddOpBlazorUI.",
+            "Funciona em Blazor Web App (Server, WebAssembly e Auto), WebAssembly standalone e em SSR estático: o estado é sempre scoped, nunca static. Componentes interativos exigem um render mode interativo.",
+            "AddOpBlazorUI registra tema, tradução, mensagens, confirmação, filtro e dialog dinâmico; o segundo parâmetro opcional define a tradução (padrão en-US).",
+            "Para Toast, ConfirmDialog e DynamicDialog, monte uma vez no layout: <OpToast Key=\"app\" />, <OpConfirmDialog Key=\"app\" /> e <OpDynamicDialogHost />.",
+            "Em WebAssembly standalone, o op-theme.js fica no wwwroot/index.html e o <OpBlazorUiSetup /> no App.razor ou no layout.",
             "Os componentes renderizam as classes p-* do Optimus UI/PrimeNG. Utilitários de layout (flex, grid, espaçamento) são responsabilidade da aplicação.",
             "Ícones usam a fonte nativa da lib: <i class=\"pi pi-*\"></i>."
         ]);

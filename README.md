@@ -4,15 +4,18 @@ Port do [Optimus UI](https://optimus.openng.org) para Blazor. Uma biblioteca de 
 (`Razor Class Library`) com os design tokens e o CSS base do tema Aura, mais os componentes
 já portados para Blazor.
 
-- Showcase online: https://optimus.openng.org
+- Showcase online: https://victorafrodrigues.github.io/OpBlazorUI
 - Projeto original (Angular): https://github.com/openng-org/optimus-ui
 
 ## Requisitos
 
 - .NET SDK **10.0** ou superior
-- Blazor Web App, Blazor Server ou Blazor WebAssembly
+- Blazor Web App (Server, WebAssembly ou Auto) ou Blazor WebAssembly standalone
 
 ## Instalação
+
+O guia completo, com setup, render modes e opções de tema, está em
+[Installation](https://victorafrodrigues.github.io/OpBlazorUI/installation).
 
 O pacote é publicado no [NuGet.org](https://www.nuget.org/packages/OpBlazorUI), a fonte padrão
 do `dotnet` — o restore não exige feed nem credencial extra:
@@ -21,11 +24,14 @@ do `dotnet` — o restore não exige feed nem credencial extra:
 dotnet add package OpBlazorUI
 ```
 
-Para os gráficos:
+Para os gráficos, use a mesma versão do pacote principal:
 
 ```bash
 dotnet add package OpBlazorUI.Charts
 ```
+
+Os comandos instalam a versão estável mais recente. Para fixar uma versão, use
+`dotnet add package OpBlazorUI --version <versão>` (a versão atual está no NuGet).
 
 Alternativamente, baixe o `.nupkg` na página de [Releases](https://github.com/victorAFRodrigues/OpBlazorUI/releases) e use uma
 referência de projeto/pasta local.
@@ -35,14 +41,27 @@ referência de projeto/pasta local.
 `Program.cs`:
 
 ```csharp
-builder.Services.AddOpBlazorUI();
+using OpBlazorUI.Globalization;
+
+builder.Services.AddOpBlazorUI(
+    theme =>
+    {
+        theme.Preset = "aura";          // aura, lara ou nora
+        theme.Primary = "noir";         // noir ou uma das paletas
+        theme.Surface = "slate";        // opcional
+        theme.PersistTheme = true;      // opcional
+    },
+    OpTranslations.PtBr);               // opcional; padrão en-US
 ```
 
-`_Imports.razor`:
+`_Imports.razor` — cada componente vive em `OpBlazorUI.Components.<Nome>`; modelos ficam em
+`OpBlazorUI.Models`:
 
 ```razor
 @using OpBlazorUI
 @using OpBlazorUI.Components.Button
+@using OpBlazorUI.Services
+@using OpBlazorUI.Globalization
 ```
 
 `App.razor` — o `op-theme.js` carrega o tema antes da primeira pintura (os `data-*` repetem o tema
@@ -51,7 +70,7 @@ do `AddOpBlazorUI`):
 ```razor
 <head>
     <base href="/" />
-    <script src="_content/OpBlazorUI/op-theme.js" data-preset="aura" data-primary="noir"></script>
+    <script src="_content/OpBlazorUI/op-theme.js" data-preset="aura" data-primary="noir" data-surface="slate"></script>
     ...
     <HeadOutlet @rendermode="InteractiveAuto" />
 </head>
@@ -60,17 +79,31 @@ do `AddOpBlazorUI`):
 </body>
 ```
 
-`MainLayout.razor` — o `<OpBlazorUiSetup />` precisa ficar **dentro da parte interativa** (ícones,
-CSS base e trocas de tema em runtime):
+`App.razor` (ou `MainLayout.razor`) — o `<OpBlazorUiSetup />` precisa ficar **dentro da parte
+interativa** (ícones, CSS base e trocas de tema em runtime):
 
 ```razor
 <OpBlazorUiSetup />
 @Body
 ```
 
+Em WebAssembly standalone, o `op-theme.js` fica no `wwwroot/index.html` e o `<OpBlazorUiSetup />`
+no `App.razor` (ou no layout); o setup não pode ficar no `index.html`.
+
 Os componentes funcionam em Interactive Server, WebAssembly e Auto. Com interatividade por página,
 use no `<OpBlazorUiSetup>` o mesmo `@rendermode` das páginas que trocam o tema; numa Blazor Web App
 com WebAssembly/Auto, chame `AddOpBlazorUI` nos dois `Program.cs` (servidor e `.Client`).
+
+Para Toast, ConfirmDialog e DynamicDialog, monte os hosts uma vez no layout:
+
+```razor
+<OpToast Key="app" />
+<OpConfirmDialog Key="app" />
+<OpDynamicDialogHost />
+```
+
+Importe os namespaces correspondentes (`OpBlazorUI.Components.Toast`,
+`OpBlazorUI.Components.ConfirmDialog` e `OpBlazorUI.Components.DynamicDialog`).
 
 Uso:
 
@@ -124,6 +157,20 @@ Tree, TreeSelect, TreeTable, VirtualScroller.
 ### Gráficos
 
 O `Chart` fica em um projeto separado, `OpBlazorUI.Charts`, sobre o Blazor-ApexCharts.
+Instale o pacote e registre o serviço:
+
+```bash
+dotnet add package OpBlazorUI.Charts
+```
+
+```csharp
+using OpBlazorUI.Charts;
+
+builder.Services.AddOpBlazorCharts();
+```
+
+No Razor, importe `ApexCharts` e `OpBlazorUI.Charts`. O gráfico depende de JavaScript e só
+renderiza em um render mode interativo; veja [Chart](https://victorafrodrigues.github.io/OpBlazorUI/chart).
 
 ## Estrutura do repositório
 
@@ -150,11 +197,11 @@ Se precisar regenerar o bundle ao adicionar uma classe nova, veja o cabeçalho d
 
 O workflow `.github/workflows/release.yml` publica `OpBlazorUI` e `OpBlazorUI.Charts` no
 NuGet.org (autenticação por Trusted Publishing via OIDC, sem API key armazenada) e cria uma
-Release com os `.nupkg` anexados. A versão vem da tag:
+Release com os `.nupkg` anexados. A versão vem da tag; o exemplo usa a versão atual (2.0.2):
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v2.0.2
+git push origin v2.0.2
 ```
 
 ## Licença

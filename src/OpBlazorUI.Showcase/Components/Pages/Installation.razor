@@ -14,7 +14,7 @@
             <p>Antes de começar, certifique-se de ter:</p>
             <ul>
                 <li>.NET SDK <strong>10.0</strong> ou superior.</li>
-                <li>Uma aplicação <strong>Blazor Web App</strong>, <strong>Blazor Server</strong> ou <strong>Blazor WebAssembly</strong>.</li>
+                <li>Uma aplicação <strong>Blazor Web App</strong> (Server, WebAssembly ou Auto) ou <strong>Blazor WebAssembly standalone</strong>.</li>
                 <li>Um editor como Rider, Visual Studio ou VS Code.</li>
             </ul>
         </Description>
@@ -22,79 +22,94 @@
 
     <DocSection Label="Compatibilidade">
         <Description>
-            <p>O OpBlazorUI é distribuído como uma <em>Razor Class Library</em> e funciona em qualquer modelo de hospedagem do Blazor.</p>
+            <p>O OpBlazorUI é distribuído como uma <em>Razor Class Library</em> e funciona em qualquer modelo de hospedagem do Blazor. Componentes de exibição renderizam em SSR estático; componentes interativos (overlays, seletores, DatePicker etc.) precisam de um render mode interativo.</p>
         </Description>
         <ChildContent>
             <ApiTable Caption="Compatibilidade"
                       Headers="@(new[] { "Versão", ".NET", "Modelos" })"
                       Rows="@(new[] {
-                          new[] { "1.0.0", "10.0", "Blazor Web App, Server, WebAssembly" }
+                          new[] { "Versão atual (2.0.2)", "10.0", "Blazor Web App (Server, WebAssembly, Auto), WebAssembly standalone e SSR estático (exibição)" }
                       })"/>
         </ChildContent>
     </DocSection>
 
     <DocSection Label="Adicionar o pacote">
         <Description>
-            <p>O pacote está no <strong>NuGet.org</strong>, a fonte padrão do <code>dotnet</code> — o restore não exige feed nem credencial extra:</p>
+            <p>O pacote está no <strong>NuGet.org</strong>, a fonte padrão do <code>dotnet</code> — o restore não exige feed nem credencial extra. O comando instala a versão estável mais recente:</p>
         </Description>
         <Code>
             <CodeBlock Language="bash" Code="@("dotnet add package OpBlazorUI")"/>
-            <p class="doc-section-description">Ou declare a referência manualmente no <code>.csproj</code>:</p>
+            <p class="doc-section-description">Ou declare a referência manualmente no <code>.csproj</code>. No exemplo, usamos a versão atual do pacote (<code>2.0.2</code>); consulte o <a href="https://www.nuget.org/packages/OpBlazorUI" target="_blank" rel="noopener noreferrer">NuGet</a> para confirmar a versão mais recente:</p>
             <CodeBlock Language="xml" Code="@PackageReferenceCode"/>
         </Code>
     </DocSection>
 
     <DocSection Label="Alternativa: GitHub Release">
         <Description>
-            <p>Para fixar um <code>.nupkg</code> específico (por exemplo, em CI sem acesso ao NuGet.org), baixe na página de releases e aponte um source local para a pasta onde salvou:</p>
+            <p>Para fixar um <code>.nupkg</code> específico (por exemplo, em CI sem acesso ao NuGet.org), baixe os pacotes na <a href="https://github.com/victorAFRodrigues/OpBlazorUI/releases" target="_blank" rel="noopener noreferrer">página de releases</a>, salve-os em uma pasta local e instale apontando para ela. O comando abaixo usa a versão atual como exemplo:</p>
         </Description>
         <Code>
             <CodeBlock Language="bash"
-                       Code="@("dotnet nuget add source ./packages --name optimus-local\ndotnet add package OpBlazorUI")"/>
+                       Code="@("dotnet add package OpBlazorUI --version 2.0.2 --source ./packages")"/>
+            <p class="doc-section-description">Se for usar gráficos, baixe também o <code>.nupkg</code> do <code>OpBlazorUI.Charts</code> para a mesma pasta e repita o comando trocando o ID do pacote.</p>
         </Code>
     </DocSection>
 
     <DocSection Label="Alternativa: referência de projeto">
         <Description>
-            <p>Para desenvolver contra o código-fonte da biblioteca, use a referência direta ao projeto:</p>
+            <p>Para desenvolver contra o código-fonte da biblioteca, use a referência direta aos projetos. A partir de uma aplicação dentro de <code>src/</code>:</p>
         </Description>
         <Code>
             <CodeBlock Language="bash"
-                       Code="@("dotnet add reference ../Components/OpBlazorUI/OpBlazorUI.csproj")"/>
+                       Code="@("dotnet add reference ../Components/OpBlazorUI/OpBlazorUI.csproj\ndotnet add reference ../Components/OpBlazorUI.Charts/OpBlazorUI.Charts.csproj # opcional")"/>
         </Code>
     </DocSection>
 
     <DocSection Label="Imports">
         <Description>
-            <p>Importe o namespace raiz no <code>_Imports.razor</code> para ter acesso ao <code>OpBlazorUiSetup</code> e aos serviços (<code>OpThemeService</code>, <code>OpMessageService</code>). Cada componente vive em seu próprio namespace:</p>
+            <p>Importe o namespace raiz no <code>_Imports.razor</code> para ter acesso ao <code>OpBlazorUiSetup</code>. Cada componente vive em <code>OpBlazorUI.Components.&lt;Nome&gt;</code>; importe o que for usar. Os serviços ficam em <code>OpBlazorUI.Services</code> e a tradução em <code>OpBlazorUI.Globalization</code>:</p>
         </Description>
         <Code>
             <CodeBlock Language="razor"
-                       Code="@("@using OpBlazorUI\n@using OpBlazorUI.Components.Button\n@using OpBlazorUI.Services")"/>
+                       Code="@("@using OpBlazorUI\n@using OpBlazorUI.Components.Button\n@using OpBlazorUI.Services\n@using OpBlazorUI.Globalization")"/>
+            <p class="doc-section-description">Modelos como <code>OpToastMessage</code> ficam em <code>OpBlazorUI.Models</code>.</p>
         </Code>
     </DocSection>
 
     <DocSection Label="Registrar os serviços">
         <Description>
-            <p>Registre os serviços da biblioteca no <code>Program.cs</code>. A extensão <code>AddOpBlazorUI()</code> registra o <code>OpThemeService</code> e o <code>OpMessageService</code>, e aceita o tema inicial. Numa <em>Blazor Web App</em> com WebAssembly ou Auto, registre nos <strong>dois</strong> <code>Program.cs</code> (servidor e <code>.Client</code>), com as mesmas opções:</p>
+            <p>Registre os serviços da biblioteca no <code>Program.cs</code>. A extensão <code>AddOpBlazorUI()</code> registra o tema, a tradução, mensagens, confirmação, filtros e dialog dinâmico:</p>
+            <ul>
+                <li><code>OpThemeService</code> — tema por circuito (Server) ou instância (WebAssembly);</li>
+                <li><code>OpTranslationService</code> — textos e formatos;</li>
+                <li><code>OpMessageService</code> — Toast;</li>
+                <li><code>OpConfirmationService</code> — ConfirmDialog;</li>
+                <li><code>OpFilterService</code> — filtros do DataTable;</li>
+                <li><code>OpDialogService</code> — DynamicDialog.</li>
+            </ul>
+            <p>O primeiro parâmetro configura o tema e o segundo, opcional, a tradução. O padrão é inglês; para português use <code>OpTranslations.PtBr</code>:</p>
         </Description>
         <Code>
-            <CodeBlock Language="csharp"
-                       Code="@ServicesCode"/>
+            <CodeBlock Language="csharp" Code="@ServicesCode"/>
+            <p class="doc-section-description">Numa <em>Blazor Web App</em> com WebAssembly ou Auto, registre nos <strong>dois</strong> <code>Program.cs</code> (servidor e <code>.Client</code>), com as mesmas opções.</p>
         </Code>
     </DocSection>
 
     <DocSection Label="Adicionar o setup">
         <Description>
-            <p>Duas peças, ambas no <code>App.razor</code> (ou no <code>index.html</code>, em WebAssembly standalone):</p>
+            <p>Duas peças:</p>
             <ul>
                 <li><code>op-theme.js</code> no <code>&lt;head&gt;</code>, depois do <code>&lt;base href&gt;</code>: carrega o CSS do tema e aplica cores, modo escuro e RTL antes da primeira pintura. Os <code>data-*</code> repetem o tema do <code>AddOpBlazorUI</code>.</li>
-                <li><code>&lt;OpBlazorUiSetup /&gt;</code> <strong>dentro da parte interativa</strong> da aplicação, normalmente no <code>MainLayout</code>: carrega ícones e CSS base e aplica as trocas de tema feitas em tempo de execução.</li>
+                <li><code>&lt;OpBlazorUiSetup /&gt;</code> <strong>dentro da parte interativa</strong> da aplicação: carrega ícones e CSS base e aplica as trocas de tema feitas em tempo de execução.</li>
             </ul>
+            <p><strong>Blazor Web App:</strong> o script fica no <code>App.razor</code> e o setup pode ficar no <code>App.razor</code> ou no <code>MainLayout</code>.</p>
+            <p><strong>WebAssembly standalone:</strong> o script fica no <code>wwwroot/index.html</code>; o <code>&lt;OpBlazorUiSetup /&gt;</code> fica no <code>App.razor</code> (ou no layout). Não coloque o setup no <code>index.html</code>.</p>
         </Description>
         <Code>
-            <CodeBlock Language="razor"
-                       Code="@SetupCode"/>
+            <p class="doc-section-description"><strong>Blazor Web App</strong> — <code>App.razor</code> + <code>MainLayout.razor</code>:</p>
+            <CodeBlock Language="razor" Code="@WebAppSetupCode"/>
+            <p class="doc-section-description"><strong>WebAssembly standalone</strong> — <code>wwwroot/index.html</code> + <code>App.razor</code>:</p>
+            <CodeBlock Language="razor" Code="@WasmSetupCode"/>
         </Code>
     </DocSection>
 
@@ -102,12 +117,33 @@
         <Description>
             <p>Os componentes são agnósticos ao modo de renderização: o mesmo código roda em <strong>Interactive Server</strong>, <strong>Interactive WebAssembly</strong> e <strong>Interactive Auto</strong> (validado nos três). Algumas regras do Blazor valem para o tema:</p>
             <ul>
-                <li><strong>Interatividade global</strong> (<code>&lt;Routes @@rendermode="..." /&gt;</code>) é o cenário mais simples: um único <code>OpThemeService</code> para a aplicação toda.</li>
-                <li><strong>Interatividade por página</strong>: o <code>&lt;OpBlazorUiSetup /&gt;</code> precisa usar o <strong>mesmo</strong> render mode das páginas que trocam o tema (por exemplo, <code>&lt;OpBlazorUiSetup @@rendermode="InteractiveServer" /&gt;</code> no layout). Cada “ilha” de render mode tem a sua instância do serviço; um Setup em Server não enxerga trocas feitas numa página WebAssembly.</li>
+                <li><strong>Interatividade global</strong> (<code>&lt;Routes @@rendermode="..." /&gt;</code>) é o cenário mais simples: há um <code>OpThemeService</code> por circuito (Server) ou instância (WebAssembly), compartilhado pelas páginas interativas.</li>
+                <li><strong>Interatividade por página</strong>: o <code>&lt;OpBlazorUiSetup /&gt;</code> precisa usar o <strong>mesmo</strong> render mode das páginas que trocam o tema (por exemplo, <code>&lt;OpBlazorUiSetup @@rendermode="InteractiveServer" /&gt;</code> no layout). Ilhas com render modes diferentes não compartilham o estado; um Setup em Server não enxerga trocas feitas numa página WebAssembly.</li>
                 <li><strong>Auto</strong>: a primeira visita roda em Server e as seguintes em WebAssembly. O estado do serviço não passa de um runtime para o outro; com <code>PersistTheme = true</code> o tema salvo é restaurado nos dois.</li>
                 <li><strong>SSR estático</strong> (sem interatividade): os componentes de exibição renderizam normalmente, mas os interativos (Select, Dialog, DatePicker...) não respondem a eventos, como qualquer componente Blazor. O tema vem só do <code>op-theme.js</code>.</li>
             </ul>
         </Description>
+    </DocSection>
+
+    <DocSection Label="Opcional: gráficos">
+        <Description>
+            <p>O <code>OpChart</code> fica no pacote separado <code>OpBlazorUI.Charts</code>, construído sobre o Blazor-ApexCharts. Instale o pacote e registre o serviço:</p>
+        </Description>
+        <Code>
+            <CodeBlock Language="bash" Code="@ChartsPackageCode"/>
+            <CodeBlock Language="csharp" Code="@ChartsProgramCode"/>
+            <CodeBlock Language="razor" Code="@ChartsImportsCode"/>
+            <p class="doc-section-description">O gráfico depende de JavaScript e só renderiza em render mode interativo; veja <a href="chart">Chart</a>.</p>
+        </Code>
+    </DocSection>
+
+    <DocSection Label="Opcional: overlays">
+        <Description>
+            <p>Toast, ConfirmDialog e DynamicDialog usam os serviços registrados por <code>AddOpBlazorUI()</code>, mas precisam de um host montado uma única vez no layout, dentro da parte interativa. O <code>Key</code> liga a chamada do serviço ao host:</p>
+        </Description>
+        <Code>
+            <CodeBlock Language="razor" Code="@OverlaysCode"/>
+        </Code>
     </DocSection>
 
     <DocSection Label="Ícones">
@@ -147,6 +183,8 @@
             <ul>
                 <li><a href="configuration">Configuration</a> — temas, modo escuro, RTL e interop.</li>
                 <li><a href="button">Button</a> — comece pelos componentes básicos.</li>
+                <li><a href="chart">Chart</a> — gráficos com o pacote <code>OpBlazorUI.Charts</code>.</li>
+                <li><a href="toast">Toast</a>, <a href="confirmdialog">ConfirmDialog</a> e <a href="dynamicdialog">DynamicDialog</a> — overlays e feedback.</li>
             </ul>
         </Description>
     </DocSection>
@@ -164,6 +202,8 @@
         "Registrar os serviços",
         "Adicionar o setup",
         "Modos de renderização",
+        "Opcional: gráficos",
+        "Opcional: overlays",
         "Ícones",
         "Verificação",
         "Próximos passos"
@@ -171,24 +211,44 @@
 
     private const string PackageReferenceCode = """
         <ItemGroup>
-            <PackageReference Include="OpBlazorUI" Version="1.0.0" />
+            <!-- Substitua 2.0.2 pela versão atual exibida no NuGet.org -->
+            <PackageReference Include="OpBlazorUI" Version="2.0.2" />
         </ItemGroup>
         """;
 
     private const string ServicesCode = """
-        builder.Services.AddOpBlazorUI(theme =>
-        {
-            theme.Preset = "aura";
-            theme.PersistTheme = true; // opcional
-        });
+        using OpBlazorUI.Globalization;
+
+        builder.Services.AddOpBlazorUI(
+            theme =>
+            {
+                theme.Preset = "aura";          // aura, lara ou nora
+                theme.Primary = "noir";         // noir ou uma das paletas
+                theme.Surface = "slate";        // opcional
+                theme.PersistTheme = true;      // opcional
+            },
+            OpTranslations.PtBr);               // opcional; padrão en-US
         """;
 
-    private const string SetupCode = """
+    private const string ChartsPackageCode = "dotnet add package OpBlazorUI.Charts";
+
+    private const string ChartsProgramCode = """
+        using OpBlazorUI.Charts;
+
+        builder.Services.AddOpBlazorCharts();
+        """;
+
+    private const string ChartsImportsCode = """
+        @using ApexCharts
+        @using OpBlazorUI.Charts
+        """;
+
+    private const string WebAppSetupCode = """
         @* App.razor *@
         <head>
             <base href="/" />
             <script src="_content/OpBlazorUI/op-theme.js"
-                    data-preset="aura" data-primary="noir"></script>
+                    data-preset="aura" data-primary="noir" data-surface="slate"></script>
             ...
             <HeadOutlet @rendermode="InteractiveAuto" />
         </head>
@@ -196,8 +256,30 @@
             <Routes @rendermode="InteractiveAuto" />
         </body>
 
-        @* MainLayout.razor *@
+        @* MainLayout.razor (ou App.razor) *@
         <OpBlazorUiSetup />
         @Body
+        """;
+
+    private const string WasmSetupCode = """
+        @* wwwroot/index.html *@
+        <head>
+            <base href="/" />
+            <script src="_content/OpBlazorUI/op-theme.js"
+                    data-preset="aura" data-primary="noir" data-surface="slate"></script>
+        </head>
+
+        @* App.razor *@
+        <OpBlazorUiSetup />
+        """;
+
+    private const string OverlaysCode = """
+        @using OpBlazorUI.Components.Toast
+        @using OpBlazorUI.Components.ConfirmDialog
+        @using OpBlazorUI.Components.DynamicDialog
+
+        <OpToast Key="app" />
+        <OpConfirmDialog Key="app" />
+        <OpDynamicDialogHost />
         """;
 }
