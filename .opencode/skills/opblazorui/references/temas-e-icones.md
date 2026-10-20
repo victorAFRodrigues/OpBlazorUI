@@ -69,6 +69,9 @@ O `<OpThemeSwitcher />` já traz a paleta de primárias e o botão de modo escur
 - Para ajustar aparência, prefira as variáveis CSS (`--p-primary-color`,
   `--p-surface-0`, `--p-content-border-color`, `--p-form-field-*`...) a sobrescrever as
   regras `p-*`.
+- Tipografia: a lib empacota Inter Variable 4.1 e usa 14px como base. Sobrescreva
+  `--op-font-family` para trocar a família e `--op-font-mono` para a pilha monoespaçada;
+  o tamanho base é ajustável em `html { font-size: ... }`.
 - Não edite os arquivos `wwwroot/themes/*.css` da lib: eles são gerados a partir dos tokens
   dos presets.
 

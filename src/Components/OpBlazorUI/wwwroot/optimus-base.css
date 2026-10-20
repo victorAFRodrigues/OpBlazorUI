@@ -4,10 +4,20 @@
  * (BaseIcon/Button etc.); aqui ficam centralizados para o port Blazor.
  */
 
-.p-icon {
-    display: inline-block;
-    vertical-align: baseline;
-    flex-shrink: 0;
+:root {
+    /* Inter é empacotada com a lib; sobrescreva a variável para usar outra fonte. */
+    --op-font-family: "Inter var", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --op-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+html {
+    font-size: 14px;
+    font-family: var(--op-font-family);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-optical-sizing: auto;
+    line-height: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 html,
@@ -16,6 +26,19 @@ body {
     min-height: 100vh;
     background-color: var(--p-surface-50);
     color: var(--p-text-color);
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+.p-icon {
+    display: inline-block;
+    vertical-align: baseline;
+    flex-shrink: 0;
 }
 
 .app-dark body {

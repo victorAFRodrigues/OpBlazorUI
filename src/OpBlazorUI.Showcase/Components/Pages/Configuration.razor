@@ -6,7 +6,7 @@
 <PageTitle>Configuration - OpBlazorUI</PageTitle>
 
 <GuidePage Title="Configuration"
-           Description="Personalize temas, modo escuro, direção e o comportamento dos componentes."
+           Description="Personalize temas, modo escuro, direção, tipografia e o comportamento dos componentes."
            Sections="@Sections">
 
     <DocSection Label="Visão geral">
@@ -94,6 +94,18 @@
         </ChildContent>
     </DocSection>
 
+    <DocSection Label="Tipografia">
+        <Description>
+            <p>A biblioteca empacota a <strong>Inter Variable 4.1</strong> e usa <strong>14px</strong> como tamanho base do documento. O <code>OpBlazorUiSetup</code> carrega <code>_content/OpBlazorUI/fonts/inter/inter.css</code>; o CSS base aplica a fonte em <code>html</code> e os componentes herdam a família.</p>
+            <p>Para usar outra família, sobrescreva <code>--op-font-family</code> depois do CSS da lib. O tamanho base pode ser ajustado em <code>html</code>:</p>
+        </Description>
+        <Code>
+            <CodeBlock Language="css"
+                       Code="@(":root {\n    --op-font-family: \"Segoe UI\", system-ui, sans-serif;\n}\n\n/* Opcional: o padrão da lib é 14px. */\nhtml {\n    font-size: 16px;\n}")"/>
+            <p class="doc-section-description">A Inter é licenciada sob SIL OFL 1.1 (<code>OFL.txt</code> no pacote) e não depende de CDN. No MAUI, os CSS fixos são carregados pelo <code>wwwroot/index.html</code>.</p>
+        </Code>
+    </DocSection>
+
     <DocSection Label="Variáveis CSS">
         <Description>
             <p>O <code>optimus-base.css</code> contém a estrutura dos componentes e o arquivo de tema define os design tokens (<code>--p-*</code>) usados por eles. Para sobrescrever cores, fontes ou raios, declare as variáveis depois do setup:</p>
@@ -101,6 +113,7 @@
         <Code>
             <CodeBlock Language="css"
                        Code="@(":root {\n    --p-primary-color: #10b981;\n    --p-border-radius-md: 8px;\n}")"/>
+            <p class="doc-section-description">As variáveis de tipografia próprias da lib são <code>--op-font-family</code> e <code>--op-font-mono</code>; as demais usam o prefixo <code>--p-</code> do tema.</p>
         </Code>
     </DocSection>
 </GuidePage>
@@ -116,6 +129,7 @@
         "Direção (RTL)",
         "Salvando as escolhas",
         "Interop JS",
+        "Tipografia",
         "Variáveis CSS"
     ];
 }

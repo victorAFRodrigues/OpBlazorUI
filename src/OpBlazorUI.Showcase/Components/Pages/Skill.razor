@@ -13,8 +13,9 @@
         <Description>
             <p>
                 A skill <code>opblazorui</code> é um conjunto de instruções em Markdown que ensina um
-                agente a usar a biblioteca: convenções, armadilhas comuns e receitas de formulários,
-                DataTable, overlays e temas. Ela complementa o <a href="/llms-txt">LLMs.txt</a>: o
+                agente a usar a biblioteca: convenções, armadilhas comuns e receitas de instalação,
+                hospedagem (Web App, WebAssembly e MAUI), formulários, DataTable, overlays e temas.
+                Ela complementa o <a href="/llms-txt">LLMs.txt</a>: o
                 agente carrega a skill quando a tarefa envolve a lib e consulta os artefatos estáticos
                 para confirmar a API.
             </p>
@@ -146,7 +147,8 @@
 
     private IReadOnlyList<string[]> RecipeRows =>
     [
-        [FileName(InstallRecipe), $"<a href=\"{RecipeUrl(InstallRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Instalação e render modes</a> — pacote, serviços, tema e render modes."],
+        [FileName(InstallRecipe), $"<a href=\"{RecipeUrl(InstallRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Instalação e render modes</a> — pacote, serviços, tema, tipografia e render modes."],
+        [FileName(HostingRecipe), $"<a href=\"{RecipeUrl(HostingRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Hospedagem: Blazor Web App, WebAssembly e MAUI</a> — exemplos completos por modelo e setup do MAUI."],
         [FileName(FormsRecipe), $"<a href=\"{RecipeUrl(FormsRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Formulários e validação</a> — binding, EditForm, DataAnnotations e componentes de entrada."],
         [FileName(TableRecipe), $"<a href=\"{RecipeUrl(TableRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">DataTable (CRUD)</a> — colunas, templates, seleção, lazy loading e edição."],
         [FileName(OverlayRecipe), $"<a href=\"{RecipeUrl(OverlayRecipe)}\" target=\"_blank\" rel=\"noopener noreferrer\">Overlays e feedback</a> — Dialog, ConfirmDialog, Toast e DynamicDialog."],
@@ -154,6 +156,7 @@
     ];
 
     private const string InstallRecipe = "instalacao-e-render-modes.md";
+    private const string HostingRecipe = "hospedagem-web-e-maui.md";
     private const string FormsRecipe = "formularios-e-validacao.md";
     private const string TableRecipe = "datatable-crud.md";
     private const string OverlayRecipe = "overlays-e-feedback.md";

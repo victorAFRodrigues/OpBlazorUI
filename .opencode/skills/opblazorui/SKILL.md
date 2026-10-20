@@ -23,6 +23,7 @@ Base padrão: <https://victorafrodrigues.github.io/OpBlazorUI>. Para fixar uma v
 ## Receitas
 
 - [Instalação e render modes](references/instalacao-e-render-modes.md)
+- [Hospedagem: Blazor Web App, WebAssembly e MAUI](references/hospedagem-web-e-maui.md)
 - [Formulários e validação](references/formularios-e-validacao.md)
 - [DataTable (CRUD)](references/datatable-crud.md)
 - [Overlays e feedback](references/overlays-e-feedback.md)
@@ -46,10 +47,23 @@ Base padrão: <https://victorafrodrigues.github.io/OpBlazorUI>. Para fixar uma v
 - Não escreva componentes "de memória": confirme os parâmetros no manifesto. Propriedade
   inexistente quebra a compilação.
 - O pacote está no NuGet.org: `dotnet add package OpBlazorUI` não exige feed nem PAT.
+- O `AddOpBlazorUI()` é extensão do namespace `OpBlazorUI`: inclua `using OpBlazorUI;` no
+  `Program.cs`/`MauiProgram.cs`.
 - `<OpBlazorUiSetup />` precisa estar na parte interativa da aplicação (não em SSR estático).
 - Estado sempre *scoped*; nunca `static` — a lib funciona em Server, WebAssembly e Auto.
 - O tema é aplicado por `op-theme.js` + `<OpBlazorUiSetup />`; o modo escuro é a classe
   `app-dark` no `<html>`.
+- Numa Blazor Web App com WebAssembly/Auto, registre `AddOpBlazorUI()` no servidor **e** no
+  `.Client`. No Auto, o servidor registra `AddInteractiveServerComponents` +
+  `AddInteractiveWebAssemblyComponents` e mapeia os dois render modes; use `InteractiveAuto`
+  no `HeadOutlet` e no `Routes`.
+- Em SSR estático, inclua `fonts/inter/inter.css`, `openng-icons.css` e `optimus-base.css` no
+  `<head>`: o setup interativo não roda.
+- MAUI Blazor Hybrid não tem `HeadOutlet`: carregue `fonts/inter/inter.css`,
+  `openng-icons.css`, `optimus-base.css` e `op-theme.js` no `wwwroot/index.html`; monte
+  `<OpBlazorUiSetup />` no `Routes.razor`/layout e não use `@rendermode`.
+- Tipografia: a lib empacota Inter Variable 4.1 e usa 14px como base. Para trocar, sobrescreva
+  `--op-font-family` (e, se quiser, `html { font-size: ... }`).
 - `OpToast`, `OpConfirmDialog` e `OpDynamicDialogHost` precisam estar montados no layout
   (uma vez) e os serviços registrados por `AddOpBlazorUI()`.
 - `OpDataTable`: `Items` + `Columns` (lista de `OpDataTableColumn`); use `DataKey` para

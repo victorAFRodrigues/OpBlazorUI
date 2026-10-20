@@ -10,11 +10,13 @@ já portados para Blazor.
 ## Requisitos
 
 - .NET SDK **10.0** ou superior
-- Blazor Web App (Server, WebAssembly ou Auto) ou Blazor WebAssembly standalone
+- Blazor Web App (Server, WebAssembly ou Auto), Blazor WebAssembly standalone ou .NET MAUI Blazor Hybrid
+- Para MAUI, o workload do .NET MAUI (`dotnet workload install maui`)
 
 ## Instalação
 
-O guia completo, com setup, render modes e opções de tema, está em
+O guia completo, com setup, render modes e exemplos para Blazor Web App (Server, WebAssembly e
+Auto), WebAssembly standalone e MAUI Blazor Hybrid, está em
 [Installation](https://victorafrodrigues.github.io/OpBlazorUI/installation).
 
 O pacote é publicado no [NuGet.org](https://www.nuget.org/packages/OpBlazorUI), a fonte padrão
@@ -41,6 +43,7 @@ referência de projeto/pasta local.
 `Program.cs`:
 
 ```csharp
+using OpBlazorUI;
 using OpBlazorUI.Globalization;
 
 builder.Services.AddOpBlazorUI(
@@ -90,9 +93,19 @@ interativa** (ícones, CSS base e trocas de tema em runtime):
 Em WebAssembly standalone, o `op-theme.js` fica no `wwwroot/index.html` e o `<OpBlazorUiSetup />`
 no `App.razor` (ou no layout); o setup não pode ficar no `index.html`.
 
-Os componentes funcionam em Interactive Server, WebAssembly e Auto. Com interatividade por página,
-use no `<OpBlazorUiSetup>` o mesmo `@rendermode` das páginas que trocam o tema; numa Blazor Web App
-com WebAssembly/Auto, chame `AddOpBlazorUI` nos dois `Program.cs` (servidor e `.Client`).
+No MAUI Blazor Hybrid, o template não inclui `HeadOutlet`: carregue o `op-theme.js` e os CSS fixos
+(`fonts/inter/inter.css`, `openng-icons.css`, `optimus-base.css` e `quill.snow.css`) no
+`wwwroot/index.html`, registre `AddOpBlazorUI` no `MauiProgram.cs` e monte `<OpBlazorUiSetup />` no
+`Routes.razor` (ou no layout). Não use `@rendermode` no MAUI.
+
+Em SSR estático, sem parte interativa, inclua manualmente no `<head>` os links de
+`fonts/inter/inter.css`, `openng-icons.css` e `optimus-base.css`; o tema inicial continua no
+`op-theme.js`.
+
+Os componentes funcionam em Interactive Server, WebAssembly, Auto e MAUI Blazor Hybrid. Com
+interatividade por página, use no `<OpBlazorUiSetup>` o mesmo `@rendermode` das páginas que trocam o
+tema; numa Blazor Web App com WebAssembly/Auto, chame `AddOpBlazorUI` nos dois `Program.cs` (servidor
+e `.Client`).
 
 Para Toast, ConfirmDialog e DynamicDialog, monte os hosts uma vez no layout:
 
@@ -110,6 +123,23 @@ Uso:
 ```razor
 <OpButton Label="Salvar" Icon="pi pi-save" />
 ```
+
+## Tipografia
+
+A biblioteca empacota a **Inter Variable 4.1** e usa **14px** como tamanho base do documento. O
+`<OpBlazorUiSetup />` carrega `_content/OpBlazorUI/fonts/inter/inter.css`; a fonte é licenciada sob
+SIL OFL 1.1 e funciona offline, sem CDN.
+
+Para usar outra família, sobrescreva a variável depois do CSS da lib:
+
+```css
+:root {
+    --op-font-family: "Segoe UI", system-ui, sans-serif;
+}
+```
+
+O tamanho base pode ser ajustado em `html` (`font-size: 16px`, por exemplo). A variável
+`--op-font-mono` define a pilha monoespaçada para conteúdo técnico.
 
 ## Temas
 
@@ -208,3 +238,7 @@ git push origin v2.0.2
 
 MIT — veja [LICENSE](LICENSE). Inclui atribuição ao PrimeTek, conforme a licença da versão
 community do PrimeNG, da qual o CSS base e os temas derivam.
+
+A fonte **Inter Variable** empacotada em `wwwroot/fonts/inter/` é licenciada sob a
+[SIL Open Font License 1.1](src/Components/OpBlazorUI/wwwroot/fonts/inter/OFL.txt); o arquivo de
+licença acompanha a fonte no pacote.

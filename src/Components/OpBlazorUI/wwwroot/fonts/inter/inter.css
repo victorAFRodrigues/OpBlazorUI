@@ -1,0 +1,12 @@
+/*
+ * Inter Variable — tipografia padrão do OpBlazorUI.
+ * Fonte: https://rsms.me/inter/ (v4.1), licenciada sob SIL OFL 1.1.
+ * O arquivo OFL.txt está nesta pasta.
+ */
+@font-face {
+    font-family: "Inter var";
+    src: url("InterVariable.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
